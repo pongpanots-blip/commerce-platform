@@ -1,0 +1,135 @@
+# Build + push (ECR) + deploy (EC2) for commerce-platform / commerce-admin / commerce-portal.
+# Mirrors the josh monorepo's "Deploy ECR → EC2" pattern.
+#
+# Tag → deploy target:
+#   v1.2.3          → all 3 services
+#   platform-v1.2.3 → commerce-platform only
+#   admin-v1.2.3    → commerce-admin only
+#   portal-v1.2.3   → commerce-portal only
+#
+# Runner: self-hosted on EC2 (labels: self-hosted, linux, commerce-platform)
+#   Setup: docker/github-runner-setup.sh
+#
+# GitHub Secrets required:
+#   Build/push ECR: AWS_ROLE_ARN (OIDC) or ECR_AWS_ACCESS_KEY_ID + ECR_AWS_SECRET_ACCESS_KEY
+#   EC2:            EC2_HOST, EC2_USER, EC2_SSH_KEY, EC2_DEPLOY_DIR
+#   App env (written to .env on EC2 by the deploy step): COMMERCE_DB_HOST, COMMERCE_DB_USERNAME,
+#     COMMERCE_DB_PASSWORD, COMMERCE_DB_NAME, REDIS_HOST, STOREFRONT_API_KEYS, PORTAL_JWT_SECRET,
+#     COMMERCE_CORS_ORIGINS
+#
+# ECR repos (create once): <account>.dkr.ecr.<region>.amazonaws.com/commerce-platform,
+#   commerce-admin, commerce-portal
+#
+# First time: Actions → Run workflow → deploy_service=all, skip_deploy=true (test push only),
+#   then run again with skip_deploy=false.
+
+name: Deploy ECR → EC2
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - '*-v*'
+  workflow_dispatch:
+    inputs:
+      deploy_service:
+        description: 'all or a single service'
+        required: true
+        type: choice
+        options:
+          - all
+          - platform
+          - admin
+          - portal
+      image_tag:
+        description: 'Image tag (default = git SHA)'
+        required: false
+        type: string
+      skip_deploy:
+        description: 'Build & push only (skip EC2)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-ecr
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.resolve.outputs.services }}
+      tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            REF="${GITHUB_REF#refs/tags/}"
+            case "$REF" in
+              platform-v*) SERVICES='["platform"]' ;;
+              admin-v*)    SERVICES='["admin"]' ;;
+              portal-v*)   SERVICES='["portal"]' ;;
+              v*)          SERVICES='["platform","admin","portal"]' ;;
+              *) echo "unrecognized tag: $REF"; exit 1 ;;
+            esac
+            TAG="$REF"
+          else
+            case "${{ inputs.deploy_service }}" in
+              all) SERVICES='["platform","admin","portal"]' ;;
+              *)   SERVICES='["${{ inputs.deploy_service }}"]' ;;
+            esac
+            TAG="${{ inputs.image_tag }}"
+            [ -z "$TAG" ] && TAG="${GITHUB_SHA::7}"
+          fi
+          echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  build-push:
+    needs: resolve
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ fromJson(needs.resolve.outputs.services) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.${{ matrix.service }}
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/commerce-${{ matrix.service }}:${{ needs.resolve.outputs.tag }}
+
+  deploy:
+    if: ${{ github.event_name == 'push' || inputs.skip_deploy != true }}
+    needs: [resolve, build-push]
+    runs-on: [self-hosted, linux, commerce-platform]
+    steps:
+      - name: Pull + restart on this EC2
+        env:
+          TAG: ${{ needs.resolve.outputs.tag }}
+          SERVICES: ${{ needs.resolve.outputs.services }}
+          COMMERCE_DB_HOST: ${{ secrets.COMMERCE_DB_HOST }}
+          COMMERCE_DB_USERNAME: ${{ secrets.COMMERCE_DB_USERNAME }}
+          COMMERCE_DB_PASSWORD: ${{ secrets.COMMERCE_DB_PASSWORD }}
+          COMMERCE_DB_NAME: ${{ secrets.COMMERCE_DB_NAME }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          STOREFRONT_API_KEYS: ${{ secrets.STOREFRONT_API_KEYS }}
+          PORTAL_JWT_SECRET: ${{ secrets.PORTAL_JWT_SECRET }}
+          COMMERCE_CORS_ORIGINS: ${{ secrets.COMMERCE_CORS_ORIGINS }}
+        run: |
+          cd "${{ secrets.EC2_DEPLOY_DIR }}/docker"
+          SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')
+          ./ec2-deploy.sh "$TAG" $SVC_LIST

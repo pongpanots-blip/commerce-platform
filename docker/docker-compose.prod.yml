@@ -1,0 +1,43 @@
+# Commerce Platform prod stack — pulled from ECR, run directly on EC2 (no Fargate/ECS).
+# Same pattern as the josh monorepo's docker/docker-compose.yml + ec2-deploy.sh.
+#
+# Networking: this compose does NOT include nginx/TLS — domain routing (commerce.joshapp.io,
+# commerce-admin.joshapp.io, ...) is an infra decision to make when DNS/certs are set up.
+# For now each service publishes its port directly on the host.
+
+services:
+  platform:
+    image: ${ECR_REGISTRY}/commerce-platform:${PLATFORM_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - '3100:3100'
+    environment:
+      NODE_ENV: production
+      PORT: 3100
+      COMMERCE_DB_HOST: ${COMMERCE_DB_HOST}
+      COMMERCE_DB_PORT: ${COMMERCE_DB_PORT:-5432}
+      COMMERCE_DB_USERNAME: ${COMMERCE_DB_USERNAME}
+      COMMERCE_DB_PASSWORD: ${COMMERCE_DB_PASSWORD}
+      COMMERCE_DB_NAME: ${COMMERCE_DB_NAME:-commerce_db}
+      COMMERCE_DB_SSL: ${COMMERCE_DB_SSL:-true}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      STOREFRONT_API_KEYS: ${STOREFRONT_API_KEYS}
+      PORTAL_JWT_SECRET: ${PORTAL_JWT_SECRET}
+      COMMERCE_CORS_ORIGINS: ${COMMERCE_CORS_ORIGINS}
+
+  admin:
+    image: ${ECR_REGISTRY}/commerce-admin:${ADMIN_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - '4403:80'
+    depends_on:
+      - platform
+
+  portal:
+    image: ${ECR_REGISTRY}/commerce-portal:${PORTAL_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - '4404:80'
+    depends_on:
+      - platform

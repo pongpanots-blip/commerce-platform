@@ -37,9 +37,37 @@ npm run migration:run
 npm run migration:revert
 ```
 
+## Deploy (ECR → EC2)
+
+Same pattern as the `josh` monorepo: build+push images to ECR via GitHub Actions, then a
+self-hosted runner on a dedicated EC2 instance pulls and restarts via `docker compose`.
+Workflow: [.github/workflows/deploy-ecr.yml](.github/workflows/deploy-ecr.yml). Runs on tag
+push (`v1.2.3` = all 3 services, `platform-v1.2.3`/`admin-v1.2.3`/`portal-v1.2.3` = single
+service) or manual dispatch.
+
+**One-time setup (not yet done — separate infra from `josh`, needs your own AWS access):**
+
+1. Create an ECR repo per service: `commerce-platform`, `commerce-admin`, `commerce-portal`
+   (same AWS account/region as `josh`, or a new one — this repo intentionally doesn't assume
+   either).
+2. Provision an EC2 instance for this stack (Docker + docker compose installed).
+3. On that EC2: run [docker/github-runner-setup.sh](docker/github-runner-setup.sh) to register
+   it as a GitHub Actions self-hosted runner (labels `self-hosted, linux, commerce-platform`),
+   then `sudo ./svc.sh install && sudo ./svc.sh start`.
+4. Copy [docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) and
+   [docker/ec2-deploy.sh](docker/ec2-deploy.sh) to the EC2 deploy directory.
+5. Set GitHub Secrets: `AWS_REGION`, `ECR_REGISTRY`, `AWS_ROLE_ARN` (or
+   `ECR_AWS_ACCESS_KEY_ID`/`ECR_AWS_SECRET_ACCESS_KEY`), `EC2_DEPLOY_DIR`, and the app env vars
+   listed at the top of the workflow file (`COMMERCE_DB_HOST`, `STOREFRONT_API_KEYS`, etc.).
+6. Point Postgres/Redis at either a new instance or the existing `commerce_db` — needs a
+   decision on whether this stack shares the `josh` DB host or gets its own.
+7. First run: Actions → Run workflow → `deploy_service=all`, `skip_deploy=true` to test the
+   build/push only, then run again with `skip_deploy=false`.
+
+Domain routing (e.g. `commerce.joshapp.io`) and TLS aren't set up yet — `docker-compose.prod.yml`
+publishes each service's port directly on the host for now.
+
 ## Notes
 
-- Not yet wired to a separate CI/CD pipeline or docker-compose — this repo currently only has
-  the app source, Nx build config, and local-dev scripts ported over from the monorepo.
-- `apps/backend` in the `josh` monorepo still has the only network-facing coupling to this
-  service (`apps/backend/src/app/commerce-platform/commerce-platform.client.ts`).
+- `apps/backend` in the `josh` monorepo has the only network-facing coupling to this service
+  (`apps/backend/src/app/commerce-platform/commerce-platform.client.ts`), over HTTP only.

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+**/.env
+.commerce-logs/
+.commerce-pids/
+.nx/cache
+.nx/workspace-data

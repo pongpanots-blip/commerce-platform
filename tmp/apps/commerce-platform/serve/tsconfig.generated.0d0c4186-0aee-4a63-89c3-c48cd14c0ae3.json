@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "paths": {}
+  },
+  "extends": "../../../../apps/commerce-platform/tsconfig.app.json"
+}

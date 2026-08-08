@@ -1,0 +1,33 @@
+{
+  "name": "commerce-platform",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/commerce-platform/src",
+  "projectType": "application",
+  "tags": ["type:app", "scope:platform-app"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/commerce-platform",
+        "main": "apps/commerce-platform/src/main.ts",
+        "tsConfig": "apps/commerce-platform/tsconfig.app.json",
+        "assets": ["apps/commerce-platform/src/assets"],
+        "generatePackageJson": true
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "inspect": false,
+        "buildTarget": "commerce-platform:build",
+        "watch": true
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

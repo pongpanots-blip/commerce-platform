@@ -358,6 +358,18 @@ export const competitorPricesApi = {
   remove: (id: string) => enveloped(api.del<Envelope<{ id: string }>>(`/competitor-prices/${id}`)),
 };
 
+// ---- AI connectors (MCP) ----
+export interface McpConnection {
+  clientId: string; clientName: string; staffUserId: string; staffEmail: string;
+  firstSeenAt: string; liveSessions: number; lastUsedAt: string | null; toolCalls: number;
+}
+export interface McpActivity { id: string; at: string; tool: string; args: Record<string, unknown> | null; staffEmail: string; clientName: string }
+export const mcpApi = {
+  connections: () => api.get<{ enabled: boolean; mcpUrl: string | null; role: string; connections: McpConnection[] }>('/mcp-connections'),
+  activity: (limit = 50) => api.get<McpActivity[]>(`/mcp-connections/activity?limit=${limit}`),
+  revoke: (c: McpConnection) => api.post<{ revoked: number }>(`/mcp-connections/${encodeURIComponent(c.clientId)}/revoke`, { staffUserId: c.staffUserId }),
+};
+
 // Webhook Subscriptions & Deliveries
 export interface WebhookDeliveryFull {
   id: string;

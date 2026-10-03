@@ -8,6 +8,7 @@ import { MarketingResearchModule } from '../modules/platform/marketing-research/
 import { McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { McpOAuthProvider } from './mcp-oauth.provider';
 import { McpTools } from './mcp.tools';
+import { McpConnectionsController } from './mcp-connections.controller';
 
 /** MCP server for AI connectors. HTTP routes are mounted in main.ts by mountMcp (they live outside /api). */
 @Module({
@@ -15,6 +16,7 @@ import { McpTools } from './mcp.tools';
     TypeOrmModule.forFeature([McpOAuthClient, McpOAuthGrant, User]),
     AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule,
   ],
+  controllers: [McpConnectionsController],
   providers: [McpOAuthProvider, McpTools],
 })
 export class McpModule {}

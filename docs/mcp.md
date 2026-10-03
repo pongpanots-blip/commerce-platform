@@ -1,6 +1,6 @@
 # MCP server: ต่อ AI (Claude / ChatGPT) เข้ากับ commerce-platform
 
-ให้ AI **อ่านและสรุป**ข้อมูลของ commerce ได้เหมือนต่อ connector ทั่วไป AI แก้ไข ลบ หรือสั่งงานอะไรไม่ได้
+ให้ AI **อ่านและสรุป**ข้อมูลของ commerce ได้เหมือนต่อ connector ทั่วไป ส่วนการ**แก้ไขข้อมูล**ทำได้ไม่กี่อย่าง และต้องเปิดเองตอน login กับยืนยันทุกครั้ง (ดูหัวข้อ Tools ที่แก้ข้อมูล)
 
 - **โปรโตคอล:** MCP แบบ Streamable HTTP ที่ `https://<commerce-host>/mcp` (stateless และตอบเป็น JSON)
 - **การยืนยันตัวตน:** OAuth 2.1 แบบ PKCE + dynamic client registration ผ่าน MCP SDK ทางการ (`@modelcontextprotocol/sdk`)
@@ -35,6 +35,28 @@
 | `erp_intake_summary` | admin | ERP ส่งอะไรมาใน N ชั่วโมง แยกตามสถานะ และรายการที่ fail |
 | `webhook_failures` | admin | event ที่ส่งให้ platform (เช่น josh) ไม่สำเร็จ |
 | `stock_levels` | admin | สต็อกและยอดจองของ SKU แยกตามคลัง |
+
+## Tools ที่แก้ข้อมูล (scope `commerce.write`)
+
+**ต้องเปิดเอง:** ตอน login ต้องติ๊ก "อนุญาตให้แก้ไขข้อมูลบางอย่างด้วย" ถ้าไม่ติ๊ก หรือ client ขอแค่ `commerce.read` ก็จะอ่านได้อย่างเดียวเหมือนเดิม และ tool ที่แก้ข้อมูลจะไม่ปรากฏเลย
+
+**ยืนยันสองชั้นทุกครั้ง:**
+1. **ขอดูก่อน:** เรียกครั้งแรกโดยไม่ใส่ `confirmCode` ระบบจะยังไม่ทำอะไร แค่ส่งกลับ `willDo` (สิ่งที่จะทำ) กับ `confirmCode`
+2. **ยืนยัน:** AI ต้องแสดง `willDo` ให้ผู้ใช้ดู พอผู้ใช้ตกลงแล้วจึงเรียกซ้ำด้วย argument ชุดเดิมพร้อม `confirmCode`
+   - code ใช้ได้ครั้งเดียว และหมดอายุใน 10 นาที
+   - code ผูกกับบัญชี, แอป AI, tool และ argument ชุดนั้น ถ้าเปลี่ยน argument ต้องขอดูใหม่
+
+นอกจากนี้ tool เหล่านี้ตั้ง `readOnlyHint: false` ไว้ Claude และ ChatGPT จึงถามผู้ใช้ก่อนเรียกอยู่แล้ว
+
+| Tool | Role | ทำอะไร |
+|---|---|---|
+| `research_create_topic` | marketing, admin | สร้างโจทย์ research |
+| `research_request_run` | marketing, admin | สั่งรันโจทย์ (ของตัวเอง ส่วน admin รันของทุกคนได้) |
+| `competitor_record_price` | marketing, admin | บันทึกราคาคู่แข่งที่ผู้ใช้เห็นจากหน้าเว็บ **ยืนยันคู่สินค้าให้ไม่ได้** ยังต้องให้คนทำ |
+| `webhook_retry_delivery` | admin | ส่ง event ที่ dead-letter ซ้ำ |
+| `erp_replay_ingest` | admin | ให้ระบบประมวลผลข้อมูลจาก ERP ที่ fail ใหม่อีกครั้ง |
+
+ทุกครั้งที่แก้จริงจะบันทึกใน `audit_logs` เป็น `action = 'mcp.write'` และหน้า AI connectors แสดงว่าแต่ละ connection แก้ไขได้หรือไม่
 
 ## ความปลอดภัย
 
@@ -83,8 +105,8 @@ MCP_BASE=http://localhost:3100 CP_ADMIN_EMAIL=… CP_ADMIN_PASSWORD=… CP_MKT_E
   node apps/commerce-platform/e2e/mcp-scenarios.mjs
 ```
 
-script นี้ทำตามลำดับเดียวกับ connector จริง: discovery → register → login ผิด/ถูก → PKCE → token → tools ของ marketing และ admin → refresh rotation → revoke (24 ข้อ)
+script นี้ทำตามลำดับเดียวกับ connector จริง: discovery → register → login ผิด/ถูก → PKCE → token → tools ของ marketing และ admin → refresh rotation → revoke → ขอสิทธิ์แก้ไข → ขอดู/ยืนยัน (code ผิด, ใช้ซ้ำ, เปลี่ยน argument) → write tool ทุกตัว (43 ข้อ เมื่อตั้ง `MCP_SKU`, `MCP_FAILED_DELIVERY`, `MCP_FAILED_INGEST`)
 
 ## ทำทีหลัง
 
-- tool ที่แก้ข้อมูลได้ เช่นส่ง dead-letter ซ้ำ หรือปรับสต็อกตอนเป็นระบบคลังเอง ต้องมี scope `commerce.write` แยก และให้ผู้ใช้ยืนยันก่อนทำ
+- ปรับสต็อก (ตอนที่ commerce เป็นระบบคลังเองแล้ว) และตั้งค่าเก็บข้อมูลเว็บ ใช้รูปแบบ write tool เดิมได้เลย

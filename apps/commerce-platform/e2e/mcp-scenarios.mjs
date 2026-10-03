@@ -11,7 +11,10 @@
 // Run (from repo root):
 //   MCP_BASE=http://localhost:3100 CP_ADMIN_EMAIL=… CP_ADMIN_PASSWORD=… \
 //   CP_MKT_EMAIL=… CP_MKT_PASSWORD=… node apps/commerce-platform/e2e/mcp-scenarios.mjs
-import { createHash, randomBytes } from 'node:crypto';
+// Optional, for the write tools: MCP_SKU (a SKU in the Josh catalog copy, used to create a test
+// competitor pair), MCP_FAILED_DELIVERY / MCP_FAILED_INGEST (ids of a failed webhook delivery /
+// ERP record to retry).
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 
@@ -33,16 +36,16 @@ async function register() {
 }
 
 /** Authorize + sign in. Returns { code, location, page } — code null when the sign-in failed. */
-async function authorize(clientId, verifier, who) {
+async function authorize(clientId, verifier, who, allowWrite = false) {
   const challenge = createHash('sha256').update(verifier).digest('base64url');
   const url = `${BASE}/authorize?${form({ response_type: 'code', client_id: clientId, redirect_uri: REDIRECT, code_challenge: challenge,
-    code_challenge_method: 'S256', state: 'st-123', scope: 'commerce.read', resource: `${BASE}/mcp` })}`;
+    code_challenge_method: 'S256', state: 'st-123', scope: allowWrite ? 'commerce.read commerce.write' : 'commerce.read', resource: `${BASE}/mcp` })}`;
   const page = await (await fetch(url)).text();
   const requestId = page.match(/name="request_id" value="([^"]+)"/)?.[1];
   const res = await fetch(`${BASE}/mcp/oauth/login`, { method: 'POST', redirect: 'manual',
-    body: form({ request_id: requestId ?? '', email: who.email, password: who.password }) });
+    body: form({ request_id: requestId ?? '', email: who.email, password: who.password, ...(allowWrite ? { allow_write: '1' } : {}) }) });
   const location = res.headers.get('location');
-  return { requestId, status: res.status, location, code: location ? new URL(location).searchParams.get('code') : null, body: location ? '' : await res.text() };
+  return { requestId, page, status: res.status, location, code: location ? new URL(location).searchParams.get('code') : null, body: location ? '' : await res.text() };
 }
 
 const token = async (params) => {
@@ -57,9 +60,9 @@ async function mcp(accessToken) {
 }
 const callJson = async (client, name, args = {}) => JSON.parse((await client.callTool({ name, arguments: args })).content[0].text);
 
-async function signIn(clientId, who) {
+async function signIn(clientId, who, allowWrite = false) {
   const verifier = randomBytes(32).toString('base64url');
-  const auth = await authorize(clientId, verifier, who);
+  const auth = await authorize(clientId, verifier, who, allowWrite);
   return token({ grant_type: 'authorization_code', client_id: clientId, code: auth.code ?? '', code_verifier: verifier, redirect_uri: REDIRECT });
 }
 
@@ -78,7 +81,7 @@ check('dynamic client registration → 201 + client_id', regStatus === 201 && !!
 
 // 3. sign-in page + wrong password
 const bad = await authorize(client.client_id, randomBytes(32).toString('base64url'), { email: MKT.email, password: 'wrong-password' });
-check('authorize shows our staff sign-in page', !!bad.requestId);
+check('authorize shows our staff sign-in page; a read-only request has no "allow changes" box', !!bad.requestId && !bad.page.includes('name="allow_write"'));
 check('wrong password → stays on the page with an error, no code', bad.status === 400 && !bad.code && bad.body.includes('role="alert"'));
 
 // 4. marketing staff: PKCE code → tokens
@@ -130,6 +133,70 @@ const rev = await fetch(`${BASE}/revoke`, { method: 'POST', body: form({ client_
 const afterRevoke = await fetch(`${BASE}/mcp`, { method: 'POST', headers: { authorization: `Bearer ${r1.json.access_token}`, 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
   body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }) });
 check('revoked access token → 401', rev.status === 200 && afterRevoke.status === 401, `${rev.status}/${afterRevoke.status}`);
+
+// 8. write tools: opt-in at sign-in, then preview → confirm
+const text = async (client, name, args) => { const r = await client.callTool({ name, arguments: args }); return { ...JSON.parse(r.content[0].text || '{}'), isError: r.isError === true }; };
+const wPage = await authorize(client.client_id, randomBytes(32).toString('base64url'), { email: MKT.email, password: 'wrong' }, true);
+check('a client asking for commerce.write gets the opt-in box on the sign-in page', wPage.page.includes('name="allow_write"'));
+const notTicked = await (async () => {
+  const v = randomBytes(32).toString('base64url');
+  const challenge = createHash('sha256').update(v).digest('base64url');
+  const page = await (await fetch(`${BASE}/authorize?${form({ response_type: 'code', client_id: client.client_id, redirect_uri: REDIRECT, code_challenge: challenge, code_challenge_method: 'S256', scope: 'commerce.read commerce.write', resource: `${BASE}/mcp` })}`)).text();
+  const res = await fetch(`${BASE}/mcp/oauth/login`, { method: 'POST', redirect: 'manual', body: form({ request_id: page.match(/name="request_id" value="([^"]+)"/)[1], email: MKT.email, password: MKT.password }) });
+  return token({ grant_type: 'authorization_code', client_id: client.client_id, code: new URL(res.headers.get('location')).searchParams.get('code'), code_verifier: v, redirect_uri: REDIRECT });
+})();
+check('asked for write but the box was not ticked → read only', notTicked.json.scope === 'commerce.read', notTicked.json.scope);
+const tw = await signIn(client.client_id, MKT, true);
+check('ticking "allow changes" → scope commerce.read commerce.write', tw.json.scope === 'commerce.read commerce.write', tw.json.scope);
+const w = await mcp(tw.json.access_token);
+const wNames = (await w.listTools()).tools;
+check('write sign-in adds research + price tools, not admin write tools', ['research_create_topic', 'research_request_run', 'competitor_record_price'].every((n) => wNames.some((t) => t.name === n))
+  && !wNames.some((t) => ['webhook_retry_delivery', 'erp_replay_ingest'].includes(t.name)), wNames.map((t) => t.name).join());
+check('write tools are not marked read-only', wNames.filter((t) => t.name.startsWith('research_create') || t.name.startsWith('competitor_record')).every((t) => t.annotations?.readOnlyHint === false));
+const before = (await callJson(w, 'research_topics', {})).total;
+const topicArgs = { title: `e2e ร้านกาแฟ ${Date.now()}`, kind: 'sales', sources: ['tat', 'osm'] };
+const p1 = await text(w, 'research_create_topic', topicArgs);
+check('first call only previews + returns a confirmCode', p1.status === 'needs_confirmation' && !!p1.confirmCode && p1.willDo?.title === topicArgs.title);
+check('preview changed nothing', (await callJson(w, 'research_topics', {})).total === before);
+check('wrong confirmCode → rejected', (await text(w, 'research_create_topic', { ...topicArgs, confirmCode: 'nope' })).status === 'rejected');
+check('same code but changed arguments → rejected', (await text(w, 'research_create_topic', { ...topicArgs, title: 'something else', confirmCode: p1.confirmCode })).status === 'rejected');
+const p2 = await text(w, 'research_create_topic', topicArgs);
+const done = await text(w, 'research_create_topic', { ...topicArgs, confirmCode: p2.confirmCode });
+check('confirmCode + same arguments → topic created', done.status === 'done' && !!done.result?.topicId, JSON.stringify(done).slice(0, 140));
+check('a confirmCode works only once', (await text(w, 'research_create_topic', { ...topicArgs, confirmCode: p2.confirmCode })).status === 'rejected');
+check('topic count +1', (await callJson(w, 'research_topics', {})).total === before + 1);
+const runP = await text(w, 'research_request_run', { topicId: done.result.topicId });
+const runD = await text(w, 'research_request_run', { topicId: done.result.topicId, confirmCode: runP.confirmCode });
+check('research_request_run: preview names the topic, confirm queues a run', runP.willDo?.topic === topicArgs.title && runD.status === 'done' && !!runD.result?.runId, JSON.stringify(runD).slice(0, 120));
+if (process.env.MCP_SKU) {
+  const staffToken = (await (await fetch(`${BASE}/api/admin/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(MKT) })).json()).accessToken;
+  const created = await (await fetch(`${BASE}/api/competitor-prices`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${staffToken}` },
+    body: JSON.stringify({ sku: process.env.MCP_SKU, ourWeightKg: 1, sourceUrl: `https://www.makro.pro/p/e2e-${Date.now()}`, competitorName: 'e2e item', competitorSku: '',
+      competitorWeightKg: 2, sourceContext: 'ราคาปกติ', vatIncluded: true, collectionAllowed: false, autoRefresh: false }) })).json();
+  const pairId = created.data?.id;
+  const pp = await text(w, 'competitor_record_price', { pairId, priceIncVat: 500 });
+  check('competitor_record_price preview shows per-kg of the new price', pp.status === 'needs_confirmation' && pp.willDo?.newPerKg === 250, JSON.stringify(pp.willDo ?? pp).slice(0, 140));
+  const pd = await text(w, 'competitor_record_price', { pairId, priceIncVat: 500, confirmCode: pp.confirmCode });
+  check('competitor_record_price confirm saves it (250/kg)', pd.status === 'done' && pd.result?.competitorPerKg === 250, JSON.stringify(pd).slice(0, 140));
+}
+await w.close();
+const ta = await signIn(client.client_id, ADMIN, true);
+const aw = await mcp(ta.json.access_token);
+const awNames = (await aw.listTools()).tools.map((t) => t.name);
+check('admin write sign-in also gets webhook_retry_delivery + erp_replay_ingest', ['webhook_retry_delivery', 'erp_replay_ingest'].every((n) => awNames.includes(n)));
+const missing = await aw.callTool({ name: 'webhook_retry_delivery', arguments: { deliveryId: randomUUID() } });
+check('retry of an unknown delivery → tool error, nothing done', missing.isError === true);
+if (process.env.MCP_FAILED_DELIVERY) {
+  const dp = await text(aw, 'webhook_retry_delivery', { deliveryId: process.env.MCP_FAILED_DELIVERY });
+  const dd = await text(aw, 'webhook_retry_delivery', { deliveryId: process.env.MCP_FAILED_DELIVERY, confirmCode: dp.confirmCode });
+  check('webhook_retry_delivery: preview shows the failure, confirm re-queues (pending)', dp.willDo?.status === 'failed' && dd.result?.status === 'pending', JSON.stringify(dd).slice(0, 120));
+}
+if (process.env.MCP_FAILED_INGEST) {
+  const ip = await text(aw, 'erp_replay_ingest', { recordId: process.env.MCP_FAILED_INGEST });
+  const id = await text(aw, 'erp_replay_ingest', { recordId: process.env.MCP_FAILED_INGEST, confirmCode: ip.confirmCode });
+  check('erp_replay_ingest: preview shows the failed record, confirm re-applies it', ip.willDo?.status === 'failed' && id.status === 'done', JSON.stringify(id).slice(0, 160));
+}
+await aw.close();
 
 // Leave one live admin token for the caller's "disabled account" check.
 if (process.env.MCP_TOKEN_OUT) (await import('node:fs')).writeFileSync(process.env.MCP_TOKEN_OUT, t2.json.access_token);

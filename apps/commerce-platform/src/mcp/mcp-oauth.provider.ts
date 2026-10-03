@@ -14,9 +14,11 @@ import { STAFF_ROLES, StaffRole } from '../shared-kernel/presentation/auth.decor
 import { McpGrantKind, McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { loginPage } from './mcp-login.page';
 
-/** Only scope for now: read + summarize. Writes would get their own scope. */
+/** read = look up + summarize. write = the few change tools, only when the staff member ticks it at sign-in. */
 export const MCP_SCOPE = 'commerce.read';
-const TTL = { request: 10 * 60, code: 5 * 60, access: 60 * 60, refresh: 30 * 24 * 60 * 60 } satisfies Record<McpGrantKind, number>;
+export const MCP_WRITE_SCOPE = 'commerce.write';
+export const MCP_SCOPES = [MCP_SCOPE, MCP_WRITE_SCOPE];
+const TTL = { request: 10 * 60, code: 5 * 60, access: 60 * 60, refresh: 30 * 24 * 60 * 60, confirm: 10 * 60 } satisfies Record<McpGrantKind, number>;
 
 const secret = () => randomBytes(32).toString('base64url');
 export const hashOf = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -77,29 +79,33 @@ export class McpOAuthProvider implements OAuthServerProvider {
   }
 
   async authorize(client: OAuthClientInformationFull, params: AuthorizationParams, res: Response): Promise<void> {
-    if (params.scopes?.some((s) => s !== MCP_SCOPE)) throw new InvalidScopeError(`only "${MCP_SCOPE}" is available`);
+    if (params.scopes?.some((s) => !MCP_SCOPES.includes(s))) throw new InvalidScopeError(`available scopes: ${MCP_SCOPES.join(' ')}`);
     // Park the request server-side: the login form only carries an opaque id, so its fields can't be tampered with.
+    // No scope requested = the client takes what it is given (read, plus write if the staff member allows it).
+    const requested = params.scopes?.length ? params.scopes : MCP_SCOPES;
     const requestId = await this.issue('request', client.client_id, {
-      data: { codeChallenge: params.codeChallenge, redirectUri: params.redirectUri, state: params.state, resource: params.resource?.href },
+      data: { codeChallenge: params.codeChallenge, redirectUri: params.redirectUri, state: params.state, resource: params.resource?.href, scopes: requested.join(' ') },
     });
-    res.status(200).type('html').send(loginPage({ requestId, clientName: client.client_name ?? client.client_id }));
+    res.status(200).type('html').send(loginPage({ requestId, clientName: client.client_name ?? client.client_id, canWrite: requested.includes(MCP_WRITE_SCOPE) }));
   }
 
   /**
    * POST of the login page. Returns where to send the browser: the client's redirect_uri with a
    * code, or null + an error to re-render the page.
    */
-  async completeLogin(requestId: string, email: string, password: string): Promise<{ redirect: string } | { error: string; clientName: string }> {
+  async completeLogin(requestId: string, email: string, password: string, allowWrite = false): Promise<{ redirect: string } | { error: string; clientName: string; canWrite: boolean }> {
     const request = await this.live(requestId, 'request');
-    if (!request) return { error: 'คำขอเชื่อมต่อหมดอายุ กรุณากดเชื่อมต่อจากแอป AI ใหม่', clientName: '' };
+    if (!request) return { error: 'คำขอเชื่อมต่อหมดอายุ กรุณากดเชื่อมต่อจากแอป AI ใหม่', clientName: '', canWrite: false };
     const client = await this.clients.findOneBy({ clientId: request.clientId });
     const clientName = client?.info.client_name ?? request.clientId;
+    const canWrite = (request.data.scopes ?? '').split(' ').includes(MCP_WRITE_SCOPE);
     let user: User;
-    try { user = await this.auth.verifyCredentials(email, password); } catch { return { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', clientName }; }
+    try { user = await this.auth.verifyCredentials(email, password); } catch { return { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', clientName, canWrite }; }
     const staff = await this.staff(user.id);
-    if (!staff) return { error: 'บัญชีนี้ไม่ใช่ staff ของ commerce จึงเชื่อมต่อ AI ไม่ได้', clientName };
-    if (!(await this.consume(request))) return { error: 'คำขอนี้ถูกใช้ไปแล้ว กรุณากดเชื่อมต่อจากแอป AI ใหม่', clientName };
-    const code = await this.issue('code', request.clientId, { staffUserId: staff.userId, data: request.data });
+    if (!staff) return { error: 'บัญชีนี้ไม่ใช่ staff ของ commerce จึงเชื่อมต่อ AI ไม่ได้', clientName, canWrite };
+    if (!(await this.consume(request))) return { error: 'คำขอนี้ถูกใช้ไปแล้ว กรุณากดเชื่อมต่อจากแอป AI ใหม่', clientName, canWrite };
+    const scopes = allowWrite && canWrite ? MCP_SCOPES : [MCP_SCOPE];
+    const code = await this.issue('code', request.clientId, { staffUserId: staff.userId, data: request.data, scopes });
     const target = new URL(request.data.redirectUri!);
     target.searchParams.set('code', code);
     if (request.data.state) target.searchParams.set('state', request.data.state);
@@ -112,11 +118,11 @@ export class McpOAuthProvider implements OAuthServerProvider {
     return grant.data.codeChallenge!;
   }
 
-  private async tokens(clientId: string, staffUserId: string): Promise<OAuthTokens> {
+  private async tokens(clientId: string, staffUserId: string, scopes: string[]): Promise<OAuthTokens> {
     return {
-      access_token: await this.issue('access', clientId, { staffUserId }),
-      refresh_token: await this.issue('refresh', clientId, { staffUserId }),
-      token_type: 'bearer', expires_in: TTL.access, scope: MCP_SCOPE,
+      access_token: await this.issue('access', clientId, { staffUserId, scopes }),
+      refresh_token: await this.issue('refresh', clientId, { staffUserId, scopes }),
+      token_type: 'bearer', expires_in: TTL.access, scope: scopes.join(' '),
     };
   }
 
@@ -124,15 +130,16 @@ export class McpOAuthProvider implements OAuthServerProvider {
     const grant = await this.live(code, 'code', client.client_id); // PKCE itself is checked by the SDK before this
     if (!grant || (redirectUri && redirectUri !== grant.data.redirectUri)) throw new InvalidGrantError('invalid authorization code');
     if (!(await this.consume(grant))) throw new InvalidGrantError('authorization code already used');
-    return this.tokens(client.client_id, grant.staffUserId!);
+    return this.tokens(client.client_id, grant.staffUserId!, grant.scopes);
   }
 
   async exchangeRefreshToken(client: OAuthClientInformationFull, refreshToken: string, scopes?: string[]): Promise<OAuthTokens> {
-    if (scopes?.some((s) => s !== MCP_SCOPE)) throw new InvalidScopeError(`only "${MCP_SCOPE}" is available`);
     const grant = await this.live(refreshToken, 'refresh', client.client_id);
     if (!grant || !(await this.staff(grant.staffUserId))) throw new InvalidGrantError('invalid refresh token');
+    // A refresh can narrow the scopes, never widen them.
+    if (scopes?.some((s) => !grant.scopes.includes(s))) throw new InvalidScopeError('cannot add scopes on refresh');
     if (!(await this.consume(grant))) throw new InvalidGrantError('refresh token already used'); // rotation
-    return this.tokens(client.client_id, grant.staffUserId!);
+    return this.tokens(client.client_id, grant.staffUserId!, scopes?.length ? scopes : grant.scopes);
   }
 
   async verifyAccessToken(token: string): Promise<AuthInfo> {
@@ -140,6 +147,18 @@ export class McpOAuthProvider implements OAuthServerProvider {
     const staff = grant && (await this.staff(grant.staffUserId));
     if (!grant || !staff) throw new InvalidTokenError('invalid or expired token');
     return { token, clientId: grant.clientId, scopes: grant.scopes, expiresAt: Math.floor(grant.expiresAt.getTime() / 1000), extra: { staff } };
+  }
+
+  /** Step 1 of a write tool: a one-time code bound to this staff member, AI client, tool and exact arguments. */
+  issueConfirm(staffUserId: string, clientId: string, tool: string, argsHash: string) {
+    return this.issue('confirm', clientId, { staffUserId, data: { tool, argsHash } });
+  }
+
+  /** Step 2: true only once, and only for the same staff, client, tool and arguments the preview was for. */
+  async consumeConfirm(code: string, staffUserId: string, clientId: string, tool: string, argsHash: string) {
+    const grant = await this.live(code, 'confirm', clientId);
+    if (!grant || grant.staffUserId !== staffUserId || grant.data.tool !== tool || grant.data.argsHash !== argsHash) return false;
+    return this.consume(grant);
   }
 
   async revokeToken(client: OAuthClientInformationFull, request: OAuthTokenRevocationRequest): Promise<void> {

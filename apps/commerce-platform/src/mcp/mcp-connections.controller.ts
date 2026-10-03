@@ -34,6 +34,7 @@ export class McpConnectionsController {
       `SELECT * FROM (SELECT g.client_id AS "clientId", coalesce(c.info->>'client_name', g.client_id) AS "clientName",
               g.staff_user_id AS "staffUserId", u.email AS "staffEmail", min(g.created_at) AS "firstSeenAt",
               count(*) FILTER (WHERE g.kind = 'refresh' AND g.used_at IS NULL AND g.expires_at > now())::int AS "liveSessions",
+              coalesce(bool_or(g.scopes ? 'commerce.write') FILTER (WHERE g.kind = 'refresh' AND g.used_at IS NULL AND g.expires_at > now()), false) AS "canWrite",
               (SELECT max(a.created_at) FROM audit_logs a WHERE a.action = 'mcp.tool_call'
                  AND a.actor_id = g.staff_user_id AND a.context->>'clientId' = g.client_id) AS "lastUsedAt",
               (SELECT count(*)::int FROM audit_logs a WHERE a.action = 'mcp.tool_call'
@@ -52,10 +53,10 @@ export class McpConnectionsController {
     const params: unknown[] = [Math.min(Math.max(limit, 1), 200)];
     const where = this.scope(req, 'a.actor_id', params);
     return this.db.query(
-      `SELECT a.id, a.created_at AS "at", a.context->>'tool' AS tool, a.context->'args' AS args, a.context->>'email' AS "staffEmail",
+      `SELECT a.id, a.created_at AS "at", a.action = 'mcp.write' AS "isWrite", a.context->>'tool' AS tool, a.context->'args' AS args, a.context->>'email' AS "staffEmail",
               coalesce(c.info->>'client_name', a.context->>'clientId') AS "clientName"
        FROM audit_logs a LEFT JOIN mcp_oauth_clients c ON c.client_id = a.context->>'clientId'
-       WHERE a.action = 'mcp.tool_call'${where}
+       WHERE (a.action = 'mcp.write' OR (a.action = 'mcp.tool_call' AND a.context->'args'->>'confirmCode' IS NULL))${where}
        ORDER BY a.created_at DESC LIMIT $1`, params);
   }
 

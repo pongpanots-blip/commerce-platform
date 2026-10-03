@@ -11,3 +11,10 @@ it('escapes the self-registered client name and the request id', () => {
   expect(html).not.toContain('role="alert"');
   expect(loginPage({ requestId: 'r', clientName: 'c', error: 'bad' })).toContain('role="alert">bad<');
 });
+
+it('offers the "allow changes" box only when the client asked for commerce.write', () => {
+  expect(loginPage({ requestId: 'r', clientName: 'c' })).not.toContain('name="allow_write"');
+  expect(loginPage({ requestId: 'r', clientName: 'c', canWrite: true })).toContain('name="allow_write" value="1"');
+  // never pre-ticked: writes are always an explicit choice
+  expect(loginPage({ requestId: 'r', clientName: 'c', canWrite: true })).not.toMatch(/allow_write"[^>]*checked/);
+});

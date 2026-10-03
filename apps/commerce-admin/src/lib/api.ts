@@ -361,9 +361,9 @@ export const competitorPricesApi = {
 // ---- AI connectors (MCP) ----
 export interface McpConnection {
   clientId: string; clientName: string; staffUserId: string; staffEmail: string;
-  firstSeenAt: string; liveSessions: number; lastUsedAt: string | null; toolCalls: number;
+  firstSeenAt: string; liveSessions: number; canWrite: boolean; lastUsedAt: string | null; toolCalls: number;
 }
-export interface McpActivity { id: string; at: string; tool: string; args: Record<string, unknown> | null; staffEmail: string; clientName: string }
+export interface McpActivity { id: string; at: string; isWrite: boolean; tool: string; args: Record<string, unknown> | null; staffEmail: string; clientName: string }
 export const mcpApi = {
   connections: () => api.get<{ enabled: boolean; mcpUrl: string | null; role: string; connections: McpConnection[] }>('/mcp-connections'),
   activity: (limit = 50) => api.get<McpActivity[]>(`/mcp-connections/activity?limit=${limit}`),

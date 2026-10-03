@@ -88,7 +88,7 @@ export class ErpFeedService {
           return;
         }
         event = new InventoryQtyChanged(product.id, {
-          ...base, changedAt: occurredAt.toISOString(), warehouseCode: warehouse.code,
+          ...base, source: 'erp', changedAt: occurredAt.toISOString(), warehouseCode: warehouse.code,
           quantity: Math.max(0, Math.floor(qty.quantity)), previousQuantity: res.previousQuantity, reason: qty.reason,
         });
       } else if (kind === 'price') {

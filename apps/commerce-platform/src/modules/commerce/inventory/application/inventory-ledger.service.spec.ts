@@ -27,7 +27,9 @@ const base = {
 };
 
 describe('InventoryLedgerService', () => {
-  const svc = new InventoryLedgerService();
+  const bus = { publish: jest.fn() };
+  const svc = new InventoryLedgerService(bus as never);
+  beforeEach(() => bus.publish.mockClear());
 
   it('writes a movement and moves the snapshot', async () => {
     const { manager, levels, movements } = makeManager({ level: { quantity: '50' } });
@@ -62,19 +64,26 @@ describe('InventoryLedgerService', () => {
 
   describe('adjustOwnStock (manual, commerce-owned warehouses only)', () => {
     const own = { id: 'w-2', code: 'OWN1', stockSource: 'commerce' } as Warehouse;
-    const adj = { productId: 'p-1', warehouse: own, reason: 'COUNT', ref: 'mcp:u-1' };
+    const adj = { productId: 'p-1', sku: 'SKU-1', warehouse: own, reason: 'COUNT', ref: 'mcp:u-1' };
 
     it('refuses an ERP-owned warehouse: its stock changes in the ERP', async () => {
       const { manager, movements } = makeManager({ level: { quantity: '10', reserved: '0' } });
       await expect(svc.adjustOwnStock(manager, { ...adj, warehouse: { ...erpWarehouse, code: 'BKK' } as Warehouse, mode: 'set', quantity: 5 }))
         .rejects.toThrow('ERP');
       expect(movements.save).not.toHaveBeenCalled();
+      expect(bus.publish).not.toHaveBeenCalled();
     });
 
     it('set = counted quantity; add = signed change; both go through the ledger as source commerce', async () => {
       const set = makeManager({ level: { quantity: '10', reserved: '0' } });
       await expect(svc.adjustOwnStock(set.manager, { ...adj, mode: 'set', quantity: 7 })).resolves.toMatchObject({ previousQuantity: 10, quantity: 7, status: 'applied' });
       expect(set.movements.save).toHaveBeenCalledWith(expect.objectContaining({ source: 'commerce', reason: 'ADJUST:COUNT', quantityAfter: '7', ref: 'mcp:u-1' }));
+      // published like an ERP qty change, so josh's existing ERP handler can take it as-is
+      expect(bus.publish).toHaveBeenCalledWith(expect.objectContaining({
+        type: 'inventory.qty.changed', aggregateId: 'p-1', metadata: { snapshot: true },
+        payload: expect.objectContaining({ sku: 'SKU-1', source: 'commerce', warehouseCode: 'OWN1', quantity: 7, previousQuantity: 10,
+          reason: 'COUNT', erp: expect.objectContaining({ PRODUCT_CODE: 'SKU-1', QUANTITY: 7, REASON: 'ADJUST' }) }),
+      }), set.manager);
       const add = makeManager({ level: { quantity: '10', reserved: '0' } });
       await expect(svc.adjustOwnStock(add.manager, { ...adj, mode: 'add', quantity: -4 })).resolves.toMatchObject({ quantity: 6 });
     });
@@ -84,6 +93,7 @@ describe('InventoryLedgerService', () => {
       await expect(svc.adjustOwnStock(m(), { ...adj, mode: 'add', quantity: -11 })).rejects.toThrow('ไม่ติดลบ');
       await expect(svc.adjustOwnStock(m(), { ...adj, mode: 'set', quantity: 2.5 })).rejects.toThrow('จำนวนเต็ม');
       await expect(svc.adjustOwnStock(m(), { ...adj, mode: 'set', quantity: 2 })).rejects.toThrow('จอง');
+      expect(bus.publish).not.toHaveBeenCalled();
     });
   });
 });

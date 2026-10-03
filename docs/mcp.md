@@ -112,4 +112,4 @@ script นี้ทำตามลำดับเดียวกับ connector
 
 ## ทำทีหลัง
 
-- ตอนนี้ยังไม่มีคลังไหนเป็น `stock_source = 'commerce'` พอ MER clean inventory เสร็จแล้วเปลี่ยนคลังเป็นของ commerce, `stock_adjust` ก็ใช้ได้ทันที แต่ยังไม่ได้ส่ง event สต็อกของคลังเราไปให้ josh ต้องทำตอนเปลี่ยนคลัง
+- ตอนนี้ยังไม่มีคลังไหนเป็น `stock_source = 'commerce'` พอ MER clean inventory เสร็จแล้วเปลี่ยนคลังเป็นของ commerce, `stock_adjust` ก็ใช้ได้ทันที และยอดใหม่ส่งไปให้ josh เองเป็น `inventory.qty.changed` (`source: "commerce"`, ดู `docs/event-contract.md`)

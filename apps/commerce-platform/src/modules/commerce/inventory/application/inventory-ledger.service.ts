@@ -1,8 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { EntityManager, MoreThan } from 'typeorm';
 import { InventoryLevel } from '../infrastructure/inventory-level.entity';
 import { InventoryMovement, MovementStatus, StockSource } from '../infrastructure/inventory-movement.entity';
 import { Warehouse } from '../../warehouse/infrastructure/warehouse.entity';
+import { EVENT_BUS, IEventBus } from '../../../../shared-kernel/interfaces/event-bus.interface';
+import { InventoryQtyChanged } from '../domain/events/inventory-qty-changed.event';
+
+/** Our adjustment reasons in the ERP's vocabulary (SALE / RECEIVE / ADJUST) for the `erp` block of the event. */
+const ERP_REASON: Record<string, string> = { RECEIVE: 'RECEIVE', RETURN: 'RECEIVE' };
 
 export interface ExternalQuantityInput {
   productId: string;
@@ -16,6 +21,7 @@ export interface ExternalQuantityInput {
 
 export interface OwnStockAdjustment {
   productId: string;
+  sku: string;
   warehouse: Warehouse;
   /** set = counted quantity · add = signed change (receive +, damage −) */
   mode: 'set' | 'add';
@@ -27,6 +33,7 @@ export interface OwnStockAdjustment {
 export interface ExternalQuantityResult {
   status: MovementStatus;
   previousQuantity: number;
+  movementId: string;
 }
 
 /**
@@ -37,6 +44,8 @@ export interface ExternalQuantityResult {
  */
 @Injectable()
 export class InventoryLedgerService {
+  constructor(@Inject(EVENT_BUS) private readonly eventBus: IEventBus) {}
+
   async recordExternalQuantity(manager: EntityManager, input: ExternalQuantityInput): Promise<ExternalQuantityResult> {
     const levels = manager.getRepository(InventoryLevel);
     const movements = manager.getRepository(InventoryMovement);
@@ -56,7 +65,7 @@ export class InventoryLedgerService {
     }
 
     const quantity = Math.max(0, Math.floor(input.quantity));
-    await movements.save(movements.create({
+    const movement = await movements.save(movements.create({
       ...where,
       source: input.source,
       reason: input.reason,
@@ -71,13 +80,15 @@ export class InventoryLedgerService {
         ? Object.assign(level, { quantity: String(quantity) })
         : levels.create({ ...where, quantity: String(quantity) }));
     }
-    return { status, previousQuantity };
+    return { status, previousQuantity, movementId: movement.id };
   }
 
   /**
    * Manual adjustment for a warehouse commerce itself owns (stock_source =
    * 'commerce'). An ERP-owned warehouse refuses — its stock is changed in the
    * ERP and arrives through the feed, otherwise the two would fight.
+   * An applied change is published (same transaction, via the outbox) as the
+   * same inventory.qty.changed every platform already receives from the ERP feed.
    */
   async adjustOwnStock(manager: EntityManager, input: OwnStockAdjustment) {
     if (input.warehouse.stockSource !== 'commerce') {
@@ -95,6 +106,14 @@ export class InventoryLedgerService {
       productId: input.productId, warehouse: input.warehouse, source: 'commerce', quantity: next,
       reason: `ADJUST:${input.reason}`.slice(0, 32), occurredAt: new Date(), ref: input.ref,
     });
+    if (result.status === 'applied') {
+      const changedAt = new Date().toISOString();
+      await this.eventBus.publish(new InventoryQtyChanged(input.productId, {
+        sku: input.sku, source: 'commerce', warehouseCode: input.warehouse.code, quantity: next, previousQuantity: previous,
+        reason: input.reason, changedAt, movementId: result.movementId,
+        erp: { PRODUCT_CODE: input.sku, QUANTITY: next, CHANGED_AT: changedAt, REASON: ERP_REASON[input.reason] ?? 'ADJUST' },
+      }), manager);
+    }
     return { status: result.status, previousQuantity: previous, quantity: next, reserved };
   }
 }

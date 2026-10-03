@@ -371,7 +371,7 @@ export class McpTools {
         async () => {
           const { product, warehouse } = await target();
           return this.db.transaction((manager) => this.ledger.adjustOwnStock(manager, {
-            productId: product.id, warehouse, mode: args.mode, quantity: args.quantity, reason: args.reason, ref: `mcp:${staff.userId}`,
+            productId: product.id, sku: product.sku, warehouse, mode: args.mode, quantity: args.quantity, reason: args.reason, ref: `mcp:${staff.userId}`,
           }));
         });
     });

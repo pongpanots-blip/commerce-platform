@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from './shared-kernel/presentation/all-exceptions
 import { validateEnv } from './config/env.validation';
 import { StorefrontModule } from './storefront/storefront.module';
 import { PortalModule } from './portal/portal.module';
+import { mountMcp } from './mcp/mcp.http';
 
 async function bootstrap() {
   validateEnv(process.env);
@@ -37,6 +38,8 @@ async function bootstrap() {
     include: [StorefrontModule, PortalModule], // admin/internal endpoints excluded
   });
   SwaggerModule.setup('api/docs', app, document);
+
+  mountMcp(app); // AI connectors (MCP + OAuth) at the origin root, outside /api
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

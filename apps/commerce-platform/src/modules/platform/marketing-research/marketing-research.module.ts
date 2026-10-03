@@ -25,5 +25,6 @@ import { ResearchFreeWorker } from './application/research-free.worker';
     ResearchAccessGuard,
     ResearchWorkerGuard,
   ],
+  exports: [MarketingResearchService],
 })
 export class MarketingResearchModule {}

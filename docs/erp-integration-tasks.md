@@ -50,12 +50,14 @@ ERP ──► commerce (stage · inventory ต่อคลัง · audit) ─�
 
 ใครจะเอา AI มาใช้กับ commerce (agent ของทีม, Claude, chatbot ของ platform) ต้องต่อผ่าน **MCP** ได้เลยโดยไม่ต้องเขียน integration เอง
 
-- endpoint เดียว `POST /api/mcp` (Streamable HTTP) ใน commerce-platform — ใช้ service เดิม ไม่มี logic ซ้ำ
-- **auth ด้วย API key ของ portal** แยก scope (`mcp:read` ก่อน, `mcp:write` ทีหลัง) · ทุก tool call ลง audit
-- tool ชุดแรกเป็น **อ่านอย่างเดียว**: สต็อกต่อคลัง + ประวัติ movement, หา product ด้วย SKU, inbound log / dead-letter, สถานะ delivery ของแต่ละ platform
-- tool ที่แก้ข้อมูล (ส่ง dead-letter ซ้ำ, ปรับสต็อกตอนเป็นระบบคลังเอง) ทำทีหลัง ต้องมี scope `mcp:write` และยืนยันก่อนทำ
+- ✅ **ทำแล้ว (2026-10-03)** รายละเอียดอยู่ที่ `docs/mcp.md`
+  - endpoint `https://<host>/mcp` (Streamable HTTP) ใช้ service เดิม ไม่มี logic ซ้ำ
+  - **auth แบบ OAuth 2.1 (PKCE + dynamic registration)** ให้ Claude และ ChatGPT ต่อเป็น connector ได้เลย staff login ผ่านหน้าของ commerce scope `commerce.read`
+  - ทุก tool call ลง `audit_logs`
+  - tool ชุดแรก**อ่านอย่างเดียว** 9 ตัว: เทียบราคาคู่แข่ง, คลังเว็บ, research, แค็ตตาล็อก josh ส่วน admin เพิ่ม ERP intake, dead-letter และสต็อกต่อคลัง
+- tool ที่แก้ข้อมูล (ส่ง dead-letter ซ้ำ, ปรับสต็อกตอนเป็นระบบคลังเอง) ทำทีหลัง ต้องมี scope `commerce.write` และยืนยันก่อนทำ
 - **ห้ามทำ MCP ใน josh** — AI โหลดหนักและคาดเดายาก ต้องไม่แตะ performance ของ shop (§0) · ข้อมูล josh ที่ AI ต้องใช้ให้มาจาก event/replica ที่ commerce มีอยู่แล้ว
-- ⚠️ ต้องปิดช่องโหว่ก่อน: controller ฝั่ง admin/integration ของ commerce ตอนนี้ **ไม่มี auth เลย** — แก้ก่อนเปิด MCP หรือ expose commerce ออก network ใด ๆ
+- ✅ ช่องโหว่ auth ของ controller ฝั่ง admin/integration ปิดแล้ว (global `StaffAuthGuard` ปฏิเสธทุกอย่างเป็นค่าเริ่มต้น)
 
 **ผลที่ตามมา:** commerce **ไม่เคยอยู่ใน request path ของ shop** · josh เรียก commerce ได้เฉพาะแบบ fire-and-forget/async ที่ล้มได้ · ทุกอย่างที่ commerce เขียนกลับ josh ต้อง idempotent
 

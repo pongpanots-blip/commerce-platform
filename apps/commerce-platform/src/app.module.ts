@@ -53,6 +53,7 @@ import { SearchModule } from './modules/platform/search/search.module';
 import { ScrapingModule } from './modules/platform/scraping/scraping.module';
 import { MarketingResearchModule } from './modules/platform/marketing-research/marketing-research.module';
 import { CompetitorPricesModule } from './modules/integration/competitor-prices/competitor-prices.module';
+import { McpModule } from './mcp/mcp.module';
 
 @Module({
   imports: [
@@ -110,6 +111,7 @@ import { CompetitorPricesModule } from './modules/integration/competitor-prices/
     ScrapingModule,
     MarketingResearchModule,
     CompetitorPricesModule,
+    McpModule,
   ],
   controllers: [AppController],
   providers: [AppService],

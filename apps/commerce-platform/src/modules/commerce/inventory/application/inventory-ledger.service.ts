@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { EntityManager, MoreThan } from 'typeorm';
 import { InventoryLevel } from '../infrastructure/inventory-level.entity';
 import { InventoryMovement, MovementStatus, StockSource } from '../infrastructure/inventory-movement.entity';
@@ -11,6 +11,16 @@ export interface ExternalQuantityInput {
   quantity: number;
   reason: string | null;
   occurredAt: Date;
+  ref: string | null;
+}
+
+export interface OwnStockAdjustment {
+  productId: string;
+  warehouse: Warehouse;
+  /** set = counted quantity · add = signed change (receive +, damage −) */
+  mode: 'set' | 'add';
+  quantity: number;
+  reason: string;
   ref: string | null;
 }
 
@@ -62,5 +72,29 @@ export class InventoryLedgerService {
         : levels.create({ ...where, quantity: String(quantity) }));
     }
     return { status, previousQuantity };
+  }
+
+  /**
+   * Manual adjustment for a warehouse commerce itself owns (stock_source =
+   * 'commerce'). An ERP-owned warehouse refuses — its stock is changed in the
+   * ERP and arrives through the feed, otherwise the two would fight.
+   */
+  async adjustOwnStock(manager: EntityManager, input: OwnStockAdjustment) {
+    if (input.warehouse.stockSource !== 'commerce') {
+      throw new BadRequestException(`คลัง ${input.warehouse.code} ใช้สต็อกจาก ERP — ปรับใน ERP แล้วยอดจะเข้ามาเอง`);
+    }
+    const where = { productId: input.productId, warehouseId: input.warehouse.id };
+    // ponytail: row lock only when a level row exists; two concurrent first-ever adds can race. Add an upsert if that matters.
+    const level = await manager.getRepository(InventoryLevel).findOne({ where, lock: { mode: 'pessimistic_write' } });
+    const previous = level ? Number(level.quantity) : 0;
+    const reserved = level ? Number(level.reserved) : 0;
+    const next = input.mode === 'set' ? input.quantity : previous + input.quantity;
+    if (!Number.isInteger(next) || next < 0) throw new BadRequestException(`ยอดหลังปรับต้องเป็นจำนวนเต็มไม่ติดลบ (ได้ ${next})`);
+    if (next < reserved) throw new BadRequestException(`ยอดหลังปรับ (${next}) น้อยกว่าที่ถูกจองไว้ (${reserved}) — ปล่อยการจองก่อน`);
+    const result = await this.recordExternalQuantity(manager, {
+      productId: input.productId, warehouse: input.warehouse, source: 'commerce', quantity: next,
+      reason: `ADJUST:${input.reason}`.slice(0, 32), occurredAt: new Date(), ref: input.ref,
+    });
+    return { status: result.status, previousQuantity: previous, quantity: next, reserved };
   }
 }

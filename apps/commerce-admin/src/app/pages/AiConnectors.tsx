@@ -9,8 +9,9 @@ const TOOL_LABEL: Record<string, string> = {
   erp_intake_summary: 'สรุปข้อมูลจาก ERP', webhook_failures: 'event ที่ส่งไม่สำเร็จ', stock_levels: 'สต็อกต่อคลัง',
   research_create_topic: 'สร้างโจทย์ research', research_request_run: 'สั่งรัน research', competitor_record_price: 'บันทึกราคาคู่แข่ง',
   webhook_retry_delivery: 'ส่ง event ซ้ำ', erp_replay_ingest: 'replay ข้อมูล ERP',
+  scraping_update_source: 'ตั้งค่าเก็บข้อมูลเว็บ', scraping_run: 'สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ', stock_adjust: 'ปรับสต็อก',
 };
-const WRITE_TOOLS = new Set(['research_create_topic', 'research_request_run', 'competitor_record_price', 'webhook_retry_delivery', 'erp_replay_ingest']);
+const WRITE_TOOLS = new Set(['research_create_topic', 'research_request_run', 'competitor_record_price', 'webhook_retry_delivery', 'erp_replay_ingest', 'scraping_update_source', 'scraping_run', 'stock_adjust']);
 const STEPS = [
   { app: 'Claude (claude.ai / Desktop)', how: 'Settings → Connectors → Add custom connector → วาง URL → Connect' },
   { app: 'ChatGPT', how: 'Settings → Connectors (เปิด developer mode) → Create → วาง URL, Authentication = OAuth' },
@@ -66,7 +67,7 @@ export function AiConnectors() {
           <table>
             <tbody>{STEPS.map((s) => <tr key={s.app}><td style={{ whiteSpace: 'nowrap' }}><strong>{s.app}</strong></td><td className="hint">{s.how}</td></tr>)}</tbody>
           </table>
-          <div className="hint">ตอนเชื่อมต่อจะเปิดหน้า login ของ commerce — ใช้บัญชี staff เดียวกับหน้านี้ · ติ๊ก "อนุญาตให้แก้ไข" ถ้าต้องการให้ AI สร้าง/สั่งรัน research, บันทึกราคาคู่แข่ง{admin ? ', ส่ง event ซ้ำ, replay ERP' : ''} (ทุกครั้ง AI ต้องแสดงสิ่งที่จะทำและรอคุณยืนยัน) · ใช้ได้: เทียบราคาคู่แข่ง, คลังเว็บ, research, แค็ตตาล็อก{admin ? ' และของ admin: ERP, dead-letter, สต็อกต่อคลัง' : ''}</div>
+          <div className="hint">ตอนเชื่อมต่อจะเปิดหน้า login ของ commerce — ใช้บัญชี staff เดียวกับหน้านี้ · ติ๊ก "อนุญาตให้แก้ไข" ถ้าต้องการให้ AI สร้าง/สั่งรัน research, บันทึกราคาคู่แข่ง, ตั้งค่าเก็บข้อมูลเว็บ{admin ? ', ส่ง event ซ้ำ, replay ERP, ปรับสต็อกคลังของเรา' : ''} (ทุกครั้ง AI ต้องแสดงสิ่งที่จะทำและรอคุณยืนยัน) · ใช้ได้: เทียบราคาคู่แข่ง, คลังเว็บ, research, แค็ตตาล็อก{admin ? ' และของ admin: ERP, dead-letter, สต็อกต่อคลัง' : ''}</div>
         </div>
       </section>
 

@@ -53,8 +53,11 @@
 | `research_create_topic` | marketing, admin | สร้างโจทย์ research |
 | `research_request_run` | marketing, admin | สั่งรันโจทย์ (ของตัวเอง ส่วน admin รันของทุกคนได้) |
 | `competitor_record_price` | marketing, admin | บันทึกราคาคู่แข่งที่ผู้ใช้เห็นจากหน้าเว็บ **ยืนยันคู่สินค้าให้ไม่ได้** ยังต้องให้คนทำ |
+| `scraping_update_source` | marketing, admin | เปิด/ปิดการเก็บข้อมูลอัตโนมัติ และเปลี่ยนรอบเก็บ (24 = วันละครั้ง, 168 = สัปดาห์ละครั้ง, 720 = เดือนละครั้ง) ถ้ากำลังเก็บอยู่ ตัวอย่างจะเตือนว่าการบันทึกจะหยุดรอบนั้น |
+| `scraping_run` | marketing, admin | สั่งเริ่มเก็บตอนนี้ (เข้าเว็บคู่แข่งจริง และต้องยืนยันสิทธิ์เก็บข้อมูลของเว็บนั้นไว้แล้ว) หรือหยุด |
 | `webhook_retry_delivery` | admin | ส่ง event ที่ dead-letter ซ้ำ |
 | `erp_replay_ingest` | admin | ให้ระบบประมวลผลข้อมูลจาก ERP ที่ fail ใหม่อีกครั้ง |
+| `stock_adjust` | admin | ปรับสต็อกแบบ `set` (ยอดที่นับได้) หรือ `add` (+รับเข้า / −เสียหาย) **ได้เฉพาะคลังที่ commerce เป็นเจ้าของสต็อก** (`stock_source = 'commerce'`) คลังของ ERP ปฏิเสธตั้งแต่ขั้นขอดู ให้ไปปรับใน ERP แทน ยอดหลังปรับต้องเป็นจำนวนเต็ม ไม่ติดลบ และไม่น้อยกว่ายอดที่ถูกจองไว้ ทุกครั้งบันทึกเป็น movement ใน ledger |
 
 ทุกครั้งที่แก้จริงจะบันทึกใน `audit_logs` เป็น `action = 'mcp.write'` และหน้า AI connectors แสดงว่าแต่ละ connection แก้ไขได้หรือไม่
 
@@ -105,8 +108,8 @@ MCP_BASE=http://localhost:3100 CP_ADMIN_EMAIL=… CP_ADMIN_PASSWORD=… CP_MKT_E
   node apps/commerce-platform/e2e/mcp-scenarios.mjs
 ```
 
-script นี้ทำตามลำดับเดียวกับ connector จริง: discovery → register → login ผิด/ถูก → PKCE → token → tools ของ marketing และ admin → refresh rotation → revoke → ขอสิทธิ์แก้ไข → ขอดู/ยืนยัน (code ผิด, ใช้ซ้ำ, เปลี่ยน argument) → write tool ทุกตัว (43 ข้อ เมื่อตั้ง `MCP_SKU`, `MCP_FAILED_DELIVERY`, `MCP_FAILED_INGEST`)
+script นี้ทำตามลำดับเดียวกับ connector จริง: discovery → register → login ผิด/ถูก → PKCE → token → tools ของ marketing และ admin → refresh rotation → revoke → ขอสิทธิ์แก้ไข → ขอดู/ยืนยัน (code ผิด, ใช้ซ้ำ, เปลี่ยน argument) → write tool ทุกตัว (53 ข้อ เมื่อตั้ง `MCP_SKU`, `MCP_FAILED_DELIVERY`, `MCP_FAILED_INGEST`, `MCP_SOURCE_ID`, `MCP_STOCK_SKU`/`MCP_OWN_WH`/`MCP_ERP_WH` ตามที่อธิบายไว้หัวไฟล์)
 
 ## ทำทีหลัง
 
-- ปรับสต็อก (ตอนที่ commerce เป็นระบบคลังเองแล้ว) และตั้งค่าเก็บข้อมูลเว็บ ใช้รูปแบบ write tool เดิมได้เลย
+- ตอนนี้ยังไม่มีคลังไหนเป็น `stock_source = 'commerce'` พอ MER clean inventory เสร็จแล้วเปลี่ยนคลังเป็นของ commerce, `stock_adjust` ก็ใช้ได้ทันที แต่ยังไม่ได้ส่ง event สต็อกของคลังเราไปให้ josh ต้องทำตอนเปลี่ยนคลัง

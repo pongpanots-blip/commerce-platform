@@ -17,6 +17,9 @@ import { WebhookSubscriptionService } from '../modules/integration/webhook-subsc
 import { ErpIngestService } from '../modules/integration/connector/erp/ingest/erp-ingest.service';
 import { ErpIngestRecord } from '../modules/integration/connector/erp/erp-ingest-record.entity';
 import { WebhookDelivery } from '../modules/integration/webhook-subscription/infrastructure/webhook-delivery.entity';
+import { InventoryLedgerService } from '../modules/commerce/inventory/application/inventory-ledger.service';
+import { Warehouse } from '../modules/commerce/warehouse/infrastructure/warehouse.entity';
+import { InventoryLevel } from '../modules/commerce/inventory/infrastructure/inventory-level.entity';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -47,6 +50,7 @@ export class McpTools {
     private readonly oauth: McpOAuthProvider,
     private readonly webhooks: WebhookSubscriptionService,
     private readonly ingest: ErpIngestService,
+    private readonly ledger: InventoryLedgerService,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -282,7 +286,95 @@ export class McpTools {
         });
     });
 
+    const sourceView = async (id: string) => {
+      const source = await this.scraping.source(id);
+      return { source, shown: { name: source.name, origin: source.origin, enabled: source.enabled, status: source.status,
+        everyHours: source.config.intervalHours, maxPages: source.config.maxPages, collectionAllowed: source.config.collectionAllowed } };
+    };
+
+    server.registerTool('scraping_update_source', {
+      title: 'Change a competitor website schedule (needs confirmation)',
+      description: 'Turn automatic collection on/off and/or change how often it runs (24 = daily, 168 = weekly, 720 = monthly). sourceId from scraping_sources.',
+      inputSchema: {
+        sourceId: z.string().uuid(), enabled: z.boolean().optional(),
+        intervalHours: z.number().int().min(1).max(8760).optional(), confirmCode: CONFIRM,
+      },
+      annotations: WRITE,
+    }, async (args) => {
+      if (args.enabled === undefined && args.intervalHours === undefined) return { ...json({ status: 'rejected', reason: 'give enabled and/or intervalHours' }), isError: true };
+      return this.twoStep(staff, clientId, 'scraping_update_source', args,
+        async () => {
+          const { shown } = await sourceView(args.sourceId);
+          return { action: 'change collection settings', website: shown.name, now: { enabled: shown.enabled, everyHours: shown.everyHours },
+            after: { enabled: args.enabled ?? shown.enabled, everyHours: args.intervalHours ?? shown.everyHours },
+            warning: shown.status === 'running' ? 'a collection run is in progress; saving settings stops it' : undefined };
+        },
+        async () => {
+          const { source } = await sourceView(args.sourceId);
+          const saved = await this.scraping.save({ name: source.name, origin: source.origin, revision: source.revision,
+            enabled: args.enabled ?? source.enabled, config: { ...source.config, intervalHours: args.intervalHours ?? source.config.intervalHours } } as never, source.id);
+          return { website: saved.name, enabled: saved.enabled, everyHours: saved.config.intervalHours, status: saved.status };
+        });
+    });
+
+    server.registerTool('scraping_run', {
+      title: 'Start or stop collecting a competitor website now (needs confirmation)',
+      description: 'start = begin a fresh collection run now (visits the competitor site); stop = pause the current run and turn automatic collection off.',
+      inputSchema: { sourceId: z.string().uuid(), action: z.enum(['start', 'stop']), confirmCode: CONFIRM },
+      annotations: { ...WRITE, openWorldHint: true }, // start reaches out to a public website
+    }, async (args) => this.twoStep(staff, clientId, 'scraping_run', args,
+      async () => {
+        const { shown } = await sourceView(args.sourceId);
+        return { action: args.action === 'start' ? `start collecting ${shown.origin} now (up to ${shown.maxPages} pages)` : 'stop collecting and turn automatic collection off',
+          website: shown.name, status: shown.status,
+          note: args.action === 'start' && !shown.collectionAllowed ? 'collection permission is not confirmed for this site — this will be refused' : undefined };
+      },
+      async () => {
+        const { source } = await sourceView(args.sourceId);
+        const saved = args.action === 'start'
+          ? await this.scraping.start(source.id, { revision: source.revision, restart: true })
+          : await this.scraping.stop(source.id, source.revision);
+        return { website: saved.name, status: saved.status, enabled: saved.enabled };
+      }));
+
     if (staff.role !== 'admin') return;
+
+    server.registerTool('stock_adjust', {
+      title: 'Adjust stock in a warehouse commerce owns (admin, needs confirmation)',
+      description: 'Manual stock change for warehouses whose stock commerce owns (stock_source = commerce). ERP-owned warehouses are refused — change those in the ERP. set = counted quantity; add = signed change (+receive, −damage).',
+      inputSchema: {
+        sku: z.string().min(1).max(64), warehouseCode: z.string().min(1).max(64),
+        mode: z.enum(['set', 'add']), quantity: z.number().int().min(-1_000_000).max(1_000_000),
+        reason: z.enum(['COUNT', 'RECEIVE', 'DAMAGE', 'RETURN', 'CORRECTION']), note: z.string().max(200).optional(),
+        confirmCode: CONFIRM,
+      },
+      annotations: { ...WRITE, destructiveHint: true },
+    }, async (args) => {
+      const target = async () => {
+        const [product] = await this.db.query(`SELECT id, sku, name FROM products WHERE sku = $1 AND deleted_at IS NULL LIMIT 1`, [args.sku]);
+        if (!product) throw new Error(`no product with SKU ${args.sku}`);
+        const warehouse = await this.db.getRepository(Warehouse).findOneBy({ code: args.warehouseCode });
+        if (!warehouse) throw new Error(`no warehouse with code ${args.warehouseCode}`);
+        if (warehouse.stockSource !== 'commerce') throw new Error(`warehouse ${warehouse.code} takes its stock from the ERP — adjust it in the ERP, the feed brings it here`);
+        return { product: product as { id: string; sku: string; name: string }, warehouse };
+      };
+      return this.twoStep(staff, clientId, 'stock_adjust', args,
+        async () => {
+          const { product, warehouse } = await target();
+          const level = await this.db.getRepository(InventoryLevel).findOneBy({ productId: product.id, warehouseId: warehouse.id });
+          const now = level ? Number(level.quantity) : 0;
+          const after = args.mode === 'set' ? args.quantity : now + args.quantity;
+          return { action: 'adjust stock', sku: product.sku, product: product.name, warehouse: `${warehouse.code} ${warehouse.name}`,
+            now, after, reserved: level ? Number(level.reserved) : 0, reason: args.reason, note: args.note,
+            problem: after < 0 ? 'would go negative — will be refused' : undefined };
+        },
+        async () => {
+          const { product, warehouse } = await target();
+          return this.db.transaction((manager) => this.ledger.adjustOwnStock(manager, {
+            productId: product.id, warehouse, mode: args.mode, quantity: args.quantity, reason: args.reason, ref: `mcp:${staff.userId}`,
+          }));
+        });
+    });
 
     server.registerTool('webhook_retry_delivery', {
       title: 'Resend a failed event to a platform (admin, needs confirmation)',

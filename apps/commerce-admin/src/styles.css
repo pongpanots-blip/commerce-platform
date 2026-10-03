@@ -84,10 +84,10 @@ td.mono, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; fo
 form.stack { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; }
 label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); flex: 1 1 180px; }
-input, select {
+input, select, textarea {
   font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--fg);
 }
-input:focus, select:focus { outline: 2px solid var(--chip); border-color: var(--accent); }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--chip); border-color: var(--accent); }
 .err { color: var(--danger); font-size: 13px; padding: 4px 0; }
 .hint { color: var(--muted); font-size: 12px; }
 pre.payload { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px; overflow: auto; font-size: 12px; max-height: 320px; }

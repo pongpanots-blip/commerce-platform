@@ -1,9 +1,8 @@
 import { FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { scrapingApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
-// Competitor price comparison stays in josh web-admin (it uses our own catalog prices).
-const JOSH_ADMIN_URL = ((import.meta as unknown as { env: Record<string, string> }).env?.VITE_JOSH_ADMIN_URL ?? '').replace(/\/$/, '');
 const money = (v: number | null) => (v == null ? '—' : `฿${v.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
 
 /** Products collected from competitor sites (moved from josh). */
@@ -23,7 +22,7 @@ export function ScrapedCatalog() {
       <div className="page-head">
         <div>
           <h1>คลังข้อมูลเว็บคู่แข่ง</h1>
-          <p>สินค้าและราคาที่เก็บจากเว็บสาธารณะ · จับคู่กับ SKU ของเราที่หน้าเทียบราคาใน josh admin</p>
+          <p>สินค้าและราคาที่เก็บจากเว็บสาธารณะ · จับคู่กับ SKU ของเราที่หน้าเทียบราคาคู่แข่ง</p>
         </div>
         <button className="btn ghost" type="button" onClick={items.reload}>Refresh</button>
       </div>
@@ -63,9 +62,7 @@ export function ScrapedCatalog() {
                     <td>{item.weightKg == null ? 'ไม่ชัดเจน' : `${item.weightKg} กก.`}</td>
                     <td>{new Date(item.observedAt).toLocaleString('th-TH')}</td>
                     <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      {JOSH_ADMIN_URL
-                        ? <a className="btn ghost sm" href={`${JOSH_ADMIN_URL}/marketing/competitor-prices?catalogItem=${item.id}`}>จับคู่ SKU ของเรา ↗</a>
-                        : <span className="hint">ตั้ง VITE_JOSH_ADMIN_URL</span>}
+                      <Link className="btn ghost sm" to={`/marketing/competitor-prices?catalogItem=${item.id}`}>จับคู่ SKU ของเรา</Link>
                     </td>
                   </tr>
                 ))}

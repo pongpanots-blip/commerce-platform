@@ -109,7 +109,12 @@ ERP ──► commerce (stage · inventory ต่อคลัง · audit) ─�
 | Buffer + retry + dead-letter ของ inbound | (josh มี `erp-inbound-queue` เป็น reference) | `ErpIngestRecord` + คิว forward ของ commerce | 2 |
 | Inventory ต่อคลัง (shadow ของ qty ที่ ERP ส่ง) | — (josh ไม่มี) | `commerce/inventory` | 2 |
 | ERP Webhook Simulator + mock ต่อ account | `erp/erp-webhook-simulator.controller.ts`, `erp-webhook-simulator.guard.ts` | `connector/erp` (dev/staging เท่านั้น มี kill-switch prod) + หน้าใน commerce-admin | 8 |
+| Scraping + Marketing Research | `competitor-prices/scraping.*`, `public-web.reader.*`, `marketing-research/*` | `platform/scraping`, `platform/marketing-research` | ✅ |
+| **สำเนาแค็ตตาล็อก josh** (ขั้น 1 ของ "commerce เป็น hub สินค้า") — commerce **ดึง** จาก replica ของ josh ทุก 15 นาที ไม่ต้องแก้โค้ด josh, josh ยังเป็นคนเขียน | `product_inventory` + `product_translation` (อ่านอย่างเดียว) | `integration/connector/josh` (`josh_catalog_products`) | ✅ |
+| **เทียบราคาคู่แข่ง (MER)** (ขั้น 2) — ทั้งหน้าย้ายมา commerce-admin, fingerprint เท่ากับของ josh เป๊ะ คู่ที่ยืนยันแล้วยังยืนยันอยู่หลัง import | `competitor-prices/*`, web-admin `CompetitorPricesPage.tsx` | `integration/competitor-prices` + `/marketing/competitor-prices` | ✅ โค้ดพร้อม · **ยังไม่ลบจาก josh** จนกว่าจะ cutover |
 | งานหนัก (รอผลวัด) | report/metrics, export/archive, cache warmup/facet — ดู Task 9 | `platform/offload` (ใหม่) | 9 |
+
+> **ขั้น 3 (ยังไม่ทำ):** ย้ายความเป็นเจ้าของสินค้าทีละกลุ่มฟิลด์ — ส่วนที่ MER แก้ ย้ายเมื่อ MER ย้ายหน้าจอมา commerce แล้วเท่านั้น (ไม่งั้นแก้ 2 ที่). ระหว่างนี้ josh เป็นคนเขียน commerce อ่านสำเนา
 
 ### ไม่ย้าย — อยู่ josh ต่อ
 
@@ -125,7 +130,6 @@ ERP ──► commerce (stage · inventory ต่อคลัง · audit) ─�
 | 3PL delivery-status (`/3pl/delivery-status`) | มาจาก 3PL ไม่ใช่ ERP |
 | Shipment tracking (`shipment-tracking.service.ts`, `GET /drivers/tracking`) | read-through cache ที่ลูกค้าเรียกตรงจาก shop — ย้ายมาจะเพิ่ม network hop (cron poll GPS ถูกลบไปแล้วใน `4e7951b5e`) |
 | Staging product/price รอ MER approve (`erp/erp-pending-change.helper.ts`, approve ที่ `product.controller.ts` + web-admin `AllProduct.tsx`) | **MER ทำงานที่ web-admin ที่เดียว** — commerce ส่ง change เข้า staging ของ josh ผ่าน internal API ไม่เปิดหน้า approve ซ้ำใน commerce-admin |
-| competitor-prices / scraping | MER ใช้คู่กับ approve ราคาใน web-admin + join `ProductInventory` ของ shop โดยตรง — แยกออกมาจะทำให้ MER ทำงาน 2 ที่ |
 | หน้าจอ/workflow ของ marketing-* และ cache ใน request path | อยู่ josh — ส่วนที่เป็นงานคำนวณหนักเบื้องหลังย้ายได้ใน Task 9 |
 
 ---

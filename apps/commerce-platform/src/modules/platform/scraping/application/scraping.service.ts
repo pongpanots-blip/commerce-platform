@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { JSDOM } from 'jsdom';
 import { ScrapedItem, ScrapingProgress, ScrapingSource } from '../domain/scraping-source.entity';
 import { DiscoverScrapingDto, PreviewScrapingDto, SaveScrapingSourceDto, StartScrapingDto } from './dto/scraping.dto';
@@ -54,6 +54,7 @@ export class ScrapingService {
     if (!source) throw new NotFoundException('ไม่พบเว็บที่ตั้งค่า');
     return source;
   }
+  sourcesByIds(ids: string[]) { return ids.length ? this.sources.findBy({ id: In([...new Set(ids)]) }) : Promise.resolve([]); }
   async findOrigin(url: string) { return this.sources.findOneBy({ origin: publicUrl(url).origin }); }
 
   async discover(dto: DiscoverScrapingDto) {

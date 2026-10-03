@@ -17,6 +17,7 @@ import { ErpIngest } from './pages/ErpIngest';
 import { MarketingResearch } from './pages/MarketingResearch';
 import { ScrapingSources } from './pages/ScrapingSources';
 import { ScrapedCatalog } from './pages/ScrapedCatalog';
+import { CompetitorPrices } from './pages/CompetitorPrices';
 import { InboundLog } from './pages/InboundLog';
 import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
 import { WebhookPlatforms } from './pages/WebhookPlatforms';
@@ -28,6 +29,7 @@ const NAV = [
     group: 'Marketing',
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
+      { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
     ],
@@ -107,6 +109,7 @@ export function App() {
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />
             <Route path="/marketing/scraped-catalog" element={<ScrapedCatalog />} />
+            <Route path="/marketing/competitor-prices" element={<CompetitorPrices />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
             <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />

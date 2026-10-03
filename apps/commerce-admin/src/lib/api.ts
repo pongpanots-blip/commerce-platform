@@ -305,6 +305,43 @@ export const scrapingApi = {
   },
 };
 
+// ---- Competitor price comparison (MER, moved from josh) — same envelope ----
+export interface CompetitorCatalogProduct {
+  id: string; sku: string; name: string; brand: string | null; country: string | null; storage: string | null;
+  packSize: string | null; sellingUnit: string | null; sellingUnitPriceIncVat: number; updatedAt: string; syncedAt: string; removed: boolean;
+}
+export interface CompetitorPriceInput {
+  catalogItemId?: string; revision?: number;
+  sku: string; ourWeightKg: number; sourceUrl: string; competitorName: string; competitorSku: string;
+  competitorWeightKg: number; sourceContext: string; vatIncluded: boolean; collectionAllowed: boolean; autoRefresh: boolean;
+}
+export type CompetitorPriceComparison = Omit<CompetitorPriceInput, 'sku'> & {
+  id: string; revision: number; ourProductVersion: string; ourProduct: CompetitorCatalogProduct;
+  sourceName: string; ourPricePerKgIncVat: number | null; ourPackPriceIncVat: number | null;
+  competitorPackPriceIncVat: number | null; competitorPricePerKgIncVat: number | null;
+  differencePerKgIncVat: number | null; differenceForOurWeightIncVat: number | null; differencePercent: number | null;
+  comparisonReady: boolean; comparisonReason: string | null; verified: boolean;
+  matchNote: string; verifiedAt: string | null; verifiedBy: string | null;
+  canRefresh: boolean; refreshReason: string | null; observedAt: string | null;
+  captureMethod: 'manual' | 'automatic' | null; lastError: string | null;
+};
+export type ScrapedCatalogItem = ScrapedItem & { source: { id: string; name: string; config: ScrapingConfig } };
+
+export const competitorPricesApi = {
+  list: () => enveloped(api.get<Envelope<CompetitorPriceComparison[]>>('/competitor-prices')),
+  catalog: (sku: string) => enveloped(api.get<Envelope<CompetitorCatalogProduct>>(`/competitor-prices/catalog/${encodeURIComponent(sku)}`)),
+  catalogItem: (id: string) => enveloped(api.get<Envelope<ScrapedCatalogItem>>(`/competitor-prices/catalog-items/${id}`)),
+  save: (input: CompetitorPriceInput, id?: string) => enveloped(id
+    ? api.put<Envelope<CompetitorPriceComparison>>(`/competitor-prices/${id}`, input)
+    : api.post<Envelope<CompetitorPriceComparison>>('/competitor-prices', input)),
+  verify: (row: CompetitorPriceComparison, matchNote: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(
+    `/competitor-prices/${row.id}/verify`, { matchNote, revision: row.revision, ourProductVersion: row.ourProductVersion })),
+  capture: (row: CompetitorPriceComparison, priceIncVat: number, observedAt: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(
+    `/competitor-prices/${row.id}/price`, { priceIncVat, observedAt, revision: row.revision })),
+  refresh: (id: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(`/competitor-prices/${id}/refresh`, {})),
+  remove: (id: string) => enveloped(api.del<Envelope<{ id: string }>>(`/competitor-prices/${id}`)),
+};
+
 // Webhook Subscriptions & Deliveries
 export interface WebhookDeliveryFull {
   id: string;

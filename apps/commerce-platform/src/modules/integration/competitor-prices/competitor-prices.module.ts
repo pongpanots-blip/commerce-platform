@@ -12,5 +12,6 @@ import { CompetitorPricesService } from './competitor-prices.service';
   imports: [TypeOrmModule.forFeature([CompetitorPrice, JoshCatalogProduct]), ScrapingModule],
   controllers: [CompetitorPricesController],
   providers: [CompetitorPricesService, JoshCatalogSyncService],
+  exports: [CompetitorPricesService],
 })
 export class CompetitorPricesModule {}

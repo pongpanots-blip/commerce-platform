@@ -58,8 +58,8 @@ export class PortalAuthService {
     }
   }
 
-  async login(emailRaw: string, password: string) {
-    this.assertSecret();
+  /** Password check shared by the admin login and the MCP OAuth login page. */
+  async verifyCredentials(emailRaw: string, password: string): Promise<User> {
     const email = emailRaw.trim().toLowerCase();
     const user = await this.users.findOne({ where: { email } });
     if (!user?.passwordHash || user.status !== 'active') {
@@ -69,6 +69,12 @@ export class PortalAuthService {
     if (!(await bcrypt.compare(password, user.passwordHash))) {
       throw new UnauthorizedException('invalid credentials');
     }
+    return user;
+  }
+
+  async login(emailRaw: string, password: string) {
+    this.assertSecret();
+    const user = await this.verifyCredentials(emailRaw, password);
     return {
       accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }),
       role: user.role,

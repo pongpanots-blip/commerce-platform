@@ -1,4 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { createHash, randomUUID } from 'node:crypto';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { DataSource, ILike, IsNull } from 'typeorm';
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -7,10 +10,24 @@ import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-c
 import { AuditLog } from '../modules/core/audit/infrastructure/audit-log.entity';
 import { ScrapingService } from '../modules/platform/scraping/application/scraping.service';
 import { MarketingResearchService } from '../modules/platform/marketing-research/application/marketing-research.service';
-import type { McpStaff } from './mcp-oauth.provider';
+import { MCP_WRITE_SCOPE, McpOAuthProvider, McpStaff } from './mcp-oauth.provider';
+import { CreateResearchTopicDto } from '../modules/platform/marketing-research/dto/research.dto';
+import { RESEARCH_KINDS, RESEARCH_SOURCES } from '../modules/platform/marketing-research/research.types';
+import { WebhookSubscriptionService } from '../modules/integration/webhook-subscription/application/webhook-subscription.service';
+import { ErpIngestService } from '../modules/integration/connector/erp/ingest/erp-ingest.service';
+import { ErpIngestRecord } from '../modules/integration/connector/erp/erp-ingest-record.entity';
+import { WebhookDelivery } from '../modules/integration/webhook-subscription/infrastructure/webhook-delivery.entity';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
+const WRITE = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false };
+const CONFIRM = z.string().max(100).optional()
+  .describe('Leave empty first: you get a preview + confirmCode. Show the preview to the user; only after they explicitly agree, call again with the same arguments and this confirmCode.');
+/** Same arguments → same hash, whatever order the client sent them in. */
+const argsHash = (args: Record<string, unknown>) =>
+  createHash('sha256').update(JSON.stringify(Object.keys(args).sort().map((k) => [k, args[k]]))).digest('hex');
+const AREAS = ['กรุงเทพมหานคร', 'กรุงเทพฯ และปริมณฑล', 'ทั่วประเทศไทย'] as const;
+const SECTORS = ['ทุกกลุ่ม · น้ำหนักเท่ากัน', 'ร้านอาหาร', 'โรงแรม / จัดเลี้ยง', 'ร้านค้าปลีก', 'โรงงานอาหาร'] as const;
 const productName = (p: JoshCatalogProduct) =>
   p.translations?.find((t) => t.language_code === 'th')?.product_name ?? p.translations?.[0]?.product_name ?? p.sku;
 
@@ -27,14 +44,19 @@ export class McpTools {
     private readonly competitor: CompetitorPricesService,
     private readonly scraping: ScrapingService,
     private readonly research: MarketingResearchService,
+    private readonly oauth: McpOAuthProvider,
+    private readonly webhooks: WebhookSubscriptionService,
+    private readonly ingest: ErpIngestService,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
-  server(staff: McpStaff, clientId: string): McpServer {
+  server(staff: McpStaff, clientId: string, scopes: string[] = []): McpServer {
+    const canWrite = scopes.includes(MCP_WRITE_SCOPE);
     const server = new McpServer(
       { name: 'commerce-platform', version: '1.0.0' },
       { instructions: 'Commerce Platform (Jagota / Josh). Read-only: look up and summarize competitor prices, scraped competitor catalogs, marketing research and the Josh catalog' +
         (staff.role === 'admin' ? ', plus ERP intake, webhook delivery failures and stock per warehouse.' : '.') +
+        (canWrite ? ' A few tools change data; each one first returns a preview and a confirmCode — always show the preview and get the user\'s explicit OK before calling it again with the code.' : ' This connection is read-only.') +
         ' Prices are THB including VAT. Answer in the user\'s language.' },
     );
     // Every tool call is recorded in audit_logs: who, which AI client, which tool, with what arguments.
@@ -46,6 +68,7 @@ export class McpTools {
       }) as never)) as typeof server.registerTool;
     this.marketing(server, staff);
     if (staff.role === 'admin') this.ops(server);
+    if (canWrite) this.writes(server, staff, clientId);
     return server;
   }
 
@@ -83,7 +106,7 @@ export class McpTools {
       return json({
         total: rows.length,
         pairs: rows.slice(0, limit).map((r) => ({
-          sku: r.ourProduct.sku, product: r.ourProduct.name, competitor: r.sourceName, competitorProduct: r.competitorName, url: r.sourceUrl,
+          pairId: r.id, sku: r.ourProduct.sku, product: r.ourProduct.name, competitor: r.sourceName, competitorProduct: r.competitorName, url: r.sourceUrl,
           ourPerKg: r.ourPricePerKgIncVat, theirPerKg: r.competitorPricePerKgIncVat, differencePerKg: r.differencePerKgIncVat,
           differencePercent: r.differencePercent, comparable: r.comparisonReady, why: r.comparisonReason, observedAt: r.observedAt,
         })),
@@ -163,6 +186,139 @@ export class McpTools {
     });
   }
 
+  /**
+   * Two-step write: without confirmCode → preview + one-time code (10 min, bound to this staff,
+   * AI client, tool and exact arguments); with it → do it. A changed argument needs a new preview.
+   */
+  private async twoStep(staff: McpStaff, clientId: string, tool: string, args: Record<string, unknown>,
+    preview: () => Promise<unknown>, run: () => Promise<unknown>) {
+    const { confirmCode, ...rest } = args;
+    const hash = argsHash(rest);
+    if (!confirmCode) {
+      const shown = await preview();
+      return json({ status: 'needs_confirmation', willDo: shown, confirmCode: await this.oauth.issueConfirm(staff.userId, clientId, tool, hash),
+        next: 'Show "willDo" to the user. Only if they explicitly agree, call this tool again with exactly the same arguments plus confirmCode.' });
+    }
+    if (!(await this.oauth.consumeConfirm(String(confirmCode), staff.userId, clientId, tool, hash))) {
+      return { ...json({ status: 'rejected', reason: 'confirmCode is invalid, expired, already used, or the arguments changed. Call again without confirmCode for a new preview.' }), isError: true };
+    }
+    const result = await run();
+    await this.db.getRepository(AuditLog).insert({
+      actorId: staff.userId, action: 'mcp.write', entityType: 'mcp_tool', entityId: null,
+      context: { tool, args: rest, clientId, email: staff.email, role: staff.role },
+    });
+    return json({ status: 'done', result });
+  }
+
+  private writes(server: McpServer, staff: McpStaff, clientId: string) {
+    const actor = { sub: staff.userId, role: staff.role };
+
+    server.registerTool('research_create_topic', {
+      title: 'Create a research topic (needs confirmation)',
+      description: 'Save a new marketing research question. Free sources tat (TAT restaurant data) and osm (OpenStreetMap) work today.',
+      inputSchema: {
+        title: z.string().min(1).max(400), kind: z.enum(RESEARCH_KINDS), area: z.enum(AREAS).default('กรุงเทพมหานคร'),
+        days: z.union([z.literal(7), z.literal(14), z.literal(30)]).default(30), sector: z.enum(SECTORS).default('ทุกกลุ่ม · น้ำหนักเท่ากัน'),
+        sources: z.array(z.enum(RESEARCH_SOURCES)).min(1).max(7).default(['tat', 'osm']), followHourly: z.boolean().default(false),
+        confirmCode: CONFIRM,
+      },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'research_create_topic', args,
+      async () => ({ action: 'create research topic', ...args, confirmCode: undefined }),
+      async () => {
+        const { confirmCode: _c, ...fields } = args;
+        const dto = plainToInstance(CreateResearchTopicDto, fields);
+        const errors = await validate(dto);
+        if (errors.length) throw new Error(errors.map((e) => Object.values(e.constraints ?? {}).join(', ')).join('; '));
+        const topic = await this.research.create(dto, actor);
+        return { topicId: topic.id, title: topic.title };
+      }));
+
+    server.registerTool('research_request_run', {
+      title: 'Run a research topic now (needs confirmation)',
+      description: 'Queue one run of an existing research topic (yours, or any if admin). Read the result later with research_report.',
+      inputSchema: { topicId: z.string().uuid(), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'research_request_run', args,
+      async () => {
+        const topic = await this.research.detail(args.topicId, actor);
+        return { action: 'queue a research run', topic: topic.title, sources: topic.sources, youCanManage: topic.canManage };
+      },
+      async () => {
+        const run = await this.research.requestRun(args.topicId, randomUUID(), actor);
+        return { runId: run.id, status: run.status };
+      }));
+
+    server.registerTool('competitor_record_price', {
+      title: 'Record a competitor price (needs confirmation)',
+      description: 'Save a competitor pack price (THB incl. VAT) the user saw on the source page, for one tracked pair (pairId from competitor_prices). Does not verify matches — a person still does that.',
+      inputSchema: {
+        pairId: z.string().uuid(), priceIncVat: z.number().positive().max(9999999999.99),
+        observedAt: z.string().datetime({ offset: true }).optional().describe('when the user saw this price; default now'),
+        confirmCode: CONFIRM,
+      },
+      annotations: { ...WRITE, destructiveHint: true }, // replaces the pair's current observation
+    }, async (args) => {
+      const pair = async () => {
+        const row = (await this.competitor.list()).find((r) => r.id === args.pairId);
+        if (!row) throw new Error('pair not found — use competitor_prices to get a pairId');
+        return row;
+      };
+      return this.twoStep(staff, clientId, 'competitor_record_price', args,
+        async () => {
+          const row = await pair();
+          return { action: 'record competitor price', sku: row.ourProduct.sku, product: row.ourProduct.name, competitor: row.sourceName,
+            competitorProduct: row.competitorName, packKg: row.competitorWeightKg, currentPrice: row.competitorPackPriceIncVat,
+            newPrice: args.priceIncVat, newPerKg: Math.round((args.priceIncVat / row.competitorWeightKg) * 100) / 100,
+            ourPerKg: row.ourPricePerKgIncVat, observedAt: args.observedAt ?? 'now' };
+        },
+        async () => {
+          const row = await pair();
+          const saved = await this.competitor.capture(row.id, {
+            revision: row.revision, priceIncVat: args.priceIncVat,
+            observedAt: new Date(args.observedAt ?? Date.now()).toISOString(),
+          });
+          return { competitorPerKg: saved.competitorPricePerKgIncVat, differencePerKg: saved.differencePerKgIncVat, comparable: saved.comparisonReady, why: saved.comparisonReason };
+        });
+    });
+
+    if (staff.role !== 'admin') return;
+
+    server.registerTool('webhook_retry_delivery', {
+      title: 'Resend a failed event to a platform (admin, needs confirmation)',
+      description: 'Dead-letter retry: resend one failed delivery (id from webhook_failures), e.g. after the SKU was added in josh.',
+      inputSchema: { deliveryId: z.string().uuid(), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'webhook_retry_delivery', args,
+      async () => {
+        const d = await this.db.getRepository(WebhookDelivery).findOneBy({ id: args.deliveryId });
+        if (!d) throw new Error('delivery not found');
+        return { action: 'resend event', eventType: d.eventType, target: d.targetUrl, status: d.status, lastError: d.error,
+          sku: (d.payload as { data?: { sku?: string } })?.data?.sku ?? null };
+      },
+      async () => {
+        const d = await this.webhooks.retryDelivery(args.deliveryId);
+        return { deliveryId: d.id, status: d.status };
+      }));
+
+    server.registerTool('erp_replay_ingest', {
+      title: 'Re-apply a failed ERP record (admin, needs confirmation)',
+      description: 'Run a failed ERP intake record (id from erp_intake_summary) through its applier again. qty/price/moq feed rows are retried with webhook_retry_delivery instead.',
+      inputSchema: { recordId: z.string().uuid(), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'erp_replay_ingest', args,
+      async () => {
+        const r = await this.db.getRepository(ErpIngestRecord).findOneBy({ id: args.recordId });
+        if (!r) throw new Error('ERP record not found');
+        return { action: 're-apply ERP record', type: r.entityType, externalId: r.externalId, status: r.status, lastError: r.error,
+          note: r.status === 'failed' ? undefined : `status is ${r.status}: nothing will change` };
+      },
+      async () => {
+        const r = await this.ingest.apply(args.recordId);
+        return { recordId: r.id, status: r.status, error: r.error };
+      }));
+  }
+
   private ops(server: McpServer) {
     server.registerTool('erp_intake_summary', {
       title: 'ERP intake summary (admin)',
@@ -174,7 +330,7 @@ export class McpTools {
       const counts = await this.db.query(
         `SELECT entity_type AS type, status, count(*)::int AS count FROM erp_ingest_records WHERE created_at >= $1 GROUP BY 1, 2 ORDER BY 1, 2`, [since]);
       const failures = await this.db.query(
-        `SELECT entity_type AS type, external_id AS "externalId", status, error, created_at AS "at" FROM erp_ingest_records
+        `SELECT id, entity_type AS type, external_id AS "externalId", status, error, created_at AS "at" FROM erp_ingest_records
          WHERE created_at >= $1 AND status = 'failed' ORDER BY created_at DESC LIMIT 20`, [since]);
       return json({ since, counts, recentFailures: failures });
     });
@@ -185,7 +341,7 @@ export class McpTools {
       inputSchema: { limit: z.number().int().min(1).max(100).default(20) },
       annotations: READ_ONLY,
     }, async ({ limit }) => json(await this.db.query(
-      `SELECT d.event_type AS "eventType", d.status, d.status_code AS "statusCode", d.attempts, d.error, d.target_url AS "target",
+      `SELECT d.id, d.event_type AS "eventType", d.status, d.status_code AS "statusCode", d.attempts, d.error, d.target_url AS "target",
               d.payload->'data'->>'sku' AS sku, d.created_at AS "at"
        FROM webhook_deliveries d WHERE d.status = 'failed' AND d.deleted_at IS NULL ORDER BY d.created_at DESC LIMIT $1`, [limit])));
 

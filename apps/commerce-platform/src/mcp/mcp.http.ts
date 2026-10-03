@@ -4,7 +4,7 @@ import { rateLimit } from 'express-rate-limit';
 import { getOAuthProtectedResourceMetadataUrl, mcpAuthRouter } from '@modelcontextprotocol/sdk/server/auth/router.js';
 import { requireBearerAuth } from '@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { MCP_SCOPE, McpOAuthProvider, McpStaff } from './mcp-oauth.provider';
+import { MCP_SCOPE, MCP_SCOPES, McpOAuthProvider, McpStaff } from './mcp-oauth.provider';
 import { McpTools } from './mcp.tools';
 import { loginPage } from './mcp-login.page';
 
@@ -35,7 +35,7 @@ export function mountMcp(app: INestApplication) {
 
   http.use(mcpAuthRouter({
     provider, issuerUrl: new URL(base), resourceServerUrl: resourceUrl,
-    scopesSupported: [MCP_SCOPE], resourceName: 'Commerce Platform',
+    scopesSupported: MCP_SCOPES, resourceName: 'Commerce Platform',
   }));
 
   // Password guessing protection for the staff sign-in page.
@@ -45,9 +45,9 @@ export function mountMcp(app: INestApplication) {
     const field = (key: string) => (typeof body?.[key] === 'string' ? (body[key] as string) : '');
     const requestId = field('request_id');
     try {
-      const result = await provider.completeLogin(requestId, field('email'), field('password'));
+      const result = await provider.completeLogin(requestId, field('email'), field('password'), field('allow_write') === '1');
       if ('redirect' in result) return res.redirect(302, result.redirect);
-      res.status(400).type('html').send(loginPage({ requestId, clientName: result.clientName, error: result.error }));
+      res.status(400).type('html').send(loginPage({ requestId, clientName: result.clientName, error: result.error, canWrite: result.canWrite }));
     } catch (error) {
       Logger.error(`MCP login failed: ${error instanceof Error ? error.message : error}`, 'Mcp');
       res.status(500).type('html').send(loginPage({ requestId, clientName: '', error: 'ระบบขัดข้อง กรุณาลองใหม่' }));
@@ -59,7 +59,7 @@ export function mountMcp(app: INestApplication) {
     resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(resourceUrl),
   });
   http.post('/mcp', bearer, express.json({ limit: '1mb' }), async (req, res) => {
-    const server = tools.server(req.auth!.extra!.staff as McpStaff, req.auth!.clientId);
+    const server = tools.server(req.auth!.extra!.staff as McpStaff, req.auth!.clientId, req.auth!.scopes);
     // Stateless: one server + transport per request, JSON responses (no SSE session to keep).
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     res.on('close', () => { void transport.close(); void server.close(); });

@@ -7,7 +7,10 @@ const TOOL_LABEL: Record<string, string> = {
   competitor_prices: 'เทียบราคาคู่แข่ง', scraped_catalog_search: 'ค้นคลังเว็บคู่แข่ง', scraping_sources: 'เว็บที่เก็บข้อมูล',
   research_topics: 'โจทย์ research', research_report: 'รายงาน research', catalog_products: 'แค็ตตาล็อก josh',
   erp_intake_summary: 'สรุปข้อมูลจาก ERP', webhook_failures: 'event ที่ส่งไม่สำเร็จ', stock_levels: 'สต็อกต่อคลัง',
+  research_create_topic: 'สร้างโจทย์ research', research_request_run: 'สั่งรัน research', competitor_record_price: 'บันทึกราคาคู่แข่ง',
+  webhook_retry_delivery: 'ส่ง event ซ้ำ', erp_replay_ingest: 'replay ข้อมูล ERP',
 };
+const WRITE_TOOLS = new Set(['research_create_topic', 'research_request_run', 'competitor_record_price', 'webhook_retry_delivery', 'erp_replay_ingest']);
 const STEPS = [
   { app: 'Claude (claude.ai / Desktop)', how: 'Settings → Connectors → Add custom connector → วาง URL → Connect' },
   { app: 'ChatGPT', how: 'Settings → Connectors (เปิด developer mode) → Create → วาง URL, Authentication = OAuth' },
@@ -63,7 +66,7 @@ export function AiConnectors() {
           <table>
             <tbody>{STEPS.map((s) => <tr key={s.app}><td style={{ whiteSpace: 'nowrap' }}><strong>{s.app}</strong></td><td className="hint">{s.how}</td></tr>)}</tbody>
           </table>
-          <div className="hint">ตอนเชื่อมต่อจะเปิดหน้า login ของ commerce — ใช้บัญชี staff เดียวกับหน้านี้ · ใช้ได้: เทียบราคาคู่แข่ง, คลังเว็บ, research, แค็ตตาล็อก{admin ? ' และของ admin: ERP, dead-letter, สต็อกต่อคลัง' : ''}</div>
+          <div className="hint">ตอนเชื่อมต่อจะเปิดหน้า login ของ commerce — ใช้บัญชี staff เดียวกับหน้านี้ · ติ๊ก "อนุญาตให้แก้ไข" ถ้าต้องการให้ AI สร้าง/สั่งรัน research, บันทึกราคาคู่แข่ง{admin ? ', ส่ง event ซ้ำ, replay ERP' : ''} (ทุกครั้ง AI ต้องแสดงสิ่งที่จะทำและรอคุณยืนยัน) · ใช้ได้: เทียบราคาคู่แข่ง, คลังเว็บ, research, แค็ตตาล็อก{admin ? ' และของ admin: ERP, dead-letter, สต็อกต่อคลัง' : ''}</div>
         </div>
       </section>
 
@@ -78,7 +81,7 @@ export function AiConnectors() {
                   <tr key={c.clientId + c.staffUserId}>
                     <td><strong>{c.clientName}</strong><div className="hint mono">{c.clientId.slice(0, 8)}</div></td>
                     {admin && <td>{c.staffEmail}</td>}
-                    <td>{c.liveSessions > 0 ? <span className="badge ok">เชื่อมต่ออยู่</span> : <span className="badge muted">หมดอายุ / ยกเลิกแล้ว</span>}</td>
+                    <td>{c.liveSessions > 0 ? <><span className="badge ok">เชื่อมต่ออยู่</span>{' '}<span className={c.canWrite ? 'badge warn' : 'badge muted'}>{c.canWrite ? 'แก้ไขได้ (ต้องยืนยัน)' : 'อ่านอย่างเดียว'}</span></> : <span className="badge muted">หมดอายุ / ยกเลิกแล้ว</span>}</td>
                     <td>{when(c.lastUsedAt)}</td>
                     <td className="mono">{c.toolCalls.toLocaleString()} ครั้ง</td>
                     <td>{when(c.firstSeenAt)}</td>
@@ -94,17 +97,17 @@ export function AiConnectors() {
       </section>
 
       <section className="panel">
-        <div className="panel-head">AI อ่านอะไรไปบ้าง (ล่าสุด 50 ครั้ง)</div>
+        <div className="panel-head">AI ทำอะไรไปบ้าง (ล่าสุด 50 ครั้ง)</div>
         {activity.error && <div className="err" style={{ padding: 16 }}>{activity.error}</div>}
         {activity.loading ? <div className="empty">Loading…</div> : !activity.data?.length ? <div className="empty">ยังไม่มีการเรียกข้อมูล</div> : (
           <div style={{ overflowX: 'auto' }}>
             <table>
-              <thead><tr><th>เวลา</th><th>ข้อมูลที่อ่าน</th><th>เงื่อนไข</th><th>แอป AI</th>{admin && <th>บัญชี</th>}</tr></thead>
+              <thead><tr><th>เวลา</th><th>สิ่งที่ทำ</th><th>เงื่อนไข</th><th>แอป AI</th>{admin && <th>บัญชี</th>}</tr></thead>
               <tbody>
                 {activity.data.map((a) => (
                   <tr key={a.id}>
                     <td style={{ whiteSpace: 'nowrap' }}>{when(a.at)}</td>
-                    <td>{TOOL_LABEL[a.tool] ?? a.tool}<div className="hint mono">{a.tool}</div></td>
+                    <td>{a.isWrite && <><span className="badge warn">แก้ไข</span>{' '}</>}{TOOL_LABEL[a.tool] ?? a.tool}{!a.isWrite && WRITE_TOOLS.has(a.tool) && <span className="hint"> · ขอดูตัวอย่าง ยังไม่ได้ทำ</span>}<div className="hint mono">{a.tool}</div></td>
                     <td className="hint mono" style={{ maxWidth: 320, wordBreak: 'break-word' }}>{a.args && Object.keys(a.args).length ? JSON.stringify(a.args) : '—'}</td>
                     <td>{a.clientName}</td>
                     {admin && <td>{a.staffEmail}</td>}

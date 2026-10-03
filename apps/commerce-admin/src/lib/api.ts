@@ -158,8 +158,8 @@ export interface OrderFull {
 }
 export interface ErpStubStockRow { id: string; sku: string; qty: number; }
 
-export type ErpIngestEntityType = 'product' | 'stock' | 'customer' | 'sale_order';
-export type ErpIngestStatus = 'received' | 'applied' | 'failed' | 'skipped';
+export type ErpIngestEntityType = 'product' | 'stock' | 'customer' | 'sale_order' | 'product_qty' | 'product_price' | 'product_moq';
+export type ErpIngestStatus = 'received' | 'applied' | 'failed' | 'skipped' | 'stale' | 'ignored';
 export interface ErpIngestRecordRow {
   id: string;
   integrationId: string;

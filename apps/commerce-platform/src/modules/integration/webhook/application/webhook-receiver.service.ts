@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { WebhookEvent } from '../infrastructure/webhook-event.entity';
 import { IntegrationService } from '../../integration/application/integration.service';
 import { SignatureVerifier } from './signature-verifier';
-import { QUEUES } from '../../../../config/redis.config';
+import { QUEUES, RETRY_JOB_OPTIONS } from '../../../../config/redis.config';
 
 /**
  * Ingest side of the webhook pipeline. Verifies the signature, stores the raw
@@ -73,7 +73,7 @@ export class WebhookReceiverService {
       throw new UnauthorizedException('Invalid webhook signature');
     }
 
-    await this.queue.add('process', { webhookEventId: saved.id });
+    await this.queue.add('process', { webhookEventId: saved.id }, RETRY_JOB_OPTIONS);
     return saved;
   }
 

@@ -188,7 +188,7 @@ npm run migration:show
 | `integration/adapter/` (`BaseCommerceAdapter`) | ✅ พร้อมใช้ |
 | `commerce/warehouse` + `commerce/inventory` (`inventory_levels`) | ✅ มีโมเดลต่อคลังแล้ว |
 | `commerce/reservation` | ✅ มี `reserved` ใน `inventory_levels` |
-| `connector/erp/ingest/` (`erp-payload.parsers.ts`, `erp-ingest.service.ts`) | 🟡 มีบางส่วน — parse ได้แค่ product / stock / customer / sale-order · staging + ownership rules มีแล้วแต่ยังไม่มีกฎ draft / ห้ามทับชื่อ (ดู Task 3) |
+| `connector/erp/ingest/` + `presentation/` | ✅ Task 2 เสร็จ (2026-10-03): `PUT /erp/products/{qty,price,moq}` · ledger `inventory_movements` + `warehouses.stock_source` · event ตาม `docs/event-contract.md` · product/customer/order ของ Jagota ยังไม่มี (Task 3-7) |
 | `ErpConnector.createOrder()` | ❌ mock — คืน `'erp order push not wired'` |
 | `ErpHttpClient` | ❌ ชี้ `/api/v1/orders` ซึ่งไม่ใช่ Jagota Node API |
 | Inbound route รับ webhook จาก ERP | ❌ ยังไม่มีเลย |
@@ -223,7 +223,7 @@ npm run migration:show
 
 ## 6. Task list
 
-### Task 1 — ล็อก internal API contract (ทำก่อนเขียนโค้ดบรรทัดแรก)
+### Task 1 — ล็อก internal API contract ✅ ฝั่ง commerce (`docs/event-contract.md`) · รอ josh ทำ endpoint
 
 **ทำอะไร:** ล็อก **event contract** ที่ commerce ส่งให้ทุก platform (josh เป็นคนแรก) — ไม่ใช่ API เฉพาะ josh (§0.1)
 
@@ -239,7 +239,7 @@ npm run migration:show
 
 ---
 
-### Task 2 — Inbound: stock / price / moq
+### Task 2 — Inbound: stock / price / moq ✅ ฝั่ง commerce · รอ josh endpoint + nginx
 
 **ทำอะไร:** รับ 3 route แรกจาก ERP
 

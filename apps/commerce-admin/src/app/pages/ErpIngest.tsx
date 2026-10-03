@@ -2,8 +2,8 @@ import { Fragment, useState } from 'react';
 import { erpIngestApi, ErpIngestRecordRow, Paginated } from '../../lib/api';
 import { useAsync, statusBadgeClass } from '../hooks';
 
-const ENTITY_TYPES = ['product', 'stock', 'customer', 'sale_order'];
-const STATUSES = ['received', 'applied', 'failed', 'skipped'];
+const ENTITY_TYPES = ['product_qty', 'product_price', 'product_moq', 'product', 'stock', 'customer', 'sale_order'];
+const STATUSES = ['received', 'applied', 'failed', 'skipped', 'stale', 'ignored'];
 
 export function ErpIngest() {
   const [entityType, setEntityType] = useState('');

@@ -13,7 +13,9 @@
 //   CP_MKT_EMAIL=… CP_MKT_PASSWORD=… node apps/commerce-platform/e2e/mcp-scenarios.mjs
 // Optional, for the write tools: MCP_SKU (a SKU in the Josh catalog copy, used to create a test
 // competitor pair), MCP_FAILED_DELIVERY / MCP_FAILED_INGEST (ids of a failed webhook delivery /
-// ERP record to retry).
+// ERP record to retry), MCP_SOURCE_ID (a scraping source with collectionAllowed=false, so "start"
+// is refused and no real site is visited), MCP_STOCK_SKU + MCP_OWN_WH + MCP_ERP_WH (a product with a
+// level in a commerce-owned warehouse, reserved 2, and an ERP-owned warehouse code).
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
@@ -179,6 +181,19 @@ if (process.env.MCP_SKU) {
   const pd = await text(w, 'competitor_record_price', { pairId, priceIncVat: 500, confirmCode: pp.confirmCode });
   check('competitor_record_price confirm saves it (250/kg)', pd.status === 'done' && pd.result?.competitorPerKg === 250, JSON.stringify(pd).slice(0, 140));
 }
+check('marketing write tools include scraping settings, not stock_adjust', ['scraping_update_source', 'scraping_run'].every((n) => wNames.some((t) => t.name === n)) && !wNames.some((t) => t.name === 'stock_adjust'));
+if (process.env.MCP_SOURCE_ID) {
+  const sid = process.env.MCP_SOURCE_ID;
+  const up = await text(w, 'scraping_update_source', { sourceId: sid, intervalHours: 24 });
+  const upd = await text(w, 'scraping_update_source', { sourceId: sid, intervalHours: 24, confirmCode: up.confirmCode });
+  check('scraping_update_source: preview now→after, confirm sets daily', up.willDo?.after?.everyHours === 24 && upd.result?.everyHours === 24, JSON.stringify(upd).slice(0, 140));
+  const st = await text(w, 'scraping_run', { sourceId: sid, action: 'start' });
+  const std = await w.callTool({ name: 'scraping_run', arguments: { sourceId: sid, action: 'start', confirmCode: st.confirmCode } });
+  check('scraping_run start without collection permission → preview warns, confirm is refused by the service', !!st.willDo?.note && std.isError === true, std.content?.[0]?.text?.slice(0, 120));
+  const sp = await text(w, 'scraping_run', { sourceId: sid, action: 'stop' });
+  const spd = await text(w, 'scraping_run', { sourceId: sid, action: 'stop', confirmCode: sp.confirmCode });
+  check('scraping_run stop → paused, automatic off', spd.result?.status === 'paused' && spd.result?.enabled === false, JSON.stringify(spd).slice(0, 120));
+}
 await w.close();
 const ta = await signIn(client.client_id, ADMIN, true);
 const aw = await mcp(ta.json.access_token);
@@ -195,6 +210,24 @@ if (process.env.MCP_FAILED_INGEST) {
   const ip = await text(aw, 'erp_replay_ingest', { recordId: process.env.MCP_FAILED_INGEST });
   const id = await text(aw, 'erp_replay_ingest', { recordId: process.env.MCP_FAILED_INGEST, confirmCode: ip.confirmCode });
   check('erp_replay_ingest: preview shows the failed record, confirm re-applies it', ip.willDo?.status === 'failed' && id.status === 'done', JSON.stringify(id).slice(0, 160));
+}
+check('admin write tools include stock_adjust', awNames.includes('stock_adjust'));
+if (process.env.MCP_STOCK_SKU) {
+  const base = { sku: process.env.MCP_STOCK_SKU, reason: 'COUNT' };
+  const erpWh = await aw.callTool({ name: 'stock_adjust', arguments: { ...base, warehouseCode: process.env.MCP_ERP_WH, mode: 'set', quantity: 1 } });
+  check('stock_adjust on an ERP-owned warehouse → refused already at preview', erpWh.isError === true && /ERP/.test(erpWh.content?.[0]?.text ?? ''), erpWh.content?.[0]?.text?.slice(0, 120));
+  const own = { ...base, warehouseCode: process.env.MCP_OWN_WH };
+  const s1 = await text(aw, 'stock_adjust', { ...own, mode: 'set', quantity: 10 });
+  const s1d = await text(aw, 'stock_adjust', { ...own, mode: 'set', quantity: 10, confirmCode: s1.confirmCode });
+  check('stock_adjust set 10 on our own warehouse → applied', s1.willDo?.after === 10 && s1d.result?.quantity === 10 && s1d.result?.status === 'applied', JSON.stringify(s1d).slice(0, 140));
+  const s2 = await text(aw, 'stock_adjust', { ...own, mode: 'add', quantity: -3, reason: 'DAMAGE' });
+  const s2d = await text(aw, 'stock_adjust', { ...own, mode: 'add', quantity: -3, reason: 'DAMAGE', confirmCode: s2.confirmCode });
+  check('stock_adjust add −3 (damage) → 7', s2.willDo?.now === 10 && s2d.result?.quantity === 7, JSON.stringify(s2d).slice(0, 140));
+  const s3 = await text(aw, 'stock_adjust', { ...own, mode: 'set', quantity: 1 });
+  const s3d = await aw.callTool({ name: 'stock_adjust', arguments: { ...own, mode: 'set', quantity: 1, confirmCode: s3.confirmCode } });
+  check('stock_adjust below the reserved quantity → refused', s3d.isError === true, s3d.content?.[0]?.text?.slice(0, 120));
+  const s4 = await text(aw, 'stock_levels', { sku: process.env.MCP_STOCK_SKU });
+  check('stock_levels shows the adjusted 7', JSON.stringify(s4).includes('"quantity":7'), JSON.stringify(s4).slice(0, 200));
 }
 await aw.close();
 

@@ -59,4 +59,31 @@ describe('InventoryLedgerService', () => {
     expect(res.status).toBe('ignored');
     expect(levels.save).not.toHaveBeenCalled();
   });
+
+  describe('adjustOwnStock (manual, commerce-owned warehouses only)', () => {
+    const own = { id: 'w-2', code: 'OWN1', stockSource: 'commerce' } as Warehouse;
+    const adj = { productId: 'p-1', warehouse: own, reason: 'COUNT', ref: 'mcp:u-1' };
+
+    it('refuses an ERP-owned warehouse: its stock changes in the ERP', async () => {
+      const { manager, movements } = makeManager({ level: { quantity: '10', reserved: '0' } });
+      await expect(svc.adjustOwnStock(manager, { ...adj, warehouse: { ...erpWarehouse, code: 'BKK' } as Warehouse, mode: 'set', quantity: 5 }))
+        .rejects.toThrow('ERP');
+      expect(movements.save).not.toHaveBeenCalled();
+    });
+
+    it('set = counted quantity; add = signed change; both go through the ledger as source commerce', async () => {
+      const set = makeManager({ level: { quantity: '10', reserved: '0' } });
+      await expect(svc.adjustOwnStock(set.manager, { ...adj, mode: 'set', quantity: 7 })).resolves.toMatchObject({ previousQuantity: 10, quantity: 7, status: 'applied' });
+      expect(set.movements.save).toHaveBeenCalledWith(expect.objectContaining({ source: 'commerce', reason: 'ADJUST:COUNT', quantityAfter: '7', ref: 'mcp:u-1' }));
+      const add = makeManager({ level: { quantity: '10', reserved: '0' } });
+      await expect(svc.adjustOwnStock(add.manager, { ...adj, mode: 'add', quantity: -4 })).resolves.toMatchObject({ quantity: 6 });
+    });
+
+    it('never goes negative, fractional, or below what is reserved', async () => {
+      const m = () => makeManager({ level: { quantity: '10', reserved: '3' } }).manager;
+      await expect(svc.adjustOwnStock(m(), { ...adj, mode: 'add', quantity: -11 })).rejects.toThrow('ไม่ติดลบ');
+      await expect(svc.adjustOwnStock(m(), { ...adj, mode: 'set', quantity: 2.5 })).rejects.toThrow('จำนวนเต็ม');
+      await expect(svc.adjustOwnStock(m(), { ...adj, mode: 'set', quantity: 2 })).rejects.toThrow('จอง');
+    });
+  });
 });

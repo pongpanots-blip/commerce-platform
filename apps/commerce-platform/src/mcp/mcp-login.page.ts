@@ -24,7 +24,7 @@ button{margin-top:18px;width:100%;padding:10px;border:0;border-radius:6px;backgr
 <input type="hidden" name="request_id" value="${esc(requestId)}">
 <label for="email">อีเมล</label><input id="email" name="email" type="email" autocomplete="username" required>
 <label for="password">รหัสผ่าน</label><input id="password" name="password" type="password" autocomplete="current-password" required>
-${canWrite ? `<label class="write"><input type="checkbox" name="allow_write" value="1"> <span>อนุญาตให้แก้ไขข้อมูลบางอย่างด้วย: สร้าง/สั่งรัน research, บันทึกราคาคู่แข่ง, ส่ง event ซ้ำ (admin) — ทุกครั้ง AI ต้องแสดงสิ่งที่จะทำและได้รับการยืนยันจากคุณก่อน</span></label>` : ''}
+${canWrite ? `<label class="write"><input type="checkbox" name="allow_write" value="1"> <span>อนุญาตให้แก้ไขข้อมูลบางอย่างด้วย: สร้าง/สั่งรัน research, บันทึกราคาคู่แข่ง, ตั้งค่าเก็บข้อมูลเว็บ, ส่ง event ซ้ำและปรับสต็อกคลังของเรา (admin) — ทุกครั้ง AI ต้องแสดงสิ่งที่จะทำและได้รับการยืนยันจากคุณก่อน</span></label>` : ''}
 ${error ? `<div class="err" role="alert">${esc(error)}</div>` : ''}
 <button type="submit">อนุญาตและเชื่อมต่อ</button>
 </form></main></body></html>`;

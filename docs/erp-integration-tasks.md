@@ -46,6 +46,17 @@ ERP ──► commerce (stage · inventory ต่อคลัง · audit) ─�
 
 **ยังไม่ทำตอนนี้ (ทำตอนสลับจริง):** หน้าจอรับเข้า/นับ/โอนคลัง · ส่งยอดจากเรากลับ ERP (บัญชีอาจยังต้องใช้) · ตัดสต็อกตอนขายผ่าน `commerce/reservation` ที่มีอยู่ · UI ระบบคลังอยู่ใน repo นี้ (`apps/warehouse-web` ใน josh เป็นแค่ scaffold ว่าง)
 
+### 0.3 AI ต่อได้ทันที — commerce มี MCP server (ตัดสิน 2026-10-03)
+
+ใครจะเอา AI มาใช้กับ commerce (agent ของทีม, Claude, chatbot ของ platform) ต้องต่อผ่าน **MCP** ได้เลยโดยไม่ต้องเขียน integration เอง
+
+- endpoint เดียว `POST /api/mcp` (Streamable HTTP) ใน commerce-platform — ใช้ service เดิม ไม่มี logic ซ้ำ
+- **auth ด้วย API key ของ portal** แยก scope (`mcp:read` ก่อน, `mcp:write` ทีหลัง) · ทุก tool call ลง audit
+- tool ชุดแรกเป็น **อ่านอย่างเดียว**: สต็อกต่อคลัง + ประวัติ movement, หา product ด้วย SKU, inbound log / dead-letter, สถานะ delivery ของแต่ละ platform
+- tool ที่แก้ข้อมูล (ส่ง dead-letter ซ้ำ, ปรับสต็อกตอนเป็นระบบคลังเอง) ทำทีหลัง ต้องมี scope `mcp:write` และยืนยันก่อนทำ
+- **ห้ามทำ MCP ใน josh** — AI โหลดหนักและคาดเดายาก ต้องไม่แตะ performance ของ shop (§0) · ข้อมูล josh ที่ AI ต้องใช้ให้มาจาก event/replica ที่ commerce มีอยู่แล้ว
+- ⚠️ ต้องปิดช่องโหว่ก่อน: controller ฝั่ง admin/integration ของ commerce ตอนนี้ **ไม่มี auth เลย** — แก้ก่อนเปิด MCP หรือ expose commerce ออก network ใด ๆ
+
 **ผลที่ตามมา:** commerce **ไม่เคยอยู่ใน request path ของ shop** · josh เรียก commerce ได้เฉพาะแบบ fire-and-forget/async ที่ล้มได้ · ทุกอย่างที่ commerce เขียนกลับ josh ต้อง idempotent
 
 ---

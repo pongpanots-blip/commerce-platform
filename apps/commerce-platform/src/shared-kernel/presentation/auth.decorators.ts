@@ -15,3 +15,8 @@ export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 /** Allow these staff roles in addition to `admin` (default: admin only). */
 export const StaffRoles = (...roles: StaffRole[]) => SetMetadata(STAFF_ROLES_KEY, roles);
+
+/** What the global staff guard attaches to an authenticated request. */
+export interface StaffRequest {
+  staff: { userId: string; email: string; role: StaffRole };
+}

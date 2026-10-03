@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpException, Param, ParseIntPipe, ParseUUIDPipe, Post, Put, Query, ValidationPipe, DefaultValuePipe, BadRequestException } from '@nestjs/common';
-import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
+import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { ScrapingService } from '../application/scraping.service';
 import { DiscoverScrapingDto, PreviewScrapingDto, SaveScrapingSourceDto, StartScrapingDto } from '../application/dto/scraping.dto';
 

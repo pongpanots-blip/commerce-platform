@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { JSDOM } from 'jsdom';
 import { chromium } from 'playwright';
 import { ScrapingConfig } from '../domain/scraping-source.entity';
-import { parseSideQuantity } from '../../../shared-kernel/helpers/avg-price.helper';
+import { parseSideQuantity } from '../../../../shared-kernel/helpers/avg-price.helper';
 
 export function extractedWeightKg(name: string): number | null {
   // ponytail: explicit single weights only; multipacks/ranges require a person to confirm.
@@ -93,7 +93,7 @@ export class PublicWebReader {
       try {
         const response = await axios.get<Buffer>(url.href, { httpsAgent: agent, proxy: false, maxRedirects: 0,
           responseType: 'arraybuffer', timeout: Math.max(1, deadline - Date.now()), maxContentLength: 5000000, maxBodyLength: 5000000,
-          headers: { 'User-Agent': 'CommercePlatformCatalog/1.0', Accept: 'text/html,application/xhtml+xml,application/xml,text/xml,*/*;q=0.5' },
+          headers: { 'User-Agent': 'JoshPublicCatalog/1.0', Accept: 'text/html,application/xhtml+xml,application/xml,text/xml,*/*;q=0.5' },
           validateStatus: status => status >= 200 && status < 400 });
         if (response.status >= 300) {
           if (!response.headers.location || redirect === 5) throw new BadRequestException('เว็บเปลี่ยนลิงก์หลายครั้งหรือไม่มีปลายทาง');

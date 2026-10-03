@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, ParseUUIDPipe, Query, UseGuards, BadRequestException, Body, ValidationPipe } from '@nestjs/common';
 import { IsUUID, IsUrl, MaxLength } from 'class-validator';
-import { Public } from '../../../shared-kernel/presentation/auth.decorators';
+import { Public } from '../../../../shared-kernel/presentation/auth.decorators';
 import { InternalKeyGuard } from './internal-key.guard';
 import { ScrapingService } from '../application/scraping.service';
 

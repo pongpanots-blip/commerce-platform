@@ -51,6 +51,7 @@ import { NotificationModule } from './modules/platform/notification/notification
 import { FileStorageModule } from './modules/platform/file-storage/file-storage.module';
 import { SearchModule } from './modules/platform/search/search.module';
 import { ScrapingModule } from './modules/platform/scraping/scraping.module';
+import { MarketingResearchModule } from './modules/platform/marketing-research/marketing-research.module';
 
 @Module({
   imports: [
@@ -106,6 +107,7 @@ import { ScrapingModule } from './modules/platform/scraping/scraping.module';
     FileStorageModule,
     SearchModule,
     ScrapingModule,
+    MarketingResearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

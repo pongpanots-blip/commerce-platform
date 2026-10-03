@@ -14,9 +14,33 @@ import { Orders } from './pages/Orders';
 import { Reservations } from './pages/Reservations';
 import { ErpStock } from './pages/ErpStock';
 import { ErpIngest } from './pages/ErpIngest';
+import { MarketingResearch } from './pages/MarketingResearch';
+import { ScrapingSources } from './pages/ScrapingSources';
+import { ScrapedCatalog } from './pages/ScrapedCatalog';
+import { InboundLog } from './pages/InboundLog';
+import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
+import { WebhookPlatforms } from './pages/WebhookPlatforms';
+import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
+  {
+    group: 'Marketing',
+    links: [
+      { to: '/marketing/research', label: 'Research', end: false },
+      { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
+      { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
+    ],
+  },
+  {
+    group: 'ERP hub',
+    links: [
+      { to: '/erp/inbound-log', label: 'Inbound log', end: false },
+      { to: '/erp/webhook-dead-letter', label: 'Dead letter', end: false },
+      { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
+      { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
+    ],
+  },
   {
     group: 'Integration',
     links: [
@@ -80,6 +104,13 @@ export function App() {
         <main className="main">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/marketing/research" element={<MarketingResearch />} />
+            <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />
+            <Route path="/marketing/scraped-catalog" element={<ScrapedCatalog />} />
+            <Route path="/erp/inbound-log" element={<InboundLog />} />
+            <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
+            <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />
+            <Route path="/erp/inventory-warehouse" element={<InventoryPerWarehouse />} />
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/webhooks" element={<Webhooks />} />
             <Route path="/subscriptions" element={<Subscriptions />} />

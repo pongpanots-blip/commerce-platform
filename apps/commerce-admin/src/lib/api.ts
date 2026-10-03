@@ -228,3 +228,115 @@ export const ordersApi = {
   failPay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/fail`, {}),
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
 };
+
+// ---- Marketing research + web scraping (moved from josh) ----
+// These endpoints keep josh's envelope: { status, data, message } with HTTP 200
+// even on failure — a non-empty `message` is the error. `enveloped` unwraps it.
+interface Envelope<T> { status: number; data: T; message: string }
+async function enveloped<T>(p: Promise<Envelope<T>>): Promise<T> {
+  const res = await p;
+  if (res.message) throw new Error(res.message);
+  return res.data;
+}
+
+export type ResearchKind = 'sales' | 'competitor' | 'procurement' | 'trend';
+export const RESEARCH_KINDS: ResearchKind[] = ['sales', 'competitor', 'procurement', 'trend'];
+export const RESEARCH_AREAS = ['กรุงเทพมหานคร', 'กรุงเทพฯ และปริมณฑล', 'ทั่วประเทศไทย'];
+export const RESEARCH_SECTORS = ['ทุกกลุ่ม · น้ำหนักเท่ากัน', 'ร้านอาหาร', 'โรงแรม / จัดเลี้ยง', 'ร้านค้าปลีก', 'โรงงานอาหาร'];
+export interface ResearchSourceStatus { id: string; ready: boolean; reason: string }
+export interface ResearchTopic {
+  id: string; title: string; kind: ResearchKind; area: string; days: number; sector: string;
+  sources: string[]; followHourly: boolean; createdBy: string; version: number;
+  nextRunAt: string | null; archivedAt: string | null; createdAt: string; updatedAt: string; canManage: boolean;
+}
+export interface ResearchRun {
+  id: string; topicId: string; status: string; message: string; attempts: number;
+  findingsCount: number; report: { summary?: string; findings?: { text: string; evidenceIds: string[] }[] } | null;
+  keptAt: string | null; createdAt: string; finishedAt: string | null;
+}
+export interface ResearchTopicInput {
+  title: string; kind: ResearchKind; area: string; days: number; sector: string; sources: string[]; followHourly: boolean;
+}
+
+export const marketingResearchApi = {
+  sources: () => enveloped(api.get<Envelope<ResearchSourceStatus[]>>('/marketing-research/sources')),
+  list: (page = 1, limit = 20) =>
+    enveloped(api.get<Envelope<{ items: ResearchTopic[]; totalCount: number; page: number; limit: number }>>(`/marketing-research/topics?page=${page}&limit=${limit}`)),
+  create: (input: ResearchTopicInput) => enveloped(api.post<Envelope<ResearchTopic>>('/marketing-research/topics', input)),
+  archive: (topic: ResearchTopic) => enveloped(api.post<Envelope<ResearchTopic>>(`/marketing-research/topics/${topic.id}/archive`, { version: topic.version })),
+  runs: (topicId: string) => enveloped(api.get<Envelope<ResearchRun[] | { items: ResearchRun[] }>>(`/marketing-research/topics/${topicId}/runs`)),
+  requestRun: (topicId: string) =>
+    enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/topics/${topicId}/runs`, { requestId: crypto.randomUUID() })),
+  keepRun: (id: string) => enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/runs/${id}/keep`, {})),
+};
+
+export interface ScrapingConfig {
+  startUrls?: string[]; pathPrefixes?: string[]; mode: 'html' | 'browser'; itemSelector?: string;
+  fields?: { key: string; label: string; selector: string; attribute?: string }[];
+  currency?: string; vatIncluded?: boolean; priceContext: string; collectionAllowed?: boolean;
+  intervalHours: number; maxPages?: number; delayMs?: number;
+}
+export interface ScrapingSource {
+  id: string; name: string; origin: string; config: ScrapingConfig; revision: number; enabled: boolean;
+  status: 'idle' | 'running' | 'paused' | 'completed' | 'limited'; lastError: string | null; lastRunAt: string | null;
+  progress: { pages?: number; pending?: number; successful: number; failed: number; items: number };
+}
+export interface ScrapedItem {
+  id: string; sourceId: string; url: string; pageUrl: string; name: string; sku: string;
+  fields: Record<string, string>; priceIncVat: number | null; weightKg: number | null; currency: string;
+  observedAt: string; configCurrent: boolean; source?: { id: string; name: string };
+}
+
+export const scrapingApi = {
+  sources: () => enveloped(api.get<Envelope<ScrapingSource[]>>('/scraping/sources')),
+  discover: (website: string, collectionAllowed: boolean) =>
+    enveloped(api.post<Envelope<unknown>>('/scraping/discover', { website, collectionAllowed })),
+  save: (input: Pick<ScrapingSource, 'name' | 'origin' | 'enabled' | 'config'> & { revision?: number }, id?: string) =>
+    enveloped(id ? api.put<Envelope<ScrapingSource>>(`/scraping/sources/${id}`, input) : api.post<Envelope<ScrapingSource>>('/scraping/sources', input)),
+  start: (source: ScrapingSource) =>
+    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/start`, { revision: source.revision, restart: true })),
+  stop: (source: ScrapingSource) =>
+    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/stop`, { revision: source.revision, restart: false })),
+  items: (sourceId: string, search: string, page: number) => {
+    const qs = new URLSearchParams({ page: String(page) });
+    if (sourceId) qs.set('sourceId', sourceId);
+    if (search) qs.set('search', search);
+    return enveloped(api.get<Envelope<{ items: ScrapedItem[]; total: number; page: number; pageSize: number }>>(`/scraping/items?${qs}`));
+  },
+};
+
+// Webhook Subscriptions & Deliveries
+export interface WebhookDeliveryFull {
+  id: string;
+  subscriptionId: string;
+  eventType: string;
+  targetUrl: string;
+  status: string;
+  statusCode: number | null;
+  attempts: number;
+  error: string | null;
+  payload?: unknown;
+  createdAt: string;
+}
+
+export const webhookApi = {
+  subscriptions: () => api.get<WebhookSubscription[]>('/webhook-subscriptions'),
+  subscription: (id: string) => api.get<WebhookSubscription>(`/webhook-subscriptions/${id}`),
+  createSubscription: (data: {
+    name: string;
+    targetUrl: string;
+    eventTypes: string[];
+    secret?: string;
+    description?: string;
+  }) => api.post<WebhookSubscription>('/webhook-subscriptions', data),
+  updateSubscription: (id: string, data: Partial<WebhookSubscription>) =>
+    api.patch<WebhookSubscription>(`/webhook-subscriptions/${id}`, data),
+  deleteSubscription: (id: string) => api.del<void>(`/webhook-subscriptions/${id}`),
+  deliveries: () => api.get<WebhookDeliveryFull[]>('/webhook-subscriptions/deliveries'),
+  getEvent: (id: string) => api.get<WebhookEvent>(`/webhooks/events/${id}`),
+  replayEvent: (webhookEventId: string) =>
+    api.post<{ replayed: string }>(`/webhooks/replay/${webhookEventId}`, {}),
+  /** Dead-letter: give a failed OUTBOUND delivery a fresh retry budget. */
+  retryDelivery: (deliveryId: string) =>
+    api.post<WebhookDeliveryFull>(`/webhook-subscriptions/deliveries/${deliveryId}/retry`, {}),
+};

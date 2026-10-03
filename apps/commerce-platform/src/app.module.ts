@@ -50,6 +50,7 @@ import { PaymentModule } from './modules/commerce/payment/payment.module';
 import { NotificationModule } from './modules/platform/notification/notification.module';
 import { FileStorageModule } from './modules/platform/file-storage/file-storage.module';
 import { SearchModule } from './modules/platform/search/search.module';
+import { ScrapingModule } from './modules/platform/scraping/scraping.module';
 
 @Module({
   imports: [
@@ -104,6 +105,7 @@ import { SearchModule } from './modules/platform/search/search.module';
     NotificationModule,
     FileStorageModule,
     SearchModule,
+    ScrapingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

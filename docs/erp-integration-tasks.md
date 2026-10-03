@@ -1,6 +1,6 @@
 # ERP Integration — งานที่ต้องทำใน commerce-platform
 
-> เขียน 2026-09-01 · ต้นทาง: `josh/docs/erp-requirements/erp-commerce-prelaunch-plan.html`
+> เขียน 2026-09-01 · อัปเดต 2026-10-03 ตาม josh `origin/main` @ `b5785c6ab` · ต้นทาง: `josh/docs/erp-requirements/erp-commerce-prelaunch-plan.html`
 > Scope: ย้าย ERP integration (Jagota Node API) จาก `josh/apps/backend` มาอยู่หลัง adapter ของ repo นี้
 > **ทำก่อน shop launch** — ไม่มี traffic จริง จึงไม่มี shadow mode / cutover / rollback plan
 
@@ -36,6 +36,39 @@
 | Customer / company / branch | **josh/apps/backend** | commerce เก็บแค่ mapping |
 
 **หลักที่ทำให้ shop ไม่ช้าลง:** commerce เป็นเจ้าของ *ความจริง* ของสต็อกต่อคลัง แต่ต้อง **write-through** กลับไปที่ Redis + Postgres ของ shop ทุกครั้งที่ ingest สำเร็จ เพื่อให้ PLP/PDP/cart ของ shop ยังอ่าน local เหมือนเดิม (0 network hop)
+
+---
+
+## 2.1 ฟีเจอร์ที่แยกจาก josh — ย้ายอะไร / ไม่ย้ายอะไร
+
+> ไฟล์ต้นทางทั้งหมดอยู่ใต้ `josh/apps/backend/src/app/` · ก่อนย้ายแต่ละ task ให้ `git log origin/main -- <path>` ดูว่ามี commit ใหม่หลังวันที่ในหัวเอกสารไหม
+
+### ย้ายมา commerce-platform
+
+| ฟีเจอร์ | ต้นทางใน josh | ปลายทางใน repo นี้ | Task |
+|---|---|---|---|
+| Inbound webhook ERP (guard `X-ERP-Key`, envelope/array pipe) | `erp/erp-webhook.controller.ts`, `erp-key.guard.ts`, `data-envelope.pipe.ts`, `single-or-array.pipe.ts`, `dto/` | `integration/connector/erp/presentation/` | 2,3,4,7 |
+| คิว inbound + log | `erp/erp-inbound-enqueuer.service.ts`, `erp-inbound-queue.processor.ts`, `erp-inbound-log.util.ts` | แทนด้วย `integration/sync-job` (ไม่ copy queue ตัวเอง) | 2 |
+| Stock + sellable | `jagota-order/jagota-stock.service.ts`, `sellable-stock.service.ts` | `commerce/inventory` + write-through Redis ของ shop | 2 |
+| Customer/branch sync ไป ERP | `jagota-order/jagota-customer-sync.service.ts`, `erp-customer-jobs.service.ts`, `erp-customer-queue.processor.ts`, `jagota-branch-sync.service.ts`, `jagota-customer-sync.flag.ts` | `connector/erp` + `integration/mapping` | 4,5 |
+| Outbound Jagota Node API client | `jagota-order/jagota-node-api.service.ts`, `interfaces/jagota-*.types.ts` | `ErpHttpClient` | 5 |
+| Order/quotation push | `jagota-order/jagota-order.service.ts`, `jagota-quotation.service.ts`, `erp-order-unit.helper.ts` | `ErpConnector.createOrder()` + quotation | 5 |
+| Order period / delivery calendar (probe + poll + cache) | `jagota-order/sku-order-period-*`, `supplier-order-period-*`, `delivery-calendar-probe.*`, `delivery-calendar.mapper.ts`, `jagota-delivery-date*.ts` | `connector/erp` → write-through ให้ checkout ของ shop อ่าน local | 6 |
+| Cron auth token / branch status | `jagota-order/jagota-auth-token.cron.ts`, `jagota-branch-status.cron.ts` | `connector/erp` | 6 |
+| ERP Webhook Simulator + mock ต่อ account | `erp/erp-webhook-simulator.controller.ts`, `erp-webhook-simulator.guard.ts` | `connector/erp` (dev/staging เท่านั้น มี kill-switch prod) + หน้าใน commerce-admin | 8 |
+
+### ไม่ย้าย — อยู่ josh ต่อ
+
+| ฟีเจอร์ | เหตุผล |
+|---|---|
+| Payment/billing ที่เรียก Jagota (`get_josh_payment`, invoice QR, KBank notify relay, `/payment/*`, `jagota-finance.service.ts` ส่วนที่ใช้ตอนจ่าย) | ผูก payment ของ shop — §1 ห้ามแตะ |
+| Credit back / credit note, invoice line (`erp-invoice-line.*`) | ผูก order/billing ของ shop |
+| ผลของ order/invoice status ที่ไปแก้ order ของ shop (auto-resume `payment_pending`, credit-term unpaid, notification) | commerce แค่รับ webhook + dedupe แล้วส่ง status ผ่าน internal API — logic ฝั่ง order ยังอยู่ josh |
+| 3PL delivery-status (`/3pl/delivery-status`) | มาจาก 3PL ไม่ใช่ ERP |
+| Shipment tracking (`shipment-tracking.service.ts`, `GET /drivers/tracking`) | read-through cache ที่ลูกค้าเรียกตรงจาก shop — ย้ายมาจะเพิ่ม network hop (cron poll GPS ถูกลบไปแล้วใน `4e7951b5e`) |
+| Staging product/price รอ MER approve (`erp/erp-pending-change.helper.ts`, approve ที่ `product.controller.ts` + web-admin `AllProduct.tsx`) | **MER ทำงานที่ web-admin ที่เดียว** — commerce ส่ง change เข้า staging ของ josh ผ่าน internal API ไม่เปิดหน้า approve ซ้ำใน commerce-admin |
+| competitor-prices / scraping | MER ใช้คู่กับ approve ราคาใน web-admin + join `ProductInventory` ของ shop โดยตรง — แยกออกมาจะทำให้ MER ทำงาน 2 ที่ |
+| marketing-*, cache/perf ทั้งหมด | ไม่เกี่ยวกับ integration |
 
 ---
 
@@ -108,7 +141,7 @@ npm run migration:show
 | `integration/adapter/` (`BaseCommerceAdapter`) | ✅ พร้อมใช้ |
 | `commerce/warehouse` + `commerce/inventory` (`inventory_levels`) | ✅ มีโมเดลต่อคลังแล้ว |
 | `commerce/reservation` | ✅ มี `reserved` ใน `inventory_levels` |
-| `connector/erp/ingest/` (`erp-payload.parsers.ts`, `erp-ingest.service.ts`) | 🟡 มีบางส่วน — parse ได้แค่ product / stock / customer / sale-order |
+| `connector/erp/ingest/` (`erp-payload.parsers.ts`, `erp-ingest.service.ts`) | 🟡 มีบางส่วน — parse ได้แค่ product / stock / customer / sale-order · staging + ownership rules มีแล้วแต่ยังไม่มีกฎ draft / ห้ามทับชื่อ (ดู Task 3) |
 | `ErpConnector.createOrder()` | ❌ mock — คืน `'erp order push not wired'` |
 | `ErpHttpClient` | ❌ ชี้ `/api/v1/orders` ซึ่งไม่ใช่ Jagota Node API |
 | Inbound route รับ webhook จาก ERP | ❌ ยังไม่มีเลย |
@@ -125,6 +158,19 @@ npm run migration:show
 - auth header เดิม: `X-ERP-Key`
 - response เดิม: `{ received: true }`
 - ตอน copy DTO จาก `josh/apps/backend/src/app/erp/dto/erp-webhook.dto.ts` **เปลี่ยนแค่ namespace** ห้ามเปลี่ยนชื่อ field ห้าม normalize เป็น camelCase
+- **copy จาก `origin/main` ล่าสุดเท่านั้น** — DTO เปลี่ยนหลัง 09-01 แล้ว เช่น shape จริงของ `quotation.status.changed` (`a921afcfc`)
+
+### Route inbound ที่มีจริงใน josh (`erp-webhook.controller.ts`, 2026-10-03)
+
+| กลุ่ม | Route | Task |
+|---|---|---|
+| Stock/price/moq | `PUT /erp/products/qty`, `PUT /erp/products/price`, `PUT /erp/products/moq` | 2 |
+| Product | `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image` | 3 |
+| Customer/company | `POST /erp/customers`, `PUT /erp/customers`, `POST /erp/companies` | 4 |
+| Order period / calendar | `POST /erp/order-periods`, `PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` | 6 |
+| Order/invoice/quotation | `POST`+`PUT /erp/orders/status`, `POST`+`PUT /erp/invoices/status`, `POST`+`PUT /erp/quotations`, `POST`+`PUT /erp/quotations/status` | 7 |
+
+รวม 22 route (POST กับ PUT ของ path เดียวกันต้องรับทั้งคู่) · **ไม่มี `/erp/categories*` แล้ว** — ถูกลบใน `f418ba325` เพราะ ERP sync แค่ SKU/price/qty · route ใต้ `/erp/testing/*` เป็น simulator ไม่ใช่ contract
 
 ---
 
@@ -134,7 +180,7 @@ npm run migration:show
 
 **ทำอะไร:** ตกลงกับฝั่ง josh ว่า commerce จะเรียกอะไรกลับไป mutate ข้อมูลของ shop
 
-- นิยาม endpoint: upsert product, set stock, update order status, upsert customer
+- นิยาม endpoint: **stage ERP product/price change** (เข้า staging ให้ MER approve ที่ web-admin), set stock, set order period / delivery date, update order status, upsert customer
 - auth: shared secret (ไม่ใช่ public route)
 - **idempotency key ทุก request** — ERP ยิงซ้ำได้ commerce retry ได้ ปลายทางต้องกันซ้ำเองได้
 - นิยามว่า fail แล้วตอบอะไร → commerce ต้องแยก "retry ได้" ออกจาก "retry ไปก็ไม่ขึ้น" (4xx vs 5xx)
@@ -160,7 +206,8 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 - ขยาย `erp-payload.parsers.ts`
 - เขียนลง `inventory_levels`
 - **write-through กลับ shop**: Redis `jagota:sellable:<sku>` + Postgres ของ shop ผ่าน internal API
-- ผ่าน `sync-job` เพื่อให้ retry ได้
+- ผ่าน `sync-job` เพื่อให้ retry ได้ — josh มีคิวของตัวเองแล้ว (`erp-inbound-enqueuer.service.ts` + `erp-inbound-queue.processor.ts`) ให้อ่านเป็น reference ว่า dedupe/retry อะไรไว้บ้าง แต่ไม่ต้อง copy queue มา
+- **price ส่งเข้า staging ของ josh** ไม่เขียน live ทันที (ดู Task 3) — qty/moq เขียน live ได้
 
 **เสร็จเมื่อ:** ยิง payload จริงของ ERP เข้ามาแล้ว `inventory_levels` อัปเดต และ shop อ่านค่าใหม่ได้ · retry ทำงานเมื่อ internal API ล้ม
 **เวลา:** 3-4 วัน
@@ -170,25 +217,40 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 ### Task 3 — Inbound: product / category
 
 **ทำอะไร:**
-- `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image`
-- `POST /erp/categories`, `POST /erp/categories/hierarchy`
+- `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image`
+- ~~`/erp/categories*`~~ — **ตัดออก** josh ลบไปแล้วใน `f418ba325` (category เป็นของ shop ไม่ได้มาจาก ERP)
 
-`ProductUpsertDto` มี ~40 field (`PRODUCT_NAME_E/T`, `BRAND`, `UNIT`, `UNIT_PER_BOX`, `PACK_SIZE`, `TEMPERATURE`, `NUTRITION_CONTENT`, `ORDERING_OPTIONS`, `COUNTRY_CODE`, …) เป็น upsert ตรง ๆ ไม่มี state machine
+`ProductUpsertDto` มี ~40 field (`PRODUCT_NAME_E/T`, `BRAND`, `UNIT`, `UNIT_PER_BOX`, `PACK_SIZE`, `TEMPERATURE`, `NUTRITION_CONTENT`, `ORDERING_OPTIONS`, `COUNTRY_CODE`, …)
 
-**ระวัง:** category hierarchy ต้องจัดการลำดับ parent มาก่อน child ถ้า ERP ส่งไม่เรียง
+**แบ่งงาน — MER approve ที่ web-admin ของ josh ที่เดียว:**
+- **commerce:** รับ webhook → parse → dedupe → audit → ส่ง product/price change เข้า **staging ของ josh** ผ่าน internal API (endpoint "stage ERP change" ใน contract ของ Task 1) · ต้องส่ง source `product` / `price` / `product+price` ไปด้วย
+- **josh (ไม่ย้าย):** staging (`erp-pending-change.helper.ts`), หน้า approve ของ MER (`AllProduct.tsx`), competitor-prices ที่ MER ใช้เทียบราคาตอน approve
+- staging/review ของ commerce-admin (C3b-T10) **ไม่ใช้เป็นหน้า approve ของ MER** — ใช้ดู audit/retry ของ ingest สำหรับ dev/ops เท่านั้น
 
-**เจ้าของข้อมูล:** product master ยังเป็นของ shop — commerce เก็บ mapping + audit แล้วส่งต่อผ่าน internal API
+**กฎที่ josh เพิ่มหลัง 09-01 — บังคับใช้ตอนเขียนลง josh ฝั่ง commerce ห้ามทำซ้ำ แค่ห้ามตัด field ทิ้ง:**
+- product/price จาก ERP เข้า staging รอ MER approve ก่อนขึ้น live (`1e32089e8`)
+- product ที่ ERP สร้างใหม่ **เริ่มเป็น draft** admin ต้อง approve (`f83054562`)
+- **ห้ามเขียนทับ** `PRODUCT_NAME_E/T` และ description ของสินค้าที่มีอยู่แล้ว (`aff4777d0`)
+- ERP เขียน product status ได้เฉพาะบางสถานะ (`shared/helpers/product-status.helper.ts`)
+- pack/ordering unit normalize ที่ josh (`erp-order-unit.helper.ts`, `erp-pack-sync.helper.ts`)
 
-**เวลา:** 4-5 วัน
+**เจ้าของข้อมูล:** product master + staging + approve เป็นของ shop — commerce เก็บแค่ mapping + audit
+
+**เวลา:** 3-4 วัน (category ตัดออก, staging ไม่ต้องทำฝั่งนี้)
 
 ---
 
 ### Task 4 — Inbound: customer / company
 
-- `POST /erp/customers`
+- `POST /erp/customers`, `PUT /erp/customers`
 - `POST /erp/companies`
 
 ใช้ `integration/mapping` เก็บคู่ external id ↔ shop id
+
+**ขาออก (shop → ERP) ที่ josh ย้ายขึ้น BullMQ แล้ว (`4a06d43ff`)** — ต้นทาง `erp-customer-jobs.service.ts`, `erp-customer-queue.processor.ts`, `jagota-customer-sync.service.ts` ระวังเรื่องที่ josh แก้ไปแล้ว:
+- business customer ต้องรอ company สร้างเสร็จก่อน (`0719a10f0`)
+- create-customer timeout กลาง registration (`e08015c10`)
+- เก็บ INA code จริง และ email ตอนสมัครยาวได้ไม่เกิน 50 ตัวอักษร (`6d5a62404`)
 
 **เวลา:** 2-3 วัน
 
@@ -200,8 +262,19 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 - `ErpHttpClient` ต้องชี้ Jagota Node API ไม่ใช่ `/api/v1/*` ที่เป็น stub
 - implement `ErpConnector.createOrder()` ให้ยิง `POST /order/add-order-create` จริง แล้วเก็บ `DOC_BOOK` / `DOC_NO` กลับมา
-- อีก 5 เส้น: `/quotation/create`, `/customers/create-customer`, `/customers/match-existing`, `/branch/create-branch`, `/finance/get-customer-info`
-- ต้นทาง logic: `josh/apps/backend/src/app/jagota-order/jagota-order.service.ts` → `submitCreateOrderToJagota()`
+- เส้นที่ต้องย้าย (นับจาก `jagota-order/` ณ 2026-10-03):
+
+| กลุ่ม | Path |
+|---|---|
+| Order/quotation | `/order/add-order-create`, `/order/cancel-josh-stock-order`, `/quotation/create` |
+| Customer/branch | `/customers/create-customer`, `/customers/match-existing`, `/customers/registration/*`, `/branch/create-branch`, `/branch/get-branch-by-magento-id` |
+| Product read | `/products/get-order-periods`, `/products/get-product-order-period`, `/products/get-product-season`, `/products/get-customer-special-price`, `/products/<sku>/delivery-date` |
+| Finance read | `/finance/get-customer-info` |
+
+- **ไม่ย้าย** (อยู่ josh — ผูก payment/billing): `/payment/*`, `get_josh_payment`, invoice QR, `/finance/get-billing-list`, `/finance/get-customer-invoice-list`, `/finance/get-payment-history`
+  - ทั้งสองฝั่งจะเรียก Jagota Node API → **auth token ต้องมีเจ้าของเดียว** (ดู Task 6) ฝั่ง josh ต้องขอ token จาก commerce หรือแชร์ผ่าน Redis
+- ต้นทาง logic: `jagota-node-api.service.ts` (client), `jagota-order.service.ts` → `submitCreateOrderToJagota()`, `jagota-quotation.service.ts`, `jagota-branch-sync.service.ts`
+- `/order/add-order-create` ใช้ shipment number เป็น `P_DOCUMENT` (`a1e9f5bd6`)
 
 **ระวัง:** auth token ของ Jagota มี cron refresh (`jagota-auth-token.cron.ts`) ย้ายมาด้วยใน Task 6 — ระหว่างนี้อย่าให้รันซ้อนสองฝั่ง
 
@@ -209,27 +282,43 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 6 — Cron: auth token + branch status
+### Task 6 — Cron + order period / delivery calendar
 
+**Cron ที่ต้องย้าย:**
 - `jagota-auth-token.cron.ts`
 - `jagota-branch-status.cron.ts`
+- `supplier-order-period-poll.cron.ts` — group sync ตาม SUP, gate ด้วย `ORDER_PERIOD` (`442913c0e`)
+- `sku-order-period-probe.cron.ts`
+- `delivery-calendar-probe.cron.ts`
+- `jagota-delivery-date-cache.cron.ts`
 
-**สำคัญ:** ปิดฝั่ง `josh/apps/backend` ด้วย env flag **ทันที** ที่ฝั่งนี้ขึ้น ห้ามเปิดทิ้งไว้ทั้งคู่
+**Inbound ที่ไปด้วยกัน:** `POST`+`PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe`
 
-**เวลา:** 2-3 วัน
+**ประเด็นสำคัญ:** order period กับ delivery date ถูก checkout ของ shop อ่านทุกครั้ง → commerce ทำแค่ probe/poll/รับ webhook แล้ว **write-through ลง Redis/Postgres ของ shop** แบบเดียวกับ stock ใน Task 2 ห้ามให้ checkout เรียกข้ามมาที่นี่
+
+**สำคัญ:** ปิดฝั่ง `josh/apps/backend` ด้วย env flag **ทันที** ที่ฝั่งนี้ขึ้น ห้ามเปิดทิ้งไว้ทั้งคู่ — schedule และ env ของ josh ย้ายไปรวมที่ `src/config` แล้ว (`4b236da02`) ให้ใส่ flag ที่นั่น
+
+**เวลา:** 4-5 วัน (เพิ่มจาก 2-3 วัน เพราะมี cron order period / delivery เพิ่มมา)
 
 ---
 
 ### Task 7 — Inbound: order / quotation lifecycle (ยากสุด ทำท้ายสุด)
 
-- `POST /erp/orders/status`
-- `POST /erp/invoices/status`
-- `POST /erp/quotations`
-- `POST /erp/quotations/status`
+- `POST`+`PUT /erp/orders/status`
+- `POST`+`PUT /erp/invoices/status`
+- `POST`+`PUT /erp/quotations`
+- `POST`+`PUT /erp/quotations/status`
 
 ผูกกับ order lifecycle + sellable stock ของ shop
 
-**ต้อง idempotent จริง** — ERP ยิงซ้ำได้ และ status อาจมาไม่เรียง ต้องกัน status เก่าทับ status ใหม่
+**ต้อง idempotent จริง** — ERP ยิงซ้ำได้ และ status อาจมาไม่เรียง ต้องกัน status เก่าทับ status ใหม่ · josh เข้าคิว + dedupe เส้นพวกนี้แล้ว (`299de0ffb`) ให้ใช้เป็น reference
+
+**แบ่งงาน:** commerce รับ webhook, dedupe, เก็บ audit, map `DOC_BOOK`/`DOC_NO` แล้วส่ง status ผ่าน internal API · **ผลกับ order ยังเป็น logic ของ josh** ได้แก่ auto-resume `payment_pending` เมื่อ quotation approve (`80af640a3`), invoice credit-term ยังเป็น unpaid (`71dcf7dfe`), credit back ต่อ shipment, notification
+
+**สิ่งที่ต้องรักษาไว้:**
+- backfill `DOC_BOOK`/`DOC_NO` จาก orders/status ถ้า push ตอนแรกไม่ได้กลับมา (`81fb86ccf`)
+- quotation status ใช้ shape จริงของ ERP (`a921afcfc`)
+- quotation ที่ยัง pending ต้อง tag เป็น `sync_status = pending` (`44d5018e7`)
 
 **เวลา:** 4-5 วัน
 
@@ -237,9 +326,11 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ### Task 8 — Reliability + wiring
 
-- Dead-letter queue + alert เมื่อ ingest ล้มเกิน N ครั้ง (ห้ามให้ webhook หายเงียบ — นี่คือปัญหาเดิมของ `josh/apps/backend` ที่เป็น ack-only)
-- nginx route `/api/erp/*` → commerce-platform
-- Smoke test ครบทุก route ด้วย payload จริงจากทีม ERP
+- Dead-letter queue + alert เมื่อ ingest ล้มเกิน N ครั้ง (ห้ามให้ webhook หายเงียบ — josh เข้าคิวบางเส้นแล้ว แต่ยังไม่มี DLQ/alert)
+- nginx route `/api/erp/*` → commerce-platform (ยกเว้น `/api/3pl/*` ที่ยังอยู่ josh)
+- **ย้าย ERP Webhook Simulator มาด้วย** (`erp-webhook-simulator.controller.ts` + guard, `6412c0566`, `b2c4ec965`) — ยิงได้ครบทุก inbound route + mock ต่อ account สำหรับ full-loop test · ต้องมี kill-switch ปิดใน prod (`122d707c1`) · หน้า console ย้ายไป commerce-admin
+  - ส่วนที่ preview credit back / shipment ของ simulator อ่านข้อมูล order ของ shop → เหลือไว้ใน josh หรือเรียกผ่าน internal API
+- Smoke test ครบทุก route ด้วย payload จริงจากทีม ERP (ใช้ simulator ข้างบน)
 - **Provision EC2 + ECR ของ repo นี้** (README บอกว่ายังไม่ทำ) — ต้องอยู่ **VPC เดียวกับ josh backend** ไม่งั้น latency ของ internal API call จะไม่ใช่ 1-3ms อีกต่อไป
 
 **เวลา:** 4-6 วัน
@@ -274,10 +365,12 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ## 9. เช็คก่อนเริ่ม
 
-- [ ] ยืนยันกับทีม ERP ว่า 18 route + payload นิ่งพอจะ implement (หรืออันไหนยังจะเปลี่ยน)
+- [ ] ยืนยันกับทีม ERP ว่า 22 route (ตาราง §5) + payload นิ่งพอจะ implement (หรืออันไหนยังจะเปลี่ยน)
+- [ ] ตกลงเจ้าของ Jagota auth token ตัวเดียว เพราะ payment/billing ของ josh ยังเรียก Jagota เองอยู่ (Task 5)
+- [ ] ก่อนเริ่มแต่ละ task ให้ diff ต้นทางใน josh เทียบกับวันที่ในหัวเอกสาร
 - [ ] เคลียร์ไฟล์ค้าง uncommitted ใน `commerce/order/`, `commerce/reservation/`
 - [ ] ตกลงว่า commerce-platform รัน EC2 ตัวไหน และอยู่ VPC เดียวกับ josh backend
 - [ ] ตกลงว่า `commerce_db` และ Redis ใช้ instance ร่วมกับ shop หรือแยก (ต้องเข้าถึง Redis ของ shop ได้ถ้าจะ write-through)
 - [ ] มี dev bandwidth ต่อเนื่อง ~5-6 สัปดาห์ (migration แบบขาดตอนเสี่ยง drift สูง)
 
-**รวมทั้งหมด ~5-6 สัปดาห์ dev เต็มเวลา**
+**รวมทั้งหมด ~6 สัปดาห์ dev เต็มเวลา** (Task 6 เพิ่ม ~2 วัน, Task 3 ลด ~1 วันเพราะ staging อยู่ josh)

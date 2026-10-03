@@ -36,13 +36,14 @@
 # "a row was created just now", so repeated runs against the same DB pass.
 set -euo pipefail
 API=${API:-http://localhost:3100/api}
+source "$(dirname "$0")/_staff-token.sh"
 KEY=${KEY:-e2e-key}
 PGHOST=${PGHOST:-localhost}
 PG_USER=${PGUSER:-pongpanot_s}
 PGDATABASE=${PGDATABASE:-commerce_db}
 ERP_SECRET_DEFAULT=${ERP_SIGNING_SECRET:-e2e-erp-secret}
 
-req()   { curl -sf -H 'Content-Type: application/json' -H "X-Api-Key: $KEY" "$@"; }
+req()   { curl -sf -H 'Content-Type: application/json' -H "X-Api-Key: $KEY" -H "Authorization: Bearer $STAFF_TOKEN" "$@"; }
 httpcode(){ curl -s -o /dev/null -w '%{http_code}' "$@"; }
 psqlc() { psql -h "$PGHOST" -U "$PG_USER" -d "$PGDATABASE" -tAc "$1"; }
 assert(){ if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (got '$2', want '$3')"; exit 1; fi }

@@ -13,6 +13,7 @@
     "migration:run": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:run -d apps/commerce-platform/src/data-source.ts",
     "migration:revert": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:revert -d apps/commerce-platform/src/data-source.ts",
     "migration:show": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:show -d apps/commerce-platform/src/data-source.ts",
+    "create-staff": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/create-staff.ts",
     "migration:generate": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:generate -d apps/commerce-platform/src/data-source.ts"
   },
   "dependencies": {

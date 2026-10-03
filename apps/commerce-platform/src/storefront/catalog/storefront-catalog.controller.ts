@@ -2,9 +2,12 @@ import { Controller, Get, Param, ParseUUIDPipe, Query, UseGuards } from '@nestjs
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { StorefrontApiKeyGuard } from '../storefront-api-key.guard';
 import { StorefrontCatalogService } from './storefront-catalog.service';
+import { Public } from '../../shared-kernel/presentation/auth.decorators';
 
 @ApiTags('storefront-catalog')
 @ApiSecurity('apiKey')
+// Own auth (or health) — skip the global staff guard.
+@Public()
 @Controller('v1/storefront/catalog')
 @UseGuards(StorefrontApiKeyGuard)
 export class StorefrontCatalogController {

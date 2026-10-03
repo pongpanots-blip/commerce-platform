@@ -3,6 +3,7 @@ import { ErpKeyGuard } from './erp-key.guard';
 import { SingleOrArrayPipe } from './single-or-array.pipe';
 import { ProductMoqItemDto, ProductPriceItemDto, ProductQtyItemDto } from './erp-feed.dto';
 import { ErpFeedService } from '../ingest/erp-feed.service';
+import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 
 /**
  * ERP → hub feed. Same paths, auth header and wire shape as josh's
@@ -11,6 +12,8 @@ import { ErpFeedService } from '../ingest/erp-feed.service';
  * staged — never waits on a downstream platform.
  */
 @UseGuards(ErpKeyGuard)
+// Own auth (or health) — skip the global staff guard.
+@Public()
 @Controller('erp')
 export class ErpFeedController {
   constructor(private readonly feed: ErpFeedService) {}

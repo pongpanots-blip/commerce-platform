@@ -25,10 +25,11 @@
 #   SCENARIOS=D   bash checkout-scenarios.sh   # against TTL=0 platform
 set -euo pipefail
 API=${API:-http://localhost:3100/api}
+source "$(dirname "$0")/_staff-token.sh"
 SCENARIOS=${SCENARIOS:-ABCD}
 has_scenario() { case "$SCENARIOS" in *"$1"*) return 0 ;; *) return 1 ;; esac; }
 
-req() { curl -sf -H 'Content-Type: application/json' "$@"; }
+req() { curl -sf -H 'Content-Type: application/json' -H "Authorization: Bearer $STAFF_TOKEN" "$@"; }
 new_order() { # $1 = productId
   req -X POST "$API/orders" -d "{\"customerId\":\"$CUSTOMER\",\"lines\":[{\"productId\":\"$1\",\"qty\":1,\"unitPrice\":100}]}" | jq -r .id
 }

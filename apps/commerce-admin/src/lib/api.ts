@@ -11,13 +11,45 @@ export interface Paginated<T> {
   pageSize: number;
 }
 
+// Staff session. sessionStorage: gone when the tab closes; the token itself
+// expires after 12h (platform JwtModule). Wrapped — storage can throw.
+const TOKEN_KEY = 'cp_admin_token';
+export const session = {
+  get(): string | null {
+    try { return sessionStorage.getItem(TOKEN_KEY); } catch { return null; }
+  },
+  set(token: string) {
+    try { sessionStorage.setItem(TOKEN_KEY, token); } catch { /* private mode: stays in memory for this load */ }
+  },
+  clear() {
+    try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
+  },
+};
+
+export async function login(email: string, password: string): Promise<{ role: string }> {
+  const res = await request<{ accessToken: string; role: string }>('/admin/auth/login', {
+    method: 'POST', body: JSON.stringify({ email, password }),
+  });
+  session.set(res.accessToken);
+  return { role: res.role };
+}
+
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = session.get();
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
   const text = await res.text();
   const body = text ? JSON.parse(text) : null;
+  if (res.status === 401 && path !== '/admin/auth/login') {
+    // Expired or missing session — back to the login screen.
+    session.clear();
+    window.dispatchEvent(new Event('cp-session-expired'));
+  }
   if (!res.ok) {
     const message =
       body?.error?.message || body?.message || `${res.status} ${res.statusText}`;

@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react';
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { session } from '../lib/api';
+import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Integrations } from './pages/Integrations';
 import { Webhooks } from './pages/Webhooks';
@@ -38,6 +41,20 @@ const NAV = [
 ];
 
 export function App() {
+  const [signedIn, setSignedIn] = useState(() => Boolean(session.get()));
+  useEffect(() => {
+    const expired = () => setSignedIn(false);
+    window.addEventListener('cp-session-expired', expired);
+    return () => window.removeEventListener('cp-session-expired', expired);
+  }, []);
+
+  if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
+
+  function signOut() {
+    session.clear();
+    setSignedIn(false);
+  }
+
   return (
     <BrowserRouter>
       <div className="layout">
@@ -55,6 +72,10 @@ export function App() {
               </div>
             ))}
           </nav>
+          <div className="side-foot">
+            <span>Signed in</span>
+            <button className="btn ghost sm" type="button" onClick={signOut}>Sign out</button>
+          </div>
         </aside>
         <main className="main">
           <Routes>

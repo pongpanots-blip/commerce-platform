@@ -34,7 +34,7 @@ describe('PortalAuthService', () => {
     const passwordHash = await bcrypt.hash('secret123', 10);
     const { service, jwt } = makeService({ id: 'u1', email: 'dev@example.com', role: 'developer', passwordHash, status: 'active' });
     const res = await service.login('dev@example.com', 'secret123');
-    expect(res).toEqual({ accessToken: 'jwt-token' });
+    expect(res).toEqual({ accessToken: 'jwt-token', role: 'developer' });
     expect(jwt.signAsync).toHaveBeenCalledWith({ sub: 'u1', email: 'dev@example.com', role: 'developer' });
   });
 

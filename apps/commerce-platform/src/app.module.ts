@@ -50,6 +50,9 @@ import { PaymentModule } from './modules/commerce/payment/payment.module';
 import { NotificationModule } from './modules/platform/notification/notification.module';
 import { FileStorageModule } from './modules/platform/file-storage/file-storage.module';
 import { SearchModule } from './modules/platform/search/search.module';
+import { ScrapingModule } from './modules/platform/scraping/scraping.module';
+import { MarketingResearchModule } from './modules/platform/marketing-research/marketing-research.module';
+import { CompetitorPricesModule } from './modules/integration/competitor-prices/competitor-prices.module';
 
 @Module({
   imports: [
@@ -104,6 +107,9 @@ import { SearchModule } from './modules/platform/search/search.module';
     NotificationModule,
     FileStorageModule,
     SearchModule,
+    ScrapingModule,
+    MarketingResearchModule,
+    CompetitorPricesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

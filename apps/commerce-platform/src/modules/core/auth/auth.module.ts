@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/infrastructure/user.entity';
+import { APP_GUARD } from '@nestjs/core';
 import { PortalAuthService } from './application/portal-auth.service';
+import { StaffAuthGuard } from './presentation/staff-auth.guard';
+import { StaffAuthController } from './presentation/staff-auth.controller';
 
 @Module({
   imports: [
@@ -12,7 +15,9 @@ import { PortalAuthService } from './application/portal-auth.service';
       signOptions: { expiresIn: '12h' },
     }),
   ],
-  providers: [PortalAuthService],
+  controllers: [StaffAuthController],
+  // Global default-deny: every HTTP route needs a staff token unless @Public().
+  providers: [PortalAuthService, { provide: APP_GUARD, useClass: StaffAuthGuard }],
   exports: [PortalAuthService, JwtModule],
 })
 export class AuthModule {}

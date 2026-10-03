@@ -6,13 +6,14 @@ import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
 import { WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 import { WebhookSubscriptionService } from './webhook-subscription.service';
-import { QUEUES } from '../../../../config/redis.config';
+import { QUEUES, RETRY_JOB_OPTIONS } from '../../../../config/redis.config';
 
 interface EmittedEvent {
   eventId?: string;
   type?: string;
   aggregateId?: string;
   payload?: unknown;
+  metadata?: { snapshot?: boolean };
 }
 
 /**
@@ -62,12 +63,15 @@ export class WebhookDispatcher {
             type: eventType,
             aggregateId: data.aggregateId ?? null,
             data: data.payload ?? null,
+            // Latest-wins events: the worker skips this one if a newer one for
+            // the same aggregate already reached the subscriber.
+            ...(data.metadata?.snapshot ? { snapshot: true } : {}),
           },
           status: 'pending',
           attempts: 0,
         }),
       );
-      await this.queue.add('deliver', { deliveryId: delivery.id });
+      await this.queue.add('deliver', { deliveryId: delivery.id }, RETRY_JOB_OPTIONS);
       this.logger.log(`Queued ${eventType} → ${sub.name} (${sub.targetUrl})`);
     }
   }

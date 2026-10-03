@@ -17,6 +17,9 @@ import { IntegrationService } from './integration/application/integration.servic
 import { IntegrationController } from './integration/presentation/integration.controller';
 import { MappingModule } from './mapping/mapping.module';
 import { SettingsModule } from '../core/settings/settings.module';
+import { InventoryModule } from '../commerce/inventory/inventory.module';
+import { ErpFeedController } from './connector/erp/presentation/erp-feed.controller';
+import { ErpFeedService } from './connector/erp/ingest/erp-feed.service';
 
 /**
  * Owns the single {@link ConnectorRegistry} and registers the built-in
@@ -25,9 +28,9 @@ import { SettingsModule } from '../core/settings/settings.module';
  * integrations.
  */
 @Module({
-  imports: [TypeOrmModule.forFeature([Integration, ErpStubStock, ErpStubReservation, ErpIngestRecord]), MappingModule, SettingsModule],
-  controllers: [IntegrationController, ErpStubStockController],
-  providers: [ConnectorRegistry, ExampleConnector, ErpStubConnector, ErpHttpClient, ErpConnector, ErpEventProcessor, ErpOrderPushSubscriber, IntegrationService, ErpIngestService],
+  imports: [TypeOrmModule.forFeature([Integration, ErpStubStock, ErpStubReservation, ErpIngestRecord]), MappingModule, SettingsModule, InventoryModule],
+  controllers: [IntegrationController, ErpStubStockController, ErpFeedController],
+  providers: [ConnectorRegistry, ExampleConnector, ErpStubConnector, ErpHttpClient, ErpConnector, ErpEventProcessor, ErpOrderPushSubscriber, IntegrationService, ErpIngestService, ErpFeedService],
   exports: [ConnectorRegistry, IntegrationService, TypeOrmModule, ErpHttpClient, ErpIngestService],
 })
 export class IntegrationModule implements OnModuleInit {

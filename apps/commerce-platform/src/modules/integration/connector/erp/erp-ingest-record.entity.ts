@@ -1,8 +1,11 @@
 import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from '../../../../shared-kernel/domain/base.entity';
 
-export type ErpIngestEntityType = 'product' | 'stock' | 'customer' | 'sale_order';
-export type ErpIngestStatus = 'received' | 'applied' | 'failed' | 'skipped';
+/** Feed types are processed at receipt by ErpFeedService (one row per SKU), never via apply(). */
+export type ErpFeedEntityType = 'product_qty' | 'product_price' | 'product_moq';
+export type ErpIngestEntityType = 'product' | 'stock' | 'customer' | 'sale_order' | ErpFeedEntityType;
+export const ERP_FEED_ENTITY_TYPES: ReadonlySet<string> = new Set<ErpFeedEntityType>(['product_qty', 'product_price', 'product_moq']);
+export type ErpIngestStatus = 'received' | 'applied' | 'failed' | 'skipped' | 'stale' | 'ignored';
 
 /**
  * Staging row for inbound ERP data ("เอามากรองก่อน"): every payload lands here

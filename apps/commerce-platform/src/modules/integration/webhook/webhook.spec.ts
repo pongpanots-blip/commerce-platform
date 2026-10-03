@@ -8,6 +8,7 @@ import { WebhookEvent } from './infrastructure/webhook-event.entity';
 import { Integration } from '../integration/infrastructure/integration.entity';
 import { IntegrationService } from '../integration/application/integration.service';
 import { IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
+import { RETRY_JOB_OPTIONS } from '../../../config/redis.config';
 
 const SECRET = 'shh';
 const BODY = JSON.stringify({ hello: 'world' });
@@ -59,7 +60,8 @@ describe('WebhookReceiverService', () => {
     expect(webhookRepo.save).toHaveBeenCalledWith(
       expect.objectContaining({ payload: { hello: 'world' }, status: 'received', signatureValid: true }),
     );
-    expect(queue.add).toHaveBeenCalledWith('process', { webhookEventId: saved.id });
+    // Must carry retry options — BullMQ's default is a single attempt.
+    expect(queue.add).toHaveBeenCalledWith('process', { webhookEventId: saved.id }, RETRY_JOB_OPTIONS);
   });
 
   it('rejects a bad signature with 401 and does NOT enqueue', async () => {

@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
+import { QUEUES, RETRY_JOB_OPTIONS } from '../../../../config/redis.config';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
-import { WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
+import { DeliveryStatus, WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 
 /** CRUD for outbound webhook subscriptions + read access to the delivery log. */
 @Injectable()
@@ -12,6 +15,7 @@ export class WebhookSubscriptionService {
     private readonly subs: Repository<WebhookSubscription>,
     @InjectRepository(WebhookDelivery)
     private readonly deliveries: Repository<WebhookDelivery>,
+    @InjectQueue(QUEUES.WEBHOOK_OUT) private readonly queue: Queue,
   ) {}
 
   list(): Promise<WebhookSubscription[]> {
@@ -50,7 +54,22 @@ export class WebhookSubscriptionService {
       .getMany();
   }
 
-  listDeliveries(limit = 100): Promise<WebhookDelivery[]> {
-    return this.deliveries.find({ order: { createdAt: 'DESC' }, take: limit });
+  listDeliveries(limit = 100, status?: DeliveryStatus): Promise<WebhookDelivery[]> {
+    return this.deliveries.find({ where: status ? { status } : {}, order: { createdAt: 'DESC' }, take: limit });
+  }
+
+  /**
+   * Dead-letter → try again: a 'failed' delivery gets a fresh retry budget.
+   * The worker still drops it as 'superseded' if a newer snapshot for the same
+   * aggregate already reached that subscriber.
+   */
+  async retryDelivery(id: string): Promise<WebhookDelivery> {
+    const delivery = await this.deliveries.findOne({ where: { id } });
+    if (!delivery) throw new NotFoundException(`Delivery ${id} not found`);
+    if (delivery.status !== 'failed') throw new BadRequestException(`Only failed deliveries can be retried (this one is ${delivery.status})`);
+    Object.assign(delivery, { status: 'pending', attempts: 0, error: null });
+    const saved = await this.deliveries.save(delivery);
+    await this.queue.add('deliver', { deliveryId: id }, RETRY_JOB_OPTIONS);
+    return saved;
   }
 }

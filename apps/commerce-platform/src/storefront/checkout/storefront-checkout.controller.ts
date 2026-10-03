@@ -3,9 +3,12 @@ import { ApiHeader, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { StorefrontApiKeyGuard } from '../storefront-api-key.guard';
 import { StorefrontCheckoutService } from './storefront-checkout.service';
 import { PaymentResultDto, StorefrontCheckoutDto } from './dto/storefront-checkout.dto';
+import { Public } from '../../shared-kernel/presentation/auth.decorators';
 
 @ApiTags('storefront-checkout')
 @ApiSecurity('apiKey')
+// Own auth (or health) — skip the global staff guard.
+@Public()
 @Controller('v1/storefront/checkout')
 @UseGuards(StorefrontApiKeyGuard)
 export class StorefrontCheckoutController {

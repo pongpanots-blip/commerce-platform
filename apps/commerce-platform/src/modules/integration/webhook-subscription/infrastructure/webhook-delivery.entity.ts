@@ -1,7 +1,8 @@
 import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from '../../../../shared-kernel/domain/base.entity';
 
-export type DeliveryStatus = 'pending' | 'success' | 'failed';
+/** superseded = a newer snapshot event for the same aggregate already reached the subscriber. */
+export type DeliveryStatus = 'pending' | 'success' | 'failed' | 'superseded';
 
 /** One outbound delivery attempt of an event to a subscription's target URL. */
 @Entity('webhook_deliveries')

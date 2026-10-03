@@ -1,8 +1,63 @@
 # ERP Integration — งานที่ต้องทำใน commerce-platform
 
-> เขียน 2026-09-01 · ต้นทาง: `josh/docs/erp-requirements/erp-commerce-prelaunch-plan.html`
-> Scope: ย้าย ERP integration (Jagota Node API) จาก `josh/apps/backend` มาอยู่หลัง adapter ของ repo นี้
+> เขียน 2026-09-01 · อัปเดต 2026-10-03 ตาม josh `origin/main` @ `b5785c6ab` · ต้นทาง: `josh/docs/erp-requirements/erp-commerce-prelaunch-plan.html`
+> Scope: commerce-platform เป็น hub รับ ERP แล้วกระจายให้ทุก platform (josh คือตัวแรก) · josh กับ commerce ล่มแยกกันได้ (§0) · ย้ายงานหนักออกจาก josh (Task 9)
 > **ทำก่อน shop launch** — ไม่มี traffic จริง จึงไม่มี shadow mode / cutover / rollback plan
+
+---
+
+## 0. หลักข้อแรก — ตัวใดตัวหนึ่งตายได้ (ตัดสิน 2026-10-03)
+
+**josh กับ commerce ต้องอยู่รอดได้เมื่ออีกฝั่งล่ม** ทุก design ในเอกสารนี้ต้องผ่านคำถาม 2 ข้อ:
+
+1. **commerce ล่ม → josh ยังขายของได้ครบไหม?** ต้องได้ — josh ห้าม block รอ commerce ใน request path หรือ cron ที่ checkout พึ่ง
+2. **josh ล่ม → ข้อมูลจาก ERP หายไหม?** ต้องไม่หาย — commerce เก็บไว้แล้วส่งซ้ำเมื่อ josh กลับมา
+
+| เรื่อง | รูปแบบ | commerce ล่ม | josh ล่ม |
+|---|---|---|---|
+| ERP inbound | nginx ส่ง `/api/erp/*` → commerce ก่อน, **josh เป็น backup upstream** (route เดิมของ josh เก็บไว้ ไม่ลบ) | nginx สลับไป josh เอง — ไม่มี audit ฝั่ง commerce ช่วงนั้น | commerce เก็บลง staging + retry จน josh กลับมา |
+| Logic ธุรกิจของ ERP (draft, staging MER, ห้ามทับชื่อ, sellable, restock notify) | **อยู่ josh ที่เดียว** — commerce ส่งต่อเข้า handler เดิมของ josh ผ่าน internal API | — | — |
+| Outbound ไป Jagota (order push, customer sync) + cron ที่ checkout พึ่ง (auth token, order period, delivery date) | **อยู่ josh** — josh มีคิว `order-erp` / `erp-customer` ของตัวเองอยู่แล้ว | ไม่กระทบ | — |
+| งานหนัก (report/metrics, export/archive, cache warmup/facet) | **commerce คำนวณ แล้วเขียนผลกลับ** Redis/ตาราง read-model ของ josh | josh ใช้ผลล่าสุดต่อ (stale) — ห้าม fallback ไปคำนวณเองใน request | commerce เก็บผลไว้ เขียนกลับเมื่อ josh กลับมา |
+
+### 0.1 commerce เป็น hub — josh คือ platform แรก ไม่ใช่ตัวเดียว (ตัดสิน 2026-10-03)
+
+platform อื่นในอนาคต (ร้าน/ช่องทางขายใหม่) ต้องมาใช้ commerce ได้โดย **ไม่ต้องแก้โค้ดของ commerce** ดังนั้นห้าม hardcode "ส่งให้ josh" ที่ไหน:
+
+```
+ERP ──► commerce (stage · inventory ต่อคลัง · audit) ──► canonical event ──► webhook subscription ของแต่ละ platform
+                                                                              ├─► josh   (/api/internal/erp/…)
+                                                                              └─► platform ถัดไป (สมัครเองผ่าน portal)
+```
+
+- ใช้ของที่มีอยู่: `integration/webhook-subscription` (secret + HMAC `x-signature`, retry 5 ครั้ง, `x-delivery-id`) + portal (API key, สมัคร webhook เอง)
+- event เป็น **canonical** (`inventory.qty.changed`, `product.price.changed`, `product.moq.changed`, …) payload = `{ type, aggregateId, data }` โดย `data` คือ item ของ ERP ตามที่ได้รับ — platform ไหนจะ map field เองฝั่งตัวเอง
+- platform อ่านสต็อก/ข้อมูลผ่าน storefront API (`X-Api-Key`) ที่มีอยู่
+- platform หนึ่งล่ม → delivery ของ platform นั้น retry/เข้า dead-letter เอง ไม่กระทบ platform อื่น
+- **ผลกับ ERP:** response ตอบ `{ received: true }` ทันทีหลัง stage (ตาม §5) — ไม่รอผลจาก platform ใด · ⚠️ ปัจจุบัน josh ตอบ `updated`/`failed` เพิ่มด้วย ต้องยืนยันกับทีม ERP ว่าไม่ได้ใช้
+
+### 0.2 อนาคต: ระบบคลังของเราเอง (หลัง MER clean inventory เสร็จ)
+
+วันนี้ ERP เป็นเจ้าของตัวเลขสต็อก commerce แค่เก็บตาม · วันหน้า **commerce จะเป็นระบบคลังเอง** (รับเข้า ปรับยอด โอนคลัง นับสต็อก) — ทำ 3 อย่างตั้งแต่ Task 2 เพราะตอนนี้ถูก:
+
+1. **เก็บเป็น ledger ไม่ใช่แค่เขียนทับ** — ทุกการเปลี่ยน qty ลง `inventory_movements(product_id, warehouse_id, source, reason, quantity_after, ref, occurred_at)` แล้วค่อยอัปเดต snapshot ใน `inventory_levels` · ERP ส่ง `REASON` (SALE / RECEIVE / ADJUST) กับ `CHANGED_AT` มาอยู่แล้ว เก็บไว้เลย → พอเป็นระบบคลังเองจะมีประวัติย้อนหลังและ reconcile กับ ERP ได้
+2. **เจ้าของสต็อกระบุต่อคลัง** — `warehouses.stock_source = 'erp' | 'commerce'` (วันนี้ทุกคลัง = `erp`) · ย้ายทีละคลังได้หลัง clean เสร็จ ไม่ต้องสลับทั้งระบบทีเดียว · คลังที่ source = `commerce` จะไม่รับ qty จาก ERP มาเขียนทับ (เก็บเป็น movement `ignored` ไว้เทียบ)
+3. **event ไม่เปลี่ยนตาม source** — platform ได้ `inventory.qty.changed` เหมือนเดิมไม่ว่าเลขมาจาก ERP หรือระบบคลังเรา → **วันสลับ josh ไม่ต้องแก้อะไร** (ได้จาก hub ใน §0.1)
+
+**ยังไม่ทำตอนนี้ (ทำตอนสลับจริง):** หน้าจอรับเข้า/นับ/โอนคลัง · ส่งยอดจากเรากลับ ERP (บัญชีอาจยังต้องใช้) · ตัดสต็อกตอนขายผ่าน `commerce/reservation` ที่มีอยู่ · UI ระบบคลังอยู่ใน repo นี้ (`apps/warehouse-web` ใน josh เป็นแค่ scaffold ว่าง)
+
+### 0.3 AI ต่อได้ทันที — commerce มี MCP server (ตัดสิน 2026-10-03)
+
+ใครจะเอา AI มาใช้กับ commerce (agent ของทีม, Claude, chatbot ของ platform) ต้องต่อผ่าน **MCP** ได้เลยโดยไม่ต้องเขียน integration เอง
+
+- endpoint เดียว `POST /api/mcp` (Streamable HTTP) ใน commerce-platform — ใช้ service เดิม ไม่มี logic ซ้ำ
+- **auth ด้วย API key ของ portal** แยก scope (`mcp:read` ก่อน, `mcp:write` ทีหลัง) · ทุก tool call ลง audit
+- tool ชุดแรกเป็น **อ่านอย่างเดียว**: สต็อกต่อคลัง + ประวัติ movement, หา product ด้วย SKU, inbound log / dead-letter, สถานะ delivery ของแต่ละ platform
+- tool ที่แก้ข้อมูล (ส่ง dead-letter ซ้ำ, ปรับสต็อกตอนเป็นระบบคลังเอง) ทำทีหลัง ต้องมี scope `mcp:write` และยืนยันก่อนทำ
+- **ห้ามทำ MCP ใน josh** — AI โหลดหนักและคาดเดายาก ต้องไม่แตะ performance ของ shop (§0) · ข้อมูล josh ที่ AI ต้องใช้ให้มาจาก event/replica ที่ commerce มีอยู่แล้ว
+- ⚠️ ต้องปิดช่องโหว่ก่อน: controller ฝั่ง admin/integration ของ commerce ตอนนี้ **ไม่มี auth เลย** — แก้ก่อนเปิด MCP หรือ expose commerce ออก network ใด ๆ
+
+**ผลที่ตามมา:** commerce **ไม่เคยอยู่ใน request path ของ shop** · josh เรียก commerce ได้เฉพาะแบบ fire-and-forget/async ที่ล้มได้ · ทุกอย่างที่ commerce เขียนกลับ josh ต้อง idempotent
 
 ---
 
@@ -10,9 +65,10 @@
 
 **เป้าหมาย**
 
-- commerce-platform เป็นด่านหน้าที่คุยกับ ERP แทน `josh/apps/backend` — สลับ/เพิ่ม ERP ได้โดยไม่แตะ checkout ของ shop
+- commerce-platform เป็นด่านหน้ารับ ERP (josh เป็นสำรอง) — buffer, audit, retry, dead-letter ให้ทุก webhook ไม่หายเงียบแม้ josh ล่ม
 - commerce-platform เป็นเจ้าของ **inventory ต่อคลัง** (`inventory_levels`) ซึ่ง `josh/apps/backend` ไม่มีโมเดลนี้
-- ทุก ingest มี retry + audit trail (ใช้ `integration/sync-job` ที่มีอยู่)
+- **ย้ายงานหนักออกจาก josh** — คำนวณที่ commerce แล้วเขียนผลกลับ เพื่อ performance ของ josh (เลือกจากผลวัดจริง ดู Task 9)
+- ทุก ingest มี retry + audit trail
 
 **ไม่ใช่เป้าหมาย — ห้ามทำในรอบนี้**
 
@@ -29,13 +85,52 @@
 
 | โดเมน | เจ้าของ | หมายเหตุ |
 |---|---|---|
-| ERP integration (ingest, push, mapping, retry, audit) | **commerce-platform** | เป้าหมายหลัก |
+| ERP inbound (buffer, audit, retry, dead-letter, mapping) | **commerce-platform** | josh เป็น backup upstream |
+| ERP business logic + outbound ไป Jagota + cron ที่ checkout พึ่ง | **josh/apps/backend** | ต้องทำงานได้ตอน commerce ล่ม (§0) |
+| งานหนักที่ไม่อยู่ใน request path | **commerce-platform** | เขียนผลกลับ josh, josh ใช้ค่าล่าสุดถ้า commerce ล่ม |
 | Inventory / warehouse | **commerce-platform** | `inventory_levels(product_id, warehouse_id, quantity, reserved)` มีอยู่แล้ว |
 | Catalog (product master, category, price) | **josh/apps/backend** | commerce เก็บแค่ mapping + audit |
 | Order / checkout / cart / pricing / promotion | **josh/apps/backend** | ห้ามแตะ |
 | Customer / company / branch | **josh/apps/backend** | commerce เก็บแค่ mapping |
 
 **หลักที่ทำให้ shop ไม่ช้าลง:** commerce เป็นเจ้าของ *ความจริง* ของสต็อกต่อคลัง แต่ต้อง **write-through** กลับไปที่ Redis + Postgres ของ shop ทุกครั้งที่ ingest สำเร็จ เพื่อให้ PLP/PDP/cart ของ shop ยังอ่าน local เหมือนเดิม (0 network hop)
+
+---
+
+## 2.1 ฟีเจอร์ที่แยกจาก josh — ย้ายอะไร / ไม่ย้ายอะไร
+
+> ไฟล์ต้นทางทั้งหมดอยู่ใต้ `josh/apps/backend/src/app/` · ก่อนย้ายแต่ละ task ให้ `git log origin/main -- <path>` ดูว่ามี commit ใหม่หลังวันที่ในหัวเอกสารไหม
+
+### ย้ายมา commerce-platform
+
+| ฟีเจอร์ | ต้นทางใน josh | ปลายทางใน repo นี้ | Task |
+|---|---|---|---|
+| Inbound webhook ERP — **copy** (route ของ josh เก็บไว้เป็น backup) | `erp/erp-webhook.controller.ts`, `erp-key.guard.ts`, `data-envelope.pipe.ts`, `single-or-array.pipe.ts`, `dto/` | `integration/connector/erp/presentation/` | 2,3,4,7 |
+| Buffer + retry + dead-letter ของ inbound | (josh มี `erp-inbound-queue` เป็น reference) | `ErpIngestRecord` + คิว forward ของ commerce | 2 |
+| Inventory ต่อคลัง (shadow ของ qty ที่ ERP ส่ง) | — (josh ไม่มี) | `commerce/inventory` | 2 |
+| ERP Webhook Simulator + mock ต่อ account | `erp/erp-webhook-simulator.controller.ts`, `erp-webhook-simulator.guard.ts` | `connector/erp` (dev/staging เท่านั้น มี kill-switch prod) + หน้าใน commerce-admin | 8 |
+| Scraping + Marketing Research | `competitor-prices/scraping.*`, `public-web.reader.*`, `marketing-research/*` | `platform/scraping`, `platform/marketing-research` | ✅ |
+| **สำเนาแค็ตตาล็อก josh** (ขั้น 1 ของ "commerce เป็น hub สินค้า") — commerce **ดึง** จาก replica ของ josh ทุก 15 นาที ไม่ต้องแก้โค้ด josh, josh ยังเป็นคนเขียน | `product_inventory` + `product_translation` (อ่านอย่างเดียว) | `integration/connector/josh` (`josh_catalog_products`) | ✅ |
+| **เทียบราคาคู่แข่ง (MER)** (ขั้น 2) — ทั้งหน้าย้ายมา commerce-admin, fingerprint เท่ากับของ josh เป๊ะ คู่ที่ยืนยันแล้วยังยืนยันอยู่หลัง import | `competitor-prices/*`, web-admin `CompetitorPricesPage.tsx` | `integration/competitor-prices` + `/marketing/competitor-prices` | ✅ โค้ดพร้อม · **ยังไม่ลบจาก josh** จนกว่าจะ cutover |
+| งานหนัก (รอผลวัด) | report/metrics, export/archive, cache warmup/facet — ดู Task 9 | `platform/offload` (ใหม่) | 9 |
+
+> **ขั้น 3 (ยังไม่ทำ):** ย้ายความเป็นเจ้าของสินค้าทีละกลุ่มฟิลด์ — ส่วนที่ MER แก้ ย้ายเมื่อ MER ย้ายหน้าจอมา commerce แล้วเท่านั้น (ไม่งั้นแก้ 2 ที่). ระหว่างนี้ josh เป็นคนเขียน commerce อ่านสำเนา
+
+### ไม่ย้าย — อยู่ josh ต่อ
+
+| ฟีเจอร์ | เหตุผล |
+|---|---|
+| **Handler ธุรกิจของ ERP** (`erp-webhook.service.ts`: qty/price/moq/product/customer/order status) | commerce ส่งต่อเข้า handler เดิม — logic มีที่เดียว ไม่ drift และ josh ยังรับ ERP เองได้ตอน commerce ล่ม |
+| Stock + sellable (`jagota-stock.service.ts`, `sellable-stock.service.ts`) | Redis sellable อ่านทุก PLP/cart — ต้องอัปเดตได้แม้ commerce ล่ม |
+| Outbound Jagota (`jagota-node-api.service.ts`, order/quotation push, customer/branch sync) | checkout ต้อง push order ได้ตอน commerce ล่ม · josh มีคิว `order-erp` / `erp-customer` อยู่แล้ว |
+| Cron ที่ checkout พึ่ง (auth token, branch status, order period, delivery calendar/date) | ถ้าย้ายแล้ว commerce ล่ม → checkout คำนวณวันส่ง/รอบสั่งไม่ได้ |
+| Payment/billing ที่เรียก Jagota (`get_josh_payment`, invoice QR, KBank notify relay, `/payment/*`, `jagota-finance.service.ts` ส่วนที่ใช้ตอนจ่าย) | ผูก payment ของ shop — §1 ห้ามแตะ |
+| Credit back / credit note, invoice line (`erp-invoice-line.*`) | ผูก order/billing ของ shop |
+| ผลของ order/invoice status ที่ไปแก้ order ของ shop (auto-resume `payment_pending`, credit-term unpaid, notification) | commerce แค่รับ webhook + dedupe แล้วส่ง status ผ่าน internal API — logic ฝั่ง order ยังอยู่ josh |
+| 3PL delivery-status (`/3pl/delivery-status`) | มาจาก 3PL ไม่ใช่ ERP |
+| Shipment tracking (`shipment-tracking.service.ts`, `GET /drivers/tracking`) | read-through cache ที่ลูกค้าเรียกตรงจาก shop — ย้ายมาจะเพิ่ม network hop (cron poll GPS ถูกลบไปแล้วใน `4e7951b5e`) |
+| Staging product/price รอ MER approve (`erp/erp-pending-change.helper.ts`, approve ที่ `product.controller.ts` + web-admin `AllProduct.tsx`) | **MER ทำงานที่ web-admin ที่เดียว** — commerce ส่ง change เข้า staging ของ josh ผ่าน internal API ไม่เปิดหน้า approve ซ้ำใน commerce-admin |
+| หน้าจอ/workflow ของ marketing-* และ cache ใน request path | อยู่ josh — ส่วนที่เป็นงานคำนวณหนักเบื้องหลังย้ายได้ใน Task 9 |
 
 ---
 
@@ -108,7 +203,7 @@ npm run migration:show
 | `integration/adapter/` (`BaseCommerceAdapter`) | ✅ พร้อมใช้ |
 | `commerce/warehouse` + `commerce/inventory` (`inventory_levels`) | ✅ มีโมเดลต่อคลังแล้ว |
 | `commerce/reservation` | ✅ มี `reserved` ใน `inventory_levels` |
-| `connector/erp/ingest/` (`erp-payload.parsers.ts`, `erp-ingest.service.ts`) | 🟡 มีบางส่วน — parse ได้แค่ product / stock / customer / sale-order |
+| `connector/erp/ingest/` + `presentation/` | ✅ Task 2 เสร็จ (2026-10-03): `PUT /erp/products/{qty,price,moq}` · ledger `inventory_movements` + `warehouses.stock_source` · event ตาม `docs/event-contract.md` · product/customer/order ของ Jagota ยังไม่มี (Task 3-7) |
 | `ErpConnector.createOrder()` | ❌ mock — คืน `'erp order push not wired'` |
 | `ErpHttpClient` | ❌ ชี้ `/api/v1/orders` ซึ่งไม่ใช่ Jagota Node API |
 | Inbound route รับ webhook จาก ERP | ❌ ยังไม่มีเลย |
@@ -125,26 +220,41 @@ npm run migration:show
 - auth header เดิม: `X-ERP-Key`
 - response เดิม: `{ received: true }`
 - ตอน copy DTO จาก `josh/apps/backend/src/app/erp/dto/erp-webhook.dto.ts` **เปลี่ยนแค่ namespace** ห้ามเปลี่ยนชื่อ field ห้าม normalize เป็น camelCase
+- **copy จาก `origin/main` ล่าสุดเท่านั้น** — DTO เปลี่ยนหลัง 09-01 แล้ว เช่น shape จริงของ `quotation.status.changed` (`a921afcfc`)
+
+### Route inbound ที่มีจริงใน josh (`erp-webhook.controller.ts`, 2026-10-03)
+
+| กลุ่ม | Route | Task |
+|---|---|---|
+| Stock/price/moq | `PUT /erp/products/qty`, `PUT /erp/products/price`, `PUT /erp/products/moq` | 2 |
+| Product | `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image` | 3 |
+| Customer/company | `POST /erp/customers`, `PUT /erp/customers`, `POST /erp/companies` | 4 |
+| Order period / calendar | `POST /erp/order-periods`, `PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` | 6 |
+| Order/invoice/quotation | `POST`+`PUT /erp/orders/status`, `POST`+`PUT /erp/invoices/status`, `POST`+`PUT /erp/quotations`, `POST`+`PUT /erp/quotations/status` | 7 |
+
+รวม 22 route (POST กับ PUT ของ path เดียวกันต้องรับทั้งคู่) · **ไม่มี `/erp/categories*` แล้ว** — ถูกลบใน `f418ba325` เพราะ ERP sync แค่ SKU/price/qty · route ใต้ `/erp/testing/*` เป็น simulator ไม่ใช่ contract
 
 ---
 
 ## 6. Task list
 
-### Task 1 — ล็อก internal API contract (ทำก่อนเขียนโค้ดบรรทัดแรก)
+### Task 1 — ล็อก internal API contract ✅ ฝั่ง commerce (`docs/event-contract.md`) · รอ josh ทำ endpoint
 
-**ทำอะไร:** ตกลงกับฝั่ง josh ว่า commerce จะเรียกอะไรกลับไป mutate ข้อมูลของ shop
+**ทำอะไร:** ล็อก **event contract** ที่ commerce ส่งให้ทุก platform (josh เป็นคนแรก) — ไม่ใช่ API เฉพาะ josh (§0.1)
 
-- นิยาม endpoint: upsert product, set stock, update order status, upsert customer
-- auth: shared secret (ไม่ใช่ public route)
-- **idempotency key ทุก request** — ERP ยิงซ้ำได้ commerce retry ได้ ปลายทางต้องกันซ้ำเองได้
-- นิยามว่า fail แล้วตอบอะไร → commerce ต้องแยก "retry ได้" ออกจาก "retry ไปก็ไม่ขึ้น" (4xx vs 5xx)
+- **event catalog:** ERP route → canonical event type (`inventory.qty.changed`, `product.price.changed`, `product.moq.changed`, …) · 1 event ต่อ 1 SKU
+- **envelope:** `{ type, aggregateId: <PRODUCT_CODE>, data: <ERP item ตามที่ได้รับ> }` · header `x-event-type`, `x-delivery-id` (= idempotency key), `x-signature` (HMAC-SHA256 ด้วย secret ของ subscription)
+- **ผู้รับต้อง:** ตรวจ signature · กันซ้ำด้วย `x-delivery-id` (เช่น Redis TTL 24 ชม.) · ตอบ `2xx` = รับแล้ว · `4xx` = ไม่ retry (payload ผิด / SKU ไม่มี) · `5xx`/timeout = retry
+- **josh:** เปิด `POST /api/internal/erp-events` 1 เส้น → แกะ `data` แล้วเรียก **handler ตัวเดียวกับ** `/api/erp/<path>` (logic อยู่ที่เดียว §0) · สมัครเป็น subscription ใน commerce
+- **กัน out-of-order:** commerce ไม่ส่ง event ของ SKU+type ที่มี event ใหม่กว่าส่งสำเร็จแล้ว (`superseded`)
+- **แก้ใน commerce:** delivery worker ปัจจุบัน retry ทุก non-2xx → ต้องหยุดที่ 4xx (ยกเว้น 408/429)
 
-**เสร็จเมื่อ:** มีเอกสาร contract 1 ไฟล์ที่ทั้งสอง repo อ้างอิงตรงกัน
-**เวลา:** 3-5 วัน
+**เสร็จเมื่อ:** `docs/event-contract.md` (ใช้กับทุก platform) + josh ทำตาม
+**เวลา:** 1-2 วัน
 
 ---
 
-### Task 2 — Inbound: stock / price / moq
+### Task 2 — Inbound: stock / price / moq ✅ ฝั่ง commerce · รอ josh endpoint + nginx
 
 **ทำอะไร:** รับ 3 route แรกจาก ERP
 
@@ -155,14 +265,18 @@ npm run migration:show
 **ประเด็นสำคัญ — ใส่ warehouse dimension ตั้งแต่ตอนนี้**
 ERP วันนี้ส่งคลังเดียว แต่ให้ parser รับ warehouse ได้เลย แล้ว map ลง `inventory_levels(product_id, warehouse_id, …)` โดยใช้ default warehouse ไปก่อน — ตอนนี้ต้นทุนเกือบศูนย์ แต่ประหยัดการรื้อรอบใหญ่ทีหลัง
 
-**ต้องทำ:**
+**ต้องทำ (commerce):**
 - controller + DTO ใน `integration/connector/erp/presentation/` (copy DTO จาก josh)
-- ขยาย `erp-payload.parsers.ts`
-- เขียนลง `inventory_levels`
-- **write-through กลับ shop**: Redis `jagota:sellable:<sku>` + Postgres ของ shop ผ่าน internal API
-- ผ่าน `sync-job` เพื่อให้ retry ได้
+- parser Jagota ใน `erp-payload.parsers.ts` (ของเดิมเป็นชื่อ field Oracle EBS — คนละรูปแบบ)
+- stage 1 `ErpIngestRecord` ต่อ SKU → qty ลง `inventory_movements` (source `erp`, เก็บ `REASON`/`CHANGED_AT`) แล้วอัปเดต `inventory_levels` ของ default warehouse · ข้ามถ้าคลังนั้น `stock_source = 'commerce'` (§0.2)
+- migration: ตาราง `inventory_movements` + คอลัมน์ `warehouses.stock_source` (default `'erp'`)
+- publish canonical event → webhook subscription ส่งให้ทุก platform ที่สมัคร · ตอบ ERP `{ received: true }` ทันทีหลัง stage
+- **ไม่เขียน Redis ของ shop เอง** — handler ของ josh ทำ sellable, cache facet, restock notify ให้อยู่แล้ว
+- price ไป staging ของ josh เพราะ handler เดิมทำแบบนั้น — commerce ไม่ต้องรู้
 
-**เสร็จเมื่อ:** ยิง payload จริงของ ERP เข้ามาแล้ว `inventory_levels` อัปเดต และ shop อ่านค่าใหม่ได้ · retry ทำงานเมื่อ internal API ล้ม
+**ต้องทำ (josh):** `POST /api/internal/erp-events` + ตรวจ signature + idempotency (Task 1) · สมัคร subscription
+
+**เสร็จเมื่อ:** ยิง payload จริงเข้า commerce แล้ว `inventory_levels` + shop อัปเดต · ปิด josh แล้วยิง → ค่าไปถึง shop เมื่อ josh กลับ · ปิด commerce แล้วยิงผ่าน nginx → josh รับเองได้ · เพิ่ม subscription ปลอมตัวที่ 2 แล้วได้ event เหมือนกันโดยไม่แก้โค้ด
 **เวลา:** 3-4 วัน
 
 ---
@@ -170,66 +284,79 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 ### Task 3 — Inbound: product / category
 
 **ทำอะไร:**
-- `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image`
-- `POST /erp/categories`, `POST /erp/categories/hierarchy`
+- `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image`
+- ~~`/erp/categories*`~~ — **ตัดออก** josh ลบไปแล้วใน `f418ba325` (category เป็นของ shop ไม่ได้มาจาก ERP)
 
-`ProductUpsertDto` มี ~40 field (`PRODUCT_NAME_E/T`, `BRAND`, `UNIT`, `UNIT_PER_BOX`, `PACK_SIZE`, `TEMPERATURE`, `NUTRITION_CONTENT`, `ORDERING_OPTIONS`, `COUNTRY_CODE`, …) เป็น upsert ตรง ๆ ไม่มี state machine
+`ProductUpsertDto` มี ~40 field (`PRODUCT_NAME_E/T`, `BRAND`, `UNIT`, `UNIT_PER_BOX`, `PACK_SIZE`, `TEMPERATURE`, `NUTRITION_CONTENT`, `ORDERING_OPTIONS`, `COUNTRY_CODE`, …)
 
-**ระวัง:** category hierarchy ต้องจัดการลำดับ parent มาก่อน child ถ้า ERP ส่งไม่เรียง
+**แบ่งงาน — MER approve ที่ web-admin ของ josh ที่เดียว:**
+- **commerce:** รับ webhook → parse → dedupe → audit → ส่ง product/price change เข้า **staging ของ josh** ผ่าน internal API (endpoint "stage ERP change" ใน contract ของ Task 1) · ต้องส่ง source `product` / `price` / `product+price` ไปด้วย
+- **josh (ไม่ย้าย):** staging (`erp-pending-change.helper.ts`), หน้า approve ของ MER (`AllProduct.tsx`), competitor-prices ที่ MER ใช้เทียบราคาตอน approve
+- staging/review ของ commerce-admin (C3b-T10) **ไม่ใช้เป็นหน้า approve ของ MER** — ใช้ดู audit/retry ของ ingest สำหรับ dev/ops เท่านั้น
 
-**เจ้าของข้อมูล:** product master ยังเป็นของ shop — commerce เก็บ mapping + audit แล้วส่งต่อผ่าน internal API
+**กฎที่ josh เพิ่มหลัง 09-01 — บังคับใช้ตอนเขียนลง josh ฝั่ง commerce ห้ามทำซ้ำ แค่ห้ามตัด field ทิ้ง:**
+- product/price จาก ERP เข้า staging รอ MER approve ก่อนขึ้น live (`1e32089e8`)
+- product ที่ ERP สร้างใหม่ **เริ่มเป็น draft** admin ต้อง approve (`f83054562`)
+- **ห้ามเขียนทับ** `PRODUCT_NAME_E/T` และ description ของสินค้าที่มีอยู่แล้ว (`aff4777d0`)
+- ERP เขียน product status ได้เฉพาะบางสถานะ (`shared/helpers/product-status.helper.ts`)
+- pack/ordering unit normalize ที่ josh (`erp-order-unit.helper.ts`, `erp-pack-sync.helper.ts`)
 
-**เวลา:** 4-5 วัน
+**เจ้าของข้อมูล:** product master + staging + approve เป็นของ shop — commerce เก็บแค่ mapping + audit
+
+**เวลา:** 3-4 วัน (category ตัดออก, staging ไม่ต้องทำฝั่งนี้)
 
 ---
 
 ### Task 4 — Inbound: customer / company
 
-- `POST /erp/customers`
+- `POST /erp/customers`, `PUT /erp/customers`
 - `POST /erp/companies`
 
 ใช้ `integration/mapping` เก็บคู่ external id ↔ shop id
 
+**ขาออก (shop → ERP) อยู่ josh ต่อ** (§0) — `erp-customer` queue ของ josh ต้องทำงานได้ตอน commerce ล่ม
+
 **เวลา:** 2-3 วัน
 
 ---
 
-### Task 5 — Outbound: Jagota connector จริง
+### Task 5 — ~~Outbound: Jagota connector~~ → ยกเลิก อยู่ josh ต่อ
 
-**ทำอะไร:** แทนที่ mock ปัจจุบัน
+ตัดสินตาม §0: checkout ของ josh ต้อง push order / quotation / customer ไป Jagota ได้ตอน commerce ล่ม และ josh มีคิว `order-erp` / `erp-customer` ที่ retry เองอยู่แล้ว · ย้ายมาจะทำให้ commerce อยู่ใน critical path ของการขาย
 
-- `ErpHttpClient` ต้องชี้ Jagota Node API ไม่ใช่ `/api/v1/*` ที่เป็น stub
-- implement `ErpConnector.createOrder()` ให้ยิง `POST /order/add-order-create` จริง แล้วเก็บ `DOC_BOOK` / `DOC_NO` กลับมา
-- อีก 5 เส้น: `/quotation/create`, `/customers/create-customer`, `/customers/match-existing`, `/branch/create-branch`, `/finance/get-customer-info`
-- ต้นทาง logic: `josh/apps/backend/src/app/jagota-order/jagota-order.service.ts` → `submitCreateOrderToJagota()`
-
-**ระวัง:** auth token ของ Jagota มี cron refresh (`jagota-auth-token.cron.ts`) ย้ายมาด้วยใน Task 6 — ระหว่างนี้อย่าให้รันซ้อนสองฝั่ง
-
-**เวลา:** 4-5 วัน
+- `ErpHttpClient` / `ErpConnector.createOrder()` ของ repo นี้ **คงเป็น mock** — ไม่ wire กับ Jagota
+- Jagota auth token มีเจ้าของเดียวคือ josh — commerce ไม่เรียก Jagota Node API เลยในรอบนี้
+- ถ้าวันหน้าต้องการ audit ขาออก: josh ส่ง event แบบ fire-and-forget มาให้ commerce เก็บ (ล้มได้ ไม่กระทบ checkout)
 
 ---
 
-### Task 6 — Cron: auth token + branch status
+### Task 6 — Inbound: order period / delivery calendar (cron อยู่ josh)
 
-- `jagota-auth-token.cron.ts`
-- `jagota-branch-status.cron.ts`
+- **ส่งต่อ** `POST`+`PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` แบบเดียวกับ Task 2
+- **cron ทั้งหมดอยู่ josh** (`jagota-auth-token`, `jagota-branch-status`, `supplier-order-period-poll`, `sku-order-period-probe`, `delivery-calendar-probe`, `jagota-delivery-date-cache`) — checkout อ่านผลทุกครั้ง ถ้าย้ายแล้ว commerce ล่ม checkout คำนวณวันส่ง/รอบสั่งไม่ได้
+- ไม่ต้องมี env flag ปิดสองฝั่ง เพราะไม่มีการรันซ้อน
 
-**สำคัญ:** ปิดฝั่ง `josh/apps/backend` ด้วย env flag **ทันที** ที่ฝั่งนี้ขึ้น ห้ามเปิดทิ้งไว้ทั้งคู่
-
-**เวลา:** 2-3 วัน
+**เวลา:** 1-2 วัน (จาก 4-5 วัน)
 
 ---
 
 ### Task 7 — Inbound: order / quotation lifecycle (ยากสุด ทำท้ายสุด)
 
-- `POST /erp/orders/status`
-- `POST /erp/invoices/status`
-- `POST /erp/quotations`
-- `POST /erp/quotations/status`
+- `POST`+`PUT /erp/orders/status`
+- `POST`+`PUT /erp/invoices/status`
+- `POST`+`PUT /erp/quotations`
+- `POST`+`PUT /erp/quotations/status`
 
 ผูกกับ order lifecycle + sellable stock ของ shop
 
-**ต้อง idempotent จริง** — ERP ยิงซ้ำได้ และ status อาจมาไม่เรียง ต้องกัน status เก่าทับ status ใหม่
+**ต้อง idempotent จริง** — ERP ยิงซ้ำได้ และ status อาจมาไม่เรียง ต้องกัน status เก่าทับ status ใหม่ · josh เข้าคิว + dedupe เส้นพวกนี้แล้ว (`299de0ffb`) ให้ใช้เป็น reference
+
+**แบ่งงาน:** commerce รับ webhook, dedupe, เก็บ audit, map `DOC_BOOK`/`DOC_NO` แล้วส่ง status ผ่าน internal API · **ผลกับ order ยังเป็น logic ของ josh** ได้แก่ auto-resume `payment_pending` เมื่อ quotation approve (`80af640a3`), invoice credit-term ยังเป็น unpaid (`71dcf7dfe`), credit back ต่อ shipment, notification
+
+**สิ่งที่ต้องรักษาไว้:**
+- backfill `DOC_BOOK`/`DOC_NO` จาก orders/status ถ้า push ตอนแรกไม่ได้กลับมา (`81fb86ccf`)
+- quotation status ใช้ shape จริงของ ERP (`a921afcfc`)
+- quotation ที่ยัง pending ต้อง tag เป็น `sync_status = pending` (`44d5018e7`)
 
 **เวลา:** 4-5 วัน
 
@@ -237,12 +364,35 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ### Task 8 — Reliability + wiring
 
-- Dead-letter queue + alert เมื่อ ingest ล้มเกิน N ครั้ง (ห้ามให้ webhook หายเงียบ — นี่คือปัญหาเดิมของ `josh/apps/backend` ที่เป็น ack-only)
-- nginx route `/api/erp/*` → commerce-platform
-- Smoke test ครบทุก route ด้วย payload จริงจากทีม ERP
+- Dead-letter queue + alert เมื่อ ingest ล้มเกิน N ครั้ง (ห้ามให้ webhook หายเงียบ — josh เข้าคิวบางเส้นแล้ว แต่ยังไม่มี DLQ/alert)
+- nginx route `/api/erp/*` → commerce-platform เป็น primary, **josh เป็น `backup` upstream** (`proxy_next_upstream error timeout http_502 http_503 http_504`) · `/api/3pl/*` ไป josh ตรง
+- **ซ้อมล่ม 2 ทาง ก่อน launch:** (1) stop commerce → ERP ยิงแล้ว josh รับ, shop อัปเดต (2) stop josh → ERP ได้ `queued`, เปิด josh กลับ → ค่าไปถึง shop ครบ ไม่ซ้ำ
+- **ย้าย ERP Webhook Simulator มาด้วย** (`erp-webhook-simulator.controller.ts` + guard, `6412c0566`, `b2c4ec965`) — ยิงได้ครบทุก inbound route + mock ต่อ account สำหรับ full-loop test · ต้องมี kill-switch ปิดใน prod (`122d707c1`) · หน้า console ย้ายไป commerce-admin
+  - ส่วนที่ preview credit back / shipment ของ simulator อ่านข้อมูล order ของ shop → เหลือไว้ใน josh หรือเรียกผ่าน internal API
+- Smoke test ครบทุก route ด้วย payload จริงจากทีม ERP (ใช้ simulator ข้างบน)
 - **Provision EC2 + ECR ของ repo นี้** (README บอกว่ายังไม่ทำ) — ต้องอยู่ **VPC เดียวกับ josh backend** ไม่งั้น latency ของ internal API call จะไม่ใช่ 1-3ms อีกต่อไป
 
 **เวลา:** 4-6 วัน
+
+---
+
+### Task 9 — ย้ายงานหนักออกจาก josh (offload)
+
+**ทำอะไร:** commerce รันงานหนักที่ไม่อยู่ใน request path แล้วเขียนผลกลับ josh
+
+**กลุ่มที่เลือก (2026-10-03):** report/metrics, export/archive, cache warmup/facet — **เลือกตัวจริงจากผลวัด** ไม่ใช่จากชื่อ
+
+**กฎ:**
+- commerce อ่าน DB ของ josh ผ่าน **read replica** (ไม่แย่ง primary) แล้วเขียนผลกลับผ่าน internal API หรือ Redis key ที่ตกลงกัน
+- ผลทุกตัวมี `computed_at` — josh แสดงค่าล่าสุดเสมอ ถ้าเก่าเกินกำหนดแค่ log/alert **ห้ามคำนวณเองใน request**
+- cron ฝั่ง josh ของงานที่ย้ายแล้วใช้ lock ร่วม (`CronLockService` ของ josh) — commerce ถือ lock ตามปกติ, josh รันแทนเฉพาะเมื่อ heartbeat ของ commerce หายเกิน N นาที (ตัวเลือก ถ้างานนั้นห้าม stale นาน)
+
+**ขั้นตอน:** วัด slow query / เวลา cron จริง → เลือก 2-3 ตัวแรก → ย้ายทีละตัว วัดก่อน/หลัง
+
+**ไม่ย้าย (ตรวจโค้ดแล้ว 2026-10-03):** `api-log-archive`, `analytics-retention`, `marketing-page-view-retention`. ทั้งสามตัวทำงานหนักอยู่ใน DB หรือ Mongo ของ josh เอง (DELETE, rollup INSERT และ `updateMany archivedAt`) ย้าย cron มารันที่ commerce ก็ไม่ลดโหลด DB ของ josh เลย แถมต้องให้ commerce ถือสิทธิ์**เขียน**ลง primary, Mongo และ S3 bucket ของ josh ซึ่งขัดกับ §0 ถ้า DELETE ก้อนใหญ่เริ่มทำให้ DB ช้า ให้แก้เป็น DELETE ทีละ batch ใน josh แทน
+**ตัวที่ย้ายแล้วได้ผลจริง** คือตัวที่*อ่าน*หนักแต่เขียนผลน้อย เช่นการคำนวณ `customer-metrics` (อ่านจาก replica แล้วส่งผลกลับ) ต้องวัดเวลาจริงก่อน
+
+**เวลา:** ประเมินหลังได้ผลวัด
 
 ---
 
@@ -266,7 +416,8 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 | ERP contract ยังไม่นิ่ง (ยังไม่ launch) | แยก boundary ออกจาก field mapping — field mapping อยู่ในไฟล์ parser เดียว |
 | Scope creep เข้า "ย้าย order มาทั้งหมด" | ยึดข้อ 1 "ไม่ใช่เป้าหมาย" — ถ้าต้องแตะ order/pricing ของ shop = ออกนอก scope |
 | Data consistency ข้าม 2 DB | retry + DLQ ตั้งแต่ Task 2 ไม่ใช่ค่อยเติมทีหลัง |
-| Cron รันซ้อนสองฝั่ง | ปิดฝั่ง josh ด้วย env flag ทันทีที่ฝั่งนี้ขึ้น |
+| ฝั่งหนึ่งล่มแล้วอีกฝั่งพังตาม | §0 + ซ้อมล่ม 2 ทางใน Task 8 · commerce ไม่อยู่ใน request path ของ shop |
+| ERP ใช้ `updated`/`failed` ใน response ที่ josh ตอบอยู่ | ยืนยันกับทีม ERP ก่อน Task 2 ขึ้น (commerce ตอบแค่ `received`) |
 | DTO drift ข้าม repo | test assert ชื่อ field ตรงตัวทั้งสองฝั่ง |
 | latency ถ้า EC2 คนละ VPC | บังคับให้อยู่ VPC เดียวกัน — เช็คใน Task 8 |
 
@@ -274,10 +425,13 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ## 9. เช็คก่อนเริ่ม
 
-- [ ] ยืนยันกับทีม ERP ว่า 18 route + payload นิ่งพอจะ implement (หรืออันไหนยังจะเปลี่ยน)
+- [ ] ยืนยันกับทีม ERP ว่า 22 route (ตาราง §5) + payload นิ่งพอจะ implement (หรืออันไหนยังจะเปลี่ยน)
+- [ ] ยืนยันกับทีม ERP ว่าไม่ได้อ่าน `updated`/`failed` จาก response
+- [ ] มี read replica ของ DB josh ให้ commerce อ่านงานหนัก (Task 9)
+- [ ] ก่อนเริ่มแต่ละ task ให้ diff ต้นทางใน josh เทียบกับวันที่ในหัวเอกสาร
 - [ ] เคลียร์ไฟล์ค้าง uncommitted ใน `commerce/order/`, `commerce/reservation/`
 - [ ] ตกลงว่า commerce-platform รัน EC2 ตัวไหน และอยู่ VPC เดียวกับ josh backend
 - [ ] ตกลงว่า `commerce_db` และ Redis ใช้ instance ร่วมกับ shop หรือแยก (ต้องเข้าถึง Redis ของ shop ได้ถ้าจะ write-through)
 - [ ] มี dev bandwidth ต่อเนื่อง ~5-6 สัปดาห์ (migration แบบขาดตอนเสี่ยง drift สูง)
 
-**รวมทั้งหมด ~5-6 สัปดาห์ dev เต็มเวลา**
+**รวม Task 1-8 ~4 สัปดาห์** (Task 5 ยกเลิก, Task 6 เหลือ 1-2 วัน) · Task 9 ประเมินหลังได้ผลวัด

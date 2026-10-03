@@ -69,6 +69,9 @@ export class PortalAuthService {
     if (!(await bcrypt.compare(password, user.passwordHash))) {
       throw new UnauthorizedException('invalid credentials');
     }
-    return { accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }) };
+    return {
+      accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }),
+      role: user.role,
+    };
   }
 }

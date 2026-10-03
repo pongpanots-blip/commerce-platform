@@ -12,9 +12,10 @@
 #     itself if missing (idempotent — reuses an existing one).
 set -euo pipefail
 API=${API:-http://localhost:3100/api}
+source "$(dirname "$0")/_staff-token.sh"
 KEY=${KEY:-e2e-key}
 
-req()   { curl -sf -H 'Content-Type: application/json' -H "X-Api-Key: $KEY" "$@"; }
+req()   { curl -sf -H 'Content-Type: application/json' -H "X-Api-Key: $KEY" -H "Authorization: Bearer $STAFF_TOKEN" "$@"; }
 nokey() { curl -s -o /dev/null -w '%{http_code}' -H 'Content-Type: application/json' "$@"; }
 assert(){ if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (got '$2', want '$3')"; exit 1; fi }
 

@@ -1,4 +1,6 @@
-import { parseErpCustomer, parseErpProduct, parseErpSaleOrder, parseErpStock } from './erp-payload.parsers';
+import {
+  parseErpCustomer, parseErpProduct, parseErpSaleOrder, parseErpStock, parseJagotaMoq, parseJagotaPrice, parseJagotaQty,
+} from './erp-payload.parsers';
 
 const productRaw = { INVENTORY_ITEM_ID: 10001, SEGMENT1: 'FISH-SALMON-1KG',
   DESCRIPTION: 'Salmon Fillet 1kg', PRIMARY_UOM_CODE: 'KG',
@@ -58,5 +60,32 @@ describe('ERP payload parsers (Oracle examples)', () => {
   it('sale order line non-numeric UNIT_SELLING_PRICE throws naming the field', () => {
     expect(() => parseErpSaleOrder({ ORDER_NUMBER: 'SO-1',
       LINES: [{ SEGMENT1: 'X', ORDERED_QUANTITY: 10, UNIT_SELLING_PRICE: 'lots' }] })).toThrow('UNIT_SELLING_PRICE');
+  });
+});
+
+describe('Jagota feed parsers', () => {
+  it('qty', () => {
+    expect(parseJagotaQty({ PRODUCT_CODE: '1001876', QUANTITY: 48, CHANGED_AT: '2026-10-03T07:01:29Z', REASON: 'SALE' }))
+      .toEqual({ sku: '1001876', warehouseCode: null, quantity: 48, reason: 'SALE', changedAt: '2026-10-03T07:01:29Z' });
+  });
+
+  it('qty: null QUANTITY means out of stock; WAREHOUSE_CODE passes through', () => {
+    expect(parseJagotaQty({ PRODUCT_CODE: '1', QUANTITY: null, WAREHOUSE_CODE: 'CNX' }))
+      .toMatchObject({ quantity: 0, warehouseCode: 'CNX', changedAt: null });
+  });
+
+  it('qty: rejects a bad CHANGED_AT and a missing PRODUCT_CODE', () => {
+    expect(() => parseJagotaQty({ PRODUCT_CODE: '1', QUANTITY: 1, CHANGED_AT: 'yesterday' })).toThrow('CHANGED_AT');
+    expect(() => parseJagotaQty({ QUANTITY: 1 })).toThrow('PRODUCT_CODE');
+  });
+
+  it('price keeps either side optional', () => {
+    expect(parseJagotaPrice({ PRODUCT_CODE: '1', PRICE: { SELLING_UNIT_PRICE: 59 } }))
+      .toEqual({ sku: '1', orderingPrice: null, sellingUnitPrice: '59.00' });
+  });
+
+  it('moq', () => {
+    expect(parseJagotaMoq({ PRODUCT_CODE: '1', MOQ: 6 })).toEqual({ sku: '1', moq: 6 });
+    expect(() => parseJagotaMoq({ PRODUCT_CODE: '1' })).toThrow('MOQ');
   });
 });

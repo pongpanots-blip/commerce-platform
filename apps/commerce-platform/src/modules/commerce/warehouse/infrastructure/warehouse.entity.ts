@@ -11,4 +11,12 @@ export class Warehouse extends BaseEntity {
 
   @Column({ type: 'jsonb', nullable: true })
   address: Record<string, unknown> | null;
+
+  /**
+   * Who owns this warehouse's stock numbers. 'erp' today; flips to 'commerce'
+   * per warehouse once it runs on our own warehouse system — ERP quantities
+   * for it are then recorded as 'ignored' movements instead of applied.
+   */
+  @Column({ type: 'varchar', length: 16, name: 'stock_source', default: 'erp' })
+  stockSource: 'erp' | 'commerce';
 }

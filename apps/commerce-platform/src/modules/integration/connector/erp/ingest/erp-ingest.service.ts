@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { ErpIngestEntityType, ErpIngestRecord } from '../erp-ingest-record.entity';
+import { ERP_FEED_ENTITY_TYPES, ErpIngestEntityType, ErpIngestRecord } from '../erp-ingest-record.entity';
 import {
   ParsedCustomer, ParsedProduct, ParsedStock,
   parseErpCustomer, parseErpProduct, parseErpSaleOrder, parseErpStock,
+  parseJagotaMoq, parseJagotaPrice, parseJagotaQty,
 } from './erp-payload.parsers';
 import { SettingsService } from '../../../../core/settings/application/settings.service';
 import { MappingService } from '../../../mapping/application/mapping.service';
@@ -18,9 +19,11 @@ import { Customer } from '../../../../commerce/customer/infrastructure/customer.
 const PARSERS: Record<ErpIngestEntityType, (raw: unknown) => Record<string, unknown>> = {
   product: parseErpProduct as never, stock: parseErpStock as never,
   customer: parseErpCustomer as never, sale_order: parseErpSaleOrder as never,
+  product_qty: parseJagotaQty as never, product_price: parseJagotaPrice as never, product_moq: parseJagotaMoq as never,
 };
 const EXTERNAL_ID_KEYS: Record<ErpIngestEntityType, string> = {
   product: 'externalId', stock: 'externalItemId', customer: 'externalId', sale_order: 'orderNumber',
+  product_qty: 'sku', product_price: 'sku', product_moq: 'sku',
 };
 
 const ERP_BASE_PRICE_LIST_NAME = 'ERP Base';
@@ -97,6 +100,9 @@ export class ErpIngestService {
     const record = await this.repo.findOne({ where: { id: recordId } });
     if (!record) throw new Error(`ErpIngestRecord ${recordId} not found`);
     if (record.status !== 'received' && record.status !== 'failed') return record;
+    // Feed rows are fully handled at receipt (ErpFeedService); their downstream
+    // retries live on the webhook delivery, not here.
+    if (ERP_FEED_ENTITY_TYPES.has(record.entityType)) return record;
 
     if (record.parsedPayload == null) {
       try {

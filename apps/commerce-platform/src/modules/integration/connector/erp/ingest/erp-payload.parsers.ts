@@ -1,9 +1,10 @@
 /**
- * Anti-corruption layer: the ONLY file in the platform that knows Oracle EBS
- * field names (SEGMENT1, INVENTORY_ITEM_ID, SUBINVENTORY_CODE, ...). Every
+ * Anti-corruption layer: the ONLY file in the platform that knows ERP field
+ * names — Oracle EBS (SEGMENT1, INVENTORY_ITEM_ID, SUBINVENTORY_CODE, ...) and
+ * the Jagota Node API feed (PRODUCT_CODE, QUANTITY, CHANGED_AT, ...). Every
  * parser takes a raw inbound payload of unknown shape, validates the fields
  * it needs, and returns a plain platform-shaped object. No other module may
- * reference an Oracle field name directly.
+ * reference an ERP field name directly (the DTOs only validate the wire shape).
  */
 
 export interface ParsedProduct {
@@ -139,4 +140,66 @@ export function parseErpSaleOrder(raw: unknown): ParsedSaleOrder {
     soldToAccount: (r.SOLD_TO_ACCOUNT as string) ?? null,
     lines: rawLines.map((line, index) => parseErpSaleOrderLine(line, index)),
   };
+}
+
+/* ───────────── Jagota Node API feed (PUT /erp/products/{qty,price,moq}) ───────────── */
+
+export interface ParsedFeedQty {
+  sku: string;
+  /** null → the configured default warehouse (Jagota sends one warehouse today). */
+  warehouseCode: string | null;
+  quantity: number;
+  reason: string | null;
+  /** ISO string; null → time of receipt. */
+  changedAt: string | null;
+}
+
+export interface ParsedFeedPrice {
+  sku: string;
+  orderingPrice: string | null;
+  sellingUnitPrice: string | null;
+}
+
+export interface ParsedFeedMoq {
+  sku: string;
+  moq: number;
+}
+
+function optionalString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() !== '' ? value.trim() : null;
+}
+
+export function parseJagotaQty(raw: unknown): ParsedFeedQty {
+  const r = asRecord(raw);
+  const sku = String(requireField(r, 'PRODUCT_CODE'));
+  // ERP sends QUANTITY: null for "out of stock" — same rule as josh's nullToZero.
+  const quantity = r.QUANTITY === null ? 0 : requireNumericField(r, 'QUANTITY', `ERP qty ${sku}`);
+  const changedAt = optionalString(r.CHANGED_AT);
+  if (changedAt && Number.isNaN(Date.parse(changedAt))) {
+    throw new Error(`ERP qty ${sku}: CHANGED_AT is not a date`);
+  }
+  return {
+    sku,
+    warehouseCode: optionalString(r.WAREHOUSE_CODE),
+    quantity,
+    reason: optionalString(r.REASON),
+    changedAt,
+  };
+}
+
+export function parseJagotaPrice(raw: unknown): ParsedFeedPrice {
+  const r = asRecord(raw);
+  const sku = String(requireField(r, 'PRODUCT_CODE'));
+  const price = asRecord(r.PRICE);
+  return {
+    sku,
+    orderingPrice: money(price.ORDERING_PRICE),
+    sellingUnitPrice: money(price.SELLING_UNIT_PRICE),
+  };
+}
+
+export function parseJagotaMoq(raw: unknown): ParsedFeedMoq {
+  const r = asRecord(raw);
+  const sku = String(requireField(r, 'PRODUCT_CODE'));
+  return { sku, moq: requireNumericField(r, 'MOQ', `ERP moq ${sku}`) };
 }

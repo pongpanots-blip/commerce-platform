@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsString, MaxLength, MinLength } from 'class-validator';
 import { PortalJwtGuard } from '../portal-jwt.guard';
 import { ApiKeyService } from '../../modules/core/api-key/application/api-key.service';
+import { Public } from '../../shared-kernel/presentation/auth.decorators';
 
 class CreateKeyDto {
   @ApiProperty({ example: 'Production key' })
@@ -11,6 +12,8 @@ class CreateKeyDto {
 
 @ApiTags('portal-keys')
 @ApiBearerAuth()
+// Own auth (or health) — skip the global staff guard.
+@Public()
 @Controller('v1/portal/keys')
 @UseGuards(PortalJwtGuard)
 export class PortalKeysController {

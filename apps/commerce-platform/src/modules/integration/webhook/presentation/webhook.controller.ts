@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { WebhookReceiverService } from '../application/webhook-receiver.service';
+import { Public } from '../../../../shared-kernel/presentation/auth.decorators';
 
 /**
  * Generic webhook entrypoint. Thin by design: hands raw body + headers to the
@@ -31,6 +32,8 @@ export class WebhookController {
 
   // `ref` is either the integration UUID or its webhook slug (e.g. "shopify"),
   // giving each platform a clean URL: POST /webhooks/shopify
+  // Authenticated by the integration's signing secret, not a staff token.
+  @Public()
   @Post(':ref')
   @HttpCode(200)
   async receive(

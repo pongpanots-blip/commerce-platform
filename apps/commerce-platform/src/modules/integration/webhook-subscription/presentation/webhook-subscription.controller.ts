@@ -7,7 +7,9 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import { DeliveryStatus } from '../infrastructure/webhook-delivery.entity';
 import { WebhookSubscriptionService } from '../application/webhook-subscription.service';
 import { CreateSubscriptionDto } from '../application/dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from '../application/dto/update-subscription.dto';
@@ -22,8 +24,13 @@ export class WebhookSubscriptionController {
   }
 
   @Get('deliveries')
-  deliveries() {
-    return this.service.listDeliveries();
+  deliveries(@Query('status') status?: DeliveryStatus) {
+    return this.service.listDeliveries(100, status);
+  }
+
+  @Post('deliveries/:id/retry')
+  retry(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.retryDelivery(id);
   }
 
   @Get(':id')

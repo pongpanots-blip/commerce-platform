@@ -13,6 +13,17 @@ export const QUEUES = {
 
 export type QueueName = (typeof QUEUES)[keyof typeof QUEUES];
 
+/**
+ * BullMQ's default is ONE attempt, so jobs that throw to "let BullMQ retry"
+ * must be enqueued with these. 5 attempts, 30s → 60s → 2m → 4m backoff — keep
+ * `attempts` equal to the workers' MAX_ATTEMPTS so the row flips to 'failed'
+ * on the last try.
+ */
+export const RETRY_JOB_OPTIONS = {
+  attempts: 5,
+  backoff: { type: 'exponential', delay: 30_000 },
+} as const;
+
 export interface RedisConnection {
   host: string;
   port: number;

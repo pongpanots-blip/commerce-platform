@@ -389,6 +389,9 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 **ขั้นตอน:** วัด slow query / เวลา cron จริง → เลือก 2-3 ตัวแรก → ย้ายทีละตัว วัดก่อน/หลัง
 
+**ไม่ย้าย (ตรวจโค้ดแล้ว 2026-10-03):** `api-log-archive`, `analytics-retention`, `marketing-page-view-retention`. ทั้งสามตัวทำงานหนักอยู่ใน DB หรือ Mongo ของ josh เอง (DELETE, rollup INSERT และ `updateMany archivedAt`) ย้าย cron มารันที่ commerce ก็ไม่ลดโหลด DB ของ josh เลย แถมต้องให้ commerce ถือสิทธิ์**เขียน**ลง primary, Mongo และ S3 bucket ของ josh ซึ่งขัดกับ §0 ถ้า DELETE ก้อนใหญ่เริ่มทำให้ DB ช้า ให้แก้เป็น DELETE ทีละ batch ใน josh แทน
+**ตัวที่ย้ายแล้วได้ผลจริง** คือตัวที่*อ่าน*หนักแต่เขียนผลน้อย เช่นการคำนวณ `customer-metrics` (อ่านจาก replica แล้วส่งผลกลับ) ต้องวัดเวลาจริงก่อน
+
 **เวลา:** ประเมินหลังได้ผลวัด
 
 ---

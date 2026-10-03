@@ -3,14 +3,10 @@ import { Public } from '../../../shared-kernel/presentation/auth.decorators';
 import { InternalKeyGuard } from './internal-key.guard';
 import { ScrapingService } from '../application/scraping.service';
 
-export class ReadProductDto {
-  sourceId: string;
-  url: string;
-}
-
 /**
  * Internal API for josh to call: machine-to-machine, requires X-Internal-Key header.
  * All endpoints return scraped data shapes matching what josh's competitor-prices.service expects.
+ * Marked @Public() to skip the global staff auth guard; InternalKeyGuard provides API key auth.
  */
 @Controller('internal/scraping')
 @Public()

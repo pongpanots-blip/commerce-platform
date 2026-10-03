@@ -22,6 +22,7 @@ import { InboundLog } from './pages/InboundLog';
 import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
 import { WebhookPlatforms } from './pages/WebhookPlatforms';
 import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
+import { AiConnectors } from './pages/AiConnectors';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -34,6 +35,7 @@ const NAV = [
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
     ],
   },
+  { group: 'AI', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
   {
     group: 'ERP hub',
     links: [
@@ -110,6 +112,7 @@ export function App() {
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />
             <Route path="/marketing/scraped-catalog" element={<ScrapedCatalog />} />
             <Route path="/marketing/competitor-prices" element={<CompetitorPrices />} />
+            <Route path="/ai/connectors" element={<AiConnectors />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
             <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />

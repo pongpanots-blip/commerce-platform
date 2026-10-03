@@ -48,6 +48,14 @@
 - **Audit:** ทุก tool call บันทึกใน `audit_logs` (`action = 'mcp.tool_call'`) ว่าใคร ผ่าน AI client ไหน ใช้ tool อะไร และส่ง argument อะไร
 - **client_secret:** client แบบ confidential เก็บ `client_secret` แบบ plain ใน `mcp_oauth_clients.info` เพราะ SDK เทียบค่าตรงๆ Claude และ ChatGPT ส่วนใหญ่ register เป็น public client (PKCE) ซึ่งไม่มี secret
 
+## หน้า AI connectors ใน commerce-admin (`/ai/connectors`)
+
+- **วิธีเชื่อมต่อ:** URL ของ MCP พร้อมปุ่มคัดลอก และขั้นตอนสำหรับ Claude, ChatGPT และ Claude Code
+- **AI ที่เชื่อมต่อ:** สถานะ, ใช้ล่าสุดเมื่อไร, เรียกข้อมูลไปกี่ครั้ง และปุ่ม**ยกเลิกการเชื่อมต่อ** (token ทุกตัวของ AI ตัวนั้นใช้ไม่ได้ทันที)
+- **AI อ่านอะไรไปบ้าง:** 50 ครั้งล่าสุดจาก `audit_logs`
+- **สิทธิ์:** marketing เห็นและยกเลิกได้เฉพาะของตัวเอง admin เห็นของทุกบัญชี
+- API: `GET /api/mcp-connections`, `GET /api/mcp-connections/activity`, `POST /api/mcp-connections/:clientId/revoke`
+
 ## Deploy
 
 ```bash
@@ -80,4 +88,3 @@ script นี้ทำตามลำดับเดียวกับ connector
 ## ทำทีหลัง
 
 - tool ที่แก้ข้อมูลได้ เช่นส่ง dead-letter ซ้ำ หรือปรับสต็อกตอนเป็นระบบคลังเอง ต้องมี scope `commerce.write` แยก และให้ผู้ใช้ยืนยันก่อนทำ
-- หน้าใน commerce-admin สำหรับดูและเพิกถอน AI ที่เชื่อมต่อแต่ละบัญชี

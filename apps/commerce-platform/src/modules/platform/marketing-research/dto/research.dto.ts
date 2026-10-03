@@ -47,13 +47,7 @@ class ResearchTopicFieldsDto {
   @ArrayMaxSize(7)
   @ArrayUnique()
   @IsIn(RESEARCH_SOURCES, { each: true })
-  sources: ResearchSource[] = [
-    'facebook',
-    'instagram',
-    'google',
-    'tiktok',
-    'youtube',
-  ];
+  sources: ResearchSource[] = ['tat', 'osm'];
   @IsBoolean() followHourly = true;
 }
 

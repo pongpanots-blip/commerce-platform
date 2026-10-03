@@ -9,6 +9,8 @@ import {
 import { MarketingResearchCron } from './application/marketing-research.cron';
 import { MarketingResearchService } from './application/marketing-research.service';
 import { ResearchAccessGuard, ResearchWorkerGuard } from './presentation/research.guards';
+import { ResearchCatalogService } from './application/research-catalog.service';
+import { ResearchFreeWorker } from './application/research-free.worker';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ResearchAccessGuard, ResearchWorkerGuard } from './presentation/researc
   providers: [
     MarketingResearchService,
     MarketingResearchCron,
+    ResearchCatalogService,
+    ResearchFreeWorker,
     ResearchAccessGuard,
     ResearchWorkerGuard,
   ],

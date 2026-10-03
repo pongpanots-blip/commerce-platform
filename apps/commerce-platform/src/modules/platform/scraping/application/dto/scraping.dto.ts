@@ -14,6 +14,8 @@ export class ScrapingConfigDto {
   @IsString() @MaxLength(300) itemSelector: string;
   @IsArray() @ArrayMaxSize(20) @ValidateNested({ each: true }) @Type(() => ScrapingFieldDto) fields: ScrapingFieldDto[];
   @IsOptional() @IsArray() @ArrayMinSize(1) @ArrayMaxSize(20) @IsString({ each: true }) @Matches(/^[a-z][a-zA-Z0-9_]{0,39}$/, { each: true }) selectedFields?: string[];
+  @IsOptional() @IsBoolean() autoCards?: boolean;
+  @IsOptional() @IsIn(['none', 'browser']) pagination?: 'none' | 'browser';
   @IsString() @Matches(/^[A-Z]{3}$/) currency: string;
   @IsBoolean() vatIncluded: boolean;
   @IsString() @Length(1, 1000) priceContext: string;

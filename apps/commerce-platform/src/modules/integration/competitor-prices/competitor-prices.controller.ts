@@ -19,6 +19,8 @@ export class CompetitorPricesController {
 
   @Get() list() { return this.result(() => this.service.list()); }
   @Get('catalog/:sku') catalog(@Param('sku') sku: string) { return this.result(() => this.service.catalog(sku)); }
+  @Get('suggestions/:catalogItemId')
+  suggestions(@Param('catalogItemId', ParseUUIDPipe) catalogItemId: string) { return this.result(() => this.service.suggestions(catalogItemId)); }
   @Get('catalog-items/:id') catalogItem(@Param('id', ParseUUIDPipe) id: string) { return this.result(() => this.service.catalogItem(id)); }
   @Post() @HttpCode(200)
   create(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: SaveCompetitorPriceDto) {

@@ -21,6 +21,7 @@ import {
   type ResearchActor,
   type ResearchReport,
   type ResearchScope,
+  type ResearchSource,
 } from '../research.types';
 
 const HOUR = 60 * 60 * 1000;
@@ -207,7 +208,7 @@ export class MarketingResearchService {
         status: ready ? 'queued' : 'waiting_configuration',
         message: ready
           ? ''
-          : 'รอเชื่อม connector และ worker ไม่มีการค้นข้อมูลจริง',
+          : 'แหล่งข้อมูลที่เลือกยังไม่เชื่อม เพิ่ม ททท. หรือ OpenStreetMap ให้โจทย์แล้วรันใหม่เพื่อค้นจากฐานข้อมูลฟรี',
         finishedAt: ready ? null : new Date(),
       }),
     );
@@ -304,7 +305,7 @@ export class MarketingResearchService {
     });
   }
 
-  async claim(now = new Date()) {
+  async claim(now = new Date(), supportedSources?: ResearchSource[]) {
     return this.db.transaction(async (manager) => {
       await manager
         .createQueryBuilder()
@@ -321,17 +322,23 @@ export class MarketingResearchService {
           { status: 'running', now },
         )
         .execute();
-      const run = await manager
+      const query = manager
         .createQueryBuilder(Run, 'run')
         .addSelect('run.leaseToken')
         .where(
-          'run.status = :queued OR (run.status = :running AND run."leaseExpiresAt" <= :now AND run.attempts < 3)',
+          '(run.status = :queued OR (run.status = :running AND run."leaseExpiresAt" <= :now AND run.attempts < 3))',
           { queued: 'queued', running: 'running', now },
         )
         .orderBy('run."createdAt"', 'ASC')
         .setLock('pessimistic_write')
-        .setOnLocked('skip_locked')
-        .getOne();
+        .setOnLocked('skip_locked');
+      if (supportedSources) {
+        query.andWhere(
+          'run."availableSources" ?| CAST(:supportedSources AS text[])',
+          { supportedSources },
+        );
+      }
+      const run = await query.getOne();
       if (!run) return null;
       const ready = new Set(
         this.sources()

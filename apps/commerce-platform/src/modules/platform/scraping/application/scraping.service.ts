@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
-import { In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { JSDOM } from 'jsdom';
 import { ScrapedItem, ScrapingProgress, ScrapingSource } from '../domain/scraping-source.entity';
 import { DiscoverScrapingDto, PreviewScrapingDto, SaveScrapingSourceDto, StartScrapingDto } from './dto/scraping.dto';
-import { PublicWebReader, publicUrl, scrapingVersion, extractedWeightKg, resolveWebsite, discoveredFieldLabels } from '../infrastructure/public-web.reader';
+import { PublicWebReader, publicUrl, scrapingVersion, extractedWeightKg, resolveWebsite, discoveredFieldLabels, ExtractedWebItem } from '../infrastructure/public-web.reader';
 
 const emptyProgress = (): ScrapingProgress => ({ pending: [], visited: [], successful: 0, failed: 0, items: 0 });
 
@@ -118,15 +118,33 @@ export class ScrapingService {
     else if (best.items.every(item => item.price == null)) warnings.push('พบข้อความราคา แต่ตัวเลขหรือเงื่อนไขยังไม่ชัดเจน กรุณาตรวจตัวอย่างก่อนนำไปเทียบ');
     if (!fieldKeys.includes('url')) fieldKeys.push('url');
     const required = ['name', 'title', 'url'];
-    const recommended = [...required, 'price', 'sku', 'weight', 'currency', 'availability', 'brand'];
+    const recommended = [...required, 'price', 'unitPrice', 'image', 'sku', 'weight', 'currency', 'availability', 'brand'];
     fieldKeys.sort((a, b) => (recommended.includes(a) ? recommended.indexOf(a) : 100) - (recommended.includes(b) ? recommended.indexOf(b) : 100));
     const fields = fieldKeys.slice(0, 20).map(key => ({ key, label: best!.config.fields.find(field => field.key === key)?.label || discoveredFieldLabels[key] || key,
       required: required.includes(key), recommended: recommended.includes(key),
       examples: [...new Set(best!.items.map(item => (key === 'url' ? item.url : item.fields[key]) || '').filter(Boolean))].slice(0, 3),
     }));
+    // Try two pages in a real browser so the user sees paging works before starting a background run.
+    let paging: { pages: { page: number; found: number; fresh: number }[]; totalPages: number | null; works: boolean } | null = null;
+    if (best.kind === 'list') {
+      const seen = new Set<string>();
+      const pages: { page: number; found: number; fresh: number }[] = [];
+      try {
+        const result = await this.reader.paginate(bestUrl, best.config, origin, { skip: 0, maxPages: 2, delayMs: 1000, onPage: async (html, url) => {
+          const items = this.reader.extract(html, url, best!.config).items;
+          const fresh = items.filter(item => !seen.has(item.url));
+          fresh.forEach(item => seen.add(item.url));
+          pages.push({ page: pages.length + 1, found: items.length, fresh: fresh.length });
+          return true;
+        } });
+        paging = { pages, totalPages: result.totalPages, works: (pages[1]?.fresh || 0) > 0 };
+        if (!paging.works) warnings.push('ไม่พบหน้าถัดไป ระบบจะเก็บเฉพาะหน้านี้และลิงก์ที่พบ');
+      } catch { warnings.push('ลองเปิดหน้าถัดไปไม่สำเร็จ ระบบจะเก็บเฉพาะหน้าที่อ่านได้'); }
+    }
     const proposal = { name: website.name, origin, enabled: false, config: { ...best.config, startUrls: [bestUrl],
+      pagination: paging?.works ? 'browser' as const : 'none' as const,
       selectedFields: fields.filter(field => field.recommended || field.required).map(field => field.key) } };
-    return { ready: true, proposal, fields, preview: { url: bestUrl, observedAt: new Date(), items: best.items.slice(0, 10),
+    return { ready: true, proposal, fields, paging, preview: { url: bestUrl, observedAt: new Date(), items: best.items.slice(0, 10),
       found: best.items.length, links: best.links.length, sitemap: best.sitemap, message: '' }, scannedPages: scanned, warnings };
   }
 
@@ -223,11 +241,14 @@ export class ScrapingService {
   }
 
   async batch(id: string) {
-    const leaseUntil = new Date(Date.now() + 180000);
+    const paged = (await this.sources.findOneBy({ id }))?.config.pagination === 'browser';
+    // Paged runs re-click to the resume page inside one session, so they hold the lease longer.
+    const leaseUntil = new Date(Date.now() + (paged ? 600000 : 180000));
     const claim = await this.sources.createQueryBuilder().update().set({ leaseUntil }).where('id = :id AND status = :status AND (lease_until IS NULL OR lease_until < now())', { id, status: 'running' }).execute();
     if (!claim.affected) return;
     const source = await this.source(id);
     try {
+      if (paged) return await this.pagedBatch(id, source, leaseUntil);
       for (let pageNumber = 0; pageNumber < 2; pageNumber++) {
         const state = await this.source(id);
         if (state.status !== 'running' || state.revision !== source.revision || state.leaseUntil?.getTime() !== leaseUntil.getTime()) break;
@@ -247,14 +268,7 @@ export class ScrapingService {
           progress.pending.shift(); progress.visited.push(requested);
           if (result) {
             progress.successful += 1;
-            const uniqueItems = [...new Map(result.items.map(item => [item.url, item])).values()];
-            if (uniqueItems.length) await manager.getRepository(ScrapedItem).upsert(uniqueItems.map(item => ({
-              sourceId: id, url: item.url, pageUrl: item.pageUrl, name: item.name, sku: item.sku, fields: item.fields,
-              priceIncVat: source.config.vatIncluded && item.currency === 'THB' ? item.price : null,
-              weightKg: extractedWeightKg(item.fields.weight || item.name), currency: item.currency,
-              configVersion: scrapingVersion(source.config), observedAt: new Date(),
-            })), ['sourceId', 'url']);
-            progress.items += uniqueItems.length;
+            progress.items += await this.saveItems(manager, source, result.items);
             const known = new Set([...progress.visited, ...progress.pending]);
             for (const link of result.links) {
               let url: URL;
@@ -279,5 +293,66 @@ export class ScrapingService {
     } finally {
       await this.sources.createQueryBuilder().update().set({ leaseUntil: null }).where('id = :id AND revision = :revision AND lease_until = :leaseUntil', { id, revision: source.revision, leaseUntil }).execute();
     }
+  }
+
+  private async saveItems(manager: EntityManager, source: ScrapingSource, items: ExtractedWebItem[]) {
+    const uniqueItems = [...new Map(items.map(item => [item.url, item])).values()];
+    if (uniqueItems.length) await manager.getRepository(ScrapedItem).upsert(uniqueItems.map(item => ({
+      sourceId: source.id, url: item.url, pageUrl: item.pageUrl, name: item.name, sku: item.sku, fields: item.fields,
+      priceIncVat: source.config.vatIncluded && item.currency === 'THB' ? item.price : null,
+      weightKg: extractedWeightKg(item.fields.weight || item.name), currency: item.currency,
+      configVersion: scrapingVersion(source.config), observedAt: new Date(),
+    })), ['sourceId', 'url']);
+    return uniqueItems.length;
+  }
+
+  /**
+   * Reads the first pending listing page by page in one browser session (see PublicWebReader.paginate), up to
+   * 10 pages per tick. Visited entries are `<listing>#page=N`, so page counts and maxPages work as for links.
+   * ponytail: the cron tick awaits this session (~1 min); move scraping to its own queue if several sites run at once.
+   */
+  private async pagedBatch(id: string, source: ScrapingSource, leaseUntil: Date) {
+    const listing = source.progress.pending[0];
+    if (!listing || source.progress.visited.length >= source.config.maxPages) return;
+    const tag = `${listing}#page=`;
+    const done = source.progress.visited.filter(entry => entry.startsWith(tag)).length;
+    const owned = (current: ScrapingSource | null): current is ScrapingSource => !!current && current.status === 'running'
+      && current.revision === source.revision && current.leaseUntil?.getTime() === leaseUntil.getTime();
+    const seen = new Set<string>();
+    let finished = false;
+    let error: string | null = null;
+    try {
+      const result = await this.reader.paginate(listing, source.config, source.origin, {
+        skip: done, maxPages: Math.min(done + 10, source.config.maxPages - source.progress.visited.length + done), delayMs: source.config.delayMs,
+        onPage: (html, url, index) => this.sources.manager.transaction(async manager => {
+          const repository = manager.getRepository(ScrapingSource);
+          const current = await repository.findOne({ where: { id }, lock: { mode: 'pessimistic_write' } });
+          if (!owned(current)) return false;
+          const fresh = this.reader.extract(html, url, source.config).items.filter(item => !seen.has(item.url));
+          fresh.forEach(item => seen.add(item.url));
+          current.progress.items += await this.saveItems(manager, source, fresh);
+          current.progress.visited.push(`${tag}${index + 1}`);
+          current.progress.successful += 1;
+          await repository.save(current);
+          // A page that repeats what we already read means paging ended (site ignored the next control).
+          return fresh.length > 0;
+        }),
+      });
+      finished = result.end !== 'limit';
+    } catch (err) {
+      error = err instanceof BadRequestException ? err.message : 'อ่านหน้ารายการไม่สำเร็จ ลองสำรวจเว็บใหม่';
+      finished = true;
+    }
+    await this.sources.manager.transaction(async manager => {
+      const repository = manager.getRepository(ScrapingSource);
+      const current = await repository.findOne({ where: { id }, lock: { mode: 'pessimistic_write' } });
+      if (!owned(current)) return;
+      const progress = current.progress;
+      if (error) progress.failed += 1;
+      if (finished) progress.pending.shift();
+      current.lastError = error || current.lastError;
+      current.status = !progress.pending.length ? (progress.failed || current.lastError ? 'limited' : 'completed') : progress.visited.length >= source.config.maxPages ? 'limited' : 'running';
+      await repository.save(current);
+    });
   }
 }

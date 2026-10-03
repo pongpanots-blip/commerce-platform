@@ -54,6 +54,11 @@ export type ResearchReport = {
   }>;
 };
 
+export const FREE_RESEARCH_SOURCES: ResearchSource[] = ['tat', 'osm'];
+export const freeResearchEnabled = () =>
+  !['false', '0'].includes(process.env.RESEARCH_FREE_WORKER_ENABLED ?? 'true');
+
+/** Readiness means a collector can accept work, not a vendor health guarantee. */
 export function researchSourceStatus() {
   const workerConfigured =
     process.env.RESEARCH_WORKER_ENABLED === 'true' &&
@@ -63,12 +68,16 @@ export function researchSourceStatus() {
       .split(',')
       .map((source) => source.trim()),
   );
-  return RESEARCH_SOURCES.map((id) => ({
-    id,
-    ready: workerConfigured && enabled.has(id),
-    reason:
-      workerConfigured && enabled.has(id)
+  return RESEARCH_SOURCES.map((id) => {
+    const ready =
+      (freeResearchEnabled() && FREE_RESEARCH_SOURCES.includes(id)) ||
+      (workerConfigured && enabled.has(id));
+    return {
+      id,
+      ready,
+      reason: ready
         ? ''
-        : 'ยังไม่ได้เปิดใช้งาน connector และ worker สำหรับแหล่งนี้',
-  }));
+        : 'ยังไม่ได้เชื่อมแหล่งข้อมูลนี้ เลือก ททท. หรือ OpenStreetMap เพื่อเริ่มค้นจากฐานรายชื่อฟรี',
+    };
+  });
 }

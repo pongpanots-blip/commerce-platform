@@ -8,8 +8,9 @@ import { useAsync, statusBadgeClass } from '../hooks';
 const KIND_LABEL: Record<ResearchKind, string> = {
   sales: 'โอกาสขาย', competitor: 'คู่แข่ง', procurement: 'จัดซื้อ / วัตถุดิบ', trend: 'เทรนด์ตลาด',
 };
+const FREE = ['tat', 'osm'];
 const blank: ResearchTopicInput = {
-  title: '', kind: 'trend', area: RESEARCH_AREAS[0], days: 30, sector: RESEARCH_SECTORS[0], sources: ['google'], followHourly: false,
+  title: '', kind: 'trend', area: RESEARCH_AREAS[0], days: 30, sector: RESEARCH_SECTORS[0], sources: ['tat', 'osm'], followHourly: false,
 };
 
 /** Marketing research (moved from josh web-admin). A worker collects evidence; this page asks and reads. */
@@ -53,7 +54,7 @@ export function MarketingResearch() {
       <div className="page-head">
         <div>
           <h1>Marketing Research</h1>
-          <p>ตั้งโจทย์ให้ worker ไปหาข้อมูลจากแหล่งสาธารณะ แล้วอ่านรายงานที่มีหลักฐานอ้างอิง</p>
+          <p>ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง · ผลค้นยังไม่ยืนยันความต้องการซื้อ ราคา หรือกระแสย้อนหลัง · Facebook, Instagram, Google, TikTok และ YouTube ยังไม่เชื่อม</p>
         </div>
         <button className="btn ghost" type="button" onClick={topics.reload}>Refresh</button>
       </div>
@@ -88,7 +89,7 @@ export function MarketingResearch() {
           </label>
         </div>
         <fieldset className="checks" style={{ border: 0, margin: 0, padding: '0 16px 12px' }}>
-          <legend className="hint">แหล่งข้อมูล (สีเทา = worker ยังไม่พร้อม)</legend>
+          <legend className="hint">แหล่งข้อมูล (สีเทา = ยังไม่เชื่อม) · ททท. และ OpenStreetMap ค้นได้ฟรี</legend>
           {(sources.data ?? []).map((s) => (
             <label key={s.id} className="check" title={s.ready ? '' : s.reason}>
               <input type="checkbox" checked={form.sources.includes(s.id)}
@@ -103,7 +104,7 @@ export function MarketingResearch() {
         </fieldset>
         <div style={{ padding: '0 16px 16px' }}>
           <button className="btn" type="submit" disabled={busy === 'create' || !form.sources.length}>{busy === 'create' ? 'กำลังบันทึก…' : 'บันทึกโจทย์'}</button>
-          {!form.sources.some((s) => ready.has(s)) && <span className="hint" style={{ marginLeft: 12 }}>ยังไม่มีแหล่งที่พร้อม — โจทย์จะรอจนกว่า worker จะเปิดใช้งาน</span>}
+          {!form.sources.some((s) => ready.has(s)) && <span className="hint" style={{ marginLeft: 12 }}>ยังไม่มีแหล่งที่พร้อม — โจทย์จะรอจนกว่าแหล่งข้อมูลจะเชื่อม</span>}
         </div>
       </form>
 
@@ -134,6 +135,12 @@ export function MarketingResearch() {
                         <button className="btn ghost sm" type="button" onClick={() => toggleRuns(t)}>{open === t.id ? 'ซ่อน' : 'รายงาน'}</button>{' '}
                         {t.canManage && !t.archivedAt && <>
                           <button className="btn sm" type="button" disabled={busy === `run-${t.id}`} onClick={() => act(`run-${t.id}`, () => marketingResearchApi.requestRun(t.id), 'ส่งเข้าคิวแล้ว')}>รันตอนนี้</button>{' '}
+                          {!t.sources.some((s) => FREE.includes(s)) && <><button className="btn ghost sm" type="button" disabled={busy === `free-${t.id}`}
+                            onClick={() => act(`free-${t.id}`, async () => {
+                              const { title, kind, area, days, sector, followHourly, sources } = t;
+                              const updated = await marketingResearchApi.update(t, { title, kind, area, days, sector, followHourly, sources: [...sources, ...FREE] });
+                              await marketingResearchApi.requestRun(updated.id);
+                            }, 'เพิ่มแหล่งฟรีและส่งเข้าคิวแล้ว')}>เพิ่มแหล่งฟรีและรัน</button>{' '}</>}
                           <button className="btn ghost sm" type="button" disabled={busy === `arc-${t.id}`} onClick={() => act(`arc-${t.id}`, () => marketingResearchApi.archive(t), 'เก็บโจทย์แล้ว')}>เก็บ</button>
                         </>}
                       </td>
@@ -147,6 +154,9 @@ export function MarketingResearch() {
                             {r.message && <div className="hint">{r.message}</div>}
                             {r.report?.summary && <p style={{ margin: '6px 0' }}>{r.report.summary}</p>}
                             {r.report?.findings?.length ? <ul style={{ margin: 0 }}>{r.report.findings.map((f, i) => <li key={i}>{f.text}</li>)}</ul> : null}
+                            {r.report?.evidence?.length ? <details><summary className="hint">หลักฐาน {r.report.evidence.length} รายการ</summary>
+                              <ul style={{ margin: 0 }}>{r.report.evidence.map((e) => <li key={e.id}><a href={e.url} target="_blank" rel="noopener noreferrer">{e.excerpt || e.url}</a> <span className="hint">· {e.source}</span></li>)}</ul></details> : null}
+                            {r.report?.limitations?.map((l, i) => <div key={i} className="hint">ข้อจำกัด: {l}</div>)}
                             {r.report && !r.keptAt && <button className="btn ghost sm" type="button" onClick={() => act(`keep-${r.id}`, () => marketingResearchApi.keepRun(r.id), 'เก็บรายงานไว้แล้ว')}>เก็บรายงานนี้</button>}
                           </div>
                         ))}

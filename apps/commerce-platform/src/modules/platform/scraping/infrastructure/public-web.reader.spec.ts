@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PublicWebReader, isPublicAddress, publicUrl, singlePrice, resolveWebsite } from './public-web.reader';
+import { PublicWebReader, isPublicAddress, publicUrl, singlePrice, resolveWebsite, cardFields } from './public-web.reader';
 import { ScrapingConfig } from '../domain/scraping-source.entity';
 
 it('pins public DNS, rejects redirects into private networks, and extracts generic mapped fields without ambiguous prices', async () => {
@@ -20,10 +20,10 @@ it('pins public DNS, rejects redirects into private networks, and extracts gener
   expect(() => reader.extract(html, 'https://example.com/list', { ...config, fields: config.fields.filter(f => f.key !== 'url') })).toThrow('หลายสินค้า');
   expect(() => reader.extract(html.replace('/mushroom', '/meat'), 'https://example.com/list', config)).toThrow('ลิงก์เดียวกัน');
   const lookup = jest.spyOn(jest.requireActual<typeof import('node:dns/promises')>('node:dns/promises'), 'lookup');
-  const get = jest.spyOn(axios, 'get');
+  const get = jest.spyOn(axios, 'request');
   try {
     lookup.mockResolvedValue([{ address: '8.8.8.8', family: 4 }] as never);
-    get.mockImplementationOnce(async (_url, options) => {
+    get.mockImplementationOnce(async (options: any) => {
       const result = await new Promise(resolve => options?.httpsAgent.options.lookup('example.com', {}, (_error: unknown, address: string) => resolve(address)));
       expect(result).toBe('8.8.8.8'); expect(options?.maxRedirects).toBe(0); expect(options?.proxy).toBe(false);
       return { status: 302, headers: { location: 'https://private.example.com/secret' } };
@@ -58,6 +58,27 @@ it('discovers structured/card/table fields and applies field selection without d
   expect(listing.config.fields.find(field => field.key === 'quality')?.label).toBe('เกรด');
   const table = reader.inspect('<table><thead><tr><th>ชื่อ</th><th>ราคา</th><th>เกรด</th></tr></thead><tbody><tr><td><a href="/a">เนื้อ</a></td><td>120</td><td>A</td></tr><tr><td><a href="/b">หมู</a></td><td>100</td><td>B</td></tr></tbody></table>', 'https://example.com/table', config);
   expect(table.items).toHaveLength(2); expect(table.items[0].fields.column3).toBe('A');
+});
+
+it('finds product cards from repeated links without CSS selectors (Makro-like markup)', () => {
+  const card = (id: string, name: string, price: string, extra = '') => `<div><a href="/p/${id}?info=pos${id}"><div>
+    <img src="/_next/static/media/apple.png"><img src="data:image/gif;base64,R0lGOD"><img srcset="https://img.example.com/${id}.jpg 1x">
+    <span>${name}</span><span>&lt;truckIcon /&gt;</span>${extra}<span>฿</span><span>${price}</span></div></a></div>`;
+  const html = `<html><body><nav><a href="/about">About</a></nav><main>
+    ${card('a1', 'น่องไก่ 1 กก.', '95', '<span>95.00 ฿ ต่อหน่วย หน่วย</span>')}
+    ${card('a2', 'เครื่องดื่มเกลือแร่ 250 มล. x 24', '252')}
+    ${card('a3', 'แครอท 1 กก.', '1,250.50', '<span>แม็คโคร</span>')}</main></body></html>`;
+  const { JSDOM } = require('jsdom');
+  const cards = cardFields(new JSDOM(html, { url: 'https://shop.example.com/c/search?q=*' }).window.document, 'https://shop.example.com/c/search?q=*');
+  expect(cards.map(c => [c.url, c.name, c.price])).toEqual([
+    ['https://shop.example.com/p/a1', 'น่องไก่ 1 กก.', '฿95'],
+    ['https://shop.example.com/p/a2', 'เครื่องดื่มเกลือแร่ 250 มล. x 24', '฿252'],
+    ['https://shop.example.com/p/a3', 'แครอท 1 กก.', '฿1250.5'],
+  ]);
+  expect(cards[0].unitPrice).toBe('95.00 ฿ ต่อหน่วย หน่วย');
+  expect(cards[0].image).toBe('https://img.example.com/a1.jpg');
+  expect(cards[2].details).toBe('แม็คโคร');
+  expect(cards.some(c => c.regularPrice)).toBe(false);
 });
 
 it('does not assign a category heading the first unrelated price on the page', () => {

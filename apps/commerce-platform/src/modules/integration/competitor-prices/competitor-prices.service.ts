@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { IsNull, Not, Repository } from 'typeorm';
 import { cronConfig } from '../../../config/cron.config';
 import { ScrapingService } from '../../platform/scraping/application/scraping.service';
-import { publicUrl, scrapingVersion } from '../../platform/scraping/infrastructure/public-web.reader';
+import { extractedWeightKg, publicUrl, scrapingVersion } from '../../platform/scraping/infrastructure/public-web.reader';
 import { JoshCatalogProduct } from '../connector/josh/josh-catalog-product.entity';
 import { JoshCatalogSyncService } from '../connector/josh/josh-catalog-sync.service';
 import { CompetitorPrice } from './competitor-price.entity';
@@ -55,6 +55,35 @@ export function catalogPricePerKg(product: JoshCatalogProduct, ourWeightKg: numb
   return null;
 }
 
+// Sizes and pack counts say nothing about what a product is; weight is compared separately.
+export function comparableName(name: string) {
+  return name.toLowerCase()
+    .replace(/\d+(?:[.,]\d+)?\s*(?:กิโลกรัม|กก\.?|กรัม|ก\.|kg|gm|g|มล\.?|ml|ลิตร|ล\.|l|ชิ้น|pcs?|แพ็ค|pack)(?![a-z])/gi, ' ')
+    .replace(/\bx\s*\d+\b|\d+\s*x\b/gi, ' ')
+    // Thai vowels/tone marks are \p{M}; dropping them would merge different words.
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').replace(/\s+/g, ' ').trim();
+}
+/** Dice similarity on character bigrams (0–1). Works for Thai, which has no spaces between words. */
+export function nameSimilarity(a: string, b: string) {
+  const grams = (text: string) => {
+    const counts = new Map<string, number>();
+    for (let i = 0; i < text.length - 1; i++) counts.set(text.slice(i, i + 2), (counts.get(text.slice(i, i + 2)) || 0) + 1);
+    return counts;
+  };
+  const left = grams(comparableName(a)), right = grams(comparableName(b));
+  let overlap = 0, total = 0;
+  for (const [gram, count] of left) { overlap += Math.min(count, right.get(gram) || 0); total += count; }
+  for (const count of right.values()) total += count;
+  return total ? (2 * overlap) / total : 0;
+}
+export type SkuWeightMatch = 'same' | 'different' | 'unknown' | 'per_kg';
+/** `per_kg`: we sell by the kilo, so any competitor pack compares per kg. `same`: within 5%. */
+export function skuWeightMatch(sellingUnit: string | null | undefined, ourWeightKg: number | null, theirWeightKg: number | null): SkuWeightMatch {
+  if (['KG', 'G', 'GM'].includes(sellingUnit?.trim().toUpperCase() || '')) return 'per_kg';
+  if (ourWeightKg == null || theirWeightKg == null) return 'unknown';
+  return Math.abs(ourWeightKg - theirWeightKg) <= theirWeightKg * 0.05 ? 'same' : 'different';
+}
+
 function productView(product: JoshCatalogProduct) {
   return {
     id: product.id, sku: product.sku,
@@ -101,6 +130,34 @@ export class CompetitorPricesService {
   async catalog(sku: string) { return productView(await this.product(sku)); }
 
   catalogItem(id: string) { return this.scraping.item(id); }
+
+  /**
+   * Top 3 active Josh SKUs for a collected competitor item: similar name (TH or EN), then matching weight.
+   * A person still confirms the pair; nothing is matched automatically. Runs on commerce's catalog copy,
+   * so josh never loads its whole catalog for this.
+   * ponytail: scores every active SKU in Node (~2k rows) so Thai works regardless of DB locale; move to pg_trgm + index if the catalog grows 10×.
+   */
+  async suggestions(catalogItemId: string) {
+    const item = await this.scraping.item(catalogItemId);
+    const theirWeightKg = item.weightKg;
+    const products = await this.products.findBy({ status: 'active', removedAt: IsNull() });
+    const ranked = products.map(product => {
+      const names = product.translations?.map(t => t.product_name).filter(Boolean) ?? [];
+      const similarity = Math.max(0, ...names.map(name => nameSimilarity(item.name, name)));
+      const ourWeightKg = extractedWeightKg(product.weightPerUnit || '');
+      const weightMatch = skuWeightMatch(product.sellingUnit, ourWeightKg, theirWeightKg);
+      const score = similarity + (weightMatch === 'same' ? 0.2 : weightMatch === 'per_kg' ? 0.1 : 0);
+      return { product, similarity, ourWeightKg, weightMatch, score };
+    }).filter(row => row.similarity >= 0.2).sort((a, b) => b.score - a.score).slice(0, 3);
+    return {
+      catalogItem: { id: item.id, name: item.name, weightKg: theirWeightKg },
+      suggestions: ranked.map(({ product, similarity, ourWeightKg, weightMatch }) => ({
+        ...productView(product), similarityPercent: Math.round(similarity * 100), weightMatch,
+        // What to put in "our weight" for this pair: per-kg SKUs compare at the competitor's pack weight.
+        ourWeightKg: weightMatch === 'per_kg' ? theirWeightKg ?? 1 : ourWeightKg,
+      })),
+    };
+  }
 
   private fingerprint(row: CompetitorPrice) {
     const product = catalogFingerprint(row.product);

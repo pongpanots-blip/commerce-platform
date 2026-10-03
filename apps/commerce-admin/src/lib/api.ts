@@ -251,7 +251,12 @@ export interface ResearchTopic {
 }
 export interface ResearchRun {
   id: string; topicId: string; status: string; message: string; attempts: number;
-  findingsCount: number; report: { summary?: string; findings?: { text: string; evidenceIds: string[] }[] } | null;
+  findingsCount: number;
+  report: {
+    summary?: string; findings?: { text: string; evidenceIds: string[] }[];
+    evidence?: { id: string; source: string; url: string; excerpt: string; collectedAt: string }[];
+    suggestions?: string[]; limitations?: string[];
+  } | null;
   keptAt: string | null; createdAt: string; finishedAt: string | null;
 }
 export interface ResearchTopicInput {
@@ -263,6 +268,8 @@ export const marketingResearchApi = {
   list: (page = 1, limit = 20) =>
     enveloped(api.get<Envelope<{ items: ResearchTopic[]; totalCount: number; page: number; limit: number }>>(`/marketing-research/topics?page=${page}&limit=${limit}`)),
   create: (input: ResearchTopicInput) => enveloped(api.post<Envelope<ResearchTopic>>('/marketing-research/topics', input)),
+  update: (topic: ResearchTopic, input: ResearchTopicInput) =>
+    enveloped(api.patch<Envelope<ResearchTopic>>(`/marketing-research/topics/${topic.id}`, { ...input, version: topic.version })),
   archive: (topic: ResearchTopic) => enveloped(api.post<Envelope<ResearchTopic>>(`/marketing-research/topics/${topic.id}/archive`, { version: topic.version })),
   runs: (topicId: string) => enveloped(api.get<Envelope<ResearchRun[] | { items: ResearchRun[] }>>(`/marketing-research/topics/${topicId}/runs`)),
   requestRun: (topicId: string) =>
@@ -275,6 +282,10 @@ export interface ScrapingConfig {
   fields?: { key: string; label: string; selector: string; attribute?: string }[];
   currency?: string; vatIncluded?: boolean; priceContext: string; collectionAllowed?: boolean;
   intervalHours: number; maxPages?: number; delayMs?: number;
+  /** Detect repeated product cards from links instead of CSS field selectors. */
+  autoCards?: boolean;
+  /** 'browser' = follow next link / next button / load more / scroll in one session. */
+  pagination?: 'none' | 'browser';
 }
 export interface ScrapingSource {
   id: string; name: string; origin: string; config: ScrapingConfig; revision: number; enabled: boolean;
@@ -325,11 +336,16 @@ export type CompetitorPriceComparison = Omit<CompetitorPriceInput, 'sku'> & {
   canRefresh: boolean; refreshReason: string | null; observedAt: string | null;
   captureMethod: 'manual' | 'automatic' | null; lastError: string | null;
 };
+/** `per_kg`: our SKU sells by the kilo. `same`: pack weights within 5%. A person still confirms every pair. */
+export type CompetitorSkuSuggestion = CompetitorCatalogProduct & {
+  similarityPercent: number; weightMatch: 'same' | 'different' | 'unknown' | 'per_kg'; ourWeightKg: number | null;
+};
 export type ScrapedCatalogItem = ScrapedItem & { source: { id: string; name: string; config: ScrapingConfig } };
 
 export const competitorPricesApi = {
   list: () => enveloped(api.get<Envelope<CompetitorPriceComparison[]>>('/competitor-prices')),
   catalog: (sku: string) => enveloped(api.get<Envelope<CompetitorCatalogProduct>>(`/competitor-prices/catalog/${encodeURIComponent(sku)}`)),
+  suggestions: (catalogItemId: string) => enveloped(api.get<Envelope<{ catalogItem: { id: string; name: string; weightKg: number | null }; suggestions: CompetitorSkuSuggestion[] }>>(`/competitor-prices/suggestions/${catalogItemId}`)),
   catalogItem: (id: string) => enveloped(api.get<Envelope<ScrapedCatalogItem>>(`/competitor-prices/catalog-items/${id}`)),
   save: (input: CompetitorPriceInput, id?: string) => enveloped(id
     ? api.put<Envelope<CompetitorPriceComparison>>(`/competitor-prices/${id}`, input)

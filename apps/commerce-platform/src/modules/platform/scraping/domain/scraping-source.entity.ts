@@ -5,6 +5,10 @@ export type ScrapingConfig = {
   startUrls: string[]; pathPrefixes: string[]; mode: 'html' | 'browser'; itemSelector: string;
   fields: ScrapingField[]; currency: string; vatIncluded: boolean; priceContext: string;
   selectedFields?: string[];
+  /** Detect repeated product cards from links instead of CSS field selectors. */
+  autoCards?: boolean;
+  /** 'browser' = keep one browser session and follow next link / next button / load more / scroll. */
+  pagination?: 'none' | 'browser';
   collectionAllowed: boolean; intervalHours: number; maxPages: number; delayMs: number;
 };
 export type ScrapingProgress = {

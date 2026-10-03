@@ -1,12 +1,13 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CompetitorCatalogProduct, CompetitorPriceComparison, CompetitorPriceInput, competitorPricesApi } from '../../lib/api';
+import { CompetitorCatalogProduct, CompetitorPriceComparison, CompetitorPriceInput, CompetitorSkuSuggestion, competitorPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const money = (v: number | null) => (v == null ? '—' : `฿${v.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
 const date = (v: string | null) => (v ? new Date(v).toLocaleString('th-TH') : 'ยังไม่มีราคา');
 const blank: CompetitorPriceInput = { sku: '', ourWeightKg: 1, sourceUrl: '', competitorName: '', competitorSku: '', competitorWeightKg: 1,
   sourceContext: '', vatIncluded: false, collectionAllowed: false, autoRefresh: false };
+const weightLabels: Record<CompetitorSkuSuggestion['weightMatch'], string> = { same: 'น้ำหนักตรง', different: 'น้ำหนักต่างกัน', unknown: 'ไม่ทราบน้ำหนัก', per_kg: 'เราขายต่อกก.' };
 const localNow = () => { const n = new Date(); return new Date(n.getTime() - n.getTimezoneOffset() * 60000).toISOString().slice(0, 19); };
 
 /** Competitor price comparison (MER) — moved from josh web-admin; same rules and data. */
@@ -22,6 +23,7 @@ export function CompetitorPrices() {
   const [form, setForm] = useState<CompetitorPriceInput | null>(null);
   const [editId, setEditId] = useState<string>();
   const [preview, setPreview] = useState<CompetitorCatalogProduct | null>(null);
+  const [suggestions, setSuggestions] = useState<CompetitorSkuSuggestion[] | null>(null);
   const [panel, setPanel] = useState<'review' | 'price' | null>(null);
   const [matchNote, setMatchNote] = useState('');
   const [price, setPrice] = useState('');
@@ -40,6 +42,9 @@ export function CompetitorPrices() {
         competitorWeightKg: item.weightKg || 0, sourceContext: item.source.config.priceContext,
         vatIncluded: !!item.source.config.vatIncluded, collectionAllowed: !!item.source.config.collectionAllowed });
     }).catch((e) => active && setError(e instanceof Error ? e.message : String(e)));
+    setSuggestions(null);
+    competitorPricesApi.suggestions(catalogItemId).then((r) => { if (active) setSuggestions(r.suggestions); })
+      .catch((e) => { if (active) { setSuggestions([]); setError(e instanceof Error ? e.message : String(e)); } });
     return () => { active = false; };
   }, [catalogItemId]);
   useEffect(() => { setPanel(null); setMatchNote(''); setPrice(''); }, [selected?.id, selected?.revision, selected?.ourProductVersion]);
@@ -94,6 +99,22 @@ export function CompetitorPrices() {
           <div className="panel-head">{editId ? 'แก้ไขคู่สินค้า' : 'เพิ่มคู่สินค้า'}
             <span className="hint">เปลี่ยน SKU ลิงก์ น้ำหนัก หรือเงื่อนไขราคา จะล้างราคาเดิมและต้องยืนยันคู่ใหม่</span></div>
           <div style={{ padding: 16, display: 'grid', gap: 12 }}>
+            {form.catalogItemId && (
+              <section aria-label="SKU ที่น่าจะตรงกัน">
+                <strong>SKU ของเราที่น่าจะตรงกับ “{form.competitorName}”</strong>
+                {suggestions == null ? <div role="status" className="hint">กำลังหา SKU ที่ชื่อใกล้เคียง…</div>
+                  : !suggestions.length ? <div className="hint">ไม่พบ SKU ที่ชื่อใกล้เคียง กรอก SKU เองด้านล่าง</div>
+                  : <table><tbody>{suggestions.map((s) => (
+                    <tr key={s.sku}>
+                      <td><strong>{s.name}</strong><div className="hint mono">{s.sku} · {s.brand || 'ไม่ระบุแบรนด์'} · {money(s.sellingUnitPriceIncVat)}/{s.sellingUnit || 'หน่วย'}</div></td>
+                      <td><span className="badge muted">ชื่อคล้าย {s.similarityPercent}%</span>{' '}
+                        <span className={s.weightMatch === 'different' ? 'badge warn' : s.weightMatch === 'unknown' ? 'badge muted' : 'badge ok'}>{weightLabels[s.weightMatch]}{s.ourWeightKg != null && s.weightMatch !== 'per_kg' ? ` (${s.ourWeightKg} กก.)` : ''}</span></td>
+                      <td style={{ textAlign: 'right' }}><button type="button" className="btn ghost sm" disabled={busy || form.sku === s.sku}
+                        onClick={() => { setForm({ ...form, sku: s.sku, ourWeightKg: s.ourWeightKg ?? form.ourWeightKg }); setPreview(s); }}>{form.sku === s.sku ? 'เลือกแล้ว' : 'ใช้ SKU นี้'}</button></td>
+                    </tr>))}</tbody></table>}
+                <div className="hint">ระบบเสนอจากชื่อและน้ำหนักเท่านั้น ตรวจแบรนด์ แพ็ก และสเปกก่อนบันทึก แล้วยืนยันคู่สินค้าตามขั้นตอนเดิม</div>
+              </section>
+            )}
             <div className="row" style={{ alignItems: 'flex-end' }}>
               <label className="field">SKU ของเรา
                 <input required maxLength={100} value={form.sku} onChange={(e) => { setForm({ ...form, sku: e.target.value }); setPreview(null); }} />

@@ -5,7 +5,7 @@ import { isIP } from 'node:net';
 import { Agent } from 'node:https';
 import { createHash } from 'node:crypto';
 import { JSDOM } from 'jsdom';
-import { chromium } from 'playwright';
+import { chromium, type Page } from 'playwright';
 import { ScrapingConfig } from '../domain/scraping-source.entity';
 import { parseSideQuantity } from '../../../../shared-kernel/helpers/avg-price.helper';
 
@@ -43,7 +43,7 @@ export function isPublicAddress(address: string): boolean {
     && !/^2001:(?:0*:|db8:)/i.test(address) && !/^2002:/i.test(address);
 }
 export function scrapingVersion(config: ScrapingConfig): string {
-  return createHash('sha256').update(JSON.stringify([config.mode, config.itemSelector, config.fields, config.currency, config.vatIncluded, config.priceContext, config.selectedFields])).digest('hex');
+  return createHash('sha256').update(JSON.stringify([config.mode, config.itemSelector, config.fields, config.currency, config.vatIncluded, config.priceContext, config.selectedFields, ...(config.autoCards ? ['autoCards'] : [])])).digest('hex');
 }
 export function resolveWebsite(input: string): { name: string; url: URL } {
   const aliases: Record<string, [string, string]> = {
@@ -62,18 +62,126 @@ export const discoveredFieldLabels: Record<string, string> = {
   name: 'ชื่อสินค้า / ชื่อรายการ', title: 'ชื่อรายการ', url: 'ลิงก์ต้นทาง', price: 'ราคาขาย', regularPrice: 'ราคาปกติ',
   sku: 'รหัสสินค้า', weight: 'น้ำหนัก', brand: 'แบรนด์', category: 'หมวดหมู่', image: 'รูปภาพ', description: 'รายละเอียด',
   currency: 'สกุลเงิน', availability: 'สถานะสินค้า', countryOfOrigin: 'ประเทศต้นทาง', gtin13: 'บาร์โค้ด',
-  author: 'ผู้เขียน', datePublished: 'วันที่เผยแพร่', priceType: 'เงื่อนไขราคา',
+  author: 'ผู้เขียน', datePublished: 'วันที่เผยแพร่', priceType: 'เงื่อนไขราคา', unitPrice: 'ราคาต่อหน่วย', details: 'ข้อมูลอื่นบนการ์ด',
 };
 export function singlePrice(text: string | undefined): number | null {
   if (!text || !/^\s*(?:฿|THB|บาท)?\s*\d+(?:,\d{3})*(?:\.\d{1,2})?\s*(?:฿|THB|บาท)?\s*$/i.test(text)) return null;
   const value = Number(text.replace(/฿|THB|บาท|,|\s/gi, ''));
   return value > 0 && value <= 9999999999.99 ? value : null;
 }
-export type ExtractedWebItem = { url: string; pageUrl: string; name: string; sku: string; fields: Record<string, string>; price: number | null; currency: string };
+const blankGif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+const cardPrice = /(?:฿|THB)\s*(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?)|(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?)\s*(?:฿|บาท|THB)(?!\s*\d)/gi;
+const cardUnitPrice = /ต่อ|\bper\b|\/\s*(?:กก|kg|ก\.|g\b|ชิ้น|หน่วย|unit|ลิตร|l\b)/i;
+const cardNoise = /^[\s฿\d.,%()/|x×*+:\-–]*$/;
+/**
+ * Product cards found from repeated same-origin links (one card = the largest element holding exactly one
+ * of those links). No CSS classes are involved, so a site can restyle without breaking collection.
+ * ponytail: heuristic — the longest card text is the name; a site with long promo text per card picks that instead.
+ */
+export function cardFields(document: Document, pageUrl: string): Record<string, string>[] {
+  const page = new URL(pageUrl);
+  const groups = new Map<string, { anchor: Element; full: string; path: string }[]>();
+  for (const anchor of Array.from(document.querySelectorAll('a[href]')).slice(0, 5000)) {
+    let url: URL;
+    try { url = new URL(anchor.getAttribute('href')!, pageUrl); } catch { continue; }
+    const segments = url.pathname.split('/').filter(Boolean);
+    if (url.origin !== page.origin || !segments.length || url.pathname === page.pathname) continue;
+    const key = `${segments.length}:${segments.slice(0, -1).join('/')}`;
+    url.hash = '';
+    groups.set(key, [...(groups.get(key) || []), { anchor, full: url.href, path: url.origin + url.pathname }]);
+  }
+  let best: Record<string, string>[] = [];
+  for (const links of groups.values()) {
+    // Tracking queries (?info=...) differ per position; keep the query only when paths alone don't identify items.
+    const usePath = new Set(links.map(l => l.path)).size >= 0.8 * new Set(links.map(l => l.full)).size;
+    const id = (l: { full: string; path: string }) => usePath ? l.path : l.full;
+    const byAnchor = new Map(links.map(l => [l.anchor, id(l)]));
+    const ids = (node: Element) => new Set(Array.from(node.querySelectorAll('a[href]')).map(a => byAnchor.get(a)).filter(Boolean));
+    const seen = new Set<string>();
+    const cards: Record<string, string>[] = [];
+    for (const link of links) {
+      const href = id(link);
+      if (seen.has(href) || cards.length >= 200) continue;
+      seen.add(href);
+      let card = link.anchor;
+      while (card.parentElement && card.parentElement !== document.body && ids(card.parentElement).size === 1) card = card.parentElement;
+      const texts: string[] = [];
+      const walker = document.createTreeWalker(card, 4 /* NodeFilter.SHOW_TEXT */);
+      for (let node = walker.nextNode(); node && texts.length < 60; node = walker.nextNode()) {
+        const text = node.textContent?.replace(/\s+/g, ' ').trim();
+        if (text && !/^<[^>]*>$/.test(text) && !node.parentElement?.closest('script, style, svg, noscript') && !texts.includes(text)) texts.push(text.slice(0, 500));
+      }
+      const hasPrice = (text: string) => new RegExp(cardPrice.source, 'i').test(text);
+      // "95.00 ฿ ต่อหน่วย" / "฿120/กก." is a unit price: kept as its own field, never compared as the selling price.
+      const unitPrice = texts.find(text => cardUnitPrice.test(text) && hasPrice(text)) || '';
+      const prices = [...new Set([...texts.filter(text => text !== unitPrice).join(' ').matchAll(cardPrice)].map(m => Number((m[1] || m[2]).replace(/,/g, ''))))];
+      if (!prices.length) continue;
+      // Any text holding a price ("95.00 ฿ ต่อหน่วย") is price info, never the product name.
+      const nameLike = (text: string) => text.length >= 3 && !cardNoise.test(text) && !hasPrice(text);
+      const words = texts.filter(nameLike);
+      const titled = Array.from(card.querySelectorAll('h1, h2, h3, h4, [title]'))
+        .map(e => (e.getAttribute('title') || e.textContent || '').replace(/\s+/g, ' ').trim()).find(nameLike);
+      const name = titled || [...words].sort((a, b) => b.length - a.length)[0] || '';
+      const image = Array.from(card.querySelectorAll('img, source')).flatMap(img => ['src', 'data-src', 'data-lazy-src', 'srcset', 'data-srcset']
+        .map(attribute => img.getAttribute(attribute)?.trim().split(/[\s,]+/)[0] || ''))
+        .map(value => { try { return value ? new URL(value, pageUrl).href : ''; } catch { return ''; } }).filter(value => /^https:\/\//.test(value))
+        .sort((a, b) => Number(/icon|logo|badge|\/static\/|\.svg/i.test(a)) - Number(/icon|logo|badge|\/static\/|\.svg/i.test(b)))[0] || '';
+      const sorted = prices.sort((a, b) => a - b);
+      cards.push({ url: href, name: name.slice(0, 500), price: `฿${sorted[0]}`, ...(sorted.length > 1 ? { regularPrice: `฿${sorted[sorted.length - 1]}` } : {}),
+        ...(image ? { image } : {}), ...(unitPrice ? { unitPrice } : {}), details: words.filter(text => text !== name).join(' · ').slice(0, 1000) });
+    }
+    if (cards.length > best.length) best = cards;
+  }
+  return best.length >= 3 ? best : [];
+}
+/** Moves a listing to its next page. `moved` is true only when the page's links actually changed. */
+async function advance(page: Page): Promise<{ moved: boolean; totalPages: number | null }> {
+  const signature = () => page.evaluate(() => Array.from(document.querySelectorAll('a[href]')).map(a => (a as HTMLAnchorElement).href).join('\n'));
+  const before = await signature();
+  const found = await page.evaluate(() => {
+    const label = (e: Element) => (e.getAttribute('aria-label') || (e as HTMLElement).innerText || '').replace(/\s+/g, ' ').trim();
+    const usable = (e: Element) => {
+      const box = e.getBoundingClientRect();
+      return box.width > 0 && box.height > 0 && !e.hasAttribute('disabled') && e.getAttribute('aria-disabled') !== 'true' && !/\bdisabled\b/i.test(e.getAttribute('class') || '');
+    };
+    const controls = Array.from(document.querySelectorAll('a, button, [role="button"], [role="link"]')).filter(usable);
+    const next = controls.find(e => /^(next|next page|ต่อไป|ถัดไป|หน้าถัดไป|›|»|>|>>|→)$/i.test(label(e)));
+    const more = controls.find(e => /^(load more|show more|view more|ดูเพิ่มเติม|โหลดเพิ่ม|แสดงเพิ่ม|ดูสินค้าเพิ่ม)/i.test(label(e)));
+    const numbers = next ? Array.from((next.closest('nav, ul, ol') || next.parentElement?.parentElement || next).querySelectorAll('a, button, li, span'))
+      .map(e => ((e as HTMLElement).innerText || '').trim()).filter(t => /^\d{1,6}$/.test(t)).map(Number) : [];
+    document.querySelectorAll('[data-josh-next]').forEach(e => e.removeAttribute('data-josh-next'));
+    (next || more)?.setAttribute('data-josh-next', '');
+    const rel = document.querySelector('a[rel~="next"][href], link[rel~="next"][href]') as HTMLAnchorElement | null;
+    return { rel: rel?.href || null, click: !!(next || more), totalPages: numbers.length ? Math.max(...numbers) : null };
+  });
+  if (found.rel && found.rel !== page.url() && new URL(found.rel).origin === new URL(page.url()).origin) {
+    await page.goto(found.rel, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => undefined);
+  } else if (found.click) {
+    await page.locator('[data-josh-next]').first().click({ timeout: 5000 }).catch(() => undefined);
+  } else {
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  }
+  // Changed AND settled: SPAs swap the list for a skeleton first, which also "changes" the links.
+  // So a move counts only when new links replace at least half of the removed ones and stay for one more poll.
+  const old = new Set(before.split('\n'));
+  let last = before;
+  for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
+    await page.waitForTimeout(700);
+    const current = await signature();
+    const links = current.split('\n');
+    const added = links.filter(link => !old.has(link)).length;
+    const removed = old.size - links.filter(link => old.has(link)).length;
+    if (current === last && added >= Math.max(1, removed / 2)) return { moved: true, totalPages: found.totalPages };
+    last = current;
+  }
+  return { moved: false, totalPages: found.totalPages };
+}
+export type ExtractedWebItem ={ url: string; pageUrl: string; name: string; sku: string; fields: Record<string, string>; price: number | null; currency: string };
 
 @Injectable()
 export class PublicWebReader {
-  async fetch(input: string, expectedOrigin?: string): Promise<{ body: Buffer; url: string; contentType: string }> {
+  async fetch(input: string, expectedOrigin?: string, request?: { method: 'GET' | 'POST'; headers: Record<string, string>; body?: Buffer | null })
+    : Promise<{ body: Buffer; url: string; contentType: string }> {
     let url = publicUrl(input);
     const deadline = Date.now() + 15000;
     for (let redirect = 0; redirect <= 5; redirect++) {
@@ -91,9 +199,9 @@ export class PublicWebReader {
         else callback(null, pinned.address, pinned.family);
       } });
       try {
-        const response = await axios.get<Buffer>(url.href, { httpsAgent: agent, proxy: false, maxRedirects: 0,
+        const response = await axios.request<Buffer>({ url: url.href, method: request?.method || 'GET', data: request?.body || undefined, httpsAgent: agent, proxy: false, maxRedirects: 0,
           responseType: 'arraybuffer', timeout: Math.max(1, deadline - Date.now()), maxContentLength: 5000000, maxBodyLength: 5000000,
-          headers: { 'User-Agent': 'JoshPublicCatalog/1.0', Accept: 'text/html,application/xhtml+xml,application/xml,text/xml,*/*;q=0.5' },
+          headers: { Accept: 'text/html,application/xhtml+xml,application/xml,text/xml,*/*;q=0.5', ...request?.headers, 'User-Agent': 'JoshPublicCatalog/1.0' },
           validateStatus: status => status >= 200 && status < 400 });
         if (response.status >= 300) {
           if (!response.headers.location || redirect === 5) throw new BadRequestException('เว็บเปลี่ยนลิงก์หลายครั้งหรือไม่มีปลายทาง');
@@ -112,22 +220,71 @@ export class PublicWebReader {
       if (!/html|xml/i.test(response.contentType)) throw new BadRequestException('หน้านี้ไม่ใช่ HTML หรือ XML');
       return { html: response.body.toString('utf8'), url: response.url };
     }
+    return this.session(input, config, origin, async page => {
+      const html = await page.content();
+      if (Buffer.byteLength(html) > 5000000) throw new BadRequestException('หน้าเว็บใหญ่เกิน 5 MB');
+      return { html, url: page.url() };
+    });
+  }
+
+  /**
+   * Reads a listing page by page inside ONE browser session: extract, then advance by rel=next link, a visible
+   * "next / ต่อไป / ›" control, a "load more" control, or scrolling — whichever changes the page. Works for
+   * sites whose next page is a JS button with no URL change (Makro PRO). `skip` pages are advanced without
+   * reading, to resume a run. `onPage` returns false to stop (no new items, lease lost, limit reached).
+   * ponytail: resume re-clicks `skip` pages from page 1 (O(n²) clicks over a long run); add URL/API paging if runs get long.
+   */
+  async paginate(input: string, config: ScrapingConfig, origin: string,
+    options: { skip: number; maxPages: number; delayMs: number; onPage: (html: string, url: string, index: number) => Promise<boolean> }) {
+    return this.session(input, config, origin, async (page, grant) => {
+      let totalPages: number | null = null;
+      for (let index = 0; index < options.maxPages; index++) {
+        if (index >= options.skip) {
+          const html = await page.content();
+          if (Buffer.byteLength(html) > 5000000) throw new BadRequestException('หน้าเว็บใหญ่เกิน 5 MB');
+          if (!await options.onPage(html, page.url(), index)) return { pages: index + 1, totalPages, end: 'stopped' as const };
+        }
+        if (index + 1 >= options.maxPages) return { pages: index + 1, totalPages, end: 'limit' as const };
+        grant();
+        const step = await advance(page);
+        totalPages ??= step.totalPages;
+        if (!step.moved) return { pages: index + 1, totalPages, end: 'no-next' as const };
+        if (index >= options.skip) await page.waitForTimeout(options.delayMs);
+      }
+      return { pages: options.maxPages, totalPages, end: 'limit' as const };
+    });
+  }
+
+  private async session<T>(input: string, config: ScrapingConfig, origin: string, work: (page: Page, grant: () => void) => Promise<T>): Promise<T> {
     const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
       args: ['--force-webrtc-ip-handling-policy=disable_non_proxied_udp', '--disable-background-networking'] })
       .catch(() => { throw new BadRequestException('เบราว์เซอร์ยังไม่พร้อมบนเซิร์ฟเวอร์ ให้ผู้ดูแลติดตั้ง Chromium หรือลองโหมด HTML'); });
     try {
       const context = await browser.newContext({ serviceWorkers: 'block', acceptDownloads: false });
       let requests = 0;
+      // Retail SPAs spend 150+ requests on scripts and trackers before the listing is usable.
+      let limit = 400;
       await context.routeWebSocket('**/*', socket => socket.close());
       await context.route('**/*', async route => {
         try {
-          if (++requests > 150 || !['GET', 'HEAD'].includes(route.request().method()) || ['image', 'media', 'font'].includes(route.request().resourceType())) return await route.abort();
-          const response = await this.fetch(route.request().url(), route.request().isNavigationRequest() ? origin : undefined);
-          if (route.request().isNavigationRequest() && response.url !== route.request().url()) {
+          const request = route.request();
+          const api = ['xhr', 'fetch'].includes(request.resourceType());
+          // Images are never downloaded, but answered with a blank pixel: aborting makes sites swap in a fallback src.
+          if (request.resourceType() === 'image') return await route.fulfill({ status: 200, contentType: 'image/gif', body: blankGif });
+          // Paged listings load the next page via public JSON/GraphQL POSTs; page navigations stay GET-only.
+          if (++requests > limit || ['media', 'font', 'ping'].includes(request.resourceType())
+            || !(['GET', 'HEAD'].includes(request.method()) || (api && request.method() === 'POST'))) return await route.abort();
+          // Our fulfilled responses carry no CORS headers, so answer the API's CORS checks ourselves.
+          const cors = api && new URL(request.url()).origin !== origin ? { 'access-control-allow-origin': origin } : {};
+          // Cookies are never forwarded: neither ours nor any the site sets.
+          const headers = api ? Object.fromEntries(Object.entries(await request.allHeaders())
+            .filter(([name]) => !['cookie', 'host', 'content-length', 'origin', 'referer', 'user-agent', 'connection'].includes(name) && !name.startsWith(':') && !name.startsWith('sec-'))) : {};
+          const response = await this.fetch(request.url(), request.isNavigationRequest() ? origin : undefined,
+            api ? { method: request.method() === 'POST' ? 'POST' : 'GET', headers, body: request.postDataBuffer() } : undefined);
+          if (request.isNavigationRequest() && response.url !== request.url()) {
             return await route.fulfill({ status: 302, headers: { location: response.url } });
           }
-          // No credentials/cookies are forwarded, including cookies set by the site.
-          await route.fulfill({ status: 200, body: response.body, contentType: response.contentType });
+          await route.fulfill({ status: 200, body: response.body, contentType: response.contentType, headers: { ...cors, 'content-type': response.contentType } });
         } catch { await route.abort().catch(() => undefined); }
       });
       const page = await context.newPage();
@@ -137,9 +294,7 @@ export class PublicWebReader {
       const selector = config.itemSelector || config.fields.find(f => f.key === 'name')?.selector;
       if (selector) await page.locator(selector).first().waitFor({ timeout: 10000 });
       else await page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => undefined);
-      const html = await page.content();
-      if (Buffer.byteLength(html) > 5000000) throw new BadRequestException('หน้าเว็บใหญ่เกิน 5 MB');
-      return { html, url: page.url() };
+      return await work(page, () => { limit = requests + 200; });
     } finally { await browser.close(); }
   }
 
@@ -217,6 +372,7 @@ export class PublicWebReader {
             availability: String(offer.availability || ''), image: typeof image === 'string' ? image : image?.url || '',
             description: typeof product.description === 'string' ? product.description.slice(0, 5000) : '' });
         }
+        if (!products.length && config.autoCards) cardFields(document, pageUrl).forEach(add);
       }
       const identities = new Map<string, string>();
       for (const item of items) {
@@ -235,6 +391,9 @@ export class PublicWebReader {
       const document = dom.window.document;
       const title = document.title.trim().slice(0, 200);
       if (structured.items.length) return { title, kind: 'product' as const, config: { ...base, fields: [] }, ...structured };
+      const cardConfig = { ...base, fields: [], itemSelector: '', selectedFields: undefined, autoCards: true };
+      const cards = this.extract(html, pageUrl, cardConfig);
+      if (cards.items.length >= 3) return { title, kind: 'list' as const, config: cardConfig, ...cards };
       const rootSelector = ['[itemtype$="/Product"]', '[data-product-id]', '[data-testid*="product-card"]', '[class*="product-card"]', 'article', 'tbody tr']
         .find(selector => document.querySelectorAll(selector).length > 1);
       const root = rootSelector ? document.querySelector(rootSelector)! : document;

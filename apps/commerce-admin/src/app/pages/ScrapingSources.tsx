@@ -7,7 +7,13 @@ const STATUS: Record<ScrapingSource['status'], string> = {
 };
 const INTERVALS = [{ h: 24, label: 'วันละครั้ง' }, { h: 168, label: 'สัปดาห์ละครั้ง' }, { h: 720, label: 'เดือนละครั้ง' }];
 
-interface Discovery { ready: boolean; proposal: Pick<ScrapingSource, 'name' | 'origin' | 'enabled' | 'config'> | null; warnings?: string[] }
+interface Discovery {
+  ready: boolean; proposal: Pick<ScrapingSource, 'name' | 'origin' | 'enabled' | 'config'> | null; warnings?: string[];
+  fields?: { key: string; label: string }[];
+  preview?: { url: string; found: number; items: { url: string; name: string; price: number | null; currency: string; fields: Record<string, string> }[] } | null;
+  /** Two listing pages read in a browser: `works` = page 2 had new items, so runs page through by themselves. */
+  paging?: { pages: { page: number; found: number; fresh: number }[]; totalPages: number | null; works: boolean } | null;
+}
 
 /** Competitor web sources (moved from josh). The crawler runs here, never on josh's API servers. */
 export function ScrapingSources() {
@@ -15,6 +21,8 @@ export function ScrapingSources() {
   const [website, setWebsite] = useState('');
   const [allowed, setAllowed] = useState(false);
   const [found, setFound] = useState<Discovery | null>(null);
+  const [maxPages, setMaxPages] = useState(50);
+  const [vat, setVat] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
 
@@ -28,7 +36,10 @@ export function ScrapingSources() {
   async function discover(e: FormEvent) {
     e.preventDefault();
     setFound(null);
-    await act('discover', async () => setFound(await scrapingApi.discover(website, allowed) as Discovery), 'ตรวจเว็บเสร็จ');
+    await act('discover', async () => {
+      const result = await scrapingApi.discover(website, allowed) as Discovery;
+      setFound(result); setMaxPages(result.proposal?.config.maxPages ?? 50); setVat(!!result.proposal?.config.vatIncluded);
+    }, 'ตรวจเว็บเสร็จ');
   }
 
   const update = (s: ScrapingSource, patch: Partial<Pick<ScrapingSource, 'enabled' | 'config'>>) =>
@@ -58,12 +69,33 @@ export function ScrapingSources() {
         {found && (
           <div style={{ padding: '0 16px 16px' }}>
             {found.warnings?.map((w) => <div key={w} className="hint">• {w}</div>)}
-            {found.ready && found.proposal ? (
-              <button className="btn" type="button" disabled={busy === 'add'}
-                onClick={() => act('add', () => scrapingApi.save({ ...found.proposal!, config: { ...found.proposal!.config, intervalHours: 168 } }), 'เพิ่มเว็บแล้ว').then((ok) => ok && setFound(null))}>
-                เพิ่ม {found.proposal.name} (เก็บสัปดาห์ละครั้ง)
-              </button>
-            ) : <div className="err">ยังเก็บข้อมูลจากเว็บนี้ไม่ได้ — ดูหมายเหตุข้างบน</div>}
+            {!!found.preview?.items.length && (
+              <div style={{ overflowX: 'auto', margin: '8px 0' }}>
+                <div className="hint">ตัวอย่าง {Math.min(found.preview.items.length, 5)} จาก {found.preview.found} รายการในหน้าแรก</div>
+                <table><thead><tr><th>สินค้า</th><th>ราคา</th></tr></thead><tbody>
+                  {found.preview.items.slice(0, 5).map((item) => <tr key={item.url}>
+                    <td><a href={item.url} target="_blank" rel="noopener noreferrer">{item.name}</a></td>
+                    <td className="mono">{item.price == null ? '—' : `${item.price.toLocaleString()} ${item.currency}`}</td></tr>)}
+                </tbody></table>
+              </div>
+            )}
+            {found.ready && found.proposal && <>
+              <p className={found.paging?.works ? 'hint' : 'err'}>
+                {found.paging?.works
+                  ? `✓ เลื่อนหน้าเองได้ — ${found.paging.pages.map((p) => `หน้า ${p.page} พบ ${p.found}${p.page > 1 ? ` (ใหม่ ${p.fresh})` : ''}`).join(' · ')}${found.paging.totalPages ? ` · เว็บแจ้งทั้งหมด ${found.paging.totalPages.toLocaleString()} หน้า` : ''}`
+                  : 'เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป'}
+              </p>
+              <div className="row" style={{ alignItems: 'flex-end' }}>
+                <label className="field" style={{ flex: '0 0 140px' }}>เก็บสูงสุด (หน้า)
+                  <input type="number" min={1} max={5000} value={maxPages} onChange={(e) => setMaxPages(Math.max(1, Math.min(5000, Number(e.target.value) || 1)))} /></label>
+                {found.fields?.some((f) => f.key === 'price') && <label className="check"><input type="checkbox" checked={vat} onChange={(e) => setVat(e.target.checked)} /> ราคาในเว็บนี้รวม VAT แล้ว</label>}
+                <button className="btn" type="button" disabled={busy === 'add'}
+                  onClick={() => act('add', () => scrapingApi.save({ ...found.proposal!, config: { ...found.proposal!.config, maxPages, vatIncluded: vat, intervalHours: 168 } }), 'เพิ่มเว็บแล้ว').then((ok) => ok && setFound(null))}>
+                  เพิ่ม {found.proposal.name} (เก็บสัปดาห์ละครั้ง)
+                </button>
+              </div>
+            </>}
+            {!(found.ready && found.proposal) && <div className="err">ยังเก็บข้อมูลจากเว็บนี้ไม่ได้ — ดูหมายเหตุข้างบน</div>}
           </div>
         )}
       </form>

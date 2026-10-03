@@ -1,7 +1,13 @@
 import { Controller, Get, Post, Param, ParseUUIDPipe, Query, UseGuards, BadRequestException, Body, ValidationPipe } from '@nestjs/common';
+import { IsUUID, IsUrl, MaxLength } from 'class-validator';
 import { Public } from '../../../shared-kernel/presentation/auth.decorators';
 import { InternalKeyGuard } from './internal-key.guard';
 import { ScrapingService } from '../application/scraping.service';
+
+export class ReadProductDto {
+  @IsUUID('4') sourceId: string;
+  @IsUrl({ require_protocol: true }) @MaxLength(2000) url: string;
+}
 
 /**
  * Internal API for josh to call: machine-to-machine, requires X-Internal-Key header.
@@ -13,6 +19,25 @@ import { ScrapingService } from '../application/scraping.service';
 @UseGuards(InternalKeyGuard)
 export class ScrapingInternalController {
   constructor(private readonly service: ScrapingService) {}
+
+  /**
+   * GET /api/internal/scraping/sources?ids=uuid,uuid,…
+   * Returns scraping sources by ids (max 200). Unknown ids omitted.
+   * Fields: id, name, origin, config, revision.
+   */
+  @Get('sources')
+  async getSources(@Query('ids') ids?: string) {
+    if (!ids) throw new BadRequestException('ids query parameter required (comma-separated UUIDs)');
+    const idList = ids.split(',').slice(0, 200);
+    // Validate each id is a UUID format
+    for (const id of idList) {
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id.trim())) {
+        throw new BadRequestException('invalid UUID format');
+      }
+    }
+    const sources = await Promise.all(idList.map(id => this.service.source(id.trim()).catch(() => null)));
+    return sources.filter(Boolean).map(s => ({ id: s.id, name: s.name, origin: s.origin, config: s.config, revision: s.revision }));
+  }
 
   /**
    * GET /api/internal/scraping/sources/by-origin?url=https://example.com

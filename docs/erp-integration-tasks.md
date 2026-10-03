@@ -36,6 +36,16 @@ ERP ──► commerce (stage · inventory ต่อคลัง · audit) ─�
 - platform หนึ่งล่ม → delivery ของ platform นั้น retry/เข้า dead-letter เอง ไม่กระทบ platform อื่น
 - **ผลกับ ERP:** response ตอบ `{ received: true }` ทันทีหลัง stage (ตาม §5) — ไม่รอผลจาก platform ใด · ⚠️ ปัจจุบัน josh ตอบ `updated`/`failed` เพิ่มด้วย ต้องยืนยันกับทีม ERP ว่าไม่ได้ใช้
 
+### 0.2 อนาคต: ระบบคลังของเราเอง (หลัง MER clean inventory เสร็จ)
+
+วันนี้ ERP เป็นเจ้าของตัวเลขสต็อก commerce แค่เก็บตาม · วันหน้า **commerce จะเป็นระบบคลังเอง** (รับเข้า ปรับยอด โอนคลัง นับสต็อก) — ทำ 3 อย่างตั้งแต่ Task 2 เพราะตอนนี้ถูก:
+
+1. **เก็บเป็น ledger ไม่ใช่แค่เขียนทับ** — ทุกการเปลี่ยน qty ลง `inventory_movements(product_id, warehouse_id, source, reason, quantity_after, ref, occurred_at)` แล้วค่อยอัปเดต snapshot ใน `inventory_levels` · ERP ส่ง `REASON` (SALE / RECEIVE / ADJUST) กับ `CHANGED_AT` มาอยู่แล้ว เก็บไว้เลย → พอเป็นระบบคลังเองจะมีประวัติย้อนหลังและ reconcile กับ ERP ได้
+2. **เจ้าของสต็อกระบุต่อคลัง** — `warehouses.stock_source = 'erp' | 'commerce'` (วันนี้ทุกคลัง = `erp`) · ย้ายทีละคลังได้หลัง clean เสร็จ ไม่ต้องสลับทั้งระบบทีเดียว · คลังที่ source = `commerce` จะไม่รับ qty จาก ERP มาเขียนทับ (เก็บเป็น movement `ignored` ไว้เทียบ)
+3. **event ไม่เปลี่ยนตาม source** — platform ได้ `inventory.qty.changed` เหมือนเดิมไม่ว่าเลขมาจาก ERP หรือระบบคลังเรา → **วันสลับ josh ไม่ต้องแก้อะไร** (ได้จาก hub ใน §0.1)
+
+**ยังไม่ทำตอนนี้ (ทำตอนสลับจริง):** หน้าจอรับเข้า/นับ/โอนคลัง · ส่งยอดจากเรากลับ ERP (บัญชีอาจยังต้องใช้) · ตัดสต็อกตอนขายผ่าน `commerce/reservation` ที่มีอยู่ · UI ระบบคลังอยู่ใน repo นี้ (`apps/warehouse-web` ใน josh เป็นแค่ scaffold ว่าง)
+
 **ผลที่ตามมา:** commerce **ไม่เคยอยู่ใน request path ของ shop** · josh เรียก commerce ได้เฉพาะแบบ fire-and-forget/async ที่ล้มได้ · ทุกอย่างที่ commerce เขียนกลับ josh ต้อง idempotent
 
 ---
@@ -243,7 +253,8 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 **ต้องทำ (commerce):**
 - controller + DTO ใน `integration/connector/erp/presentation/` (copy DTO จาก josh)
 - parser Jagota ใน `erp-payload.parsers.ts` (ของเดิมเป็นชื่อ field Oracle EBS — คนละรูปแบบ)
-- stage 1 `ErpIngestRecord` ต่อ SKU → qty เขียน `inventory_levels` (default warehouse)
+- stage 1 `ErpIngestRecord` ต่อ SKU → qty ลง `inventory_movements` (source `erp`, เก็บ `REASON`/`CHANGED_AT`) แล้วอัปเดต `inventory_levels` ของ default warehouse · ข้ามถ้าคลังนั้น `stock_source = 'commerce'` (§0.2)
+- migration: ตาราง `inventory_movements` + คอลัมน์ `warehouses.stock_source` (default `'erp'`)
 - publish canonical event → webhook subscription ส่งให้ทุก platform ที่สมัคร · ตอบ ERP `{ received: true }` ทันทีหลัง stage
 - **ไม่เขียน Redis ของ shop เอง** — handler ของ josh ทำ sellable, cache facet, restock notify ให้อยู่แล้ว
 - price ไป staging ของ josh เพราะ handler เดิมทำแบบนั้น — commerce ไม่ต้องรู้

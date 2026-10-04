@@ -413,6 +413,17 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 - สถานะ order ที่นับต้องตรงกัน: commerce ส่งรายการไปทุก batch, josh ตอบ 409 ถ้าไม่ตรง `ACTIVE_ORDER_STATUSES`
 - ทดสอบ: หลัง `reconcile()` จริงของ josh บน DB copy (1,639 orders) diff ของ commerce = **0 แถว** (ค่าตรงกันทุกคอลัมน์รวมทศนิยม) · เปลี่ยนยอด order 1 ใบ → ส่ง 1 แถว → josh เขียน 1 แถว → diff กลับเป็น 0 · batch เก่ากว่าแถวของ josh ไม่ทับ · status ไม่ตรง 409 · ลายเซ็นปลอม 401
 
+**✅ ตัวที่สอง (2026-10-04): อันดับขายดี (`BestsellersOffloadJob`, ทุก 10 นาที, ต้องเปิดเอง `CRON_JOSH_BESTSELLERS_ENABLED`)**
+- ของเดิม: rail ขายดีของ josh (home + search) รัน `SUM(product_quantity)` ทั้งตาราง `order_items` บน primary ทุกครั้งที่ cache 15 นาทีหมด — อ่านหนัก ผลเล็ก
+- commerce: ทำ SUM บน replica → ส่ง 200 SKU แรก (เรียงยอดขาย, tie ตาม SKU) ไป `POST /api/internal/bestsellers` (HMAC, ส่งรายการ status ไปด้วย ไม่ตรง → 409) · **ไม่กรองสินค้า** กฎ "แสดงได้" อยู่ josh ที่เดียว
+- josh: เก็บ Redis 1 ชม. → ตอน cache หมดกรองด้วยกฎเดิม (`sku IN (...)` เล็ก) แล้วตัดตาม limit · ไม่มี push สด หรือ 200 ตัวแรกกรองแล้วไม่พอ limit → คำนวณเองเหมือนเดิม (ไม่มี flag ฝั่ง josh)
+- ทดสอบ: DB ชั่วคราวข้อมูลสังเคราะห์ (400 SKU, 3,000 orders, มี inactive/ราคา 0/ยกเลิก) ผลตรง query เดิมทุก limit 1-50 · list สั้นเกิน → fallback
+
+**ไม่ทำต่อ (ตรวจ cron ทั้งหมดของ josh แล้ว 2026-10-04)** — ที่เหลือเป็นงานเขียน/ส่งแจ้งเตือน/เรียก API ภายนอก ย้ายแล้วไม่ลดโหลด:
+- `MarketingConversionService.matchConversions` — N+1 (1 query ต่อ enrollment) แต่เส้นหลักคือ job ตอน order settled ที่ต้องตอบไว ย้ายแค่ cron รายชั่วโมงไม่ช่วย · ทางที่ถูกคือเขียนเป็น query เดียว (`LATERAL`) **ใน josh**
+- `ProductSyncService` warmup — อ่านทั้งแค็ตตาล็อก 6 relation ทุกชั่วโมงแต่ผลคือ JSON ทั้งแค็ตตาล็อกลง Redis (ส่งผ่าน HTTP ใหญ่เท่าที่อ่าน) · ทางที่ถูกคือให้ josh อ่านจาก replica เอง
+- `productSyncDeepNightCleanup` แค่ log — ลบทิ้งได้ (งานของทีม josh)
+
 ---
 
 ## 7. เผื่ออนาคต — ทำตอนนี้เพราะถูกกว่าทำทีหลัง

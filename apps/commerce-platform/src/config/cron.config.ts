@@ -9,6 +9,7 @@ export interface CronConfig {
   joshCatalogSync: CronJobConfig;
   competitorPricesRefresh: CronJobConfig;
   joshCustomerMetrics: CronJobConfig;
+  joshBestsellers: CronJobConfig;
 }
 
 function cronEnabled(name: string, env: NodeJS.ProcessEnv): boolean {
@@ -38,6 +39,12 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
     joshCustomerMetrics: {
       expression: env.CRON_JOSH_CUSTOMER_METRICS ?? '30 2 * * *',
       enabled: env.CRON_JOSH_CUSTOMER_METRICS_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Task 9 offload. Opt-in; josh keeps each push for 1h, so a 10-minute cadence leaves room for misses.
+    joshBestsellers: {
+      expression: env.CRON_JOSH_BESTSELLERS ?? '0 */10 * * * *',
+      enabled: env.CRON_JOSH_BESTSELLERS_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
     },
     competitorPricesRefresh: {

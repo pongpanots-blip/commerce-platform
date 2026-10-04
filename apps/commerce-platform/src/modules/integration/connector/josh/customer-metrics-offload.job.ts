@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { createHmac } from 'node:crypto';
 import { cronConfig } from '../../../../config/cron.config';
+import { joshApiConfigured, postToJosh } from './josh-api';
 import { JoshReplica } from './josh-replica';
 
 /**
@@ -58,19 +58,9 @@ export class CustomerMetricsOffloadJob {
 
   constructor(private readonly replica: JoshReplica) {}
 
-  get configured() {
-    return this.replica.configured && !!process.env.JOSH_API_URL?.trim() && !!process.env.JOSH_EVENTS_SECRET?.trim();
-  }
+  get configured() { return this.replica.configured && joshApiConfigured(); }
 
-  private async post(body: unknown) {
-    const text = JSON.stringify(body);
-    const res = await fetch(`${process.env.JOSH_API_URL!.trim().replace(/\/$/, '')}/internal/customer-metrics`, {
-      method: 'POST', body: text, signal: AbortSignal.timeout(60_000),
-      headers: { 'content-type': 'application/json', 'x-signature': createHmac('sha256', process.env.JOSH_EVENTS_SECRET!.trim()).update(text).digest('hex') },
-    });
-    if (!res.ok) throw new Error(`josh answered ${res.status}: ${(await res.text()).slice(0, 300)}`);
-    return res.json() as Promise<{ written?: number }>;
-  }
+  private post(body: unknown) { return postToJosh<{ written?: number }>('/internal/customer-metrics', body); }
 
   /** Returns how many changed rows were sent; throws (and sends no "done") on any failure. */
   async run(): Promise<{ changed: number; written: number }> {

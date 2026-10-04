@@ -23,11 +23,14 @@ function makeSub(opts: {
 }
 
 const event = { aggregateId: 'o1', payload: { id: 'o1' } };
+/** The push runs detached from the listener (the outbox relay must not wait on the ERP). */
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('ErpOrderPushSubscriber', () => {
   it('pushes a confirmed order and links the ERP ref', async () => {
     const { sub, client, mapping } = makeSub();
-    await sub.onOrderConfirmed(event as never);
+    sub.onOrderConfirmed(event as never);
+    await flush();
     expect(client.createOrder).toHaveBeenCalledWith(
       expect.objectContaining({
         platformOrderId: 'o1', customerCode: 'JGT-9', total: '150.00', currency: 'THB',
@@ -38,19 +41,23 @@ describe('ErpOrderPushSubscriber', () => {
 
   it('skips silently when no active erp integration exists', async () => {
     const { sub, client } = makeSub({ integration: null });
-    await sub.onOrderConfirmed(event as never);
+    sub.onOrderConfirmed(event as never);
+    await flush();
     expect(client.createOrder).not.toHaveBeenCalled();
   });
 
   it('client failure → warn, no mapping, NO throw (push never blocks the order)', async () => {
     const { sub, mapping } = makeSub({ createOrderResult: { ok: false, error: 'down' } });
-    await expect(sub.onOrderConfirmed(event as never)).resolves.toBeUndefined();
+    expect(sub.onOrderConfirmed(event as never)).toBeUndefined();
+    await flush();
     expect(mapping.link).not.toHaveBeenCalled();
   });
 
   it('client THROW is swallowed with a warn', async () => {
-    const { sub, client } = makeSub();
+    const { sub, client, mapping } = makeSub();
     client.createOrder.mockRejectedValue(new Error('boom'));
-    await expect(sub.onOrderConfirmed(event as never)).resolves.toBeUndefined();
+    expect(sub.onOrderConfirmed(event as never)).toBeUndefined();
+    await flush();
+    expect(mapping.link).not.toHaveBeenCalled();
   });
 });

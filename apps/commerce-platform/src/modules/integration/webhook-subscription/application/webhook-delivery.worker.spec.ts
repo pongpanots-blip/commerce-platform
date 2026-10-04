@@ -1,11 +1,11 @@
 import { UnrecoverableError } from 'bullmq';
 import { WebhookDeliveryWorker } from './webhook-delivery.worker';
 
-function makeWorker(delivery: Record<string, unknown>, newerSuccess = 0) {
+function makeWorker(delivery: Record<string, unknown>, newerLive = false) {
   const qb = {
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
-    getCount: jest.fn().mockResolvedValue(newerSuccess),
+    getExists: jest.fn().mockResolvedValue(newerLive),
   };
   const deliveries = {
     findOne: jest.fn().mockResolvedValue(delivery),
@@ -61,19 +61,22 @@ describe('WebhookDeliveryWorker', () => {
     await expect(worker.handle('d-1')).rejects.not.toBeInstanceOf(UnrecoverableError);
   });
 
-  it('drops an older snapshot once a newer one for the same aggregate succeeded', async () => {
+  it('drops an older snapshot when a newer one for the same aggregate landed or is still queued', async () => {
     global.fetch = jest.fn() as never;
     const d = base();
-    const { worker } = makeWorker(d, 1);
+    const { worker, qb } = makeWorker(d, true);
     await worker.handle('d-1');
     expect(d.status).toBe('superseded');
     expect(global.fetch).not.toHaveBeenCalled();
+    expect(qb.andWhere).toHaveBeenCalledWith('d.status IN (:...live)', { live: ['pending', 'success'] });
+    expect(qb.andWhere).toHaveBeenCalledWith(`d.payload ->> 'snapshot' = 'true'`);
+    expect(qb.andWhere).toHaveBeenCalledWith('d.created_at > (SELECT created_at FROM webhook_deliveries WHERE id = :id)', { id: 'd-1' });
   });
 
   it('never supersedes non-snapshot events', async () => {
     respond(200);
     const d = { ...base(), payload: { type: 'order.created', aggregateId: 'o-1', data: {} } };
-    const { worker, deliveries } = makeWorker(d, 1);
+    const { worker, deliveries } = makeWorker(d, true);
     await worker.handle('d-1');
     expect(deliveries.createQueryBuilder).not.toHaveBeenCalled();
     expect(d.status).toBe('success');

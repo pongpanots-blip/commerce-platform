@@ -4,13 +4,16 @@ import { EntityManager, Repository } from 'typeorm';
 import { IEventBus } from '../interfaces/event-bus.interface';
 import { DomainEvent } from '../domain/domain-event';
 import { OutboxMessage } from './outbox.entity';
+import { OUTBOX_CHANNEL } from './outbox-relay.worker';
 
 /**
  * Event bus that persists every event to the transactional outbox. When a
  * caller supplies the transaction's EntityManager, the outbox insert joins that
  * transaction; otherwise it uses the default repository connection.
  *
- * Actual dispatch (in-process + BullMQ) happens later in the relay worker.
+ * Dispatch happens in the relay worker, woken by a NOTIFY that Postgres only
+ * delivers once this transaction commits — no 2s polling delay, and never for a
+ * row that was rolled back.
  */
 @Injectable()
 export class EventEmitterBus implements IEventBus {
@@ -35,5 +38,6 @@ export class EventEmitterBus implements IEventBus {
         publishedAt: null,
       }),
     );
+    await repo.query(`SELECT pg_notify('${OUTBOX_CHANNEL}', '')`);
   }
 }

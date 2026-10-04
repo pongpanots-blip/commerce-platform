@@ -7,7 +7,6 @@
 export const QUEUES = {
   WEBHOOK: 'webhook',
   WEBHOOK_OUT: 'webhook-out',
-  OUTBOX: 'outbox',
   SYNC: 'sync-job',
 } as const;
 

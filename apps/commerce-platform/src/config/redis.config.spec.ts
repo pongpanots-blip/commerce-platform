@@ -20,7 +20,6 @@ describe('QUEUES', () => {
     expect(QUEUES).toEqual({
       WEBHOOK: 'webhook',
       WEBHOOK_OUT: 'webhook-out',
-      OUTBOX: 'outbox',
       SYNC: 'sync-job',
     });
   });

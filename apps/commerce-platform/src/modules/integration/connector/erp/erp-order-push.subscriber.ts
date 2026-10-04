@@ -25,13 +25,13 @@ export class ErpOrderPushSubscriber {
     private readonly mapping: MappingService,
   ) {}
 
+  // Not awaited: the outbox relay waits for every listener before the next
+  // event, and an ERP HTTP call must not hold up deliveries to platforms.
   @OnEvent('order.confirmed')
-  async onOrderConfirmed(event: { aggregateId: string }): Promise<void> {
-    try {
-      await this.push(event.aggregateId);
-    } catch (error) {
+  onOrderConfirmed(event: { aggregateId: string }): void {
+    this.push(event.aggregateId).catch((error) => {
       this.logger.warn(`ERP order push failed for ${event.aggregateId}: ${error}`);
-    }
+    });
   }
 
   private async push(orderId: string): Promise<void> {

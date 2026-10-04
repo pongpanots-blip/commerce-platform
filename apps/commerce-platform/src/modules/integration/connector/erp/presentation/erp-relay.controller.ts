@@ -1,13 +1,15 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Put, UseGuards } from '@nestjs/common';
 import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { ErpKeyGuard } from './erp-key.guard';
-import { ERP_RELAY_EVENTS as E, ErpRelayService } from '../ingest/erp-relay.service';
+import { ERP_RELAY_EVENTS as E, ErpRelayService, orderPeriodSnapshotKey } from '../ingest/erp-relay.service';
 
 /**
  * Same paths, method, X-ERP-Key and `{ received: true }` as josh's ERP routes
  * (contract §5), so nginx can send them here first with josh as backup.
- * `GET /erp/products` (the ERP reading josh's catalog) is not here: nginx keeps
- * that one on josh.
+ * Not here — nginx keeps them on josh: `GET /erp/products` (the ERP reading
+ * josh's catalog) and the ops probes `POST /erp/delivery-calendar/probe` +
+ * `POST /erp/sku-order-period/probe` (josh calls Jagota and answers with the
+ * result; queuing them here would only hide that answer).
  */
 @UseGuards(ErpKeyGuard)
 @Public()
@@ -15,8 +17,8 @@ import { ERP_RELAY_EVENTS as E, ErpRelayService } from '../ingest/erp-relay.serv
 export class ErpRelayController {
   constructor(private readonly relay: ErpRelayService) {}
 
-  private async send(type: (typeof E)[keyof typeof E], route: string, body: unknown) {
-    await this.relay.relay(type, route, body);
+  private async send(type: (typeof E)[keyof typeof E], route: string, body: unknown, snapshotKey: string | null = null) {
+    await this.relay.relay(type, route, body, snapshotKey);
     return { received: true };
   }
 
@@ -36,4 +38,7 @@ export class ErpRelayController {
   @Put('quotations') @HttpCode(HttpStatus.OK) quotationPut(@Body() b: unknown) { return this.send(E.quotation, 'PUT /erp/quotations', b); }
   @Post('quotations/status') @HttpCode(HttpStatus.OK) quotationStatusPost(@Body() b: unknown) { return this.send(E.quotationStatus, 'POST /erp/quotations/status', b); }
   @Put('quotations/status') @HttpCode(HttpStatus.OK) quotationStatusPut(@Body() b: unknown) { return this.send(E.quotationStatus, 'PUT /erp/quotations/status', b); }
+
+  @Post('order-periods') @HttpCode(HttpStatus.OK) orderPeriodsPost(@Body() b: unknown) { return this.send(E.orderPeriods, 'POST /erp/order-periods', b, orderPeriodSnapshotKey(b)); }
+  @Put('order-periods') @HttpCode(HttpStatus.OK) orderPeriodsPut(@Body() b: unknown) { return this.send(E.orderPeriods, 'PUT /erp/order-periods', b, orderPeriodSnapshotKey(b)); }
 }

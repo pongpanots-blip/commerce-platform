@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { BadRequestException, Inject, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DomainEvent } from '../../../../../shared-kernel/domain/domain-event';
@@ -16,17 +17,38 @@ export const ERP_RELAY_EVENTS = {
   invoiceStatus: 'erp.invoice.status_changed',
   quotation: 'erp.quotation.pushed',
   quotationStatus: 'erp.quotation.status_changed',
+  orderPeriods: 'erp.order_periods.pushed',
 } as const;
 export type ErpRelayEventType = (typeof ERP_RELAY_EVENTS)[keyof typeof ERP_RELAY_EVENTS];
 
 export interface ErpRelayPayload { route: string; externalId: string | null; ingestRecordId: string; erp: unknown }
 
-/** Not a snapshot: order/invoice/quotation history must all arrive (the platform orders and dedupes them). */
+/**
+ * Not a snapshot by default: order/invoice/quotation history must all arrive (the platform orders and dedupes them).
+ * With a `snapshotKey` the call is a full replace of that key (order periods per SUP_CODE): latest wins, so a
+ * retried older push never rolls the platform back.
+ */
 export class ErpRelayed extends DomainEvent<ErpRelayPayload> {
-  constructor(readonly type: ErpRelayEventType, aggregateId: string, payload: ErpRelayPayload) { super(aggregateId, payload); }
+  constructor(readonly type: ErpRelayEventType, aggregateId: string, payload: ErpRelayPayload, snapshot = false) {
+    super(aggregateId, payload, snapshot ? { snapshot: true } : {});
+  }
 }
 
-const ID_KEYS = ['PRODUCT_CODE', 'product_code', 'DOC_NO', 'orderId', 'quotationId', 'CUSTOMER_CODE', 'CUST_CODE', 'COMPANY_CODE', 'TAX_ID'];
+/**
+ * Order-period push = the full round list of each SUP_CODE in it (josh closes the rest), so pushes for the
+ * same supplier set are latest-wins. ponytail: keyed on the exact SUP_CODE set — an older mixed push {A,B}
+ * retried after a newer {A} still lands; per-supplier split if the ERP starts mixing suppliers.
+ */
+export function orderPeriodSnapshotKey(body: unknown): string | null {
+  if (!Array.isArray(body)) return null;
+  const codes = body.map((row) => String((row as { SUP_CODE?: unknown })?.SUP_CODE ?? '').trim());
+  if (codes.some((c) => !c)) return null;
+  // aggregate_id is a uuid column: a stable uuid-shaped hash of the key.
+  const h = createHash('sha256').update(`order-periods:${[...new Set(codes)].sort().join(',')}`).digest('hex');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;
+}
+
+const ID_KEYS = ['PRODUCT_CODE', 'SUP_CODE', 'product_code', 'DOC_NO', 'orderId', 'quotationId', 'CUSTOMER_CODE', 'CUST_CODE', 'COMPANY_CODE', 'TAX_ID'];
 
 /** Best-effort key for the audit row (lookups / dead-letter search); the platform validates the payload for real. */
 export function relayExternalId(body: unknown): string | null {
@@ -57,7 +79,7 @@ export class ErpRelayService {
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
   ) {}
 
-  async relay(type: ErpRelayEventType, route: string, body: unknown): Promise<void> {
+  async relay(type: ErpRelayEventType, route: string, body: unknown, snapshotKey: string | null = null): Promise<void> {
     if (body == null || typeof body !== 'object' || (Array.isArray(body) && !body.length)) {
       throw new BadRequestException('request body must be a JSON object or a non-empty array');
     }
@@ -73,7 +95,8 @@ export class ErpRelayService {
         integrationId: integration.id, entityType: ERP_RELAY_ENTITY_TYPE, externalId, rawPayload: body,
         parsedPayload: { eventType: type, route }, status: 'applied', appliedAt: new Date(),
       }));
-      await this.eventBus.publish(new ErpRelayed(type, record.id, { route, externalId, ingestRecordId: record.id, erp: body }), manager);
+      const payload = { route, externalId, ingestRecordId: record.id, erp: body };
+      await this.eventBus.publish(new ErpRelayed(type, snapshotKey ?? record.id, payload, !!snapshotKey), manager);
     });
   }
 }

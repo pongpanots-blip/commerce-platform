@@ -231,7 +231,7 @@ npm run migration:show
 | Stock/price/moq | `PUT /erp/products/qty`, `PUT /erp/products/price`, `PUT /erp/products/moq` | 2 |
 | Product | `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image` | 3 |
 | Customer/company | `POST /erp/customers`, `PUT /erp/customers`, `POST /erp/companies` | 4 |
-| Order period / calendar | `POST /erp/order-periods`, `PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` | 6 |
+| Order period / calendar | `POST /erp/order-periods`, `PUT /erp/order-periods` (relay) · `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` (nginx → josh ตรง) | 6 |
 | Order/invoice/quotation | `POST`+`PUT /erp/orders/status`, `POST`+`PUT /erp/invoices/status`, `POST`+`PUT /erp/quotations`, `POST`+`PUT /erp/quotations/status` | 7 |
 
 รวม 22 route (POST กับ PUT ของ path เดียวกันต้องรับทั้งคู่) · **ไม่มี `/erp/categories*` แล้ว** — ถูกลบใน `f418ba325` เพราะ ERP sync แค่ SKU/price/qty · route ใต้ `/erp/testing/*` เป็น simulator ไม่ใช่ contract
@@ -338,13 +338,14 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 6 — Inbound: order period / delivery calendar (cron อยู่ josh)
+### Task 6 — Inbound: order period / delivery calendar ✅ relay (2026-10-04) · cron อยู่ josh
 
-- **ส่งต่อ** `POST`+`PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` แบบเดียวกับ Task 2
+> **ทำแล้ว:** `POST`+`PUT /erp/order-periods` → `erp.order_periods.pushed` → josh `supplierOrderPeriod.upsertFromErp()` เดิม (pipe `ParseArrayPipe(SupplierOrderPeriodPushDto)` ตัวเดียวกับ route เดิม)
+> - **เป็น snapshot ต่อชุด SUP_CODE:** หนึ่ง push คือรอบทั้งหมดของ supplier นั้น (josh ปิดรอบที่ไม่อยู่ใน push เป็น `C`) ถ้า push เก่าที่ค้าง retry ไปถึงหลัง push ใหม่ จะปิดรอบใหม่ทิ้ง → commerce ใช้ latest-wins (aggregateId = uuid จาก hash ของชุด SUP_CODE) · ข้อจำกัด: push ผสม {A,B} เก่าที่ retry หลัง push {A} ใหม่ ยังไปถึง — แยกต่อ supplier เมื่อ ERP เริ่มส่งผสม
+> - **probe 2 ตัวไม่ย้าย — nginx ส่งไป josh ตรง** (เหมือน `GET /erp/products`): `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` เป็นปุ่มของ ops ที่ให้ josh ไปเรียก Jagota แล้ว**ตอบผลกลับทันที** ถ้าผ่าน queue ของ commerce ผู้เรียกจะได้แค่ `{received:true}` ไม่เห็นผล และ probe ต้องใช้ josh อยู่แล้ว commerce คั่นกลางไม่ได้ช่วยตอน josh ล่ม · nginx ต้องมี `location` แยกสองเส้นนี้ (commerce ตอบ 404 ซึ่ง nginx ไม่ fallback)
+
 - **cron ทั้งหมดอยู่ josh** (`jagota-auth-token`, `jagota-branch-status`, `supplier-order-period-poll`, `sku-order-period-probe`, `delivery-calendar-probe`, `jagota-delivery-date-cache`) — checkout อ่านผลทุกครั้ง ถ้าย้ายแล้ว commerce ล่ม checkout คำนวณวันส่ง/รอบสั่งไม่ได้
 - ไม่ต้องมี env flag ปิดสองฝั่ง เพราะไม่มีการรันซ้อน
-
-**เวลา:** 1-2 วัน (จาก 4-5 วัน)
 
 ---
 

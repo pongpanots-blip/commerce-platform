@@ -164,6 +164,7 @@ export const EVENT_TYPES = [
   'erp.invoice.status_changed',
   'erp.quotation.pushed',
   'erp.quotation.status_changed',
+  'erp.order_periods.pushed',
 ];
 
 export interface AdminStats {

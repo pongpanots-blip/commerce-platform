@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHash, randomBytes } from 'node:crypto';
 import { IsNull, MoreThan, Repository } from 'typeorm';
@@ -159,6 +160,22 @@ export class McpOAuthProvider implements OAuthServerProvider {
     const grant = await this.live(code, 'confirm', clientId);
     if (!grant || grant.staffUserId !== staffUserId || grant.data.tool !== tool || grant.data.argsHash !== argsHash) return false;
     return this.consume(grant);
+  }
+
+  /**
+   * Daily housekeeping. Minute-lived rows (sign-in requests, codes, confirm codes) go a day after
+   * expiry; tokens stay 30 days past expiry so the AI connectors page still shows recent connections.
+   * Plain idempotent DELETE, safe if several instances run it.
+   */
+  @Cron('0 4 * * *', { timeZone: 'Asia/Bangkok' })
+  async purgeExpired() {
+    const result = await this.grants.query(
+      `DELETE FROM mcp_oauth_grants
+       WHERE (kind IN ('request', 'code', 'confirm') AND expires_at < now() - interval '1 day')
+          OR expires_at < now() - interval '30 days'`);
+    const removed = Array.isArray(result) ? Number(result[1] ?? 0) : 0;
+    if (removed) Logger.log(`MCP OAuth housekeeping removed ${removed} expired rows`, 'Mcp');
+    return removed;
   }
 
   async revokeToken(client: OAuthClientInformationFull, request: OAuthTokenRevocationRequest): Promise<void> {

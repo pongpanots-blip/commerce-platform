@@ -55,6 +55,14 @@ describe('WebhookDeliveryWorker', () => {
     expect(d.attempts).toBe(1);
   });
 
+  it('the last of the ~3h of attempts dead-letters it', async () => {
+    respond(503);
+    const d = { ...base(), attempts: 199 };
+    const { worker } = makeWorker(d);
+    await expect(worker.handle('d-1')).rejects.toThrow('503');
+    expect(d.status).toBe('failed');
+  });
+
   it('retries 429 like a 5xx', async () => {
     respond(429);
     const { worker } = makeWorker(base());

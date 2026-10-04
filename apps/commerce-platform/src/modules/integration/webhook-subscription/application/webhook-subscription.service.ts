@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
-import { QUEUES, RETRY_JOB_OPTIONS } from '../../../../config/redis.config';
+import { DELIVERY_JOB_OPTIONS, QUEUES } from '../../../../config/redis.config';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
 import { DeliveryStatus, WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 
@@ -69,7 +69,7 @@ export class WebhookSubscriptionService {
     if (delivery.status !== 'failed') throw new BadRequestException(`Only failed deliveries can be retried (this one is ${delivery.status})`);
     Object.assign(delivery, { status: 'pending', attempts: 0, error: null });
     const saved = await this.deliveries.save(delivery);
-    await this.queue.add('deliver', { deliveryId: id }, RETRY_JOB_OPTIONS);
+    await this.queue.add('deliver', { deliveryId: id }, DELIVERY_JOB_OPTIONS);
     return saved;
   }
 }

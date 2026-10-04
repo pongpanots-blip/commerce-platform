@@ -6,7 +6,7 @@ import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
 import { WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 import { WebhookSubscriptionService } from './webhook-subscription.service';
-import { QUEUES, RETRY_JOB_OPTIONS } from '../../../../config/redis.config';
+import { DELIVERY_JOB_OPTIONS, QUEUES } from '../../../../config/redis.config';
 
 interface EmittedEvent {
   eventId?: string;
@@ -71,7 +71,7 @@ export class WebhookDispatcher {
           attempts: 0,
         }),
       );
-      await this.queue.add('deliver', { deliveryId: delivery.id }, RETRY_JOB_OPTIONS);
+      await this.queue.add('deliver', { deliveryId: delivery.id }, DELIVERY_JOB_OPTIONS);
       this.logger.log(`Queued ${eventType} → ${sub.name} (${sub.targetUrl})`);
     }
   }

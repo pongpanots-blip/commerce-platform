@@ -376,7 +376,7 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ### Task 8 — Reliability + wiring
 
-- Dead-letter queue + alert เมื่อ ingest ล้มเกิน N ครั้ง (ห้ามให้ webhook หายเงียบ — josh เข้าคิวบางเส้นแล้ว แต่ยังไม่มี DLQ/alert)
+- ✅ (2026-10-04) Dead-letter + alert: `DeliveryMonitor` ทุก 30 วิ → `ALERT_WEBHOOK_URL` (คิวรอเกิน 60 วิ / dead-letter / relay ค้าง, เตือนซ้ำ 30 นาที, แจ้งเมื่อหาย) + `GET /api/health/delivery` · retry ไป platform 1s→60s นาน ~3 ชม. · ส่งไป josh p50 15 ms (NOTIFY แทน poll 2 วิ)
 - nginx route `/api/erp/*` → commerce-platform เป็น primary, **josh เป็น `backup` upstream** (`proxy_next_upstream error timeout http_502 http_503 http_504`) · `/api/3pl/*` ไป josh ตรง
 - **ซ้อมล่ม 2 ทาง ก่อน launch:** (1) stop commerce → ERP ยิงแล้ว josh รับ, shop อัปเดต (2) stop josh → ERP ได้ `queued`, เปิด josh กลับ → ค่าไปถึง shop ครบ ไม่ซ้ำ
 - **ย้าย ERP Webhook Simulator มาด้วย** (`erp-webhook-simulator.controller.ts` + guard, `6412c0566`, `b2c4ec965`) — ยิงได้ครบทุก inbound route + mock ต่อ account สำหรับ full-loop test · ต้องมี kill-switch ปิดใน prod (`122d707c1`) · หน้า console ย้ายไป commerce-admin

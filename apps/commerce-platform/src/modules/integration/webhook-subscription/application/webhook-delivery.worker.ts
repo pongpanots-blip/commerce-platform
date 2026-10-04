@@ -6,9 +6,8 @@ import { Repository } from 'typeorm';
 import { createHmac } from 'crypto';
 import { WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
-import { QUEUES } from '../../../../config/redis.config';
+import { DELIVERY_MAX_ATTEMPTS, deliveryBackoff, QUEUES } from '../../../../config/redis.config';
 
-const MAX_ATTEMPTS = 5; // keep equal to RETRY_JOB_OPTIONS.attempts
 const REQUEST_TIMEOUT_MS = 10_000;
 
 /**
@@ -16,7 +15,7 @@ const REQUEST_TIMEOUT_MS = 10_000;
  * the subscription secret (x-signature: HMAC-SHA256). Non-2xx or network errors
  * are retried with backoff by BullMQ; the delivery row records the outcome.
  */
-@Processor(QUEUES.WEBHOOK_OUT)
+@Processor(QUEUES.WEBHOOK_OUT, { settings: { backoffStrategy: deliveryBackoff } })
 export class WebhookDeliveryWorker extends WorkerHost {
   private readonly logger = new Logger(WebhookDeliveryWorker.name);
 
@@ -79,7 +78,7 @@ export class WebhookDeliveryWorker extends WorkerHost {
     } catch (error) {
       if (error instanceof UnrecoverableError) throw error;
       delivery.error = error instanceof Error ? error.message : String(error);
-      if (delivery.attempts >= MAX_ATTEMPTS) {
+      if (delivery.attempts >= DELIVERY_MAX_ATTEMPTS) {
         delivery.status = 'failed';
         this.logger.error(`Delivery ${delivery.id} failed after ${delivery.attempts} attempts`);
       }

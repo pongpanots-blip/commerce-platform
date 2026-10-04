@@ -150,6 +150,21 @@ export const EVENT_TYPES = [
   'inventory.updated',
   'price.updated',
   'supplier.updated',
+  // ERP hub: canonical feed events
+  'inventory.qty.changed',
+  'product.price.changed',
+  'product.moq.changed',
+  // ERP hub: ERP calls relayed verbatim (for platforms running ERP logic, e.g. josh)
+  'erp.product.upserted',
+  'erp.products.bulk_upserted',
+  'erp.product.image_updated',
+  'erp.customer.upserted',
+  'erp.company.upserted',
+  'erp.order.status_changed',
+  'erp.invoice.status_changed',
+  'erp.quotation.pushed',
+  'erp.quotation.status_changed',
+  'erp.order_periods.pushed',
 ];
 
 export interface AdminStats {
@@ -356,6 +371,22 @@ export const competitorPricesApi = {
     `/competitor-prices/${row.id}/price`, { priceIncVat, observedAt, revision: row.revision })),
   refresh: (id: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(`/competitor-prices/${id}/refresh`, {})),
   remove: (id: string) => enveloped(api.del<Envelope<{ id: string }>>(`/competitor-prices/${id}`)),
+};
+
+// ---- Inventory per warehouse (read model) ----
+export interface WarehouseStockSummary { code: string; name: string; stockSource: 'erp' | 'commerce'; skus: number; onHand: number; reserved: number }
+export interface WarehouseStockRow {
+  id: string; sku: string; name: string; warehouseCode: string; stockSource: 'erp' | 'commerce';
+  quantity: number; reserved: number; available: number; updatedAt: string;
+  lastSource: string | null; lastReason: string | null; lastStatus: string | null; lastChangedAt: string | null;
+}
+export const inventoryOverviewApi = {
+  get: (warehouse: string, search: string, page: number) => {
+    const qs = new URLSearchParams({ page: String(page) });
+    if (warehouse) qs.set('warehouse', warehouse);
+    if (search) qs.set('search', search);
+    return api.get<{ warehouses: WarehouseStockSummary[]; items: WarehouseStockRow[]; total: number; page: number; pageSize: number }>(`/inventory-overview?${qs}`);
+  },
 };
 
 // ---- AI connectors (MCP) ----

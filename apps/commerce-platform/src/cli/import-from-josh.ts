@@ -22,6 +22,7 @@ import { DataSource } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { JoshCatalogSyncService } from '../modules/integration/connector/josh/josh-catalog-sync.service';
 import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-catalog-product.entity';
+import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 
 type Scope = 'research' | 'scraping' | 'competitor';
 /** userColumns → commerce staff id (by email) · emailColumns → the josh user's email. */
@@ -104,8 +105,9 @@ async function main() {
     const scopes = scope === 'all' ? (['research', 'scraping', 'competitor'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
-        const sync = new JoshCatalogSyncService(commerce.getRepository(JoshCatalogProduct));
-        try { console.log(`josh_catalog_products: ${await sync.syncAll()} products synced`); } finally { await sync.onModuleDestroy(); }
+        const replica = new JoshReplica();
+        const sync = new JoshCatalogSyncService(commerce.getRepository(JoshCatalogProduct), replica);
+        try { console.log(`josh_catalog_products: ${await sync.syncAll()} products synced`); } finally { await replica.onModuleDestroy(); }
       }
       for (const plan of PLANS[s]) await copy(josh, commerce, plan, users);
     }

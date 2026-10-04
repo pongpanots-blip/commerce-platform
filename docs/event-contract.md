@@ -45,13 +45,28 @@ Body:
 
 ## 3. Event catalog
 
-| `type` | มาจาก ERP route | field เพิ่มใน `data` |
+| `type` | มาจาก | field เพิ่มใน `data` |
 |---|---|---|
-| `inventory.qty.changed` | `PUT /erp/products/qty` | `quantity` (int ≥ 0), `previousQuantity`, `warehouseCode`, `reason` (SALE/RECEIVE/ADJUST หรือ null) |
+| `inventory.qty.changed` | `PUT /erp/products/qty` **หรือ** การปรับสต็อกในคลังที่ commerce เป็นเจ้าของ | `source` (`erp` / `commerce`), `quantity` (int ≥ 0), `previousQuantity`, `warehouseCode`, `reason`, `ingestRecordId` (erp) หรือ `movementId` (commerce) |
 | `product.price.changed` | `PUT /erp/products/price` | `orderingPrice`, `sellingUnitPrice` (string 2 ตำแหน่ง หรือ null = ไม่เปลี่ยน) |
 | `product.moq.changed` | `PUT /erp/products/moq` | `moq` |
 
-qty ที่ **เก่ากว่า** ค่าที่ commerce มีอยู่ (ดูจาก `CHANGED_AT`) จะไม่ถูกส่งออก — เก็บเป็น movement `stale` ใน ledger อย่างเดียว
+qty ที่ **เก่ากว่า** ค่าที่ commerce มีอยู่ (ดูจาก `CHANGED_AT`) จะไม่ถูกส่งออก ระบบเก็บไว้เป็น movement `stale` ใน ledger อย่างเดียว
+
+### สต็อกจากคลังที่ commerce เป็นเจ้าของ (`source: "commerce"`)
+
+คลังที่ `stock_source = 'commerce'` (ระบบคลังของเราเอง §0.2) ส่ง `inventory.qty.changed` **ชนิดเดียวกันและหน้าตาเดียวกัน**กับสต็อกจาก ERP:
+
+- **ก้อน `data.erp`:** ยังมีเสมอและเป็นรูปแบบเดียวกับ ERP คือ `PRODUCT_CODE`, `QUANTITY`, `CHANGED_AT`, `REASON`
+  - เหตุผลแปลงเป็นคำของ ERP: RECEIVE/RETURN → `RECEIVE` ส่วนเหตุผลอื่นเป็น `ADJUST`
+  - เหตุผลจริงอยู่ใน `data.reason` (COUNT / RECEIVE / DAMAGE / RETURN / CORRECTION)
+  - ผลคือ platform ที่ส่ง `data.erp` เข้า handler ของ ERP อยู่แล้ว (josh) **ไม่ต้องแก้โค้ด** ตอนย้ายคลังจาก ERP มาเป็นของ commerce
+- **ส่งเฉพาะเมื่อยอดเปลี่ยนจริง:** event ออกเมื่อ movement เป็น `applied` และเขียนลง outbox ใน transaction เดียวกับ ledger
+- **ไม่ชนกับ ERP:** คลังแต่ละแห่งรับยอดได้จากเจ้าของเท่านั้น คลังของ commerce จึงไม่มี event จาก ERP มาทับ และคลังของ ERP ก็ปรับจาก commerce ไม่ได้
+- **ทดสอบแล้ว (2026-10-03):** ใช้ build จริงของ josh (`feat/commerce-hub-integration`) โดยไม่แก้โค้ด josh
+  - AI ปรับสต็อกผ่าน MCP: josh เปลี่ยนเป็น 9 แล้วรับเข้า +3 เป็น 12
+  - คลัง ERP ถูกปฏิเสธและไม่มี event ออก
+  - qty จาก ERP feed ยังเข้า josh ได้ และติดป้าย `source: "erp"`
 
 ## 4. ผู้รับต้องทำ
 

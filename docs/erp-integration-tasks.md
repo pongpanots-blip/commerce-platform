@@ -231,7 +231,7 @@ npm run migration:show
 | Stock/price/moq | `PUT /erp/products/qty`, `PUT /erp/products/price`, `PUT /erp/products/moq` | 2 |
 | Product | `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image` | 3 |
 | Customer/company | `POST /erp/customers`, `PUT /erp/customers`, `POST /erp/companies` | 4 |
-| Order period / calendar | `POST /erp/order-periods`, `PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` | 6 |
+| Order period / calendar | `POST /erp/order-periods`, `PUT /erp/order-periods` (relay) · `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` (nginx → josh ตรง) | 6 |
 | Order/invoice/quotation | `POST`+`PUT /erp/orders/status`, `POST`+`PUT /erp/invoices/status`, `POST`+`PUT /erp/quotations`, `POST`+`PUT /erp/quotations/status` | 7 |
 
 รวม 22 route (POST กับ PUT ของ path เดียวกันต้องรับทั้งคู่) · **ไม่มี `/erp/categories*` แล้ว** — ถูกลบใน `f418ba325` เพราะ ERP sync แค่ SKU/price/qty · route ใต้ `/erp/testing/*` เป็น simulator ไม่ใช่ contract
@@ -283,7 +283,10 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 3 — Inbound: product / category
+### Task 3 — Inbound: product / category ✅ relay (2026-10-04)
+
+> **ทำแล้ว:** commerce รับ `POST /erp/products`, `/products/bulk`, `PUT /products/image` แบบ verbatim → event `erp.product.upserted` / `erp.products.bulk_upserted` / `erp.product.image_updated` → josh `POST /api/internal/erp-events` → handler เดิมของ josh (กฎ draft, ห้ามทับชื่อ, staging MER ทำงานครบ — ทดสอบกับ build จริงแล้ว) · `GET /erp/products` ให้ nginx ส่งไป josh ตรง
+
 
 **ทำอะไร:**
 - `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image`
@@ -309,7 +312,10 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 4 — Inbound: customer / company
+### Task 4 — Inbound: customer / company ✅ relay (2026-10-04)
+
+> **ทำแล้ว:** `POST`+`PUT /erp/customers`, `POST /erp/companies` → `erp.customer.upserted` / `erp.company.upserted` → handler เดิมของ josh
+
 
 - `POST /erp/customers`, `PUT /erp/customers`
 - `POST /erp/companies`
@@ -332,17 +338,21 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 6 — Inbound: order period / delivery calendar (cron อยู่ josh)
+### Task 6 — Inbound: order period / delivery calendar ✅ relay (2026-10-04) · cron อยู่ josh
 
-- **ส่งต่อ** `POST`+`PUT /erp/order-periods`, `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` แบบเดียวกับ Task 2
+> **ทำแล้ว:** `POST`+`PUT /erp/order-periods` → `erp.order_periods.pushed` → josh `supplierOrderPeriod.upsertFromErp()` เดิม (pipe `ParseArrayPipe(SupplierOrderPeriodPushDto)` ตัวเดียวกับ route เดิม)
+> - **เป็น snapshot ต่อชุด SUP_CODE:** หนึ่ง push คือรอบทั้งหมดของ supplier นั้น (josh ปิดรอบที่ไม่อยู่ใน push เป็น `C`) ถ้า push เก่าที่ค้าง retry ไปถึงหลัง push ใหม่ จะปิดรอบใหม่ทิ้ง → commerce ใช้ latest-wins (aggregateId = uuid จาก hash ของชุด SUP_CODE) · ข้อจำกัด: push ผสม {A,B} เก่าที่ retry หลัง push {A} ใหม่ ยังไปถึง — แยกต่อ supplier เมื่อ ERP เริ่มส่งผสม
+> - **probe 2 ตัวไม่ย้าย — nginx ส่งไป josh ตรง** (เหมือน `GET /erp/products`): `POST /erp/delivery-calendar/probe`, `POST /erp/sku-order-period/probe` เป็นปุ่มของ ops ที่ให้ josh ไปเรียก Jagota แล้ว**ตอบผลกลับทันที** ถ้าผ่าน queue ของ commerce ผู้เรียกจะได้แค่ `{received:true}` ไม่เห็นผล และ probe ต้องใช้ josh อยู่แล้ว commerce คั่นกลางไม่ได้ช่วยตอน josh ล่ม · nginx ต้องมี `location` แยกสองเส้นนี้ (commerce ตอบ 404 ซึ่ง nginx ไม่ fallback)
+
 - **cron ทั้งหมดอยู่ josh** (`jagota-auth-token`, `jagota-branch-status`, `supplier-order-period-poll`, `sku-order-period-probe`, `delivery-calendar-probe`, `jagota-delivery-date-cache`) — checkout อ่านผลทุกครั้ง ถ้าย้ายแล้ว commerce ล่ม checkout คำนวณวันส่ง/รอบสั่งไม่ได้
 - ไม่ต้องมี env flag ปิดสองฝั่ง เพราะไม่มีการรันซ้อน
 
-**เวลา:** 1-2 วัน (จาก 4-5 วัน)
-
 ---
 
-### Task 7 — Inbound: order / quotation lifecycle (ยากสุด ทำท้ายสุด)
+### Task 7 — Inbound: order / quotation lifecycle ✅ relay (2026-10-04)
+
+> **ทำแล้ว:** orders/invoices status, quotations, quotations/status (POST+PUT) → `erp.order.status_changed` / `erp.invoice.status_changed` / `erp.quotation.pushed` / `erp.quotation.status_changed` (ไม่ใช่ snapshot — ทุกครั้งต้องถึง) → josh เข้า inbound queue / handler เดิม (dedupe, กันสถานะย้อน, backfill DOC_NO อยู่ที่ josh ที่เดียว) · payload ที่ route เดิมของ josh จะปฏิเสธ → 422 → dead-letter ใน commerce
+
 
 - `POST`+`PUT /erp/orders/status`
 - `POST`+`PUT /erp/invoices/status`
@@ -395,6 +405,24 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 **ตัวที่ย้ายแล้วได้ผลจริง** คือตัวที่*อ่าน*หนักแต่เขียนผลน้อย เช่นการคำนวณ `customer-metrics` (อ่านจาก replica แล้วส่งผลกลับ) ต้องวัดเวลาจริงก่อน
 
 **เวลา:** ประเมินหลังได้ผลวัด
+
+**✅ ตัวแรกทำแล้ว (2026-10-04): `customer-metrics`**
+- **commerce** (`CustomerMetricsOffloadJob`, 02:30, ต้องเปิดเอง): รัน aggregation **ชุดเดียวกับ** `reconcile()` ของ josh บน **replica** แล้วเทียบกับ `customer_metrics` ปัจจุบัน → ส่งเฉพาะแถวที่เปลี่ยน (ทีละ 1000) ไป `POST /api/internal/customer-metrics` (HMAC)
+- **josh**: เขียนเฉพาะแถวนั้น (ไม่ทับแถวที่ josh อัปเดตเองหลังเวลาที่ commerce คำนวณ) → ปิดท้ายด้วย `assignAllTiers()` เดิม + heartbeat · cron 03:00 ของ josh **ยังอยู่** ข้ามเฉพาะเมื่อ `CUSTOMER_METRICS_OFFLOADED=true` และ commerce ส่งครบภายใน 26 ชม. — commerce ล่ม/ช้า josh ทำเองเหมือนเดิม
+- ต่างจากเดิม: primary ของ josh ไม่ต้อง aggregate orders ทั้งตาราง และไม่ต้อง UPDATE ทุกแถวทุกคืน — เขียนแค่แถวที่ค่าเปลี่ยนจริง
+- สถานะ order ที่นับต้องตรงกัน: commerce ส่งรายการไปทุก batch, josh ตอบ 409 ถ้าไม่ตรง `ACTIVE_ORDER_STATUSES`
+- ทดสอบ: หลัง `reconcile()` จริงของ josh บน DB copy (1,639 orders) diff ของ commerce = **0 แถว** (ค่าตรงกันทุกคอลัมน์รวมทศนิยม) · เปลี่ยนยอด order 1 ใบ → ส่ง 1 แถว → josh เขียน 1 แถว → diff กลับเป็น 0 · batch เก่ากว่าแถวของ josh ไม่ทับ · status ไม่ตรง 409 · ลายเซ็นปลอม 401
+
+**✅ ตัวที่สอง (2026-10-04): อันดับขายดี (`BestsellersOffloadJob`, ทุก 10 นาที, ต้องเปิดเอง `CRON_JOSH_BESTSELLERS_ENABLED`)**
+- ของเดิม: rail ขายดีของ josh (home + search) รัน `SUM(product_quantity)` ทั้งตาราง `order_items` บน primary ทุกครั้งที่ cache 15 นาทีหมด — อ่านหนัก ผลเล็ก
+- commerce: ทำ SUM บน replica → ส่ง 200 SKU แรก (เรียงยอดขาย, tie ตาม SKU) ไป `POST /api/internal/bestsellers` (HMAC, ส่งรายการ status ไปด้วย ไม่ตรง → 409) · **ไม่กรองสินค้า** กฎ "แสดงได้" อยู่ josh ที่เดียว
+- josh: เก็บ Redis 1 ชม. → ตอน cache หมดกรองด้วยกฎเดิม (`sku IN (...)` เล็ก) แล้วตัดตาม limit · ไม่มี push สด หรือ 200 ตัวแรกกรองแล้วไม่พอ limit → คำนวณเองเหมือนเดิม (ไม่มี flag ฝั่ง josh)
+- ทดสอบ: DB ชั่วคราวข้อมูลสังเคราะห์ (400 SKU, 3,000 orders, มี inactive/ราคา 0/ยกเลิก) ผลตรง query เดิมทุก limit 1-50 · list สั้นเกิน → fallback
+
+**ไม่ทำต่อ (ตรวจ cron ทั้งหมดของ josh แล้ว 2026-10-04)** — ที่เหลือเป็นงานเขียน/ส่งแจ้งเตือน/เรียก API ภายนอก ย้ายแล้วไม่ลดโหลด:
+- `MarketingConversionService.matchConversions` — N+1 (1 query ต่อ enrollment) แต่เส้นหลักคือ job ตอน order settled ที่ต้องตอบไว ย้ายแค่ cron รายชั่วโมงไม่ช่วย · ทางที่ถูกคือเขียนเป็น query เดียว (`LATERAL`) **ใน josh**
+- `ProductSyncService` warmup — อ่านทั้งแค็ตตาล็อก 6 relation ทุกชั่วโมงแต่ผลคือ JSON ทั้งแค็ตตาล็อกลง Redis (ส่งผ่าน HTTP ใหญ่เท่าที่อ่าน) · ทางที่ถูกคือให้ josh อ่านจาก replica เอง
+- `productSyncDeepNightCleanup` แค่ log — ลบทิ้งได้ (งานของทีม josh)
 
 ---
 

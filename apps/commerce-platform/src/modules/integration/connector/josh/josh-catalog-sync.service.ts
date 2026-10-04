@@ -1,9 +1,10 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { cronConfig } from '../../../../config/cron.config';
 import { JoshCatalogProduct } from './josh-catalog-product.entity';
+import { JoshReplica } from './josh-replica';
 
 const SELECT = `SELECT p.product_inventory_id AS id, p.product_inventory_sku AS sku, p.product_status AS status,
   p.brand_code, p.brand_name, p.country_code_source, p.storage_temperature, p.packaging_type, p.pack_size,
@@ -36,24 +37,16 @@ const UPSERT = `INSERT INTO josh_catalog_products (id, ${COLUMNS.join(', ')}, jo
  * shows up here. josh down → the last copy stays and the next run catches up.
  */
 @Injectable()
-export class JoshCatalogSyncService implements OnModuleDestroy {
+export class JoshCatalogSyncService {
   private readonly logger = new Logger(JoshCatalogSyncService.name);
-  private josh: DataSource | null = null;
   private running = false;
 
-  constructor(@InjectRepository(JoshCatalogProduct) private readonly products: Repository<JoshCatalogProduct>) {}
+  constructor(
+    @InjectRepository(JoshCatalogProduct) private readonly products: Repository<JoshCatalogProduct>,
+    private readonly josh: JoshReplica,
+  ) {}
 
-  get configured() { return !!process.env.JOSH_DATABASE_URL?.trim(); }
-
-  private async source() {
-    if (!this.josh) {
-      const josh = new DataSource({ type: 'postgres', url: process.env.JOSH_DATABASE_URL, entities: [],
-        applicationName: 'commerce-josh-catalog-sync', extra: { max: 1, statement_timeout: 60_000, connectionTimeoutMillis: 5_000 } });
-      await josh.initialize();
-      this.josh = josh;
-    }
-    return this.josh;
-  }
+  get configured() { return this.josh.configured; }
 
   private async upsert(rows: Record<string, unknown>[]) {
     // ponytail: 1000 rows per statement; ~6k products today = 6 statements per run.
@@ -62,7 +55,7 @@ export class JoshCatalogSyncService implements OnModuleDestroy {
 
   /** Full pull. Returns how many josh products were seen. */
   async syncAll(): Promise<number> {
-    const rows: Record<string, unknown>[] = await (await this.source()).query(SELECT);
+    const rows = await this.josh.query(SELECT);
     // An empty result is far likelier a wrong database than an empty catalog — never mark everything removed.
     if (!rows.length) throw new Error('josh returned no products — check JOSH_DATABASE_URL');
     await this.upsert(rows);
@@ -73,7 +66,7 @@ export class JoshCatalogSyncService implements OnModuleDestroy {
 
   /** Pull one SKU now (MER typed a SKU that was added after the last run). Null if josh has no such SKU. */
   async syncSku(sku: string): Promise<JoshCatalogProduct | null> {
-    const rows: Record<string, unknown>[] = await (await this.source()).query(`${SELECT} WHERE p.product_inventory_sku = $1`, [sku]);
+    const rows = await this.josh.query(`${SELECT} WHERE p.product_inventory_sku = $1`, [sku]);
     if (!rows.length) return null;
     await this.upsert(rows);
     return this.products.findOneBy({ id: rows[0].id as string });
@@ -87,10 +80,7 @@ export class JoshCatalogSyncService implements OnModuleDestroy {
       this.logger.log(`josh catalog synced: ${await this.syncAll()} products`);
     } catch (error) {
       this.logger.warn(`josh catalog sync failed, keeping the last copy: ${error instanceof Error ? error.message : error}`);
-      await this.josh?.destroy().catch(() => undefined);
-      this.josh = null;
     } finally { this.running = false; }
   }
 
-  async onModuleDestroy() { await this.josh?.destroy().catch(() => undefined); }
 }

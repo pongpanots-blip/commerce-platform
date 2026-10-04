@@ -17,10 +17,8 @@ export interface FeedEventPayload {
 
 const SNAPSHOT = { snapshot: true };
 
-export class InventoryQtyChanged extends DomainEvent<FeedEventPayload> {
-  readonly type = 'inventory.qty.changed';
-  constructor(aggregateId: string, payload: FeedEventPayload) { super(aggregateId, payload, SNAPSHOT); }
-}
+// Stock is owned by the inventory domain: ERP-owned and commerce-owned warehouses publish the same event.
+export { InventoryQtyChanged } from '../../../../commerce/inventory/domain/events/inventory-qty-changed.event';
 
 export class ProductPriceChanged extends DomainEvent<FeedEventPayload> {
   readonly type = 'product.price.changed';

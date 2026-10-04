@@ -420,7 +420,7 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 - ทดสอบ: DB ชั่วคราวข้อมูลสังเคราะห์ (400 SKU, 3,000 orders, มี inactive/ราคา 0/ยกเลิก) ผลตรง query เดิมทุก limit 1-50 · list สั้นเกิน → fallback
 
 **ไม่ทำต่อ (ตรวจ cron ทั้งหมดของ josh แล้ว 2026-10-04)** — ที่เหลือเป็นงานเขียน/ส่งแจ้งเตือน/เรียก API ภายนอก ย้ายแล้วไม่ลดโหลด:
-- `MarketingConversionService.matchConversions` — N+1 (1 query ต่อ enrollment) แต่เส้นหลักคือ job ตอน order settled ที่ต้องตอบไว ย้ายแค่ cron รายชั่วโมงไม่ช่วย · ทางที่ถูกคือเขียนเป็น query เดียว (`LATERAL`) **ใน josh**
+- `MarketingConversionService.matchConversions` — N+1 (1 query ต่อ enrollment) แต่เส้นหลักคือ job ตอน order settled ที่ต้องตอบไว ย้ายแค่ cron รายชั่วโมงไม่ช่วย → **แก้ใน josh แล้ว** (branch `perf/marketing-conversion-single-query`): `UPDATE … RETURNING` คำสั่งเดียวด้วย `LATERAL` ผลตรงของเดิม 154/154 บน DB ชั่วคราว และกันนับซ้ำเมื่อ cron กับ job ทับกัน
 - `ProductSyncService` warmup — อ่านทั้งแค็ตตาล็อก 6 relation ทุกชั่วโมงแต่ผลคือ JSON ทั้งแค็ตตาล็อกลง Redis (ส่งผ่าน HTTP ใหญ่เท่าที่อ่าน) · ทางที่ถูกคือให้ josh อ่านจาก replica เอง
 - `productSyncDeepNightCleanup` แค่ log — ลบทิ้งได้ (งานของทีม josh)
 

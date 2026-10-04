@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { ERP_FEED_ENTITY_TYPES, ErpIngestEntityType, ErpIngestRecord } from '../erp-ingest-record.entity';
+import { ERP_FEED_ENTITY_TYPES, ERP_RELAY_ENTITY_TYPE, ErpIngestEntityType, ErpIngestRecord } from '../erp-ingest-record.entity';
 import {
   ParsedCustomer, ParsedProduct, ParsedStock,
   parseErpCustomer, parseErpProduct, parseErpSaleOrder, parseErpStock,
@@ -16,12 +16,14 @@ import { Warehouse } from '../../../../commerce/warehouse/infrastructure/warehou
 import { InventoryLevel } from '../../../../commerce/inventory/infrastructure/inventory-level.entity';
 import { Customer } from '../../../../commerce/customer/infrastructure/customer.entity';
 
-const PARSERS: Record<ErpIngestEntityType, (raw: unknown) => Record<string, unknown>> = {
+/** Relayed calls are never parsed here (the platform validates them). */
+type ParsedType = Exclude<ErpIngestEntityType, 'relay'>;
+const PARSERS: Record<ParsedType, (raw: unknown) => Record<string, unknown>> = {
   product: parseErpProduct as never, stock: parseErpStock as never,
   customer: parseErpCustomer as never, sale_order: parseErpSaleOrder as never,
   product_qty: parseJagotaQty as never, product_price: parseJagotaPrice as never, product_moq: parseJagotaMoq as never,
 };
-const EXTERNAL_ID_KEYS: Record<ErpIngestEntityType, string> = {
+const EXTERNAL_ID_KEYS: Record<ParsedType, string> = {
   product: 'externalId', stock: 'externalItemId', customer: 'externalId', sale_order: 'orderNumber',
   product_qty: 'sku', product_price: 'sku', product_moq: 'sku',
 };
@@ -102,7 +104,7 @@ export class ErpIngestService {
     if (record.status !== 'received' && record.status !== 'failed') return record;
     // Feed rows are fully handled at receipt (ErpFeedService); their downstream
     // retries live on the webhook delivery, not here.
-    if (ERP_FEED_ENTITY_TYPES.has(record.entityType)) return record;
+    if (ERP_FEED_ENTITY_TYPES.has(record.entityType) || record.entityType === ERP_RELAY_ENTITY_TYPE) return record;
 
     if (record.parsedPayload == null) {
       try {

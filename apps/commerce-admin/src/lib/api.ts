@@ -150,6 +150,20 @@ export const EVENT_TYPES = [
   'inventory.updated',
   'price.updated',
   'supplier.updated',
+  // ERP hub: canonical feed events
+  'inventory.qty.changed',
+  'product.price.changed',
+  'product.moq.changed',
+  // ERP hub: ERP calls relayed verbatim (for platforms running ERP logic, e.g. josh)
+  'erp.product.upserted',
+  'erp.products.bulk_upserted',
+  'erp.product.image_updated',
+  'erp.customer.upserted',
+  'erp.company.upserted',
+  'erp.order.status_changed',
+  'erp.invoice.status_changed',
+  'erp.quotation.pushed',
+  'erp.quotation.status_changed',
 ];
 
 export interface AdminStats {

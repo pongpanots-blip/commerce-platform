@@ -23,6 +23,7 @@ import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
 import { WebhookPlatforms } from './pages/WebhookPlatforms';
 import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
 import { AiConnectors } from './pages/AiConnectors';
+import { ErpSimulator } from './pages/ErpSimulator';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -43,6 +44,7 @@ const NAV = [
       { to: '/erp/webhook-dead-letter', label: 'Dead letter', end: false },
       { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
       { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
+      { to: '/erp/simulator', label: 'ERP simulator', end: false },
     ],
   },
   {
@@ -117,6 +119,7 @@ export function App() {
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
             <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />
             <Route path="/erp/inventory-warehouse" element={<InventoryPerWarehouse />} />
+            <Route path="/erp/simulator" element={<ErpSimulator />} />
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/webhooks" element={<Webhooks />} />
             <Route path="/subscriptions" element={<Subscriptions />} />

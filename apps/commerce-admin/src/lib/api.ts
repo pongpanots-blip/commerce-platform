@@ -415,6 +415,13 @@ export interface WebhookDeliveryFull {
   createdAt: string;
 }
 
+export interface ErpSimulatorResult { route: string; status: number; ms: number; sentAt: string; response: unknown }
+
+export const erpSimulatorApi = {
+  routes: () => api.get<{ routes: string[]; erpKeyConfigured: boolean }>('/erp-simulator/routes'),
+  send: (route: string, payload: unknown) => api.post<ErpSimulatorResult>('/erp-simulator/send', { route, payload }),
+};
+
 export const webhookApi = {
   subscriptions: () => api.get<WebhookSubscription[]>('/webhook-subscriptions'),
   subscription: (id: string) => api.get<WebhookSubscription>(`/webhook-subscriptions/${id}`),

@@ -379,7 +379,7 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 - ✅ (2026-10-04) Dead-letter + alert: `DeliveryMonitor` ทุก 30 วิ → `ALERT_WEBHOOK_URL` (คิวรอเกิน 60 วิ / dead-letter / relay ค้าง, เตือนซ้ำ 30 นาที, แจ้งเมื่อหาย) + `GET /api/health/delivery` · retry ไป platform 1s→60s นาน ~3 ชม. · ส่งไป josh p50 15 ms (NOTIFY แทน poll 2 วิ)
 - nginx route `/api/erp/*` → commerce-platform เป็น primary, **josh เป็น `backup` upstream** (`proxy_next_upstream error timeout http_502 http_503 http_504`) · `/api/3pl/*` ไป josh ตรง
 - **ซ้อมล่ม 2 ทาง ก่อน launch:** (1) stop commerce → ERP ยิงแล้ว josh รับ, shop อัปเดต (2) stop josh → ERP ได้ `queued`, เปิด josh กลับ → ค่าไปถึง shop ครบ ไม่ซ้ำ
-- **ย้าย ERP Webhook Simulator มาด้วย** (`erp-webhook-simulator.controller.ts` + guard, `6412c0566`, `b2c4ec965`) — ยิงได้ครบทุก inbound route + mock ต่อ account สำหรับ full-loop test · ต้องมี kill-switch ปิดใน prod (`122d707c1`) · หน้า console ย้ายไป commerce-admin
+- ✅ (2026-10-04) **ERP Webhook Simulator ใน commerce** — admin → ERP simulator (`POST /api/erp-simulator/send`): เลือก route (19 route ที่ commerce รับ, allow-list) + payload → commerce ยิง `/api/erp/*` ของตัวเองด้วย `X-ERP-Key` จริง = ทางเดียวกับ ERP ทุกขั้น แล้วโชว์ว่าส่งต่อ platform อะไรไปบ้าง · admin เท่านั้น · บันทึก `audit_logs` (`erp.simulator.send`) · production ปิด (404) จนกว่าตั้ง `ERP_SIMULATOR_ENABLED=true` · **simulator ของ josh ยังอยู่ ไม่ได้ลบ**
   - ส่วนที่ preview credit back / shipment ของ simulator อ่านข้อมูล order ของ shop → เหลือไว้ใน josh หรือเรียกผ่าน internal API
 - Smoke test ครบทุก route ด้วย payload จริงจากทีม ERP (ใช้ simulator ข้างบน)
 - **Provision EC2 + ECR ของ repo นี้** (README บอกว่ายังไม่ทำ) — ต้องอยู่ **VPC เดียวกับ josh backend** ไม่งั้น latency ของ internal API call จะไม่ใช่ 1-3ms อีกต่อไป

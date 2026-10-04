@@ -283,7 +283,10 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 3 — Inbound: product / category
+### Task 3 — Inbound: product / category ✅ relay (2026-10-04)
+
+> **ทำแล้ว:** commerce รับ `POST /erp/products`, `/products/bulk`, `PUT /products/image` แบบ verbatim → event `erp.product.upserted` / `erp.products.bulk_upserted` / `erp.product.image_updated` → josh `POST /api/internal/erp-events` → handler เดิมของ josh (กฎ draft, ห้ามทับชื่อ, staging MER ทำงานครบ — ทดสอบกับ build จริงแล้ว) · `GET /erp/products` ให้ nginx ส่งไป josh ตรง
+
 
 **ทำอะไร:**
 - `GET /erp/products`, `POST /erp/products`, `POST /erp/products/bulk`, `PUT /erp/products/image`
@@ -309,7 +312,10 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 4 — Inbound: customer / company
+### Task 4 — Inbound: customer / company ✅ relay (2026-10-04)
+
+> **ทำแล้ว:** `POST`+`PUT /erp/customers`, `POST /erp/companies` → `erp.customer.upserted` / `erp.company.upserted` → handler เดิมของ josh
+
 
 - `POST /erp/customers`, `PUT /erp/customers`
 - `POST /erp/companies`
@@ -342,7 +348,10 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 
 ---
 
-### Task 7 — Inbound: order / quotation lifecycle (ยากสุด ทำท้ายสุด)
+### Task 7 — Inbound: order / quotation lifecycle ✅ relay (2026-10-04)
+
+> **ทำแล้ว:** orders/invoices status, quotations, quotations/status (POST+PUT) → `erp.order.status_changed` / `erp.invoice.status_changed` / `erp.quotation.pushed` / `erp.quotation.status_changed` (ไม่ใช่ snapshot — ทุกครั้งต้องถึง) → josh เข้า inbound queue / handler เดิม (dedupe, กันสถานะย้อน, backfill DOC_NO อยู่ที่ josh ที่เดียว) · payload ที่ route เดิมของ josh จะปฏิเสธ → 422 → dead-letter ใน commerce
+
 
 - `POST`+`PUT /erp/orders/status`
 - `POST`+`PUT /erp/invoices/status`
@@ -395,6 +404,13 @@ ERP วันนี้ส่งคลังเดียว แต่ให้ pa
 **ตัวที่ย้ายแล้วได้ผลจริง** คือตัวที่*อ่าน*หนักแต่เขียนผลน้อย เช่นการคำนวณ `customer-metrics` (อ่านจาก replica แล้วส่งผลกลับ) ต้องวัดเวลาจริงก่อน
 
 **เวลา:** ประเมินหลังได้ผลวัด
+
+**✅ ตัวแรกทำแล้ว (2026-10-04): `customer-metrics`**
+- **commerce** (`CustomerMetricsOffloadJob`, 02:30, ต้องเปิดเอง): รัน aggregation **ชุดเดียวกับ** `reconcile()` ของ josh บน **replica** แล้วเทียบกับ `customer_metrics` ปัจจุบัน → ส่งเฉพาะแถวที่เปลี่ยน (ทีละ 1000) ไป `POST /api/internal/customer-metrics` (HMAC)
+- **josh**: เขียนเฉพาะแถวนั้น (ไม่ทับแถวที่ josh อัปเดตเองหลังเวลาที่ commerce คำนวณ) → ปิดท้ายด้วย `assignAllTiers()` เดิม + heartbeat · cron 03:00 ของ josh **ยังอยู่** ข้ามเฉพาะเมื่อ `CUSTOMER_METRICS_OFFLOADED=true` และ commerce ส่งครบภายใน 26 ชม. — commerce ล่ม/ช้า josh ทำเองเหมือนเดิม
+- ต่างจากเดิม: primary ของ josh ไม่ต้อง aggregate orders ทั้งตาราง และไม่ต้อง UPDATE ทุกแถวทุกคืน — เขียนแค่แถวที่ค่าเปลี่ยนจริง
+- สถานะ order ที่นับต้องตรงกัน: commerce ส่งรายการไปทุก batch, josh ตอบ 409 ถ้าไม่ตรง `ACTIVE_ORDER_STATUSES`
+- ทดสอบ: หลัง `reconcile()` จริงของ josh บน DB copy (1,639 orders) diff ของ commerce = **0 แถว** (ค่าตรงกันทุกคอลัมน์รวมทศนิยม) · เปลี่ยนยอด order 1 ใบ → ส่ง 1 แถว → josh เขียน 1 แถว → diff กลับเป็น 0 · batch เก่ากว่าแถวของ josh ไม่ทับ · status ไม่ตรง 409 · ลายเซ็นปลอม 401
 
 ---
 

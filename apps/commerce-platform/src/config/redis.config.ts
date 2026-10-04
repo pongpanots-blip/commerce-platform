@@ -7,7 +7,6 @@
 export const QUEUES = {
   WEBHOOK: 'webhook',
   WEBHOOK_OUT: 'webhook-out',
-  OUTBOX: 'outbox',
   SYNC: 'sync-job',
 } as const;
 
@@ -23,6 +22,19 @@ export const RETRY_JOB_OPTIONS = {
   attempts: 5,
   backoff: { type: 'exponential', delay: 30_000 },
 } as const;
+
+/**
+ * Outbound deliveries to platforms (josh). A platform being down for a deploy
+ * or restart must not cost it data, and it must catch up the moment it is back:
+ * retry after 1s, 2s, 4s … capped at 60s, for ~3 hours before dead-letter.
+ * Workers on QUEUES.WEBHOOK_OUT use {@link deliveryBackoff}.
+ */
+export const DELIVERY_MAX_ATTEMPTS = 200;
+export const DELIVERY_JOB_OPTIONS = {
+  attempts: DELIVERY_MAX_ATTEMPTS,
+  backoff: { type: 'custom' },
+} as const;
+export const deliveryBackoff = (attemptsMade: number): number => Math.min(1000 * 2 ** Math.max(attemptsMade - 1, 0), 60_000);
 
 export interface RedisConnection {
   host: string;

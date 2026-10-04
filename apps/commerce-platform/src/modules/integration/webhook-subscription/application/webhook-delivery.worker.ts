@@ -6,9 +6,8 @@ import { Repository } from 'typeorm';
 import { createHmac } from 'crypto';
 import { WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
-import { QUEUES } from '../../../../config/redis.config';
+import { DELIVERY_MAX_ATTEMPTS, deliveryBackoff, QUEUES } from '../../../../config/redis.config';
 
-const MAX_ATTEMPTS = 5; // keep equal to RETRY_JOB_OPTIONS.attempts
 const REQUEST_TIMEOUT_MS = 10_000;
 
 /**
@@ -16,7 +15,7 @@ const REQUEST_TIMEOUT_MS = 10_000;
  * the subscription secret (x-signature: HMAC-SHA256). Non-2xx or network errors
  * are retried with backoff by BullMQ; the delivery row records the outcome.
  */
-@Processor(QUEUES.WEBHOOK_OUT)
+@Processor(QUEUES.WEBHOOK_OUT, { settings: { backoffStrategy: deliveryBackoff } })
 export class WebhookDeliveryWorker extends WorkerHost {
   private readonly logger = new Logger(WebhookDeliveryWorker.name);
 
@@ -38,8 +37,8 @@ export class WebhookDeliveryWorker extends WorkerHost {
     if (!delivery) throw new Error(`Delivery ${deliveryId} not found`);
     if (delivery.status === 'success' || delivery.status === 'superseded') return;
     if (await this.isSuperseded(delivery)) {
-      // Retrying an older snapshot after a newer one landed would roll the
-      // subscriber back (e.g. stock 50 overwriting 48) — drop it instead.
+      // Sending an older snapshot after (or instead of) a newer one would roll
+      // the subscriber back (e.g. stock 50 overwriting 48) — drop it instead.
       delivery.status = 'superseded';
       await this.deliveries.save(delivery);
       return;
@@ -79,7 +78,7 @@ export class WebhookDeliveryWorker extends WorkerHost {
     } catch (error) {
       if (error instanceof UnrecoverableError) throw error;
       delivery.error = error instanceof Error ? error.message : String(error);
-      if (delivery.attempts >= MAX_ATTEMPTS) {
+      if (delivery.attempts >= DELIVERY_MAX_ATTEMPTS) {
         delivery.status = 'failed';
         this.logger.error(`Delivery ${delivery.id} failed after ${delivery.attempts} attempts`);
       }
@@ -88,19 +87,27 @@ export class WebhookDeliveryWorker extends WorkerHost {
     }
   }
 
+  /**
+   * Latest-wins events: skip this one when a newer delivery for the same aggregate
+   * already landed OR is still waiting its turn (it carries the newer value). In a
+   * burst for one SKU only the last value goes out; order is kept because the
+   * queue is FIFO and anything older than what was sent is dropped.
+   * A newer delivery that failed for good does not count — this one still goes.
+   */
   private async isSuperseded(delivery: WebhookDelivery): Promise<boolean> {
     const envelope = delivery.payload as { snapshot?: boolean; aggregateId?: string | null } | null;
     if (!envelope?.snapshot || !envelope.aggregateId) return false;
-    // ponytail: jsonb lookup without an index — fine at today's volume; add an
-    // expression index on (payload->>'aggregateId') if deliveries grow large.
     const newer = await this.deliveries
       .createQueryBuilder('d')
       .where('d.subscription_id = :sub', { sub: delivery.subscriptionId })
       .andWhere('d.event_type = :type', { type: delivery.eventType })
+      // matches the partial index ix_webhook_deliveries_snapshot_agg
+      .andWhere(`d.payload ->> 'snapshot' = 'true'`)
       .andWhere(`d.payload ->> 'aggregateId' = :agg`, { agg: envelope.aggregateId })
-      .andWhere('d.status = :ok', { ok: 'success' })
-      .andWhere('d.created_at > :at', { at: delivery.createdAt })
-      .getCount();
-    return newer > 0;
+      // compare in the DB: a JS Date drops the microseconds, and the row would look newer than itself
+      .andWhere('d.created_at > (SELECT created_at FROM webhook_deliveries WHERE id = :id)', { id: delivery.id })
+      .andWhere('d.status IN (:...live)', { live: ['pending', 'success'] })
+      .getExists();
+    return newer;
   }
 }

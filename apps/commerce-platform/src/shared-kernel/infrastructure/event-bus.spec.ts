@@ -1,6 +1,5 @@
 import { EntityManager, Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Queue } from 'bullmq';
 import { EventEmitterBus } from './event-emitter.bus';
 import { OutboxRelayWorker } from './outbox-relay.worker';
 import { OutboxMessage } from './outbox.entity';
@@ -15,6 +14,7 @@ function repoMock(): jest.Mocked<Repository<OutboxMessage>> {
     create: jest.fn((x) => x),
     save: jest.fn(async (x) => x),
     find: jest.fn(),
+    query: jest.fn().mockResolvedValue([]),
   } as unknown as jest.Mocked<Repository<OutboxMessage>>;
 }
 
@@ -31,6 +31,8 @@ describe('EventEmitterBus', () => {
         attempts: 0,
       }),
     );
+    // Postgres holds the NOTIFY until commit, so the relay never wakes for a rolled-back row.
+    expect(repo.query).toHaveBeenCalledWith("SELECT pg_notify('outbox_pending', '')");
   });
 
   it('uses the transaction manager repo when a manager is passed', async () => {
@@ -40,37 +42,62 @@ describe('EventEmitterBus', () => {
     const bus = new EventEmitterBus(repo);
     await bus.publish(new DemoEvent('agg-2', { id: 'agg-2' }), manager);
     expect(txRepo.save).toHaveBeenCalled();
+    expect(txRepo.query).toHaveBeenCalled(); // NOTIFY inside the caller's transaction
     expect(repo.save).not.toHaveBeenCalled();
   });
 });
 
 describe('OutboxRelayWorker', () => {
-  function make(rows: Partial<OutboxMessage>[]) {
+  function make(rows: Partial<OutboxMessage>[], locked = true) {
     const repo = repoMock();
-    (repo.find as jest.Mock).mockResolvedValue(rows);
-    const emitter = { emit: jest.fn() } as unknown as EventEmitter2;
-    const queue = { add: jest.fn() } as unknown as Queue;
-    return { worker: new OutboxRelayWorker(repo, emitter, queue), repo, emitter, queue };
+    (repo.find as jest.Mock).mockResolvedValueOnce(rows).mockResolvedValue([]);
+    const manager = { query: jest.fn().mockResolvedValue([{ locked }]), getRepository: () => repo };
+    (repo as unknown as { manager: unknown }).manager = { transaction: (fn: (m: unknown) => unknown) => fn(manager), connection: { options: {} } };
+    const order: string[] = [];
+    const emitter = {
+      emitAsync: jest.fn(async (type: string, e: { aggregateId: string }) => {
+        order.push(`start ${e.aggregateId}`);
+        await new Promise((r) => setTimeout(r, 5));
+        order.push(`end ${e.aggregateId}`);
+      }),
+    } as unknown as EventEmitter2;
+    return { worker: new OutboxRelayWorker(repo, emitter), repo, emitter, manager, order };
   }
+  const row = (id: string, agg: string, attempts = 0) =>
+    ({ id, type: 'demo.created', aggregateId: agg, payload: {}, metadata: {}, status: 'pending', attempts }) as Partial<OutboxMessage>;
 
-  it('emits in-process, enqueues, and marks the row published', async () => {
-    const { worker, repo, emitter, queue } = make([
-      { id: 'r1', type: 'demo.created', aggregateId: 'agg-1', payload: {}, metadata: {}, status: 'pending', attempts: 0 },
-    ]);
+  it('emits oldest-first, each event\'s listeners finishing before the next, then marks rows published', async () => {
+    const { worker, repo, order, manager } = make([row('r1', 'a'), row('r2', 'b')]);
     await worker.processPending();
-    expect(emitter.emit).toHaveBeenCalledWith('demo.created', expect.objectContaining({ aggregateId: 'agg-1' }));
-    expect(queue.add).toHaveBeenCalledWith('publish', expect.objectContaining({ outboxId: 'r1' }));
-    expect(repo.save).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1', status: 'published' }));
+    expect(manager.query).toHaveBeenCalledWith('SELECT pg_try_advisory_xact_lock($1) AS locked', [expect.any(Number)]);
+    expect(repo.find).toHaveBeenCalledWith(expect.objectContaining({ where: { status: 'pending' }, order: { createdAt: 'ASC' } }));
+    expect(order).toEqual(['start a', 'end a', 'start b', 'end b']);
+    expect(repo.save).toHaveBeenCalledWith([
+      expect.objectContaining({ id: 'r1', status: 'published' }),
+      expect.objectContaining({ id: 'r2', status: 'published' }),
+    ]);
+  });
+
+  it('another instance holds the relay lock → touches nothing', async () => {
+    const { worker, repo, emitter } = make([row('r1', 'a')], false);
+    await worker.processPending();
+    expect(repo.find).not.toHaveBeenCalled();
+    expect(emitter.emitAsync).not.toHaveBeenCalled();
+  });
+
+  it('a wake-up during a run makes it go round again instead of overlapping', async () => {
+    const { worker, repo, emitter } = make([row('r1', 'a')]);
+    const first = worker.processPending();
+    await worker.processPending(); // arrives mid-run: returns at once, flags another pass
+    await first;
+    expect(emitter.emitAsync).toHaveBeenCalledTimes(1);
+    expect(repo.find).toHaveBeenCalledTimes(2); // second pass found nothing new
   });
 
   it('increments attempts and marks failed after the max on repeated errors', async () => {
-    const { worker, repo, queue } = make([
-      { id: 'r2', type: 'demo.created', aggregateId: 'a', payload: {}, metadata: {}, status: 'pending', attempts: 4 },
-    ]);
-    (queue.add as jest.Mock).mockRejectedValue(new Error('redis down'));
+    const { worker, repo, emitter } = make([row('r2', 'a', 4)]);
+    (emitter.emitAsync as jest.Mock).mockRejectedValue(new Error('listener blew up'));
     await worker.processPending();
-    expect(repo.save).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 'r2', status: 'failed', attempts: 5 }),
-    );
+    expect(repo.save).toHaveBeenCalledWith([expect.objectContaining({ id: 'r2', status: 'failed', attempts: 5 })]);
   });
 });

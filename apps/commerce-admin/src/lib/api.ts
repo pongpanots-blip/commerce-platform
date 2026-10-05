@@ -604,3 +604,24 @@ export const pushCampaignApi = {
   list: () => api.get<PushCampaign[]>('/reports/push-campaigns'),
   delivery: (id: string) => api.get<PushDelivery>(`/reports/push-campaigns/${id}/delivery`),
 };
+
+// josh catalog, read-only — josh's column names.
+export interface JoshProductRow {
+  product_inventory_id: string; product_inventory_sku: string; product_status: string; name_th: string | null; name_en: string | null;
+  category_id: string | null; category_name_th: string | null; category_path: string | null; brand_name: string | null;
+  selling_unit_price: number | null; ordering_price: number | null; original_price: number | null; product_inventory_quantity: number | null;
+  low_stock_threshold: number | null; moq: number | null; selling_unit: string | null; pack_size: string | null; order_taking_flag: string | null;
+  sup_code: string | null; storage_temperature: string | null; country_code_source: string | null;
+  erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
+}
+export interface JoshProductDetail extends JoshProductRow {
+  vat_type: string | null; created_at: string; media: { source: string; media_type: string; sort_order: number }[];
+  pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
+}
+export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';
+export const joshProductApi = {
+  summary: () => api.get<Record<ProductIssueKey | 'total', number> & { byStatus: { status: string; n: number }[] }>('/reports/products/summary'),
+  categories: () => api.get<{ id: string; category_name_th: string | null; category_path: string | null }[]>('/reports/products/categories'),
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshProductRow[]; total: number; page: number; limit: number }>(`/reports/products?${query(f)}`),
+  detail: (idOrSku: string) => api.get<JoshProductDetail>(`/reports/products/${encodeURIComponent(idOrSku)}`),
+};

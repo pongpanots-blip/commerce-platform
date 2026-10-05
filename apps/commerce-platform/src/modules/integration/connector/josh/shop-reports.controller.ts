@@ -5,6 +5,7 @@ import { NO_REPLICA, SystemHealthReport } from './system-health';
 import { parseRestaurantFilters, RestaurantPlaces } from './restaurant-places';
 import { ErpLogFilters, JoshErpLogs } from './josh-erp-logs';
 import { JoshPushCampaigns } from './josh-push-campaigns';
+import { JoshProducts, ProductFilters } from './josh-products';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string }
 
@@ -29,7 +30,7 @@ function range(q: PeriodQuery) {
  */
 @Controller('reports')
 export class ShopReportsController {
-  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs, private readonly push: JoshPushCampaigns) {}
+  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs, private readonly push: JoshPushCampaigns, private readonly products: JoshProducts) {}
 
   private replica() {
     if (!this.insights.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
@@ -127,4 +128,24 @@ export class ShopReportsController {
   @Get('push-campaigns/:id/delivery')
   @StaffRoles('marketing')
   pushDelivery(@Param('id', ParseUUIDPipe) id: string) { this.replica(); return this.push.delivery(id); }
+
+  /** josh catalog, read-only (headless step 3 groundwork). Editing / approving stays in josh admin. */
+  @Get('products/summary')
+  @StaffRoles('marketing')
+  productSummary() { this.replica(); return this.products.summary(); }
+
+  @Get('products/categories')
+  @StaffRoles('marketing')
+  productCategories() { this.replica(); return this.products.categories(); }
+
+  @Get('products')
+  @StaffRoles('marketing')
+  productList(@Query() q: ProductFilters & { page?: string; limit?: string }) {
+    this.replica();
+    return this.products.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+  }
+
+  @Get('products/:idOrSku')
+  @StaffRoles('marketing')
+  productDetail(@Param('idOrSku') idOrSku: string) { this.replica(); return this.products.detail(idOrSku); }
 }

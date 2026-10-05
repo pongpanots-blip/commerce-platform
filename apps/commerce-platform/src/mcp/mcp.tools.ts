@@ -25,6 +25,7 @@ import { SystemHealthReport } from '../modules/integration/connector/josh/system
 import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
 import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
 import { JoshPushCampaigns } from '../modules/integration/connector/josh/josh-push-campaigns';
+import { JoshProducts, PRODUCT_ISSUES } from '../modules/integration/connector/josh/josh-products';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -69,6 +70,7 @@ export class McpTools {
     private readonly erpLogs: JoshErpLogs,
     private readonly winback: JoshWinback,
     private readonly push: JoshPushCampaigns,
+    private readonly products: JoshProducts,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -154,6 +156,24 @@ export class McpTools {
       const [overview, rows] = await Promise.all([this.push.overview(), this.push.list()]);
       return json({ overview, campaigns: rows.slice(0, limit).map((r) => ({ id: r.id, name: r.name, status: r.status, title: r.title,
         audience: r.audience, ab_enabled: r.ab_enabled, scheduled_at: r.scheduled_at, sent_at: r.sent_at, stats: r.stats, last_error: r.last_error })) });
+    });
+
+    server.registerTool('josh_products', {
+      title: 'Shop products (josh catalog)',
+      description: 'The josh shop catalog, read-only: counts of products waiting for ERP change approval, without image, without category, without price, out of / low on stock; a filtered list; or one product (sku or id) with images and each pending ERP change next to the live value.',
+      inputSchema: {
+        sku: z.string().max(100).optional().describe('one product (SKU or id) → full detail'),
+        issue: z.enum(Object.keys(PRODUCT_ISSUES) as [keyof typeof PRODUCT_ISSUES]).optional(),
+        search: z.string().max(100).optional().describe('SKU or name'),
+        status: z.string().max(20).optional().describe('active, draft, inactive …'),
+        limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ sku, issue, search, status, limit }) => {
+      if (!this.products.available) return json(NO_REPLICA);
+      if (sku) return json(await this.products.detail(sku));
+      const [summary, list] = await Promise.all([this.products.summary(), this.products.list({ issue, search, status }, 1, limit)]);
+      return json({ summary, total: list.total, products: list.items });
     });
 
     server.registerTool('competitor_prices', {

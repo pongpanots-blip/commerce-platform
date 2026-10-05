@@ -31,6 +31,7 @@ import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/
 import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
+import { JoshPromotions } from '../modules/integration/connector/josh/josh-promotions';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
@@ -91,6 +92,7 @@ export class McpTools {
     private readonly priceShadow: PriceShadow,
     private readonly staffPrices: StaffPrices,
     private readonly jagotaHistory: JagotaSyncHistoryImport,
+    private readonly promotions: JoshPromotions,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -130,6 +132,22 @@ export class McpTools {
   }
 
   private marketing(server: McpServer, staff: McpStaff) {
+    server.registerTool('josh_promotions', {
+      title: 'Promotions on the josh shop (marketing)',
+      description: 'josh promotion mechanics: name, badge, window, state (running / scheduled / ended / sold_out / off), units sold vs cap, audience, SKU count; pass id for one promotion with its SKUs. shadow = how often commerce, re-pricing josh order lines, picked the same promotion josh did (must be ~100% before commerce owns promotions). Read-only; changes happen in commerce-admin › โปรโมชัน.',
+      inputSchema: {
+        id: z.string().uuid().optional(),
+        state: z.enum(['running', 'scheduled', 'ended', 'sold_out', 'off']).optional(),
+        search: z.string().max(100).optional(),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, state, search }) => {
+      if (!this.promotions.available) return json(NO_REPLICA);
+      if (id) return json(await this.promotions.detail(id));
+      const [items, shadow] = await Promise.all([this.promotions.list({ state, search }), this.promotions.shadow(7)]);
+      return json({ shadow, count: items.length, items: items.slice(0, 100) });
+    });
+
     server.registerTool('shop_traffic', {
       title: 'Shop traffic (josh)',
       description: 'Visits (sessions), visitors, product views, searches, add-to-cart, checkout and purchase counts on the josh shop for a period, by platform and by day, the funnel, and the top searches (with how many found nothing). Compared with the previous period of the same length.',

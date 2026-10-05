@@ -679,6 +679,20 @@ export const jagotaHistoryApi = {
   run: () => api.post<{ added: number; refreshed: number }>('/reports/jagota-sync-history/run', {}),
 };
 
+export interface PromotionRow { id: string; name: string; badge_text: string | null; badge_text_en: string | null; is_active: boolean; start_date: string; end_date: string;
+  campaign_id: string | null; campaign_name: string | null; max_units: number | null; sold_units: number; audience: string; audience_companies: number;
+  value: Record<string, unknown> | null; product_set_ids: string[]; sku_count: number; state: 'running' | 'scheduled' | 'ended' | 'sold_out' | 'off'; updated_at: string }
+export const promotionsApi = {
+  list: (f: { state: string; search: string }) => api.get<PromotionRow[]>(`/reports/promotions?state=${encodeURIComponent(f.state)}&search=${encodeURIComponent(f.search)}`),
+  detail: (id: string) => api.get<PromotionRow & { skus: { sku: string; name_th: string | null; badge_text: string | null; value: unknown; quantity_rules: unknown }[] }>(`/reports/promotions/${id}`),
+  productSets: () => api.get<{ id: string; name: string; is_active: boolean; products: number }[]>('/reports/promotions/product-sets'),
+  shadow: (days: number) => api.get<{ days: number; lines: number; same_mechanic: number; matched: number; sameMechanicRate: number | null }>(`/reports/promotions/shadow?days=${days}`),
+  /** Body in josh's CreatePromotionMechanicDto shape; josh validates it. */
+  create: (mechanic: Record<string, unknown>) => api.post<unknown>('/josh/promotions', { mechanic }),
+  update: (id: string, changes: Record<string, unknown>) => api.post<unknown>(`/josh/promotions/${id}/update`, { changes }),
+  remove: (id: string) => api.post<unknown>(`/josh/promotions/${id}/remove`, {}),
+};
+
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
   items: Record<string, unknown>[]; total: number; page: number; limit: number }

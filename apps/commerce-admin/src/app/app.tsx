@@ -36,6 +36,7 @@ import { JoshBackoffice } from './pages/JoshBackoffice';
 import { JoshApiLogs } from './pages/JoshApiLogs';
 import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
+import { Promotions } from './pages/Promotions';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -78,6 +79,7 @@ const NAV = [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
       { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
+      { to: '/marketing/promotions', label: 'โปรโมชัน', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
@@ -173,6 +175,7 @@ export function App() {
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
+            <Route path="/marketing/promotions" element={<Promotions />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />

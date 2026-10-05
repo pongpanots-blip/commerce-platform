@@ -10,6 +10,8 @@ import { SystemHealthReport } from './system-health';
 import { RestaurantPlaces } from './restaurant-places';
 import { JoshErpLogs } from './josh-erp-logs';
 import { JoshPushCampaigns } from './josh-push-campaigns';
+import { JoshActions } from './josh-actions';
+import { JoshActionsController } from './josh-actions.controller';
 import { JoshWinback } from './winback/josh-winback';
 import { JoshWinbackController } from './winback/josh-winback.controller';
 import { ShopReportsController } from './shop-reports.controller';
@@ -18,8 +20,8 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 /** Everything that reads josh's data (via its replica): the catalog copy and the offloaded heavy jobs (Task 9). */
 @Module({
   imports: [TypeOrmModule.forFeature([JoshCatalogProduct]), WebhookSubscriptionModule],
-  controllers: [ShopReportsController, JoshWinbackController],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns],
+  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions],
 })
 export class JoshModule {}

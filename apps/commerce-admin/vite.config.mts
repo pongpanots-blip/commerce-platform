@@ -16,6 +16,14 @@ export default defineConfig(() => ({
     host: 'localhost',
   },
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
+  // josh web-admin pages copied into src/josh-admin import josh's shared libs by package name.
+  resolve: {
+    alias: {
+      '@josh/shared-api': `${import.meta.dirname}/src/josh-admin/libs/shared-api/index.ts`,
+      '@josh/shared-ui-web': `${import.meta.dirname}/src/josh-admin/libs/shared-ui-web/index.ts`,
+      '@josh/shared-models': `${import.meta.dirname}/src/josh-admin/libs/shared-models/index.ts`,
+    },
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //   plugins: () => [ nxViteTsPaths() ],

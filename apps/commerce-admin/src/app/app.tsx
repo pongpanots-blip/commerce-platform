@@ -38,6 +38,7 @@ import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
 import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
+import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
 import { JoshAdminLists } from './pages/JoshAdminLists';
 import { CsDesk } from './pages/CsDesk';
@@ -106,6 +107,44 @@ const NAV = [
       { to: '/josh-admin/bot-intents', label: 'Bot · intent rules', end: false },
       { to: '/josh-admin/bot-workflows', label: 'Bot · workflows', end: false },
       { to: '/josh-admin/bot-templates', label: 'Bot · templates', end: false },
+    ],
+  },
+  {
+    group: 'สินค้า / ลูกค้า (จาก josh)',
+    links: [
+      { to: '/j/categories', label: 'หมวดสินค้า', end: false },
+      { to: '/j/brands', label: 'แบรนด์', end: false },
+      { to: '/j/trusted-brands', label: 'Trusted brands', end: false },
+      { to: '/j/cuisine-cards', label: 'Cuisine cards', end: false },
+      { to: '/j/cuisine-names', label: 'ชื่อ cuisine', end: false },
+      { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
+      { to: '/j/trusted-users', label: 'Trusted users', end: false },
+      { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
+    ],
+  },
+  {
+    group: 'Order / การเงิน (จาก josh)',
+    links: [
+      { to: '/j/order', label: 'Orders (จัดการ)', end: false },
+      { to: '/j/shipments', label: 'Shipments (จัดการ)', end: false },
+      { to: '/j/payment-transactions', label: 'รายการชำระเงิน (จัดการ)', end: false },
+      { to: '/j/order/import', label: 'นำเข้า order', end: true },
+      { to: '/j/batch-sticker', label: 'พิมพ์ sticker', end: false },
+      { to: '/j/kbank/testing-console', label: 'KBank testing console', end: false },
+    ],
+  },
+  {
+    group: 'Marketing (จาก josh)',
+    links: [
+      { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', end: false },
+      { to: '/j/smart-links', label: 'Smart links', end: false },
+      { to: '/j/marketing-links', label: 'Marketing links', end: false },
+      { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', end: false },
+      { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', end: false },
+      { to: '/j/marketing/queue', label: 'คิวงานการตลาด', end: false },
+      { to: '/j/marketing/journey-funnel', label: 'Journey funnel', end: false },
+      { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', end: false },
+      { to: '/j/marketing/banner-targeting', label: 'Banner targeting', end: false },
     ],
   },
   { group: 'AI', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
@@ -205,6 +244,7 @@ export function App() {
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
             <Route path="/josh-admin/:kind" element={<JoshAdminLists />} />
+            <Route path="/j/*" element={<JoshAdminApp />} />
             <Route path="/cs" element={<CsDesk />} />
             <Route path="/livechat" element={<Livechat />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />

@@ -5,7 +5,7 @@
  */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [__dirname + '/src/app/pages/workflow-editor/josh/**/*.{ts,tsx}'],
+  content: [__dirname + '/src/app/pages/workflow-editor/josh/**/*.{ts,tsx}', __dirname + '/src/josh-admin/**/*.{ts,tsx}'],
   important: '.josh-tw',
   corePlugins: { preflight: false },
   theme: {

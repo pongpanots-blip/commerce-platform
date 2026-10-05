@@ -10,6 +10,12 @@ const AREAS: { path: RegExp; marketing: boolean }[] = [
   { path: /^\/(campaigns|user-segments)(\/|$)/, marketing: true },
   { path: /^\/(marketing-workflows|marketing-notify-templates|marketing-trigger-presets|marketing-settings)(\/|$)/, marketing: true },
   { path: /^\/admin\/bot\//, marketing: true },
+  { path: /^\/(banner|popup-definitions)$/, marketing: true },
+  { path: /^\/(product-category|brands|trusted-brand|cuisine)(\/|$)/, marketing: true },
+  { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink|upload\/image)(\/|$)/, marketing: true },
+  { path: /^\/user-segments\/banner-targeting$/, marketing: true },
+  { path: /^\/(membership-tiers|trusted-user|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, marketing: false },
+  { path: /^\/(orders|shipments|payment\/kbank\/testing)(\/|$)/, marketing: false },
   { path: /^\/cs-admin\//, marketing: false },
 ];
 const METHODS = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];

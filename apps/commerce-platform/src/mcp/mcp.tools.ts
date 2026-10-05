@@ -34,6 +34,7 @@ import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jago
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
 import { PriceShadow } from '../modules/integration/connector/josh/pricing/price-shadow';
+import { StaffPrices } from '../modules/integration/connector/josh/pricing/staff-prices';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -87,6 +88,7 @@ export class McpTools {
     private readonly backoffice: JoshBackoffice,
     private readonly apiLogs: JoshApiLogs,
     private readonly priceShadow: PriceShadow,
+    private readonly staffPrices: StaffPrices,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -523,6 +525,21 @@ export class McpTools {
     }, async ({ days }) => {
       const [summary, mismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20)]);
       return json({ summary, latestMismatches: mismatches.items });
+    });
+
+    server.registerTool('staff_prices', {
+      title: 'Customer and contract prices owned by commerce (admin)',
+      description: "Customer prices (one per company + product) and branch contract prices that commerce owns and writes to josh through josh's own services. Counts by status (synced = josh charges it, pending, failed = josh refused / unreachable, with josh's reason) and a filtered list. Read-only; edits happen in commerce-admin › ราคาลูกค้า / ราคาสัญญา.",
+      inputSchema: {
+        kind: z.enum(['customer', 'contract']).default('customer'),
+        scopeId: z.string().uuid().optional().describe('company id (customer) or branch id (contract)'),
+        sku: z.string().max(100).optional(), status: z.enum(['synced', 'pending', 'failed']).optional(),
+        page: z.number().int().min(1).default(1),
+      },
+      annotations: READ_ONLY,
+    }, async ({ kind, scopeId, sku, status, page }) => {
+      const [summary, list] = await Promise.all([this.staffPrices.summary(), this.staffPrices.list({ kind, scopeId, search: sku, status }, page, 50)]);
+      return json({ summary: summary.rows, total: list.total, items: list.items });
     });
 
     server.registerTool('josh_backoffice', {

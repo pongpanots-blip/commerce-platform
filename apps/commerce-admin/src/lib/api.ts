@@ -698,6 +698,8 @@ export const joshActionsApi = {
   approveAccess: (id: string, role: string) => api.post<unknown>(`/josh/admin-access/${id}/approve`, { role }),
   rejectAccess: (id: string, reason: string) => api.post<unknown>(`/josh/admin-access/${id}/reject`, { reason }),
   setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
+  approveProducts: (ids: string[]) => api.post<unknown>('/josh/products/approve', { ids }),
+  rejectProducts: (ids: string[]) => api.post<unknown>('/josh/products/reject', { ids }),
 };
 
 export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;
@@ -709,4 +711,22 @@ export const priceShadowApi = {
   list: (filter: string, page: number) => api.get<{ items: PriceShadowRow[]; total: number }>(`/reports/price-shadow?filter=${filter}&page=${page}`),
   run: () => api.post<{ checked: number }>('/reports/price-shadow/run', {}),
   recheck: (id: string) => api.post<PriceShadowRow>(`/reports/price-shadow/recheck/${id}`, {}),
+};
+
+export interface StaffPriceRow { id: string; kind: 'customer' | 'contract'; companyId: string | null; branchId: string | null; productInventoryId: string; sku: string | null;
+  price: number; contractRef: string | null; startDate: string; endDate: string | null; joshId: string | null; status: 'synced' | 'pending' | 'failed';
+  syncError: string | null; updatedBy: string | null; updatedAt: string }
+export interface StaffPriceInput { kind?: 'customer' | 'contract'; companyId?: string; branchId?: string; sku?: string; price?: number; contractRef?: string; startDate?: string; endDate?: string | null }
+export const staffPricesApi = {
+  summary: () => api.get<{ rows: { kind: string; status: string; n: number }[] }>('/staff-prices/summary'),
+  list: (f: { kind: string; scopeId?: string; search?: string; status?: string; page: number }) => {
+    const p = new URLSearchParams({ kind: f.kind, page: String(f.page) });
+    for (const k of ['scopeId', 'search', 'status'] as const) if (f[k]) p.set(k, f[k]!);
+    return api.get<{ items: StaffPriceRow[]; total: number; limit: number }>(`/staff-prices?${p}`);
+  },
+  create: (b: StaffPriceInput) => api.post<StaffPriceRow>('/staff-prices', b),
+  update: (id: string, b: StaffPriceInput) => api.patch<StaffPriceRow>(`/staff-prices/${id}`, b),
+  remove: (id: string) => api.del<unknown>(`/staff-prices/${id}`),
+  retry: (id: string) => api.post<StaffPriceRow>(`/staff-prices/${id}/retry`, {}),
+  importFromJosh: () => api.post<{ added: number; changedInJosh: number; removedInJosh: number }>('/staff-prices/import', {}),
 };

@@ -12,6 +12,7 @@ export interface CronConfig {
   joshBestsellers: CronJobConfig;
   jagotaShadow: CronJobConfig;
   priceShadow: CronJobConfig;
+  staffPricesImport: CronJobConfig;
 }
 
 function cronEnabled(name: string, env: NodeJS.ProcessEnv): boolean {
@@ -59,6 +60,12 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
     priceShadow: {
       expression: env.CRON_PRICE_SHADOW ?? '45 */5 * * * *',
       enabled: env.CRON_PRICE_SHADOW_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Import josh's customer / contract prices into commerce's staff_prices (rows josh creates itself: ERP quotations, CS requests). Opt-in.
+    staffPricesImport: {
+      expression: env.CRON_STAFF_PRICES_IMPORT ?? '15 */10 * * * *',
+      enabled: env.CRON_STAFF_PRICES_IMPORT_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
     },
     competitorPricesRefresh: {

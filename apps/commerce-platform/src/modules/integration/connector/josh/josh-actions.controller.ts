@@ -69,4 +69,15 @@ export class JoshActionsController {
   setCouponActive(@Param('id', ParseUUIDPipe) id: string, @Body() b: { isActive?: boolean }, @Req() req: StaffRequest) {
     return this.josh.run('coupons', 'set_active', { couponId: id, isActive: b?.isActive }, this.as(req), 'admin');
   }
+
+  /** Approve / reject staged ERP product and price changes (josh applies them; ids only, max 200). */
+  @Post('products/approve') @HttpCode(HttpStatus.OK)
+  approveProducts(@Body() b: { ids?: string[] }, @Req() req: StaffRequest) {
+    return this.josh.run('products', 'approve', { ids: Array.isArray(b?.ids) ? b.ids.slice(0, 200) : [] }, this.as(req), 'admin');
+  }
+
+  @Post('products/reject') @HttpCode(HttpStatus.OK)
+  rejectProducts(@Body() b: { ids?: string[] }, @Req() req: StaffRequest) {
+    return this.josh.run('products', 'reject', { ids: Array.isArray(b?.ids) ? b.ids.slice(0, 200) : [] }, this.as(req), 'admin');
+  }
 }

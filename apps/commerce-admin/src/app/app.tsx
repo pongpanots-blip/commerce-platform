@@ -35,6 +35,7 @@ import { JagotaShadow } from './pages/JagotaShadow';
 import { JoshBackoffice } from './pages/JoshBackoffice';
 import { JoshApiLogs } from './pages/JoshApiLogs';
 import { PriceShadow } from './pages/PriceShadow';
+import { StaffPrices } from './pages/StaffPrices';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -47,6 +48,7 @@ const NAV = [
       { to: '/reports/customers', label: 'ลูกค้า / บริษัท (josh)', end: false },
       { to: '/reports/prices', label: 'ราคาที่ลูกค้าเห็น (josh)', end: false },
       { to: '/reports/price-shadow', label: 'ราคา: commerce คิดคู่กัน (ทดลอง)', end: false },
+      { to: '/prices/staff', label: 'ราคาลูกค้า / ราคาสัญญา (commerce)', end: false },
       { to: '/reports/traffic', label: 'Traffic', end: false },
       { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
       { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
@@ -161,6 +163,7 @@ export function App() {
             <Route path="/josh/:view" element={<JoshBackoffice />} />
             <Route path="/josh-api-logs" element={<JoshApiLogs />} />
             <Route path="/reports/price-shadow" element={<PriceShadow />} />
+            <Route path="/prices/staff" element={<StaffPrices />} />
             <Route path="/reports/customers" element={<JoshCustomersPage />} />
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />

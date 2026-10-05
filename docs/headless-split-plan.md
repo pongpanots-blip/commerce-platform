@@ -137,3 +137,10 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 2. ส่งจริงผ่าน commerce — josh ยังสร้าง request + gate + `jagota_order_sync` + retry เอง ย้ายแค่ HTTP call: josh `JAGOTA_VIA_COMMERCE_BRANCHES` (ปิด) → commerce `POST /api/v1/storefront/jagota/order-create` (API key ของ josh) → Jagota · commerce เก็บ 1 แถวต่อเลข order (`jagota_order_sends`) ส่งซ้ำไม่ได้: ส่งแล้ว = ตอบของเดิม, กำลังส่ง = in_flight · commerce ปิด/ล่ม → josh ส่งตรงเหมือนเดิม · ฝั่ง commerce เปิดด้วย `JAGOTA_GATEWAY_ENABLED` + `JAGOTA_NODEAPI_*`
 3. ย้ายประวัติ `jagota_order_sync` มา commerce — ยังไม่ทำ
 
+**สินค้าและราคา (ข้อ 3)** — ทุกอย่างปิดไว้ (default off)
+- ทดลองคิดราคาคู่กัน: commerce คิดราคาทุกบรรทัด order ของ josh ด้วยโค้ดราคาของ josh (สำเนา) แล้วเทียบ · รายงานร้าน › ราคา: commerce คิดคู่กัน · MCP `price_shadow` · `CRON_PRICE_SHADOW_ENABLED`
+- ราคาลูกค้า / ราคาสัญญา: commerce เป็นที่เก็บหลัก (`staff_prices`) → josh บันทึกผ่าน PrivatePriceService / BranchPricingService (ล้าง cache ราคาเอง) · ราคาที่ josh สร้างเอง (ใบเสนอราคา ERP, คำขอราคา CS) ดึงเข้ามาด้วย import (`CRON_STAFF_PRICES_IMPORT_ENABLED`) · MCP `staff_prices`
+- อนุมัติข้อมูลสินค้าจาก ERP: ปุ่มในหน้า สินค้า (josh) → josh ProductService approve / reject
+- สวิตช์ฝั่ง josh: `COMMERCE_OWNS_PRICES` (ล็อกหน้าแก้ราคาใน josh, live-price ไม่เขียนทับราคา, MOQ ต้องอนุมัติ) · `COMMERCE_APPROVES_PRODUCTS` (ล็อกปุ่มอนุมัติใน josh)
+- ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS
+

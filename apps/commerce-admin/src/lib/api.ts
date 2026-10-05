@@ -615,7 +615,7 @@ export interface JoshProductRow {
   erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
 }
 export interface JoshProductDetail extends JoshProductRow {
-  vat_type: string | null; created_at: string; media: { source: string; media_type: string; sort_order: number }[];
+  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { source: string; media_type: string; sort_order: number }[];
   pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
 }
 export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';
@@ -711,6 +711,8 @@ export const joshActionsApi = {
   setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
   approveProducts: (ids: string[]) => api.post<unknown>('/josh/products/approve', { ids }),
   rejectProducts: (ids: string[]) => api.post<unknown>('/josh/products/reject', { ids }),
+  /** josh field names (ProductService.update), e.g. product_name_th, selling_unit_price, category_id. */
+  updateProduct: (id: string, fields: Record<string, unknown>) => api.post<unknown>(`/josh/products/${id}/update`, { fields }),
 };
 
 export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;

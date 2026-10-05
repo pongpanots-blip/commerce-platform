@@ -141,6 +141,7 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - ทดลองคิดราคาคู่กัน: commerce คิดราคาทุกบรรทัด order ของ josh ด้วยโค้ดราคาของ josh (สำเนา) แล้วเทียบ · รายงานร้าน › ราคา: commerce คิดคู่กัน · MCP `price_shadow` · `CRON_PRICE_SHADOW_ENABLED`
 - ราคาลูกค้า / ราคาสัญญา: commerce เป็นที่เก็บหลัก (`staff_prices`) → josh บันทึกผ่าน PrivatePriceService / BranchPricingService (ล้าง cache ราคาเอง) · ราคาที่ josh สร้างเอง (ใบเสนอราคา ERP, คำขอราคา CS) ดึงเข้ามาด้วย import (`CRON_STAFF_PRICES_IMPORT_ENABLED`) · MCP `staff_prices`
 - อนุมัติข้อมูลสินค้าจาก ERP: ปุ่มในหน้า สินค้า (josh) → josh ProductService approve / reject
+- ข้อมูลสินค้าหลัก (ชื่อ รายละเอียด หมวด หน่วย ราคาขาย/ตั้ง สถานะ): ปุ่ม "แก้ข้อมูลสินค้า" ในหน้า สินค้า (josh) → josh `internal/commerce/products` action `update` → ProductService.update (ตัวเดียวกับฟอร์ม admin ของ josh) · ดึงสำเนา `josh_catalog_products` ทันทีหลังแก้ · รูปยังอยู่ที่ josh · สวิตช์ josh `COMMERCE_OWNS_CATALOG` ล็อกการสร้าง/แก้ฟิลด์สินค้าใน josh
 - สวิตช์ฝั่ง josh: `COMMERCE_OWNS_PRICES` (ล็อกหน้าแก้ราคาใน josh, live-price ไม่เขียนทับราคา, MOQ ต้องอนุมัติ) · `COMMERCE_APPROVES_PRODUCTS` (ล็อกปุ่มอนุมัติใน josh)
-- ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS
+- ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS → COMMERCE_OWNS_CATALOG
 

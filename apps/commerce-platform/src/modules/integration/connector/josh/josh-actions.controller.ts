@@ -1,6 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
+import { JoshCatalogSyncService } from './josh-catalog-sync.service';
 
 /**
  * commerce-admin buttons that ask josh to act (winback, push campaigns, credit applications, admin
@@ -10,7 +11,7 @@ import { JoshActions } from './josh-actions';
  */
 @Controller('josh')
 export class JoshActionsController {
-  constructor(private readonly josh: JoshActions) {}
+  constructor(private readonly josh: JoshActions, private readonly catalog: JoshCatalogSyncService) {}
 
   private as(req: StaffRequest) { return { userId: req.staff.userId, email: req.staff.email }; }
 
@@ -79,5 +80,17 @@ export class JoshActionsController {
   @Post('products/reject') @HttpCode(HttpStatus.OK)
   rejectProducts(@Body() b: { ids?: string[] }, @Req() req: StaffRequest) {
     return this.josh.run('products', 'reject', { ids: Array.isArray(b?.ids) ? b.ids.slice(0, 200) : [] }, this.as(req), 'admin');
+  }
+
+  /**
+   * Edit one product's master data (COMMERCE_OWNS_CATALOG): josh's ProductService.update writes it,
+   * josh rejects fields it does not allow from commerce. Commerce's catalog copy is refreshed right away.
+   */
+  @Post('products/:id/update') @HttpCode(HttpStatus.OK)
+  async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
+    const fields = b?.fields && typeof b.fields === 'object' && !Array.isArray(b.fields) ? b.fields : {};
+    const result = await this.josh.run('products', 'update', { id, fields }, this.as(req), 'admin');
+    await this.catalog.syncId(id).catch(() => undefined); // the cron catches up if the replica lags
+    return result;
   }
 }

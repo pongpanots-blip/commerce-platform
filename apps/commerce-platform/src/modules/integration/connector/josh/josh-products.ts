@@ -91,7 +91,7 @@ export class JoshProducts {
   async detail(idOrSku: string) {
     const bySku = !/^[0-9a-f-]{36}$/i.test(idOrSku);
     const [row] = await this.replica.query<Record<string, unknown>>(
-      `SELECT ${COLUMNS}, p.vat_type, p.erp_pending_payload, p.created_at FROM product_inventory p ${JOINS}
+      `SELECT ${COLUMNS}, p.vat_type, p.erp_pending_payload, p.created_at, th.product_description AS description_th, en.product_description AS description_en FROM product_inventory p ${JOINS}
         WHERE ${bySku ? 'p.product_inventory_sku = $1' : 'p.product_inventory_id = $1'} LIMIT 1`, [idOrSku.trim().slice(0, 100)]);
     if (!row) throw new NotFoundException(`product ${idOrSku} not found in josh`);
     const media = await this.replica.query(

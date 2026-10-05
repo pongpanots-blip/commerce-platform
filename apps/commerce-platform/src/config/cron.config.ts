@@ -13,6 +13,7 @@ export interface CronConfig {
   jagotaShadow: CronJobConfig;
   priceShadow: CronJobConfig;
   staffPricesImport: CronJobConfig;
+  jagotaSyncImport: CronJobConfig;
 }
 
 function cronEnabled(name: string, env: NodeJS.ProcessEnv): boolean {
@@ -66,6 +67,12 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
     staffPricesImport: {
       expression: env.CRON_STAFF_PRICES_IMPORT ?? '15 */10 * * * *',
       enabled: env.CRON_STAFF_PRICES_IMPORT_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Copy josh's ERP send history (jagota_order_sync) into commerce (orders → Jagota step 3). Opt-in; reads josh only.
+    jagotaSyncImport: {
+      expression: env.CRON_JAGOTA_SYNC_IMPORT ?? '30 */5 * * * *',
+      enabled: env.CRON_JAGOTA_SYNC_IMPORT_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
     },
     competitorPricesRefresh: {

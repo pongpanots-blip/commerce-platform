@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { jagotaGatewayApi, jagotaShadowApi } from '../../lib/api';
+import { jagotaGatewayApi, jagotaHistoryApi, jagotaShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const show = (v: unknown) => (v === undefined ? '—' : JSON.stringify(v));
@@ -97,6 +97,7 @@ export function JagotaShadow() {
         </div>
       )}
       <GatewaySends />
+      <SyncHistory />
     </div>
   );
 }
@@ -159,6 +160,95 @@ function GatewaySends() {
             </table>
           ) : <div className="empty">ยังไม่มี order ที่ส่งผ่าน commerce</div>}
         </section>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Step 3: josh's ERP send history (`jagota_order_sync`) copied into commerce, so it survives josh
+ * being down. Filled by CRON_JAGOTA_SYNC_IMPORT_ENABLED or the import button; reads josh only.
+ */
+function SyncHistory() {
+  const [status, setStatus] = useState('');
+  const [q, setQ] = useState('');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [open, setOpen] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const summary = useAsync(() => jagotaHistoryApi.summary(7), [msg]);
+  const list = useAsync(() => jagotaHistoryApi.list({ status, q: search, page }), [status, search, page, msg]);
+  const detail = useAsync(() => (open ? jagotaHistoryApi.detail(open) : Promise.resolve(null)), [open]);
+  const s = summary.data;
+  const pages = list.data ? Math.max(1, Math.ceil(list.data.total / 50)) : 1;
+  async function importNow() {
+    setBusy(true);
+    try { const r = await jagotaHistoryApi.run(); setMsg(`ดึงใหม่ ${r.added} รายการ · อัปเดต ${r.refreshed} รายการล่าสุด`); }
+    catch (e) { setMsg(e instanceof Error ? e.message : String(e)); }
+    finally { setBusy(false); }
+  }
+  return (
+    <section style={{ marginTop: 28 }}>
+      <div className="page-head">
+        <div>
+          <h2>ประวัติส่ง ERP (สำเนาจาก josh)</h2>
+          <p>ทุกครั้งที่ josh ส่ง order / shipment ไป Jagota (<span className="mono">jagota_order_sync</span>) เก็บสำเนาไว้ที่ commerce · ดูได้แม้ josh ล่ม
+            {s && <> · ทั้งหมด {s.total} รายการ · ดึงล่าสุด {when(s.last_import_at)}</>}</p>
+        </div>
+        <button className="btn sm" disabled={busy} onClick={importNow}>{busy ? 'กำลังดึง…' : 'ดึงจาก josh ตอนนี้'}</button>
+      </div>
+      {msg && <div className="hint">{msg}</div>}
+      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
+      {s && s.byStatus.length > 0 && (
+        <div className="stat-grid">
+          {s.byStatus.map((b) => (
+            <div className="stat" key={b.sync_status}><div className="label">{b.sync_status} (7 วัน)</div>
+              <div className={`value${b.sync_status === 'failed' && b.n ? ' attn' : ''}`}>{b.n}</div></div>
+          ))}
+        </div>
+      )}
+      <div className="row" style={{ margin: '12px 0', gap: 8, flexWrap: 'wrap' }}>
+        {[['', 'ทั้งหมด'], ['failed', 'ล้มเหลว'], ['sent', 'ส่งแล้ว'], ['pending', 'รอส่ง']].map(([k, label]) => (
+          <button key={k} className={`btn sm ${status === k ? '' : 'ghost'}`} aria-pressed={status === k} onClick={() => { setStatus(k); setPage(1); }}>{label}</button>
+        ))}
+        <form onSubmit={(e) => { e.preventDefault(); setSearch(q.trim()); setPage(1); }} className="row" style={{ gap: 6 }}>
+          <input aria-label="ค้นหาเลข order หรือเลขเอกสาร ERP" placeholder="เลข order / DOC no." value={q} onChange={(e) => setQ(e.target.value)} />
+          <button className="btn ghost sm">ค้นหา</button>
+        </form>
+      </div>
+      {list.data && (
+        <section className="panel">
+          {list.data.items.length ? (
+            <table>
+              <thead><tr><th>Order</th><th>สถานะ</th><th>ชำระ</th><th>DOC</th><th>ส่งเมื่อ</th><th>ข้อผิดพลาด</th><th></th></tr></thead>
+              <tbody>{list.data.items.map((r) => (
+                <Fragment key={r.id}>
+                  <tr>
+                    <td className="mono">{r.orderNumber ?? r.orderId}{r.shipmentId && <div className="hint">shipment</div>}</td>
+                    <td><span className={`badge ${r.syncStatus === 'sent' ? 'ok' : r.syncStatus === 'failed' ? 'danger' : ''}`}>{r.syncStatus}</span></td>
+                    <td>{r.paymentMethod}{r.paymentSuccess ? ' ✓' : ''}</td>
+                    <td className="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</td>
+                    <td>{when(r.createdAt)}</td><td>{r.errorMessage ?? '—'}</td>
+                    <td><button className="btn ghost sm" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? 'ซ่อน' : 'ดู'}</button></td>
+                  </tr>
+                  {open === r.id && <tr><td colSpan={7}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
+                      <div><div className="hint">josh ส่ง</div><pre className="payload">{JSON.stringify(detail.data.requestJson, null, 2) ?? '—'}</pre></div>
+                      <div><div className="hint">Jagota ตอบ</div><pre className="payload">{JSON.stringify(detail.data.jagotaResponseJson, null, 2) ?? '—'}</pre></div>
+                    </div>)}</td></tr>}
+                </Fragment>
+              ))}</tbody>
+            </table>
+          ) : <div className="empty">{s?.total ? 'ไม่พบรายการ' : 'ยังไม่ได้ดึงประวัติจาก josh'}</div>}
+        </section>
+      )}
+      {pages > 1 && (
+        <div className="row" style={{ gap: 8, marginTop: 8 }}>
+          <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</button>
+          <span className="hint">หน้า {page} / {pages}</span>
+          <button className="btn ghost sm" disabled={page >= pages} onClick={() => setPage(page + 1)}>ถัดไป</button>
+        </div>
       )}
     </section>
   );

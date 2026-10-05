@@ -135,7 +135,7 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 **ส่ง order ไป Jagota ผ่าน commerce (3 ขั้น)**
 1. ทดลองคู่กัน (shadow) — commerce สร้าง request ของ order ที่ josh ส่งแล้วเทียบทีละช่อง · ไม่ส่งอะไร · ERP › "ส่ง order ผ่าน commerce (ทดลอง)" · MCP `jagota_shadow` · `CRON_JAGOTA_SHADOW_ENABLED`
 2. ส่งจริงผ่าน commerce — josh ยังสร้าง request + gate + `jagota_order_sync` + retry เอง ย้ายแค่ HTTP call: josh `JAGOTA_VIA_COMMERCE_BRANCHES` (ปิด) → commerce `POST /api/v1/storefront/jagota/order-create` (API key ของ josh) → Jagota · commerce เก็บ 1 แถวต่อเลข order (`jagota_order_sends`) ส่งซ้ำไม่ได้: ส่งแล้ว = ตอบของเดิม, กำลังส่ง = in_flight · commerce ปิด/ล่ม → josh ส่งตรงเหมือนเดิม · ฝั่ง commerce เปิดด้วย `JAGOTA_GATEWAY_ENABLED` + `JAGOTA_NODEAPI_*`
-3. ย้ายประวัติ `jagota_order_sync` มา commerce — ยังไม่ทำ
+3. ย้ายประวัติ `jagota_order_sync` มา commerce — สำเนาครบทุกคอลัมน์ใน `jagota_order_sync_history` (+เลข order) · ดึงของใหม่ทุก 5 นาที + อ่าน 3 วันล่าสุดซ้ำ (josh แก้แถวเดิมและไม่มี updated_at) · ERP › "ประวัติส่ง ERP" · MCP `jagota_shadow` (`orderNumber`) · `CRON_JAGOTA_SYNC_IMPORT_ENABLED` · josh ยังเขียนตารางของตัวเองตามเดิม
 
 **สินค้าและราคา (ข้อ 3)** — ทุกอย่างปิดไว้ (default off)
 - ทดลองคิดราคาคู่กัน: commerce คิดราคาทุกบรรทัด order ของ josh ด้วยโค้ดราคาของ josh (สำเนา) แล้วเทียบ · รายงานร้าน › ราคา: commerce คิดคู่กัน · MCP `price_shadow` · `CRON_PRICE_SHADOW_ENABLED`

@@ -668,6 +668,17 @@ export const jagotaGatewayApi = {
   detail: (id: string) => api.get<JagotaSend>(`/reports/jagota-gateway/${id}`),
 };
 
+export interface JagotaSyncRow { id: string; orderId: string; orderNumber: string | null; shipmentId: string | null; paymentMethod: string; paymentSuccess: boolean;
+  syncStatus: string; docBook: string | null; docNo: string | null; errorMessage: string | null; createdAt: string; requestJson?: unknown; jagotaResponseJson?: unknown }
+export const jagotaHistoryApi = {
+  summary: (days: number) => api.get<{ days: number; total: number; recent: number; first_at: string | null; last_at: string | null; last_import_at: string | null;
+    byStatus: { sync_status: string; n: number }[] }>(`/reports/jagota-sync-history/summary?days=${days}`),
+  list: (f: { status: string; q: string; page: number }) => api.get<{ items: JagotaSyncRow[]; total: number }>(
+    `/reports/jagota-sync-history?status=${encodeURIComponent(f.status)}&q=${encodeURIComponent(f.q)}&page=${f.page}`),
+  detail: (id: string) => api.get<JagotaSyncRow>(`/reports/jagota-sync-history/${id}`),
+  run: () => api.post<{ added: number; refreshed: number }>('/reports/jagota-sync-history/run', {}),
+};
+
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
   items: Record<string, unknown>[]; total: number; page: number; limit: number }

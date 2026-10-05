@@ -38,6 +38,9 @@ import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
 import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
+import { JoshAdminLists } from './pages/JoshAdminLists';
+import { CsDesk } from './pages/CsDesk';
+import { Livechat } from './pages/Livechat';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -84,9 +87,24 @@ const NAV = [
       { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
       { to: '/marketing/promotions', label: 'โปรโมชัน', end: false },
       { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
+      { to: '/josh-admin/coupons', label: 'คูปอง (สร้าง/แก้)', end: false },
+      { to: '/josh-admin/campaigns', label: 'Campaigns (แก้)', end: false },
+      { to: '/josh-admin/segments', label: 'Segments (แก้)', end: false },
+      { to: '/josh-admin/product-sets', label: 'Product Set', end: false },
+      { to: '/josh-admin/promotion-pages', label: 'หน้าโปรโมชัน', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
+    ],
+  },
+  {
+    group: 'CS / แชต',
+    links: [
+      { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
+      { to: '/livechat', label: 'Live chat', end: false },
+      { to: '/josh-admin/bot-intents', label: 'Bot · intent rules', end: false },
+      { to: '/josh-admin/bot-workflows', label: 'Bot · workflows', end: false },
+      { to: '/josh-admin/bot-templates', label: 'Bot · templates', end: false },
     ],
   },
   { group: 'AI', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
@@ -181,6 +199,9 @@ export function App() {
             <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
             <Route path="/marketing/promotions" element={<Promotions />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
+            <Route path="/josh-admin/:kind" element={<JoshAdminLists />} />
+            <Route path="/cs" element={<CsDesk />} />
+            <Route path="/livechat" element={<Livechat />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />

@@ -1,5 +1,5 @@
 import { FormEvent, Fragment, useState } from 'react';
-import { joshActionsApi, joshProductApi, JoshProductDetail, ProductIssueKey } from '../../lib/api';
+import { fileForJosh, joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail, ProductIssueKey } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const ISSUES: [ProductIssueKey, string][] = [
@@ -122,9 +122,7 @@ export function JoshProducts() {
                         <tr><td colSpan={9}>
                           {detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
                             <div style={{ display: 'grid', gap: 12 }}>
-                              <div className="row">
-                                {detail.data.media.map((m) => <img key={m.source} src={m.source} alt="" width={72} height={72} style={{ objectFit: 'cover', borderRadius: 6 }} />)}
-                              </div>
+                              <ProductImages p={detail.data} onSaved={(m) => { setMsg(m); list.reload(); detail.reload(); }} />
                               <div className="hint">
                                 ราคา: ขาย {baht(detail.data.selling_unit_price)} · สั่ง {baht(detail.data.ordering_price)} · ตั้ง {baht(detail.data.original_price)} · MOQ {show(detail.data.moq)} ·
                                 {' '}supplier {show(detail.data.sup_code)} · เก็บ {show(detail.data.storage_temperature)} · ประเทศ {show(detail.data.country_code_source)} · VAT {show(detail.data.vat_type)}
@@ -245,5 +243,46 @@ function ProductEditor({ p, categories, onSaved }: { p: JoshProductDetail; categ
         <span className="hint">ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน</span>
       </div>
     </form>
+  );
+}
+
+/**
+ * Product images (COMMERCE_OWNS_CATALOG): josh's own PATCH /product/:id with only images — files to add
+ * and `removed_media_ids`. josh keeps at most 3 images, stores them in its media storage, makes thumbnails.
+ */
+function ProductImages({ p, onSaved }: { p: JoshProductDetail; onSaved: (msg: string) => void }) {
+  const images = p.media.filter((m) => m.media_type === 'image');
+  const [removed, setRemoved] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const keep = images.filter((m) => !removed.includes(m.id)).length;
+  async function save() {
+    if (keep + files.length > 3) return setErr('รูปได้สูงสุด 3 รูป (josh)');
+    if (files.reduce((n, f) => n + f.size, 0) > 3.5 * 1024 * 1024) return setErr('รูปรวมกันได้ไม่เกิน 3.5 MB ต่อครั้ง');
+    if (!window.confirm(`${files.length ? `เพิ่ม ${files.length} รูป` : ''}${files.length && removed.length ? ' · ' : ''}${removed.length ? `ลบ ${removed.length} รูป` : ''} ของ ${p.product_inventory_sku}? หน้าร้านเห็นทันที`)) return;
+    setBusy(true); setErr('');
+    try {
+      await joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, { removed_media_ids: JSON.stringify(removed) },
+        { files: await Promise.all(files.map((f) => fileForJosh('images', f))) });
+      setRemoved([]); setFiles([]); onSaved(`บันทึกรูปของ ${p.product_inventory_sku} แล้ว`);
+    } catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
+  }
+  return (
+    <div style={{ display: 'grid', gap: 6 }}>
+      <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+        {images.map((m) => (
+          <figure key={m.id} style={{ margin: 0, opacity: removed.includes(m.id) ? 0.35 : 1 }}>
+            <img src={m.source} alt="" width={72} height={72} style={{ objectFit: 'cover', borderRadius: 6 }} />
+            <figcaption><button type="button" className="btn ghost sm" onClick={() => setRemoved(removed.includes(m.id) ? removed.filter((x) => x !== m.id) : [...removed, m.id])}>
+              {removed.includes(m.id) ? 'ไม่ลบ' : 'ลบ'}</button></figcaption>
+          </figure>
+        ))}
+        <label className="field">เพิ่มรูป<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} /></label>
+      </div>
+      {(files.length > 0 || removed.length > 0) && <div className="row"><button type="button" className="btn sm" disabled={busy} onClick={save}>{busy ? 'กำลังอัปโหลด…' : 'บันทึกรูป'}</button>
+        <button type="button" className="btn ghost sm" onClick={() => { setFiles([]); setRemoved([]); }}>ยกเลิก</button></div>}
+      {err && <div className="err">{err}</div>}
+    </div>
   );
 }

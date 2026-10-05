@@ -615,7 +615,7 @@ export interface JoshProductRow {
   erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
 }
 export interface JoshProductDetail extends JoshProductRow {
-  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { source: string; media_type: string; sort_order: number }[];
+  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { id: string; source: string; media_type: string; sort_order: number }[];
   pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
 }
 export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';
@@ -705,6 +705,30 @@ export const workflowsApi = {
   /** josh's UpdateMarketingWorkflowDto fields; josh validates. */
   update: (id: string, workflow: Record<string, unknown>) => api.post<unknown>(`/josh/marketing-workflows/${id}/update`, { workflow }),
 };
+
+/**
+ * Call one of josh's own admin routes through commerce (POST /josh/admin-call): josh runs it as you,
+ * with josh's validation; the answer is josh's. `path` is josh's path without /api, e.g. `/coupon`.
+ */
+export const joshAdmin = {
+  call: <T = unknown>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string, body?: unknown,
+    opts: { query?: Record<string, string | number | boolean>; files?: { field: string; filename: string; contentType?: string; base64: string }[] } = {}) =>
+    api.post<T>('/josh/admin-call', { method, path, body, query: opts.query, files: opts.files }),
+  get: <T = unknown>(path: string, query?: Record<string, string | number | boolean>) => joshAdmin.call<T>('GET', path, undefined, { query }),
+};
+
+export interface LivechatLogRow { id: string; direction: 'to_cs_crm' | 'to_shop'; route: string; visitorId: string | null; text: string | null; status: number; createdAt: string }
+export const livechatApi = {
+  list: (visitorId: string, page: number) => api.get<{ items: LivechatLogRow[]; total: number }>(`/reports/livechat?visitorId=${encodeURIComponent(visitorId)}&page=${page}`),
+};
+
+/** File → the base64 form josh admin-call takes. */
+export async function fileForJosh(field: string, file: File) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return { field, filename: file.name, contentType: file.type || undefined, base64: btoa(bin) };
+}
 
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];

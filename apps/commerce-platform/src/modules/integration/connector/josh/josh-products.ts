@@ -95,7 +95,7 @@ export class JoshProducts {
         WHERE ${bySku ? 'p.product_inventory_sku = $1' : 'p.product_inventory_id = $1'} LIMIT 1`, [idOrSku.trim().slice(0, 100)]);
     if (!row) throw new NotFoundException(`product ${idOrSku} not found in josh`);
     const media = await this.replica.query(
-      `SELECT source, media_type::text AS media_type, sort_order FROM product_media WHERE product_inventory_id = $1 ORDER BY sort_order, created_at`, [row.product_inventory_id]);
+      `SELECT product_media_id::text AS id, source, media_type::text AS media_type, sort_order FROM product_media WHERE product_inventory_id = $1 ORDER BY sort_order, created_at`, [row.product_inventory_id]);
     const payload = (row.erp_pending_payload ?? null) as Record<string, unknown> | null;
     const pendingChanges = payload
       ? Object.entries(payload).map(([field, next]) => {

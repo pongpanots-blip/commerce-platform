@@ -24,6 +24,7 @@ import { ErpRelayController } from './connector/erp/presentation/erp-relay.contr
 import { AccountingRelayController } from './connector/erp/presentation/accounting-relay.controller';
 import { CsCrmRelayController } from './connector/erp/presentation/cs-crm-relay.controller';
 import { LivechatLog } from './connector/erp/presentation/livechat-log.entity';
+import { LivechatLogController } from './connector/erp/presentation/livechat-log.controller';
 import { ApiKeyModule } from '../core/api-key/api-key.module';
 import { StorefrontApiKeyGuard } from '../../storefront/storefront-api-key.guard';
 import { ErpSimulatorController } from './connector/erp/presentation/erp-simulator.controller';
@@ -37,7 +38,7 @@ import { ErpRelayService } from './connector/erp/ingest/erp-relay.service';
  */
 @Module({
   imports: [TypeOrmModule.forFeature([Integration, ErpStubStock, ErpStubReservation, ErpIngestRecord, LivechatLog]), MappingModule, SettingsModule, InventoryModule, ApiKeyModule],
-  controllers: [IntegrationController, ErpStubStockController, ErpFeedController, ErpRelayController, AccountingRelayController, CsCrmRelayController, ErpSimulatorController],
+  controllers: [IntegrationController, ErpStubStockController, ErpFeedController, ErpRelayController, AccountingRelayController, CsCrmRelayController, LivechatLogController, ErpSimulatorController],
   providers: [ConnectorRegistry, ExampleConnector, ErpStubConnector, ErpHttpClient, ErpConnector, ErpEventProcessor, ErpOrderPushSubscriber, IntegrationService, ErpIngestService, ErpFeedService, ErpRelayService, StorefrontApiKeyGuard],
   exports: [ConnectorRegistry, IntegrationService, TypeOrmModule, ErpHttpClient, ErpIngestService],
 })

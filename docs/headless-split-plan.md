@@ -64,7 +64,7 @@
 | ขั้น | อะไร | ทำไมลำดับนี้ |
 |---|---|---|
 | **0. ฐาน** | commerce ขึ้น prod · event bus commerce→josh สำหรับสำเนา (ขยายจาก `internal/erp-events`) · lib กลาง · commerce เชื่อ JWT ของ josh (JWKS) · แบบ façade ใน josh สำหรับ path เดิม | ทุกขั้นต่อจากนี้ต้องใช้ |
-| **1. หลังบ้านล้วน** | supplier, dbd, restaurant-place, winback, internal-docs, erp-log, refunds, order-targetgroup, purchases-dashboard, รายงาน analytics, push-campaign (+ competitor/research ที่พักไว้) | ไม่มีเส้นทางหน้าร้าน เสี่ยงต่ำ พิสูจน์ commerce-admin |
+| **1. หลังบ้านล้วน** ✅ บางส่วน (ดูหัวข้อ 6) | supplier, dbd, restaurant-place, winback, internal-docs, erp-log, refunds, order-targetgroup, purchases-dashboard, รายงาน analytics, push-campaign (+ competitor/research ที่พักไว้) | ไม่มีเส้นทางหน้าร้าน เสี่ยงต่ำ พิสูจน์ commerce-admin |
 | **2. ERP/Jagota** | สถานะ order/invoice, ส่ง order ไป Jagota, probe, รอบส่ง → event ให้ josh | ต้องมีก่อน order ย้าย |
 | **3. สินค้า + ราคา** | commerce เป็นเจ้าของ · josh สร้างสำเนาแค็ตตาล็อก + ราคาต่อสาขา · **เทียบผลคู่กัน (shadow compare) ก่อนสลับ** | หน้าร้านเร็วเท่าเดิมได้ต้องมีสำเนาก่อน |
 | **4. ลูกค้า/บริษัท** | master, KYC, วงเงิน · onboarding เขียนผ่าน commerce · staff ไป SSO | ต้องมีก่อน checkout |
@@ -100,6 +100,35 @@
 - ERP customer push ถูกเรียกจาก auth และ onboarding — ช่วงย้ายถ้าทั้งสองฝั่ง push จะได้ custcode ซ้ำ
 - frontend 7 จุดเรียก `fetch` ตรงไม่ผ่าน `shared-api`
 
+**จากโค้ด josh ใหม่ (#442–#453, 2026-10-05) — ไม่มี migration, ไม่กระทบตารางที่ commerce อ่าน แต่เพิ่มกติกาที่ต้องพาไปด้วย**
+- **ห้ามตอบ 403 กับ mobile** (#448): mobile ถือว่า 403 = session หมด แล้ว logout → order นอกสิทธิ์ตอบ 404 + `error_code` · façade ใน josh ต้องแปลง 403 จาก commerce เป็น 404 เสมอ
+- **ตะกร้าผูกกับ user** (#451): ลูกค้าที่ login ใช้ cart id `user:<userId>` ร่วมกันทุกเครื่อง · cart อยู่ josh ตามแผน แต่การจอง pre-order ที่ย้ายไป commerce ต้องรู้จัก id แบบนี้
+- **staff เห็นเฉพาะ order ที่ตัวเองสั่งในสาขาตัวเอง** (#444) · commerce ต้องใช้ scope เดียวกันตอนย้าย order
+- **คูปองลดทั้งตะกร้าเสมอ ขอบเขตใช้แค่เช็คสิทธิ์** (#445) และคูปอง auto-apply ยกเลิกเลือกได้ (#447) · ย้ายคูปองต้องตรงกติกานี้
+- **cutoff ส่ง D+1: แสดง 17:00 ล็อก 17:30** (#450, `shared/helpers/next-delivery-date.helper.ts`) · ย้าย checkout ต้องใช้ตัวเดียวกัน
+- scraping ยัง active (retry/resume #442 #453, คอลัมน์ใน jsonb `progress`) → การย้าย competitor/scraping ยังพักไว้ตามเดิม
+
 ## 5. ขนาด (ประมาณการหยาบ)
 
 backend josh ~253k บรรทัด · โค้ดที่ย้ายหรือแยกราว ครึ่งหนึ่ง · ขั้น 0–2 หลักสัปดาห์ · ขั้น 3–5 ขั้นละ 1–2 เดือน · ขั้น 6 2–3 เดือน · ทั้งหมดหลายเดือนถึงปีขึ้นกับคนและการที่ทีม josh ยังเพิ่มฟีเจอร์ — **ต้องตกลงว่าฟีเจอร์ใหม่ในโดเมนที่จะย้าย ทำที่ commerce เลย** ไม่งั้นไล่ไม่ทัน
+
+## 6. ความคืบหน้า
+
+**ขั้น 1 — ทำแล้วใน commerce (อ่านจาก replica ของ josh, josh ไม่ต้องแก้อะไร)**
+| ของ josh | ใน commerce | สิทธิ์ |
+|---|---|---|
+| `purchases-dashboard` (มุม internal) + analytics funnel | commerce-admin › รายงานร้าน › ยอดขาย / Traffic · `GET /api/reports/sales\|traffic` · MCP `shop_sales`, `shop_traffic` | ยอดขาย: admin · traffic: marketing |
+| (ใหม่) สุขภาพระบบ | รายงานร้าน › Error / สุขภาพระบบ · `GET /api/reports/health` · MCP `system_health` (ใช้ `SystemHealthReport` ตัวเดียวกัน) | admin |
+| `order-targetgroup` | รายงานร้าน › Order target group · `GET /api/reports/order-targetgroup` | admin |
+| `restaurant-place` (Market Explorer) | Marketing › Market Explorer · `GET /api/reports/restaurants[/export\|/:id]` · MCP `restaurant_places` | marketing |
+
+ต่างจาก josh: Market Explorer กรอง "คนเยอะช่วง…" ใน SQL (josh โหลดทั้งตารางมากรองใน JS) และใช้วันในสัปดาห์ตามเวลาไทย (josh ใช้ UTC → ก่อน 07:00 เป็นของเมื่อวาน)
+
+**ขั้น 1 — ยังไม่ย้าย และเหตุผล**
+- `purchases-dashboard` มุมลูกค้า (บริษัทดูยอดซื้อตัวเอง, export Excel ทางอีเมล): ลูกค้าเรียกจากหน้าร้าน/แอป → ต้องรอ façade ขั้น 0
+- `supplier`, `internal-docs-library`: มีการเขียน — ย้ายตอนนี้ = เขียนสองที่ · รอ commerce ขึ้น prod แล้วสลับเจ้าของทีเดียว
+- `winback`, `push-campaign`: ส่งข้อความ/แจ้งเตือนจริง · ทำล่วงหน้าได้แค่แบบปิดไว้ (default-off) จนวันสลับ
+- `dbd`: เรียก API กรมพัฒนาฯ ตอน onboarding (เส้นทางลูกค้า)
+- `erp-log`: อยู่ใน Mongo ของ josh ที่ commerce อ่านไม่ได้ · ฝั่ง commerce มี Inbound log ของตัวเองแล้ว
+- `refunds`: มีแค่หน้า "คำขอคืนเงินของฉัน" ของลูกค้า (หน้าร้าน)
+

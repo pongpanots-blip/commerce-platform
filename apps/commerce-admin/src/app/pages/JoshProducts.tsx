@@ -1,5 +1,5 @@
 import { FormEvent, Fragment, useState } from 'react';
-import { fileForJosh, joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail, ProductIssueKey } from '../../lib/api';
+import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail, ProductIssueKey } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const ISSUES: [ProductIssueKey, string][] = [
@@ -259,12 +259,13 @@ function ProductImages({ p, onSaved }: { p: JoshProductDetail; onSaved: (msg: st
   const keep = images.filter((m) => !removed.includes(m.id)).length;
   async function save() {
     if (keep + files.length > 3) return setErr('รูปได้สูงสุด 3 รูป (josh)');
-    if (files.reduce((n, f) => n + f.size, 0) > 3.5 * 1024 * 1024) return setErr('รูปรวมกันได้ไม่เกิน 3.5 MB ต่อครั้ง');
     if (!window.confirm(`${files.length ? `เพิ่ม ${files.length} รูป` : ''}${files.length && removed.length ? ' · ' : ''}${removed.length ? `ลบ ${removed.length} รูป` : ''} ของ ${p.product_inventory_sku}? หน้าร้านเห็นทันที`)) return;
     setBusy(true); setErr('');
     try {
-      await joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, { removed_media_ids: JSON.stringify(removed) },
-        { files: await Promise.all(files.map((f) => fileForJosh('images', f))) });
+      const fields = { removed_media_ids: JSON.stringify(removed) };
+      await (files.length
+        ? joshAdmin.upload('PATCH', `/product/${p.product_inventory_id}`, fields, files.map((file) => ({ field: 'images', file })))
+        : joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, fields));
       setRemoved([]); setFiles([]); onSaved(`บันทึกรูปของ ${p.product_inventory_sku} แล้ว`);
     } catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }

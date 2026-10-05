@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import { JoshActions } from './josh-actions';
 
@@ -33,6 +33,19 @@ describe('JoshActions (commerce asks josh to act)', () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 403, text: async () => '{"message":"เฉพาะ manager ที่ตั้งเป้ายอดขายได้"}' }) as never;
     await expect(actions.run('winback', 'set_target', {}, actor, 'admin')).rejects.toThrow(ForbiddenException);
     expect(insert).toHaveBeenCalledWith(expect.objectContaining({ context: expect.objectContaining({ joshStatus: 403 }) }));
+  });
+
+  it('upload: multipart to /admin-call/upload, envelope in a header signed with each file\'s sha256; audit keeps no file bytes', async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, text: async () => '{"status":200,"data":{"ok":true}}' }) as never;
+    const bytes = Buffer.from('video-bytes');
+    await actions.upload({ method: 'POST', path: '/product/video-upload', body: { skus: 'A1' } }, [{ field: 'video', filename: 'v.mp4', contentType: 'video/mp4', bytes }], actor, 'admin');
+    const [url, init] = (global.fetch as jest.Mock).mock.calls[0];
+    expect(url).toBe('http://josh.test/api/internal/commerce/admin-call/upload');
+    expect(init.body).toBeInstanceOf(FormData);
+    const text = Buffer.from(init.headers['x-commerce-envelope'], 'base64url').toString('utf8');
+    expect(init.headers['x-signature']).toBe(createHmac('sha256', 's3cret').update(text).digest('hex'));
+    expect(JSON.parse(text).args.streamedFiles).toEqual([{ field: 'video', filename: 'v.mp4', contentType: 'video/mp4', size: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') }]);
+    expect(JSON.stringify(insert.mock.calls[0][0])).not.toContain(bytes.toString('base64'));
   });
 
   it('does nothing when josh is not connected', async () => {

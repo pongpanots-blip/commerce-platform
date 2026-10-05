@@ -39,7 +39,8 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
+      // FormData sets its own multipart boundary.
+      ...(init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
@@ -683,20 +684,32 @@ export const joshAdmin = {
     opts: { query?: Record<string, string | number | boolean>; files?: { field: string; filename: string; contentType?: string; base64: string }[] } = {}) =>
     api.post<T>('/josh/admin-call', { method, path, body, query: opts.query, files: opts.files }),
   get: <T = unknown>(path: string, query?: Record<string, string | number | boolean>) => joshAdmin.call<T>('GET', path, undefined, { query }),
+  /** Real multipart (videos, bulk images, any size josh's own route takes): `fields` are josh's form fields, `files` keep josh's field names. */
+  upload: <T = unknown>(method: 'POST' | 'PATCH' | 'PUT', path: string, fields: Record<string, unknown>, files: { field: string; file: File }[],
+    query?: Record<string, string | number | boolean>) => {
+    const form = new FormData();
+    form.append('request', JSON.stringify({ method, path, query, body: fields }));
+    for (const f of files) form.append(f.field, f.file, f.file.name);
+    return request<T>('/josh/admin-call/upload', { method: 'POST', body: form });
+  },
 };
+
+/** A josh binary answer (CSV / PDF export) as admin-call returns it. */
+export interface JoshFileAnswer { file: { contentType: string; filename: string | null; base64: string } }
+export const isJoshFile = (v: unknown): v is JoshFileAnswer =>
+  !!v && typeof v === 'object' && typeof (v as JoshFileAnswer).file?.base64 === 'string';
+export function joshFileBlob(a: JoshFileAnswer): Blob {
+  const bin = atob(a.file.base64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: a.file.contentType });
+}
 
 export interface LivechatLogRow { id: string; direction: 'to_cs_crm' | 'to_shop'; route: string; visitorId: string | null; text: string | null; status: number; createdAt: string }
 export const livechatApi = {
   list: (visitorId: string, page: number) => api.get<{ items: LivechatLogRow[]; total: number }>(`/reports/livechat?visitorId=${encodeURIComponent(visitorId)}&page=${page}`),
 };
 
-/** File → the base64 form josh admin-call takes. */
-export async function fileForJosh(field: string, file: File) {
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  let bin = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  return { field, filename: file.name, contentType: file.type || undefined, base64: btoa(bin) };
-}
 
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];

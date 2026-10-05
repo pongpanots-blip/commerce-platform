@@ -3,11 +3,12 @@
  * make goes to josh's admin route through commerce (POST /api/josh/admin-call) — josh runs it as the
  * signed-in staff member with josh's own guards and DTOs. Answers come back shaped like axios
  * (`{ data, status }`); a josh error rejects with `{ response: { status, data: { message } } }` like
- * axios, so josh's error handling keeps working. FormData bodies (uploads) become admin-call files.
- * Not supported here: binary downloads (`responseType: 'blob'`) — josh answers those as text.
+ * axios, so josh's error handling keeps working. FormData bodies (uploads, any size josh's route
+ * takes) go as real multipart (POST /api/josh/admin-call/upload); a binary answer (export) comes back
+ * as a Blob, which is what josh's `responseType: 'blob'` callers expect.
  */
 import type { AxiosResponse } from 'axios';
-import { fileForJosh, joshAdmin } from '../../../../../lib/api';
+import { isJoshFile, joshAdmin, joshFileBlob } from '../../../../../lib/api';
 
 type Config = { params?: Record<string, unknown>; headers?: Record<string, string>; responseType?: string; signal?: AbortSignal; timeout?: number };
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -19,19 +20,21 @@ async function call<T>(method: Method, url: string, body?: unknown, config?: Con
     if (v === undefined || v === null || v === '') continue;
     query[k] = Array.isArray(v) ? v.join(',') : String(v);
   }
-  let json: unknown = body;
-  let files: Awaited<ReturnType<typeof fileForJosh>>[] | undefined;
+  const q = Object.keys(query).length ? query as Record<string, string> : undefined;
+  let fields: Record<string, unknown> | undefined;
+  const files: { field: string; file: File }[] = [];
   if (typeof FormData !== 'undefined' && body instanceof FormData) {
-    const fields: Record<string, unknown> = {};
-    files = [];
+    fields = {};
     for (const [k, v] of (body as unknown as { entries(): Iterable<[string, FormDataEntryValue]> }).entries()) {
       if (typeof v === 'string') fields[k] = v;
-      else files.push(await fileForJosh(k, v as File));
+      else files.push({ field: k, file: v as File });
     }
-    json = fields;
   }
   try {
-    const data = await joshAdmin.call<T>(method, path, json, { query: Object.keys(query).length ? query as Record<string, string> : undefined, files: files?.length ? files : undefined });
+    const answer = files.length && method !== 'GET' && method !== 'DELETE'
+      ? await joshAdmin.upload<T>(method, path, fields!, files, q)
+      : await joshAdmin.call<T>(method, path, fields ?? body, { query: q });
+    const data = (isJoshFile(answer) ? joshFileBlob(answer) : answer) as T;
     return { data, status: 200, statusText: 'OK', headers: {}, config: {} } as AxiosResponse<T>;
   } catch (e) {
     const message = e instanceof Error ? e.message.replace(/^josh: /, '') : String(e);

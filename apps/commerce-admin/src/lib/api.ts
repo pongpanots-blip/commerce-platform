@@ -699,3 +699,14 @@ export const joshActionsApi = {
   rejectAccess: (id: string, reason: string) => api.post<unknown>(`/josh/admin-access/${id}/reject`, { reason }),
   setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
 };
+
+export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;
+  joshUnitPrice: string; joshSource: string | null; joshMechanicId: string | null; commerceUnitPrice: string | null; commerceSource: string | null;
+  commerceMechanicId: string | null; matched: boolean; diffs: string[]; note: string | null }
+export const priceShadowApi = {
+  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; could_not_price: number; changed_after: number;
+    matchRate: number | null; first_at: string | null; last_at: string | null; mismatchBySource: { josh_source: string | null; commerce_source: string | null; n: number }[] }>(`/reports/price-shadow/summary?days=${days}`),
+  list: (filter: string, page: number) => api.get<{ items: PriceShadowRow[]; total: number }>(`/reports/price-shadow?filter=${filter}&page=${page}`),
+  run: () => api.post<{ checked: number }>('/reports/price-shadow/run', {}),
+  recheck: (id: string) => api.post<PriceShadowRow>(`/reports/price-shadow/recheck/${id}`, {}),
+};

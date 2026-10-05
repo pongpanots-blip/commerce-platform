@@ -33,6 +33,7 @@ import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagot
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
+import { PriceShadow } from '../modules/integration/connector/josh/pricing/price-shadow';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -85,6 +86,7 @@ export class McpTools {
     private readonly jagotaGateway: JagotaGateway,
     private readonly backoffice: JoshBackoffice,
     private readonly apiLogs: JoshApiLogs,
+    private readonly priceShadow: PriceShadow,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -513,6 +515,16 @@ export class McpTools {
   }
 
   private ops(server: McpServer) {
+    server.registerTool('price_shadow', {
+      title: 'Prices: commerce re-prices josh orders (trial, admin)',
+      description: "Shadow mode before commerce owns product prices: each new josh order line is re-priced with josh's own price resolver (copied into commerce, run on josh's replica) for the same company, branch, quantity and order time, and compared with what josh charged (unit price inc. VAT, price source, promotion mechanic). Match rate, mismatches by source, latest mismatches; `changed_after` = price data edited after the order (not a bug). Read-only.",
+      inputSchema: { days: z.number().int().min(1).max(90).default(7) },
+      annotations: READ_ONLY,
+    }, async ({ days }) => {
+      const [summary, mismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20)]);
+      return json({ summary, latestMismatches: mismatches.items });
+    });
+
     server.registerTool('josh_backoffice', {
       title: 'josh back-office lists (admin)',
       description: `josh staff lists, read-only from josh's replica, with counts by status: ${Object.entries(BACKOFFICE_VIEWS).map(([k, v]) => `${k} (${v.title})`).join(', ')}. Column names are josh's. Phones, emails and people's names are masked; files, card data and password hashes are never read.`,

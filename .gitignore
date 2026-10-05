@@ -6,3 +6,6 @@ dist/
 .commerce-pids/
 .nx/cache
 .nx/workspace-data
+
+# credentials written by scripts/josh-mongo-readonly-user.mjs
+*.secret

@@ -47,7 +47,7 @@ export function AiConnectors() {
       <div className="page-head">
         <div>
           <h1>AI connectors (MCP)</h1>
-          <p>ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้ · อ่านอย่างเดียว แก้ไขหรือสั่งงานไม่ได้ · เห็นข้อมูลตามสิทธิ์ของบัญชีที่ login</p>
+          <p>ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้ · อ่านอย่างเดียวเป็นค่าเริ่มต้น แก้ไขได้เมื่อติ๊กอนุญาตตอน login และต้องยืนยันทุกครั้ง · เห็นข้อมูลตามสิทธิ์ของบัญชีที่ login</p>
         </div>
         <button className="btn ghost" type="button" onClick={() => { info.reload(); activity.reload(); }}>Refresh</button>
       </div>

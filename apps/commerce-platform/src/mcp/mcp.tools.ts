@@ -32,6 +32,7 @@ import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
 import { JoshPromotions } from '../modules/integration/connector/josh/josh-promotions';
+import { OrderQuoteShadow } from '../modules/integration/connector/josh/checkout/order-quote-shadow';
 import { JoshMarketingWorkflows } from '../modules/integration/connector/josh/josh-marketing-workflows';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
@@ -95,6 +96,7 @@ export class McpTools {
     private readonly jagotaHistory: JagotaSyncHistoryImport,
     private readonly promotions: JoshPromotions,
     private readonly workflows: JoshMarketingWorkflows,
+    private readonly orderQuotes: OrderQuoteShadow,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -551,12 +553,13 @@ export class McpTools {
   private ops(server: McpServer) {
     server.registerTool('price_shadow', {
       title: 'Prices: commerce re-prices josh orders (trial, admin)',
-      description: "Shadow mode before commerce owns product prices: each new josh order line is re-priced with josh's own price resolver (copied into commerce, run on josh's replica) for the same company, branch, quantity and order time, and compared with what josh charged (unit price inc. VAT, price source, promotion mechanic). Match rate, mismatches by source, latest mismatches; `changed_after` = price data edited after the order (not a bug). Read-only.",
+      description: "Shadow mode before commerce owns product prices: each new josh order line is re-priced with josh's own price resolver (copied into commerce, run on josh's replica) for the same company, branch, quantity and order time, and compared with what josh charged (unit price inc. VAT, price source, promotion mechanic). Match rate, mismatches by source, latest mismatches; `changed_after` = price data edited after the order (not a bug). orderTotals = checkout shadow quote: each josh order's totals (VAT, delivery fee, discount spread, total) rebuilt with josh's checkout math. Read-only.",
       inputSchema: { days: z.number().int().min(1).max(90).default(7) },
       annotations: READ_ONLY,
     }, async ({ days }) => {
-      const [summary, mismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20)]);
-      return json({ summary, latestMismatches: mismatches.items });
+      const [summary, mismatches, quote, quoteMismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20),
+        this.orderQuotes.summary(days), this.orderQuotes.list('mismatched', 1, 20)]);
+      return json({ summary, latestMismatches: mismatches.items, orderTotals: { summary: quote, latestMismatches: quoteMismatches.items } });
     });
 
     server.registerTool('staff_prices', {

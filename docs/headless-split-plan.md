@@ -165,6 +165,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - พิจารณาคำขอวงเงิน: มีแล้ว (josh › Credit terms)
 - สวิตช์ josh `COMMERCE_OWNS_CUSTOMERS` ล็อกการแก้เหล่านี้ใน josh · ลูกค้าแก้โปรไฟล์บริษัทตัวเองและการรวมบัญชียังเหมือนเดิม
 
+**checkout / orders** (3 ขั้น: shadow quote → dual-write → สลับ)
+1. shadow quote — ทำแล้ว (ปิดไว้): commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (สำเนา `checkout/order-totals.ts`: แยก VAT ต่อหน่วย, กลุ่มตามประเภทการส่ง, ค่าส่ง 100 เมื่อกลุ่มต่ำกว่า 2,500 ก่อน VAT, กระจายส่วนลดแบบเศษมากสุด) แล้วเทียบ 8 ช่อง · ราคาแต่ละบรรทัดเทียบใน price shadow · ส่วนลดคูปอง/เครดิตใช้ตัวเลขของ josh · รายงานร้าน › ราคา: commerce คิดคู่กัน (ส่วนล่าง) · MCP `price_shadow` (`orderTotals`) · `CRON_ORDER_QUOTE_SHADOW_ENABLED`
+2. dual-write — ยังไม่ทำ: รอ shadow ราคา + ยอดรวม ตรง ~100% ต่อเนื่อง แล้ว commerce เก็บสำเนา order ทุกใบตอน checkout
+3. สลับให้ commerce เป็นเจ้าของ order — ยังไม่ทำ
+
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`
 - แก้โปร (สร้าง/แก้ชื่อ ป้าย ช่วงเวลา โควตา/เปิด-ปิด/ลบ): commerce-admin → josh `internal/commerce/promotions` → PromotionMechanicService (DTO แบบเข้มเดียวกับ josh) · Product Set และหน้าโปรยังอยู่ที่ josh

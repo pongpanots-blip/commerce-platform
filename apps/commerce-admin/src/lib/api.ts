@@ -759,6 +759,15 @@ export const priceShadowApi = {
   recheck: (id: string) => api.post<PriceShadowRow>(`/reports/price-shadow/recheck/${id}`, {}),
 };
 
+export interface OrderQuoteRow { id: string; joshOrderId: string; orderNumber: string | null; orderedAt: string; matched: boolean;
+  diffs: { field: string; josh: number; commerce: number }[]; note: string | null }
+export const orderQuoteApi = {
+  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; matchRate: number | null; last_at: string | null;
+    mismatchByField: { field: string; n: number }[] }>(`/reports/order-quote-shadow/summary?days=${days}`),
+  list: (filter: string, page: number) => api.get<{ items: OrderQuoteRow[]; total: number }>(`/reports/order-quote-shadow?filter=${filter}&page=${page}`),
+  run: () => api.post<{ checked: number }>('/reports/order-quote-shadow/run', {}),
+};
+
 export interface StaffPriceRow { id: string; kind: 'customer' | 'contract'; companyId: string | null; branchId: string | null; productInventoryId: string; sku: string | null;
   price: number; contractRef: string | null; startDate: string; endDate: string | null; joshId: string | null; status: 'synced' | 'pending' | 'failed';
   syncError: string | null; updatedBy: string | null; updatedAt: string }

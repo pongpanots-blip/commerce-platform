@@ -12,6 +12,9 @@ import { JoshErpLogs } from './josh-erp-logs';
 import { JoshPushCampaigns } from './josh-push-campaigns';
 import { JoshActions } from './josh-actions';
 import { JoshProducts } from './josh-products';
+import { JoshOrders } from './josh-orders';
+import { JoshCustomers } from './josh-customers';
+import { JoshPrices } from './josh-prices';
 import { JoshActionsController } from './josh-actions.controller';
 import { JoshWinback } from './winback/josh-winback';
 import { JoshWinbackController } from './winback/josh-winback.controller';
@@ -22,7 +25,7 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 @Module({
   imports: [TypeOrmModule.forFeature([JoshCatalogProduct]), WebhookSubscriptionModule],
   controllers: [ShopReportsController, JoshWinbackController, JoshActionsController],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices],
 })
 export class JoshModule {}

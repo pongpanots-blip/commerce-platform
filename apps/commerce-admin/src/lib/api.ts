@@ -625,3 +625,21 @@ export const joshProductApi = {
   list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshProductRow[]; total: number; page: number; limit: number }>(`/reports/products?${query(f)}`),
   detail: (idOrSku: string) => api.get<JoshProductDetail>(`/reports/products/${encodeURIComponent(idOrSku)}`),
 };
+
+// josh orders / customers / prices, read-only — josh column names.
+export type JoshRow = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+export const joshOrderApi = {
+  summary: (f: Record<string, string | undefined>) => api.get<JoshRow>(`/reports/orders/summary?${query(f)}`),
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshRow[]; total: number }>(`/reports/orders?${query(f)}`),
+  detail: (idOrNumber: string) => api.get<JoshRow>(`/reports/orders/${encodeURIComponent(idOrNumber)}`),
+};
+export const joshCustomerApi = {
+  summary: () => api.get<JoshRow>('/reports/customers/summary'),
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshRow[]; total: number }>(`/reports/customers?${query(f)}`),
+  detail: (id: string) => api.get<JoshRow>(`/reports/customers/${id}`),
+};
+export const joshPriceApi = {
+  branches: (search: string) => api.get<JoshRow[]>(`/reports/prices/branches?${query({ search })}`),
+  forBranch: (branchId: string, search: string) => api.get<{ branch: JoshRow; note: string; items: JoshRow[] }>(`/reports/prices/branches/${branchId}?${query({ search })}`),
+  quotations: (customerCode: string) => api.get<JoshRow[]>(`/reports/prices/quotations?${query({ customerCode })}`),
+};

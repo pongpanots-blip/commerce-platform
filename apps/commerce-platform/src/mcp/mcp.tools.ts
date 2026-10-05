@@ -26,6 +26,9 @@ import { RestaurantPlaces } from '../modules/integration/connector/josh/restaura
 import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
 import { JoshPushCampaigns } from '../modules/integration/connector/josh/josh-push-campaigns';
 import { JoshProducts, PRODUCT_ISSUES } from '../modules/integration/connector/josh/josh-products';
+import { JoshOrders, SYNC_STATES } from '../modules/integration/connector/josh/josh-orders';
+import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/josh/josh-customers';
+import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -71,6 +74,9 @@ export class McpTools {
     private readonly winback: JoshWinback,
     private readonly push: JoshPushCampaigns,
     private readonly products: JoshProducts,
+    private readonly joshOrders: JoshOrders,
+    private readonly joshCustomers: JoshCustomers,
+    private readonly joshPrices: JoshPrices,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -499,6 +505,56 @@ export class McpTools {
   }
 
   private ops(server: McpServer) {
+    server.registerTool('josh_orders', {
+      title: 'Shop orders (josh, admin)',
+      description: 'josh orders, read-only: counts by status, awaiting payment, and whether paid orders reached Jagota (ERP): failed, not sent, pending, sent. A filtered list, or one order (order number or id) with items, shipments, every Jagota send attempt and payments. Customer contact data is masked.',
+      inputSchema: {
+        order: z.string().max(64).optional().describe('order number or id → full detail'),
+        sync: z.enum(Object.keys(SYNC_STATES) as [keyof typeof SYNC_STATES]).optional().describe('Jagota state'),
+        status: z.string().max(30).optional(), search: z.string().max(100).optional().describe('order number, customer code, PO or company'),
+        from: z.string().max(40).optional(), to: z.string().max(40).optional(),
+        limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ order, limit, ...f }) => {
+      if (!this.joshOrders.available) return json(NO_REPLICA);
+      if (order) return json(await this.joshOrders.detail(order));
+      const [summary, list] = await Promise.all([this.joshOrders.summary(f), this.joshOrders.list(f, 1, limit)]);
+      return json({ summary, total: list.total, orders: list.items });
+    });
+
+    server.registerTool('josh_customers', {
+      title: 'Shop customers / companies (josh, admin)',
+      description: 'josh business customers, read-only: companies with credit limit / used / term, branches, users, KYC status (none, pending, approved, rejected) and credit-term applications. Filter by issue (KYC pending, over or near credit limit, no ERP code …). Pass companyId for one company. Identity numbers, phones, emails and family names are masked.',
+      inputSchema: {
+        companyId: z.string().uuid().optional(),
+        issue: z.enum(Object.keys(COMPANY_ISSUES) as [keyof typeof COMPANY_ISSUES]).optional(),
+        search: z.string().max(100).optional().describe('company name or ERP customer code'),
+        limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ companyId, issue, search, limit }) => {
+      if (!this.joshCustomers.available) return json(NO_REPLICA);
+      if (companyId) return json(await this.joshCustomers.detail(companyId));
+      const [summary, list] = await Promise.all([this.joshCustomers.summary(), this.joshCustomers.list({ issue, search }, 1, limit)]);
+      return json({ summary, total: list.total, companies: list.items });
+    });
+
+    server.registerTool('josh_prices', {
+      title: 'Prices a customer branch sees (josh, admin)',
+      description: 'What a josh customer branch pays per unit today, layer by layer in josh\'s order (company private price → branch contract → branch special → promotion → qty tiers → base) and which one wins; or the ERP quotations for a customer code. Without branchId: search branches by company / branch / ERP code.',
+      inputSchema: {
+        branchId: z.string().uuid().optional(), search: z.string().max(100).optional().describe('with branchId: SKU or product name; without: company / branch / ERP code'),
+        customerCode: z.string().max(50).optional().describe('ERP quotations for this customer code'),
+      },
+      annotations: READ_ONLY,
+    }, async ({ branchId, search, customerCode }) => {
+      if (!this.joshPrices.available) return json(NO_REPLICA);
+      if (customerCode) return json(await this.joshPrices.quotations(customerCode));
+      if (branchId) return json(await this.joshPrices.forBranch(branchId, search));
+      return json(await this.joshPrices.branches(search));
+    });
+
     server.registerTool('shop_sales', {
       title: 'Shop sales (josh, admin)',
       description: 'Sales of the josh shop for a period: paid orders, revenue (THB incl. VAT, after discounts), average order, buying customers/companies, new customers, awaiting payment / cancelled / refunded, revenue by day (or month), top products, and the change vs the previous period.',

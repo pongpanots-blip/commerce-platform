@@ -30,6 +30,7 @@ import { JoshErpLogs } from './pages/JoshErpLogs';
 import { Winback } from './pages/Winback';
 import { PushCampaigns } from './pages/PushCampaigns';
 import { JoshProducts } from './pages/JoshProducts';
+import { JoshCustomersPage, JoshOrdersPage, JoshPricesPage } from './pages/JoshCommerce';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -38,6 +39,9 @@ const NAV = [
     links: [
       { to: '/reports/sales', label: 'ยอดขาย', end: false },
       { to: '/reports/products', label: 'สินค้า (josh)', end: false },
+      { to: '/reports/orders', label: 'Orders (josh)', end: false },
+      { to: '/reports/customers', label: 'ลูกค้า / บริษัท (josh)', end: false },
+      { to: '/reports/prices', label: 'ราคาที่ลูกค้าเห็น (josh)', end: false },
       { to: '/reports/traffic', label: 'Traffic', end: false },
       { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
       { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
@@ -130,6 +134,9 @@ export function App() {
         <main className="main">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/reports/orders" element={<JoshOrdersPage />} />
+            <Route path="/reports/customers" element={<JoshCustomersPage />} />
+            <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />

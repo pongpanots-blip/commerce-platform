@@ -6,6 +6,9 @@ import { parseRestaurantFilters, RestaurantPlaces } from './restaurant-places';
 import { ErpLogFilters, JoshErpLogs } from './josh-erp-logs';
 import { JoshPushCampaigns } from './josh-push-campaigns';
 import { JoshProducts, ProductFilters } from './josh-products';
+import { JoshOrders, OrderFilters } from './josh-orders';
+import { CompanyFilters, JoshCustomers } from './josh-customers';
+import { JoshPrices } from './josh-prices';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string }
 
@@ -30,7 +33,8 @@ function range(q: PeriodQuery) {
  */
 @Controller('reports')
 export class ShopReportsController {
-  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs, private readonly push: JoshPushCampaigns, private readonly products: JoshProducts) {}
+  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs, private readonly push: JoshPushCampaigns, private readonly products: JoshProducts,
+    private readonly orders: JoshOrders, private readonly customers: JoshCustomers, private readonly prices: JoshPrices) {}
 
   private replica() {
     if (!this.insights.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
@@ -148,4 +152,23 @@ export class ShopReportsController {
   @Get('products/:idOrSku')
   @StaffRoles('marketing')
   productDetail(@Param('idOrSku') idOrSku: string) { this.replica(); return this.products.detail(idOrSku); }
+
+  // josh orders / customers / prices, read-only — admin only (the guard default).
+  @Get('orders/summary') orderSummary(@Query() q: OrderFilters) { this.replica(); return this.orders.summary(q); }
+  @Get('orders') orderList(@Query() q: OrderFilters & { page?: string; limit?: string }) {
+    this.replica(); return this.orders.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+  }
+  @Get('orders/:idOrNumber') orderDetail(@Param('idOrNumber') id: string) { this.replica(); return this.orders.detail(id); }
+
+  @Get('customers/summary') customerSummary() { this.replica(); return this.customers.summary(); }
+  @Get('customers') customerList(@Query() q: CompanyFilters & { page?: string; limit?: string }) {
+    this.replica(); return this.customers.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+  }
+  @Get('customers/:id') customerDetail(@Param('id', ParseUUIDPipe) id: string) { this.replica(); return this.customers.detail(id); }
+
+  @Get('prices/branches') priceBranches(@Query('search') search?: string) { this.replica(); return this.prices.branches(search); }
+  @Get('prices/quotations') priceQuotations(@Query('customerCode') code = '') { this.replica(); return this.prices.quotations(code); }
+  @Get('prices/branches/:branchId') branchPrices(@Param('branchId', ParseUUIDPipe) id: string, @Query('search') search?: string) {
+    this.replica(); return this.prices.forBranch(id, search);
+  }
 }

@@ -643,3 +643,18 @@ export const joshPriceApi = {
   forBranch: (branchId: string, search: string) => api.get<{ branch: JoshRow; note: string; items: JoshRow[] }>(`/reports/prices/branches/${branchId}?${query({ search })}`),
   quotations: (customerCode: string) => api.get<JoshRow[]>(`/reports/prices/quotations?${query({ customerCode })}`),
 };
+
+// Orders → Jagota through commerce, shadow mode (compare only, nothing sent).
+export interface ShadowDiff { path: string; josh: unknown; commerce: unknown }
+export interface ShadowCheck {
+  id: string; joshSyncId: string; orderReference: string | null; joshSyncStatus: string | null; joshSentAt: string; matched: boolean;
+  diffs: ShadowDiff[]; note: string | null; checkedAt: string; joshRequest?: unknown; commerceRequest?: unknown;
+}
+export const jagotaShadowApi = {
+  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; could_not_build: number; matchRate: number | null;
+    first_at: string | null; last_at: string | null; topFields: { field: string; n: number }[] }>(`/reports/jagota-shadow/summary?days=${days}`),
+  list: (filter: string, page: number) => api.get<{ items: ShadowCheck[]; total: number }>(`/reports/jagota-shadow?filter=${filter}&page=${page}`),
+  detail: (id: string) => api.get<ShadowCheck>(`/reports/jagota-shadow/${id}`),
+  run: () => api.post<{ checked: number }>('/reports/jagota-shadow/run', {}),
+  recheck: (joshSyncId: string) => api.post<ShadowCheck>(`/reports/jagota-shadow/recheck/${encodeURIComponent(joshSyncId)}`, {}),
+};

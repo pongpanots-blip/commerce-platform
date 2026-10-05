@@ -10,6 +10,7 @@ export interface CronConfig {
   competitorPricesRefresh: CronJobConfig;
   joshCustomerMetrics: CronJobConfig;
   joshBestsellers: CronJobConfig;
+  jagotaShadow: CronJobConfig;
 }
 
 function cronEnabled(name: string, env: NodeJS.ProcessEnv): boolean {
@@ -45,6 +46,12 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
     joshBestsellers: {
       expression: env.CRON_JOSH_BESTSELLERS ?? '0 */10 * * * *',
       enabled: env.CRON_JOSH_BESTSELLERS_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Shadow mode for orders → Jagota through commerce: compare josh's sends with commerce's build. Opt-in; sends nothing.
+    jagotaShadow: {
+      expression: env.CRON_JAGOTA_SHADOW ?? '30 * * * * *',
+      enabled: env.CRON_JAGOTA_SHADOW_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
     },
     competitorPricesRefresh: {

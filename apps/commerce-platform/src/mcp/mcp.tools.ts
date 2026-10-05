@@ -29,6 +29,7 @@ import { JoshProducts, PRODUCT_ISSUES } from '../modules/integration/connector/j
 import { JoshOrders, SYNC_STATES } from '../modules/integration/connector/josh/josh-orders';
 import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/josh/josh-customers';
 import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
+import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -77,6 +78,7 @@ export class McpTools {
     private readonly joshOrders: JoshOrders,
     private readonly joshCustomers: JoshCustomers,
     private readonly joshPrices: JoshPrices,
+    private readonly jagotaShadow: JagotaShadow,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -553,6 +555,16 @@ export class McpTools {
       if (customerCode) return json(await this.joshPrices.quotations(customerCode));
       if (branchId) return json(await this.joshPrices.forBranch(branchId, search));
       return json(await this.joshPrices.branches(search));
+    });
+
+    server.registerTool('jagota_shadow', {
+      title: 'Orders → Jagota through commerce: trial results (admin)',
+      description: 'Shadow mode before commerce sends orders to Jagota itself: josh keeps sending; commerce rebuilds each request and compares field by field. Match rate, which fields differ most, and the latest mismatches with josh vs commerce values. Read-only; nothing is sent.',
+      inputSchema: { days: z.number().int().min(1).max(90).default(7) },
+      annotations: READ_ONLY,
+    }, async ({ days }) => {
+      const [summary, mismatches] = await Promise.all([this.jagotaShadow.summary(days), this.jagotaShadow.list('mismatched', 1, 20)]);
+      return json({ summary, latestMismatches: mismatches.items });
     });
 
     server.registerTool('shop_sales', {

@@ -15,6 +15,9 @@ import { JoshProducts } from './josh-products';
 import { JoshOrders } from './josh-orders';
 import { JoshCustomers } from './josh-customers';
 import { JoshPrices } from './josh-prices';
+import { JagotaShadow } from './jagota/jagota-shadow';
+import { JagotaShadowController } from './jagota/jagota-shadow.controller';
+import { JagotaShadowCheck } from './jagota/jagota-shadow-check.entity';
 import { JoshActionsController } from './josh-actions.controller';
 import { JoshWinback } from './winback/josh-winback';
 import { JoshWinbackController } from './winback/josh-winback.controller';
@@ -23,9 +26,9 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 
 /** Everything that reads josh's data (via its replica): the catalog copy and the offloaded heavy jobs (Task 9). */
 @Module({
-  imports: [TypeOrmModule.forFeature([JoshCatalogProduct]), WebhookSubscriptionModule],
-  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices],
+  imports: [TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck]), WebhookSubscriptionModule],
+  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController, JagotaShadowController],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow],
 })
 export class JoshModule {}

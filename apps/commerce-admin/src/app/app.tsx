@@ -31,6 +31,7 @@ import { Winback } from './pages/Winback';
 import { PushCampaigns } from './pages/PushCampaigns';
 import { JoshProducts } from './pages/JoshProducts';
 import { JoshCustomersPage, JoshOrdersPage, JoshPricesPage } from './pages/JoshCommerce';
+import { JagotaShadow } from './pages/JagotaShadow';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -69,6 +70,7 @@ const NAV = [
       { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
       { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
       { to: '/erp/simulator', label: 'ERP simulator', end: false },
+      { to: '/erp/jagota-shadow', label: 'ส่ง order ผ่าน commerce (ทดลอง)', end: false },
     ],
   },
   {
@@ -155,6 +157,7 @@ export function App() {
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
             <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />
             <Route path="/erp/inventory-warehouse" element={<InventoryPerWarehouse />} />
+            <Route path="/erp/jagota-shadow" element={<JagotaShadow />} />
             <Route path="/erp/simulator" element={<ErpSimulator />} />
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/webhooks" element={<Webhooks />} />

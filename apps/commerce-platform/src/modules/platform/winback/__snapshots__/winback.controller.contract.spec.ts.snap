@@ -1,0 +1,136 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`WinbackController contract snapshots forces analytics scope=me and ignores sales_user_id for sale role 1`] = `
+{
+  "kpis": {
+    "reactivation": {
+      "rate": 0,
+      "total": 0,
+      "won": 0,
+    },
+  },
+  "period": {
+    "from": "2026-08-01T00:00:00.000Z",
+    "to": "2026-08-24T00:00:00.000Z",
+  },
+}
+`;
+
+exports[`WinbackController contract snapshots forces dashboard scope=me for sale role 1`] = `
+{
+  "gmv": 0,
+  "period": {
+    "from": "2026-08-01T00:00:00.000Z",
+    "to": "2026-08-24T00:00:00.000Z",
+  },
+  "scope": "me",
+}
+`;
+
+exports[`WinbackController contract snapshots matches calendar contract shape 1`] = `
+[
+  {
+    "account": {
+      "customer_code": "WB-01",
+      "display_name": "ร้าน A",
+      "id": "acc-1",
+    },
+    "account_id": "acc-1",
+    "id": "act-2",
+    "sales_user_id": "sales-1",
+    "scheduled_at": "2026-08-25T06:00:00.000Z",
+    "status": "planned",
+    "type": "meeting",
+  },
+]
+`;
+
+exports[`WinbackController contract snapshots matches diary contract shape 1`] = `
+[
+  {
+    "account": {
+      "customer_code": "WB-01",
+      "display_name": "ร้าน A",
+      "id": "acc-1",
+    },
+    "account_id": "acc-1",
+    "id": "act-1",
+    "sales_user_id": "sales-1",
+    "status": "done",
+    "type": "visit",
+  },
+]
+`;
+
+exports[`WinbackController contract snapshots matches my-day contract shape 1`] = `
+{
+  "activityByType": {
+    "visit": 1,
+  },
+  "bought": {
+    "count": 0,
+    "items": [],
+  },
+  "dueToday": {
+    "count": 1,
+    "items": [
+      {
+        "customer_code": "WB-01",
+        "id": "a1",
+      },
+    ],
+  },
+  "newLeads": {
+    "count": 0,
+    "items": [],
+  },
+  "notVisited": {
+    "count": 0,
+    "items": [],
+  },
+  "overdue": {
+    "count": 0,
+    "items": [],
+  },
+  "worklist": {
+    "count": 1,
+    "items": [
+      {
+        "avg_monthly_revenue": 180000,
+        "customer_code": "WB-02",
+        "delay_ratio": 11.9,
+        "display_name": "ร้าน A",
+        "id": "a2",
+        "inactive_days": 214,
+        "last_order_at": "2026-02-13T00:00:00.000Z",
+        "median_reorder_interval_days": 18,
+        "priority": 96,
+        "reasons": [
+          "ไม่ได้สั่ง 214 วัน",
+          "ปกติสั่งทุก 18 วัน (ช้ากว่าปกติ 11.9 เท่า)",
+        ],
+        "recommended_action": "call",
+        "signal_type": "reactivate",
+      },
+    ],
+  },
+}
+`;
+
+exports[`WinbackController contract snapshots matches pool contract shape 1`] = `
+{
+  "data": [
+    {
+      "customer_code": "WB-01",
+      "id": "acc-1",
+      "tmp_progress": null,
+    },
+  ],
+  "meta": {
+    "limit": 20,
+    "page": 1,
+    "total": 1,
+    "totalPages": 1,
+  },
+}
+`;

@@ -1,4 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { winbackOwnedByCommerce } from '../../../platform/winback/shared/winback.config';
+import type { WinbackStaffActions } from '../../../platform/winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
 import { JoshCatalogSyncService } from './josh-catalog-sync.service';
@@ -11,23 +14,31 @@ import { JoshCatalogSyncService } from './josh-catalog-sync.service';
  */
 @Controller('josh')
 export class JoshActionsController {
-  constructor(private readonly josh: JoshActions, private readonly catalog: JoshCatalogSyncService) {}
+  constructor(private readonly josh: JoshActions, private readonly catalog: JoshCatalogSyncService, private readonly modules: ModuleRef) {}
 
   private as(req: StaffRequest) { return { userId: req.staff.userId, email: req.staff.email }; }
 
+  /** Winback buttons: commerce's own winback once it runs it (WINBACK_OWNER=commerce), otherwise josh's. */
+  private async winback(action: 'assign' | 'move_stage' | 'set_target', args: Record<string, unknown>, req: StaffRequest) {
+    if (!winbackOwnedByCommerce()) return this.josh.run('winback', action, args, this.as(req), 'admin');
+    // Resolved lazily: WinbackModule imports this module, so this one cannot import it.
+    const { WinbackStaffActions: cls } = await import('../../../platform/winback/winback-staff-actions');
+    return this.modules.get<WinbackStaffActions>(cls, { strict: false }).act(action, args, req.staff.email);
+  }
+
   @Post('winback/accounts/:id/assign') @HttpCode(HttpStatus.OK)
   assign(@Param('id', ParseUUIDPipe) id: string, @Body() b: { assignedSalesUserId?: string | null }, @Req() req: StaffRequest) {
-    return this.josh.run('winback', 'assign', { accountId: id, assignedSalesUserId: b?.assignedSalesUserId ?? null }, this.as(req), 'admin');
+    return this.winback('assign', { accountId: id, assignedSalesUserId: b?.assignedSalesUserId ?? null }, req);
   }
 
   @Post('winback/accounts/:id/stage') @HttpCode(HttpStatus.OK)
   moveStage(@Param('id', ParseUUIDPipe) id: string, @Body() b: Record<string, unknown>, @Req() req: StaffRequest) {
-    return this.josh.run('winback', 'move_stage', { ...b, accountId: id }, this.as(req), 'admin');
+    return this.winback('move_stage', { ...b, accountId: id }, req);
   }
 
   @Put('winback/targets')
   setTarget(@Body() b: Record<string, unknown>, @Req() req: StaffRequest) {
-    return this.josh.run('winback', 'set_target', b ?? {}, this.as(req), 'admin');
+    return this.winback('set_target', b ?? {}, req);
   }
 
   @Post('push-campaigns') @HttpCode(HttpStatus.OK) @StaffRoles('marketing')

@@ -32,6 +32,7 @@ import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
 import { JoshPromotions } from '../modules/integration/connector/josh/josh-promotions';
+import { JoshMarketingWorkflows } from '../modules/integration/connector/josh/josh-marketing-workflows';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
@@ -93,6 +94,7 @@ export class McpTools {
     private readonly staffPrices: StaffPrices,
     private readonly jagotaHistory: JagotaSyncHistoryImport,
     private readonly promotions: JoshPromotions,
+    private readonly workflows: JoshMarketingWorkflows,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -132,6 +134,16 @@ export class McpTools {
   }
 
   private marketing(server: McpServer, staff: McpStaff) {
+    server.registerTool('marketing_workflows', {
+      title: 'Marketing automations on josh (marketing)',
+      description: 'josh marketing workflows (trigger → steps → LINE / push / email): status (draft / active / paused), trigger, schedule, and for the last `days` how many customers were enrolled, still running, failed, converted and held out, plus the last scheduled run. Pass id for one workflow with its steps, enrollments by status, recent runs and failed sends. Read-only; changes happen in commerce-admin › Marketing workflows.',
+      inputSchema: { id: z.string().uuid().optional(), days: z.number().int().min(1).max(365).default(30) },
+      annotations: READ_ONLY,
+    }, async ({ id, days }) => {
+      if (!this.workflows.available) return json(NO_REPLICA);
+      return json(id ? await this.workflows.detail(id) : await this.workflows.list(days));
+    });
+
     server.registerTool('josh_promotions', {
       title: 'Promotions on the josh shop (marketing)',
       description: 'josh promotion mechanics: name, badge, window, state (running / scheduled / ended / sold_out / off), units sold vs cap, audience, SKU count; pass id for one promotion with its SKUs. shadow = how often commerce, re-pricing josh order lines, picked the same promotion josh did (must be ~100% before commerce owns promotions). Read-only; changes happen in commerce-admin › โปรโมชัน.',

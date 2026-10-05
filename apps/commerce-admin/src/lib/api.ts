@@ -693,6 +693,19 @@ export const promotionsApi = {
   remove: (id: string) => api.post<unknown>(`/josh/promotions/${id}/remove`, {}),
 };
 
+export interface WorkflowRow { id: string; name: string; status: 'draft' | 'active' | 'paused'; trigger_type: string; schedule: unknown; cooldown_days: number | null;
+  holdout_percent: number | null; conversion_window_days: number | null; updated_at: string; enrolled: number; running: number; failed: number; converted: number;
+  holdout: number; last_run_at: string | null; failed_runs: number }
+export const workflowsApi = {
+  list: (days: number) => api.get<WorkflowRow[]>(`/reports/marketing-workflows?days=${days}`),
+  detail: (id: string) => api.get<Record<string, unknown> & { enrollmentsByStatus: { status: string; n: number }[];
+    recentRuns: { fired_at: string; source: string; status: string; skip_reason: string | null; audience_count: number | null; enrolled_count: number | null; error_message: string | null }[];
+    recentFailures: { created_at: string; step_id: string; action_kind: string; detail: unknown }[] }>(`/reports/marketing-workflows/${id}`),
+  setState: (id: string, action: 'activate' | 'pause') => api.post<unknown>(`/josh/marketing-workflows/${id}/${action}`, {}),
+  /** josh's UpdateMarketingWorkflowDto fields; josh validates. */
+  update: (id: string, workflow: Record<string, unknown>) => api.post<unknown>(`/josh/marketing-workflows/${id}/update`, { workflow }),
+};
+
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
   items: Record<string, unknown>[]; total: number; page: number; limit: number }

@@ -155,6 +155,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - ดูใบแจ้งหนี้ (ค้าง/เลยกำหนด/ชำระแล้ว/ยกเลิก): josh › ใบแจ้งหนี้ · Credit notes / Credit backs / Payments มีอยู่แล้ว
 - ยังอยู่ที่ josh: ลูกค้าจ่ายใบแจ้งหนี้ (หน้าร้าน), cron เตือนใบแจ้งหนี้เลยกำหนด (ส่งแจ้งเตือนจริง)
 
+**Marketing workflows** — ปิดไว้ (default off)
+- Marketing › Marketing workflows: ดูทุก workflow + ผล (เข้า / กำลังไป / ล้มเหลว / ซื้อ) · เปิด/หยุด · แก้แบบ JSON → josh `internal/commerce/marketing-workflows` → MarketingWorkflowService · MCP `marketing_workflows`
+- การคัดลูกค้าเข้าและส่งข้อความยังเป็น cron ของ josh · ไม่มีปุ่มส่งทดสอบจาก commerce · ตัวแก้แบบกราฟยังอยู่ที่ josh
+- สวิตช์ josh `COMMERCE_OWNS_MARKETING_WORKFLOWS` ล็อกการสร้าง/แก้/เปิด/หยุดใน josh
+
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`
 - แก้โปร (สร้าง/แก้ชื่อ ป้าย ช่วงเวลา โควตา/เปิด-ปิด/ลบ): commerce-admin → josh `internal/commerce/promotions` → PromotionMechanicService (DTO แบบเข้มเดียวกับ josh) · Product Set และหน้าโปรยังอยู่ที่ josh

@@ -2,8 +2,9 @@ import type {
   MarketingTriggerConfig,
   MarketingTriggerType,
   MarketingWorkflowSchedule,
-} from './marketing.types';
+} from './shared-api';
 
+/** Resolve hours + minutes → total minutes (same rules as backend `marketing-duration`). */
 export function durationToMinutes(
   hours?: number | null,
   minutes?: number | null,
@@ -29,6 +30,7 @@ export function formatDurationLabel(hours?: number | null, minutes?: number | nu
   return `${m} นาที`;
 }
 
+/** Mirrors `defaultTriggerConfig` in `apps/backend/src/app/marketing-workflow/marketing-workflow.service.ts`. */
 export function defaultTriggerConfigFor(type: MarketingTriggerType): MarketingTriggerConfig {
   if (type === 'page_affinity') {
     return {
@@ -108,6 +110,7 @@ export const TRIGGER_TYPE_CARDS: Array<{
   },
 ];
 
+/** Short chips for the schedule strip (not the full `describeMarketingSchedule` sentence). */
 export function scheduleStripChips(schedule: MarketingWorkflowSchedule): string[] {
   if (!schedule) return ['ตลอดเวลา'];
   const chips: string[] = [];

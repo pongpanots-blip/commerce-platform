@@ -38,6 +38,7 @@ import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
 import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
+import { WorkflowEditor } from './pages/workflow-editor';
 import { JoshAdminLists } from './pages/JoshAdminLists';
 import { CsDesk } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
@@ -199,6 +200,8 @@ export function App() {
             <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
             <Route path="/marketing/promotions" element={<Promotions />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
+            <Route path="/marketing/workflows/new" element={<WorkflowEditor />} />
+            <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />
             <Route path="/josh-admin/:kind" element={<JoshAdminLists />} />
             <Route path="/cs" element={<CsDesk />} />
             <Route path="/livechat" element={<Livechat />} />

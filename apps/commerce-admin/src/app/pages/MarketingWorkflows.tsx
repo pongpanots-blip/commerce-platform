@@ -1,4 +1,5 @@
 import { FormEvent, Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { WorkflowRow, workflowsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -40,6 +41,7 @@ export function MarketingWorkflows() {
           <h1>Marketing workflows</h1>
           <p>ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh</p>
         </div>
+        <Link className="btn sm" to="/marketing/workflows/new">สร้าง workflow</Link>
         <label className="row" style={{ gap: 6 }}>ช่วง
           <select value={days} onChange={(e) => setDays(Number(e.target.value))}>{[7, 30, 90].map((d) => <option key={d} value={d}>{d} วัน</option>)}</select>
         </label>
@@ -63,7 +65,8 @@ export function MarketingWorkflows() {
                     <td>{when(w.last_run_at)}{w.failed_runs ? <div className="hint">ล้มเหลว {w.failed_runs} รอบ</div> : null}</td>
                     <td className="row" style={{ gap: 4 }}>
                       <button className="btn ghost sm" onClick={() => setOpen(open === w.id ? null : w.id)}>{open === w.id ? 'ซ่อน' : 'ดู'}</button>
-                      <button className="btn ghost sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>แก้</button>
+                      <Link className="btn ghost sm" to={`/marketing/workflows/${w.id}/edit`}>กราฟ</Link>
+                      <button className="btn ghost sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>แก้ JSON</button>
                       <button className={`btn sm ${w.status === 'active' ? 'ghost' : ''}`} disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? 'หยุด' : 'เปิด'}</button>
                     </td>
                   </tr>

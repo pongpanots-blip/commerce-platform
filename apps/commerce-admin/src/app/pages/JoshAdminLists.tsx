@@ -29,10 +29,10 @@ export const JOSH_LISTS: Record<string, ListDef> = {
     blank: { slug: '', name: '', is_active: false },
   },
   coupons: {
-    title: 'คูปอง', hint: 'สร้าง / แก้คูปอง (เปิด-ปิดอย่างเดียวทำที่ josh › Coupons ก็ได้)', list: '/coupon',
+    title: 'คูปอง', hint: 'สร้าง / แก้คูปอง · รหัสคูปองไม่เกิน 8 ตัวอักษร (กฎของ josh)', list: '/coupon',
     item: (id) => `/coupon/${id}`, update: 'PATCH', columns: ['coupon_code', 'title', 'status', 'is_active', 'discount_type', 'discount_value', 'global_used_count', 'start_date', 'end_date'],
     readOnly: ['global_used_count'],
-    blank: { coupon_code: '', title: '', discount_type: 'fixed', discount_value: 0, is_active: false },
+    blank: { coupon_code: '', title: '', discount_type: 'fixed', discount_value: 0, start_date: '', end_date: '', applicable_products_th: 'ทุกสินค้า', applicable_products_en: 'All products', is_active: false },
   },
   campaigns: {
     title: 'Campaigns', hint: 'แคมเปญ (ช่วงเวลาที่โปรและคูปองผูกด้วย)', list: '/campaigns',

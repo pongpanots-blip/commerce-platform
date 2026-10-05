@@ -1,3 +1,4 @@
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -11,7 +12,9 @@ import { mountMcp } from './mcp/mcp.http';
 async function bootstrap() {
   validateEnv(process.env);
 
-  const app = await NestFactory.create(AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
+  // Product / coupon images go to josh as base64 through /api/josh/admin-call (3.5 MB of files per call).
+  app.useBodyParser('json', { limit: '6mb' });
   // COMMERCE_CORS_ORIGINS is a comma-separated allowlist (no spaces), e.g.
   // "http://localhost:4403,http://localhost:4404" — add :4404 (commerce-portal
   // dev server) alongside :4403 (commerce-admin) when running the portal UI locally.

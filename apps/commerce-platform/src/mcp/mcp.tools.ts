@@ -30,6 +30,7 @@ import { JoshOrders, SYNC_STATES } from '../modules/integration/connector/josh/j
 import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/josh/josh-customers';
 import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
+import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -79,6 +80,7 @@ export class McpTools {
     private readonly joshCustomers: JoshCustomers,
     private readonly joshPrices: JoshPrices,
     private readonly jagotaShadow: JagotaShadow,
+    private readonly jagotaGateway: JagotaGateway,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -559,12 +561,13 @@ export class McpTools {
 
     server.registerTool('jagota_shadow', {
       title: 'Orders → Jagota through commerce: trial results (admin)',
-      description: 'Shadow mode before commerce sends orders to Jagota itself: josh keeps sending; commerce rebuilds each request and compares field by field. Match rate, which fields differ most, and the latest mismatches with josh vs commerce values. Read-only; nothing is sent.',
+      description: 'Orders reaching Jagota through commerce. Step 1 (shadow): josh keeps sending; commerce rebuilds each request and compares field by field — match rate, fields that differ most, latest mismatches. Step 2 (live, branches josh routes via JAGOTA_VIA_COMMERCE_BRANCHES): what commerce actually sent — sent / failed / retried counts and the latest failures. Read-only.',
       inputSchema: { days: z.number().int().min(1).max(90).default(7) },
       annotations: READ_ONLY,
     }, async ({ days }) => {
-      const [summary, mismatches] = await Promise.all([this.jagotaShadow.summary(days), this.jagotaShadow.list('mismatched', 1, 20)]);
-      return json({ summary, latestMismatches: mismatches.items });
+      const [summary, mismatches, live, liveFailures] = await Promise.all([this.jagotaShadow.summary(days), this.jagotaShadow.list('mismatched', 1, 20),
+        this.jagotaGateway.summary(days), this.jagotaGateway.list('failed', 1, 20)]);
+      return json({ shadow: { summary, latestMismatches: mismatches.items }, live: { summary: live, latestFailures: liveFailures.items } });
     });
 
     server.registerTool('shop_sales', {

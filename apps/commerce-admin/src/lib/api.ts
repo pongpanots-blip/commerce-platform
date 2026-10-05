@@ -658,3 +658,12 @@ export const jagotaShadowApi = {
   run: () => api.post<{ checked: number }>('/reports/jagota-shadow/run', {}),
   recheck: (joshSyncId: string) => api.post<ShadowCheck>(`/reports/jagota-shadow/recheck/${encodeURIComponent(joshSyncId)}`, {}),
 };
+
+export interface JagotaSend { id: string; orderReference: string; status: 'sending' | 'sent' | 'failed'; attempts: number; lastError: string | null;
+  docBook: string | null; docNo: string | null; durationMs: number | null; createdAt: string; updatedAt: string; request?: unknown; response?: unknown }
+export const jagotaGatewayApi = {
+  summary: (days: number) => api.get<{ enabled: boolean; days: number; total: number; sent: number; failed: number; sending: number; retried: number;
+    avg_ms: number | null; last_at: string | null }>(`/reports/jagota-gateway/summary?days=${days}`),
+  list: (status: string, page: number) => api.get<{ items: JagotaSend[]; total: number }>(`/reports/jagota-gateway?status=${status}&page=${page}`),
+  detail: (id: string) => api.get<JagotaSend>(`/reports/jagota-gateway/${id}`),
+};

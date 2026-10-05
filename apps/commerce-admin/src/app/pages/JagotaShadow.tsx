@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { jagotaShadowApi } from '../../lib/api';
+import { jagotaGatewayApi, jagotaShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const show = (v: unknown) => (v === undefined ? '—' : JSON.stringify(v));
@@ -96,6 +96,70 @@ export function JagotaShadow() {
           <button className="btn ghost sm" disabled={page >= Math.ceil(list.data.total / 50)} onClick={() => setPage(page + 1)}>ถัดไป</button>
         </div>
       )}
+      <GatewaySends />
     </div>
+  );
+}
+
+/**
+ * Step 2: orders josh routes through commerce (josh JAGOTA_VIA_COMMERCE_BRANCHES) — what commerce
+ * sent to Jagota, one row per order reference. Empty until josh routes a branch here.
+ */
+function GatewaySends() {
+  const [status, setStatus] = useState('');
+  const [open, setOpen] = useState<string | null>(null);
+  const summary = useAsync(() => jagotaGatewayApi.summary(7), []);
+  const list = useAsync(() => jagotaGatewayApi.list(status, 1), [status]);
+  const detail = useAsync(() => (open ? jagotaGatewayApi.detail(open) : Promise.resolve(null)), [open]);
+  const s = summary.data;
+  return (
+    <section style={{ marginTop: 28 }}>
+      <div className="page-head">
+        <div>
+          <h2>ส่งจริงผ่าน commerce</h2>
+          <p>order ของ branch ที่ josh เปิดให้ส่งผ่าน commerce (<span className="mono">JAGOTA_VIA_COMMERCE_BRANCHES</span>) · commerce ส่งไป Jagota แทน josh · ส่งซ้ำไม่ได้ (1 แถวต่อเลข order)
+            {s && <> · สถานะฝั่ง commerce: <span className={`badge ${s.enabled ? 'ok' : ''}`}>{s.enabled ? 'เปิด' : 'ปิด (josh ส่งเอง)'}</span></>}</p>
+        </div>
+      </div>
+      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
+      {s && (
+        <div className="stat-grid">
+          <div className="stat"><div className="label">ส่งสำเร็จ (7 วัน)</div><div className="value">{s.sent}</div><div className="hint">จาก {s.total} รายการ</div></div>
+          <div className="stat"><div className="label">ล้มเหลว</div><div className={`value${s.failed ? ' attn' : ''}`}>{s.failed}</div><div className="hint">josh จะลองใหม่เอง</div></div>
+          <div className="stat"><div className="label">ส่งมากกว่า 1 ครั้ง</div><div className="value">{s.retried}</div></div>
+          <div className="stat"><div className="label">เวลาเฉลี่ย</div><div className="value">{s.avg_ms == null ? '—' : `${(s.avg_ms / 1000).toFixed(1)}s`}</div><div className="hint">ล่าสุด {when(s.last_at)}</div></div>
+        </div>
+      )}
+      <div className="row" role="tablist" style={{ margin: '12px 0' }}>
+        {[['', 'ทั้งหมด'], ['failed', 'ล้มเหลว'], ['sent', 'สำเร็จ'], ['sending', 'กำลังส่ง']].map(([k, label]) => (
+          <button key={k} className={`btn sm ${status === k ? '' : 'ghost'}`} aria-selected={status === k} onClick={() => setStatus(k)}>{label}</button>
+        ))}
+      </div>
+      {list.data && (
+        <section className="panel">
+          {list.data.items.length ? (
+            <table>
+              <thead><tr><th>Shipment / order</th><th>สถานะ</th><th>ครั้ง</th><th>DOC</th><th>เวลา</th><th>ล่าสุด</th><th>ข้อผิดพลาด</th><th></th></tr></thead>
+              <tbody>{list.data.items.map((r) => (
+                <Fragment key={r.id}>
+                  <tr>
+                    <td className="mono">{r.orderReference}</td>
+                    <td><span className={`badge ${r.status === 'sent' ? 'ok' : r.status === 'failed' ? 'danger' : ''}`}>{r.status}</span></td>
+                    <td>{r.attempts}</td><td className="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</td>
+                    <td>{r.durationMs == null ? '—' : `${(r.durationMs / 1000).toFixed(1)}s`}</td><td>{when(r.updatedAt)}</td><td>{r.lastError ?? '—'}</td>
+                    <td><button className="btn ghost sm" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? 'ซ่อน' : 'ดู'}</button></td>
+                  </tr>
+                  {open === r.id && <tr><td colSpan={8}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                      <div><div className="hint">ส่งไป Jagota</div><pre className="payload">{JSON.stringify(detail.data.request, null, 2)}</pre></div>
+                      <div><div className="hint">Jagota ตอบ</div><pre className="payload">{JSON.stringify(detail.data.response, null, 2) ?? '—'}</pre></div>
+                    </div>)}</td></tr>}
+                </Fragment>
+              ))}</tbody>
+            </table>
+          ) : <div className="empty">ยังไม่มี order ที่ส่งผ่าน commerce</div>}
+        </section>
+      )}
+    </section>
   );
 }

@@ -78,7 +78,7 @@
 **เงิน / ความถูกต้อง**
 - **บั๊กที่มีอยู่แล้ว** (`commerce-platform-order.service.ts`, ปิดอยู่ด้วย `COMMERCE_PLATFORM_SYNC_ENABLED`): จองสต็อกใน commerce ก่อนเริ่ม transaction ของ josh และไม่มี API ยกเลิกการจอง → transaction ล้ม/josh ล่ม = สต็อกค้าง · แจ้ง commerce เฉพาะ `paid` ไม่แจ้งหมดเวลา/ยกเลิก → **ต้องแก้ก่อนเปิด flag**
 - การยืนยันจ่ายเงิน (`claimTransactionPaid`) กันซ้ำด้วยการเช็คสถานะก่อนหน้า — webhook KBank/Jagota และ reconcile cron แข่งกันได้ · ช่วงย้ายให้ฝั่งเดียวเป็นเจ้าของ webhook + reconcile
-- ส่ง order ไป ERP ไม่มี dedupe ฝั่ง ERP — ย้ายต้องพา `jagota_order_sync` ไปด้วย
+- ส่ง order ไป ERP: ERP ปฏิเสธเลข order ซ้ำ ("Magento Order Id is already used" ซึ่ง josh นับเป็นส่งแล้ว) แต่ไม่มีอะไรอื่นกันส่งซ้ำ — ย้ายต้องพา `jagota_order_sync` ไปด้วย
 - เลข credit back ใช้ `MAX+1` → commerce ออกเลขฝั่งเดียว
 - flash sale จองโควตาตอน checkout และคืนจาก ~6 จุด → ย้ายพร้อม checkout เท่านั้น
 - คูปองที่ workflow แจกต้อง idempotent ข้ามระบบ
@@ -131,4 +131,9 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - `dbd`: เรียก API กรมพัฒนาฯ ตอน onboarding (เส้นทางลูกค้า)
 - `erp-log`: อยู่ใน Mongo ของ josh ที่ commerce อ่านไม่ได้ · ฝั่ง commerce มี Inbound log ของตัวเองแล้ว
 - `refunds`: มีแค่หน้า "คำขอคืนเงินของฉัน" ของลูกค้า (หน้าร้าน)
+
+**ส่ง order ไป Jagota ผ่าน commerce (3 ขั้น)**
+1. ทดลองคู่กัน (shadow) — commerce สร้าง request ของ order ที่ josh ส่งแล้วเทียบทีละช่อง · ไม่ส่งอะไร · ERP › "ส่ง order ผ่าน commerce (ทดลอง)" · MCP `jagota_shadow` · `CRON_JAGOTA_SHADOW_ENABLED`
+2. ส่งจริงผ่าน commerce — josh ยังสร้าง request + gate + `jagota_order_sync` + retry เอง ย้ายแค่ HTTP call: josh `JAGOTA_VIA_COMMERCE_BRANCHES` (ปิด) → commerce `POST /api/v1/storefront/jagota/order-create` (API key ของ josh) → Jagota · commerce เก็บ 1 แถวต่อเลข order (`jagota_order_sends`) ส่งซ้ำไม่ได้: ส่งแล้ว = ตอบของเดิม, กำลังส่ง = in_flight · commerce ปิด/ล่ม → josh ส่งตรงเหมือนเดิม · ฝั่ง commerce เปิดด้วย `JAGOTA_GATEWAY_ENABLED` + `JAGOTA_NODEAPI_*`
+3. ย้ายประวัติ `jagota_order_sync` มา commerce — ยังไม่ทำ
 

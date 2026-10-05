@@ -54,6 +54,17 @@ export const BACKOFFICE_VIEWS: Record<string, View> = {
       c('cn_status', 'สถานะ', 'n.cn_status', 'status'), c('claim_reason', 'เหตุผลเคลม', 'n.claim_reason'), c('created_at', 'ออกเมื่อ', 'n.created_at', 'datetime')],
     search: ['n.cn_number', 'o.order_number', 'co.name'], status: 'n.cn_status', order: 'n.created_at',
   },
+  invoices: {
+    title: 'ใบแจ้งหนี้', joshPage: 'accounting/Invoices',
+    from: `invoices i LEFT JOIN orders o ON o.orders_id = i.order_id LEFT JOIN company co ON co.id = o.company_id`,
+    columns: [c('invoice_number', 'เลขใบแจ้งหนี้', 'i.invoice_number', 'code'), c('erp_inv', 'เลข ERP', "concat_ws('/', i.erp_inv_book, i.erp_inv_no)", 'code'),
+      c('order_number', 'Order', 'o.order_number', 'code'), COMPANY, c('payment_method', 'ชำระด้วย', 'i.payment_method', 'code'),
+      c('state', 'สถานะ', `CASE WHEN i.erp_invoice_cancelled THEN 'cancelled' WHEN i.is_paid THEN 'paid' WHEN i.due_date < current_date THEN 'overdue' ELSE 'open' END`, 'status'),
+      c('due_date', 'ครบกำหนด', 'i.due_date', 'date'), c('paid_at', 'ชำระเมื่อ', 'i.paid_at', 'datetime'), c('created_at', 'ออกเมื่อ', 'i.created_at', 'datetime')],
+    search: ['i.invoice_number', 'i.erp_inv_no', 'o.order_number', 'co.name'],
+    status: `CASE WHEN i.erp_invoice_cancelled THEN 'cancelled' WHEN i.is_paid THEN 'paid' WHEN i.due_date < current_date THEN 'overdue' ELSE 'open' END`,
+    order: 'i.created_at',
+  },
   credit_backs: {
     title: 'Credit backs', joshPage: 'accounting/CreditBacksAdmin',
     from: 'credit_backs b LEFT JOIN orders o ON o.orders_id = b.issued_from_order_id LEFT JOIN company co ON co.id = o.company_id',

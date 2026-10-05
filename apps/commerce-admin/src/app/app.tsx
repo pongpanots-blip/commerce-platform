@@ -66,6 +66,7 @@ const NAV = [
       { to: '/josh/payments', label: 'รายการชำระเงิน', end: false },
       { to: '/josh/credit_notes', label: 'Credit notes', end: false },
       { to: '/josh/credit_backs', label: 'Credit backs', end: false },
+      { to: '/josh/invoices', label: 'ใบแจ้งหนี้', end: false },
       { to: '/josh/coupons', label: 'Coupons', end: false },
       { to: '/josh/campaigns', label: 'Campaigns', end: false },
       { to: '/josh/segments', label: 'Segments', end: false },

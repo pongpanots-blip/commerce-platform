@@ -18,6 +18,9 @@ export const ERP_RELAY_EVENTS = {
   quotation: 'erp.quotation.pushed',
   quotationStatus: 'erp.quotation.status_changed',
   orderPeriods: 'erp.order_periods.pushed',
+  // Accounting webhooks josh takes outside /erp (CS-CRM claim → credit note, ERP invoice under order → credit back).
+  creditNote: 'erp.credit_note.claim_approved',
+  creditBack: 'erp.credit_back.invoice_received',
 } as const;
 export type ErpRelayEventType = (typeof ERP_RELAY_EVENTS)[keyof typeof ERP_RELAY_EVENTS];
 
@@ -48,7 +51,7 @@ export function orderPeriodSnapshotKey(body: unknown): string | null {
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;
 }
 
-const ID_KEYS = ['PRODUCT_CODE', 'SUP_CODE', 'product_code', 'DOC_NO', 'orderId', 'quotationId', 'CUSTOMER_CODE', 'CUST_CODE', 'COMPANY_CODE', 'TAX_ID'];
+const ID_KEYS = ['cnNumber', 'invoiceNumber', 'PRODUCT_CODE', 'SUP_CODE', 'product_code', 'DOC_NO', 'orderId', 'quotationId', 'CUSTOMER_CODE', 'CUST_CODE', 'COMPANY_CODE', 'TAX_ID'];
 
 /** Best-effort key for the audit row (lookups / dead-letter search); the platform validates the payload for real. */
 export function relayExternalId(body: unknown): string | null {

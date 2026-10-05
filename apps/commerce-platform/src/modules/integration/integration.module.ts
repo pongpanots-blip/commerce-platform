@@ -21,6 +21,7 @@ import { InventoryModule } from '../commerce/inventory/inventory.module';
 import { ErpFeedController } from './connector/erp/presentation/erp-feed.controller';
 import { ErpFeedService } from './connector/erp/ingest/erp-feed.service';
 import { ErpRelayController } from './connector/erp/presentation/erp-relay.controller';
+import { AccountingRelayController } from './connector/erp/presentation/accounting-relay.controller';
 import { ErpSimulatorController } from './connector/erp/presentation/erp-simulator.controller';
 import { ErpRelayService } from './connector/erp/ingest/erp-relay.service';
 
@@ -32,7 +33,7 @@ import { ErpRelayService } from './connector/erp/ingest/erp-relay.service';
  */
 @Module({
   imports: [TypeOrmModule.forFeature([Integration, ErpStubStock, ErpStubReservation, ErpIngestRecord]), MappingModule, SettingsModule, InventoryModule],
-  controllers: [IntegrationController, ErpStubStockController, ErpFeedController, ErpRelayController, ErpSimulatorController],
+  controllers: [IntegrationController, ErpStubStockController, ErpFeedController, ErpRelayController, AccountingRelayController, ErpSimulatorController],
   providers: [ConnectorRegistry, ExampleConnector, ErpStubConnector, ErpHttpClient, ErpConnector, ErpEventProcessor, ErpOrderPushSubscriber, IntegrationService, ErpIngestService, ErpFeedService, ErpRelayService],
   exports: [ConnectorRegistry, IntegrationService, TypeOrmModule, ErpHttpClient, ErpIngestService],
 })

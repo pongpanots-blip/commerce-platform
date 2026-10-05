@@ -150,6 +150,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - เอกสารภายใน (docs-web): josh › เอกสารภายใน อัปโหลด .md (≤ 90 KB จาก commerce) / ลบ → josh `internal/commerce/internal-docs` · สวิตช์ josh `COMMERCE_OWNS_INTERNAL_DOCS`
 - DBD ตอน onboarding: josh `DBD_VIA_COMMERCE=true` → commerce `GET /api/v1/storefront/dbd/juristic_person/:n` ส่งต่อคำตอบ DBD + เก็บคำตอบล่าสุด (`dbd_lookups`, ใช้ซ้ำ 24 ชม., DBD ล่มใช้ของเดิม) · commerce ล่ม/ไม่ตอบ → josh เรียก DBD ตรงเหมือนเดิม
 
+**บัญชี**
+- webhook ใบลดหนี้จากเคลม (`POST /api/credit-notes/claim-approved`, `X-Credit-Note-Secret`) และ credit back จากใบแจ้งหนี้ (`POST /api/credit-backs/invoice-received`, `X-Credit-Back-Secret`) รับที่ commerce ได้ path/header/secret เดียวกับ josh → เก็บไว้ทุกครั้ง → ส่งต่อ josh (`erp.credit_note.claim_approved` / `erp.credit_back.invoice_received`, retry + dead-letter) → josh สร้างใบด้วย service เดิม · เปิดใช้: ตั้ง `CREDIT_NOTE_INGEST_SECRET` / `CREDIT_BACK_INGEST_SECRET` ที่ commerce, เพิ่ม 2 event ใน subscription "josh shop", แล้วให้ nginx ส่ง 2 path นี้มา commerce ก่อน (josh สำรอง) · ต่างจากเดิม: ตอบ `{ received: true }` ไม่ใช่ใบที่สร้าง
+- ดูใบแจ้งหนี้ (ค้าง/เลยกำหนด/ชำระแล้ว/ยกเลิก): josh › ใบแจ้งหนี้ · Credit notes / Credit backs / Payments มีอยู่แล้ว
+- ยังอยู่ที่ josh: ลูกค้าจ่ายใบแจ้งหนี้ (หน้าร้าน), cron เตือนใบแจ้งหนี้เลยกำหนด (ส่งแจ้งเตือนจริง)
+
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`
 - แก้โปร (สร้าง/แก้ชื่อ ป้าย ช่วงเวลา โควตา/เปิด-ปิด/ลบ): commerce-admin → josh `internal/commerce/promotions` → PromotionMechanicService (DTO แบบเข้มเดียวกับ josh) · Product Set และหน้าโปรยังอยู่ที่ josh

@@ -20,7 +20,9 @@ import { JagotaShadowController } from './jagota/jagota-shadow.controller';
 import { JagotaShadowCheck } from './jagota/jagota-shadow-check.entity';
 import { JagotaOrderSend } from './jagota/jagota-order-send.entity';
 import { JagotaGateway } from './jagota/jagota-gateway';
-import { JagotaGatewayController, JagotaGatewayReportController } from './jagota/jagota-gateway.controller';
+import { JagotaGatewayController, JagotaGatewayReportController, JagotaSyncHistoryController } from './jagota/jagota-gateway.controller';
+import { JagotaSyncHistoryImport } from './jagota/jagota-sync-history';
+import { JagotaSyncHistory } from './jagota/jagota-sync-history.entity';
 import { StorefrontApiKeyGuard } from '../../../../storefront/storefront-api-key.guard';
 import { ApiKeyModule } from '../../../core/api-key/api-key.module';
 import { JoshActionsController } from './josh-actions.controller';
@@ -40,9 +42,9 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 
 /** Everything that reads josh's data (via its replica): the catalog copy and the offloaded heavy jobs (Task 9). */
 @Module({
-  imports: [TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck, JagotaOrderSend, PriceShadowCheck, StaffPrice]), WebhookSubscriptionModule, ApiKeyModule],
-  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController, JagotaShadowController, JagotaGatewayController, JagotaGatewayReportController, JoshBackofficeController, PriceShadowController, StaffPricesController],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, StorefrontApiKeyGuard],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices],
+  imports: [TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck, JagotaOrderSend, JagotaSyncHistory, PriceShadowCheck, StaffPrice]), WebhookSubscriptionModule, ApiKeyModule],
+  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController, JagotaShadowController, JagotaGatewayController, JagotaGatewayReportController, JagotaSyncHistoryController, JoshBackofficeController, PriceShadowController, StaffPricesController],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, StorefrontApiKeyGuard],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices],
 })
 export class JoshModule {}

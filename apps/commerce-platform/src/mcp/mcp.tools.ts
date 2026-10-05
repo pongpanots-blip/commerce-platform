@@ -31,6 +31,7 @@ import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/
 import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
+import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
 import { PriceShadow } from '../modules/integration/connector/josh/pricing/price-shadow';
@@ -89,6 +90,7 @@ export class McpTools {
     private readonly apiLogs: JoshApiLogs,
     private readonly priceShadow: PriceShadow,
     private readonly staffPrices: StaffPrices,
+    private readonly jagotaHistory: JagotaSyncHistoryImport,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -629,13 +631,15 @@ export class McpTools {
 
     server.registerTool('jagota_shadow', {
       title: 'Orders → Jagota through commerce: trial results (admin)',
-      description: 'Orders reaching Jagota through commerce. Step 1 (shadow): josh keeps sending; commerce rebuilds each request and compares field by field — match rate, fields that differ most, latest mismatches. Step 2 (live, branches josh routes via JAGOTA_VIA_COMMERCE_BRANCHES): what commerce actually sent — sent / failed / retried counts and the latest failures. Read-only.',
-      inputSchema: { days: z.number().int().min(1).max(90).default(7) },
+      description: 'Orders reaching Jagota through commerce. Step 1 (shadow): josh keeps sending; commerce rebuilds each request and compares field by field — match rate, fields that differ most, latest mismatches. Step 2 (live, branches josh routes via JAGOTA_VIA_COMMERCE_BRANCHES): what commerce actually sent — sent / failed / retried counts and the latest failures. Step 3 (history): the josh ERP send history (jagota_order_sync) copied into commerce — totals by sync status and the latest failed sends; pass orderNumber to see every send of one order. Read-only.',
+      inputSchema: { days: z.number().int().min(1).max(90).default(7), orderNumber: z.string().max(64).optional().describe('josh order number or ERP doc no. — history of that order only') },
       annotations: READ_ONLY,
-    }, async ({ days }) => {
-      const [summary, mismatches, live, liveFailures] = await Promise.all([this.jagotaShadow.summary(days), this.jagotaShadow.list('mismatched', 1, 20),
-        this.jagotaGateway.summary(days), this.jagotaGateway.list('failed', 1, 20)]);
-      return json({ shadow: { summary, latestMismatches: mismatches.items }, live: { summary: live, latestFailures: liveFailures.items } });
+    }, async ({ days, orderNumber }) => {
+      if (orderNumber) return json({ history: await this.jagotaHistory.list({ q: orderNumber, limit: 50 }) });
+      const [summary, mismatches, live, liveFailures, history, historyFailures] = await Promise.all([this.jagotaShadow.summary(days), this.jagotaShadow.list('mismatched', 1, 20),
+        this.jagotaGateway.summary(days), this.jagotaGateway.list('failed', 1, 20), this.jagotaHistory.summary(days), this.jagotaHistory.list({ status: 'failed', limit: 20 })]);
+      return json({ shadow: { summary, latestMismatches: mismatches.items }, live: { summary: live, latestFailures: liveFailures.items },
+        history: { summary: history, latestFailed: historyFailures.items } });
     });
 
     server.registerTool('shop_sales', {

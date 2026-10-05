@@ -9,6 +9,7 @@ import { JoshInsights } from './josh-insights';
 import { SystemHealthReport } from './system-health';
 import { RestaurantPlaces } from './restaurant-places';
 import { JoshErpLogs } from './josh-erp-logs';
+import { JoshPushCampaigns } from './josh-push-campaigns';
 import { JoshWinback } from './winback/josh-winback';
 import { JoshWinbackController } from './winback/josh-winback.controller';
 import { ShopReportsController } from './shop-reports.controller';
@@ -18,7 +19,7 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 @Module({
   imports: [TypeOrmModule.forFeature([JoshCatalogProduct]), WebhookSubscriptionModule],
   controllers: [ShopReportsController, JoshWinbackController],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns],
 })
 export class JoshModule {}

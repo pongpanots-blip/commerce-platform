@@ -28,6 +28,7 @@ import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReport
 import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
 import { JoshErpLogs } from './pages/JoshErpLogs';
 import { Winback } from './pages/Winback';
+import { PushCampaigns } from './pages/PushCampaigns';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -46,6 +47,7 @@ const NAV = [
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
+      { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
@@ -131,6 +133,7 @@ export function App() {
             <Route path="/reports/health" element={<HealthReportPage />} />
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
+            <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />

@@ -24,6 +24,7 @@ import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/conn
 import { SystemHealthReport } from '../modules/integration/connector/josh/system-health';
 import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
 import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
+import { JoshPushCampaigns } from '../modules/integration/connector/josh/josh-push-campaigns';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -67,6 +68,7 @@ export class McpTools {
     private readonly restaurants: RestaurantPlaces,
     private readonly erpLogs: JoshErpLogs,
     private readonly winback: JoshWinback,
+    private readonly push: JoshPushCampaigns,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -136,6 +138,22 @@ export class McpTools {
     }, async ({ page, limit, ...filters }) => {
       if (!this.restaurants.available) return json(NO_REPLICA);
       return json(await this.restaurants.list(filters, page, limit));
+    });
+
+    server.registerTool('push_campaigns', {
+      title: 'Push campaigns (josh)',
+      description: 'Marketing push / in-app campaigns sent from josh: KPIs and the latest campaigns (status, audience, sent/skipped/failed). Pass id for one campaign with its real delivery results per channel (push, in-app, email), clicks, by day and the top skip/fail reasons. Read-only — creating and sending stay in josh.',
+      inputSchema: {
+        id: z.string().uuid().optional().describe('one campaign → delivery results'),
+        limit: z.number().int().min(1).max(50).default(20),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, limit }) => {
+      if (!this.push.available) return json(NO_REPLICA);
+      if (id) return json(await this.push.delivery(id));
+      const [overview, rows] = await Promise.all([this.push.overview(), this.push.list()]);
+      return json({ overview, campaigns: rows.slice(0, limit).map((r) => ({ id: r.id, name: r.name, status: r.status, title: r.title,
+        audience: r.audience, ab_enabled: r.ab_enabled, scheduled_at: r.scheduled_at, sent_at: r.sent_at, stats: r.stats, last_error: r.last_error })) });
     });
 
     server.registerTool('competitor_prices', {

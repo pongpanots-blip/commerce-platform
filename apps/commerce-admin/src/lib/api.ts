@@ -550,3 +550,21 @@ export const winbackApi = {
   scorecard: () => api.get<WbEnvelope<{ reactivation: { total: number; won: number; rate: number }; timing: { avgDaysToFirstContact: number | null; avgDaysToFirstOrder: number | null } }>>('/reports/winback/scorecard'),
   leadSignals: () => api.get<WbEnvelope<{ leads: WbLead[]; stageMedianDays: Record<string, number> }>>('/reports/winback/lead-signals?limit=50'),
 };
+
+// josh push campaigns (read-only) — josh's own field names.
+export interface PushCampaign {
+  id: string; name: string; status: string; title: string; body: string; audience: { include: Record<string, string[]>; exclude: Record<string, string[]> };
+  ab_enabled: boolean; scheduled_at: string | null; sent_at: string | null; created_at: string; last_error: string | null;
+  stats: { queued: number; sent: number; skipped: number; failed: number; clicked: number };
+}
+export interface PushDelivery {
+  deliveryStats: null | { totals: { attempted: number; sent: number; skipped: number; failed: number; clicked: number; deliveryRate: number; clickRate: number };
+    byTypeChannel: { channel: string; attempted: number; sent: number; skipped: number; failed: number; clicked: number; clickRate: number }[];
+    topSkipAndFailReasons: { reason: string; count: number }[] };
+  note?: string;
+}
+export const pushCampaignApi = {
+  overview: () => api.get<{ campaigns: number; scheduled: number; sentToday: number; totalQueued: number; totalSent: number }>('/reports/push-campaigns/overview'),
+  list: () => api.get<PushCampaign[]>('/reports/push-campaigns'),
+  delivery: (id: string) => api.get<PushDelivery>(`/reports/push-campaigns/${id}/delivery`),
+};

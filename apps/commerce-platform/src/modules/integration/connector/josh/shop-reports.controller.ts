@@ -4,6 +4,7 @@ import { bangkokRange, JoshInsights, Period, PERIODS } from './josh-insights';
 import { NO_REPLICA, SystemHealthReport } from './system-health';
 import { parseRestaurantFilters, RestaurantPlaces } from './restaurant-places';
 import { ErpLogFilters, JoshErpLogs } from './josh-erp-logs';
+import { JoshPushCampaigns } from './josh-push-campaigns';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string }
 
@@ -24,11 +25,11 @@ function range(q: PeriodQuery) {
  * Read-only shop reports for commerce-admin (headless plan phase 1): the same
  * answers the MCP tools give, from josh's read replica — josh is not called.
  * Sales, health, order target group, josh's ERP log: admin only (the guard default).
- * Traffic and restaurants (Market Explorer): marketing too.
+ * Traffic, restaurants (Market Explorer) and push campaigns: marketing too.
  */
 @Controller('reports')
 export class ShopReportsController {
-  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs) {}
+  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs, private readonly push: JoshPushCampaigns) {}
 
   private replica() {
     if (!this.insights.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
@@ -109,4 +110,21 @@ export class ShopReportsController {
     if (!doc) throw new NotFoundException('ERP log not found (josh keeps them 14 days)');
     return doc;
   }
+
+  /** josh push campaigns, read-only (josh `GET /api/admin/push-campaigns*`). Creating and sending stay in josh. */
+  @Get('push-campaigns/overview')
+  @StaffRoles('marketing')
+  pushOverview() { this.replica(); return this.push.overview(); }
+
+  @Get('push-campaigns')
+  @StaffRoles('marketing')
+  pushList() { this.replica(); return this.push.list(); }
+
+  @Get('push-campaigns/:id')
+  @StaffRoles('marketing')
+  pushOne(@Param('id', ParseUUIDPipe) id: string) { this.replica(); return this.push.findOne(id); }
+
+  @Get('push-campaigns/:id/delivery')
+  @StaffRoles('marketing')
+  pushDelivery(@Param('id', ParseUUIDPipe) id: string) { this.replica(); return this.push.delivery(id); }
 }

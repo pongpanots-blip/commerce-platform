@@ -45,7 +45,8 @@ export class JoshErpLogs implements OnModuleDestroy {
 
   get configured() { return !!process.env.JOSH_MONGO_URL?.trim(); }
 
-  private async collection(): Promise<Collection> {
+  /** A collection in josh's log DB (josh_logs) — read-only user; also used for josh's notification_deliveries. */
+  async logsCollection(name: string): Promise<Collection> {
     if (!this.client) {
       // Standalone mongo (no replica set) → primary. Small pool, fail fast when josh's Mongo is down.
       this.client = new MongoClient(process.env.JOSH_MONGO_URL!.trim(), {
@@ -53,8 +54,10 @@ export class JoshErpLogs implements OnModuleDestroy {
       });
     }
     // db name from the URL path, else josh's default
-    return this.client.db(process.env.JOSH_MONGO_DB?.trim() || undefined).collection('api_logs');
+    return this.client.db(process.env.JOSH_MONGO_DB?.trim() || undefined).collection(name);
   }
+
+  private collection() { return this.logsCollection('api_logs'); }
 
   async list(f: ErpLogFilters, page = 1, limit = 50) {
     const c = await this.collection();

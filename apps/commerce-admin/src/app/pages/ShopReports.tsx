@@ -99,6 +99,7 @@ export function SalesReport() {
             <Stat label="ลูกค้าที่ซื้อ" value={num(t.buying_customers)} extra={<span className="hint">{num(t.buying_companies)} บริษัท · ใหม่ {num(t.new_customers)}</span>} />
             <Stat label="ส่วนลดรวม" value={baht(t.discounts_inc_vat)} />
             <Stat label="รอชำระ / ยกเลิก" value={`${num(t.awaiting_payment)} / ${num(t.cancelled)}`} />
+            {t.settled_without_payment > 0 && <Stat label="ไม่นับเป็นยอดขาย (สถานะจ่าย/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ)" value={baht(t.settled_without_payment_value)} extra={<span className="hint">{num(t.settled_without_payment)} ออเดอร์ · ดูที่ Orders (josh)</span>} />}
             <Stat label="คืนเงิน" value={baht(t.refunds.amount)} extra={<span className="hint">{num(t.refunds.n)} รายการ</span>} />
           </div>
           <div className="panel" style={{ marginTop: 16 }}>

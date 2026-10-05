@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone } from './winback/pii.helper';
+import { paidOrderSql } from './josh-insights';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 /** josh order statuses where the order should already be at Jagota (paid onward, not cancelled). */
@@ -25,7 +26,7 @@ export const SYNC_STATES = {
   sent: `js.sync_status IN ('sent','confirmed','reserved','skipped')`,
 } as const;
 
-export interface OrderFilters { search?: string; status?: string; sync?: string; companyId?: string; from?: string; to?: string }
+export interface OrderFilters { search?: string; status?: string; sync?: string; companyId?: string; from?: string; to?: string; payment?: string }
 
 export function orderWhere(f: OrderFilters): { where: string; params: unknown[] } {
   const params: unknown[] = [];
@@ -37,6 +38,11 @@ export function orderWhere(f: OrderFilters): { where: string; params: unknown[] 
   if (f.sync) {
     if (!(f.sync in SYNC_STATES)) throw new BadRequestException(`sync must be one of: ${Object.keys(SYNC_STATES).join(', ')}`);
     w.push(SYNC_STATES[f.sync as keyof typeof SYNC_STATES]);
+  }
+  if (f.payment) {
+    // 'missing' = a paid / fulfilled status but no successful non-test payment (not counted as sales)
+    if (f.payment !== 'missing') throw new BadRequestException('payment must be missing');
+    w.push(`o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND NOT ${paidOrderSql('o')}`);
   }
   if (f.companyId) { if (!UUID.test(f.companyId)) throw new BadRequestException('companyId must be a uuid'); w.push(`o.company_id = ${add(f.companyId)}`); }
   for (const [k, op] of [['from', '>='], ['to', '<']] as const) {
@@ -65,7 +71,8 @@ export class JoshOrders {
     const [[row], byStatus] = await Promise.all([
       this.replica.query(`SELECT count(*)::int AS total, ${sync},
           count(*) FILTER (WHERE o.status::text = 'payment_pending')::int AS awaiting_payment,
-          COALESCE(sum(o.total_price) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA}), 0)::float AS paid_value
+          COALESCE(sum(o.total_price) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND ${paidOrderSql('o')}), 0)::float AS paid_value,
+          count(*) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND NOT ${paidOrderSql('o')})::int AS settled_without_payment
         FROM orders o LEFT JOIN company c ON c.id = o.company_id ${LATEST_SYNC} ${where}`, params),
       this.replica.query(`SELECT o.status::text AS status, count(*)::int AS n FROM orders o LEFT JOIN company c ON c.id = o.company_id ${LATEST_SYNC} ${where} GROUP BY 1 ORDER BY 2 DESC`, params),
     ]);

@@ -582,6 +582,7 @@ export class McpTools {
       inputSchema: {
         order: z.string().max(64).optional().describe('order number or id → full detail'),
         sync: z.enum(Object.keys(SYNC_STATES) as [keyof typeof SYNC_STATES]).optional().describe('Jagota state'),
+        payment: z.enum(['missing']).optional().describe('missing = paid / delivered status but no successful payment (not counted as sales)'),
         status: z.string().max(30).optional(), search: z.string().max(100).optional().describe('order number, customer code, PO or company'),
         from: z.string().max(40).optional(), to: z.string().max(40).optional(),
         limit: z.number().int().min(1).max(100).default(30),

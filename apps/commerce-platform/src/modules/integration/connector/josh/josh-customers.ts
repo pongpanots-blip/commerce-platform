@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone, maskRegisterNumber } from './winback/pii.helper';
+import { paidOrderSql } from './josh-insights';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -92,8 +93,8 @@ export class JoshCustomers {
       this.replica.query(`SELECT application_type::text AS application_type, status::text AS status, requested_credit_limit::float AS requested_credit_limit,
           requested_term_days, approved_credit_limit::float AS approved_credit_limit, approved_term_days, reject_reason, created_at, reviewed_at
         FROM credit_term_applications WHERE company_id = $1 ORDER BY created_at DESC LIMIT 10`, [id]),
-      this.replica.query(`SELECT count(*)::int AS orders, COALESCE(sum(total_price) FILTER (WHERE status::text IN ('paid','preparing','shipped','delivered')), 0)::float AS paid_value,
-          max(create_date) AS last_order_at FROM orders WHERE company_id = $1`, [id]),
+      this.replica.query(`SELECT count(*)::int AS orders, COALESCE(sum(o.total_price) FILTER (WHERE o.status::text IN ('paid','preparing','shipped','delivered') AND ${paidOrderSql('o')}), 0)::float AS paid_value,
+          max(o.create_date) AS last_order_at FROM orders o WHERE o.company_id = $1`, [id]),
     ]);
     return {
       ...company,

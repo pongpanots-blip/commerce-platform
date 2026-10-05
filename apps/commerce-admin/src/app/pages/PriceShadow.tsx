@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { orderQuoteApi, priceShadowApi } from '../../lib/api';
+import { priceShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const when = (v: string | null) => (v ? new Date(v).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '—');
@@ -80,63 +80,6 @@ export function PriceShadow() {
           <button className="btn ghost sm" disabled={page >= Math.ceil(list.data.total / 50)} onClick={() => setPage(page + 1)}>ถัดไป</button>
         </div>
       )}
-      <OrderQuotes />
     </div>
-  );
-}
-
-const FIELD: Record<string, string> = { total_price: 'ยอดสุทธิ', subtotal_ex_vat: 'ยอดก่อน VAT', vat_amount: 'VAT', delivery_fee: 'ค่าส่ง',
-  discount_amount: 'ส่วนลด (ก่อน VAT)', discount_inc_vat: 'ส่วนลด (รวม VAT)', product_discount_ex_vat: 'ส่วนลดสินค้า', gross_ex_vat: 'ยอดก่อนส่วนลด' };
-
-/**
- * Checkout step 1 (shadow quote): each josh order's totals rebuilt with josh's checkout math — VAT split,
- * groups by fulfillment type, delivery fee rule, discount spread. Line prices are the section above.
- */
-function OrderQuotes() {
-  const [filter, setFilter] = useState('mismatched');
-  const [busy, setBusy] = useState(false);
-  const summary = useAsync(() => orderQuoteApi.summary(7), []);
-  const list = useAsync(() => orderQuoteApi.list(filter, 1), [filter]);
-  const s = summary.data;
-  async function runNow() {
-    setBusy(true);
-    try { await orderQuoteApi.run(); summary.reload(); list.reload(); } finally { setBusy(false); }
-  }
-  return (
-    <section style={{ marginTop: 28 }}>
-      <div className="page-head">
-        <div>
-          <h2>ยอดรวม order · commerce คิดคู่กับ josh</h2>
-          <p>commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (VAT ค่าส่ง ส่วนลด ยอดสุทธิ) แล้วเทียบ · ส่วนลดคูปองใช้ตัวเลขที่ josh คิด · ไม่ส่งอะไรให้ josh</p>
-        </div>
-        <button className="btn sm" disabled={busy} onClick={runNow}>{busy ? 'กำลังคิด…' : 'คิดตอนนี้'}</button>
-      </div>
-      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
-      {s && (
-        <div className="stat-grid">
-          <div className="stat"><div className="label">ตรงกัน (7 วัน)</div><div className={`value${s.matchRate != null && s.matchRate < 100 ? ' attn' : ''}`}>{s.matchRate == null ? '—' : `${s.matchRate}%`}</div><div className="hint">{s.matched} / {s.checked} order</div></div>
-          <div className="stat"><div className="label">ไม่ตรง</div><div className="value">{s.mismatched}</div>
-            <div className="hint">{s.mismatchByField.map((f) => `${FIELD[f.field] ?? f.field} ${f.n}`).join(' · ') || '—'}</div></div>
-        </div>
-      )}
-      <div className="row" style={{ margin: '12px 0' }}>
-        {[['mismatched', 'ไม่ตรง'], ['matched', 'ตรง'], ['all', 'ทั้งหมด']].map(([k, label]) => (
-          <button key={k} className={`btn sm ${filter === k ? '' : 'ghost'}`} aria-pressed={filter === k} onClick={() => setFilter(k)}>{label}</button>
-        ))}
-      </div>
-      {list.data && (
-        <section className="panel">
-          {list.data.items.length ? (
-            <table>
-              <thead><tr><th>Order</th><th>สั่งเมื่อ</th><th>ช่องที่ต่าง (josh → commerce)</th><th>หมายเหตุ</th></tr></thead>
-              <tbody>{list.data.items.map((r) => (
-                <tr key={r.id}><td className="mono">{r.orderNumber ?? r.joshOrderId}</td><td>{new Date(r.orderedAt).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}</td>
-                  <td>{r.matched ? <span className="badge ok">ตรง</span> : r.diffs.map((d) => `${FIELD[d.field] ?? d.field}: ${d.josh} → ${d.commerce}`).join(' · ')}</td><td>{r.note ?? '—'}</td></tr>
-              ))}</tbody>
-            </table>
-          ) : <div className="empty">ไม่มีรายการ</div>}
-        </section>
-      )}
-    </section>
   );
 }

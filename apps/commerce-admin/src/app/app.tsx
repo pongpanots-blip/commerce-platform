@@ -131,6 +131,10 @@ const NAV = [
       { to: '/j/order/import', label: 'นำเข้า order', end: true },
       { to: '/j/batch-sticker', label: 'พิมพ์ sticker', end: false },
       { to: '/j/kbank/testing-console', label: 'KBank testing console', end: false },
+      { to: '/j/invoices', label: 'Overdue invoices', end: false },
+      { to: '/j/credit-notes', label: 'Credit notes', end: false },
+      { to: '/j/credit-backs', label: 'Credit backs', end: false },
+      { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', end: false },
     ],
   },
   {

@@ -17,6 +17,10 @@ const EditCategory = lazy(() => import('./app/page/category/EditCategory'));
 const EditTrustedBrand = lazy(() => import('./app/page/trusted-brand/EditTrustedBrand'));
 const EditTrustedUser = lazy(() => import('./app/page/trusted-user/EditTrustedUser'));
 const KbankTestingConsole = lazy(() => import('./app/page/kbank/KbankTestingConsole'));
+const InvoicesOverdue = lazy(() => import('./app/page/CS/InvoicesOverdue'));
+const CreditTermsAdmin = lazy(() => import('./app/page/CS/CreditTermsAdmin'));
+const CreditNotesAdmin = lazy(() => import('./app/page/accounting/CreditNotesAdmin'));
+const CreditBacksAdmin = lazy(() => import('./app/page/accounting/CreditBacksAdmin'));
 const MarketingBannerTargeting = lazy(() => import('./app/page/marketing/MarketingBannerTargeting'));
 const MarketingJourneyFunnel = lazy(() => import('./app/page/marketing/MarketingJourneyFunnel'));
 const MarketingLinksPage = lazy(() => import('./app/page/marketing/MarketingLinksPage'));
@@ -92,6 +96,10 @@ export function JoshAdminApp() {
             <Route path="membership-tiers" element={<MembershipTierConfig />} />
             <Route path="brands" element={<BrandList />} />
             <Route path="kbank/testing-console" element={<KbankTestingConsole />} />
+            <Route path="invoices" element={<InvoicesOverdue />} />
+            <Route path="credit-notes" element={<CreditNotesAdmin />} />
+            <Route path="credit-backs" element={<CreditBacksAdmin />} />
+            <Route path="credit-terms" element={<CreditTermsAdmin />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

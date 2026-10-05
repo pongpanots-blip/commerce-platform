@@ -17,6 +17,7 @@ const AREAS: { path: RegExp; marketing: boolean }[] = [
   { path: /^\/(membership-tiers|trusted-user|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, marketing: false },
   { path: /^\/(orders|shipments|payment\/kbank\/testing)(\/|$)/, marketing: false },
   { path: /^\/cs-admin\//, marketing: false },
+  { path: /^\/(credit-notes|credit-backs)(\/|$)/, marketing: false },
 ];
 const METHODS = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];
 /** josh takes JSON bodies up to 5 MB; base64 adds a third — keep all files of one call under 3.5 MB. */

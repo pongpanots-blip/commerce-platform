@@ -10,7 +10,7 @@
 | **commerce** | ระบบหลัก (system of record) + หลังบ้าน: สินค้า ราคา โปรโมชัน สต็อก ลูกค้า/บริษัท order การชำระเงิน บัญชี ERP/Jagota รายงาน marketing engine AI | รับการ**เขียน**ทั้งหมด · ส่ง event ให้ platform |
 | **josh** | หน้าร้าน (shop-web, landing, mobile API) + CMS + login + ตัวกลางให้หน้าบ้าน (BFF) | **อ่านจากสำเนาในเครื่องตัวเอง**ที่ commerce ส่ง event มาอัปเดต — ไม่เรียก commerce ตอนลูกค้าเปิดหน้า · เรียก commerce สดเฉพาะ "สั่งซื้อ/จ่ายเงิน" |
 
-ข้อตกลงที่ต้องยอมรับ: หลังย้าย checkout แล้ว commerce ล่ม = ดูสินค้าได้แต่สั่งซื้อไม่ได้ → commerce ต้อง HA ก่อนถึงขั้นนั้น
+~~ข้อตกลงที่ต้องยอมรับ: หลังย้าย checkout แล้ว commerce ล่ม = ดูสินค้าได้แต่สั่งซื้อไม่ได้ → commerce ต้อง HA ก่อนถึงขั้นนั้น~~ → ตัดสินแล้ว: checkout อยู่ที่ josh ถาวร (ดู **checkout / orders**) commerce ล่ม josh ยังขายได้
 
 ## 1. ข้อเท็จจริงที่กำหนดแผน
 
@@ -165,10 +165,9 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - พิจารณาคำขอวงเงิน: มีแล้ว (josh › Credit terms)
 - สวิตช์ josh `COMMERCE_OWNS_CUSTOMERS` ล็อกการแก้เหล่านี้ใน josh · ลูกค้าแก้โปรไฟล์บริษัทตัวเองและการรวมบัญชียังเหมือนเดิม
 
-**checkout / orders** (3 ขั้น: shadow quote → dual-write → สลับ)
-1. shadow quote — ทำแล้ว (ปิดไว้): commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (สำเนา `checkout/order-totals.ts`: แยก VAT ต่อหน่วย, กลุ่มตามประเภทการส่ง, ค่าส่ง 100 เมื่อกลุ่มต่ำกว่า 2,500 ก่อน VAT, กระจายส่วนลดแบบเศษมากสุด) แล้วเทียบ 8 ช่อง · ราคาแต่ละบรรทัดเทียบใน price shadow · ส่วนลดคูปอง/เครดิตใช้ตัวเลขของ josh · รายงานร้าน › ราคา: commerce คิดคู่กัน (ส่วนล่าง) · MCP `price_shadow` (`orderTotals`) · `CRON_ORDER_QUOTE_SHADOW_ENABLED`
-2. สำเนา order — ทำแล้ว (ปิดไว้): commerce เก็บทุก order + บรรทัดของ josh (`josh_orders`, `josh_order_lines`, ชื่อช่องแบบ josh) · ดึงย้อนหลังทั้งหมดและอ่าน order ที่ยังเปลี่ยนได้ซ้ำทุกรอบ (`CRON_JOSH_ORDER_COPY_ENABLED`) · josh `ORDERS_COPY_TO_COMMERCE=true` แจ้งทันทีหลัง checkout แบบไม่รอ (2 วินาที) → commerce คัดลอกทันที · checkout ของ josh ไม่ขึ้นกับ commerce
-3. สลับให้ commerce เป็นคนคิดราคาและสร้าง order — ยังไม่ทำ: รอ price shadow + order totals shadow ตรง ~100% ต่อเนื่องบนข้อมูลจริง (ยังไม่มีข้อมูล) · ทางที่จะใช้: commerce มี checkout API ของตัวเองอยู่แล้ว (`/api/v1/storefront/checkout`) แต่ทางเดิมของ josh (`COMMERCE_PLATFORM_SYNC_ENABLED`) ทำให้ checkout ล้มเมื่อ commerce ล่ม — ต้องเพิ่มทางสำรองก่อนเปิด
+**checkout / orders** — ตัดสินแล้ว (2026-10-05): **checkout อยู่ที่ josh ถาวร** — josh คิดราคา/ยอดรวม สร้าง order, split shipment, การชำระเงิน (บัตร/QR) และ KBank reconcile cron · commerce รับสำเนา order แล้วเป็นคนส่งไป ERP · ไม่มี shadow เทียบยอด (เอาออกแล้ว; ตาราง `order_quote_checks` ยังค้างใน DB ไม่มีโค้ดใช้)
+1. สำเนา order — ทำแล้ว (ปิดไว้): commerce เก็บทุก order + บรรทัดของ josh (`josh_orders`, `josh_order_lines`, ชื่อช่องแบบ josh) · ดึงย้อนหลังและอ่าน order ที่ยังเปลี่ยนได้ซ้ำทุกรอบ (`CRON_JOSH_ORDER_COPY_ENABLED`) · josh `ORDERS_COPY_TO_COMMERCE=true` แจ้งทันทีหลัง checkout แบบไม่รอ (2 วินาที) · checkout ของ josh ไม่ขึ้นกับ commerce
+2. ส่ง ERP ผ่าน commerce — ทำแล้ว (ปิดไว้): josh สร้าง request `add-order-create` เหมือนเดิม แล้วให้ commerce ส่ง (`JAGOTA_GATEWAY_ENABLED` ฝั่ง commerce, `JAGOTA_VIA_COMMERCE_BRANCHES` ฝั่ง josh ทีละสาขาหรือ `*`) · commerce ล่ม/ไม่ตอบใน 40 วินาที → josh ส่งตรงเหมือนเดิม · ไม่ซ้ำเพราะ commerce กันซ้ำตามเลข order และ ERP ปฏิเสธเลขซ้ำ
 
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`

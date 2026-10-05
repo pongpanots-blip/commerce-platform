@@ -690,3 +690,12 @@ export const apiLogsApi = {
   stats: (q: Record<string, string>) => api.get<ApiLogStats>(`/reports/api-logs/stats?${new URLSearchParams(q)}`),
   detail: (id: string) => api.get<ApiLogDetail>(`/reports/api-logs/${encodeURIComponent(id)}`),
 };
+
+/** Ask josh to act (josh's own services and rules do the work; off on josh unless COMMERCE_ACTIONS_ENABLED). */
+export const joshActionsApi = {
+  reviewCredit: (id: string, b: { status: string; approved_credit_limit?: number; approved_term_days?: number; reject_reason?: string; accounting_remark?: string }) =>
+    api.post<unknown>(`/josh/credit-applications/${id}/review`, b),
+  approveAccess: (id: string, role: string) => api.post<unknown>(`/josh/admin-access/${id}/approve`, { role }),
+  rejectAccess: (id: string, reason: string) => api.post<unknown>(`/josh/admin-access/${id}/reject`, { reason }),
+  setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
+};

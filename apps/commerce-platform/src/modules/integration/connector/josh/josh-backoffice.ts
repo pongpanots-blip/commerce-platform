@@ -89,7 +89,7 @@ export const BACKOFFICE_VIEWS: Record<string, View> = {
   coupons: {
     title: 'Coupons', joshPage: 'coupon',
     from: 'coupons cp LEFT JOIN campaigns cg ON cg.id = cp.campaign_id',
-    columns: [c('coupon_code', 'โค้ด', 'cp.coupon_code', 'code'), c('title', 'ชื่อ', 'cp.title'), c('campaign_name', 'แคมเปญ', 'cg.name'),
+    columns: [c('id', 'id', 'cp.id', 'code'), c('coupon_code', 'โค้ด', 'cp.coupon_code', 'code'), c('title', 'ชื่อ', 'cp.title'), c('campaign_name', 'แคมเปญ', 'cg.name'),
       c('coupon_type', 'ประเภท', 'cp.coupon_type'), c('distribution_type', 'แจกแบบ', 'cp.distribution_type'), c('discount_type', 'ลดแบบ', 'cp.discount_type'),
       c('discount_value', 'ส่วนลด', 'cp.discount_value::float', 'number'), c('minimum_order_amount', 'ขั้นต่ำ', 'cp.minimum_order_amount::float', 'money'),
       c('maximum_discount_amount', 'ลดสูงสุด', 'cp.maximum_discount_amount::float', 'money'), c('usage_type', 'ใช้ได้', 'cp.usage_type'),

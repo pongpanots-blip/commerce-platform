@@ -204,7 +204,7 @@ export class JoshInsights {
     return {
       counts: Object.fromEntries(counts.map((c) => [c.kind, c.n])),
       jagotaOrderSyncErrors: jagotaErrors,
-      notAvailable: 'HTTP request logs / 5xx counts and ERP request logs are kept in josh\'s Mongo (api_logs), which commerce cannot read.',
+      notAvailable: 'HTTP request logs / 5xx counts are not read from josh (ERP request logs are: see joshErpInbound).',
     };
   }
 }

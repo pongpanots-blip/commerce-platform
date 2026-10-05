@@ -491,15 +491,15 @@ export async function downloadFile(path: string, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+/** josh `RestaurantPlaceListItemDto` / `RestaurantPlaceListResponseDto`, same field names. */
 export interface RestaurantRow {
-  id: string; name: string; name_th: string | null; name_en: string | null; district: string | null; category: string | null;
-  lat: number; lng: number; rating: number | null; review_count: number | null; price_range: string | null;
-  is_enriched: boolean; dine_in: boolean | null; takeaway: boolean | null; delivery: boolean | null;
-  popular_times_today: number[] | null; winback_account_id: string | null; winback_customer_code: string | null;
+  id: string; name: string; nameTh: string | null; nameEn: string | null; district: string | null; category: string | null;
+  lat: number; lng: number; rating: number | null; reviewCount: number | null; priceRange: string | null; isEnriched: boolean;
+  popularTimesToday: number[] | null; estimatedTables: number | null; winbackAccountId: string | null; winbackCustomerCode: string | null;
 }
 export interface RestaurantList {
   items: RestaurantRow[]; page: number; limit: number;
-  summary: { total_count: number; top_categories: { name: string; count: number }[]; top_districts: { name: string; count: number }[] };
+  summary: { totalCount: number; topCategories: { name: string; count: number }[]; topDistricts: { name: string; count: number }[] };
 }
 export interface TargetgroupRow {
   cust_code: string; total_skus_ordered: number; ot_skus_ordered: number; ot_skus_with_active_period: number;
@@ -512,4 +512,10 @@ export const marketApi = {
   restaurantsCsv: (f: Record<string, string | number | boolean | undefined>) => downloadFile(`/reports/restaurants/export?${query(f)}`, 'restaurant-places.csv'),
   targetgroup: (f: { minShipmentsPerWeek?: number; custCode?: string; limit: number; offset: number }) =>
     api.get<{ total: number; items: TargetgroupRow[] }>(`/reports/order-targetgroup?${query(f)}`),
+};
+
+export interface JoshErpLogRow { id: string; endpoint: string; method: string; statusCode: number; isSuccess: boolean; durationMs: number; summary?: string; createdAt: string }
+export const joshErpLogApi = {
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshErpLogRow[]; total: number; page: number; limit: number }>(`/reports/erp-logs?${query(f)}`),
+  get: (id: string) => api.get<Record<string, unknown>>(`/reports/erp-logs/${id}`),
 };

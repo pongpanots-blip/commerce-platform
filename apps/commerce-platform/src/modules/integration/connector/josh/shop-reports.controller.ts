@@ -3,6 +3,7 @@ import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorato
 import { bangkokRange, JoshInsights, Period, PERIODS } from './josh-insights';
 import { NO_REPLICA, SystemHealthReport } from './system-health';
 import { parseRestaurantFilters, RestaurantPlaces } from './restaurant-places';
+import { ErpLogFilters, JoshErpLogs } from './josh-erp-logs';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string }
 
@@ -22,12 +23,12 @@ function range(q: PeriodQuery) {
 /**
  * Read-only shop reports for commerce-admin (headless plan phase 1): the same
  * answers the MCP tools give, from josh's read replica — josh is not called.
- * Sales, health, order target group: admin only (the guard default).
+ * Sales, health, order target group, josh's ERP log: admin only (the guard default).
  * Traffic and restaurants (Market Explorer): marketing too.
  */
 @Controller('reports')
 export class ShopReportsController {
-  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces) {}
+  constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs) {}
 
   private replica() {
     if (!this.insights.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
@@ -87,5 +88,25 @@ export class ShopReportsController {
     const row = await this.restaurants.detail(id);
     if (!row) throw new NotFoundException(`restaurant place ${id} not found`);
     return row;
+  }
+
+  private mongo() {
+    if (!this.erpLogs.configured) throw new ServiceUnavailableException('josh\'s log database is not connected on this server (JOSH_MONGO_URL).');
+  }
+
+  /** josh's ERP inbound log (josh `GET /api/erp-logs`), from josh's Mongo — payloads include prices and customer codes. */
+  @Get('erp-logs')
+  erpLogList(@Query() q: ErpLogFilters & { page?: string; limit?: string }) {
+    if (q.status && !['ok', 'fail', 'all'].includes(q.status)) throw new BadRequestException('status must be ok, fail or all');
+    this.mongo();
+    return this.erpLogs.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+  }
+
+  @Get('erp-logs/:id')
+  async erpLogDetail(@Param('id') id: string) {
+    this.mongo();
+    const doc = await this.erpLogs.get(id);
+    if (!doc) throw new NotFoundException('ERP log not found (josh keeps them 14 days)');
+    return doc;
   }
 }

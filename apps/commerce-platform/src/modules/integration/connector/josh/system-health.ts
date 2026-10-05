@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DeliveryMonitor } from '../../webhook-subscription/application/delivery-monitor';
 import { JoshInsights, Range } from './josh-insights';
+import { JoshErpLogs } from './josh-erp-logs';
 
 const COMMERCE_FAILURES_SQL = `
   SELECT (SELECT count(*) FROM webhook_deliveries WHERE status = 'failed' AND updated_at >= $1 AND updated_at < $2)::int AS deliveries_dead_lettered,
@@ -14,7 +15,7 @@ export const NO_REPLICA = { available: false, reason: 'Shop data is read from jo
 /** "Is anything broken now, and what failed in a period" — one answer for the MCP tool and the admin report page. */
 @Injectable()
 export class SystemHealthReport {
-  constructor(private readonly db: DataSource, private readonly monitor: DeliveryMonitor, private readonly insights: JoshInsights) {}
+  constructor(private readonly db: DataSource, private readonly monitor: DeliveryMonitor, private readonly insights: JoshInsights, private readonly erpLogs: JoshErpLogs) {}
 
   async report(range: Range) {
     const [problemsNow, [commerce]] = await Promise.all([
@@ -25,6 +26,10 @@ export class SystemHealthReport {
     if (this.insights.available) {
       try { josh = await this.insights.failures(range); } catch (error) { josh = { available: false, reason: `josh replica query failed: ${error instanceof Error ? error.message : error}` }; }
     }
-    return { period: range.label, now: { ok: problemsNow.length === 0, problems: problemsNow.map((p) => p.message) }, commerce, josh };
+    let joshErpInbound: unknown = { available: false, reason: 'josh\'s log database is not connected (JOSH_MONGO_URL).' };
+    if (this.erpLogs.configured) {
+      try { joshErpInbound = await this.erpLogs.summary(range.from, range.to); } catch (error) { joshErpInbound = { available: false, reason: `josh log query failed: ${error instanceof Error ? error.message : error}` }; }
+    }
+    return { period: range.label, now: { ok: problemsNow.length === 0, problems: problemsNow.map((p) => p.message) }, commerce, josh, joshErpInbound };
   }
 }

@@ -86,6 +86,19 @@ const COLUMNS = `p.id, COALESCE(p.name_th, p.name_en, '') AS name, p.name_th, p.
 const WINBACK_JOIN = 'LEFT JOIN LATERAL (SELECT id, customer_code FROM winback_account WHERE restaurant_place_id = p.id LIMIT 1) wa ON TRUE';
 const ORDER = 'ORDER BY p.name_th ASC NULLS LAST, p.name_en ASC, p.id';
 
+/** Rough seating capacity from public review volume — display-only heuristic, same as josh `estimateTables`. */
+export const estimateTables = (reviewCount: number | null) =>
+  reviewCount == null || reviewCount <= 0 ? null : Math.max(5, Math.min(200, Math.round(Math.sqrt(reviewCount) * 2)));
+
+type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+/** Row → josh's `RestaurantPlaceListItemDto`, field for field, so the two can be compared side by side. */
+export const toListItem = (r: Row) => ({
+  id: r.id, name: r.name, nameTh: r.name_th, nameEn: r.name_en, district: r.district, category: r.category,
+  lat: r.lat ?? 0, lng: r.lng ?? 0, rating: r.rating, reviewCount: r.review_count, priceRange: r.price_range,
+  isEnriched: r.is_enriched, popularTimesToday: r.popular_times_today ?? null, estimatedTables: estimateTables(r.review_count),
+  winbackAccountId: r.winback_account_id ?? null, winbackCustomerCode: r.winback_customer_code ?? null,
+});
+
 export const MAX_EXPORT_ROWS = 50_000;
 const csvCell = (v: unknown) => {
   if (v === null || v === undefined) return '';
@@ -119,14 +132,24 @@ export class RestaurantPlaces {
                 COALESCE((SELECT json_agg(t) FROM (SELECT district AS name, count(*)::int AS count FROM f WHERE district IS NOT NULL GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5) t), '[]') AS top_districts`,
         summaryWhere.params),
     ]);
-    return { items: rows, summary, page, limit };
+    return {
+      items: rows.map(toListItem),
+      summary: { totalCount: summary.total_count, topCategories: summary.top_categories, topDistricts: summary.top_districts },
+      page, limit,
+    };
   }
 
   async detail(id: string, now = Date.now()) {
     const [row] = await this.replica.query(
       `SELECT ${COLUMNS}, p.source, p.popular_times, p.opening_hours, p.enriched_at, p.google_place_id, p.fsq_id
          FROM restaurant_place p ${WINBACK_JOIN} WHERE p.id = $2`, [bangkokDayKey(now), id]);
-    return row ?? null;
+    if (!row) return null;
+    // josh's RestaurantPlaceDetailDto
+    return {
+      ...toListItem(row), source: row.source, popularTimes: row.popular_times, openingHours: row.opening_hours,
+      serviceOptions: { dineIn: row.dine_in, takeaway: row.takeaway, delivery: row.delivery },
+      enrichedAt: row.enriched_at ? new Date(row.enriched_at as string).toISOString() : null,
+    };
   }
 
   async csv(f: RestaurantFilters, now = Date.now()) {

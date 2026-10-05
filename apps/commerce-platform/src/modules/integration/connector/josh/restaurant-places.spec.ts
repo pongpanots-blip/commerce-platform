@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { bangkokDayKey, parseBusyWindow, parseRestaurantFilters, restaurantWhere } from './restaurant-places';
+import { bangkokDayKey, estimateTables, toListItem, parseBusyWindow, parseRestaurantFilters, restaurantWhere } from './restaurant-places';
 
 describe('restaurant places (Market Explorer)', () => {
   it('parses busy windows like josh', () => {
@@ -27,5 +27,15 @@ describe('restaurant places (Market Explorer)', () => {
     expect(where).toContain('NOT EXISTS (SELECT 1 FROM winback_account');
     // no filters → no placeholders, so a query without the day column binds nothing
     expect(restaurantWhere({}, 'monday')).toEqual({ where: '', params: [] });
+  });
+
+  it('answers with josh\'s RestaurantPlaceListItemDto field names', () => {
+    const item = toListItem({ id: 'x', name: 'a', name_th: 'a', name_en: null, district: null, category: null, lat: null, lng: 1, rating: 4.5,
+      review_count: 100, price_range: '฿', is_enriched: false, popular_times_today: null, winback_account_id: null, winback_customer_code: null });
+    expect(Object.keys(item)).toEqual(['id', 'name', 'nameTh', 'nameEn', 'district', 'category', 'lat', 'lng', 'rating', 'reviewCount', 'priceRange',
+      'isEnriched', 'popularTimesToday', 'estimatedTables', 'winbackAccountId', 'winbackCustomerCode']);
+    expect(item.lat).toBe(0); // josh: null coords → 0
+    expect(estimateTables(100)).toBe(20);
+    expect(estimateTables(0)).toBeNull();
   });
 });

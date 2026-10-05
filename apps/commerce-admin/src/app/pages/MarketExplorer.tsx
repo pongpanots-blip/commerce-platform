@@ -20,7 +20,7 @@ export function MarketExplorer() {
   function submit(e: FormEvent) { e.preventDefault(); setPage(1); setFilters(draft); }
   const set = (k: keyof Filters) => (e: { target: HTMLInputElement }) =>
     setDraft({ ...draft, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
-  const total = data?.summary.total_count ?? 0;
+  const total = data?.summary.totalCount ?? 0;
   const maxPage = Math.max(1, Math.ceil(total / LIMIT));
 
   async function csv() {
@@ -66,24 +66,25 @@ export function MarketExplorer() {
         <>
           <p className="hint">
             {total.toLocaleString('th-TH')} ร้าน
-            {data.summary.top_categories.length > 0 && <> · ประเภท: {data.summary.top_categories.map((c) => `${c.name} (${c.count})`).join(', ')}</>}
-            {data.summary.top_districts.length > 0 && <> · เขต: {data.summary.top_districts.map((c) => `${c.name} (${c.count})`).join(', ')}</>}
+            {data.summary.topCategories.length > 0 && <> · ประเภท: {data.summary.topCategories.map((c) => `${c.name} (${c.count})`).join(', ')}</>}
+            {data.summary.topDistricts.length > 0 && <> · เขต: {data.summary.topDistricts.map((c) => `${c.name} (${c.count})`).join(', ')}</>}
           </p>
           <section className="panel">
             {data.items.length ? (
               <table>
-                <thead><tr><th>ร้าน</th><th>เขต</th><th>ประเภท</th><th>rating</th><th>รีวิว</th><th>ราคา</th><th>วันนี้ 08–23</th><th>ฝ่ายขาย</th></tr></thead>
+                <thead><tr><th>ร้าน</th><th>เขต</th><th>ประเภท</th><th>rating</th><th>รีวิว</th><th>โต๊ะ (ประมาณ)</th><th>ราคา</th><th>วันนี้ 08–23</th><th>ฝ่ายขาย</th></tr></thead>
                 <tbody>
                   {data.items.map((r) => (
                     <tr key={r.id}>
-                      <td>{r.name}{r.name_en && r.name_th && <div className="hint">{r.name_en}</div>}</td>
+                      <td>{r.name}{r.nameEn && r.nameTh && <div className="hint">{r.nameEn}</div>}</td>
                       <td>{r.district ?? '—'}</td>
                       <td>{r.category ?? '—'}</td>
                       <td>{r.rating ?? '—'}</td>
-                      <td>{r.review_count ?? '—'}</td>
-                      <td>{r.price_range ?? '—'}</td>
-                      <td><Spark curve={r.popular_times_today} /></td>
-                      <td>{r.winback_customer_code ? <span className="badge ok">{r.winback_customer_code}</span> : <span className="badge muted">ยังไม่มี</span>}</td>
+                      <td>{r.reviewCount ?? '—'}</td>
+                      <td>{r.estimatedTables ?? '—'}</td>
+                      <td>{r.priceRange ?? '—'}</td>
+                      <td><Spark curve={r.popularTimesToday} /></td>
+                      <td>{r.winbackCustomerCode ? <span className="badge ok">{r.winbackCustomerCode}</span> : <span className="badge muted">ยังไม่มี</span>}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -26,6 +26,7 @@ import { AiConnectors } from './pages/AiConnectors';
 import { ErpSimulator } from './pages/ErpSimulator';
 import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReports';
 import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
+import { JoshErpLogs } from './pages/JoshErpLogs';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -53,6 +54,7 @@ const NAV = [
     group: 'ERP hub',
     links: [
       { to: '/erp/inbound-log', label: 'Inbound log', end: false },
+      { to: '/erp/josh-logs', label: 'ERP log ของ josh', end: false },
       { to: '/erp/webhook-dead-letter', label: 'Dead letter', end: false },
       { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
       { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
@@ -132,6 +134,7 @@ export function App() {
             <Route path="/marketing/scraped-catalog" element={<ScrapedCatalog />} />
             <Route path="/marketing/competitor-prices" element={<CompetitorPrices />} />
             <Route path="/ai/connectors" element={<AiConnectors />} />
+            <Route path="/erp/josh-logs" element={<JoshErpLogs />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
             <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />

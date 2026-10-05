@@ -23,6 +23,7 @@ import { InventoryLevel } from '../modules/commerce/inventory/infrastructure/inv
 import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/connector/josh/josh-insights';
 import { SystemHealthReport } from '../modules/integration/connector/josh/system-health';
 import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
+import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -63,6 +64,7 @@ export class McpTools {
     private readonly insights: JoshInsights,
     private readonly health: SystemHealthReport,
     private readonly restaurants: RestaurantPlaces,
+    private readonly erpLogs: JoshErpLogs,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -465,6 +467,26 @@ export class McpTools {
     }, async ({ period, fromDate, toDate }) => {
       if (!this.insights.available) return json(NO_REPLICA);
       return json(await this.insights.sales(bangkokRange(period, Date.now(), fromDate, toDate)));
+    });
+
+    server.registerTool('josh_erp_logs', {
+      title: 'ERP calls received by josh (admin)',
+      description: 'What the ERP sent to josh (josh /api/erp/*) and whether josh accepted it: list by endpoint (e.g. products/qty, orders/status), ok/fail, time window (max 7 days, default last 24h; josh keeps 14 days), free-text search on codes (PRODUCT_CODE, ORDER_NO, CUST_CODE...). Pass id to get one call with its request/response payload.',
+      inputSchema: {
+        id: z.string().max(40).optional().describe('one log id from a previous list → full payload'),
+        endpoint: z.string().max(100).optional().describe('e.g. products/qty, products/price, orders/status, customers'),
+        status: z.enum(['ok', 'fail', 'all']).default('all'),
+        from: z.string().max(40).optional().describe('ISO date-time'),
+        to: z.string().max(40).optional().describe('ISO date-time'),
+        q: z.string().max(100).optional().describe('search, e.g. a product code or order number'),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(50).default(20),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, page, limit, ...filters }) => {
+      if (!this.erpLogs.configured) return json({ available: false, reason: 'josh\'s log database is not connected on this server (JOSH_MONGO_URL).' });
+      if (id) return json((await this.erpLogs.get(id)) ?? { found: false, note: 'josh keeps ERP logs 14 days' });
+      return json(await this.erpLogs.list(filters, page, limit));
     });
 
     server.registerTool('system_health', {

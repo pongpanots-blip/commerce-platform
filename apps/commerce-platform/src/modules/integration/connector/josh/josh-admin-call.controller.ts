@@ -33,24 +33,29 @@ export class JoshAdminCallController {
   constructor(private readonly josh: JoshActions) {}
 
   @Post() @HttpCode(HttpStatus.OK)
-  async call(@Body() b: AdminCallBody, @Req() req: StaffRequest) {
-    const method = String(b?.method ?? '').toUpperCase();
-    const path = String(b?.path ?? '');
-    if (!METHODS.includes(method) || !path.startsWith('/') || path.includes('..') || path.length > 300) throw new BadRequestException('method and a josh path (/coupon, …) required');
-    const area = AREAS.find((a) => a.path.test(path));
-    if (!area) throw new ForbiddenException(`${path} is not a josh admin route commerce drives`);
-    if (!area.marketing && req.staff.role !== 'admin') throw new ForbiddenException('admin only');
-    const files = (b.files ?? []).slice(0, 10);
-    for (const f of files) if (!f?.field || !f.filename || typeof f.base64 !== 'string') throw new BadRequestException('files: { field, filename, base64 }');
-    if (files.reduce((n, f) => n + f.base64.length * 0.75, 0) > MAX_RELAY_FILES_BYTES) throw new BadRequestException('files: 3.5 MB per save at most');
-    const r = await this.josh.run<{ status: number; data: unknown }>('admin-call', 'call', { method, path, query: b.query, body: b.body, files: files.length ? files : undefined },
-      { userId: req.staff.userId, email: req.staff.email }, 'admin');
-    if (r.status >= 400) {
-      const d = r.data as { message?: unknown; error?: { message?: unknown } } | string | null;
-      const m = typeof d === 'string' ? d : d?.message ?? d?.error?.message ?? r.status;
-      const message = `josh: ${Array.isArray(m) ? m.join(', ') : String(m)}`;
-      throw r.status === 403 ? new ForbiddenException(message) : new BadRequestException(message);
-    }
-    return r.data;
+  call(@Body() b: AdminCallBody, @Req() req: StaffRequest) {
+    return joshAdminCall(this.josh, { userId: req.staff.userId, email: req.staff.email, role: req.staff.role }, b, 'admin');
   }
+}
+
+/** Shared by commerce-admin and MCP: check the path and role, call josh, unwrap josh's answer (a josh 4xx becomes the same error). */
+export async function joshAdminCall(josh: JoshActions, actor: { userId: string; email: string; role: string }, b: AdminCallBody, via: string): Promise<unknown> {
+  const method = String(b?.method ?? '').toUpperCase();
+  const path = String(b?.path ?? '');
+  if (!METHODS.includes(method) || !path.startsWith('/') || path.includes('..') || path.length > 300) throw new BadRequestException('method and a josh path (/coupon, …) required');
+  const area = AREAS.find((a) => a.path.test(path));
+  if (!area) throw new ForbiddenException(`${path} is not a josh admin route commerce drives`);
+  if (!area.marketing && actor.role !== 'admin') throw new ForbiddenException('admin only');
+  const files = (b.files ?? []).slice(0, 10);
+  for (const f of files) if (!f?.field || !f.filename || typeof f.base64 !== 'string') throw new BadRequestException('files: { field, filename, base64 }');
+  if (files.reduce((n, f) => n + f.base64.length * 0.75, 0) > MAX_RELAY_FILES_BYTES) throw new BadRequestException('files: 3.5 MB per save at most');
+  const r = await josh.run<{ status: number; data: unknown }>('admin-call', 'call', { method, path, query: b.query, body: b.body, files: files.length ? files : undefined },
+    { userId: actor.userId, email: actor.email }, via);
+  if (r.status >= 400) {
+    const d = r.data as { message?: unknown; error?: { message?: unknown } } | string | null;
+    const m = typeof d === 'string' ? d : d?.message ?? d?.error?.message ?? r.status;
+    const message = `josh: ${Array.isArray(m) ? m.join(', ') : String(m)}`;
+    throw r.status === 403 ? new ForbiddenException(message) : new BadRequestException(message);
+  }
+  return r.data;
 }

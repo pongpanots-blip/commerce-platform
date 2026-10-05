@@ -32,6 +32,8 @@ import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
 import { JoshPromotions } from '../modules/integration/connector/josh/josh-promotions';
+import { JoshActions } from '../modules/integration/connector/josh/josh-actions';
+import { joshAdminCall } from '../modules/integration/connector/josh/josh-admin-call.controller';
 import { OrderQuoteShadow } from '../modules/integration/connector/josh/checkout/order-quote-shadow';
 import { JoshMarketingWorkflows } from '../modules/integration/connector/josh/josh-marketing-workflows';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
@@ -44,6 +46,24 @@ import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connect
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 const WRITE = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false };
+
+/** josh admin routes behind marketing_list / marketing_save; `off` = what a new one is created with. */
+const MARKETING_KINDS: Record<'workflow' | 'coupon' | 'segment' | 'campaign' | 'product_set' | 'promotion_page', { path: string; update: 'PATCH' | 'PUT'; off?: Record<string, unknown> }> = {
+  workflow: { path: '/marketing-workflows', update: 'PATCH' },
+  coupon: { path: '/coupon', update: 'PATCH', off: { is_active: false } },
+  segment: { path: '/user-segments', update: 'PATCH', off: { is_active: false } },
+  campaign: { path: '/campaigns', update: 'PATCH', off: { is_active: false } },
+  product_set: { path: '/admin/promotion-product-sets', update: 'PATCH' },
+  promotion_page: { path: '/promotion-pages', update: 'PUT', off: { is_active: false } },
+};
+
+/** josh lists come as an array, `{ data }`, `{ data: { items } }` or `{ items }`. */
+function rowsOf(answer: unknown): Record<string, unknown>[] {
+  const a = answer as { data?: unknown; items?: unknown } | null;
+  const d = a?.data as { items?: unknown; data?: unknown } | undefined;
+  for (const c of [a, d, d?.items, d?.data, a?.items]) if (Array.isArray(c)) return c as Record<string, unknown>[];
+  return [];
+}
 const CONFIRM = z.string().max(100).optional()
   .describe('Leave empty first: you get a preview + confirmCode. Show the preview to the user; only after they explicitly agree, call again with the same arguments and this confirmCode.');
 /** Same arguments → same hash, whatever order the client sent them in. */
@@ -97,6 +117,7 @@ export class McpTools {
     private readonly promotions: JoshPromotions,
     private readonly workflows: JoshMarketingWorkflows,
     private readonly orderQuotes: OrderQuoteShadow,
+    private readonly joshActions: JoshActions,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -136,6 +157,24 @@ export class McpTools {
   }
 
   private marketing(server: McpServer, staff: McpStaff) {
+    server.registerTool('segment_preview', {
+      title: 'Preview who is in a customer segment (marketing)',
+      description: 'Ask josh how many customers a segment rule matches (a count — no customer details), before saving it with marketing_save kind=segment. `rule` uses josh\'s user-segment fields (rule_type, rule_config / definition — copy the shape of an existing segment from marketing_list kind=segment). Nothing is saved.',
+      inputSchema: { rule: z.record(z.string(), z.unknown()) },
+      annotations: READ_ONLY,
+    }, async ({ rule }) => json(await joshAdminCall(this.joshActions, { userId: staff.userId, email: staff.email, role: staff.role }, { method: 'POST', path: '/user-segments/preview', body: rule }, 'mcp')));
+
+    server.registerTool('marketing_list', {
+      title: 'Marketing setup on josh: coupons, segments, campaigns, product sets, promotion pages (marketing)',
+      description: 'Lists what marketing has set up in josh, as josh returns it (josh field names): coupons, user segments, campaigns, product sets (the SKU groups promotions use) and promotion landing pages. Use the ids with marketing_save to change one. Promotions → josh_promotions; workflows → marketing_workflows.',
+      inputSchema: { kind: z.enum(['coupon', 'segment', 'campaign', 'product_set', 'promotion_page']), search: z.string().max(100).optional() },
+      annotations: READ_ONLY,
+    }, async ({ kind, search }) => {
+      const answer = await joshAdminCall(this.joshActions, { userId: staff.userId, email: staff.email, role: staff.role }, { method: 'GET', path: MARKETING_KINDS[kind].path, query: kind === 'coupon' ? { limit: 200 } : undefined }, 'mcp');
+      const rows = rowsOf(answer).filter((r) => !search || JSON.stringify(r).toLowerCase().includes(search.toLowerCase()));
+      return json({ kind, count: rows.length, items: rows.slice(0, 100) });
+    });
+
     server.registerTool('marketing_workflows', {
       title: 'Marketing automations on josh (marketing)',
       description: 'josh marketing workflows (trigger → steps → LINE / push / email): status (draft / active / paused), trigger, schedule, and for the last `days` how many customers were enrolled, still running, failed, converted and held out, plus the last scheduled run. Pass id for one workflow with its steps, enrollments by status, recent runs and failed sends. Read-only; changes happen in commerce-admin › Marketing workflows.',
@@ -355,6 +394,43 @@ export class McpTools {
 
   private writes(server: McpServer, staff: McpStaff, clientId: string) {
     const actor = { sub: staff.userId, role: staff.role };
+    const joshActor = { userId: staff.userId, email: staff.email, role: staff.role };
+
+    server.registerTool('marketing_save', {
+      title: 'Create or edit marketing setup on josh — always switched off (needs confirmation)',
+      description: 'Create (no id) or edit (with id) a marketing workflow, promotion, coupon, segment, campaign, product set, promotion page or push campaign draft. `data` uses josh\'s own field names and rules (josh validates and answers with its reason if something is wrong) — read an existing one first (marketing_workflows, josh_promotions, marketing_list) and copy its shape. Anything new is created switched off / as a draft; this tool never switches anything on, activates a workflow or sends a push — a person does that in commerce-admin after checking it.',
+      inputSchema: {
+        kind: z.enum(['workflow', 'promotion', 'coupon', 'segment', 'campaign', 'product_set', 'promotion_page', 'push_campaign']),
+        id: z.string().uuid().optional().describe('edit this one; omit to create'),
+        data: z.record(z.string(), z.unknown()).describe('josh fields to set'),
+        confirmCode: CONFIRM,
+      },
+      annotations: WRITE,
+    }, async (args) => {
+      const { kind, id, data } = args;
+      const switchesOn = Object.entries(data).find(([k, v]) => (['is_active', 'active'].includes(k) && v === true) || (k === 'status' && v === 'active'));
+      if (switchesOn) return { ...json({ status: 'rejected', reason: `${switchesOn[0]}=${String(switchesOn[1])}: switching on / activating is done by a person in commerce-admin, not from MCP.` }), isError: true };
+      if (kind === 'push_campaign' && id) return { ...json({ status: 'rejected', reason: 'push campaigns: MCP creates drafts only; edit / schedule / send in commerce-admin.' }), isError: true };
+      const def = kind === 'promotion' || kind === 'push_campaign' ? null : MARKETING_KINDS[kind];
+      const body = !id && def?.off ? { ...data, ...def.off } : data;
+      return this.twoStep(staff, clientId, 'marketing_save', args,
+        async () => ({ action: `${id ? 'edit' : 'create (switched off)'} ${kind}${id ? ` ${id}` : ''} in josh`, data: body, note: 'josh checks the data when it is saved; switching on stays in commerce-admin' }),
+        async () => {
+          if (kind === 'promotion') return this.joshActions.run('promotions', id ? 'update' : 'create', id ? { id, changes: body } : { mechanic: { ...body, is_active: false } }, joshActor, 'mcp');
+          if (kind === 'push_campaign') return this.joshActions.run('push-campaigns', 'create', { campaign: body }, joshActor, 'mcp');
+          return joshAdminCall(this.joshActions, joshActor, { method: id ? def!.update : 'POST', path: id ? `${def!.path}/${id}` : def!.path, body }, 'mcp');
+        });
+    });
+
+    server.registerTool('marketing_workflow_pause', {
+      title: 'Pause a marketing workflow (needs confirmation)',
+      description: 'Stop a josh marketing workflow from enrolling and messaging customers (customers already in it get no further steps until it is switched on again in commerce-admin).',
+      inputSchema: { id: z.string().uuid(), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'marketing_workflow_pause', args,
+      async () => ({ action: 'pause marketing workflow', workflow: await this.workflows.detail(args.id).then((w) => { const r = w as Record<string, unknown>; return { id: r.id, name: r.name, status: r.status }; }).catch(() => ({ id: args.id })) }),
+      () => this.joshActions.run('marketing-workflows', 'pause', { id: args.id }, joshActor, 'mcp')));
+
 
     server.registerTool('research_create_topic', {
       title: 'Create a research topic (needs confirmation)',

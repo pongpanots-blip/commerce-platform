@@ -745,6 +745,7 @@ export const joshActionsApi = {
   removeSupplier: (id: string) => api.post<unknown>(`/josh/suppliers/${id}/remove`, {}),
   uploadDoc: (d: { category: string; title?: string; filename: string; content: string }) => api.post<unknown>('/josh/internal-docs', d),
   removeDoc: (id: string) => api.post<unknown>(`/josh/internal-docs/${id}/remove`, {}),
+  updateCustomer: (kind: 'users' | 'branches' | 'companies', id: string, changes: Record<string, unknown>) => api.post<unknown>(`/josh/customers/${kind}/${id}/update`, { changes }),
 };
 
 export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;

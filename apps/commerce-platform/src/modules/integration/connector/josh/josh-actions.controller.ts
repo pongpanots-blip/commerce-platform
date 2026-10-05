@@ -120,6 +120,28 @@ export class JoshActionsController {
   removeDoc(@Param('id', ParseUUIDPipe) id: string, @Req() req: StaffRequest) {
     return this.josh.run('internal-docs', 'remove', { id }, this.as(req), 'admin');
   }
+
+  /** Customer data (COMMERCE_OWNS_CUSTOMERS): josh's CS-admin / company services validate with their own DTOs. */
+  @Post('customers/users/:id/update') @HttpCode(HttpStatus.OK)
+  updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() b: { changes?: unknown }, @Req() req: StaffRequest) {
+    return this.josh.run('customers', 'update_user', { userId: id, changes: plain(b?.changes) }, this.as(req), 'admin');
+  }
+
+  @Post('customers/branches/:id/update') @HttpCode(HttpStatus.OK)
+  updateBranch(@Param('id', ParseUUIDPipe) id: string, @Body() b: { changes?: unknown }, @Req() req: StaffRequest) {
+    return this.josh.run('customers', 'update_branch', { branchId: id, changes: plain(b?.changes) }, this.as(req), 'admin');
+  }
+
+  @Post('customers/companies/:id/sales-rep') @HttpCode(HttpStatus.OK)
+  assignSales(@Param('id', ParseUUIDPipe) id: string, @Body() b: { salesUserId?: string | null }, @Req() req: StaffRequest) {
+    return this.josh.run('customers', 'assign_sales', { companyId: id, salesUserId: b?.salesUserId ?? null }, this.as(req), 'admin');
+  }
+
+  /** Company master data incl. credit limit / term (josh: admin roles only). */
+  @Post('customers/companies/:id/update') @HttpCode(HttpStatus.OK)
+  updateCompany(@Param('id', ParseUUIDPipe) id: string, @Body() b: { changes?: unknown }, @Req() req: StaffRequest) {
+    return this.josh.run('customers', 'update_company', { companyId: id, changes: plain(b?.changes) }, this.as(req), 'admin');
+  }
 }
 
 const plain = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});

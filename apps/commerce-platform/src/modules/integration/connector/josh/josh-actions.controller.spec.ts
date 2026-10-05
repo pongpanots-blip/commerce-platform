@@ -33,4 +33,21 @@ describe('JoshActionsController — back-office actions', () => {
     await c.updateProduct(ID, { fields: ['x'] as never }, req);
     expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: {} }, expect.anything(), 'admin');
   });
+
+  it('customer edits map to josh customers actions; suppliers and docs too', async () => {
+    await c.updateUser(ID, { changes: { mobile_phone: '0812345678' } }, req);
+    await c.updateBranch(ID, { changes: ['x'] as never }, req);
+    await c.updateCompany(ID, { changes: { credit_limit: 50000 } }, req);
+    await c.assignSales(ID, {}, req);
+    await c.removeSupplier(ID, req);
+    await c.uploadDoc({ category: 'api', filename: 'a.md', content: '# a' }, req);
+    expect(josh.run.mock.calls.map((call) => (call as unknown[]).slice(0, 3))).toEqual([
+      ['customers', 'update_user', { userId: ID, changes: { mobile_phone: '0812345678' } }],
+      ['customers', 'update_branch', { branchId: ID, changes: {} }],
+      ['customers', 'update_company', { companyId: ID, changes: { credit_limit: 50000 } }],
+      ['customers', 'assign_sales', { companyId: ID, salesUserId: null }],
+      ['suppliers', 'remove', { id: ID }],
+      ['internal-docs', 'upload', { category: 'api', title: undefined, filename: 'a.md', content: '# a' }],
+    ]);
+  });
 });

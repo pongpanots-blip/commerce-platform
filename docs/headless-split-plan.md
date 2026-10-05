@@ -160,6 +160,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - การคัดลูกค้าเข้าและส่งข้อความยังเป็น cron ของ josh · ไม่มีปุ่มส่งทดสอบจาก commerce · ตัวแก้แบบกราฟยังอยู่ที่ josh
 - สวิตช์ josh `COMMERCE_OWNS_MARKETING_WORKFLOWS` ล็อกการสร้าง/แก้/เปิด/หยุดใน josh
 
+**ข้อมูลลูกค้า / เครดิต** — ปิดไว้ (default off)
+- รายงานร้าน › ลูกค้า (รายละเอียด): ปุ่ม "แก้" ของบริษัท (ชื่อ วงเงิน เครดิตวัน ที่อยู่ โทร), สาขา (ชื่อ ผู้รับ โทร ที่อยู่ส่ง), ผู้ใช้ (ชื่อ อีเมล มือถือ) → josh `internal/commerce/customers` → CsAdminService / CompanyService · แก้บริษัทต้องเป็น admin ใน josh · ค่าที่ถูกปิดบังเริ่มว่าง = คงเดิม
+- พิจารณาคำขอวงเงิน: มีแล้ว (josh › Credit terms)
+- สวิตช์ josh `COMMERCE_OWNS_CUSTOMERS` ล็อกการแก้เหล่านี้ใน josh · ลูกค้าแก้โปรไฟล์บริษัทตัวเองและการรวมบัญชียังเหมือนเดิม
+
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`
 - แก้โปร (สร้าง/แก้ชื่อ ป้าย ช่วงเวลา โควตา/เปิด-ปิด/ลบ): commerce-admin → josh `internal/commerce/promotions` → PromotionMechanicService (DTO แบบเข้มเดียวกับ josh) · Product Set และหน้าโปรยังอยู่ที่ josh

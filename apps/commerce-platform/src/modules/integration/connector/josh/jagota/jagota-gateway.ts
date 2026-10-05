@@ -2,18 +2,32 @@ import { BadRequestException, Injectable, Logger, ServiceUnavailableException } 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import type { ErpCreateOrderRequest } from './erp-order-request';
+import { JagotaCustomerSend } from './jagota-customer-send.entity';
 import { JagotaOrderSend } from './jagota-order-send.entity';
 
 /** josh jagota-order.types `ERP_REFERENCE_ALREADY_USED`: ERP already holds this reference — the earlier send reached it. */
 export const ERP_REFERENCE_ALREADY_USED = 'Magento Order Id is already used';
 /** josh JAGOTA_ORDER_CREATE_TIMEOUT_MS — ERP's own doc asks callers for ≥ 30s on add-order-create. */
 export const ORDER_CREATE_TIMEOUT_MS = 30_000;
+/** josh JAGOTA_CUSTOMER_CREATE_TIMEOUT_MS — ERP's create-customer runs several steps (prospect, actual customer). */
+export const CUSTOMER_CREATE_TIMEOUT_MS = 75_000;
+/** A `sending` registration older than this was abandoned (commerce restarted mid-call). */
+const CUSTOMER_SENDING_LEASE_SECONDS = 150;
 const LOGIN_TIMEOUT_MS = 8_000;
 /** A `sending` row older than this is an abandoned attempt (commerce restarted mid-call) and may be taken over. */
 const SENDING_LEASE_SECONDS = 90;
 const TOKEN_TTL_MS = 23 * 3600_000;
 
 export type ErpCreateOrderResponse = { error?: boolean; message?: string; data?: unknown };
+type ErpCustomerCreateResponse = ErpCreateOrderResponse;
+
+/** Same read as josh submitCustomerRegistration: the converted INA… code first, else the created prospect's CUST_CODE. */
+export function erpCustomerCode(response: ErpCustomerCreateResponse | null): string | null {
+  const data = response?.data as { createActualCustomer?: { data?: { result?: Record<string, string>[] } }; created?: { data?: { result?: { CUST_CODE?: string }[] } } } | undefined;
+  const actual = data?.createActualCustomer?.data?.result?.[0];
+  const code = (actual ? Object.values(actual)[0] : undefined) ?? data?.created?.data?.result?.[0]?.CUST_CODE;
+  return typeof code === 'string' && code.trim() ? code.trim().slice(0, 40) : null;
+}
 
 /** josh `erpCreateFailureReason`: ERP puts the refusal in `message` or in `data.status`; null when it did not refuse. */
 export function erpFailureReason(response: ErpCreateOrderResponse | null): string | null {
@@ -50,7 +64,10 @@ export class JagotaGateway {
   private token: { value: string; expires: number } | null = null;
   private login: Promise<string> | null = null;
 
-  constructor(@InjectRepository(JagotaOrderSend) private readonly sends: Repository<JagotaOrderSend>) {}
+  constructor(
+    @InjectRepository(JagotaOrderSend) private readonly sends: Repository<JagotaOrderSend>,
+    @InjectRepository(JagotaCustomerSend) private readonly customerSends: Repository<JagotaCustomerSend>,
+  ) {}
 
   private get baseUrl() { return process.env.JAGOTA_NODEAPI_BASE_URL?.trim().replace(/\/$/, '') || ''; }
 
@@ -92,6 +109,46 @@ export class JagotaGateway {
       durationMs: Date.now() - started, updatedAt: new Date(),
     });
     this.logger.log(`Jagota add-order-create ${reference} for josh → ${ok ? 'accepted' : `failed: ${erpFailureReason(response)}`} (${Date.now() - started}ms)`);
+    return { attempted: true, replayed: false, response };
+  }
+
+  /**
+   * josh's `POST /customers/create-customer`, built by josh as today (josh still decides when to
+   * register, reads the code back and stamps it). One row per contact email: a sent one is replayed,
+   * a running one answers in flight (josh retries later). Falling back to josh's direct call is
+   * safe — ERP refuses an email it already holds ("under approval") and josh reads that code back.
+   */
+  async createCustomer(request: Record<string, unknown>): Promise<GatewayAnswer> {
+    if (!this.enabled) throw new ServiceUnavailableException('Jagota gateway is off on this server (JAGOTA_GATEWAY_ENABLED / JAGOTA_NODEAPI_*).');
+    const contact = (request?.customerContact as { Email?: unknown }[] | undefined)?.[0];
+    const email = typeof contact?.Email === 'string' ? contact.Email.trim().toLowerCase() : '';
+    if (!email || email.length > 254 || !email.includes('@') || typeof request.customer !== 'object' || !request.customer) {
+      throw new BadRequestException('request must be the create-customer body (customer, customerContact[0].Email)');
+    }
+
+    const claimed: { id: string }[] = await this.customerSends.query(
+      `INSERT INTO jagota_customer_sends (email, status, request, attempts) VALUES ($1, 'sending', $2, 1)
+       ON CONFLICT (email) DO UPDATE SET status = 'sending', request = EXCLUDED.request,
+              attempts = jagota_customer_sends.attempts + 1, last_error = NULL, updated_at = now()
+        WHERE jagota_customer_sends.status = 'failed'
+           OR (jagota_customer_sends.status = 'sending' AND jagota_customer_sends.updated_at < now() - make_interval(secs => $3))
+       RETURNING id`, [email, request, CUSTOMER_SENDING_LEASE_SECONDS]);
+    if (!claimed.length) {
+      const existing = await this.customerSends.findOneByOrFail({ email });
+      if (existing.status === 'sent') return { attempted: true, replayed: true, response: existing.response as ErpCreateOrderResponse };
+      return { attempted: false, reason: 'in_flight' };
+    }
+
+    const started = Date.now();
+    const response = await this.post<ErpCustomerCreateResponse>('/customers/create-customer', request, CUSTOMER_CREATE_TIMEOUT_MS);
+    const custCode = erpCustomerCode(response);
+    const ok = !!response && response.error !== true && !!custCode;
+    await this.customerSends.update({ id: claimed[0].id }, {
+      status: ok ? 'sent' : 'failed', response: response as Record<string, unknown> | null, custCode,
+      lastError: ok ? null : (response?.message ?? (response ? 'ERP answered without a CUST_CODE' : 'no response from ERP')).slice(0, 500),
+      durationMs: Date.now() - started, updatedAt: new Date(),
+    });
+    this.logger.log(`Jagota create-customer for josh → ${ok ? `accepted ${custCode}` : `failed: ${response?.message ?? 'no answer'}`} (${Date.now() - started}ms)`);
     return { attempted: true, replayed: false, response };
   }
 

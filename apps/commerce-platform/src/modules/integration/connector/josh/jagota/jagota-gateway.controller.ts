@@ -5,7 +5,7 @@ import type { ErpCreateOrderRequest } from './erp-order-request';
 import { JagotaGateway } from './jagota-gateway';
 import { JagotaSyncHistoryImport } from './jagota-sync-history';
 
-/** josh → commerce → Jagota `add-order-create` (josh's storefront API key, like its other commerce calls). */
+/** josh → commerce → Jagota `add-order-create` and `create-customer` (josh's storefront API key, like its other commerce calls). */
 @Public()
 @Controller('v1/storefront/jagota')
 @UseGuards(StorefrontApiKeyGuard)
@@ -14,6 +14,9 @@ export class JagotaGatewayController {
 
   @Post('order-create') @HttpCode(HttpStatus.OK)
   createOrder(@Body() body: { request?: ErpCreateOrderRequest }) { return this.gateway.createOrder(body?.request as ErpCreateOrderRequest); }
+
+  @Post('customer-create') @HttpCode(HttpStatus.OK)
+  createCustomer(@Body() body: { request?: Record<string, unknown> }) { return this.gateway.createCustomer(body?.request as Record<string, unknown>); }
 }
 
 /** What commerce sent to Jagota for josh (admin only, the guard default). */

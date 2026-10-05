@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
-import { erpSimulatorApi, ErpSimulatorResult, webhookApi, WebhookDeliveryFull } from '../../lib/api';
+import { ReactNode, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { erpSimulatorApi, ErpSimulatorResult, JoshOrderResult, JoshOrderTrace, SimProduct, webhookApi, WebhookDeliveryFull } from '../../lib/api';
 import { useAsync, statusBadgeClass } from '../hooks';
 
 /**
+ * Both directions of the ERP flow, each through the real HTTP path:
+ *   ERP → commerce → josh  (ERP pushes stock/price/order status…; commerce relays to platforms)
+ *   josh → commerce → ERP  (josh places an order; once paid, commerce pushes it to the ERP)
+ *
  * ERP webhook simulator (moved from josh web-admin's payload console). Sends the
  * exact body the ERP would send to commerce's real /api/erp/* route — same key,
  * DTO, ingest/relay and delivery to every subscribed platform — then shows what
@@ -66,7 +71,7 @@ const SPECS: Spec[] = [
 ];
 const GROUPS = [...new Set(SPECS.map((s) => s.group))];
 
-export function ErpSimulator() {
+function ErpToJosh() {
   const { data: info, error: infoError } = useAsync(() => erpSimulatorApi.routes(), []);
   const [route, setRoute] = useState(SPECS[0].route);
   const [edited, setEdited] = useState<Record<string, string>>({});
@@ -74,6 +79,7 @@ export function ErpSimulator() {
   const [error, setError] = useState('');
   const [result, setResult] = useState<ErpSimulatorResult | null>(null);
   const [outgoing, setOutgoing] = useState<WebhookDeliveryFull[]>([]);
+  const [watching, setWatching] = useState(false);
 
   const spec = SPECS.find((s) => s.route === route)!;
   const text = edited[route] ?? JSON.stringify(spec.template, null, 2);
@@ -83,12 +89,14 @@ export function ErpSimulator() {
     if (!result) return;
     let stop = false;
     const since = new Date(result.sentAt).getTime() - 1000;
+    setWatching(true);
     const poll = async (n: number) => {
       try {
         const all = await webhookApi.deliveries();
         if (!stop) setOutgoing(all.filter((d) => new Date(d.createdAt).getTime() >= since));
       } catch { /* keep the last list */ }
       if (!stop && n < 15) setTimeout(() => void poll(n + 1), 1000);
+      else if (!stop) setWatching(false);
     };
     void poll(0);
     return () => { stop = true; };
@@ -107,12 +115,13 @@ export function ErpSimulator() {
 
   return (
     <div>
-      <div className="page-head">
-        <div>
-          <h1>ERP simulator</h1>
-          <p>ยิง payload แบบที่ ERP ส่งเข้า <span className="mono">/api/erp/*</span> ของ commerce จริง → ingest / relay → ส่งต่อทุก platform ที่ subscribe (josh)</p>
-        </div>
-      </div>
+      <Flow nodes={[
+        { name: 'ERP', state: result ? 'ok' : 'idle', detail: result ? `ส่ง ${spec.title}` : 'เลือก payload แล้วกดส่ง' },
+        { name: 'commerce', state: !result ? 'idle' : result.status < 300 ? 'ok' : 'fail', detail: result ? `ตอบ ${result.status} ใน ${result.ms} ms` : 'รับที่ /api/erp/*' },
+        { name: 'josh', state: !result || result.status >= 300 || (!outgoing.length && !watching) ? 'idle' : deliveryState(outgoing),
+          detail: !result ? 'รับ event ที่ /api/internal/erp-events' : outgoing.length ? deliverySummary(outgoing)
+            : watching ? 'รอส่ง…' : 'ไม่มี platform ที่ subscribe event นี้ (commerce เก็บไว้เอง)' },
+      ]} />
 
       {infoError && <div className="panel" style={{ padding: 16, color: '#c2333f' }}>Simulator ปิดอยู่หรือเข้าไม่ได้: {infoError}</div>}
       {info && !info.erpKeyConfigured && <div className="panel" style={{ padding: 12, marginBottom: 12 }}>ยังไม่ได้ตั้ง ERP_WEBHOOK_KEY — dev รับทุก request; production จะตอบ 401</div>}
@@ -173,3 +182,220 @@ export function ErpSimulator() {
     </div>
   );
 }
+
+type NodeState = 'idle' | 'wait' | 'ok' | 'fail';
+const NODE_COLOR: Record<NodeState, string> = { idle: 'var(--line)', wait: 'var(--warn)', ok: 'var(--ok)', fail: 'var(--danger)' };
+
+/** The three boxes with arrows: who sends, who relays, who receives — and how far it got. */
+function Flow({ nodes }: { nodes: { name: string; state: NodeState; detail: ReactNode }[] }) {
+  return (
+    <div className="panel" style={{ padding: 16, marginBottom: 16, display: 'flex', alignItems: 'stretch', gap: 8, flexWrap: 'wrap' }}>
+      {nodes.map((n, i) => (
+        <div key={n.name} style={{ display: 'contents' }}>
+          {i > 0 && <div aria-hidden style={{ alignSelf: 'center', fontSize: 22, color: nodes[i - 1].state === 'ok' ? 'var(--ok)' : 'var(--muted)' }}>→</div>}
+          <div style={{ flex: '1 1 160px', border: `2px solid ${NODE_COLOR[n.state]}`, borderRadius: 8, padding: '10px 12px', minWidth: 0 }}>
+            <div style={{ fontWeight: 700, display: 'flex', justifyContent: 'space-between', gap: 6 }}>
+              {n.name}
+              <span className={`badge ${n.state === 'ok' ? 'ok' : n.state === 'fail' ? 'danger' : n.state === 'wait' ? 'warn' : 'muted'}`}>
+                {n.state === 'ok' ? 'ผ่าน' : n.state === 'fail' ? 'ไม่ผ่าน' : n.state === 'wait' ? 'รอ' : '—'}
+              </span>
+            </div>
+            <div className="hint" style={{ marginTop: 4 }}>{n.detail}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function deliveryState(d: WebhookDeliveryFull[]): NodeState {
+  if (!d.length) return 'wait';
+  if (d.some((x) => x.status === 'failed')) return 'fail';
+  return d.every((x) => x.status === 'success') ? 'ok' : 'wait';
+}
+const deliverySummary = (d: WebhookDeliveryFull[]) => {
+  const n = (s: string) => d.filter((x) => x.status === s).length;
+  return `ส่ง ${d.length} event · สำเร็จ ${n('success')}${n('pending') ? ` · รอ ${n('pending')}` : ''}${n('failed') ? ` · ล้มเหลว ${n('failed')}` : ''}`;
+};
+
+const DIRECTIONS = [
+  { key: 'erp', label: 'ERP → commerce → josh', hint: 'ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh' },
+  { key: 'josh', label: 'josh → commerce → ERP', hint: 'josh สั่งซื้อผ่าน commerce · จ่ายเงินแล้ว commerce ส่ง order ไป ERP' },
+] as const;
+
+export function ErpSimulator() {
+  const [params, setParams] = useSearchParams();
+  const dir = params.get('dir') === 'josh' ? 'josh' : 'erp';
+  const current = DIRECTIONS.find((d) => d.key === dir)!;
+  return (
+    <div>
+      <div className="page-head">
+        <div>
+          <h1>ERP simulator</h1>
+          <p>{current.hint} · ทุกขั้นวิ่งผ่าน HTTP จริงของ commerce</p>
+        </div>
+      </div>
+      <div className="row" role="tablist" style={{ marginBottom: 12 }}>
+        {DIRECTIONS.map((d) => (
+          <button key={d.key} type="button" role="tab" aria-selected={dir === d.key} className={`btn ${dir === d.key ? '' : 'ghost'}`}
+            onClick={() => setParams(d.key === 'erp' ? {} : { dir: d.key })}>{d.label}</button>
+        ))}
+      </div>
+      {dir === 'erp' ? <ErpToJosh /> : <JoshToErp />}
+    </div>
+  );
+}
+
+type Line = { product: SimProduct; qty: number };
+
+/** josh places an order the way josh does (customer → checkout → payment result); then watch commerce confirm it and push it to the ERP. */
+function JoshToErp() {
+  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
+  const products = useAsync(() => erpSimulatorApi.joshProducts(query), [query]);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [customer, setCustomer] = useState({ name: 'ร้านทดสอบ simulator', email: 'simulator@example.com', phone: '' });
+  const [payment, setPayment] = useState<'paid' | 'failed' | 'none'>('paid');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<JoshOrderResult | null>(null);
+  const [trace, setTrace] = useState<JoshOrderTrace | null>(null);
+
+  // After an order: follow it for ~15 s — the ERP push runs right after the order is confirmed.
+  useEffect(() => {
+    if (!result?.orderId) return;
+    let stop = false;
+    const poll = async (n: number) => {
+      try { const t = await erpSimulatorApi.joshOrderTrace(result.orderId!); if (!stop) setTrace(t); if (t.erp.erpOrderRef) return; } catch { /* keep last */ }
+      if (!stop && n < 15) setTimeout(() => void poll(n + 1), 1000);
+    };
+    void poll(0);
+    return () => { stop = true; };
+  }, [result]);
+
+  const add = (p: SimProduct) => setLines((ls) => ls.some((l) => l.product.id === p.id) ? ls : [...ls, { product: p, qty: 1 }]);
+  async function send() {
+    setSending(true); setError(''); setResult(null); setTrace(null);
+    try {
+      setResult(await erpSimulatorApi.joshOrder({
+        customer, payment, lines: lines.map((l) => ({ productId: l.product.id, qty: l.qty, unitPrice: Number(l.product.price ?? 0) })),
+      }));
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); } finally { setSending(false); }
+  }
+
+  const step = (name: string) => result?.steps.find((s) => s.step === name);
+  const failed = result?.steps.find((s) => s.status >= 300);
+  const order = trace?.order;
+  // josh only sends; a 4xx/5xx is commerce refusing, so it lights the commerce box.
+  const joshState: NodeState = !result ? 'idle' : 'ok';
+  const reason = (r: unknown) => { const e = (r as { error?: { message?: unknown }; message?: unknown }); const m = e?.error?.message ?? e?.message; return Array.isArray(m) ? m.join(', ') : String(m ?? ''); };
+  const commerceState: NodeState = !result || !step('checkout') ? (failed ? 'fail' : 'idle')
+    : !order ? 'wait' : order.status === 'confirmed' ? 'ok' : ['failed', 'cancelled', 'expired'].includes(order.status) ? 'fail' : 'wait';
+  const erpState: NodeState = !trace ? 'idle' : trace.erp.erpOrderRef ? 'ok' : !trace.erp.integration ? 'fail' : order?.status === 'confirmed' ? 'wait' : 'idle';
+
+  return (
+    <div>
+      <Flow nodes={[
+        { name: 'josh', state: joshState, detail: !result ? 'ลูกค้ากดสั่งซื้อ' : result.steps.map((s) => `${s.step} ${s.status}`).join(' · ') },
+        { name: 'commerce', state: commerceState, detail: failed ? `${failed.step} ถูกปฏิเสธ ${failed.status}: ${reason(failed.response)}` : !order ? 'จองสต็อก → สร้าง order → รอจ่าย' :
+          `order ${order.status} · จอง ${trace!.reservations.filter((r) => r.status === 'reserved' || r.status === 'confirmed').length}/${trace!.reservations.length} รายการ` },
+        { name: 'ERP', state: erpState, detail: !trace ? 'รับ order เมื่อจ่ายเงินแล้ว' : trace.erp.erpOrderRef
+          ? `ได้เลข ${trace.erp.erpOrderRef}${trace.erp.liveMode ? '' : ' (mock — liveMode ปิด)'}`
+          : !trace.erp.integration ? 'ไม่มี ERP integration ที่ active' : order?.status === 'confirmed' ? 'กำลังส่ง…' : 'ไม่ส่ง (order ยังไม่ยืนยัน)' },
+      ]} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 1fr) minmax(300px, 1.2fr)', gap: 16 }}>
+        <div className="panel">
+          <div className="panel-head">สินค้า (catalog ที่ josh เห็น)</div>
+          <form className="row" style={{ padding: 12 }} onSubmit={(e) => { e.preventDefault(); setQuery(search.trim()); }}>
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหาชื่อ / SKU" style={{ flex: 1 }} />
+            <button className="btn ghost sm" type="submit">ค้นหา</button>
+          </form>
+          {products.error && <div className="err" style={{ padding: '0 12px' }}>{products.error}</div>}
+          <table>
+            <thead><tr><th>SKU</th><th>สินค้า</th><th>พร้อมขาย</th><th></th></tr></thead>
+            <tbody>
+              {(products.data?.items ?? []).map((p) => (
+                <tr key={p.id}>
+                  <td className="mono">{p.sku}</td><td>{p.name}</td><td>{p.stock}</td>
+                  <td><button type="button" className="btn ghost sm" onClick={() => add(p)} disabled={lines.some((l) => l.product.id === p.id)}>เพิ่ม</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="panel">
+          <div className="panel-head">order ของ josh</div>
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 16 }}>
+            <div className="row">
+              <label className="field">ชื่อลูกค้า<input value={customer.name} onChange={(e) => setCustomer({ ...customer, name: e.target.value })} /></label>
+              <label className="field">อีเมล<input value={customer.email} onChange={(e) => setCustomer({ ...customer, email: e.target.value })} /></label>
+              <label className="field">เบอร์<input value={customer.phone} onChange={(e) => setCustomer({ ...customer, phone: e.target.value })} /></label>
+            </div>
+            {lines.length ? (
+              <table>
+                <thead><tr><th>สินค้า</th><th>ราคา</th><th>จำนวน</th><th></th></tr></thead>
+                <tbody>
+                  {lines.map((l) => (
+                    <tr key={l.product.id}>
+                      <td>{l.product.name}<div className="hint mono">{l.product.sku}</div></td>
+                      <td>{l.product.price ?? 0}</td>
+                      <td><input type="number" min={1} value={l.qty} style={{ width: 72 }}
+                        onChange={(e) => setLines((ls) => ls.map((x) => x.product.id === l.product.id ? { ...x, qty: Math.max(1, Number(e.target.value) || 1) } : x))} /></td>
+                      <td><button type="button" className="btn ghost sm" onClick={() => setLines((ls) => ls.filter((x) => x.product.id !== l.product.id))}>ลบ</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : <div className="empty">เพิ่มสินค้าจากรายการด้านซ้าย</div>}
+            <label className="field">หลังสั่งซื้อ josh แจ้งว่า
+              <select value={payment} onChange={(e) => setPayment(e.target.value as typeof payment)}>
+                <option value="paid">จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP</option>
+                <option value="failed">จ่ายไม่สำเร็จ → ไม่ส่ง ERP</option>
+                <option value="none">ยังไม่จ่าย (ค้างรอจ่าย)</option>
+              </select>
+            </label>
+            {error && <div className="err">{error}</div>}
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="button" className="btn" disabled={sending || !lines.length || !customer.name.trim()} onClick={send}>{sending ? 'กำลังส่ง…' : 'Send as josh →'}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {result && (
+        <div className="panel" style={{ marginTop: 16 }}>
+          <div className="panel-head">josh เรียก commerce</div>
+          <table>
+            <thead><tr><th>ขั้น</th><th>Call</th><th>Status</th><th>ms</th><th>คำตอบ</th></tr></thead>
+            <tbody>
+              {result.steps.map((s) => (
+                <tr key={s.step}>
+                  <td>{s.step}</td><td className="mono" style={{ fontSize: 12 }}>{s.call}</td>
+                  <td><span className={statusBadgeClass(s.status < 300 ? 'success' : 'failed')}>{s.status}</span></td><td>{s.ms}</td>
+                  <td><pre className="payload" style={{ margin: 0, maxHeight: 160 }}>{JSON.stringify(s.response, null, 2)}</pre></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {trace && (
+            <div style={{ padding: 16 }}>
+              <div className="hint">สต็อกที่จอง</div>
+              <table>
+                <thead><tr><th>SKU</th><th>จำนวน</th><th>สถานะ</th><th>เหตุผล</th></tr></thead>
+                <tbody>{trace.reservations.map((r, i) => <tr key={i}><td className="mono">{r.sku}</td><td>{r.qty}</td><td><span className={statusBadgeClass(r.status)}>{r.status}</span></td><td>{r.fail_reason ?? '—'}</td></tr>)}</tbody>
+              </table>
+              <div className="hint" style={{ marginTop: 12 }}>event ของ order นี้</div>
+              <table>
+                <thead><tr><th>Event</th><th>สถานะ</th><th>เวลา</th></tr></thead>
+                <tbody>{trace.events.map((e, i) => <tr key={i}><td className="mono">{e.type}</td><td>{e.status}</td><td>{new Date(e.created_at).toLocaleTimeString('th-TH')}</td></tr>)}</tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+

@@ -417,9 +417,22 @@ export interface WebhookDeliveryFull {
 
 export interface ErpSimulatorResult { route: string; status: number; ms: number; sentAt: string; response: unknown }
 
+export interface SimProduct { id: string; sku: string; name: string; price: string | null; stock: number }
+export interface JoshOrderResult { orderId: string | null; steps: { step: string; call: string; request?: unknown; status: number; ms: number; response: unknown }[] }
+export interface JoshOrderTrace {
+  order: { id: string; code: string | null; status: string; total: number; currency: string; created_at: string };
+  reservations: { sku: string | null; qty: number; status: string; fail_reason: string | null }[];
+  payments: { status: string; amount: number; updated_at: string }[];
+  events: { type: string; status: string; created_at: string; published_at: string | null }[];
+  erp: { integration: boolean; liveMode: boolean; erpOrderRef: string | null; pushedAt: string | null };
+}
 export const erpSimulatorApi = {
   routes: () => api.get<{ routes: string[]; erpKeyConfigured: boolean }>('/erp-simulator/routes'),
   send: (route: string, payload: unknown) => api.post<ErpSimulatorResult>('/erp-simulator/send', { route, payload }),
+  joshProducts: (search: string) => api.get<{ items: SimProduct[] }>(`/erp-simulator/josh/products${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  joshOrder: (body: { customer: { name: string; email?: string; phone?: string }; payment: 'paid' | 'failed' | 'none';
+    lines: { productId: string; qty: number; unitPrice: number }[] }) => api.post<JoshOrderResult>('/erp-simulator/josh/order', body),
+  joshOrderTrace: (id: string) => api.get<JoshOrderTrace>(`/erp-simulator/josh/orders/${id}`),
 };
 
 export const webhookApi = {

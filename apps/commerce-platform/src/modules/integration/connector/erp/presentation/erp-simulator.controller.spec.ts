@@ -40,4 +40,44 @@ describe('ErpSimulatorController', () => {
     process.env.ERP_SIMULATOR_ENABLED = 'true';
     expect(ctl.routes().routes).toBe(SIMULATOR_ROUTES);
   });
+
+  describe('josh → commerce → ERP', () => {
+    const answer = (status: number, body: unknown) => ({ status, ok: status < 400, text: async () => JSON.stringify(body) });
+    const line = { productId: 'b3f1c2a4-1234-4a5b-8c9d-abcdef012345', qty: 2, unitPrice: 100 };
+
+    it('makes josh\'s three calls in order with josh\'s storefront key and a fresh Idempotency-Key', async () => {
+      process.env.STOREFRONT_API_KEYS = 'sf-1, sf-2';
+      (global.fetch as jest.Mock)
+        .mockResolvedValueOnce(answer(201, { customerId: 'c-1' }))
+        .mockResolvedValueOnce(answer(201, { orderId: 'o-1', status: 'pending_payment' }))
+        .mockResolvedValueOnce(answer(200, { status: 'paid' }));
+      const out = await ctl.joshOrder({ customer: { name: 'ร้านทดสอบ' }, lines: [line], payment: 'paid' }, req);
+      const calls = (global.fetch as jest.Mock).mock.calls;
+      expect(calls.map(([u]) => u)).toEqual([
+        'http://127.0.0.1:3990/api/v1/storefront/customers',
+        'http://127.0.0.1:3990/api/v1/storefront/checkout',
+        'http://127.0.0.1:3990/api/v1/storefront/checkout/o-1/payment-result',
+      ]);
+      expect(calls.every(([, i]) => i.headers['x-api-key'] === 'sf-1')).toBe(true);
+      expect(calls[1][1].headers['idempotency-key']).toMatch(/^erp-sim-/);
+      expect(JSON.parse(calls[1][1].body)).toMatchObject({ customerId: 'c-1', lines: [line] });
+      expect(out).toMatchObject({ orderId: 'o-1', steps: [{ step: 'customer' }, { step: 'checkout' }, { step: 'payment' }] });
+      expect(insert).toHaveBeenCalledWith(expect.objectContaining({ action: 'erp.simulator.josh_order', entityId: 'o-1' }));
+    });
+
+    it('stops at the first failing step; no payment when stock was not reserved', async () => {
+      (global.fetch as jest.Mock)
+        .mockResolvedValueOnce(answer(201, { customerId: 'c-1' }))
+        .mockResolvedValueOnce(answer(201, { orderId: 'o-2', status: 'failed' }));
+      const out = await ctl.joshOrder({ customer: { name: 'x' }, lines: [line] }, req);
+      expect(out.steps.map((s) => s.step)).toEqual(['customer', 'checkout']);
+    });
+
+    it('validates before calling anything', async () => {
+      await expect(ctl.joshOrder({ customer: {}, lines: [line] }, req)).rejects.toBeInstanceOf(BadRequestException);
+      await expect(ctl.joshOrder({ customer: { name: 'x' }, lines: [] }, req)).rejects.toBeInstanceOf(BadRequestException);
+      await expect(ctl.joshOrder({ customer: { name: 'x' }, lines: [line], payment: 'maybe' as never }, req)).rejects.toBeInstanceOf(BadRequestException);
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+  });
 });

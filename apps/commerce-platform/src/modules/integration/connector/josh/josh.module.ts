@@ -22,6 +22,9 @@ import { JagotaOrderSend } from './jagota/jagota-order-send.entity';
 import { JagotaGateway } from './jagota/jagota-gateway';
 import { JagotaGatewayController, JagotaGatewayReportController, JagotaSyncHistoryController } from './jagota/jagota-gateway.controller';
 import { JoshPromotions } from './josh-promotions';
+import { JoshOrderCopy, JoshOrderLineCopy } from './orders/josh-order-copy.entity';
+import { JoshOrderCopyService } from './orders/josh-order-copy';
+import { JoshOrderCopyReportController, JoshOrderPlacedController } from './orders/josh-order-copy.controller';
 import { JoshAdminCallController } from './josh-admin-call.controller';
 import { OrderQuoteShadow } from './checkout/order-quote-shadow';
 import { OrderQuoteShadowController } from './checkout/order-quote-shadow.controller';
@@ -52,9 +55,9 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 
 /** Everything that reads josh's data (via its replica): the catalog copy and the offloaded heavy jobs (Task 9). */
 @Module({
-  imports: [TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck, JagotaOrderSend, JagotaSyncHistory, DbdLookup, OrderQuoteCheck, PriceShadowCheck, StaffPrice]), WebhookSubscriptionModule, ApiKeyModule],
-  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController, JagotaShadowController, JagotaGatewayController, JagotaGatewayReportController, JagotaSyncHistoryController, JoshBackofficeController, PriceShadowController, StaffPricesController, JoshPromotionsController, DbdRelayController, JoshMarketingWorkflowsController, OrderQuoteShadowController, JoshAdminCallController],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, JoshPromotions, JoshMarketingWorkflows, OrderQuoteShadow, StorefrontApiKeyGuard],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, JoshPromotions, JoshMarketingWorkflows, OrderQuoteShadow],
+  imports: [TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck, JagotaOrderSend, JagotaSyncHistory, DbdLookup, OrderQuoteCheck, JoshOrderCopy, JoshOrderLineCopy, PriceShadowCheck, StaffPrice]), WebhookSubscriptionModule, ApiKeyModule],
+  controllers: [ShopReportsController, JoshWinbackController, JoshActionsController, JagotaShadowController, JagotaGatewayController, JagotaGatewayReportController, JagotaSyncHistoryController, JoshBackofficeController, PriceShadowController, StaffPricesController, JoshPromotionsController, DbdRelayController, JoshMarketingWorkflowsController, OrderQuoteShadowController, JoshAdminCallController, JoshOrderPlacedController, JoshOrderCopyReportController],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, JoshPromotions, JoshMarketingWorkflows, OrderQuoteShadow, JoshOrderCopyService, StorefrontApiKeyGuard],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, JoshPromotions, JoshMarketingWorkflows, OrderQuoteShadow, JoshOrderCopyService],
 })
 export class JoshModule {}

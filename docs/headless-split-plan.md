@@ -167,8 +167,8 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 
 **checkout / orders** (3 ขั้น: shadow quote → dual-write → สลับ)
 1. shadow quote — ทำแล้ว (ปิดไว้): commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (สำเนา `checkout/order-totals.ts`: แยก VAT ต่อหน่วย, กลุ่มตามประเภทการส่ง, ค่าส่ง 100 เมื่อกลุ่มต่ำกว่า 2,500 ก่อน VAT, กระจายส่วนลดแบบเศษมากสุด) แล้วเทียบ 8 ช่อง · ราคาแต่ละบรรทัดเทียบใน price shadow · ส่วนลดคูปอง/เครดิตใช้ตัวเลขของ josh · รายงานร้าน › ราคา: commerce คิดคู่กัน (ส่วนล่าง) · MCP `price_shadow` (`orderTotals`) · `CRON_ORDER_QUOTE_SHADOW_ENABLED`
-2. dual-write — ยังไม่ทำ: รอ shadow ราคา + ยอดรวม ตรง ~100% ต่อเนื่อง แล้ว commerce เก็บสำเนา order ทุกใบตอน checkout
-3. สลับให้ commerce เป็นเจ้าของ order — ยังไม่ทำ
+2. สำเนา order — ทำแล้ว (ปิดไว้): commerce เก็บทุก order + บรรทัดของ josh (`josh_orders`, `josh_order_lines`, ชื่อช่องแบบ josh) · ดึงย้อนหลังทั้งหมดและอ่าน order ที่ยังเปลี่ยนได้ซ้ำทุกรอบ (`CRON_JOSH_ORDER_COPY_ENABLED`) · josh `ORDERS_COPY_TO_COMMERCE=true` แจ้งทันทีหลัง checkout แบบไม่รอ (2 วินาที) → commerce คัดลอกทันที · checkout ของ josh ไม่ขึ้นกับ commerce
+3. สลับให้ commerce เป็นคนคิดราคาและสร้าง order — ยังไม่ทำ: รอ price shadow + order totals shadow ตรง ~100% ต่อเนื่องบนข้อมูลจริง (ยังไม่มีข้อมูล) · ทางที่จะใช้: commerce มี checkout API ของตัวเองอยู่แล้ว (`/api/v1/storefront/checkout`) แต่ทางเดิมของ josh (`COMMERCE_PLATFORM_SYNC_ENABLED`) ทำให้ checkout ล้มเมื่อ commerce ล่ม — ต้องเพิ่มทางสำรองก่อนเปิด
 
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`

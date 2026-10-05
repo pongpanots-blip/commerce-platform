@@ -15,6 +15,7 @@ export interface CronConfig {
   staffPricesImport: CronJobConfig;
   jagotaSyncImport: CronJobConfig;
   orderQuoteShadow: CronJobConfig;
+  joshOrderCopy: CronJobConfig;
 }
 
 function cronEnabled(name: string, env: NodeJS.ProcessEnv): boolean {
@@ -80,6 +81,12 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
     orderQuoteShadow: {
       expression: env.CRON_ORDER_QUOTE_SHADOW ?? '50 */5 * * * *',
       enabled: env.CRON_ORDER_QUOTE_SHADOW_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Checkout step 2: commerce's copy of every josh order (backfill + refresh of orders that can still change). Opt-in; reads josh only.
+    joshOrderCopy: {
+      expression: env.CRON_JOSH_ORDER_COPY ?? '20 */2 * * * *',
+      enabled: env.CRON_JOSH_ORDER_COPY_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
     },
     competitorPricesRefresh: {

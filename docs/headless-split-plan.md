@@ -30,7 +30,7 @@
 - ลูกค้า/หลังบ้าน: `kyc`, `pii`, `customer-import`, `cs-admin`, `cs-crm-claims`, `winback`, `push-campaign`, `internal-docs-library`, `webhook` (Zendesk/support หลังบ้าน), `shared/pdf`, `shared/notification` (OneSignal)
 
 **อยู่ josh (JOSH)**
-- CMS: `banner`, `carousel`, `copy`, `figma-sync`, `trusted-brand`, `trusted-user`, `cuisine`, `marketing-link`, `smart-link`, `popup-definition`*, `web-brand`*, หน้า legal/policies/about, landing SEO, articles (Strapi demo)
+- CMS (ตัดสิน 2026-10-05: ทั้งกลุ่ม Storefront ของ josh admin อยู่ที่ josh — homepage, categories, carousels, banners, banner targeting, trusted brands/restaurants, cuisine; ไม่มีล็อก, commerce อ่านหมวด/cuisine ได้อย่างเดียวสำหรับตัวเลือกในหน้าสินค้า): `banner`, `carousel`, `copy`, `product-category`, `figma-sync`, `trusted-brand`, `trusted-user`, `cuisine`, `marketing-link`, `smart-link`, `popup-definition`*, `web-brand`*, หน้า legal/policies/about, landing SEO, articles (Strapi demo)
 - หน้าร้าน: `search` (ต้องเร็ว), `livechat`, `cache-warmup`, `shared/revalidate`, `users` (สำเนา), `commerce-platform` (กลายเป็น client ของ commerce สำหรับ checkout)
 - `customer-metrics` เหลือแค่ตัวรับ (ทำแล้ว)
 - (*ไม่มี frontend เรียก — ตรวจซ้ำแล้วอาจเลิกใช้)

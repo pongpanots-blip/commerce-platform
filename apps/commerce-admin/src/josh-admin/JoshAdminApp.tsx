@@ -6,22 +6,11 @@ import './josh-admin.css';
 const Alluser = lazy(() => import('./app/page/user/Alluser'));
 const BatchSticker = lazy(() => import('./app/page/batch-sticker/BatchSticker'));
 const BrandList = lazy(() => import('./app/page/brand/BrandList'));
-const CategoryList = lazy(() => import('./app/page/category/CategoryList'));
-const CreateCategory = lazy(() => import('./app/page/category/CreateCategory'));
-const CreateTrustedBrand = lazy(() => import('./app/page/trusted-brand/CreateTrustedBrand'));
-const CreateTrustedUser = lazy(() => import('./app/page/trusted-user/CreateTrustedUser'));
-const CuisineCardEdit = lazy(() => import('./app/page/cuisine/CuisineCardEdit'));
-const CuisineCardsPage = lazy(() => import('./app/page/cuisine/CuisineCardsPage'));
-const CuisineNamesPage = lazy(() => import('./app/page/cuisine/CuisineNamesPage'));
-const EditCategory = lazy(() => import('./app/page/category/EditCategory'));
-const EditTrustedBrand = lazy(() => import('./app/page/trusted-brand/EditTrustedBrand'));
-const EditTrustedUser = lazy(() => import('./app/page/trusted-user/EditTrustedUser'));
 const KbankTestingConsole = lazy(() => import('./app/page/kbank/KbankTestingConsole'));
 const InvoicesOverdue = lazy(() => import('./app/page/CS/InvoicesOverdue'));
 const CreditTermsAdmin = lazy(() => import('./app/page/CS/CreditTermsAdmin'));
 const CreditNotesAdmin = lazy(() => import('./app/page/accounting/CreditNotesAdmin'));
 const CreditBacksAdmin = lazy(() => import('./app/page/accounting/CreditBacksAdmin'));
-const MarketingBannerTargeting = lazy(() => import('./app/page/marketing/MarketingBannerTargeting'));
 const MarketingJourneyFunnel = lazy(() => import('./app/page/marketing/MarketingJourneyFunnel'));
 const MarketingLinksPage = lazy(() => import('./app/page/marketing/MarketingLinksPage'));
 const MarketingNotifyTemplates = lazy(() => import('./app/page/marketing/MarketingNotifyTemplates'));
@@ -38,8 +27,6 @@ const Shipments = lazy(() => import('./app/page/orders/Shipments'));
 const SmartLinkAnalyticsPage = lazy(() => import('./app/page/marketing/SmartLinkAnalyticsPage'));
 const SmartLinkEdit = lazy(() => import('./app/page/marketing/SmartLinkEdit'));
 const SmartLinksPage = lazy(() => import('./app/page/marketing/SmartLinksPage'));
-const TrustedBrandList = lazy(() => import('./app/page/trusted-brand/TrustedBrandList'));
-const TrustedUserList = lazy(() => import('./app/page/trusted-user/TrustedUserList'));
 const UserDetail = lazy(() => import('./app/page/user/UserDetail'));
 const WelcomeLeadEmailPage = lazy(() => import('./app/page/marketing/WelcomeLeadEmailPage'));
 const KycQueue = lazy(() => import('./app/page/kyc/KycQueue'));
@@ -110,24 +97,10 @@ export function JoshAdminApp() {
         <Suspense fallback={<div className="p-6 text-sm text-ink-muted">Loading…</div>}>
           <Routes>
             <Route path="batch-sticker" element={<BatchSticker />} />
-            <Route path="categories" element={<CategoryList />} />
-            <Route path="categories/create" element={<CreateCategory />} />
-            <Route path="categories/edit/:id" element={<EditCategory />} />
-            <Route path="trusted-brands" element={<TrustedBrandList />} />
-            <Route path="trusted-brand/create" element={<CreateTrustedBrand />} />
-            <Route path="trusted-brand/edit/:id" element={<EditTrustedBrand />} />
-            <Route path="trusted-users" element={<TrustedUserList />} />
-            <Route path="trusted-user/create" element={<CreateTrustedUser />} />
-            <Route path="trusted-user/edit/:id" element={<EditTrustedUser />} />
-            <Route path="cuisine-cards" element={<CuisineCardsPage />} />
-            <Route path="cuisine-cards/create" element={<CuisineCardEdit />} />
-            <Route path="cuisine-cards/edit/:id" element={<CuisineCardEdit />} />
-            <Route path="cuisine-names" element={<CuisineNamesPage />} />
             <Route path="marketing-links" element={<MarketingLinksPage />} />
             <Route path="marketing/queue" element={<MarketingQueueDashboard />} />
             <Route path="marketing/journey-funnel" element={<MarketingJourneyFunnel />} />
             <Route path="marketing/notify-templates" element={<MarketingNotifyTemplates />} />
-            <Route path="marketing/banner-targeting" element={<MarketingBannerTargeting />} />
             <Route path="marketing/settings" element={<MarketingSettingsPage />} />
             <Route path="marketing/welcome-lead-email" element={<WelcomeLeadEmailPage />} />
             <Route path="marketing/offers-check" element={<MarketingOfferCheckPage />} />

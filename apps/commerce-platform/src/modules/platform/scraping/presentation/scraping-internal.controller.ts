@@ -46,7 +46,11 @@ export class ScrapingInternalController {
   @Get('sources/by-origin')
   async findOrigin(@Query('url') url: string) {
     if (!url) throw new BadRequestException('url parameter required');
-    return this.service.findOrigin(url);
+    const source = await this.service.findOrigin(url);
+    if (!source) return source;
+    // The site password (even encrypted) and the login never leave commerce.
+    const { loginPasswordEnc: _password, loginUrl: _url, loginUsername: _username, ...rest } = source;
+    return rest;
   }
 
   /**

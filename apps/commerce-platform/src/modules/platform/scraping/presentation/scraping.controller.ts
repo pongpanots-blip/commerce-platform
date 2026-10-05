@@ -1,11 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpException, Param, ParseIntPipe, ParseUUIDPipe, Post, Put, Query, ValidationPipe, DefaultValuePipe, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Req, HttpCode, HttpException, Param, ParseIntPipe, ParseUUIDPipe, Post, Put, Query, ValidationPipe, DefaultValuePipe, BadRequestException } from '@nestjs/common';
 import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
+import type { StaffRequest } from '../../../../shared-kernel/presentation/auth.decorators';
 import { ScrapingService } from '../application/scraping.service';
-import { DiscoverScrapingDto, PreviewScrapingDto, SaveScrapingSourceDto, StartScrapingDto } from '../application/dto/scraping.dto';
+import { ScrapingAutomationDto, DiscoverScrapingDto, PreviewScrapingDto, SaveScrapingSourceDto, SaveSiteLoginDto, StartScrapingDto } from '../application/dto/scraping.dto';
 
 /**
- * Staff controller for scraping sources and items.
- * Requires bearer token with staff role 'marketing' or 'admin' (global guard).
+ * Staff controller for scraping sources and items — same routes, bodies and responses as josh's
+ * /api/competitor-scraping/*, under /api/scraping. Requires staff role 'marketing' or 'admin' (global guard).
  */
 @Controller('scraping')
 @StaffRoles('marketing')
@@ -16,6 +17,11 @@ export class ScrapingController {
     catch (error) { return { status: 200, data: [], message: (error as { code?: string }).code === '23505'
       ? 'เว็บนี้มีการตั้งค่าแล้ว เลือกแก้ไขเว็บเดิม' : error instanceof HttpException ? error.message : 'ทำรายการไม่สำเร็จ ตรวจเว็บและการตั้งค่าแล้วลองใหม่' }; }
   }
+  @Get('automation') automation() { return this.result(() => this.service.automation()); }
+  @Put('automation')
+  setAutomation(@Body(new ValidationPipe({ whitelist: true })) dto: ScrapingAutomationDto, @Req() request: StaffRequest) {
+    return this.result(() => this.service.setAutomation(dto.enabled, request.staff.userId));
+  }
   @Get('sources') sources() { return this.result(() => this.service.listSources()); }
   @Post('discover') @HttpCode(200)
   discover(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: DiscoverScrapingDto) { return this.result(() => this.service.discover(dto)); }
@@ -23,10 +29,17 @@ export class ScrapingController {
   create(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: SaveScrapingSourceDto) { return this.result(() => this.service.save(dto)); }
   @Put('sources/:id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: SaveScrapingSourceDto) { return this.result(() => this.service.save(dto, id)); }
+  @Put('sources/:id/login')
+  saveLogin(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: SaveSiteLoginDto) { return this.result(() => this.service.saveLogin(id, dto)); }
+  @Delete('sources/:id/login') clearLogin(@Param('id', ParseUUIDPipe) id: string) { return this.result(() => this.service.clearLogin(id)); }
   @Post('preview') @HttpCode(200)
   preview(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: PreviewScrapingDto) { return this.result(() => this.service.preview(dto)); }
   @Post('sources/:id/start') @HttpCode(200)
   start(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: StartScrapingDto) { return this.result(() => this.service.start(id, dto)); }
+  @Post('sources/:id/paging') @HttpCode(200)
+  paging(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: StartScrapingDto) { return this.result(() => this.service.enablePaging(id, dto.revision)); }
+  @Post('sources/:id/run-now') @HttpCode(200)
+  runNow(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: StartScrapingDto) { return this.result(() => this.service.runNow(id, dto.revision)); }
   @Post('sources/:id/stop') @HttpCode(200)
   stop(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: StartScrapingDto) { return this.result(() => this.service.stop(id, dto.revision)); }
   @Get('items')

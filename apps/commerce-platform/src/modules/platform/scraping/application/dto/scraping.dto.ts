@@ -16,6 +16,8 @@ export class ScrapingConfigDto {
   @IsOptional() @IsArray() @ArrayMinSize(1) @ArrayMaxSize(20) @IsString({ each: true }) @Matches(/^[a-z][a-zA-Z0-9_]{0,39}$/, { each: true }) selectedFields?: string[];
   @IsOptional() @IsBoolean() autoCards?: boolean;
   @IsOptional() @IsIn(['none', 'browser']) pagination?: 'none' | 'browser';
+  @IsOptional() @IsBoolean() nightOnly?: boolean;
+  @IsOptional() @IsInt() @Min(1) @Max(1000000) expectedPages?: number;
   @IsString() @Matches(/^[A-Z]{3}$/) currency: string;
   @IsBoolean() vatIncluded: boolean;
   @IsString() @Length(1, 1000) priceContext: string;
@@ -37,8 +39,27 @@ export class PreviewScrapingDto extends SaveScrapingSourceDto {
 export class StartScrapingDto {
   @IsInt() @Min(1) revision: number;
   @IsBoolean() restart: boolean;
+  /** Paged sources: read the first pages now in the background, even outside the night window. */
+  @IsOptional() @IsBoolean() firstLook?: boolean;
+}
+/** Our own member account on the site. The password is write-only: it is never returned. */
+export class SiteLoginDto {
+  @IsUrl({ protocols: ['https'], require_protocol: true }) @MaxLength(2000) url: string;
+  @IsString() @Length(1, 200) username: string;
+  @IsString() @Length(1, 200) password: string;
+}
+export class SaveSiteLoginDto {
+  @IsUrl({ protocols: ['https'], require_protocol: true }) @MaxLength(2000) url: string;
+  @IsString() @Length(1, 200) username: string;
+  /** Omit to keep the stored password (e.g. only the username changed). */
+  @IsOptional() @IsString() @Length(1, 200) password?: string;
+}
+export class ScrapingAutomationDto {
+  @IsBoolean() enabled: boolean;
 }
 export class DiscoverScrapingDto {
   @IsString() @Length(1, 2000) website: string;
   @IsBoolean() collectionAllowed: boolean;
+  /** Used for this discovery only; save it with PUT /sources/:id/login. */
+  @IsOptional() @ValidateNested() @Type(() => SiteLoginDto) login?: SiteLoginDto;
 }

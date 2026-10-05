@@ -36,6 +36,8 @@ import { JoshBackoffice } from './pages/JoshBackoffice';
 import { JoshApiLogs } from './pages/JoshApiLogs';
 import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
+import { Promotions } from './pages/Promotions';
+import { MarketingWorkflows } from './pages/MarketingWorkflows';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -65,10 +67,12 @@ const NAV = [
       { to: '/josh/payments', label: 'รายการชำระเงิน', end: false },
       { to: '/josh/credit_notes', label: 'Credit notes', end: false },
       { to: '/josh/credit_backs', label: 'Credit backs', end: false },
+      { to: '/josh/invoices', label: 'ใบแจ้งหนี้', end: false },
       { to: '/josh/coupons', label: 'Coupons', end: false },
       { to: '/josh/campaigns', label: 'Campaigns', end: false },
       { to: '/josh/segments', label: 'Segments', end: false },
       { to: '/josh/suppliers', label: 'Suppliers', end: false },
+      { to: '/josh/internal_docs', label: 'เอกสารภายใน', end: false },
       { to: '/josh-api-logs', label: 'API log ของ josh', end: false },
     ],
   },
@@ -78,6 +82,8 @@ const NAV = [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
       { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
+      { to: '/marketing/promotions', label: 'โปรโมชัน', end: false },
+      { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
@@ -173,6 +179,8 @@ export function App() {
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
+            <Route path="/marketing/promotions" element={<Promotions />} />
+            <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />

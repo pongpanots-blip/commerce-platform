@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { backofficeApi, BackofficeColumn } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { ACTION_VIEWS, RowAction } from './JoshBackofficeActions';
+import { ACTION_VIEWS, RowAction, ViewCreate } from './JoshBackofficeActions';
 
 const money = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -51,6 +51,7 @@ export function JoshBackoffice() {
           <button type="button" className="btn ghost" onClick={list.reload}>Refresh</button>
         </form>
       </div>
+      <div style={{ marginBottom: 8 }}><ViewCreate key={view} view={view} onDone={(m) => { setMsg(m); list.reload(); }} /></div>
       {msg && <div className="hint" style={{ marginBottom: 8 }}>{msg}</div>}
       {list.error && <div className="err">{list.error}</div>}
       {!!d?.byStatus.length && (

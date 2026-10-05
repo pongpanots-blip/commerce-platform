@@ -615,7 +615,7 @@ export interface JoshProductRow {
   erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
 }
 export interface JoshProductDetail extends JoshProductRow {
-  vat_type: string | null; created_at: string; media: { source: string; media_type: string; sort_order: number }[];
+  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { source: string; media_type: string; sort_order: number }[];
   pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
 }
 export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';
@@ -679,6 +679,33 @@ export const jagotaHistoryApi = {
   run: () => api.post<{ added: number; refreshed: number }>('/reports/jagota-sync-history/run', {}),
 };
 
+export interface PromotionRow { id: string; name: string; badge_text: string | null; badge_text_en: string | null; is_active: boolean; start_date: string; end_date: string;
+  campaign_id: string | null; campaign_name: string | null; max_units: number | null; sold_units: number; audience: string; audience_companies: number;
+  value: Record<string, unknown> | null; product_set_ids: string[]; sku_count: number; state: 'running' | 'scheduled' | 'ended' | 'sold_out' | 'off'; updated_at: string }
+export const promotionsApi = {
+  list: (f: { state: string; search: string }) => api.get<PromotionRow[]>(`/reports/promotions?state=${encodeURIComponent(f.state)}&search=${encodeURIComponent(f.search)}`),
+  detail: (id: string) => api.get<PromotionRow & { skus: { sku: string; name_th: string | null; badge_text: string | null; value: unknown; quantity_rules: unknown }[] }>(`/reports/promotions/${id}`),
+  productSets: () => api.get<{ id: string; name: string; is_active: boolean; products: number }[]>('/reports/promotions/product-sets'),
+  shadow: (days: number) => api.get<{ days: number; lines: number; same_mechanic: number; matched: number; sameMechanicRate: number | null }>(`/reports/promotions/shadow?days=${days}`),
+  /** Body in josh's CreatePromotionMechanicDto shape; josh validates it. */
+  create: (mechanic: Record<string, unknown>) => api.post<unknown>('/josh/promotions', { mechanic }),
+  update: (id: string, changes: Record<string, unknown>) => api.post<unknown>(`/josh/promotions/${id}/update`, { changes }),
+  remove: (id: string) => api.post<unknown>(`/josh/promotions/${id}/remove`, {}),
+};
+
+export interface WorkflowRow { id: string; name: string; status: 'draft' | 'active' | 'paused'; trigger_type: string; schedule: unknown; cooldown_days: number | null;
+  holdout_percent: number | null; conversion_window_days: number | null; updated_at: string; enrolled: number; running: number; failed: number; converted: number;
+  holdout: number; last_run_at: string | null; failed_runs: number }
+export const workflowsApi = {
+  list: (days: number) => api.get<WorkflowRow[]>(`/reports/marketing-workflows?days=${days}`),
+  detail: (id: string) => api.get<Record<string, unknown> & { enrollmentsByStatus: { status: string; n: number }[];
+    recentRuns: { fired_at: string; source: string; status: string; skip_reason: string | null; audience_count: number | null; enrolled_count: number | null; error_message: string | null }[];
+    recentFailures: { created_at: string; step_id: string; action_kind: string; detail: unknown }[] }>(`/reports/marketing-workflows/${id}`),
+  setState: (id: string, action: 'activate' | 'pause') => api.post<unknown>(`/josh/marketing-workflows/${id}/${action}`, {}),
+  /** josh's UpdateMarketingWorkflowDto fields; josh validates. */
+  update: (id: string, workflow: Record<string, unknown>) => api.post<unknown>(`/josh/marketing-workflows/${id}/update`, { workflow }),
+};
+
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
   items: Record<string, unknown>[]; total: number; page: number; limit: number }
@@ -711,6 +738,14 @@ export const joshActionsApi = {
   setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
   approveProducts: (ids: string[]) => api.post<unknown>('/josh/products/approve', { ids }),
   rejectProducts: (ids: string[]) => api.post<unknown>('/josh/products/reject', { ids }),
+  /** josh field names (ProductService.update), e.g. product_name_th, selling_unit_price, category_id. */
+  updateProduct: (id: string, fields: Record<string, unknown>) => api.post<unknown>(`/josh/products/${id}/update`, { fields }),
+  createSupplier: (supplier: Record<string, string>) => api.post<unknown>('/josh/suppliers', { supplier }),
+  updateSupplier: (id: string, supplier: Record<string, string>) => api.post<unknown>(`/josh/suppliers/${id}/update`, { supplier }),
+  removeSupplier: (id: string) => api.post<unknown>(`/josh/suppliers/${id}/remove`, {}),
+  uploadDoc: (d: { category: string; title?: string; filename: string; content: string }) => api.post<unknown>('/josh/internal-docs', d),
+  removeDoc: (id: string) => api.post<unknown>(`/josh/internal-docs/${id}/remove`, {}),
+  updateCustomer: (kind: 'users' | 'branches' | 'companies', id: string, changes: Record<string, unknown>) => api.post<unknown>(`/josh/customers/${kind}/${id}/update`, { changes }),
 };
 
 export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;
@@ -722,6 +757,15 @@ export const priceShadowApi = {
   list: (filter: string, page: number) => api.get<{ items: PriceShadowRow[]; total: number }>(`/reports/price-shadow?filter=${filter}&page=${page}`),
   run: () => api.post<{ checked: number }>('/reports/price-shadow/run', {}),
   recheck: (id: string) => api.post<PriceShadowRow>(`/reports/price-shadow/recheck/${id}`, {}),
+};
+
+export interface OrderQuoteRow { id: string; joshOrderId: string; orderNumber: string | null; orderedAt: string; matched: boolean;
+  diffs: { field: string; josh: number; commerce: number }[]; note: string | null }
+export const orderQuoteApi = {
+  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; matchRate: number | null; last_at: string | null;
+    mismatchByField: { field: string; n: number }[] }>(`/reports/order-quote-shadow/summary?days=${days}`),
+  list: (filter: string, page: number) => api.get<{ items: OrderQuoteRow[]; total: number }>(`/reports/order-quote-shadow?filter=${filter}&page=${page}`),
+  run: () => api.post<{ checked: number }>('/reports/order-quote-shadow/run', {}),
 };
 
 export interface StaffPriceRow { id: string; kind: 'customer' | 'contract'; companyId: string | null; branchId: string | null; productInventoryId: string; sku: string | null;

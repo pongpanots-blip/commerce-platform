@@ -72,6 +72,12 @@ export class JoshCatalogSyncService {
     return this.products.findOneBy({ id: rows[0].id as string });
   }
 
+  /** Pull one product by josh id (after commerce edited it through josh). */
+  async syncId(id: string): Promise<void> {
+    const rows = await this.josh.query(`${SELECT} WHERE p.product_inventory_id = $1`, [id]);
+    if (rows.length) await this.upsert(rows);
+  }
+
   @Cron(cronConfig.joshCatalogSync.expression, { timeZone: cronConfig.joshCatalogSync.timeZone, disabled: !cronConfig.joshCatalogSync.enabled })
   async scheduled() {
     if (this.running || !this.configured) return;

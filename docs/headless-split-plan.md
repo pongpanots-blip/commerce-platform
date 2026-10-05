@@ -126,9 +126,9 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 
 **ขั้น 1 — ยังไม่ย้าย และเหตุผล**
 - `purchases-dashboard` มุมลูกค้า (บริษัทดูยอดซื้อตัวเอง, export Excel ทางอีเมล): ลูกค้าเรียกจากหน้าร้าน/แอป → ต้องรอ façade ขั้น 0
-- `supplier`, `internal-docs-library`: มีการเขียน — ย้ายตอนนี้ = เขียนสองที่ · รอ commerce ขึ้น prod แล้วสลับเจ้าของทีเดียว
+- `supplier`, `internal-docs-library`: ย้ายแล้ว (ปิดไว้) — ดูหัวข้อ "supplier / เอกสารภายใน / DBD"
 - `winback`, `push-campaign`: ส่งข้อความ/แจ้งเตือนจริง · ทำล่วงหน้าได้แค่แบบปิดไว้ (default-off) จนวันสลับ
-- `dbd`: เรียก API กรมพัฒนาฯ ตอน onboarding (เส้นทางลูกค้า)
+- `dbd`: ย้ายแล้ว (ปิดไว้) — ดูหัวข้อ "supplier / เอกสารภายใน / DBD"
 - `erp-log`: อยู่ใน Mongo ของ josh ที่ commerce อ่านไม่ได้ · ฝั่ง commerce มี Inbound log ของตัวเองแล้ว
 - `refunds`: มีแค่หน้า "คำขอคืนเงินของฉัน" ของลูกค้า (หน้าร้าน)
 
@@ -141,6 +141,37 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - ทดลองคิดราคาคู่กัน: commerce คิดราคาทุกบรรทัด order ของ josh ด้วยโค้ดราคาของ josh (สำเนา) แล้วเทียบ · รายงานร้าน › ราคา: commerce คิดคู่กัน · MCP `price_shadow` · `CRON_PRICE_SHADOW_ENABLED`
 - ราคาลูกค้า / ราคาสัญญา: commerce เป็นที่เก็บหลัก (`staff_prices`) → josh บันทึกผ่าน PrivatePriceService / BranchPricingService (ล้าง cache ราคาเอง) · ราคาที่ josh สร้างเอง (ใบเสนอราคา ERP, คำขอราคา CS) ดึงเข้ามาด้วย import (`CRON_STAFF_PRICES_IMPORT_ENABLED`) · MCP `staff_prices`
 - อนุมัติข้อมูลสินค้าจาก ERP: ปุ่มในหน้า สินค้า (josh) → josh ProductService approve / reject
+- ข้อมูลสินค้าหลัก (ชื่อ รายละเอียด หมวด หน่วย ราคาขาย/ตั้ง สถานะ): ปุ่ม "แก้ข้อมูลสินค้า" ในหน้า สินค้า (josh) → josh `internal/commerce/products` action `update` → ProductService.update (ตัวเดียวกับฟอร์ม admin ของ josh) · ดึงสำเนา `josh_catalog_products` ทันทีหลังแก้ · รูปยังอยู่ที่ josh · สวิตช์ josh `COMMERCE_OWNS_CATALOG` ล็อกการสร้าง/แก้ฟิลด์สินค้าใน josh
 - สวิตช์ฝั่ง josh: `COMMERCE_OWNS_PRICES` (ล็อกหน้าแก้ราคาใน josh, live-price ไม่เขียนทับราคา, MOQ ต้องอนุมัติ) · `COMMERCE_APPROVES_PRODUCTS` (ล็อกปุ่มอนุมัติใน josh)
-- ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS
+- ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS → COMMERCE_OWNS_CATALOG
+
+**supplier / เอกสารภายใน / DBD** — ปิดไว้ (default off)
+- Supplier: josh › Suppliers มีปุ่ม เพิ่ม/แก้/ลบ → josh `internal/commerce/suppliers` → SupplierService · สวิตช์ josh `COMMERCE_OWNS_SUPPLIERS`
+- เอกสารภายใน (docs-web): josh › เอกสารภายใน อัปโหลด .md (≤ 90 KB จาก commerce) / ลบ → josh `internal/commerce/internal-docs` · สวิตช์ josh `COMMERCE_OWNS_INTERNAL_DOCS`
+- DBD ตอน onboarding: josh `DBD_VIA_COMMERCE=true` → commerce `GET /api/v1/storefront/dbd/juristic_person/:n` ส่งต่อคำตอบ DBD + เก็บคำตอบล่าสุด (`dbd_lookups`, ใช้ซ้ำ 24 ชม., DBD ล่มใช้ของเดิม) · commerce ล่ม/ไม่ตอบ → josh เรียก DBD ตรงเหมือนเดิม
+
+**บัญชี**
+- webhook ใบลดหนี้จากเคลม (`POST /api/credit-notes/claim-approved`, `X-Credit-Note-Secret`) และ credit back จากใบแจ้งหนี้ (`POST /api/credit-backs/invoice-received`, `X-Credit-Back-Secret`) รับที่ commerce ได้ path/header/secret เดียวกับ josh → เก็บไว้ทุกครั้ง → ส่งต่อ josh (`erp.credit_note.claim_approved` / `erp.credit_back.invoice_received`, retry + dead-letter) → josh สร้างใบด้วย service เดิม · เปิดใช้: ตั้ง `CREDIT_NOTE_INGEST_SECRET` / `CREDIT_BACK_INGEST_SECRET` ที่ commerce, เพิ่ม 2 event ใน subscription "josh shop", แล้วให้ nginx ส่ง 2 path นี้มา commerce ก่อน (josh สำรอง) · ต่างจากเดิม: ตอบ `{ received: true }` ไม่ใช่ใบที่สร้าง
+- ดูใบแจ้งหนี้ (ค้าง/เลยกำหนด/ชำระแล้ว/ยกเลิก): josh › ใบแจ้งหนี้ · Credit notes / Credit backs / Payments มีอยู่แล้ว
+- ยังอยู่ที่ josh: ลูกค้าจ่ายใบแจ้งหนี้ (หน้าร้าน), cron เตือนใบแจ้งหนี้เลยกำหนด (ส่งแจ้งเตือนจริง)
+
+**Marketing workflows** — ปิดไว้ (default off)
+- Marketing › Marketing workflows: ดูทุก workflow + ผล (เข้า / กำลังไป / ล้มเหลว / ซื้อ) · เปิด/หยุด · แก้แบบ JSON → josh `internal/commerce/marketing-workflows` → MarketingWorkflowService · MCP `marketing_workflows`
+- การคัดลูกค้าเข้าและส่งข้อความยังเป็น cron ของ josh · ไม่มีปุ่มส่งทดสอบจาก commerce · ตัวแก้แบบกราฟยังอยู่ที่ josh
+- สวิตช์ josh `COMMERCE_OWNS_MARKETING_WORKFLOWS` ล็อกการสร้าง/แก้/เปิด/หยุดใน josh
+
+**ข้อมูลลูกค้า / เครดิต** — ปิดไว้ (default off)
+- รายงานร้าน › ลูกค้า (รายละเอียด): ปุ่ม "แก้" ของบริษัท (ชื่อ วงเงิน เครดิตวัน ที่อยู่ โทร), สาขา (ชื่อ ผู้รับ โทร ที่อยู่ส่ง), ผู้ใช้ (ชื่อ อีเมล มือถือ) → josh `internal/commerce/customers` → CsAdminService / CompanyService · แก้บริษัทต้องเป็น admin ใน josh · ค่าที่ถูกปิดบังเริ่มว่าง = คงเดิม
+- พิจารณาคำขอวงเงิน: มีแล้ว (josh › Credit terms)
+- สวิตช์ josh `COMMERCE_OWNS_CUSTOMERS` ล็อกการแก้เหล่านี้ใน josh · ลูกค้าแก้โปรไฟล์บริษัทตัวเองและการรวมบัญชียังเหมือนเดิม
+
+**checkout / orders** (3 ขั้น: shadow quote → dual-write → สลับ)
+1. shadow quote — ทำแล้ว (ปิดไว้): commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (สำเนา `checkout/order-totals.ts`: แยก VAT ต่อหน่วย, กลุ่มตามประเภทการส่ง, ค่าส่ง 100 เมื่อกลุ่มต่ำกว่า 2,500 ก่อน VAT, กระจายส่วนลดแบบเศษมากสุด) แล้วเทียบ 8 ช่อง · ราคาแต่ละบรรทัดเทียบใน price shadow · ส่วนลดคูปอง/เครดิตใช้ตัวเลขของ josh · รายงานร้าน › ราคา: commerce คิดคู่กัน (ส่วนล่าง) · MCP `price_shadow` (`orderTotals`) · `CRON_ORDER_QUOTE_SHADOW_ENABLED`
+2. dual-write — ยังไม่ทำ: รอ shadow ราคา + ยอดรวม ตรง ~100% ต่อเนื่อง แล้ว commerce เก็บสำเนา order ทุกใบตอน checkout
+3. สลับให้ commerce เป็นเจ้าของ order — ยังไม่ทำ
+
+**โปรโมชัน** — ปิดไว้ (default off)
+- ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`
+- แก้โปร (สร้าง/แก้ชื่อ ป้าย ช่วงเวลา โควตา/เปิด-ปิด/ลบ): commerce-admin → josh `internal/commerce/promotions` → PromotionMechanicService (DTO แบบเข้มเดียวกับ josh) · Product Set และหน้าโปรยังอยู่ที่ josh
+- สวิตช์ josh `COMMERCE_OWNS_PROMOTIONS` ล็อกการแก้โปรใน josh · เปิดเมื่อ "เลือกโปรตรง josh" ≈ 100% ต่อเนื่อง
 

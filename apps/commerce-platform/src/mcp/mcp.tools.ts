@@ -31,6 +31,9 @@ import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/
 import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
+import { JoshPromotions } from '../modules/integration/connector/josh/josh-promotions';
+import { OrderQuoteShadow } from '../modules/integration/connector/josh/checkout/order-quote-shadow';
+import { JoshMarketingWorkflows } from '../modules/integration/connector/josh/josh-marketing-workflows';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
@@ -91,6 +94,9 @@ export class McpTools {
     private readonly priceShadow: PriceShadow,
     private readonly staffPrices: StaffPrices,
     private readonly jagotaHistory: JagotaSyncHistoryImport,
+    private readonly promotions: JoshPromotions,
+    private readonly workflows: JoshMarketingWorkflows,
+    private readonly orderQuotes: OrderQuoteShadow,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -130,6 +136,32 @@ export class McpTools {
   }
 
   private marketing(server: McpServer, staff: McpStaff) {
+    server.registerTool('marketing_workflows', {
+      title: 'Marketing automations on josh (marketing)',
+      description: 'josh marketing workflows (trigger → steps → LINE / push / email): status (draft / active / paused), trigger, schedule, and for the last `days` how many customers were enrolled, still running, failed, converted and held out, plus the last scheduled run. Pass id for one workflow with its steps, enrollments by status, recent runs and failed sends. Read-only; changes happen in commerce-admin › Marketing workflows.',
+      inputSchema: { id: z.string().uuid().optional(), days: z.number().int().min(1).max(365).default(30) },
+      annotations: READ_ONLY,
+    }, async ({ id, days }) => {
+      if (!this.workflows.available) return json(NO_REPLICA);
+      return json(id ? await this.workflows.detail(id) : await this.workflows.list(days));
+    });
+
+    server.registerTool('josh_promotions', {
+      title: 'Promotions on the josh shop (marketing)',
+      description: 'josh promotion mechanics: name, badge, window, state (running / scheduled / ended / sold_out / off), units sold vs cap, audience, SKU count; pass id for one promotion with its SKUs. shadow = how often commerce, re-pricing josh order lines, picked the same promotion josh did (must be ~100% before commerce owns promotions). Read-only; changes happen in commerce-admin › โปรโมชัน.',
+      inputSchema: {
+        id: z.string().uuid().optional(),
+        state: z.enum(['running', 'scheduled', 'ended', 'sold_out', 'off']).optional(),
+        search: z.string().max(100).optional(),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, state, search }) => {
+      if (!this.promotions.available) return json(NO_REPLICA);
+      if (id) return json(await this.promotions.detail(id));
+      const [items, shadow] = await Promise.all([this.promotions.list({ state, search }), this.promotions.shadow(7)]);
+      return json({ shadow, count: items.length, items: items.slice(0, 100) });
+    });
+
     server.registerTool('shop_traffic', {
       title: 'Shop traffic (josh)',
       description: 'Visits (sessions), visitors, product views, searches, add-to-cart, checkout and purchase counts on the josh shop for a period, by platform and by day, the funnel, and the top searches (with how many found nothing). Compared with the previous period of the same length.',
@@ -521,12 +553,13 @@ export class McpTools {
   private ops(server: McpServer) {
     server.registerTool('price_shadow', {
       title: 'Prices: commerce re-prices josh orders (trial, admin)',
-      description: "Shadow mode before commerce owns product prices: each new josh order line is re-priced with josh's own price resolver (copied into commerce, run on josh's replica) for the same company, branch, quantity and order time, and compared with what josh charged (unit price inc. VAT, price source, promotion mechanic). Match rate, mismatches by source, latest mismatches; `changed_after` = price data edited after the order (not a bug). Read-only.",
+      description: "Shadow mode before commerce owns product prices: each new josh order line is re-priced with josh's own price resolver (copied into commerce, run on josh's replica) for the same company, branch, quantity and order time, and compared with what josh charged (unit price inc. VAT, price source, promotion mechanic). Match rate, mismatches by source, latest mismatches; `changed_after` = price data edited after the order (not a bug). orderTotals = checkout shadow quote: each josh order's totals (VAT, delivery fee, discount spread, total) rebuilt with josh's checkout math. Read-only.",
       inputSchema: { days: z.number().int().min(1).max(90).default(7) },
       annotations: READ_ONLY,
     }, async ({ days }) => {
-      const [summary, mismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20)]);
-      return json({ summary, latestMismatches: mismatches.items });
+      const [summary, mismatches, quote, quoteMismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20),
+        this.orderQuotes.summary(days), this.orderQuotes.list('mismatched', 1, 20)]);
+      return json({ summary, latestMismatches: mismatches.items, orderTotals: { summary: quote, latestMismatches: quoteMismatches.items } });
     });
 
     server.registerTool('staff_prices', {

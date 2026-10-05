@@ -20,6 +20,22 @@ import { WebhookDelivery } from '../modules/integration/webhook-subscription/inf
 import { InventoryLedgerService } from '../modules/commerce/inventory/application/inventory-ledger.service';
 import { Warehouse } from '../modules/commerce/warehouse/infrastructure/warehouse.entity';
 import { InventoryLevel } from '../modules/commerce/inventory/infrastructure/inventory-level.entity';
+import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/connector/josh/josh-insights';
+import { SystemHealthReport } from '../modules/integration/connector/josh/system-health';
+import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
+import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
+import { JoshPushCampaigns } from '../modules/integration/connector/josh/josh-push-campaigns';
+import { JoshProducts, PRODUCT_ISSUES } from '../modules/integration/connector/josh/josh-products';
+import { JoshOrders, SYNC_STATES } from '../modules/integration/connector/josh/josh-orders';
+import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/josh/josh-customers';
+import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
+import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
+import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
+import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
+import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
+import { PriceShadow } from '../modules/integration/connector/josh/pricing/price-shadow';
+import { StaffPrices } from '../modules/integration/connector/josh/pricing/staff-prices';
+import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -31,6 +47,12 @@ const argsHash = (args: Record<string, unknown>) =>
   createHash('sha256').update(JSON.stringify(Object.keys(args).sort().map((k) => [k, args[k]]))).digest('hex');
 const AREAS = ['กรุงเทพมหานคร', 'กรุงเทพฯ และปริมณฑล', 'ทั่วประเทศไทย'] as const;
 const SECTORS = ['ทุกกลุ่ม · น้ำหนักเท่ากัน', 'ร้านอาหาร', 'โรงแรม / จัดเลี้ยง', 'ร้านค้าปลีก', 'โรงงานอาหาร'] as const;
+const PERIOD_INPUT = {
+  period: z.enum(PERIODS).default('this_month').describe('Bangkok time. this_month = 1st of the month until now; compared with the same length right before it'),
+  fromDate: z.string().max(10).optional().describe('custom only: YYYY-MM-DD'),
+  toDate: z.string().max(10).optional().describe('custom only: YYYY-MM-DD (inclusive)'),
+};
+const NO_REPLICA = { available: false, reason: 'Shop data is read from josh\'s read replica, which is not configured on this server (JOSH_DATABASE_URL). Tell the user it is not connected yet.' };
 const productName = (p: JoshCatalogProduct) =>
   p.translations?.find((t) => t.language_code === 'th')?.product_name ?? p.translations?.[0]?.product_name ?? p.sku;
 
@@ -51,6 +73,22 @@ export class McpTools {
     private readonly webhooks: WebhookSubscriptionService,
     private readonly ingest: ErpIngestService,
     private readonly ledger: InventoryLedgerService,
+    private readonly insights: JoshInsights,
+    private readonly health: SystemHealthReport,
+    private readonly restaurants: RestaurantPlaces,
+    private readonly erpLogs: JoshErpLogs,
+    private readonly winback: JoshWinback,
+    private readonly push: JoshPushCampaigns,
+    private readonly products: JoshProducts,
+    private readonly joshOrders: JoshOrders,
+    private readonly joshCustomers: JoshCustomers,
+    private readonly joshPrices: JoshPrices,
+    private readonly jagotaShadow: JagotaShadow,
+    private readonly jagotaGateway: JagotaGateway,
+    private readonly backoffice: JoshBackoffice,
+    private readonly apiLogs: JoshApiLogs,
+    private readonly priceShadow: PriceShadow,
+    private readonly staffPrices: StaffPrices,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -59,7 +97,8 @@ export class McpTools {
     const server = new McpServer(
       { name: 'commerce-platform', version: '1.0.0' },
       { instructions: 'Commerce Platform (Jagota / Josh). Read-only: look up and summarize competitor prices, scraped competitor catalogs, marketing research and the Josh catalog' +
-        (staff.role === 'admin' ? ', plus ERP intake, webhook delivery failures and stock per warehouse.' : '.') +
+        ', shop traffic' +
+        (staff.role === 'admin' ? ', plus shop sales, system health/errors, ERP intake, webhook delivery failures and stock per warehouse.' : '.') +
         (canWrite ? ' A few tools change data; each one first returns a preview and a confirmCode — always show the preview and get the user\'s explicit OK before calling it again with the code.' : ' This connection is read-only.') +
         ' Prices are THB including VAT. Answer in the user\'s language.' },
     );
@@ -89,6 +128,72 @@ export class McpTools {
   }
 
   private marketing(server: McpServer, staff: McpStaff) {
+    server.registerTool('shop_traffic', {
+      title: 'Shop traffic (josh)',
+      description: 'Visits (sessions), visitors, product views, searches, add-to-cart, checkout and purchase counts on the josh shop for a period, by platform and by day, the funnel, and the top searches (with how many found nothing). Compared with the previous period of the same length.',
+      inputSchema: PERIOD_INPUT,
+      annotations: READ_ONLY,
+    }, async ({ period, fromDate, toDate }) => {
+      if (!this.insights.available) return json(NO_REPLICA);
+      return json(await this.insights.traffic(bangkokRange(period, Date.now(), fromDate, toDate)));
+    });
+
+    server.registerTool('restaurant_places', {
+      title: 'Restaurants (Market Explorer)',
+      description: 'Restaurant master data in Thailand for prospecting: name, district, category, Google rating/reviews, price range, dine-in/takeaway/delivery, how busy today, and whether sales already has it as a winback account. Filter, get counts + top categories/districts + one page of places.',
+      inputSchema: {
+        search: z.string().max(100).optional().describe('part of the Thai or English name'),
+        district: z.string().max(100).optional().describe('exact district name as stored, e.g. วัฒนา'),
+        category: z.string().max(100).optional().describe('part of the category, e.g. Japanese, ญี่ปุ่น, cafe'),
+        minRating: z.number().min(0).max(5).optional(),
+        minReviewCount: z.number().int().min(0).optional(),
+        priceRange: z.string().max(20).optional(),
+        delivery: z.boolean().optional(),
+        busyWindow: z.string().regex(/^\d{1,2}-\d{1,2}$/).optional().describe('"17-20" = busy (>60%) at some hour 17:00-20:00 today'),
+        excludeHasTmpLead: z.boolean().optional().describe('true = only places sales has not linked to an account yet'),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(50).default(20),
+      },
+      annotations: READ_ONLY,
+    }, async ({ page, limit, ...filters }) => {
+      if (!this.restaurants.available) return json(NO_REPLICA);
+      return json(await this.restaurants.list(filters, page, limit));
+    });
+
+    server.registerTool('push_campaigns', {
+      title: 'Push campaigns (josh)',
+      description: 'Marketing push / in-app campaigns sent from josh: KPIs and the latest campaigns (status, audience, sent/skipped/failed). Pass id for one campaign with its real delivery results per channel (push, in-app, email), clicks, by day and the top skip/fail reasons. Read-only — creating and sending stay in josh.',
+      inputSchema: {
+        id: z.string().uuid().optional().describe('one campaign → delivery results'),
+        limit: z.number().int().min(1).max(50).default(20),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, limit }) => {
+      if (!this.push.available) return json(NO_REPLICA);
+      if (id) return json(await this.push.delivery(id));
+      const [overview, rows] = await Promise.all([this.push.overview(), this.push.list()]);
+      return json({ overview, campaigns: rows.slice(0, limit).map((r) => ({ id: r.id, name: r.name, status: r.status, title: r.title,
+        audience: r.audience, ab_enabled: r.ab_enabled, scheduled_at: r.scheduled_at, sent_at: r.sent_at, stats: r.stats, last_error: r.last_error })) });
+    });
+
+    server.registerTool('josh_products', {
+      title: 'Shop products (josh catalog)',
+      description: 'The josh shop catalog, read-only: counts of products waiting for ERP change approval, without image, without category, without price, out of / low on stock; a filtered list; or one product (sku or id) with images and each pending ERP change next to the live value.',
+      inputSchema: {
+        sku: z.string().max(100).optional().describe('one product (SKU or id) → full detail'),
+        issue: z.enum(Object.keys(PRODUCT_ISSUES) as [keyof typeof PRODUCT_ISSUES]).optional(),
+        search: z.string().max(100).optional().describe('SKU or name'),
+        status: z.string().max(20).optional().describe('active, draft, inactive …'),
+        limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ sku, issue, search, status, limit }) => {
+      if (!this.products.available) return json(NO_REPLICA);
+      if (sku) return json(await this.products.detail(sku));
+      const [summary, list] = await Promise.all([this.products.summary(), this.products.list({ issue, search, status }, 1, limit)]);
+      return json({ summary, total: list.total, products: list.items });
+    });
+
     server.registerTool('competitor_prices', {
       title: 'Competitor price comparison',
       description: 'Tracked pairs of our SKU vs a competitor product, with price per kg (THB incl. VAT) and the gap. differencePerKg > 0 means we are cheaper.',
@@ -412,6 +517,204 @@ export class McpTools {
   }
 
   private ops(server: McpServer) {
+    server.registerTool('price_shadow', {
+      title: 'Prices: commerce re-prices josh orders (trial, admin)',
+      description: "Shadow mode before commerce owns product prices: each new josh order line is re-priced with josh's own price resolver (copied into commerce, run on josh's replica) for the same company, branch, quantity and order time, and compared with what josh charged (unit price inc. VAT, price source, promotion mechanic). Match rate, mismatches by source, latest mismatches; `changed_after` = price data edited after the order (not a bug). Read-only.",
+      inputSchema: { days: z.number().int().min(1).max(90).default(7) },
+      annotations: READ_ONLY,
+    }, async ({ days }) => {
+      const [summary, mismatches] = await Promise.all([this.priceShadow.summary(days), this.priceShadow.list('mismatched', 1, 20)]);
+      return json({ summary, latestMismatches: mismatches.items });
+    });
+
+    server.registerTool('staff_prices', {
+      title: 'Customer and contract prices owned by commerce (admin)',
+      description: "Customer prices (one per company + product) and branch contract prices that commerce owns and writes to josh through josh's own services. Counts by status (synced = josh charges it, pending, failed = josh refused / unreachable, with josh's reason) and a filtered list. Read-only; edits happen in commerce-admin › ราคาลูกค้า / ราคาสัญญา.",
+      inputSchema: {
+        kind: z.enum(['customer', 'contract']).default('customer'),
+        scopeId: z.string().uuid().optional().describe('company id (customer) or branch id (contract)'),
+        sku: z.string().max(100).optional(), status: z.enum(['synced', 'pending', 'failed']).optional(),
+        page: z.number().int().min(1).default(1),
+      },
+      annotations: READ_ONLY,
+    }, async ({ kind, scopeId, sku, status, page }) => {
+      const [summary, list] = await Promise.all([this.staffPrices.summary(), this.staffPrices.list({ kind, scopeId, search: sku, status }, page, 50)]);
+      return json({ summary: summary.rows, total: list.total, items: list.items });
+    });
+
+    server.registerTool('josh_backoffice', {
+      title: 'josh back-office lists (admin)',
+      description: `josh staff lists, read-only from josh's replica, with counts by status: ${Object.entries(BACKOFFICE_VIEWS).map(([k, v]) => `${k} (${v.title})`).join(', ')}. Column names are josh's. Phones, emails and people's names are masked; files, card data and password hashes are never read.`,
+      inputSchema: {
+        list: z.enum(Object.keys(BACKOFFICE_VIEWS) as [string, ...string[]]),
+        search: z.string().max(100).optional().describe('company, order / shipment / CN number, coupon code, name…'),
+        status: z.string().max(40).optional().describe('one of the statuses in byStatus'),
+        page: z.number().int().min(1).default(1),
+      },
+      annotations: READ_ONLY,
+    }, async ({ list, search, status, page }) => {
+      if (!this.backoffice.available) return json(NO_REPLICA);
+      const r = await this.backoffice.list(list, { search, status }, page);
+      return json({ list: r.key, title: r.title, byStatus: r.byStatus, total: r.total, page: r.page, items: r.items });
+    });
+
+    server.registerTool('josh_api_logs', {
+      title: 'josh API log (admin)',
+      description: "josh's general API log from its Mongo (josh's own query code): calls josh served and calls it made to Jagota / KBank, ERP inbound excluded (see josh_erp_logs). Without `id`: stats (traffic, errors, slowest routes) plus the matching rows for a window (default last 24h, max 7 days). With `id`: one call with payload, response and timing steps.",
+      inputSchema: {
+        id: z.string().max(40).optional(),
+        status: z.enum(['all', '2xx', '4xx', '5xx']).optional(), source: z.enum(['all', 'internal', 'jagota', 'kbank', 'erp_webhook']).optional(),
+        method: z.enum(['all', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE']).optional(), q: z.string().max(100).optional().describe('text in the message / URL'),
+        from: z.string().max(40).optional(), to: z.string().max(40).optional(), minDurationMs: z.number().int().min(0).optional(),
+        sort: z.enum(['newest', 'slowest']).optional(), limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, ...q }) => {
+      if (!this.apiLogs.available) return json({ available: false, reason: "josh's log Mongo is not connected on this server (JOSH_MONGO_URL)." });
+      if (id) return json(await this.apiLogs.detail(id));
+      const [stats, list] = await Promise.all([this.apiLogs.stats(q), this.apiLogs.list(q)]);
+      return json({ stats, total: list.total, items: list.items });
+    });
+
+    server.registerTool('josh_orders', {
+      title: 'Shop orders (josh, admin)',
+      description: 'josh orders, read-only: counts by status, awaiting payment, and whether paid orders reached Jagota (ERP): failed, not sent, pending, sent. A filtered list, or one order (order number or id) with items, shipments, every Jagota send attempt and payments. Customer contact data is masked.',
+      inputSchema: {
+        order: z.string().max(64).optional().describe('order number or id → full detail'),
+        sync: z.enum(Object.keys(SYNC_STATES) as [keyof typeof SYNC_STATES]).optional().describe('Jagota state'),
+        status: z.string().max(30).optional(), search: z.string().max(100).optional().describe('order number, customer code, PO or company'),
+        from: z.string().max(40).optional(), to: z.string().max(40).optional(),
+        limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ order, limit, ...f }) => {
+      if (!this.joshOrders.available) return json(NO_REPLICA);
+      if (order) return json(await this.joshOrders.detail(order));
+      const [summary, list] = await Promise.all([this.joshOrders.summary(f), this.joshOrders.list(f, 1, limit)]);
+      return json({ summary, total: list.total, orders: list.items });
+    });
+
+    server.registerTool('josh_customers', {
+      title: 'Shop customers / companies (josh, admin)',
+      description: 'josh business customers, read-only: companies with credit limit / used / term, branches, users, KYC status (none, pending, approved, rejected) and credit-term applications. Filter by issue (KYC pending, over or near credit limit, no ERP code …). Pass companyId for one company. Identity numbers, phones, emails and family names are masked.',
+      inputSchema: {
+        companyId: z.string().uuid().optional(),
+        issue: z.enum(Object.keys(COMPANY_ISSUES) as [keyof typeof COMPANY_ISSUES]).optional(),
+        search: z.string().max(100).optional().describe('company name or ERP customer code'),
+        limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ companyId, issue, search, limit }) => {
+      if (!this.joshCustomers.available) return json(NO_REPLICA);
+      if (companyId) return json(await this.joshCustomers.detail(companyId));
+      const [summary, list] = await Promise.all([this.joshCustomers.summary(), this.joshCustomers.list({ issue, search }, 1, limit)]);
+      return json({ summary, total: list.total, companies: list.items });
+    });
+
+    server.registerTool('josh_prices', {
+      title: 'Prices a customer branch sees (josh, admin)',
+      description: 'What a josh customer branch pays per unit today, layer by layer in josh\'s order (company private price → branch contract → branch special → promotion → qty tiers → base) and which one wins; or the ERP quotations for a customer code. Without branchId: search branches by company / branch / ERP code.',
+      inputSchema: {
+        branchId: z.string().uuid().optional(), search: z.string().max(100).optional().describe('with branchId: SKU or product name; without: company / branch / ERP code'),
+        customerCode: z.string().max(50).optional().describe('ERP quotations for this customer code'),
+      },
+      annotations: READ_ONLY,
+    }, async ({ branchId, search, customerCode }) => {
+      if (!this.joshPrices.available) return json(NO_REPLICA);
+      if (customerCode) return json(await this.joshPrices.quotations(customerCode));
+      if (branchId) return json(await this.joshPrices.forBranch(branchId, search));
+      return json(await this.joshPrices.branches(search));
+    });
+
+    server.registerTool('jagota_shadow', {
+      title: 'Orders → Jagota through commerce: trial results (admin)',
+      description: 'Orders reaching Jagota through commerce. Step 1 (shadow): josh keeps sending; commerce rebuilds each request and compares field by field — match rate, fields that differ most, latest mismatches. Step 2 (live, branches josh routes via JAGOTA_VIA_COMMERCE_BRANCHES): what commerce actually sent — sent / failed / retried counts and the latest failures. Read-only.',
+      inputSchema: { days: z.number().int().min(1).max(90).default(7) },
+      annotations: READ_ONLY,
+    }, async ({ days }) => {
+      const [summary, mismatches, live, liveFailures] = await Promise.all([this.jagotaShadow.summary(days), this.jagotaShadow.list('mismatched', 1, 20),
+        this.jagotaGateway.summary(days), this.jagotaGateway.list('failed', 1, 20)]);
+      return json({ shadow: { summary, latestMismatches: mismatches.items }, live: { summary: live, latestFailures: liveFailures.items } });
+    });
+
+    server.registerTool('shop_sales', {
+      title: 'Shop sales (josh, admin)',
+      description: 'Sales of the josh shop for a period: paid orders, revenue (THB incl. VAT, after discounts), average order, buying customers/companies, new customers, awaiting payment / cancelled / refunded, revenue by day (or month), top products, and the change vs the previous period.',
+      inputSchema: PERIOD_INPUT,
+      annotations: READ_ONLY,
+    }, async ({ period, fromDate, toDate }) => {
+      if (!this.insights.available) return json(NO_REPLICA);
+      return json(await this.insights.sales(bangkokRange(period, Date.now(), fromDate, toDate)));
+    });
+
+    const RANGE = {
+      from: z.string().max(40).optional().describe('ISO date or date-time; default: this month (josh dashboard default)'),
+      to: z.string().max(40).optional().describe('ISO date or date-time'),
+    };
+    const iso = (v?: string) => { if (v && Number.isNaN(Date.parse(v))) throw new Error(`not a date: ${v}`); return v; };
+    const winbackTool = <A>(fn: (a: A) => Promise<unknown>) => async (a: A) =>
+      json(this.winback.available ? wrapWinbackResponse(await fn(a)) : NO_REPLICA);
+
+    server.registerTool('winback_overview', {
+      title: 'Win-back pipeline overview (admin)',
+      description: 'Sales win-back CRM (josh winback): how many lapsed/at-risk customers and leads by health (dormant/watch/active_again), stage, source and lifecycle (tmp/lead), unassigned, restaurant places not yet leads, by province, and monthly revenue at risk / recoverable.',
+      inputSchema: {}, annotations: READ_ONLY,
+    }, winbackTool(() => this.winback.overview()));
+
+    server.registerTool('winback_performance', {
+      title: 'Win-back sales performance (admin)',
+      description: 'Sales team results for a period: funnel and stage conversion, reactivation (won) rate, days to first contact / first order, activities by type and outcome, reject reasons, TMP→lead; GMV vs monthly target, AOV, customer segments and per-rep figures; per-rep lead/visit/call counts.',
+      inputSchema: RANGE, annotations: READ_ONLY,
+    }, winbackTool(async ({ from, to }: { from?: string; to?: string }) => {
+      const [scorecard, dashboard, team] = await Promise.all([
+        this.winback.scorecard(iso(from), iso(to)), this.winback.dashboard(iso(from), iso(to)), this.winback.teamStats(iso(from), iso(to)),
+      ]);
+      return { scorecard, dashboard, teamStats: team };
+    }));
+
+    server.registerTool('winback_follow_up', {
+      title: 'Win-back leads needing attention (admin)',
+      description: 'Leads nobody has worked for N days (aging) and per-lead facts for a sales meeting: stage, how long in stage, last activity and note, appointments that passed without being logged, plus median days per stage (team and per rep).',
+      inputSchema: {
+        days: z.number().int().min(0).max(365).default(3).describe('aging: no activity for at least this many days'),
+        salesUserId: z.string().uuid().optional().describe('only this rep\'s leads'),
+        limit: z.number().int().min(1).max(200).default(50),
+      },
+      annotations: READ_ONLY,
+    }, winbackTool(async ({ days, salesUserId, limit }: { days: number; salesUserId?: string; limit: number }) => {
+      const [aging, signals] = await Promise.all([this.winback.aging(days), this.winback.leadSignals(salesUserId, limit)]);
+      return { aging, leadSignals: signals };
+    }));
+
+    server.registerTool('josh_erp_logs', {
+      title: 'ERP calls received by josh (admin)',
+      description: 'What the ERP sent to josh (josh /api/erp/*) and whether josh accepted it: list by endpoint (e.g. products/qty, orders/status), ok/fail, time window (max 7 days, default last 24h; josh keeps 14 days), free-text search on codes (PRODUCT_CODE, ORDER_NO, CUST_CODE...). Pass id to get one call with its request/response payload.',
+      inputSchema: {
+        id: z.string().max(40).optional().describe('one log id from a previous list → full payload'),
+        endpoint: z.string().max(100).optional().describe('e.g. products/qty, products/price, orders/status, customers'),
+        status: z.enum(['ok', 'fail', 'all']).default('all'),
+        from: z.string().max(40).optional().describe('ISO date-time'),
+        to: z.string().max(40).optional().describe('ISO date-time'),
+        q: z.string().max(100).optional().describe('search, e.g. a product code or order number'),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(50).default(20),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, page, limit, ...filters }) => {
+      if (!this.erpLogs.configured) return json({ available: false, reason: 'josh\'s log database is not connected on this server (JOSH_MONGO_URL).' });
+      if (id) return json((await this.erpLogs.get(id)) ?? { found: false, note: 'josh keeps ERP logs 14 days' });
+      return json(await this.erpLogs.list(filters, page, limit));
+    });
+
+    server.registerTool('system_health', {
+      title: 'System health and errors (admin)',
+      description: 'Is anything broken right now, and what failed in a period: commerce → platform delivery (stuck queue, dead-letters, relay), ERP intake failures, and josh-side failures (payments, Jagota order sync, marketing runs, push campaigns).',
+      inputSchema: PERIOD_INPUT,
+      annotations: READ_ONLY,
+    }, async ({ period, fromDate, toDate }) => {
+      return json(await this.health.report(bangkokRange(period, Date.now(), fromDate, toDate).current));
+    });
+
     server.registerTool('erp_intake_summary', {
       title: 'ERP intake summary (admin)',
       description: 'What the ERP sent in the last N hours: counts by type and status, plus the most recent failures.',

@@ -15,7 +15,7 @@
 #   EC2:            EC2_HOST, EC2_USER, EC2_SSH_KEY, EC2_DEPLOY_DIR
 #   App env (written to .env on EC2 by the deploy step): COMMERCE_DB_HOST, COMMERCE_DB_USERNAME,
 #     COMMERCE_DB_PASSWORD, COMMERCE_DB_NAME, REDIS_HOST, STOREFRONT_API_KEYS, PORTAL_JWT_SECRET,
-#     COMMERCE_CORS_ORIGINS
+#     COMMERCE_CORS_ORIGINS, JOSH_DATABASE_URL, JOSH_MONGO_URL (optional, read-only josh DB users)
 #
 # ECR repos (create once): <account>.dkr.ecr.<region>.amazonaws.com/commerce-platform,
 #   commerce-admin, commerce-portal
@@ -129,6 +129,8 @@ jobs:
           STOREFRONT_API_KEYS: ${{ secrets.STOREFRONT_API_KEYS }}
           PORTAL_JWT_SECRET: ${{ secrets.PORTAL_JWT_SECRET }}
           COMMERCE_CORS_ORIGINS: ${{ secrets.COMMERCE_CORS_ORIGINS }}
+          JOSH_DATABASE_URL: ${{ secrets.JOSH_DATABASE_URL }}
+          JOSH_MONGO_URL: ${{ secrets.JOSH_MONGO_URL }}
         run: |
           cd "${{ secrets.EC2_DEPLOY_DIR }}/docker"
           SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')

@@ -292,21 +292,44 @@ export const marketingResearchApi = {
   keepRun: (id: string) => enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/runs/${id}/keep`, {})),
 };
 
-export interface ScrapingConfig {
-  startUrls?: string[]; pathPrefixes?: string[]; mode: 'html' | 'browser'; itemSelector?: string;
-  fields?: { key: string; label: string; selector: string; attribute?: string }[];
-  currency?: string; vatIncluded?: boolean; priceContext: string; collectionAllowed?: boolean;
-  intervalHours: number; maxPages?: number; delayMs?: number;
+// Same shapes as josh libs/shared-api competitor-prices.api.ts (af81a227), so the two compare 1:1.
+export type ScrapingField = { key: string; label: string; selector: string; attribute?: string };
+export type ScrapingConfig = {
+  startUrls: string[]; pathPrefixes: string[]; mode: 'html' | 'browser'; itemSelector: string;
+  fields: ScrapingField[]; currency: string; vatIncluded: boolean; priceContext: string;
+  selectedFields?: string[];
   /** Detect repeated product cards from links instead of CSS field selectors. */
   autoCards?: boolean;
   /** 'browser' = follow next link / next button / load more / scroll in one session. */
   pagination?: 'none' | 'browser';
-}
-export interface ScrapingSource {
-  id: string; name: string; origin: string; config: ScrapingConfig; revision: number; enabled: boolean;
+  /** Run only at night (server window, default 00:00–06:00 Bangkok); long runs pause and resume next night. */
+  nightOnly?: boolean;
+  /** Pages the site reported at discovery, for 'X of ~Y' progress. */
+  expectedPages?: number;
+  collectionAllowed: boolean; intervalHours: number; maxPages: number; delayMs: number;
+};
+export type ScrapingSourceInput = { name: string; origin: string; config: ScrapingConfig; enabled: boolean; revision?: number };
+/** Our own member account on a site. Password is write-only; prices read while logged in are member prices. */
+export type ScrapingLogin = { url: string; username: string; password?: string };
+export interface ScrapingSource extends ScrapingSourceInput {
+  id: string; revision: number; configVersion: string;
+  login: { url: string; username: string; hasPassword: boolean } | null;
   status: 'idle' | 'running' | 'paused' | 'completed' | 'limited'; lastError: string | null; lastRunAt: string | null;
-  progress: { pages?: number; pending?: number; successful: number; failed: number; items: number };
+  /** reading · waiting_for_night · queued (starts within seconds) · retrying (dropped, retrying itself) · gave_up (dropped 3×, use runNow) */
+  activity: 'reading' | 'waiting_for_night' | 'queued' | 'retrying' | 'gave_up' | null;
+  progress: { pages: number; pending: number; successful: number; failed: number; items: number };
 }
+export type ScrapingPreview = { url: string; observedAt: string; found: number; links: number; sitemap: boolean; message: string;
+  items: { url: string; name: string; sku: string; fields: Record<string, string>; price: number | null; currency: string }[];
+};
+/** Result of reading two listing pages in a browser: `works` = page 2 had new items, so runs page through by themselves. */
+export type ScrapingPaging = { pages: { page: number; found: number; fresh: number }[]; totalPages: number | null; works: boolean };
+export type ScrapingDiscovery = { ready: boolean; proposal: ScrapingSourceInput | null; preview: ScrapingPreview | null; paging?: ScrapingPaging | null;
+  fields: { key: string; label: string; examples: string[]; required: boolean; recommended: boolean }[];
+  scannedPages: { url: string; title: string; mode: 'html' | 'browser'; found: number; error: string | null }[]; warnings: string[];
+};
+/** Master switch for all background collection (trial period). Off = no scheduled starts; running sessions stop after their current page. */
+export type ScrapingAutomation = { enabled: boolean; updatedAt: string | null; updatedBy: string | null };
 export interface ScrapedItem {
   id: string; sourceId: string; url: string; pageUrl: string; name: string; sku: string;
   fields: Record<string, string>; priceIncVat: number | null; weightKg: number | null; currency: string;
@@ -314,13 +337,26 @@ export interface ScrapedItem {
 }
 
 export const scrapingApi = {
+  automation: () => enveloped(api.get<Envelope<ScrapingAutomation>>('/scraping/automation')),
+  setAutomation: (enabled: boolean) => enveloped(api.put<Envelope<ScrapingAutomation>>('/scraping/automation', { enabled })),
   sources: () => enveloped(api.get<Envelope<ScrapingSource[]>>('/scraping/sources')),
-  discover: (website: string, collectionAllowed: boolean) =>
-    enveloped(api.post<Envelope<unknown>>('/scraping/discover', { website, collectionAllowed })),
-  save: (input: Pick<ScrapingSource, 'name' | 'origin' | 'enabled' | 'config'> & { revision?: number }, id?: string) =>
+  discover: (website: string, collectionAllowed: boolean, login?: ScrapingLogin) =>
+    enveloped(api.post<Envelope<ScrapingDiscovery>>('/scraping/discover', { website, collectionAllowed, ...(login ? { login } : {}) })),
+  /** Omit `password` to keep the stored one. Resets the run: a login changes which prices are read. */
+  saveLogin: (sourceId: string, login: ScrapingLogin) => enveloped(api.put<Envelope<ScrapingSource>>(`/scraping/sources/${sourceId}/login`, login)),
+  clearLogin: (sourceId: string) => enveloped(api.del<Envelope<ScrapingSource>>(`/scraping/sources/${sourceId}/login`)),
+  save: (input: ScrapingSourceInput, id?: string) =>
     enveloped(id ? api.put<Envelope<ScrapingSource>>(`/scraping/sources/${id}`, input) : api.post<Envelope<ScrapingSource>>('/scraping/sources', input)),
-  start: (source: ScrapingSource) =>
-    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/start`, { revision: source.revision, restart: true })),
+  preview: (input: ScrapingSourceInput & { sampleUrl: string }) => enveloped(api.post<Envelope<ScrapingPreview>>('/scraping/preview', input)),
+  /** `firstLook`: paged sites read their first 20 pages now in the background (night-only sites continue at night). */
+  start: (source: ScrapingSource, restart: boolean, firstLook = false) =>
+    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/start`, { revision: source.revision, restart, ...(firstLook ? { firstLook } : {}) })),
+  /** Old link-crawl source → whole-listing paging; answers at once, a first look runs in the background. */
+  enablePaging: (source: ScrapingSource) =>
+    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/paging`, { revision: source.revision, restart: true })),
+  /** A night-only site waiting for tonight (or one that gave up) continues now in the background. */
+  runNow: (source: ScrapingSource) =>
+    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/run-now`, { revision: source.revision, restart: false })),
   stop: (source: ScrapingSource) =>
     enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/stop`, { revision: source.revision, restart: false })),
   items: (sourceId: string, search: string, page: number) => {
@@ -415,6 +451,26 @@ export interface WebhookDeliveryFull {
   createdAt: string;
 }
 
+export interface ErpSimulatorResult { route: string; status: number; ms: number; sentAt: string; response: unknown }
+
+export interface SimProduct { id: string; sku: string; name: string; price: string | null; stock: number }
+export interface JoshOrderResult { orderId: string | null; steps: { step: string; call: string; request?: unknown; status: number; ms: number; response: unknown }[] }
+export interface JoshOrderTrace {
+  order: { id: string; code: string | null; status: string; total: number; currency: string; created_at: string };
+  reservations: { sku: string | null; qty: number; status: string; fail_reason: string | null }[];
+  payments: { status: string; amount: number; updated_at: string }[];
+  events: { type: string; status: string; created_at: string; published_at: string | null }[];
+  erp: { integration: boolean; liveMode: boolean; erpOrderRef: string | null; pushedAt: string | null };
+}
+export const erpSimulatorApi = {
+  routes: () => api.get<{ routes: string[]; erpKeyConfigured: boolean }>('/erp-simulator/routes'),
+  send: (route: string, payload: unknown) => api.post<ErpSimulatorResult>('/erp-simulator/send', { route, payload }),
+  joshProducts: (search: string) => api.get<{ items: SimProduct[] }>(`/erp-simulator/josh/products${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  joshOrder: (body: { customer: { name: string; email?: string; phone?: string }; payment: 'paid' | 'failed' | 'none';
+    lines: { productId: string; qty: number; unitPrice: number }[] }) => api.post<JoshOrderResult>('/erp-simulator/josh/order', body),
+  joshOrderTrace: (id: string) => api.get<JoshOrderTrace>(`/erp-simulator/josh/orders/${id}`),
+};
+
 export const webhookApi = {
   subscriptions: () => api.get<WebhookSubscription[]>('/webhook-subscriptions'),
   subscription: (id: string) => api.get<WebhookSubscription>(`/webhook-subscriptions/${id}`),
@@ -435,4 +491,242 @@ export const webhookApi = {
   /** Dead-letter: give a failed OUTBOUND delivery a fresh retry budget. */
   retryDelivery: (deliveryId: string) =>
     api.post<WebhookDeliveryFull>(`/webhook-subscriptions/deliveries/${deliveryId}/retry`, {}),
+};
+
+// Shop reports (josh read replica) — same numbers the MCP tools answer with.
+export const REPORT_PERIODS = ['today', 'yesterday', 'this_week', 'last_7_days', 'this_month', 'last_month', 'last_30_days', 'custom'] as const;
+export type ReportPeriod = (typeof REPORT_PERIODS)[number];
+export interface PeriodParams { period: ReportPeriod; fromDate?: string; toDate?: string }
+type Row = Record<string, string | number | null>;
+export interface SalesReport {
+  period: string;
+  totals: Record<string, number> & { refunds: { n: number; amount: number } };
+  vsPreviousPeriod: { period: string; revenue_inc_vat: number; orders: number; revenue_change_percent: number | null; orders_change_percent: number | null };
+  byDay?: { bucket: string; orders: number; revenue_inc_vat: number }[];
+  byMonth?: { bucket: string; orders: number; revenue_inc_vat: number }[];
+  topProducts: { sku: string; name: string; qty: number; revenue_inc_vat: number }[];
+}
+export interface TrafficReport {
+  period: string;
+  note: string;
+  totals: Record<string, number>;
+  vsPreviousPeriod: { period: string; sessions: number; visitors: number; sessions_change_percent: number | null };
+  byPlatform: { platform: string; sessions: number; visitors: number }[];
+  sessionsByDay: { day: string; sessions: number }[];
+  funnelSessions: Record<string, number>;
+  topSearches: { query: string; searches: number; no_results: number }[];
+}
+export interface HealthReport {
+  period: string;
+  now: { ok: boolean; problems: string[] };
+  commerce: Record<string, number>;
+  josh: { available?: false; reason?: string; counts?: Record<string, number>; jagotaOrderSyncErrors?: Row[]; notAvailable?: string };
+}
+const qs = (p: PeriodParams) => '?' + new URLSearchParams(Object.entries(p).filter(([, v]) => v) as [string, string][]).toString();
+export const reportsApi = {
+  sales: (p: PeriodParams) => api.get<SalesReport>(`/reports/sales${qs(p)}`),
+  traffic: (p: PeriodParams) => api.get<TrafficReport>(`/reports/traffic${qs(p)}`),
+  health: (p: PeriodParams) => api.get<HealthReport>(`/reports/health${qs(p)}`),
+};
+
+/** GET a file with the staff token and save it (a plain <a href> can't send the Authorization header). */
+export async function downloadFile(path: string, filename: string) {
+  const token = session.get();
+  const res = await fetch(`${BASE}${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  const url = URL.createObjectURL(await res.blob());
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename });
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/** josh `RestaurantPlaceListItemDto` / `RestaurantPlaceListResponseDto`, same field names. */
+export interface RestaurantRow {
+  id: string; name: string; nameTh: string | null; nameEn: string | null; district: string | null; category: string | null;
+  lat: number; lng: number; rating: number | null; reviewCount: number | null; priceRange: string | null; isEnriched: boolean;
+  popularTimesToday: number[] | null; estimatedTables: number | null; winbackAccountId: string | null; winbackCustomerCode: string | null;
+}
+export interface RestaurantList {
+  items: RestaurantRow[]; page: number; limit: number;
+  summary: { totalCount: number; topCategories: { name: string; count: number }[]; topDistricts: { name: string; count: number }[] };
+}
+export interface TargetgroupRow {
+  cust_code: string; total_skus_ordered: number; ot_skus_ordered: number; ot_skus_with_active_period: number;
+  max_shipments_per_week: number; delivery_weekdays: number[] | null;
+}
+const query = (p: Record<string, string | number | boolean | undefined>) =>
+  new URLSearchParams(Object.entries(p).filter(([, v]) => v !== undefined && v !== '' && v !== false).map(([k, v]) => [k, String(v)])).toString();
+export const marketApi = {
+  restaurants: (f: Record<string, string | number | boolean | undefined>) => api.get<RestaurantList>(`/reports/restaurants?${query(f)}`),
+  restaurantsCsv: (f: Record<string, string | number | boolean | undefined>) => downloadFile(`/reports/restaurants/export?${query(f)}`, 'restaurant-places.csv'),
+  targetgroup: (f: { minShipmentsPerWeek?: number; custCode?: string; limit: number; offset: number }) =>
+    api.get<{ total: number; items: TargetgroupRow[] }>(`/reports/order-targetgroup?${query(f)}`),
+};
+
+export interface JoshErpLogRow { id: string; endpoint: string; method: string; statusCode: number; isSuccess: boolean; durationMs: number; summary?: string; createdAt: string }
+export const joshErpLogApi = {
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshErpLogRow[]; total: number; page: number; limit: number }>(`/reports/erp-logs?${query(f)}`),
+  get: (id: string) => api.get<Record<string, unknown>>(`/reports/erp-logs/${id}`),
+};
+
+// josh winback manager reports — josh's `{data, meta}` camelCase envelope, same as josh GET /api/winback/*.
+type WbEnvelope<T> = { data: T; meta?: { total: number; page: number; limit: number; totalPages: number } };
+export interface WbOverview {
+  counts: { total: number; unassigned: number; placeCandidates: number; byHealth: Record<string, number>; byStage: Record<string, number>; byLifecycle: Record<string, number> };
+  provinces: { province: string; count: number }[];
+  revenueRisk: { revenueAtRisk: number; dormantMonthlyRevenue: number; recoverableRevenue: number; recoveryProbability: number };
+}
+export interface WbRep { salesUserId: string; name: string | null; email: string | null; leadCount: number; openCount: number; signedCount: number; rejectedCount: number; visits: number; calls: number; activities: number }
+export interface WbPerson { salesUserId: string; name: string | null; gmv: number; orderCount: number; target: number | null; achievementPct: number | null }
+export interface WbLead { accountId: string; displayName: string; assignedSalesUserName: string | null; stage: string; stageEnteredAt: string; lastActivityAt: string | null; lastActivityType: string | null; lastNote: string | null; unloggedAppointments: { activityId: string; scheduledAt: string }[] }
+export const winbackApi = {
+  overview: () => api.get<WbEnvelope<WbOverview>>('/reports/winback/overview'),
+  teamStats: () => api.get<WbEnvelope<{ reps: WbRep[] }>>('/reports/winback/team-stats'),
+  dashboard: () => api.get<WbEnvelope<{ gmv: number; target: { set: boolean; baht: number }; achievement: { pct: number | null }; orders: { total: number; aov: number }; byPerson: WbPerson[] }>>('/reports/winback/dashboard'),
+  scorecard: () => api.get<WbEnvelope<{ reactivation: { total: number; won: number; rate: number }; timing: { avgDaysToFirstContact: number | null; avgDaysToFirstOrder: number | null } }>>('/reports/winback/scorecard'),
+  leadSignals: () => api.get<WbEnvelope<{ leads: WbLead[]; stageMedianDays: Record<string, number> }>>('/reports/winback/lead-signals?limit=50'),
+};
+
+// josh push campaigns (read-only) — josh's own field names.
+export interface PushCampaign {
+  id: string; name: string; status: string; title: string; body: string; audience: { include: Record<string, string[]>; exclude: Record<string, string[]> };
+  ab_enabled: boolean; scheduled_at: string | null; sent_at: string | null; created_at: string; last_error: string | null;
+  stats: { queued: number; sent: number; skipped: number; failed: number; clicked: number };
+}
+export interface PushDelivery {
+  deliveryStats: null | { totals: { attempted: number; sent: number; skipped: number; failed: number; clicked: number; deliveryRate: number; clickRate: number };
+    byTypeChannel: { channel: string; attempted: number; sent: number; skipped: number; failed: number; clicked: number; clickRate: number }[];
+    topSkipAndFailReasons: { reason: string; count: number }[] };
+  note?: string;
+}
+export const pushCampaignApi = {
+  overview: () => api.get<{ campaigns: number; scheduled: number; sentToday: number; totalQueued: number; totalSent: number }>('/reports/push-campaigns/overview'),
+  list: () => api.get<PushCampaign[]>('/reports/push-campaigns'),
+  delivery: (id: string) => api.get<PushDelivery>(`/reports/push-campaigns/${id}/delivery`),
+};
+
+// josh catalog, read-only — josh's column names.
+export interface JoshProductRow {
+  product_inventory_id: string; product_inventory_sku: string; product_status: string; name_th: string | null; name_en: string | null;
+  category_id: string | null; category_name_th: string | null; category_path: string | null; brand_name: string | null;
+  selling_unit_price: number | null; ordering_price: number | null; original_price: number | null; product_inventory_quantity: number | null;
+  low_stock_threshold: number | null; moq: number | null; selling_unit: string | null; pack_size: string | null; order_taking_flag: string | null;
+  sup_code: string | null; storage_temperature: string | null; country_code_source: string | null;
+  erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
+}
+export interface JoshProductDetail extends JoshProductRow {
+  vat_type: string | null; created_at: string; media: { source: string; media_type: string; sort_order: number }[];
+  pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
+}
+export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';
+export const joshProductApi = {
+  summary: () => api.get<Record<ProductIssueKey | 'total', number> & { byStatus: { status: string; n: number }[] }>('/reports/products/summary'),
+  categories: () => api.get<{ id: string; category_name_th: string | null; category_path: string | null }[]>('/reports/products/categories'),
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshProductRow[]; total: number; page: number; limit: number }>(`/reports/products?${query(f)}`),
+  detail: (idOrSku: string) => api.get<JoshProductDetail>(`/reports/products/${encodeURIComponent(idOrSku)}`),
+};
+
+// josh orders / customers / prices, read-only — josh column names.
+export type JoshRow = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+export const joshOrderApi = {
+  summary: (f: Record<string, string | undefined>) => api.get<JoshRow>(`/reports/orders/summary?${query(f)}`),
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshRow[]; total: number }>(`/reports/orders?${query(f)}`),
+  detail: (idOrNumber: string) => api.get<JoshRow>(`/reports/orders/${encodeURIComponent(idOrNumber)}`),
+};
+export const joshCustomerApi = {
+  summary: () => api.get<JoshRow>('/reports/customers/summary'),
+  list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshRow[]; total: number }>(`/reports/customers?${query(f)}`),
+  detail: (id: string) => api.get<JoshRow>(`/reports/customers/${id}`),
+};
+export const joshPriceApi = {
+  branches: (search: string) => api.get<JoshRow[]>(`/reports/prices/branches?${query({ search })}`),
+  forBranch: (branchId: string, search: string) => api.get<{ branch: JoshRow; note: string; items: JoshRow[] }>(`/reports/prices/branches/${branchId}?${query({ search })}`),
+  quotations: (customerCode: string) => api.get<JoshRow[]>(`/reports/prices/quotations?${query({ customerCode })}`),
+};
+
+// Orders → Jagota through commerce, shadow mode (compare only, nothing sent).
+export interface ShadowDiff { path: string; josh: unknown; commerce: unknown }
+export interface ShadowCheck {
+  id: string; joshSyncId: string; orderReference: string | null; joshSyncStatus: string | null; joshSentAt: string; matched: boolean;
+  diffs: ShadowDiff[]; note: string | null; checkedAt: string; joshRequest?: unknown; commerceRequest?: unknown;
+}
+export const jagotaShadowApi = {
+  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; could_not_build: number; matchRate: number | null;
+    first_at: string | null; last_at: string | null; topFields: { field: string; n: number }[] }>(`/reports/jagota-shadow/summary?days=${days}`),
+  list: (filter: string, page: number) => api.get<{ items: ShadowCheck[]; total: number }>(`/reports/jagota-shadow?filter=${filter}&page=${page}`),
+  detail: (id: string) => api.get<ShadowCheck>(`/reports/jagota-shadow/${id}`),
+  run: () => api.post<{ checked: number }>('/reports/jagota-shadow/run', {}),
+  recheck: (joshSyncId: string) => api.post<ShadowCheck>(`/reports/jagota-shadow/recheck/${encodeURIComponent(joshSyncId)}`, {}),
+};
+
+export interface JagotaSend { id: string; orderReference: string; status: 'sending' | 'sent' | 'failed'; attempts: number; lastError: string | null;
+  docBook: string | null; docNo: string | null; durationMs: number | null; createdAt: string; updatedAt: string; request?: unknown; response?: unknown }
+export const jagotaGatewayApi = {
+  summary: (days: number) => api.get<{ enabled: boolean; days: number; total: number; sent: number; failed: number; sending: number; retried: number;
+    avg_ms: number | null; last_at: string | null }>(`/reports/jagota-gateway/summary?days=${days}`),
+  list: (status: string, page: number) => api.get<{ items: JagotaSend[]; total: number }>(`/reports/jagota-gateway?status=${status}&page=${page}`),
+  detail: (id: string) => api.get<JagotaSend>(`/reports/jagota-gateway/${id}`),
+};
+
+export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
+export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
+  items: Record<string, unknown>[]; total: number; page: number; limit: number }
+export const backofficeApi = {
+  list: (view: string, f: { search?: string; status?: string; page: number }) => {
+    const p = new URLSearchParams({ page: String(f.page) });
+    if (f.search) p.set('search', f.search);
+    if (f.status) p.set('status', f.status);
+    return api.get<BackofficeList>(`/reports/backoffice/${encodeURIComponent(view)}?${p}`);
+  },
+};
+
+export interface ApiLogRow { id: string; method: string; url: string; statusCode: number; isSuccess: boolean; durationMs: number; message: string; createdAt: string;
+  source: string; requestId: string | null; userId: string | null }
+export interface ApiLogDetail extends ApiLogRow { errorMessage?: string; response?: unknown; payload?: unknown; query?: unknown; ip?: string; steps: { label: string; ms: number }[] }
+export interface ApiLogStats { from: string; to: string; bucketMs: number; buckets: { start: string; count: number; errors: number; avgMs: number; maxMs: number }[];
+  topEndpoints: { method: string; route: string; count: number; errors: number; avgMs: number; maxMs: number }[] }
+export const apiLogsApi = {
+  list: (q: Record<string, string>) => api.get<{ items: ApiLogRow[]; total: number; page: number; limit: number }>(`/reports/api-logs?${new URLSearchParams(q)}`),
+  stats: (q: Record<string, string>) => api.get<ApiLogStats>(`/reports/api-logs/stats?${new URLSearchParams(q)}`),
+  detail: (id: string) => api.get<ApiLogDetail>(`/reports/api-logs/${encodeURIComponent(id)}`),
+};
+
+/** Ask josh to act (josh's own services and rules do the work; off on josh unless COMMERCE_ACTIONS_ENABLED). */
+export const joshActionsApi = {
+  reviewCredit: (id: string, b: { status: string; approved_credit_limit?: number; approved_term_days?: number; reject_reason?: string; accounting_remark?: string }) =>
+    api.post<unknown>(`/josh/credit-applications/${id}/review`, b),
+  approveAccess: (id: string, role: string) => api.post<unknown>(`/josh/admin-access/${id}/approve`, { role }),
+  rejectAccess: (id: string, reason: string) => api.post<unknown>(`/josh/admin-access/${id}/reject`, { reason }),
+  setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
+  approveProducts: (ids: string[]) => api.post<unknown>('/josh/products/approve', { ids }),
+  rejectProducts: (ids: string[]) => api.post<unknown>('/josh/products/reject', { ids }),
+};
+
+export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;
+  joshUnitPrice: string; joshSource: string | null; joshMechanicId: string | null; commerceUnitPrice: string | null; commerceSource: string | null;
+  commerceMechanicId: string | null; matched: boolean; diffs: string[]; note: string | null }
+export const priceShadowApi = {
+  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; could_not_price: number; changed_after: number;
+    matchRate: number | null; first_at: string | null; last_at: string | null; mismatchBySource: { josh_source: string | null; commerce_source: string | null; n: number }[] }>(`/reports/price-shadow/summary?days=${days}`),
+  list: (filter: string, page: number) => api.get<{ items: PriceShadowRow[]; total: number }>(`/reports/price-shadow?filter=${filter}&page=${page}`),
+  run: () => api.post<{ checked: number }>('/reports/price-shadow/run', {}),
+  recheck: (id: string) => api.post<PriceShadowRow>(`/reports/price-shadow/recheck/${id}`, {}),
+};
+
+export interface StaffPriceRow { id: string; kind: 'customer' | 'contract'; companyId: string | null; branchId: string | null; productInventoryId: string; sku: string | null;
+  price: number; contractRef: string | null; startDate: string; endDate: string | null; joshId: string | null; status: 'synced' | 'pending' | 'failed';
+  syncError: string | null; updatedBy: string | null; updatedAt: string }
+export interface StaffPriceInput { kind?: 'customer' | 'contract'; companyId?: string; branchId?: string; sku?: string; price?: number; contractRef?: string; startDate?: string; endDate?: string | null }
+export const staffPricesApi = {
+  summary: () => api.get<{ rows: { kind: string; status: string; n: number }[] }>('/staff-prices/summary'),
+  list: (f: { kind: string; scopeId?: string; search?: string; status?: string; page: number }) => {
+    const p = new URLSearchParams({ kind: f.kind, page: String(f.page) });
+    for (const k of ['scopeId', 'search', 'status'] as const) if (f[k]) p.set(k, f[k]!);
+    return api.get<{ items: StaffPriceRow[]; total: number; limit: number }>(`/staff-prices?${p}`);
+  },
+  create: (b: StaffPriceInput) => api.post<StaffPriceRow>('/staff-prices', b),
+  update: (id: string, b: StaffPriceInput) => api.patch<StaffPriceRow>(`/staff-prices/${id}`, b),
+  remove: (id: string) => api.del<unknown>(`/staff-prices/${id}`),
+  retry: (id: string) => api.post<StaffPriceRow>(`/staff-prices/${id}/retry`, {}),
+  importFromJosh: () => api.post<{ added: number; changedInJosh: number; removedInJosh: number }>('/staff-prices/import', {}),
 };

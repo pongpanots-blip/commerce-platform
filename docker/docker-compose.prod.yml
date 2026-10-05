@@ -25,6 +25,9 @@ services:
       STOREFRONT_API_KEYS: ${STOREFRONT_API_KEYS}
       PORTAL_JWT_SECRET: ${PORTAL_JWT_SECRET}
       COMMERCE_CORS_ORIGINS: ${COMMERCE_CORS_ORIGINS}
+      # josh's databases, READ-ONLY users (scripts/josh-db-readonly-users.sh). Unset = josh pages show "not configured".
+      JOSH_DATABASE_URL: ${JOSH_DATABASE_URL:-}
+      JOSH_MONGO_URL: ${JOSH_MONGO_URL:-}
 
   admin:
     image: ${ECR_REGISTRY}/commerce-admin:${ADMIN_TAG:-latest}

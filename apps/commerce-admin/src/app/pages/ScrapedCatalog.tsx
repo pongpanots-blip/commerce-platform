@@ -8,7 +8,8 @@ const money = (v: number | null) => (v == null ? '—' : `฿${v.toLocaleString(
 /** Products collected from competitor sites (moved from josh). */
 export function ScrapedCatalog() {
   const sources = useAsync(() => scrapingApi.sources(), []);
-  const [sourceId, setSourceId] = useState('');
+  // "ดูรายการ" on a scraping-sources card links here with ?sourceId= (same as josh).
+  const [sourceId, setSourceId] = useState(() => new URLSearchParams(window.location.search).get('sourceId') || '');
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);

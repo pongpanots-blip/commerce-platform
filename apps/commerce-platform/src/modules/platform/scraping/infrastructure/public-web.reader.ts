@@ -69,16 +69,102 @@ export function singlePrice(text: string | undefined): number | null {
   const value = Number(text.replace(/฿|THB|บาท|,|\s/gi, ''));
   return value > 0 && value <= 9999999999.99 ? value : null;
 }
+/** Plain-language reason for an HTTP failure. Bot challenges are reported, never bypassed. */
+export function httpProblem(status: number, headers: Record<string, unknown>, body: string): string {
+  if (headers['cf-mitigated'] === 'challenge' || /<title>\s*Just a moment|cf-chl-|challenge-platform|captcha/i.test(body)) {
+    return 'เว็บนี้มีระบบกันบอท (เช่น Cloudflare / CAPTCHA) ระบบจะไม่ดึงข้าม — ต้องขออนุญาตหรือขอไฟล์ราคาจากเว็บโดยตรง';
+  }
+  if (status === 404) return 'ไม่พบหน้านี้บนเว็บ (404) ตรวจลิงก์อีกครั้ง';
+  if (status === 401 || status === 403) return `เว็บปฏิเสธการเข้าถึง (${status}) อาจต้องล็อกอิน หรือเว็บไม่อนุญาตให้ดึงข้อมูล`;
+  if (status === 429) return 'เว็บจำกัดจำนวนครั้งที่เข้า (429) ลองใหม่ภายหลัง หรือเพิ่มเวลาพักระหว่างหน้า';
+  if (status >= 500) return `เว็บต้นทางขัดข้อง (${status}) ลองใหม่ภายหลัง`;
+  return `เว็บตอบกลับผิดปกติ (${status})`;
+}
+/** Our own member account on a site. The password is decrypted only for the length of one browser session. */
+export type SiteLogin = { url: string; username: string; password: string };
+
+/** Set-Cookie → Playwright cookie; a Domain attribute keeps parent-domain cookies (accounts.x.com → .x.com). */
+export function parseSetCookie(header: string, url: string) {
+  const [pair, ...attributes] = header.split(';').map(part => part.trim());
+  const at = pair.indexOf('=');
+  if (at < 1) return [];
+  const attribute = (name: string) => attributes.find(a => a.toLowerCase().startsWith(`${name}=`))?.slice(name.length + 1);
+  const domain = attribute('domain');
+  const maxAge = Number(attribute('max-age'));
+  const expires = Number.isFinite(maxAge) && attribute('max-age') != null ? Date.now() / 1000 + maxAge : attribute('expires') ? Date.parse(attribute('expires')!) / 1000 : -1;
+  const host = new URL(url).hostname;
+  // A site may only set cookies for itself or a parent domain of itself.
+  if (domain && !(`.${host}`.endsWith(`.${domain.replace(/^\./, '')}`))) return [];
+  return [{ name: pair.slice(0, at), value: pair.slice(at + 1), path: attribute('path') || '/', secure: true,
+    httpOnly: attributes.some(a => a.toLowerCase() === 'httponly'), expires: Number.isFinite(expires) ? expires : -1,
+    ...(domain ? { domain: `.${domain.replace(/^\./, '')}` } : { domain: host }) }];
+}
+
+/**
+ * Fills the site's own login form. Stops — never works around — CAPTCHA and OTP; a person must log in
+ * themselves on such sites, or the site must provide a feed.
+ */
+async function signIn(page: Page, login: SiteLogin) {
+  const challenge = 'iframe[src*="recaptcha"], iframe[src*="hcaptcha"], iframe[src*="turnstile"], iframe[src*="captcha"], [class*="captcha" i]';
+  await page.goto(login.url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+  await page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => undefined);
+  if (await page.locator(challenge).count()) throw new BadRequestException('หน้าล็อกอินมี CAPTCHA ระบบไม่ข้าม — ล็อกอินอัตโนมัติไม่ได้');
+  const password = page.locator('input[type="password"]:visible').first();
+  const user = page.locator(['input[type="email"]', 'input[autocomplete="username"]', 'input[name*="user" i]', 'input[name*="email" i]', 'input[name*="phone" i]',
+    'input[name*="login" i]', 'input[type="tel"]', 'input[type="text"]'].map(selector => `${selector}:visible`).join(', ')).first();
+  if (!await user.count()) throw new BadRequestException('ไม่พบช่องชื่อผู้ใช้ในหน้าล็อกอิน ตรวจลิงก์หน้าล็อกอิน');
+  await user.fill(login.username);
+  if (!await password.count()) { await user.press('Enter'); await page.waitForTimeout(3000); } // two-step forms ask for the password next
+  if (!await password.count()) throw new BadRequestException('ไม่พบช่องรหัสผ่านในหน้าล็อกอิน ตรวจลิงก์หน้าล็อกอิน');
+  await password.fill(login.password);
+  await password.press('Enter');
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => undefined);
+  await page.waitForTimeout(1500);
+  if (await page.locator(`input[autocomplete="one-time-code"], ${challenge}`).count() || /\bOTP\b|รหัส OTP|one-time/i.test(await page.locator('body').innerText().catch(() => ''))) {
+    throw new BadRequestException('เว็บขอ OTP หรือ CAPTCHA หลังล็อกอิน ระบบล็อกอินอัตโนมัติไม่ได้');
+  }
+  if (await page.locator('input[type="password"]:visible').count()) throw new BadRequestException('ล็อกอินไม่สำเร็จ ตรวจชื่อผู้ใช้และรหัสผ่าน');
+}
 const blankGif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 const cardPrice = /(?:฿|THB)\s*(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?)|(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?)\s*(?:฿|บาท|THB)(?!\s*\d)/gi;
 const cardUnitPrice = /ต่อ|\bper\b|\/\s*(?:กก|kg|ก\.|g\b|ชิ้น|หน่วย|unit|ลิตร|l\b)/i;
+const cardDiscount = /\bsave\b|ประหยัด|ส่วนลด|ลด|\boff\b/i;
 const cardNoise = /^[\s฿\d.,%()/|x×*+:\-–]*$/;
-/**
- * Product cards found from repeated same-origin links (one card = the largest element holding exactly one
- * of those links). No CSS classes are involved, so a site can restyle without breaking collection.
- * ponytail: heuristic — the longest card text is the name; a site with long promo text per card picks that instead.
- */
-export function cardFields(document: Document, pageUrl: string): Record<string, string>[] {
+const hasPrice = (text: string) => new RegExp(cardPrice.source, 'i').test(text);
+
+/** Fields of one product card element; null when it shows no price or no name. */
+function cardRecord(document: Document, card: Element, pageUrl: string, url: string): Record<string, string> | null {
+  const texts: string[] = [];
+  const walker = document.createTreeWalker(card, 4 /* NodeFilter.SHOW_TEXT */);
+  for (let node = walker.nextNode(); node && texts.length < 60; node = walker.nextNode()) {
+    const text = node.textContent?.replace(/\s+/g, ' ').trim();
+    // Button labels ("หยิบใส่รถเข็น") are actions, not product information.
+    if (text && !/^<[^>]*>$/.test(text) && !node.parentElement?.closest('script, style, svg, noscript, button') && !texts.includes(text)) texts.push(text.slice(0, 500));
+  }
+  // "95.00 ฿ ต่อหน่วย" / "฿120/กก." is a unit price and "SAVE ฿12" a discount: own fields, never the selling price.
+  const unitPrice = texts.find(text => cardUnitPrice.test(text) && hasPrice(text)) || '';
+  const discount = texts.find(text => text !== unitPrice && cardDiscount.test(text) && hasPrice(text)) || '';
+  const prices = [...new Set([...texts.filter(text => text !== unitPrice && text !== discount).join(' ').matchAll(cardPrice)]
+    .map(m => Number((m[1] || m[2]).replace(/,/g, ''))))];
+  if (!prices.length || prices.length > 3) return null; // >3 prices = a section of several cards, not one card
+  const nameLike = (text: string) => text.length >= 3 && !cardNoise.test(text) && !hasPrice(text);
+  const words = texts.filter(nameLike);
+  const titled = Array.from(card.querySelectorAll('h1, h2, h3, h4, [title]'))
+    .map(e => (e.getAttribute('title') || e.textContent || '').replace(/\s+/g, ' ').trim()).find(nameLike);
+  const name = titled || [...words].sort((a, b) => b.length - a.length)[0] || '';
+  if (!name) return null;
+  const image = Array.from(card.querySelectorAll('img, source')).flatMap(img => ['src', 'data-src', 'data-lazy-src', 'srcset', 'data-srcset']
+    .map(attribute => img.getAttribute(attribute)?.trim().split(/[\s,]+/)[0] || ''))
+    .map(value => { try { return value ? new URL(value, pageUrl).href : ''; } catch { return ''; } }).filter(value => /^https:\/\//.test(value))
+    .sort((a, b) => Number(/icon|logo|badge|\/static\/|\.svg/i.test(a)) - Number(/icon|logo|badge|\/static\/|\.svg/i.test(b)))[0] || '';
+  const sorted = prices.sort((a, b) => a - b);
+  return { url, name: name.slice(0, 500), price: `฿${sorted[0]}`, ...(sorted.length > 1 ? { regularPrice: `฿${sorted[sorted.length - 1]}` } : {}),
+    ...(image ? { image } : {}), ...(unitPrice ? { unitPrice } : {}), ...(discount ? { discount } : {}),
+    details: words.filter(text => text !== name).join(' · ').slice(0, 1000) };
+}
+
+/** Strategy 1: repeated same-origin links (one card = the largest element holding exactly one of those links). */
+function linkCards(document: Document, pageUrl: string): Record<string, string>[] {
   const page = new URL(pageUrl);
   const groups = new Map<string, { anchor: Element; full: string; path: string }[]>();
   for (const anchor of Array.from(document.querySelectorAll('a[href]')).slice(0, 5000)) {
@@ -105,34 +191,59 @@ export function cardFields(document: Document, pageUrl: string): Record<string, 
       seen.add(href);
       let card = link.anchor;
       while (card.parentElement && card.parentElement !== document.body && ids(card.parentElement).size === 1) card = card.parentElement;
-      const texts: string[] = [];
-      const walker = document.createTreeWalker(card, 4 /* NodeFilter.SHOW_TEXT */);
-      for (let node = walker.nextNode(); node && texts.length < 60; node = walker.nextNode()) {
-        const text = node.textContent?.replace(/\s+/g, ' ').trim();
-        if (text && !/^<[^>]*>$/.test(text) && !node.parentElement?.closest('script, style, svg, noscript') && !texts.includes(text)) texts.push(text.slice(0, 500));
-      }
-      const hasPrice = (text: string) => new RegExp(cardPrice.source, 'i').test(text);
-      // "95.00 ฿ ต่อหน่วย" / "฿120/กก." is a unit price: kept as its own field, never compared as the selling price.
-      const unitPrice = texts.find(text => cardUnitPrice.test(text) && hasPrice(text)) || '';
-      const prices = [...new Set([...texts.filter(text => text !== unitPrice).join(' ').matchAll(cardPrice)].map(m => Number((m[1] || m[2]).replace(/,/g, ''))))];
-      if (!prices.length) continue;
-      // Any text holding a price ("95.00 ฿ ต่อหน่วย") is price info, never the product name.
-      const nameLike = (text: string) => text.length >= 3 && !cardNoise.test(text) && !hasPrice(text);
-      const words = texts.filter(nameLike);
-      const titled = Array.from(card.querySelectorAll('h1, h2, h3, h4, [title]'))
-        .map(e => (e.getAttribute('title') || e.textContent || '').replace(/\s+/g, ' ').trim()).find(nameLike);
-      const name = titled || [...words].sort((a, b) => b.length - a.length)[0] || '';
-      const image = Array.from(card.querySelectorAll('img, source')).flatMap(img => ['src', 'data-src', 'data-lazy-src', 'srcset', 'data-srcset']
-        .map(attribute => img.getAttribute(attribute)?.trim().split(/[\s,]+/)[0] || ''))
-        .map(value => { try { return value ? new URL(value, pageUrl).href : ''; } catch { return ''; } }).filter(value => /^https:\/\//.test(value))
-        .sort((a, b) => Number(/icon|logo|badge|\/static\/|\.svg/i.test(a)) - Number(/icon|logo|badge|\/static\/|\.svg/i.test(b)))[0] || '';
-      const sorted = prices.sort((a, b) => a - b);
-      cards.push({ url: href, name: name.slice(0, 500), price: `฿${sorted[0]}`, ...(sorted.length > 1 ? { regularPrice: `฿${sorted[sorted.length - 1]}` } : {}),
-        ...(image ? { image } : {}), ...(unitPrice ? { unitPrice } : {}), details: words.filter(text => text !== name).join(' · ').slice(0, 1000) });
+      const record = cardRecord(document, card, pageUrl, href);
+      if (record) cards.push(record);
     }
     if (cards.length > best.length) best = cards;
   }
-  return best.length >= 3 ? best : [];
+  return best;
+}
+
+/**
+ * Strategy 2, for sites whose cards navigate by script and have no product link (Freshket, Lotus's): the
+ * container with the most same-shaped children (same tag + classes) that each show a price and a name.
+ * Items without a link get `<listing URL>#<name>` so each stays unique; "ดูแหล่งที่มา" opens the listing.
+ */
+function gridCards(document: Document, pageUrl: string): Record<string, string>[] {
+  const page = new URL(pageUrl);
+  const signature = (e: Element) => `${e.tagName}.${Array.from(e.classList).sort().join('.')}`;
+  let best: Element[] = [];
+  for (const parent of Array.from(document.body?.querySelectorAll('*') ?? []).slice(0, 30000)) {
+    if (parent.children.length < 3) continue;
+    const groups = new Map<string, Element[]>();
+    for (const child of Array.from(parent.children)) groups.set(signature(child), [...(groups.get(signature(child)) || []), child]);
+    for (const kids of groups.values()) {
+      if (kids.length < 3 || kids.length <= best.length) continue;
+      const priced = kids.filter(kid => hasPrice(kid.textContent || ''));
+      if (priced.length >= 3 && priced.length >= kids.length * 0.6 && priced.length > best.length) best = priced;
+    }
+  }
+  const seen = new Set<string>();
+  const cards: Record<string, string>[] = [];
+  for (const card of best.slice(0, 200)) {
+    const link = Array.from(card.querySelectorAll('a[href]')).map(a => { try { return new URL(a.getAttribute('href')!, pageUrl); } catch { return null; } })
+      .find(url => url && url.origin === page.origin && url.pathname !== page.pathname);
+    const draft = cardRecord(document, card, pageUrl, '');
+    if (!draft) continue;
+    const listing = new URL(pageUrl); listing.hash = encodeURIComponent(draft.name.slice(0, 200));
+    const url = link ? (link.hash = '', link.href) : listing.href;
+    if (seen.has(url)) continue;
+    seen.add(url);
+    cards.push({ ...draft, url });
+  }
+  return cards;
+}
+
+/**
+ * Product cards without CSS selectors, so a site restyle does not break collection: repeated product links
+ * first, else repeated same-shaped priced blocks.
+ * ponytail: heuristic — the longest card text is the name; a site with long promo text per card picks that instead.
+ */
+export function cardFields(document: Document, pageUrl: string): Record<string, string>[] {
+  const linked = linkCards(document, pageUrl);
+  if (linked.length >= 3) return linked;
+  const grid = gridCards(document, pageUrl);
+  return grid.length >= 3 ? grid : [];
 }
 /** Moves a listing to its next page. `moved` is true only when the page's links actually changed. */
 async function advance(page: Page): Promise<{ moved: boolean; totalPages: number | null }> {
@@ -146,7 +257,9 @@ async function advance(page: Page): Promise<{ moved: boolean; totalPages: number
     };
     const controls = Array.from(document.querySelectorAll('a, button, [role="button"], [role="link"]')).filter(usable);
     const next = controls.find(e => /^(next|next page|ต่อไป|ถัดไป|หน้าถัดไป|›|»|>|>>|→)$/i.test(label(e)));
-    const more = controls.find(e => /^(load more|show more|view more|ดูเพิ่มเติม|โหลดเพิ่ม|แสดงเพิ่ม|ดูสินค้าเพิ่ม)/i.test(label(e)));
+    // "โหลดรายการเพิ่มเติม..." (Gourmet), "ดูสินค้าเพิ่ม", "Load more", or a control styled as load-more.
+    const more = controls.find(e => /^((load|show|view|see)\s+more|(ดู|โหลด|แสดง)(สินค้า|รายการ)?เพิ่ม)/i.test(label(e))
+      || (/load-?more|show-?more/i.test(e.getAttribute('class') || '') && label(e).length < 40));
     const numbers = next ? Array.from((next.closest('nav, ul, ol') || next.parentElement?.parentElement || next).querySelectorAll('a, button, li, span'))
       .map(e => ((e as HTMLElement).innerText || '').trim()).filter(t => /^\d{1,6}$/.test(t)).map(Number) : [];
     document.querySelectorAll('[data-josh-next]').forEach(e => e.removeAttribute('data-josh-next'));
@@ -159,14 +272,32 @@ async function advance(page: Page): Promise<{ moved: boolean; totalPages: number
   } else if (found.click) {
     await page.locator('[data-josh-next]').first().click({ timeout: 5000 }).catch(() => undefined);
   } else {
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    // Infinite scroll loads when a marker just under the product grid comes into view; jumping straight to the
+    // page bottom past a tall footer can skip it (Lotus's). So bring the last content link into view first.
+    // "Last content link" = last link of the most repeated same-origin path pattern (the product links).
+    await page.evaluate(() => {
+      const groups = new Map<string, Element[]>();
+      for (const a of Array.from(document.querySelectorAll('a[href]'))) {
+        try {
+          const url = new URL((a as HTMLAnchorElement).href);
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (url.origin !== location.origin || parts.length < 2) continue;
+          const key = `${parts.length}:${parts.slice(0, -1).join('/')}`;
+          groups.set(key, [...(groups.get(key) || []), a]);
+        } catch { /* ignore unparsable hrefs */ }
+      }
+      const items = [...groups.values()].sort((x, y) => y.length - x.length)[0] ?? [];
+      items[items.length - 1]?.scrollIntoView({ block: 'end' });
+      window.scrollBy(0, 300);
+    });
   }
   // Changed AND settled: SPAs swap the list for a skeleton first, which also "changes" the links.
   // So a move counts only when new links replace at least half of the removed ones and stay for one more poll.
   const old = new Set(before.split('\n'));
   let last = before;
-  for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
+  for (let poll = 0, deadline = Date.now() + 15000; Date.now() < deadline; poll++) {
     await page.waitForTimeout(700);
+    if (!found.rel && !found.click && poll === 4) await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     const current = await signature();
     const links = current.split('\n');
     const added = links.filter(link => !old.has(link)).length;
@@ -180,9 +311,11 @@ export type ExtractedWebItem ={ url: string; pageUrl: string; name: string; sku:
 
 @Injectable()
 export class PublicWebReader {
-  async fetch(input: string, expectedOrigin?: string, request?: { method: 'GET' | 'POST'; headers: Record<string, string>; body?: Buffer | null })
-    : Promise<{ body: Buffer; url: string; contentType: string }> {
+  async fetch(input: string, expectedOrigin?: string, request?: { method: 'GET' | 'POST'; headers: Record<string, string>; body?: Buffer | null }, maxBytes = 5000000)
+    : Promise<{ body: Buffer; url: string; contentType: string; setCookies: { url: string; header: string }[] }> {
     let url = publicUrl(input);
+    // Set-Cookie from every hop (a login POST usually answers 302 + Set-Cookie); only login sessions use them.
+    const setCookies: { url: string; header: string }[] = [];
     const deadline = Date.now() + 15000;
     for (let redirect = 0; redirect <= 5; redirect++) {
       if (Date.now() >= deadline) throw new BadRequestException('เว็บตอบช้าเกินเวลาที่กำหนด กรุณาลองใหม่');
@@ -200,27 +333,41 @@ export class PublicWebReader {
       } });
       try {
         const response = await axios.request<Buffer>({ url: url.href, method: request?.method || 'GET', data: request?.body || undefined, httpsAgent: agent, proxy: false, maxRedirects: 0,
-          responseType: 'arraybuffer', timeout: Math.max(1, deadline - Date.now()), maxContentLength: 5000000, maxBodyLength: 5000000,
+          responseType: 'arraybuffer', timeout: Math.max(1, deadline - Date.now()), maxContentLength: maxBytes, maxBodyLength: 5000000,
           headers: { Accept: 'text/html,application/xhtml+xml,application/xml,text/xml,*/*;q=0.5', ...request?.headers, 'User-Agent': 'JoshPublicCatalog/1.0' },
-          validateStatus: status => status >= 200 && status < 400 });
+          validateStatus: () => true });
+        if (response.status >= 400 || response.status < 200) {
+          throw new BadRequestException(httpProblem(response.status, response.headers as Record<string, unknown>, Buffer.from(response.data ?? '').toString('utf8', 0, 20000)));
+        }
+        for (const header of ([] as string[]).concat((response.headers['set-cookie'] as string[] | string | undefined) ?? [])) setCookies.push({ url: url.href, header });
         if (response.status >= 300) {
           if (!response.headers.location || redirect === 5) throw new BadRequestException('เว็บเปลี่ยนลิงก์หลายครั้งหรือไม่มีปลายทาง');
-          url = publicUrl(new URL(String(response.headers.location), url).href);
+          const next = publicUrl(new URL(String(response.headers.location), url).href);
+          // Same as browsers: 301/302/303 turn a POST into a body-less GET (only 307/308 keep the body),
+          // and credentials the page set never follow a redirect to another origin.
+          if (request) {
+            const keepBody = request.method !== 'POST' || [307, 308].includes(response.status);
+            const headers = Object.fromEntries(Object.entries(request.headers).filter(([name]) =>
+              !(keepBody ? [] : ['content-type']).includes(name.toLowerCase()) && !(next.origin !== url.origin && name.toLowerCase() === 'authorization')));
+            request = keepBody ? { ...request, headers } : { method: 'GET', headers, body: null };
+          }
+          url = next;
           continue;
         }
-        return { body: Buffer.from(response.data), url: url.href, contentType: String(response.headers['content-type'] ?? '') };
+        return { body: Buffer.from(response.data), url: url.href, contentType: String(response.headers['content-type'] ?? ''), setCookies };
       } finally { agent.destroy(); }
     }
     throw new BadRequestException('เปิดลิงก์ไม่สำเร็จ');
   }
 
-  async page(input: string, config: ScrapingConfig, origin: string): Promise<{ html: string; url: string }> {
-    if (config.mode === 'html' || /\.xml(?:\?|$)/i.test(input)) {
+  async page(input: string, config: ScrapingConfig, origin: string, login?: SiteLogin): Promise<{ html: string; url: string }> {
+    // A login needs the browser's session cookies, so logged-in reads always use the browser.
+    if (!login && (config.mode === 'html' || /\.xml(?:\?|$)/i.test(input))) {
       const response = await this.fetch(input, origin);
       if (!/html|xml/i.test(response.contentType)) throw new BadRequestException('หน้านี้ไม่ใช่ HTML หรือ XML');
       return { html: response.body.toString('utf8'), url: response.url };
     }
-    return this.session(input, config, origin, async page => {
+    return this.session(input, config, origin, login, async page => {
       const html = await page.content();
       if (Buffer.byteLength(html) > 5000000) throw new BadRequestException('หน้าเว็บใหญ่เกิน 5 MB');
       return { html, url: page.url() };
@@ -235,13 +382,15 @@ export class PublicWebReader {
    * ponytail: resume re-clicks `skip` pages from page 1 (O(n²) clicks over a long run); add URL/API paging if runs get long.
    */
   async paginate(input: string, config: ScrapingConfig, origin: string,
-    options: { skip: number; maxPages: number; delayMs: number; onPage: (html: string, url: string, index: number) => Promise<boolean> }) {
-    return this.session(input, config, origin, async (page, grant) => {
+    options: { skip: number; maxPages: number; delayMs: number; login?: SiteLogin; onPage: (html: string, url: string, index: number) => Promise<boolean> }) {
+    return this.session(input, config, origin, options.login, async (page, grant) => {
       let totalPages: number | null = null;
       for (let index = 0; index < options.maxPages; index++) {
         if (index >= options.skip) {
           const html = await page.content();
-          if (Buffer.byteLength(html) > 5000000) throw new BadRequestException('หน้าเว็บใหญ่เกิน 5 MB');
+          // Infinite scroll keeps every earlier product in the page, so the page keeps growing.
+          // ponytail: re-parses the whole page each step (O(n²)); fine for a few hundred products per listing.
+          if (Buffer.byteLength(html) > 20000000) throw new BadRequestException('หน้ารายการโตเกิน 20 MB ลดจำนวนหน้าสูงสุดของเว็บนี้');
           if (!await options.onPage(html, page.url(), index)) return { pages: index + 1, totalPages, end: 'stopped' as const };
         }
         if (index + 1 >= options.maxPages) return { pages: index + 1, totalPages, end: 'limit' as const };
@@ -255,7 +404,9 @@ export class PublicWebReader {
     });
   }
 
-  private async session<T>(input: string, config: ScrapingConfig, origin: string, work: (page: Page, grant: () => void) => Promise<T>): Promise<T> {
+  private async session<T>(input: string, config: ScrapingConfig, origin: string, login: SiteLogin | undefined,
+    work: (page: Page, grant: () => void) => Promise<T>): Promise<T> {
+    const loginOrigin = login ? publicUrl(login.url).origin : null;
     const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
       args: ['--force-webrtc-ip-handling-policy=disable_non_proxied_udp', '--disable-background-networking'] })
       .catch(() => { throw new BadRequestException('เบราว์เซอร์ยังไม่พร้อมบนเซิร์ฟเวอร์ ให้ผู้ดูแลติดตั้ง Chromium หรือลองโหมด HTML'); });
@@ -271,16 +422,25 @@ export class PublicWebReader {
           const api = ['xhr', 'fetch'].includes(request.resourceType());
           // Images are never downloaded, but answered with a blank pixel: aborting makes sites swap in a fallback src.
           if (request.resourceType() === 'image') return await route.fulfill({ status: 200, contentType: 'image/gif', body: blankGif });
-          // Paged listings load the next page via public JSON/GraphQL POSTs; page navigations stay GET-only.
+          // Paged listings load the next page via public JSON/GraphQL POSTs; page navigations stay GET-only,
+          // except the login form submit in a login session.
+          const post = request.method() === 'POST' && (api || (!!login && request.isNavigationRequest()));
           if (++requests > limit || ['media', 'font', 'ping'].includes(request.resourceType())
-            || !(['GET', 'HEAD'].includes(request.method()) || (api && request.method() === 'POST'))) return await route.abort();
+            || !(['GET', 'HEAD'].includes(request.method()) || post)) return await route.abort();
           // Our fulfilled responses carry no CORS headers, so answer the API's CORS checks ourselves.
           const cors = api && new URL(request.url()).origin !== origin ? { 'access-control-allow-origin': origin } : {};
-          // Cookies are never forwarded: neither ours nor any the site sets.
-          const headers = api ? Object.fromEntries(Object.entries(await request.allHeaders())
-            .filter(([name]) => !['cookie', 'host', 'content-length', 'origin', 'referer', 'user-agent', 'connection'].includes(name) && !name.startsWith(':') && !name.startsWith('sec-'))) : {};
-          const response = await this.fetch(request.url(), request.isNavigationRequest() ? origin : undefined,
-            api ? { method: request.method() === 'POST' ? 'POST' : 'GET', headers, body: request.postDataBuffer() } : undefined);
+          // Public sessions never forward cookies (ours or the site's). A login session forwards the browser's own
+          // cookie jar, which only ever holds this site's session cookies (see the addCookies call below).
+          const all = await request.allHeaders();
+          const headers = api || login ? Object.fromEntries(Object.entries(all).filter(([name]) => !['cookie', 'host', 'content-length', 'origin', 'referer', 'user-agent', 'connection'].includes(name)
+            && !name.startsWith(':') && !name.startsWith('sec-') && (api || name === 'content-type'))) : {};
+          if (login && all.cookie) headers.cookie = all.cookie;
+          const navigationOrigin = loginOrigin && new URL(request.url()).origin === loginOrigin ? loginOrigin : origin;
+          const response = await this.fetch(request.url(), request.isNavigationRequest() ? navigationOrigin : undefined,
+            api || login ? { method: request.method() === 'POST' ? 'POST' : 'GET', headers, body: request.postDataBuffer() } : undefined,
+            // Modern storefront bundles exceed 5 MB (Lotus's _app.js); without it the app never starts. Pages/APIs stay at 5 MB.
+            request.resourceType() === 'script' ? 25000000 : 5000000);
+          if (login) await context.addCookies(response.setCookies.flatMap(cookie => parseSetCookie(cookie.header, cookie.url)));
           if (request.isNavigationRequest() && response.url !== request.url()) {
             return await route.fulfill({ status: 302, headers: { location: response.url } });
           }
@@ -289,11 +449,19 @@ export class PublicWebReader {
       });
       const page = await context.newPage();
       context.on('page', popup => { if (popup !== page) void popup.close(); });
+      if (login) await signIn(page, login);
       const response = await page.goto(input, { waitUntil: 'domcontentloaded', timeout: 20000 });
-      if (!response?.ok() || publicUrl(page.url()).origin !== origin) throw new BadRequestException('เปิดหน้าเว็บไม่ได้');
+      if (!response?.ok()) throw new BadRequestException(response ? httpProblem(response.status(), await response.allHeaders(), await page.content().catch(() => '')) : 'เปิดหน้าเว็บไม่ได้');
+      if (publicUrl(page.url()).origin !== origin) throw new BadRequestException('เว็บพาไปโดเมนอื่น กรุณาใช้ลิงก์ปลายทางโดยตรง');
       const selector = config.itemSelector || config.fields.find(f => f.key === 'name')?.selector;
       if (selector) await page.locator(selector).first().waitFor({ timeout: 10000 });
       else await page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => undefined);
+      // Some apps clear the server-rendered list and only render products once the user scrolls (Lotus's).
+      if (!selector) {
+        await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+        await page.waitForLoadState('networkidle', { timeout: 4000 }).catch(() => undefined);
+        await page.waitForTimeout(800);
+      }
       return await work(page, () => { limit = requests + 200; });
     } finally { await browser.close(); }
   }

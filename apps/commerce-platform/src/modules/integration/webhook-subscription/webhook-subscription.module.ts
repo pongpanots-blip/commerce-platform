@@ -18,6 +18,6 @@ import { QUEUES } from '../../../config/redis.config';
   ],
   controllers: [WebhookSubscriptionController, DeliveryHealthController],
   providers: [WebhookSubscriptionService, WebhookDispatcher, WebhookDeliveryWorker, DeliveryMonitor],
-  exports: [WebhookSubscriptionService],
+  exports: [WebhookSubscriptionService, DeliveryMonitor],
 })
 export class WebhookSubscriptionModule {}

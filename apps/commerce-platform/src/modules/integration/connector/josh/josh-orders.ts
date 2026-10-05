@@ -1,0 +1,123 @@
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { JoshReplica } from './josh-replica';
+import { maskEmail, maskPersonName, maskPhone } from './winback/pii.helper';
+
+const UUID = /^[0-9a-f-]{36}$/i;
+/** josh order statuses where the order should already be at Jagota (paid onward, not cancelled). */
+const SHOULD_BE_AT_JAGOTA = `('paid','preparing','shipped','delivered')`;
+
+/**
+ * Latest Jagota sync per order (josh `jagota_order_sync`, one row per send attempt / shipment).
+ * `sent`/`confirmed`/`reserved`/`skipped` = handled; `failed`; `pending`; none = never tried.
+ */
+const LATEST_SYNC = `LEFT JOIN LATERAL (
+    SELECT s.sync_status, s.error_message, s.doc_book, s.doc_no, s.created_at
+      FROM jagota_order_sync s WHERE s.order_id = o.orders_id ORDER BY s.created_at DESC LIMIT 1
+  ) js ON TRUE`;
+const LATEST_PAYMENT = `LEFT JOIN LATERAL (
+    SELECT t.status::text AS status, t.payment_method, t.paid_at FROM payment_transactions t WHERE t.order_id = o.orders_id ORDER BY t.created_at DESC LIMIT 1
+  ) pt ON TRUE`;
+
+export const SYNC_STATES = {
+  failed: `js.sync_status = 'failed'`,
+  not_sent: `o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND js.sync_status IS NULL`,
+  pending: `js.sync_status = 'pending'`,
+  sent: `js.sync_status IN ('sent','confirmed','reserved','skipped')`,
+} as const;
+
+export interface OrderFilters { search?: string; status?: string; sync?: string; companyId?: string; from?: string; to?: string }
+
+export function orderWhere(f: OrderFilters): { where: string; params: unknown[] } {
+  const params: unknown[] = [];
+  const add = (v: unknown) => `$${params.push(v)}`;
+  const w: string[] = [];
+  const s = f.search?.trim().slice(0, 100);
+  if (s) { const p = add(`%${s}%`); w.push(`(o.order_number ILIKE ${p} OR o.customer_code ILIKE ${p} OR o.po_number ILIKE ${p} OR c.name ILIKE ${p})`); }
+  if (f.status) w.push(`o.status::text = ${add(f.status.slice(0, 30))}`);
+  if (f.sync) {
+    if (!(f.sync in SYNC_STATES)) throw new BadRequestException(`sync must be one of: ${Object.keys(SYNC_STATES).join(', ')}`);
+    w.push(SYNC_STATES[f.sync as keyof typeof SYNC_STATES]);
+  }
+  if (f.companyId) { if (!UUID.test(f.companyId)) throw new BadRequestException('companyId must be a uuid'); w.push(`o.company_id = ${add(f.companyId)}`); }
+  for (const [k, op] of [['from', '>='], ['to', '<']] as const) {
+    const v = f[k];
+    if (!v) continue;
+    if (Number.isNaN(Date.parse(v))) throw new BadRequestException(`${k} must be a date`);
+    w.push(`o.create_date ${op} ${add(new Date(v))}`);
+  }
+  return { where: w.length ? `WHERE ${w.join(' AND ')}` : '', params };
+}
+
+/**
+ * josh orders, READ-ONLY from josh's replica: status, payment, and whether each order reached
+ * Jagota (ERP). Orders keep being created, paid and sent by josh. Customer contact data is
+ * masked like josh's winback screens.
+ */
+@Injectable()
+export class JoshOrders {
+  constructor(private readonly replica: JoshReplica) {}
+
+  get available() { return this.replica.configured; }
+
+  async summary(f: OrderFilters = {}) {
+    const { where, params } = orderWhere(f);
+    const sync = Object.entries(SYNC_STATES).map(([k, cond]) => `count(*) FILTER (WHERE ${cond})::int AS sync_${k}`).join(', ');
+    const [[row], byStatus] = await Promise.all([
+      this.replica.query(`SELECT count(*)::int AS total, ${sync},
+          count(*) FILTER (WHERE o.status::text = 'payment_pending')::int AS awaiting_payment,
+          COALESCE(sum(o.total_price) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA}), 0)::float AS paid_value
+        FROM orders o LEFT JOIN company c ON c.id = o.company_id ${LATEST_SYNC} ${where}`, params),
+      this.replica.query(`SELECT o.status::text AS status, count(*)::int AS n FROM orders o LEFT JOIN company c ON c.id = o.company_id ${LATEST_SYNC} ${where} GROUP BY 1 ORDER BY 2 DESC`, params),
+    ]);
+    return { ...row, byStatus };
+  }
+
+  async list(f: OrderFilters, page = 1, limit = 50) {
+    const { where, params } = orderWhere(f);
+    const n = params.length;
+    const base = `FROM orders o LEFT JOIN company c ON c.id = o.company_id LEFT JOIN branch b ON b.id = o.branch_id ${LATEST_SYNC} ${LATEST_PAYMENT} ${where}`;
+    const [items, [{ total }]] = await Promise.all([
+      this.replica.query(`SELECT o.orders_id, o.order_number, o.status::text AS status, o.create_date, o.delivery_date::text AS delivery_date, o.total_price::float AS total_price,
+          o.customer_code, o.po_number, c.name AS company_name, b.name AS branch_name,
+          pt.status AS payment_status, pt.payment_method, pt.paid_at,
+          js.sync_status AS jagota_sync_status, js.error_message AS jagota_error, js.doc_book, js.doc_no, js.created_at AS jagota_synced_at
+        ${base} ORDER BY o.create_date DESC LIMIT $${n + 1} OFFSET $${n + 2}`, [...params, limit, (page - 1) * limit]),
+      this.replica.query(`SELECT count(*)::int AS total ${base}`, params),
+    ]);
+    return { items, total, page, limit };
+  }
+
+  async detail(idOrNumber: string) {
+    const byId = UUID.test(idOrNumber);
+    const [order] = await this.replica.query<Record<string, unknown>>(
+      `SELECT o.orders_id, o.order_number, o.status::text AS status, o.fulfillment_type::text AS fulfillment_type, o.payment_type::text AS payment_type, o.create_date, o.delivery_date::text AS delivery_date, o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
+          o.total_price::float AS total_price, o.subtotal_ex_vat::float AS subtotal_ex_vat, o.vat_amount::float AS vat_amount,
+          o.discount_inc_vat::float AS discount_inc_vat, o.delivery_fee::float AS delivery_fee,
+          c.id AS company_id, c.name AS company_name, c.erp_customer_code, b.name AS branch_name, b.erp_branch_code,
+          u.first_name, u.last_name, u.email, u.mobile_phone
+        FROM orders o LEFT JOIN company c ON c.id = o.company_id LEFT JOIN branch b ON b.id = o.branch_id LEFT JOIN users u ON u.id = o.user_id
+       WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} LIMIT 1`, [idOrNumber.trim().slice(0, 64)]);
+    if (!order) throw new NotFoundException(`order ${idOrNumber} not found in josh`);
+    const id = order.orders_id;
+    const [items, shipments, jagota, payments] = await Promise.all([
+      this.replica.query(`SELECT pi.product_inventory_sku AS sku, COALESCE(th.product_name, pi.product_inventory_sku) AS name, oi.product_quantity::float AS qty,
+          oi.product_price::float AS unit_price, oi.line_revenue::float AS line_revenue, oi.price_source::text AS price_source, oi.order_taking_flag
+        FROM order_items oi JOIN product_inventory pi ON pi.product_inventory_id = oi.product_inventory_id
+        LEFT JOIN product_translation th ON th.product_inventory_id = pi.product_inventory_id AND th.language_code = 'th'
+       WHERE oi.order_id = $1 ORDER BY pi.product_inventory_sku`, [id]),
+      this.replica.query(`SELECT shipment_number, status::text AS status, fulfillment_type::text AS fulfillment_type, delivery_date::text AS delivery_date, shipped_at, delivered_at, cancelled_at, total_inc_vat::float AS total_inc_vat,
+          erp_sync_status, three_pl_status FROM shipments WHERE order_id = $1 ORDER BY created_at`, [id]),
+      this.replica.query(`SELECT sync_status, transaction_type, doc_book, doc_no, error_message, payment_method, payment_success, created_at
+        FROM jagota_order_sync WHERE order_id = $1 ORDER BY created_at`, [id]),
+      this.replica.query(`SELECT status::text AS status, payment_method, amount::float AS amount, gateway_provider, paid_at, created_at
+        FROM payment_transactions WHERE order_id = $1 ORDER BY created_at`, [id]),
+    ]);
+    // Who ordered: masked the same way josh's winback masks people (full values stay in josh's audited reveal).
+    const { first_name, last_name, email, mobile_phone, ...rest } = order;
+    return {
+      ...rest,
+      orderedBy: { name: maskPersonName(first_name as string, last_name as string), email: maskEmail(email as string), phone: maskPhone(mobile_phone as string) },
+      items, shipments, jagotaSync: jagota, payments,
+    };
+  }
+}

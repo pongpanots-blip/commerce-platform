@@ -1,0 +1,63 @@
+import { BadRequestException } from '@nestjs/common';
+import { orderWhere, SYNC_STATES } from './josh-orders';
+import { companyWhere, JoshCustomers } from './josh-customers';
+import { isActiveDateRange, resolvePromotionPrice, winningPrice, PriceLayers } from './josh-prices';
+
+describe('josh orders (read-only)', () => {
+  it('binds values, maps Jagota states to fixed SQL, rejects the rest', () => {
+    const { where, params } = orderWhere({ search: "SO1'; drop", sync: 'failed', from: '2026-10-01' });
+    expect(where).not.toContain('drop');
+    expect(where).toContain(SYNC_STATES.failed);
+    expect(params).toEqual(["%SO1'; drop%", new Date('2026-10-01')]);
+    expect(() => orderWhere({ sync: 'x' })).toThrow(BadRequestException);
+    expect(() => orderWhere({ companyId: '1 OR 1=1' })).toThrow(BadRequestException);
+    expect(() => orderWhere({ to: 'soon' })).toThrow(BadRequestException);
+  });
+});
+
+describe('josh customers (read-only, masked)', () => {
+  it('rejects unknown issues', () => {
+    expect(() => companyWhere({ issue: 'all' })).toThrow(BadRequestException);
+    expect(companyWhere({})).toEqual({ where: '', params: [] });
+  });
+
+  it('masks identity numbers, phones, emails and family names like josh winback', async () => {
+    const q = jest.fn()
+      .mockResolvedValueOnce([{ id: 'c1', name: 'ร้านดี', register_number: '0105556123456', phone: '0812345678' }])
+      .mockResolvedValueOnce([{ id: 'b1', phone: '021234567', tax_id: '0105556123456' }])
+      .mockResolvedValueOnce([{ id: 'u1', first_name: 'สมชาย', last_name: 'ใจดี', email: 'somchai@shop.co.th', mobile_phone: '0898765432', role: 'owner' }])
+      .mockResolvedValue([{}]);
+    const d = await new JoshCustomers({ query: q } as never).detail('11111111-1111-4111-8111-111111111111');
+    const text = JSON.stringify(d);
+    for (const raw of ['0105556123456', '0812345678', 'somchai@shop.co.th', '0898765432', 'ใจดี']) expect(text).not.toContain(raw);
+    expect(d.users[0]).toMatchObject({ first_name: 'สมชาย', last_name: 'ใ.' });
+  });
+});
+
+describe('josh prices (josh resolveSkuPrice order)', () => {
+  const at = new Date('2026-10-05T03:00:00Z');
+  const row = (price: number, start: string | null, end: string | null, id = String(price)) => ({ id, price, start_date: start, end_date: end });
+  const layers = (over: Partial<PriceLayers>): PriceLayers => ({ base: 100, privatePrice: [], contract: [], branchSpecial: [], qtyRules: [], hasActiveMechanic: false, ...over });
+
+  it('company private price beats branch contract beats branch special beats everything else', () => {
+    expect(winningPrice(layers({ privatePrice: [row(80, null, null)], contract: [row(85, null, null)], branchSpecial: [row(90, null, null)] }), at)).toMatchObject({ source: 'customer_sku', price: 80 });
+    expect(winningPrice(layers({ contract: [row(85, null, null)], branchSpecial: [row(90, null, null)] }), at)).toMatchObject({ source: 'contract_sku', price: 85 });
+    expect(winningPrice(layers({ branchSpecial: [row(90, null, null)] }), at)).toMatchObject({ source: 'promotion', price: 90 });
+  });
+
+  it('skips rows outside their dates (UTC day, as josh), then promotion, qty tiers, base', () => {
+    expect(winningPrice(layers({ privatePrice: [row(80, '2026-10-06', null)] }), at)).toMatchObject({ source: 'base', price: 100 });
+    expect(winningPrice(layers({ privatePrice: [row(80, null, '2026-10-04')] }), at)).toMatchObject({ source: 'base' });
+    expect(winningPrice(layers({ hasActiveMechanic: true }), at)).toEqual({ source: 'promotion_mechanic', price: null });
+    expect(winningPrice(layers({ qtyRules: [{ min_qty: 1, max_qty: 9, promotion_price: 95 }] }), at)).toMatchObject({ source: 'promotion_mechanic', price: 95 });
+    expect(isActiveDateRange('2026-10-05', '2026-10-05', at)).toBe(true);
+  });
+
+  it('qty tiers: bounded ranges first, then the highest open-ended tier reached (josh resolvePromotionPrice)', () => {
+    const rules = [{ min_qty: 1, max_qty: 4, promotion_price: 100 }, { min_qty: 10, max_qty: null, promotion_price: 80 }, { min_qty: 5, max_qty: null, promotion_price: 90 }];
+    expect(resolvePromotionPrice(rules, 3, 120)).toBe(100);
+    expect(resolvePromotionPrice(rules, 6, 120)).toBe(90);
+    expect(resolvePromotionPrice(rules, 12, 120)).toBe(80);
+    expect(resolvePromotionPrice([], 1, 120)).toBe(120);
+  });
+});

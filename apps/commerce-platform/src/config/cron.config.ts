@@ -10,6 +10,9 @@ export interface CronConfig {
   competitorPricesRefresh: CronJobConfig;
   joshCustomerMetrics: CronJobConfig;
   joshBestsellers: CronJobConfig;
+  jagotaShadow: CronJobConfig;
+  priceShadow: CronJobConfig;
+  staffPricesImport: CronJobConfig;
 }
 
 function cronEnabled(name: string, env: NodeJS.ProcessEnv): boolean {
@@ -45,6 +48,24 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
     joshBestsellers: {
       expression: env.CRON_JOSH_BESTSELLERS ?? '0 */10 * * * *',
       enabled: env.CRON_JOSH_BESTSELLERS_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Shadow mode for orders → Jagota through commerce: compare josh's sends with commerce's build. Opt-in; sends nothing.
+    jagotaShadow: {
+      expression: env.CRON_JAGOTA_SHADOW ?? '30 * * * * *',
+      enabled: env.CRON_JAGOTA_SHADOW_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Shadow mode for "commerce owns prices": re-price josh's new order lines with josh's resolver (copied) and compare. Opt-in; reads only.
+    priceShadow: {
+      expression: env.CRON_PRICE_SHADOW ?? '45 */5 * * * *',
+      enabled: env.CRON_PRICE_SHADOW_ENABLED?.trim().toLowerCase() === 'true',
+      timeZone: 'Asia/Bangkok',
+    },
+    // Import josh's customer / contract prices into commerce's staff_prices (rows josh creates itself: ERP quotations, CS requests). Opt-in.
+    staffPricesImport: {
+      expression: env.CRON_STAFF_PRICES_IMPORT ?? '15 */10 * * * *',
+      enabled: env.CRON_STAFF_PRICES_IMPORT_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
     },
     competitorPricesRefresh: {

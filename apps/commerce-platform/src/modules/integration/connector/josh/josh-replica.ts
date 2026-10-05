@@ -1,5 +1,7 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { JOSH_WINBACK_TABLES } from './winback/josh-tables';
+import { JOSH_PRICING_TABLES } from './pricing/josh-pricing-tables';
 
 /**
  * Read-only connection to josh's database (JOSH_DATABASE_URL — the read
@@ -13,15 +15,31 @@ export class JoshReplica implements OnModuleDestroy {
 
   get configured() { return !!process.env.JOSH_DATABASE_URL?.trim(); }
 
+  /** The replica connection. Knows josh's winback and price tables (read via copied josh code); never synchronizes or migrates. */
+  async dataSource(): Promise<DataSource> {
+    if (!this.josh) {
+      const josh = new DataSource({ type: 'postgres', url: process.env.JOSH_DATABASE_URL, entities: [...JOSH_WINBACK_TABLES, ...JOSH_PRICING_TABLES],
+        synchronize: false, migrationsRun: false,
+        applicationName: 'commerce-josh-replica', extra: { max: 2, statement_timeout: 120_000, connectionTimeoutMillis: 5_000 } });
+      await josh.initialize();
+      this.josh = josh;
+    }
+    return this.josh;
+  }
+
   async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<T[]> {
     try {
-      if (!this.josh) {
-        const josh = new DataSource({ type: 'postgres', url: process.env.JOSH_DATABASE_URL, entities: [],
-          applicationName: 'commerce-josh-replica', extra: { max: 2, statement_timeout: 120_000, connectionTimeoutMillis: 5_000 } });
-        await josh.initialize();
-        this.josh = josh;
-      }
-      return await this.josh.query(sql, params);
+      return await (await this.dataSource()).query(sql, params);
+    } catch (error) {
+      await this.onModuleDestroy();
+      throw error;
+    }
+  }
+
+  /** Run copied josh code against the replica; a failure drops the pool so the next call reconnects. */
+  async run<T>(fn: (ds: DataSource) => Promise<T>): Promise<T> {
+    try {
+      return await fn(await this.dataSource());
     } catch (error) {
       await this.onModuleDestroy();
       throw error;

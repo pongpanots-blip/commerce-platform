@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PublicWebReader, isPublicAddress, publicUrl, singlePrice, resolveWebsite, cardFields } from './public-web.reader';
+import { PublicWebReader, isPublicAddress, publicUrl, singlePrice, resolveWebsite, cardFields, httpProblem } from './public-web.reader';
 import { ScrapingConfig } from '../domain/scraping-source.entity';
 
 it('pins public DNS, rejects redirects into private networks, and extracts generic mapped fields without ambiguous prices', async () => {
@@ -91,4 +91,38 @@ it('does not assign a category heading the first unrelated price on the page', (
   expect(page.config.fields.map(field => field.key)).not.toContain('price');
   expect(page.config.fields.map(field => field.key)).not.toContain('regularPrice');
   expect(page.items).toMatchObject([{ name: 'Beef', price: null }]);
+});
+
+it('follows POST redirects like a browser: 302 drops the body, cross-origin drops authorization', async () => {
+  const reader = new PublicWebReader();
+  const dns = require('node:dns/promises');
+  const lookup = jest.spyOn(dns, 'lookup').mockResolvedValue([{ address: '8.8.8.8', family: 4 }] as never);
+  const calls: any[] = [];
+  const send = jest.spyOn(axios, 'request').mockImplementation(async (options: any) => {
+    calls.push({ url: options.url, method: options.method, data: options.data, headers: options.headers });
+    if (calls.length === 1) return { status: 302, headers: { location: 'https://other.example.com/next' } } as never;
+    if (calls.length === 2) return { status: 200, headers: { 'content-type': 'application/json' }, data: Buffer.from('{}') } as never;
+    if (calls.length === 3) return { status: 307, headers: { location: '/again' } } as never;
+    return { status: 200, headers: { 'content-type': 'application/json' }, data: Buffer.from('{}') } as never;
+  });
+  try {
+    const post = { method: 'POST' as const, headers: { 'content-type': 'application/json', authorization: 'Bearer public-search-key' }, body: Buffer.from('{"q":"*"}') };
+    await reader.fetch('https://api.example.com/search', undefined, post);
+    expect(calls[1]).toMatchObject({ url: 'https://other.example.com/next', method: 'GET', data: undefined });
+    expect(calls[1].headers.authorization).toBeUndefined();
+    expect(calls[1].headers['content-type']).toBeUndefined();
+    await reader.fetch('https://api.example.com/search', undefined, post);
+    expect(calls[3]).toMatchObject({ url: 'https://api.example.com/again', method: 'POST' });
+    expect(String(calls[3].data)).toBe('{"q":"*"}');
+    expect(calls[3].headers.authorization).toBe('Bearer public-search-key');
+  } finally { lookup.mockRestore(); send.mockRestore(); }
+});
+
+it('explains HTTP failures in plain words and reports bot challenges instead of bypassing them', () => {
+  expect(httpProblem(403, { 'cf-mitigated': 'challenge' }, '')).toMatch(/ระบบกันบอท/);
+  expect(httpProblem(403, {}, '<title>Just a moment...</title>')).toMatch(/ระบบกันบอท/);
+  expect(httpProblem(404, {}, '<html>')).toBe('ไม่พบหน้านี้บนเว็บ (404) ตรวจลิงก์อีกครั้ง');
+  expect(httpProblem(403, {}, '<html>')).toMatch(/อาจต้องล็อกอิน/);
+  expect(httpProblem(429, {}, '')).toMatch(/429/);
+  expect(httpProblem(503, {}, '')).toMatch(/ขัดข้อง \(503\)/);
 });

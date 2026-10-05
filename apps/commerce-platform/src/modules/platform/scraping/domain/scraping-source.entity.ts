@@ -9,10 +9,18 @@ export type ScrapingConfig = {
   autoCards?: boolean;
   /** 'browser' = keep one browser session and follow next link / next button / load more / scroll. */
   pagination?: 'none' | 'browser';
+  /** Run only inside the night window (SCRAPING_NIGHT_*); long runs pause at its end and resume next night. */
+  nightOnly?: boolean;
+  /** Pages the site itself reported at discovery (e.g. Makro 3,978) — shown as progress 'X of ~Y'. */
+  expectedPages?: number;
   collectionAllowed: boolean; intervalHours: number; maxPages: number; delayMs: number;
 };
 export type ScrapingProgress = {
   pending: string[]; visited: string[]; successful: number; failed: number; items: number;
+  /** Drops in a row on the current listing; reset by any page read. */
+  retries?: number;
+  /** A person asked to collect now (first look / "เก็บต่อเลยตอนนี้"): keeps going outside the night window, even after a restart. */
+  now?: 'first_look' | 'all';
 };
 
 @Entity('scraping_sources')
@@ -29,6 +37,11 @@ export class ScrapingSource {
   @Column({ name: 'lease_until', type: 'timestamptz', nullable: true }) leaseUntil: Date | null;
   @Column({ name: 'last_error', type: 'varchar', length: 500, nullable: true }) lastError: string | null;
   @Column({ name: 'last_run_at', type: 'timestamptz', nullable: true }) lastRunAt: Date | null;
+  /** Our own member account on this site. Prices read while logged in are member prices, kept apart from public ones. */
+  @Column({ name: 'login_url', type: 'varchar', length: 2000, nullable: true }) loginUrl: string | null;
+  @Column({ name: 'login_username', type: 'varchar', length: 200, nullable: true }) loginUsername: string | null;
+  /** AES-256-GCM with SCRAPING_CREDENTIALS_KEY (see credential-cipher.ts). Never returned by the API. */
+  @Column({ name: 'login_password_enc', type: 'text', nullable: true }) loginPasswordEnc: string | null;
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' }) createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' }) updatedAt: Date;
 }

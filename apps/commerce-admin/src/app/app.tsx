@@ -32,6 +32,8 @@ import { PushCampaigns } from './pages/PushCampaigns';
 import { JoshProducts } from './pages/JoshProducts';
 import { JoshCustomersPage, JoshOrdersPage, JoshPricesPage } from './pages/JoshCommerce';
 import { JagotaShadow } from './pages/JagotaShadow';
+import { JoshBackoffice } from './pages/JoshBackoffice';
+import { JoshApiLogs } from './pages/JoshApiLogs';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -47,6 +49,23 @@ const NAV = [
       { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
       { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
       { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
+    ],
+  },
+  {
+    group: 'หลังบ้าน josh (อ่านอย่างเดียว)',
+    links: [
+      { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
+      { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
+      { to: '/josh/admin_access', label: 'คำขอเข้า admin', end: false },
+      { to: '/josh/shipments', label: 'Shipments', end: false },
+      { to: '/josh/payments', label: 'รายการชำระเงิน', end: false },
+      { to: '/josh/credit_notes', label: 'Credit notes', end: false },
+      { to: '/josh/credit_backs', label: 'Credit backs', end: false },
+      { to: '/josh/coupons', label: 'Coupons', end: false },
+      { to: '/josh/campaigns', label: 'Campaigns', end: false },
+      { to: '/josh/segments', label: 'Segments', end: false },
+      { to: '/josh/suppliers', label: 'Suppliers', end: false },
+      { to: '/josh-api-logs', label: 'API log ของ josh', end: false },
     ],
   },
   {
@@ -137,6 +156,8 @@ export function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
+            <Route path="/josh/:view" element={<JoshBackoffice />} />
+            <Route path="/josh-api-logs" element={<JoshApiLogs />} />
             <Route path="/reports/customers" element={<JoshCustomersPage />} />
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />

@@ -31,6 +31,8 @@ import { COMPANY_ISSUES, JoshCustomers } from '../modules/integration/connector/
 import { JoshPrices } from '../modules/integration/connector/josh/josh-prices';
 import { JagotaShadow } from '../modules/integration/connector/josh/jagota/jagota-shadow';
 import { JagotaGateway } from '../modules/integration/connector/josh/jagota/jagota-gateway';
+import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
+import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
@@ -81,6 +83,8 @@ export class McpTools {
     private readonly joshPrices: JoshPrices,
     private readonly jagotaShadow: JagotaShadow,
     private readonly jagotaGateway: JagotaGateway,
+    private readonly backoffice: JoshBackoffice,
+    private readonly apiLogs: JoshApiLogs,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -509,6 +513,40 @@ export class McpTools {
   }
 
   private ops(server: McpServer) {
+    server.registerTool('josh_backoffice', {
+      title: 'josh back-office lists (admin)',
+      description: `josh staff lists, read-only from josh's replica, with counts by status: ${Object.entries(BACKOFFICE_VIEWS).map(([k, v]) => `${k} (${v.title})`).join(', ')}. Column names are josh's. Phones, emails and people's names are masked; files, card data and password hashes are never read.`,
+      inputSchema: {
+        list: z.enum(Object.keys(BACKOFFICE_VIEWS) as [string, ...string[]]),
+        search: z.string().max(100).optional().describe('company, order / shipment / CN number, coupon code, name…'),
+        status: z.string().max(40).optional().describe('one of the statuses in byStatus'),
+        page: z.number().int().min(1).default(1),
+      },
+      annotations: READ_ONLY,
+    }, async ({ list, search, status, page }) => {
+      if (!this.backoffice.available) return json(NO_REPLICA);
+      const r = await this.backoffice.list(list, { search, status }, page);
+      return json({ list: r.key, title: r.title, byStatus: r.byStatus, total: r.total, page: r.page, items: r.items });
+    });
+
+    server.registerTool('josh_api_logs', {
+      title: 'josh API log (admin)',
+      description: "josh's general API log from its Mongo (josh's own query code): calls josh served and calls it made to Jagota / KBank, ERP inbound excluded (see josh_erp_logs). Without `id`: stats (traffic, errors, slowest routes) plus the matching rows for a window (default last 24h, max 7 days). With `id`: one call with payload, response and timing steps.",
+      inputSchema: {
+        id: z.string().max(40).optional(),
+        status: z.enum(['all', '2xx', '4xx', '5xx']).optional(), source: z.enum(['all', 'internal', 'jagota', 'kbank', 'erp_webhook']).optional(),
+        method: z.enum(['all', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE']).optional(), q: z.string().max(100).optional().describe('text in the message / URL'),
+        from: z.string().max(40).optional(), to: z.string().max(40).optional(), minDurationMs: z.number().int().min(0).optional(),
+        sort: z.enum(['newest', 'slowest']).optional(), limit: z.number().int().min(1).max(100).default(30),
+      },
+      annotations: READ_ONLY,
+    }, async ({ id, ...q }) => {
+      if (!this.apiLogs.available) return json({ available: false, reason: "josh's log Mongo is not connected on this server (JOSH_MONGO_URL)." });
+      if (id) return json(await this.apiLogs.detail(id));
+      const [stats, list] = await Promise.all([this.apiLogs.stats(q), this.apiLogs.list(q)]);
+      return json({ stats, total: list.total, items: list.items });
+    });
+
     server.registerTool('josh_orders', {
       title: 'Shop orders (josh, admin)',
       description: 'josh orders, read-only: counts by status, awaiting payment, and whether paid orders reached Jagota (ERP): failed, not sent, pending, sent. A filtered list, or one order (order number or id) with items, shipments, every Jagota send attempt and payments. Customer contact data is masked.',

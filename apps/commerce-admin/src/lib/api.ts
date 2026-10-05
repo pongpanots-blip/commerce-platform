@@ -667,3 +667,26 @@ export const jagotaGatewayApi = {
   list: (status: string, page: number) => api.get<{ items: JagotaSend[]; total: number }>(`/reports/jagota-gateway?status=${status}&page=${page}`),
   detail: (id: string) => api.get<JagotaSend>(`/reports/jagota-gateway/${id}`),
 };
+
+export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
+export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
+  items: Record<string, unknown>[]; total: number; page: number; limit: number }
+export const backofficeApi = {
+  list: (view: string, f: { search?: string; status?: string; page: number }) => {
+    const p = new URLSearchParams({ page: String(f.page) });
+    if (f.search) p.set('search', f.search);
+    if (f.status) p.set('status', f.status);
+    return api.get<BackofficeList>(`/reports/backoffice/${encodeURIComponent(view)}?${p}`);
+  },
+};
+
+export interface ApiLogRow { id: string; method: string; url: string; statusCode: number; isSuccess: boolean; durationMs: number; message: string; createdAt: string;
+  source: string; requestId: string | null; userId: string | null }
+export interface ApiLogDetail extends ApiLogRow { errorMessage?: string; response?: unknown; payload?: unknown; query?: unknown; ip?: string; steps: { label: string; ms: number }[] }
+export interface ApiLogStats { from: string; to: string; bucketMs: number; buckets: { start: string; count: number; errors: number; avgMs: number; maxMs: number }[];
+  topEndpoints: { method: string; route: string; count: number; errors: number; avgMs: number; maxMs: number }[] }
+export const apiLogsApi = {
+  list: (q: Record<string, string>) => api.get<{ items: ApiLogRow[]; total: number; page: number; limit: number }>(`/reports/api-logs?${new URLSearchParams(q)}`),
+  stats: (q: Record<string, string>) => api.get<ApiLogStats>(`/reports/api-logs/stats?${new URLSearchParams(q)}`),
+  detail: (id: string) => api.get<ApiLogDetail>(`/reports/api-logs/${encodeURIComponent(id)}`),
+};

@@ -90,7 +90,7 @@ export class JoshOrders {
   async detail(idOrNumber: string) {
     const byId = UUID.test(idOrNumber);
     const [order] = await this.replica.query<Record<string, unknown>>(
-      `SELECT o.orders_id, o.order_number, o.status::text AS status, o.type::text AS type, o.create_date, o.delivery_date::text AS delivery_date, o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
+      `SELECT o.orders_id, o.order_number, o.status::text AS status, o.fulfillment_type::text AS fulfillment_type, o.payment_type::text AS payment_type, o.create_date, o.delivery_date::text AS delivery_date, o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
           o.total_price::float AS total_price, o.subtotal_ex_vat::float AS subtotal_ex_vat, o.vat_amount::float AS vat_amount,
           o.discount_inc_vat::float AS discount_inc_vat, o.delivery_fee::float AS delivery_fee,
           c.id AS company_id, c.name AS company_name, c.erp_customer_code, b.name AS branch_name, b.erp_branch_code,
@@ -105,7 +105,7 @@ export class JoshOrders {
         FROM order_items oi JOIN product_inventory pi ON pi.product_inventory_id = oi.product_inventory_id
         LEFT JOIN product_translation th ON th.product_inventory_id = pi.product_inventory_id AND th.language_code = 'th'
        WHERE oi.order_id = $1 ORDER BY pi.product_inventory_sku`, [id]),
-      this.replica.query(`SELECT shipment_number, type::text AS type, delivery_date::text AS delivery_date, shipped_at, delivered_at, cancelled_at, total_inc_vat::float AS total_inc_vat,
+      this.replica.query(`SELECT shipment_number, status::text AS status, fulfillment_type::text AS fulfillment_type, delivery_date::text AS delivery_date, shipped_at, delivered_at, cancelled_at, total_inc_vat::float AS total_inc_vat,
           erp_sync_status, three_pl_status FROM shipments WHERE order_id = $1 ORDER BY created_at`, [id]),
       this.replica.query(`SELECT sync_status, transaction_type, doc_book, doc_no, error_message, payment_method, payment_success, created_at
         FROM jagota_order_sync WHERE order_id = $1 ORDER BY created_at`, [id]),

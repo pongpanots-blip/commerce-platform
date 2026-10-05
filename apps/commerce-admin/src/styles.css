@@ -84,7 +84,9 @@ td.mono, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; fo
 
 form.stack { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; }
-label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); flex: 1 1 180px; }
+label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
+/* Grow side by side only in a horizontal .row — in a column container a 180px basis becomes a 180px height. */
+.row > label.field { flex: 1 1 180px; }
 input, select, textarea {
   font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--fg);
 }
@@ -103,6 +105,4 @@ pre.payload { background: var(--bg); border: 1px solid var(--line); border-radiu
 .login { width: 100%; max-width: 360px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
 .login .brand { padding: 0 0 4px; }
 .login input { width: 100%; }
-/* label.field grows along a row (flex: 1 1 180px); in this column form that basis became a 180px height */
-.login label.field { flex: none; }
 .side-foot { margin-top: 16px; padding: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 8px; }

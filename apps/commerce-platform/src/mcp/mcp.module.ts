@@ -8,6 +8,7 @@ import { MarketingResearchModule } from '../modules/platform/marketing-research/
 import { WebhookSubscriptionModule } from '../modules/integration/webhook-subscription/webhook-subscription.module';
 import { IntegrationModule } from '../modules/integration/integration.module';
 import { InventoryModule } from '../modules/commerce/inventory/inventory.module';
+import { JoshModule } from '../modules/integration/connector/josh/josh.module';
 import { McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { McpOAuthProvider } from './mcp-oauth.provider';
 import { McpTools } from './mcp.tools';
@@ -17,7 +18,7 @@ import { McpConnectionsController } from './mcp-connections.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([McpOAuthClient, McpOAuthGrant, User]),
-    AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule, WebhookSubscriptionModule, IntegrationModule, InventoryModule,
+    AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule, WebhookSubscriptionModule, IntegrationModule, InventoryModule, JoshModule,
   ],
   controllers: [McpConnectionsController],
   providers: [McpOAuthProvider, McpTools],

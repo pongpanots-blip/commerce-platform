@@ -20,6 +20,8 @@ import { WebhookDelivery } from '../modules/integration/webhook-subscription/inf
 import { InventoryLedgerService } from '../modules/commerce/inventory/application/inventory-ledger.service';
 import { Warehouse } from '../modules/commerce/warehouse/infrastructure/warehouse.entity';
 import { InventoryLevel } from '../modules/commerce/inventory/infrastructure/inventory-level.entity';
+import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/connector/josh/josh-insights';
+import { DeliveryMonitor } from '../modules/integration/webhook-subscription/application/delivery-monitor';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -31,6 +33,12 @@ const argsHash = (args: Record<string, unknown>) =>
   createHash('sha256').update(JSON.stringify(Object.keys(args).sort().map((k) => [k, args[k]]))).digest('hex');
 const AREAS = ['กรุงเทพมหานคร', 'กรุงเทพฯ และปริมณฑล', 'ทั่วประเทศไทย'] as const;
 const SECTORS = ['ทุกกลุ่ม · น้ำหนักเท่ากัน', 'ร้านอาหาร', 'โรงแรม / จัดเลี้ยง', 'ร้านค้าปลีก', 'โรงงานอาหาร'] as const;
+const PERIOD_INPUT = {
+  period: z.enum(PERIODS).default('this_month').describe('Bangkok time. this_month = 1st of the month until now; compared with the same length right before it'),
+  fromDate: z.string().max(10).optional().describe('custom only: YYYY-MM-DD'),
+  toDate: z.string().max(10).optional().describe('custom only: YYYY-MM-DD (inclusive)'),
+};
+const NO_REPLICA = { available: false, reason: 'Shop data is read from josh\'s read replica, which is not configured on this server (JOSH_DATABASE_URL). Tell the user it is not connected yet.' };
 const productName = (p: JoshCatalogProduct) =>
   p.translations?.find((t) => t.language_code === 'th')?.product_name ?? p.translations?.[0]?.product_name ?? p.sku;
 
@@ -51,6 +59,8 @@ export class McpTools {
     private readonly webhooks: WebhookSubscriptionService,
     private readonly ingest: ErpIngestService,
     private readonly ledger: InventoryLedgerService,
+    private readonly insights: JoshInsights,
+    private readonly monitor: DeliveryMonitor,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -59,7 +69,8 @@ export class McpTools {
     const server = new McpServer(
       { name: 'commerce-platform', version: '1.0.0' },
       { instructions: 'Commerce Platform (Jagota / Josh). Read-only: look up and summarize competitor prices, scraped competitor catalogs, marketing research and the Josh catalog' +
-        (staff.role === 'admin' ? ', plus ERP intake, webhook delivery failures and stock per warehouse.' : '.') +
+        ', shop traffic' +
+        (staff.role === 'admin' ? ', plus shop sales, system health/errors, ERP intake, webhook delivery failures and stock per warehouse.' : '.') +
         (canWrite ? ' A few tools change data; each one first returns a preview and a confirmCode — always show the preview and get the user\'s explicit OK before calling it again with the code.' : ' This connection is read-only.') +
         ' Prices are THB including VAT. Answer in the user\'s language.' },
     );
@@ -89,6 +100,16 @@ export class McpTools {
   }
 
   private marketing(server: McpServer, staff: McpStaff) {
+    server.registerTool('shop_traffic', {
+      title: 'Shop traffic (josh)',
+      description: 'Visits (sessions), visitors, product views, searches, add-to-cart, checkout and purchase counts on the josh shop for a period, by platform and by day, the funnel, and the top searches (with how many found nothing). Compared with the previous period of the same length.',
+      inputSchema: PERIOD_INPUT,
+      annotations: READ_ONLY,
+    }, async ({ period, fromDate, toDate }) => {
+      if (!this.insights.available) return json(NO_REPLICA);
+      return json(await this.insights.traffic(bangkokRange(period, Date.now(), fromDate, toDate)));
+    });
+
     server.registerTool('competitor_prices', {
       title: 'Competitor price comparison',
       description: 'Tracked pairs of our SKU vs a competitor product, with price per kg (THB incl. VAT) and the gap. differencePerKg > 0 means we are cheaper.',
@@ -412,6 +433,39 @@ export class McpTools {
   }
 
   private ops(server: McpServer) {
+    server.registerTool('shop_sales', {
+      title: 'Shop sales (josh, admin)',
+      description: 'Sales of the josh shop for a period: paid orders, revenue (THB incl. VAT, after discounts), average order, buying customers/companies, new customers, awaiting payment / cancelled / refunded, revenue by day (or month), top products, and the change vs the previous period.',
+      inputSchema: PERIOD_INPUT,
+      annotations: READ_ONLY,
+    }, async ({ period, fromDate, toDate }) => {
+      if (!this.insights.available) return json(NO_REPLICA);
+      return json(await this.insights.sales(bangkokRange(period, Date.now(), fromDate, toDate)));
+    });
+
+    server.registerTool('system_health', {
+      title: 'System health and errors (admin)',
+      description: 'Is anything broken right now, and what failed in a period: commerce → platform delivery (stuck queue, dead-letters, relay), ERP intake failures, and josh-side failures (payments, Jagota order sync, marketing runs, push campaigns).',
+      inputSchema: PERIOD_INPUT,
+      annotations: READ_ONLY,
+    }, async ({ period, fromDate, toDate }) => {
+      const { current } = bangkokRange(period, Date.now(), fromDate, toDate);
+      const [problemsNow, [commerce]] = await Promise.all([
+        this.monitor.check(),
+        this.db.query(
+          `SELECT (SELECT count(*) FROM webhook_deliveries WHERE status = 'failed' AND updated_at >= $1 AND updated_at < $2)::int AS deliveries_dead_lettered,
+                  (SELECT count(*) FROM webhook_deliveries WHERE status = 'success' AND updated_at >= $1 AND updated_at < $2)::int AS deliveries_succeeded,
+                  (SELECT count(*) FROM erp_ingest_records WHERE status = 'failed' AND created_at >= $1 AND created_at < $2)::int AS erp_intake_failed,
+                  (SELECT count(*) FROM erp_ingest_records WHERE created_at >= $1 AND created_at < $2)::int AS erp_intake_total`,
+          [current.from, current.to]),
+      ]);
+      let josh: unknown = NO_REPLICA;
+      if (this.insights.available) {
+        try { josh = await this.insights.failures(current); } catch (error) { josh = { available: false, reason: `josh replica query failed: ${error instanceof Error ? error.message : error}` }; }
+      }
+      return json({ period: current.label, now: { ok: problemsNow.length === 0, problems: problemsNow.map((p) => p.message) }, commerce, josh });
+    });
+
     server.registerTool('erp_intake_summary', {
       title: 'ERP intake summary (admin)',
       description: 'What the ERP sent in the last N hours: counts by type and status, plus the most recent failures.',

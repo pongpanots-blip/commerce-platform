@@ -28,7 +28,6 @@ import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReport
 import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
 import { JoshErpLogs } from './pages/JoshErpLogs';
 import { Winback } from './pages/Winback';
-import { PushCampaigns } from './pages/PushCampaigns';
 import { JoshProducts } from './pages/JoshProducts';
 import { JoshCustomersPage, JoshOrdersPage, JoshPricesPage } from './pages/JoshCommerce';
 import { JagotaShadow } from './pages/JagotaShadow';
@@ -36,7 +35,6 @@ import { JoshBackoffice } from './pages/JoshBackoffice';
 import { JoshApiLogs } from './pages/JoshApiLogs';
 import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
-import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
 import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
@@ -85,8 +83,6 @@ const NAV = [
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
-      { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
-      { to: '/marketing/promotions', label: 'โปรโมชัน', end: false },
       { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
       { to: '/j/coupons', label: 'Coupons', end: false },
       { to: '/j/promotion-product-sets', label: 'Promotion product sets', end: false },
@@ -94,7 +90,7 @@ const NAV = [
       { to: '/j/promotion-pages', label: 'Promotion pages', end: false },
       { to: '/j/promotions/campaigns', label: 'Campaigns', end: false },
       { to: '/j/segments', label: 'Segments', end: false },
-      { to: '/j/marketing/push-campaigns', label: 'Push campaigns (josh)', end: false },
+      { to: '/j/marketing/push-campaigns', label: 'Push campaigns', end: false },
       { to: '/j/cs/notification-catalog', label: 'Notification catalog', end: false },
       { to: '/j/cs/notification-log', label: 'Notification log', end: false },
       { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
@@ -254,8 +250,6 @@ export function App() {
             <Route path="/reports/health" element={<HealthReportPage />} />
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
-            <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
-            <Route path="/marketing/promotions" element={<Promotions />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
             <Route path="/marketing/workflows/new" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />

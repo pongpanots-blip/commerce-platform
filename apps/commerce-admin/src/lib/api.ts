@@ -587,24 +587,6 @@ export const winbackApi = {
   leadSignals: () => api.get<WbEnvelope<{ leads: WbLead[]; stageMedianDays: Record<string, number> }>>('/reports/winback/lead-signals?limit=50'),
 };
 
-// josh push campaigns (read-only) — josh's own field names.
-export interface PushCampaign {
-  id: string; name: string; status: string; title: string; body: string; audience: { include: Record<string, string[]>; exclude: Record<string, string[]> };
-  ab_enabled: boolean; scheduled_at: string | null; sent_at: string | null; created_at: string; last_error: string | null;
-  stats: { queued: number; sent: number; skipped: number; failed: number; clicked: number };
-}
-export interface PushDelivery {
-  deliveryStats: null | { totals: { attempted: number; sent: number; skipped: number; failed: number; clicked: number; deliveryRate: number; clickRate: number };
-    byTypeChannel: { channel: string; attempted: number; sent: number; skipped: number; failed: number; clicked: number; clickRate: number }[];
-    topSkipAndFailReasons: { reason: string; count: number }[] };
-  note?: string;
-}
-export const pushCampaignApi = {
-  overview: () => api.get<{ campaigns: number; scheduled: number; sentToday: number; totalQueued: number; totalSent: number }>('/reports/push-campaigns/overview'),
-  list: () => api.get<PushCampaign[]>('/reports/push-campaigns'),
-  delivery: (id: string) => api.get<PushDelivery>(`/reports/push-campaigns/${id}/delivery`),
-};
-
 // josh catalog, read-only — josh's column names.
 export interface JoshProductRow {
   product_inventory_id: string; product_inventory_sku: string; product_status: string; name_th: string | null; name_en: string | null;
@@ -677,20 +659,6 @@ export const jagotaHistoryApi = {
     `/reports/jagota-sync-history?status=${encodeURIComponent(f.status)}&q=${encodeURIComponent(f.q)}&page=${f.page}`),
   detail: (id: string) => api.get<JagotaSyncRow>(`/reports/jagota-sync-history/${id}`),
   run: () => api.post<{ added: number; refreshed: number }>('/reports/jagota-sync-history/run', {}),
-};
-
-export interface PromotionRow { id: string; name: string; badge_text: string | null; badge_text_en: string | null; is_active: boolean; start_date: string; end_date: string;
-  campaign_id: string | null; campaign_name: string | null; max_units: number | null; sold_units: number; audience: string; audience_companies: number;
-  value: Record<string, unknown> | null; product_set_ids: string[]; sku_count: number; state: 'running' | 'scheduled' | 'ended' | 'sold_out' | 'off'; updated_at: string }
-export const promotionsApi = {
-  list: (f: { state: string; search: string }) => api.get<PromotionRow[]>(`/reports/promotions?state=${encodeURIComponent(f.state)}&search=${encodeURIComponent(f.search)}`),
-  detail: (id: string) => api.get<PromotionRow & { skus: { sku: string; name_th: string | null; badge_text: string | null; value: unknown; quantity_rules: unknown }[] }>(`/reports/promotions/${id}`),
-  productSets: () => api.get<{ id: string; name: string; is_active: boolean; products: number }[]>('/reports/promotions/product-sets'),
-  shadow: (days: number) => api.get<{ days: number; lines: number; same_mechanic: number; matched: number; sameMechanicRate: number | null }>(`/reports/promotions/shadow?days=${days}`),
-  /** Body in josh's CreatePromotionMechanicDto shape; josh validates it. */
-  create: (mechanic: Record<string, unknown>) => api.post<unknown>('/josh/promotions', { mechanic }),
-  update: (id: string, changes: Record<string, unknown>) => api.post<unknown>(`/josh/promotions/${id}/update`, { changes }),
-  remove: (id: string) => api.post<unknown>(`/josh/promotions/${id}/remove`, {}),
 };
 
 export interface WorkflowRow { id: string; name: string; status: 'draft' | 'active' | 'paused'; trigger_type: string; schedule: unknown; cooldown_days: number | null;

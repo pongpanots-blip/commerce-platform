@@ -55,7 +55,8 @@ export function JoshOrdersPage() {
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState<string | null>(null);
   const summary = useAsync(() => joshOrderApi.summary({ ...f, sync: undefined }), [f.search, f.status, f.from, f.to]);
-  const list = useAsync(() => joshOrderApi.list({ ...f, page, limit: LIMIT }), [f, page]);
+  // The 'payment_missing' tile filters by payment, not by Jagota state.
+  const list = useAsync(() => joshOrderApi.list({ ...f, ...(f.sync === 'payment_missing' ? { sync: '', payment: 'missing' } : {}), page, limit: LIMIT }), [f, page]);
   const detail = useAsync(() => (open ? joshOrderApi.detail(open) : Promise.resolve(null)), [open]);
   const s = summary.data;
   const d = detail.data;
@@ -68,6 +69,7 @@ export function JoshOrdersPage() {
         { key: 'not_sent', label: 'จ่ายแล้วแต่ยังไม่ส่ง Jagota', value: s.sync_not_sent, attn: s.sync_not_sent > 0 },
         { key: 'pending', label: 'รอส่ง Jagota', value: s.sync_pending },
         { key: 'sent', label: 'ส่ง Jagota แล้ว', value: s.sync_sent },
+        { key: 'payment_missing', label: 'สถานะจ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ', value: s.settled_without_payment, attn: s.settled_without_payment > 0 },
       ]} />}
       {s && <p className="hint" style={{ marginTop: 8 }}>ทั้งหมด {s.total.toLocaleString('th-TH')} · รอชำระ {s.awaiting_payment} · มูลค่าที่ชำระแล้ว {baht(s.paid_value)} · {s.byStatus.map((b: JoshRow) => `${ORDER_STATUS[b.status] ?? b.status} ${b.n}`).join(' · ')}</p>}
       <section className="panel" style={{ marginTop: 12 }}>

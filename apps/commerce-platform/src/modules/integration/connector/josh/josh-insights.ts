@@ -4,6 +4,18 @@ import { JoshReplica } from './josh-replica';
 /** josh's SETTLED_ORDER_STATUSES (money taken) — the same set its purchases dashboard counts. */
 export const JOSH_SETTLED_STATUSES = ['paid', 'preparing', 'shipped', 'delivered'];
 
+/**
+ * An order counts as sales only when a real (non-test) payment for it succeeded — the order status
+ * alone is not enough: josh can move an order to `delivered` while its payment was cancelled.
+ * A payment links to its order directly (`payment_transactions.order_id`, the first order of a
+ * checkout batch) or through `payment_transaction_orders` (every order of the batch); credit-term
+ * orders get a `success` transaction at checkout, so they count.
+ */
+export const paidOrderSql = (o: string) => `(EXISTS (SELECT 1 FROM payment_transactions pt_ WHERE pt_.order_id = ${o}.orders_id AND pt_.status::text = 'success' AND NOT pt_.is_test)
+  OR EXISTS (SELECT 1 FROM payment_transaction_orders pl_ JOIN payment_transactions pt_ ON pt_.id = pl_.transaction_id
+              WHERE pl_.order_id = ${o}.orders_id AND pt_.status::text = 'success' AND NOT pt_.is_test))`;
+const SOLD = `o.status::text = ANY($3) AND ${paidOrderSql('o')}`;
+
 export const PERIODS = ['today', 'yesterday', 'this_week', 'last_7_days', 'this_month', 'last_month', 'last_30_days', 'custom'] as const;
 export type Period = (typeof PERIODS)[number];
 export interface Range { label: string; from: Date; to: Date }
@@ -52,20 +64,23 @@ export function bangkokRange(period: Period, now = Date.now(), fromDate?: string
 }
 
 const SALES_TOTALS_SQL = `
-  SELECT count(*) FILTER (WHERE status::text = ANY($3))::int AS orders,
-         COALESCE(sum(total_price) FILTER (WHERE status::text = ANY($3)), 0)::float AS revenue_inc_vat,
-         COALESCE(sum(subtotal_ex_vat) FILTER (WHERE status::text = ANY($3)), 0)::float AS subtotal_ex_vat,
-         COALESCE(sum(discount_inc_vat) FILTER (WHERE status::text = ANY($3)), 0)::float AS discounts_inc_vat,
-         count(DISTINCT user_id) FILTER (WHERE status::text = ANY($3))::int AS buying_customers,
-         count(DISTINCT company_id) FILTER (WHERE status::text = ANY($3))::int AS buying_companies,
-         count(*) FILTER (WHERE status::text = 'payment_pending')::int AS awaiting_payment,
-         count(*) FILTER (WHERE status::text = 'cancelled')::int AS cancelled,
-         count(*) FILTER (WHERE status::text = 'refunded')::int AS refunded
-    FROM orders WHERE create_date >= $1 AND create_date < $2`;
+  SELECT count(*) FILTER (WHERE ${SOLD})::int AS orders,
+         COALESCE(sum(o.total_price) FILTER (WHERE ${SOLD}), 0)::float AS revenue_inc_vat,
+         COALESCE(sum(o.subtotal_ex_vat) FILTER (WHERE ${SOLD}), 0)::float AS subtotal_ex_vat,
+         COALESCE(sum(o.discount_inc_vat) FILTER (WHERE ${SOLD}), 0)::float AS discounts_inc_vat,
+         count(DISTINCT o.user_id) FILTER (WHERE ${SOLD})::int AS buying_customers,
+         count(DISTINCT o.company_id) FILTER (WHERE ${SOLD})::int AS buying_companies,
+         count(*) FILTER (WHERE o.status::text = 'payment_pending')::int AS awaiting_payment,
+         count(*) FILTER (WHERE o.status::text = 'cancelled')::int AS cancelled,
+         count(*) FILTER (WHERE o.status::text = 'refunded')::int AS refunded,
+         -- data problem to fix in josh: fulfilled / paid status but no successful payment
+         count(*) FILTER (WHERE o.status::text = ANY($3) AND NOT ${paidOrderSql('o')})::int AS settled_without_payment,
+         COALESCE(sum(o.total_price) FILTER (WHERE o.status::text = ANY($3) AND NOT ${paidOrderSql('o')}), 0)::float AS settled_without_payment_value
+    FROM orders o WHERE o.create_date >= $1 AND o.create_date < $2`;
 
 const SALES_DAILY_SQL = `
-  SELECT to_char(create_date AT TIME ZONE 'Asia/Bangkok', $4) AS bucket, count(*)::int AS orders, COALESCE(sum(total_price), 0)::float AS revenue_inc_vat
-    FROM orders WHERE create_date >= $1 AND create_date < $2 AND status::text = ANY($3)
+  SELECT to_char(o.create_date AT TIME ZONE 'Asia/Bangkok', $4) AS bucket, count(*)::int AS orders, COALESCE(sum(o.total_price), 0)::float AS revenue_inc_vat
+    FROM orders o WHERE o.create_date >= $1 AND o.create_date < $2 AND ${SOLD}
    GROUP BY 1 ORDER BY 1`;
 
 // ponytail: order_items has no order_id index in josh's migrations — this hash-joins
@@ -77,7 +92,7 @@ const TOP_PRODUCTS_SQL = `
     JOIN order_items oi ON oi.order_id = o.orders_id
     JOIN product_inventory pi ON pi.product_inventory_id = oi.product_inventory_id
     LEFT JOIN product_translation th ON th.product_inventory_id = pi.product_inventory_id AND th.language_code = 'th'
-   WHERE o.create_date >= $1 AND o.create_date < $2 AND o.status::text = ANY($3)
+   WHERE o.create_date >= $1 AND o.create_date < $2 AND ${SOLD}
    GROUP BY 1, 2 ORDER BY revenue_inc_vat DESC LIMIT $4`;
 
 const NEW_CUSTOMERS_SQL = `SELECT count(*)::int AS n FROM customer_metrics WHERE first_order_at >= $1 AND first_order_at < $2`;
@@ -161,7 +176,7 @@ export class JoshInsights {
     const orders = Number(now.orders);
     return {
       period: r.current.label,
-      counted: `orders with status ${JOSH_SETTLED_STATUSES.join('/')} (paid); THB incl. VAT after discounts`,
+      counted: `orders with status ${JOSH_SETTLED_STATUSES.join('/')} AND a successful non-test payment; THB incl. VAT after discounts. settled_without_payment = orders in those statuses with no successful payment (not counted)`,
       totals: { ...now, average_order_inc_vat: orders ? round(revenue / orders) : 0, new_customers: newCustomers.n, refunds },
       vsPreviousPeriod: { period: r.previous.label, revenue_inc_vat: before.revenue_inc_vat, orders: before.orders,
         revenue_change_percent: change(revenue, Number(before.revenue_inc_vat)), orders_change_percent: change(orders, Number(before.orders)) },

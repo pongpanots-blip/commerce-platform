@@ -27,6 +27,7 @@ import { ErpSimulator } from './pages/ErpSimulator';
 import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReports';
 import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
 import { JoshErpLogs } from './pages/JoshErpLogs';
+import { Winback } from './pages/Winback';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
@@ -37,6 +38,7 @@ const NAV = [
       { to: '/reports/traffic', label: 'Traffic', end: false },
       { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
       { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
+      { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
     ],
   },
   {
@@ -127,6 +129,7 @@ export function App() {
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />
+            <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />

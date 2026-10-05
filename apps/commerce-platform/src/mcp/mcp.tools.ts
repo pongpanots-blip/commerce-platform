@@ -24,6 +24,7 @@ import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/conn
 import { SystemHealthReport } from '../modules/integration/connector/josh/system-health';
 import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
 import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
+import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -65,6 +66,7 @@ export class McpTools {
     private readonly health: SystemHealthReport,
     private readonly restaurants: RestaurantPlaces,
     private readonly erpLogs: JoshErpLogs,
+    private readonly winback: JoshWinback,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -468,6 +470,45 @@ export class McpTools {
       if (!this.insights.available) return json(NO_REPLICA);
       return json(await this.insights.sales(bangkokRange(period, Date.now(), fromDate, toDate)));
     });
+
+    const RANGE = {
+      from: z.string().max(40).optional().describe('ISO date or date-time; default: this month (josh dashboard default)'),
+      to: z.string().max(40).optional().describe('ISO date or date-time'),
+    };
+    const iso = (v?: string) => { if (v && Number.isNaN(Date.parse(v))) throw new Error(`not a date: ${v}`); return v; };
+    const winbackTool = <A>(fn: (a: A) => Promise<unknown>) => async (a: A) =>
+      json(this.winback.available ? wrapWinbackResponse(await fn(a)) : NO_REPLICA);
+
+    server.registerTool('winback_overview', {
+      title: 'Win-back pipeline overview (admin)',
+      description: 'Sales win-back CRM (josh winback): how many lapsed/at-risk customers and leads by health (dormant/watch/active_again), stage, source and lifecycle (tmp/lead), unassigned, restaurant places not yet leads, by province, and monthly revenue at risk / recoverable.',
+      inputSchema: {}, annotations: READ_ONLY,
+    }, winbackTool(() => this.winback.overview()));
+
+    server.registerTool('winback_performance', {
+      title: 'Win-back sales performance (admin)',
+      description: 'Sales team results for a period: funnel and stage conversion, reactivation (won) rate, days to first contact / first order, activities by type and outcome, reject reasons, TMP→lead; GMV vs monthly target, AOV, customer segments and per-rep figures; per-rep lead/visit/call counts.',
+      inputSchema: RANGE, annotations: READ_ONLY,
+    }, winbackTool(async ({ from, to }: { from?: string; to?: string }) => {
+      const [scorecard, dashboard, team] = await Promise.all([
+        this.winback.scorecard(iso(from), iso(to)), this.winback.dashboard(iso(from), iso(to)), this.winback.teamStats(iso(from), iso(to)),
+      ]);
+      return { scorecard, dashboard, teamStats: team };
+    }));
+
+    server.registerTool('winback_follow_up', {
+      title: 'Win-back leads needing attention (admin)',
+      description: 'Leads nobody has worked for N days (aging) and per-lead facts for a sales meeting: stage, how long in stage, last activity and note, appointments that passed without being logged, plus median days per stage (team and per rep).',
+      inputSchema: {
+        days: z.number().int().min(0).max(365).default(3).describe('aging: no activity for at least this many days'),
+        salesUserId: z.string().uuid().optional().describe('only this rep\'s leads'),
+        limit: z.number().int().min(1).max(200).default(50),
+      },
+      annotations: READ_ONLY,
+    }, winbackTool(async ({ days, salesUserId, limit }: { days: number; salesUserId?: string; limit: number }) => {
+      const [aging, signals] = await Promise.all([this.winback.aging(days), this.winback.leadSignals(salesUserId, limit)]);
+      return { aging, leadSignals: signals };
+    }));
 
     server.registerTool('josh_erp_logs', {
       title: 'ERP calls received by josh (admin)',

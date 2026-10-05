@@ -532,3 +532,21 @@ export const joshErpLogApi = {
   list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshErpLogRow[]; total: number; page: number; limit: number }>(`/reports/erp-logs?${query(f)}`),
   get: (id: string) => api.get<Record<string, unknown>>(`/reports/erp-logs/${id}`),
 };
+
+// josh winback manager reports — josh's `{data, meta}` camelCase envelope, same as josh GET /api/winback/*.
+type WbEnvelope<T> = { data: T; meta?: { total: number; page: number; limit: number; totalPages: number } };
+export interface WbOverview {
+  counts: { total: number; unassigned: number; placeCandidates: number; byHealth: Record<string, number>; byStage: Record<string, number>; byLifecycle: Record<string, number> };
+  provinces: { province: string; count: number }[];
+  revenueRisk: { revenueAtRisk: number; dormantMonthlyRevenue: number; recoverableRevenue: number; recoveryProbability: number };
+}
+export interface WbRep { salesUserId: string; name: string | null; email: string | null; leadCount: number; openCount: number; signedCount: number; rejectedCount: number; visits: number; calls: number; activities: number }
+export interface WbPerson { salesUserId: string; name: string | null; gmv: number; orderCount: number; target: number | null; achievementPct: number | null }
+export interface WbLead { accountId: string; displayName: string; assignedSalesUserName: string | null; stage: string; stageEnteredAt: string; lastActivityAt: string | null; lastActivityType: string | null; lastNote: string | null; unloggedAppointments: { activityId: string; scheduledAt: string }[] }
+export const winbackApi = {
+  overview: () => api.get<WbEnvelope<WbOverview>>('/reports/winback/overview'),
+  teamStats: () => api.get<WbEnvelope<{ reps: WbRep[] }>>('/reports/winback/team-stats'),
+  dashboard: () => api.get<WbEnvelope<{ gmv: number; target: { set: boolean; baht: number }; achievement: { pct: number | null }; orders: { total: number; aov: number }; byPerson: WbPerson[] }>>('/reports/winback/dashboard'),
+  scorecard: () => api.get<WbEnvelope<{ reactivation: { total: number; won: number; rate: number }; timing: { avgDaysToFirstContact: number | null; avgDaysToFirstOrder: number | null } }>>('/reports/winback/scorecard'),
+  leadSignals: () => api.get<WbEnvelope<{ leads: WbLead[]; stageMedianDays: Record<string, number> }>>('/reports/winback/lead-signals?limit=50'),
+};

@@ -40,7 +40,6 @@ import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
 import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
-import { JoshAdminLists } from './pages/JoshAdminLists';
 import { CsDesk } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
 
@@ -63,7 +62,7 @@ const NAV = [
     ],
   },
   {
-    group: 'หลังบ้าน josh (อ่านอย่างเดียว)',
+    group: 'หลังบ้าน josh (อ่านจาก replica ใช้ได้แม้ josh ล่ม)',
     links: [
       { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
       { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
@@ -89,11 +88,17 @@ const NAV = [
       { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
       { to: '/marketing/promotions', label: 'โปรโมชัน', end: false },
       { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
-      { to: '/josh-admin/coupons', label: 'คูปอง (สร้าง/แก้)', end: false },
-      { to: '/josh-admin/campaigns', label: 'Campaigns (แก้)', end: false },
-      { to: '/josh-admin/segments', label: 'Segments (แก้)', end: false },
-      { to: '/josh-admin/product-sets', label: 'Product Set', end: false },
-      { to: '/josh-admin/promotion-pages', label: 'หน้าโปรโมชัน', end: false },
+      { to: '/j/coupons', label: 'Coupons', end: false },
+      { to: '/j/promotion-product-sets', label: 'Promotion product sets', end: false },
+      { to: '/j/promotions-mechanic', label: 'Promotion mechanics', end: false },
+      { to: '/j/promotion-pages', label: 'Promotion pages', end: false },
+      { to: '/j/promotions/campaigns', label: 'Campaigns', end: false },
+      { to: '/j/segments', label: 'Segments', end: false },
+      { to: '/j/marketing/push-campaigns', label: 'Push campaigns (josh)', end: false },
+      { to: '/j/cs/notification-catalog', label: 'Notification catalog', end: false },
+      { to: '/j/cs/notification-log', label: 'Notification log', end: false },
+      { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
+      { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
@@ -104,15 +109,20 @@ const NAV = [
     links: [
       { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
       { to: '/livechat', label: 'Live chat', end: false },
-      { to: '/josh-admin/bot-intents', label: 'Bot · intent rules', end: false },
-      { to: '/josh-admin/bot-workflows', label: 'Bot · workflows', end: false },
-      { to: '/josh-admin/bot-templates', label: 'Bot · templates', end: false },
+      { to: '/j/bot/intent-rules', label: 'Bot · intent rules', end: false },
+      { to: '/j/bot/workflows', label: 'Bot · workflows', end: false },
+      { to: '/j/bot/templates', label: 'Bot · templates', end: false },
     ],
   },
   {
     group: 'สินค้า / ลูกค้า (จาก josh)',
     links: [
       { to: '/j/categories', label: 'หมวดสินค้า', end: false },
+      { to: '/j/allproducts', label: 'สินค้า (จัดการ)', end: false },
+      { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true },
+      { to: '/j/product/video-upload', label: 'Video upload', end: true },
+      { to: '/j/product/bulk-image-upload', label: 'Bulk image upload', end: true },
+      { to: '/j/suppliers', label: 'Suppliers', end: false },
       { to: '/j/brands', label: 'แบรนด์', end: false },
       { to: '/j/trusted-brands', label: 'Trusted brands', end: false },
       { to: '/j/cuisine-cards', label: 'Cuisine cards', end: false },
@@ -120,6 +130,12 @@ const NAV = [
       { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
       { to: '/j/trusted-users', label: 'Trusted users', end: false },
       { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
+      { to: '/j/company', label: 'บริษัท', end: false },
+      { to: '/j/kyc', label: 'KYC', end: false },
+      { to: '/j/cs/sample-requests', label: 'Sample requests', end: false },
+      { to: '/j/price-requests', label: 'Price requests', end: false },
+      { to: '/j/active-offers', label: 'Active offers', end: false },
+      { to: '/j/admin-access', label: 'Admin access requests', end: false },
     ],
   },
   {
@@ -135,6 +151,10 @@ const NAV = [
       { to: '/j/credit-notes', label: 'Credit notes', end: false },
       { to: '/j/credit-backs', label: 'Credit backs', end: false },
       { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', end: false },
+      { to: '/j/billing', label: 'Billing', end: false },
+      { to: '/j/refunds', label: 'Returns & refunds', end: false },
+      { to: '/j/jagota/payment-testing', label: 'Jagota payment testing', end: false },
+      { to: '/j/erp/webhook-simulator', label: 'ERP webhook simulator (josh)', end: false },
     ],
   },
   {
@@ -247,7 +267,6 @@ export function App() {
             <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
-            <Route path="/josh-admin/:kind" element={<JoshAdminLists />} />
             <Route path="/j/*" element={<JoshAdminApp />} />
             <Route path="/cs" element={<CsDesk />} />
             <Route path="/livechat" element={<Livechat />} />

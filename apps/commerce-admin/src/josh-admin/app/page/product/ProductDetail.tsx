@@ -1,0 +1,339 @@
+// @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
+import { getProductById } from '@josh/shared-api';
+import { ADMIN_PRODUCT_READ } from '../../config/admin-product-read';
+import { Button } from '@josh/shared-ui-web';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ADMIN_ROUTES } from '../../config/admin-routes';
+import { MarketingLinkField } from '../../components/MarketingLinkField';
+import { SmartLinkField } from '../../components/SmartLinkField';
+import {
+  getTranslation,
+  ProductMediaItem,
+  resolveMediaUrl,
+  sortProductMedia,
+} from './product-media.helpers';
+import ProductCustomerPricingSection from './ProductCustomerPricingSection';
+import {
+  formatPromotionSummary,
+  parsePromotionRows,
+} from '../campain/promotion-mechanic.helpers';
+import { catalogSellingPrice } from './catalog-price';
+import { nutritionForDisplay } from './product-nutrition.helpers';
+import { normalizeProductStatus, productStatusBadge } from './product-status.helpers';
+
+function MediaPreview({ item }: { item: ProductMediaItem }) {
+  const [failed, setFailed] = useState(false);
+  const url = resolveMediaUrl(item.source);
+  const isVideo = item.media_type === 'video';
+
+  if (!url || failed) {
+    return (
+      <div className="w-full h-40 flex items-center justify-center bg-gray-100 text-xs text-gray-400">
+        โหลดสื่อไม่สำเร็จ
+      </div>
+    );
+  }
+
+  if (isVideo) {
+    return (
+      <video
+        src={url}
+        controls
+        playsInline
+        className="w-full h-40 object-cover bg-black"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <img
+      src={url}
+      alt="product media"
+      className="w-full h-40 object-cover"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+const ProductDetail = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState<Record<string, unknown> | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+
+    getProductById(id, ADMIN_PRODUCT_READ)
+      .then((response) => {
+        setProduct(response.data ?? null);
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+  }
+
+  if (!product) {
+    return <div className="p-6 text-sm text-red-500">ไม่พบข้อมูลสินค้า</div>;
+  }
+
+  const translations = (product.translations as Array<Record<string, string>>) ?? [];
+  const th = getTranslation(translations, 'th');
+  const en = getTranslation(translations, 'en');
+  const media = sortProductMedia((product.media as ProductMediaItem[]) ?? []);
+  const statusBadge = productStatusBadge(normalizeProductStatus(product.product_status));
+  const promotionRows = parsePromotionRows(
+    product.promotion_rules ?? product.tier_prices,
+  );
+  const promotionSummary =
+    promotionRows.length > 0
+      ? formatPromotionSummary(promotionRows)
+      : null;
+  // Catalog price — the payload is priced like the shop (promotion / special price move selling_unit_price).
+  const basePrice = Number(catalogSellingPrice(product) ?? 0);
+  const nutrition = nutritionForDisplay(product.nutrition);
+
+  const formatRestock = (raw: unknown): string => {
+    if (raw == null || raw === '') return '-';
+    const date = new Date(String(raw));
+    if (Number.isNaN(date.getTime())) return String(raw);
+    return date.toLocaleString('th-TH');
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <button
+            type="button"
+            onClick={() => navigate(ADMIN_ROUTES.products)}
+            className="text-sm text-gray-500 hover:text-gray-800 mb-2"
+          >
+            ← กลับรายการสินค้า
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {String(product.product_name ?? th?.product_name ?? 'รายละเอียดสินค้า')}
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            SKU: {String(product.product_inventory_sku ?? '-')}
+          </p>
+        </div>
+        <Button
+          text="แก้ไขสินค้า"
+          onClick={() => id && navigate(ADMIN_ROUTES.productEdit(id))}
+        />
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InfoRow label="สถานะ" value={statusBadge.label} />
+          <InfoRow
+            label="ราคาขาย"
+            value={`฿${basePrice.toLocaleString()}/${String(product.selling_unit ?? product.product_unit ?? 'ชิ้น')}`}
+          />
+          {promotionSummary && (
+            <InfoRow
+              label="Promotion Mechanic"
+              value={promotionSummary}
+            />
+          )}
+          <InfoRow
+            label="สต็อก"
+            value={`${Number(product.product_inventory_quantity ?? 0).toLocaleString()} ชิ้น`}
+          />
+          <InfoRow label="แบรนด์" value={String(product.brand_name ?? '-')} />
+          <InfoRow label="Marketed By" value={String(product.marketed_by ?? '-')} />
+          <InfoRow label="VAT Type" value={String(product.vat_type ?? '-')} />
+          <InfoRow label="หมวดหมู่" value={String(product.category_names_path ?? '-')} />
+          <InfoRow
+            label="อุณหภูมิเก็บรักษา"
+            value={String(product.storage_temperature ?? '-')}
+          />
+          <InfoRow
+            label="วิธีเก็บรักษา"
+            value={String(product.storage_instruction ?? '-')}
+            wide
+          />
+          <InfoRow
+            label="วิธีใช้"
+            value={String(product.usage_direction ?? '-')}
+            wide
+          />
+          <InfoRow
+            label="คาดว่าจะมีสต็อกเข้า"
+            value={formatRestock(product.expected_restock_at)}
+          />
+        </section>
+
+        {id && (
+          <section>
+            <h2 className="text-sm font-semibold text-gray-700 mb-1">
+              ลิงก์สินค้า (สำหรับ Marketing)
+            </h2>
+            <p className="text-xs text-gray-400 mb-3">
+              ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ (deferred deep link) ส่วน desktop เปิดหน้าเว็บสินค้า
+              เอาไปยิง ads ได้เลย
+            </p>
+            <MarketingLinkField type="product" id={id} />
+            <div className="mt-3">
+              <SmartLinkField type="product" id={id} />
+            </div>
+          </section>
+        )}
+
+        {promotionRows.length > 0 && (
+          <section>
+            <h2 className="text-sm font-semibold text-gray-700 mb-1">
+              ราคาตามจำนวน (จาก Promotion Mechanic)
+            </h2>
+            <p className="text-xs text-gray-400 mb-3">
+              แก้ไขได้ที่เมนู Promotion Mechanic เท่านั้น
+            </p>
+            <div className="overflow-hidden rounded-xl border border-gray-100">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50 text-left text-xs text-gray-500">
+                  <tr>
+                    <th className="px-4 py-2">ซื้อขั้นต่ำ</th>
+                    <th className="px-4 py-2">ราคาโปร</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {promotionRows.map((rule) => (
+                    <tr key={`${rule.min_qty}-${rule.promotion_price}`} className="border-t">
+                      <td className="px-4 py-2">
+                        {rule.min_qty} {rule.unit_label ?? 'ชิ้น'}
+                      </td>
+                      <td className="px-4 py-2 font-semibold">
+                        ฿{rule.promotion_price.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        <section>
+          <h2 className="text-sm font-semibold text-gray-700 mb-2">ชื่อและรายละเอียด (TH)</h2>
+          <p className="font-medium text-gray-900">{th?.product_name ?? '-'}</p>
+          <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">
+            {th?.product_description ?? '-'}
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-sm font-semibold text-gray-700 mb-2">ชื่อและรายละเอียด (EN)</h2>
+          <p className="font-medium text-gray-900">{en?.product_name ?? '-'}</p>
+          <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">
+            {en?.product_description ?? '-'}
+          </p>
+        </section>
+
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InfoRow
+            label="ส่วนประกอบ"
+            value={String(product.ingredients ?? '-')}
+            wide
+          />
+          <InfoRow
+            label="สารก่อภูมิแพ้"
+            value={String(product.allergens ?? '-')}
+            wide
+          />
+          <InfoRow
+            label="ข้อมูลวันหมดอายุ"
+            value={String(product.expiration_info ?? '-')}
+            wide
+          />
+        </section>
+
+        <section>
+          <h2 className="text-sm font-semibold text-gray-700 mb-1">
+            ข้อมูลโภชนาการ
+          </h2>
+          {nutrition ? (
+            <>
+              {nutrition.basis && (
+                <p className="text-xs text-gray-500 mb-3">{nutrition.basis}</p>
+              )}
+              <div className="overflow-hidden rounded-xl border border-gray-100">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gray-50 text-left text-xs text-gray-500">
+                    <tr>
+                      <th className="px-4 py-2">สารอาหาร</th>
+                      <th className="px-4 py-2">ค่า</th>
+                      <th className="px-4 py-2">หน่วย</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {nutrition.items.map((item, index) => (
+                      <tr key={`${item.label}-${index}`} className="border-t">
+                        <td className="px-4 py-2">{item.label}</td>
+                        <td className="px-4 py-2">{item.value || '-'}</td>
+                        <td className="px-4 py-2">{item.unit || '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-gray-400">ยังไม่มีข้อมูลโภชนาการ</p>
+          )}
+        </section>
+
+        <section>
+          <h2 className="text-sm font-semibold text-gray-700 mb-3">สื่อสินค้า</h2>
+          {media.length === 0 ? (
+            <p className="text-sm text-gray-400">ยังไม่มีรูปภาพหรือวิดีโอ</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {media.map((item) => (
+                <div
+                  key={item.product_media_id}
+                  className="border rounded-xl overflow-hidden bg-gray-50"
+                >
+                  <MediaPreview item={item} />
+                  <div className="px-3 py-2 text-xs text-gray-500 flex justify-between">
+                    <span>{item.media_type === 'video' ? 'วิดีโอ' : 'รูปภาพ'}</span>
+                    <span>ลำดับ {item.sort_order}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {id && <ProductCustomerPricingSection productId={id} />}
+      </div>
+    </div>
+  );
+};
+
+function InfoRow({
+  label,
+  value,
+  wide,
+}: {
+  label: string;
+  value: string;
+  wide?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 ${wide ? 'md:col-span-2' : ''}`}
+    >
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-sm font-medium text-gray-900 mt-1 whitespace-pre-wrap">
+        {value || '-'}
+      </p>
+    </div>
+  );
+}
+
+export default ProductDetail;

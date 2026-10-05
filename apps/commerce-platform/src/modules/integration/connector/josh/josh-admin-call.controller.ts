@@ -18,6 +18,10 @@ const AREAS: { path: RegExp; marketing: boolean }[] = [
   { path: /^\/(orders|shipments|payment\/kbank\/testing)(\/|$)/, marketing: false },
   { path: /^\/cs-admin\//, marketing: false },
   { path: /^\/(credit-notes|credit-backs)(\/|$)/, marketing: false },
+  { path: /^\/(supplier|promotion-mechanics)(\/|$)/, marketing: true },
+  { path: /^\/product$/, marketing: true },
+  { path: /^\/admin\/(push-campaigns|notifications|product-notify-funnel|audit-logs)(\/|$)/, marketing: true },
+  { path: /^\/(company|admin-access|admin\/kyc|erp\/testing|payment\/jagota\/testing)(\/|$)/, marketing: false },
 ];
 const METHODS = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];
 /** josh takes JSON bodies up to 5 MB; base64 adds a third — keep all files of one call under 3.5 MB. */

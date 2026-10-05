@@ -5,6 +5,6 @@ export const ADMIN_ROUTES = {
   marketingWorkflowEnrollments: (id: string) => `/marketing/workflows/${id}/enrollments`,
   marketingWorkflowScheduledRuns: (id: string) => `/marketing/workflows/${id}/scheduled-runs`,
   userDetail: (id: string) => `/j/allusers/${id}`,
-  couponCreate: '/josh-admin/coupons',
+  couponCreate: '/j/coupon/create',
   marketingNotifyTemplates: '/j/marketing/notify-templates',
 };

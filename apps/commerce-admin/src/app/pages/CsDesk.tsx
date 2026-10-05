@@ -1,7 +1,19 @@
 import { FormEvent, useState } from 'react';
 import { joshAdmin, joshCustomerApi, joshProductApi, JoshRow } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { rowsOf } from './JoshAdminLists';
+
+type Row = Record<string, unknown>;
+/** josh answers lists as an array, `{ data }`, `{ data: { items } }` or `{ items }`. */
+function rowsOf(answer: unknown): Row[] {
+  const a = answer as { data?: unknown; items?: unknown } | unknown[] | null;
+  if (Array.isArray(a)) return a as Row[];
+  const d = a?.data as { items?: unknown; data?: unknown } | unknown[] | undefined;
+  if (Array.isArray(d)) return d as Row[];
+  if (Array.isArray(d?.items)) return d.items as Row[];
+  if (Array.isArray(d?.data)) return d.data as Row[];
+  if (Array.isArray(a?.items)) return a.items as Row[];
+  return [];
+}
 
 const PAYMENT = [['credit', 'เครดิตเทอม'], ['qr', 'QR'], ['cod', 'เก็บปลายทาง'], ['payment_link', 'ลิงก์ชำระเงิน'], ['customer_credit', 'เครดิตลูกค้า']];
 const SAMPLE_STATUS: Record<string, string> = { pending: 'รอพิจารณา', approved: 'อนุมัติ', rejected: 'ไม่อนุมัติ', fulfilled: 'ส่งแล้ว' };

@@ -1,0 +1,36 @@
+.container {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.nodeLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nodeIcon {
+  font-size: 18px;
+}
+
+.nodeText {
+  text-align: left;
+}
+
+.nodeId {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nodePreview {
+  font-size: 11px;
+  opacity: 0.9;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,111 @@
+.page {
+  padding: 24px;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.saveBtn,
+.testBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.saveBtn {
+  background: #3b82f6;
+  color: white;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.saveBtn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.testBtn {
+  background: #10b981;
+  color: white;
+}
+
+.testBtn:hover {
+  background: #059669;
+}
+
+.settings {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.settingRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settingRow label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.settingRow input,
+.settingRow select {
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.settingRow input[type='checkbox'] {
+  width: auto;
+  cursor: pointer;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: #9ca3af;
+}
+
+.empty {
+  background: white;
+  padding: 48px;
+  border-radius: 8px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+h2 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 700;
+}

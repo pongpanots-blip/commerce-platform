@@ -75,12 +75,12 @@ echo "postgres: verified — reads ok, writes refused"
 
 # ---------- Mongo ----------
 # Root credentials come from the container's own MONGO_INITDB_ROOT_* env; the script is on stdin.
+# mongosh reads stdin line by line (REPL), so every statement must be complete on one line.
 printf 'RO_USER=%s\nRO_PW=%s\nRO_DB=%s\n' "$ROLE" "$MONGO_PW" "$MONGO_DB" > "$TMP/mongo.env"
 docker exec -i --env-file "$TMP/mongo.env" "$MONGO_CONTAINER" sh -c \
   'mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin admin' <<'JS'
 const user = process.env.RO_USER, pwd = process.env.RO_PW, roles = [{ role: 'read', db: process.env.RO_DB }];
-if (db.getUser(user)) { db.updateUser(user, { pwd, roles }); print(`mongo: rotated password of ${user}`); }
-else { db.createUser({ user, pwd, roles }); print(`mongo: created ${user}`); }
+if (db.getUser(user)) { db.updateUser(user, { pwd, roles }); print('mongo: rotated password of ' + user); } else { db.createUser({ user, pwd, roles }); print('mongo: created ' + user); }
 JS
 
 docker exec -i --env-file "$TMP/mongo.env" "$MONGO_CONTAINER" sh -c \

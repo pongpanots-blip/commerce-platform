@@ -93,4 +93,33 @@ export class JoshActionsController {
     await this.catalog.syncId(id).catch(() => undefined); // the cron catches up if the replica lags
     return result;
   }
+
+  /** Suppliers (josh SupplierService validates with its DTO; supplier_name is required on update too). */
+  @Post('suppliers') @HttpCode(HttpStatus.OK)
+  createSupplier(@Body() b: { supplier?: Record<string, unknown> }, @Req() req: StaffRequest) {
+    return this.josh.run('suppliers', 'create', { supplier: plain(b?.supplier) }, this.as(req), 'admin');
+  }
+
+  @Post('suppliers/:id/update') @HttpCode(HttpStatus.OK)
+  updateSupplier(@Param('id', ParseUUIDPipe) id: string, @Body() b: { supplier?: Record<string, unknown> }, @Req() req: StaffRequest) {
+    return this.josh.run('suppliers', 'update', { id, supplier: plain(b?.supplier) }, this.as(req), 'admin');
+  }
+
+  @Post('suppliers/:id/remove') @HttpCode(HttpStatus.OK)
+  removeSupplier(@Param('id', ParseUUIDPipe) id: string, @Req() req: StaffRequest) {
+    return this.josh.run('suppliers', 'remove', { id }, this.as(req), 'admin');
+  }
+
+  /** Internal docs library: one markdown file (josh checks .md, non-empty, 2 MB). */
+  @Post('internal-docs') @HttpCode(HttpStatus.OK)
+  uploadDoc(@Body() b: { category?: string; title?: string; filename?: string; content?: string }, @Req() req: StaffRequest) {
+    return this.josh.run('internal-docs', 'upload', { category: b?.category, title: b?.title || undefined, filename: b?.filename, content: b?.content }, this.as(req), 'admin');
+  }
+
+  @Post('internal-docs/:id/remove') @HttpCode(HttpStatus.OK)
+  removeDoc(@Param('id', ParseUUIDPipe) id: string, @Req() req: StaffRequest) {
+    return this.josh.run('internal-docs', 'remove', { id }, this.as(req), 'admin');
+  }
 }
+
+const plain = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});

@@ -124,6 +124,14 @@ export const BACKOFFICE_VIEWS: Record<string, View> = {
       c('created_at', 'เพิ่มเมื่อ', 'sp.created_at', 'datetime')],
     search: ['sp.supplier_name'], order: 'sp.created_at',
   },
+  internal_docs: {
+    title: 'เอกสารภายใน (docs-web)', joshPage: 'internal-docs/library',
+    from: 'uploaded_internal_docs d',
+    columns: [c('id', 'id', 'd.id', 'code'), c('category', 'หมวด', 'd.category', 'status'), c('title', 'ชื่อ', 'd.title'),
+      c('original_filename', 'ไฟล์', 'd.original_filename', 'code'), c('size', 'ขนาด (ตัวอักษร)', 'length(d.content)', 'number'),
+      c('updated_at', 'แก้ล่าสุด', 'd.updated_at', 'datetime')],
+    search: ['d.title', 'd.original_filename'], status: 'd.category', order: 'd.updated_at',
+  },
   admin_access: {
     title: 'คำขอเข้า admin', joshPage: 'admin-access/AdminAccessQueue',
     from: 'admin_access_request r',

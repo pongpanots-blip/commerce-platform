@@ -3,7 +3,7 @@ import { createHmac, randomUUID } from 'node:crypto';
 import { DataSource } from 'typeorm';
 import { AuditLog } from '../../../core/audit/infrastructure/audit-log.entity';
 
-export type JoshActionTarget = 'winback' | 'push-campaigns' | 'credit-applications' | 'admin-access' | 'coupons' | 'customer-prices' | 'contract-prices' | 'products' | 'promotions';
+export type JoshActionTarget = 'winback' | 'push-campaigns' | 'credit-applications' | 'admin-access' | 'coupons' | 'customer-prices' | 'contract-prices' | 'products' | 'promotions' | 'suppliers' | 'internal-docs';
 export interface JoshActionActor { userId: string; email: string }
 
 /**

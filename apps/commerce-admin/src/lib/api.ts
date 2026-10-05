@@ -727,6 +727,11 @@ export const joshActionsApi = {
   rejectProducts: (ids: string[]) => api.post<unknown>('/josh/products/reject', { ids }),
   /** josh field names (ProductService.update), e.g. product_name_th, selling_unit_price, category_id. */
   updateProduct: (id: string, fields: Record<string, unknown>) => api.post<unknown>(`/josh/products/${id}/update`, { fields }),
+  createSupplier: (supplier: Record<string, string>) => api.post<unknown>('/josh/suppliers', { supplier }),
+  updateSupplier: (id: string, supplier: Record<string, string>) => api.post<unknown>(`/josh/suppliers/${id}/update`, { supplier }),
+  removeSupplier: (id: string) => api.post<unknown>(`/josh/suppliers/${id}/remove`, {}),
+  uploadDoc: (d: { category: string; title?: string; filename: string; content: string }) => api.post<unknown>('/josh/internal-docs', d),
+  removeDoc: (id: string) => api.post<unknown>(`/josh/internal-docs/${id}/remove`, {}),
 };
 
 export interface PriceShadowRow { id: string; joshOrderItemId: string; orderNumber: string | null; sku: string | null; quantity: number; orderedAt: string;

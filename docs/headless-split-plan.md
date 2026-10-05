@@ -126,9 +126,9 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 
 **ขั้น 1 — ยังไม่ย้าย และเหตุผล**
 - `purchases-dashboard` มุมลูกค้า (บริษัทดูยอดซื้อตัวเอง, export Excel ทางอีเมล): ลูกค้าเรียกจากหน้าร้าน/แอป → ต้องรอ façade ขั้น 0
-- `supplier`, `internal-docs-library`: มีการเขียน — ย้ายตอนนี้ = เขียนสองที่ · รอ commerce ขึ้น prod แล้วสลับเจ้าของทีเดียว
+- `supplier`, `internal-docs-library`: ย้ายแล้ว (ปิดไว้) — ดูหัวข้อ "supplier / เอกสารภายใน / DBD"
 - `winback`, `push-campaign`: ส่งข้อความ/แจ้งเตือนจริง · ทำล่วงหน้าได้แค่แบบปิดไว้ (default-off) จนวันสลับ
-- `dbd`: เรียก API กรมพัฒนาฯ ตอน onboarding (เส้นทางลูกค้า)
+- `dbd`: ย้ายแล้ว (ปิดไว้) — ดูหัวข้อ "supplier / เอกสารภายใน / DBD"
 - `erp-log`: อยู่ใน Mongo ของ josh ที่ commerce อ่านไม่ได้ · ฝั่ง commerce มี Inbound log ของตัวเองแล้ว
 - `refunds`: มีแค่หน้า "คำขอคืนเงินของฉัน" ของลูกค้า (หน้าร้าน)
 
@@ -144,6 +144,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - ข้อมูลสินค้าหลัก (ชื่อ รายละเอียด หมวด หน่วย ราคาขาย/ตั้ง สถานะ): ปุ่ม "แก้ข้อมูลสินค้า" ในหน้า สินค้า (josh) → josh `internal/commerce/products` action `update` → ProductService.update (ตัวเดียวกับฟอร์ม admin ของ josh) · ดึงสำเนา `josh_catalog_products` ทันทีหลังแก้ · รูปยังอยู่ที่ josh · สวิตช์ josh `COMMERCE_OWNS_CATALOG` ล็อกการสร้าง/แก้ฟิลด์สินค้าใน josh
 - สวิตช์ฝั่ง josh: `COMMERCE_OWNS_PRICES` (ล็อกหน้าแก้ราคาใน josh, live-price ไม่เขียนทับราคา, MOQ ต้องอนุมัติ) · `COMMERCE_APPROVES_PRODUCTS` (ล็อกปุ่มอนุมัติใน josh)
 - ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS → COMMERCE_OWNS_CATALOG
+
+**supplier / เอกสารภายใน / DBD** — ปิดไว้ (default off)
+- Supplier: josh › Suppliers มีปุ่ม เพิ่ม/แก้/ลบ → josh `internal/commerce/suppliers` → SupplierService · สวิตช์ josh `COMMERCE_OWNS_SUPPLIERS`
+- เอกสารภายใน (docs-web): josh › เอกสารภายใน อัปโหลด .md (≤ 90 KB จาก commerce) / ลบ → josh `internal/commerce/internal-docs` · สวิตช์ josh `COMMERCE_OWNS_INTERNAL_DOCS`
+- DBD ตอน onboarding: josh `DBD_VIA_COMMERCE=true` → commerce `GET /api/v1/storefront/dbd/juristic_person/:n` ส่งต่อคำตอบ DBD + เก็บคำตอบล่าสุด (`dbd_lookups`, ใช้ซ้ำ 24 ชม., DBD ล่มใช้ของเดิม) · commerce ล่ม/ไม่ตอบ → josh เรียก DBD ตรงเหมือนเดิม
 
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`

@@ -70,6 +70,7 @@ const NAV = [
       { to: '/josh/campaigns', label: 'Campaigns', end: false },
       { to: '/josh/segments', label: 'Segments', end: false },
       { to: '/josh/suppliers', label: 'Suppliers', end: false },
+      { to: '/josh/internal_docs', label: 'เอกสารภายใน', end: false },
       { to: '/josh-api-logs', label: 'API log ของ josh', end: false },
     ],
   },

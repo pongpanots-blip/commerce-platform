@@ -24,13 +24,25 @@ import { WebhookPlatforms } from './pages/WebhookPlatforms';
 import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
 import { AiConnectors } from './pages/AiConnectors';
 import { ErpSimulator } from './pages/ErpSimulator';
+import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReports';
+import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
 
 const NAV = [
   { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
   {
+    group: 'รายงานร้าน (josh)',
+    links: [
+      { to: '/reports/sales', label: 'ยอดขาย', end: false },
+      { to: '/reports/traffic', label: 'Traffic', end: false },
+      { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
+      { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
+    ],
+  },
+  {
     group: 'Marketing',
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
+      { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
@@ -110,6 +122,11 @@ export function App() {
         <main className="main">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/reports/sales" element={<SalesReport />} />
+            <Route path="/reports/traffic" element={<TrafficReport />} />
+            <Route path="/reports/health" element={<HealthReportPage />} />
+            <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
+            <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />
             <Route path="/marketing/scraped-catalog" element={<ScrapedCatalog />} />

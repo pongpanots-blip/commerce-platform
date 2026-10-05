@@ -443,3 +443,73 @@ export const webhookApi = {
   retryDelivery: (deliveryId: string) =>
     api.post<WebhookDeliveryFull>(`/webhook-subscriptions/deliveries/${deliveryId}/retry`, {}),
 };
+
+// Shop reports (josh read replica) — same numbers the MCP tools answer with.
+export const REPORT_PERIODS = ['today', 'yesterday', 'this_week', 'last_7_days', 'this_month', 'last_month', 'last_30_days', 'custom'] as const;
+export type ReportPeriod = (typeof REPORT_PERIODS)[number];
+export interface PeriodParams { period: ReportPeriod; fromDate?: string; toDate?: string }
+type Row = Record<string, string | number | null>;
+export interface SalesReport {
+  period: string;
+  totals: Record<string, number> & { refunds: { n: number; amount: number } };
+  vsPreviousPeriod: { period: string; revenue_inc_vat: number; orders: number; revenue_change_percent: number | null; orders_change_percent: number | null };
+  byDay?: { bucket: string; orders: number; revenue_inc_vat: number }[];
+  byMonth?: { bucket: string; orders: number; revenue_inc_vat: number }[];
+  topProducts: { sku: string; name: string; qty: number; revenue_inc_vat: number }[];
+}
+export interface TrafficReport {
+  period: string;
+  note: string;
+  totals: Record<string, number>;
+  vsPreviousPeriod: { period: string; sessions: number; visitors: number; sessions_change_percent: number | null };
+  byPlatform: { platform: string; sessions: number; visitors: number }[];
+  sessionsByDay: { day: string; sessions: number }[];
+  funnelSessions: Record<string, number>;
+  topSearches: { query: string; searches: number; no_results: number }[];
+}
+export interface HealthReport {
+  period: string;
+  now: { ok: boolean; problems: string[] };
+  commerce: Record<string, number>;
+  josh: { available?: false; reason?: string; counts?: Record<string, number>; jagotaOrderSyncErrors?: Row[]; notAvailable?: string };
+}
+const qs = (p: PeriodParams) => '?' + new URLSearchParams(Object.entries(p).filter(([, v]) => v) as [string, string][]).toString();
+export const reportsApi = {
+  sales: (p: PeriodParams) => api.get<SalesReport>(`/reports/sales${qs(p)}`),
+  traffic: (p: PeriodParams) => api.get<TrafficReport>(`/reports/traffic${qs(p)}`),
+  health: (p: PeriodParams) => api.get<HealthReport>(`/reports/health${qs(p)}`),
+};
+
+/** GET a file with the staff token and save it (a plain <a href> can't send the Authorization header). */
+export async function downloadFile(path: string, filename: string) {
+  const token = session.get();
+  const res = await fetch(`${BASE}${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  const url = URL.createObjectURL(await res.blob());
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename });
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export interface RestaurantRow {
+  id: string; name: string; name_th: string | null; name_en: string | null; district: string | null; category: string | null;
+  lat: number; lng: number; rating: number | null; review_count: number | null; price_range: string | null;
+  is_enriched: boolean; dine_in: boolean | null; takeaway: boolean | null; delivery: boolean | null;
+  popular_times_today: number[] | null; winback_account_id: string | null; winback_customer_code: string | null;
+}
+export interface RestaurantList {
+  items: RestaurantRow[]; page: number; limit: number;
+  summary: { total_count: number; top_categories: { name: string; count: number }[]; top_districts: { name: string; count: number }[] };
+}
+export interface TargetgroupRow {
+  cust_code: string; total_skus_ordered: number; ot_skus_ordered: number; ot_skus_with_active_period: number;
+  max_shipments_per_week: number; delivery_weekdays: number[] | null;
+}
+const query = (p: Record<string, string | number | boolean | undefined>) =>
+  new URLSearchParams(Object.entries(p).filter(([, v]) => v !== undefined && v !== '' && v !== false).map(([k, v]) => [k, String(v)])).toString();
+export const marketApi = {
+  restaurants: (f: Record<string, string | number | boolean | undefined>) => api.get<RestaurantList>(`/reports/restaurants?${query(f)}`),
+  restaurantsCsv: (f: Record<string, string | number | boolean | undefined>) => downloadFile(`/reports/restaurants/export?${query(f)}`, 'restaurant-places.csv'),
+  targetgroup: (f: { minShipmentsPerWeek?: number; custCode?: string; limit: number; offset: number }) =>
+    api.get<{ total: number; items: TargetgroupRow[] }>(`/reports/order-targetgroup?${query(f)}`),
+};

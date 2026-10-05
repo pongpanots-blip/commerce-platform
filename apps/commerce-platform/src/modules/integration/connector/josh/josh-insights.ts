@@ -122,6 +122,15 @@ const JAGOTA_SYNC_ERRORS_SQL = `
   SELECT left(error_message, 200) AS error, count(*)::int AS n, max(created_at) AS last_at FROM jagota_order_sync
    WHERE sync_status = 'failed' AND created_at >= $1 AND created_at < $2 GROUP BY 1 ORDER BY 2 DESC LIMIT 5`;
 
+/** josh's `customer_order_targetgroup_summary` view: per customer, how many order-taking SKUs they buy and how often they can be delivered. */
+const ORDER_TARGETGROUP_SQL = `
+  SELECT cust_code, total_skus_ordered, ot_skus_ordered, ot_skus_with_active_period, max_shipments_per_week, delivery_weekdays,
+         count(*) OVER ()::int AS total
+    FROM customer_order_targetgroup_summary
+   WHERE max_shipments_per_week >= $1 AND ($2::text IS NULL OR cust_code ILIKE $2)
+   ORDER BY max_shipments_per_week DESC, ot_skus_ordered DESC, cust_code
+   LIMIT $3 OFFSET $4`;
+
 const round = (n: number) => Math.round(n * 100) / 100;
 const change = (now: number, before: number) => (before ? round(((now - before) / before) * 100) : null);
 
@@ -178,6 +187,13 @@ export class JoshInsights {
       funnelSessions: Object.fromEntries(funnel.map((f) => [f.step, f.sessions])),
       topSearches: searches,
     };
+  }
+
+  async orderTargetgroup(o: { minShipmentsPerWeek?: number; custCode?: string; limit?: number; offset?: number }) {
+    const limit = Math.min(Math.max(o.limit ?? 100, 1), 1000);
+    const rows = await this.replica.query(ORDER_TARGETGROUP_SQL,
+      [o.minShipmentsPerWeek ?? 0, o.custCode ? `%${o.custCode}%` : null, limit, Math.max(o.offset ?? 0, 0)]);
+    return { total: rows[0]?.total ?? 0, items: rows.map(({ total: _t, ...r }: Record<string, unknown>) => r) };
   }
 
   async failures(range: Range) {

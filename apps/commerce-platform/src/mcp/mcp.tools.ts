@@ -21,7 +21,8 @@ import { InventoryLedgerService } from '../modules/commerce/inventory/applicatio
 import { Warehouse } from '../modules/commerce/warehouse/infrastructure/warehouse.entity';
 import { InventoryLevel } from '../modules/commerce/inventory/infrastructure/inventory-level.entity';
 import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/connector/josh/josh-insights';
-import { DeliveryMonitor } from '../modules/integration/webhook-subscription/application/delivery-monitor';
+import { SystemHealthReport } from '../modules/integration/connector/josh/system-health';
+import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -60,7 +61,8 @@ export class McpTools {
     private readonly ingest: ErpIngestService,
     private readonly ledger: InventoryLedgerService,
     private readonly insights: JoshInsights,
-    private readonly monitor: DeliveryMonitor,
+    private readonly health: SystemHealthReport,
+    private readonly restaurants: RestaurantPlaces,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -108,6 +110,28 @@ export class McpTools {
     }, async ({ period, fromDate, toDate }) => {
       if (!this.insights.available) return json(NO_REPLICA);
       return json(await this.insights.traffic(bangkokRange(period, Date.now(), fromDate, toDate)));
+    });
+
+    server.registerTool('restaurant_places', {
+      title: 'Restaurants (Market Explorer)',
+      description: 'Restaurant master data in Thailand for prospecting: name, district, category, Google rating/reviews, price range, dine-in/takeaway/delivery, how busy today, and whether sales already has it as a winback account. Filter, get counts + top categories/districts + one page of places.',
+      inputSchema: {
+        search: z.string().max(100).optional().describe('part of the Thai or English name'),
+        district: z.string().max(100).optional().describe('exact district name as stored, e.g. วัฒนา'),
+        category: z.string().max(100).optional().describe('part of the category, e.g. Japanese, ญี่ปุ่น, cafe'),
+        minRating: z.number().min(0).max(5).optional(),
+        minReviewCount: z.number().int().min(0).optional(),
+        priceRange: z.string().max(20).optional(),
+        delivery: z.boolean().optional(),
+        busyWindow: z.string().regex(/^\d{1,2}-\d{1,2}$/).optional().describe('"17-20" = busy (>60%) at some hour 17:00-20:00 today'),
+        excludeHasTmpLead: z.boolean().optional().describe('true = only places sales has not linked to an account yet'),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(50).default(20),
+      },
+      annotations: READ_ONLY,
+    }, async ({ page, limit, ...filters }) => {
+      if (!this.restaurants.available) return json(NO_REPLICA);
+      return json(await this.restaurants.list(filters, page, limit));
     });
 
     server.registerTool('competitor_prices', {
@@ -449,21 +473,7 @@ export class McpTools {
       inputSchema: PERIOD_INPUT,
       annotations: READ_ONLY,
     }, async ({ period, fromDate, toDate }) => {
-      const { current } = bangkokRange(period, Date.now(), fromDate, toDate);
-      const [problemsNow, [commerce]] = await Promise.all([
-        this.monitor.check(),
-        this.db.query(
-          `SELECT (SELECT count(*) FROM webhook_deliveries WHERE status = 'failed' AND updated_at >= $1 AND updated_at < $2)::int AS deliveries_dead_lettered,
-                  (SELECT count(*) FROM webhook_deliveries WHERE status = 'success' AND updated_at >= $1 AND updated_at < $2)::int AS deliveries_succeeded,
-                  (SELECT count(*) FROM erp_ingest_records WHERE status = 'failed' AND created_at >= $1 AND created_at < $2)::int AS erp_intake_failed,
-                  (SELECT count(*) FROM erp_ingest_records WHERE created_at >= $1 AND created_at < $2)::int AS erp_intake_total`,
-          [current.from, current.to]),
-      ]);
-      let josh: unknown = NO_REPLICA;
-      if (this.insights.available) {
-        try { josh = await this.insights.failures(current); } catch (error) { josh = { available: false, reason: `josh replica query failed: ${error instanceof Error ? error.message : error}` }; }
-      }
-      return json({ period: current.label, now: { ok: problemsNow.length === 0, problems: problemsNow.map((p) => p.message) }, commerce, josh });
+      return json(await this.health.report(bangkokRange(period, Date.now(), fromDate, toDate).current));
     });
 
     server.registerTool('erp_intake_summary', {

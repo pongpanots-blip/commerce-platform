@@ -6,11 +6,16 @@ import { JoshReplica } from './josh-replica';
 import { CustomerMetricsOffloadJob } from './customer-metrics-offload.job';
 import { BestsellersOffloadJob } from './bestsellers-offload.job';
 import { JoshInsights } from './josh-insights';
+import { SystemHealthReport } from './system-health';
+import { RestaurantPlaces } from './restaurant-places';
+import { ShopReportsController } from './shop-reports.controller';
+import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-subscription.module';
 
 /** Everything that reads josh's data (via its replica): the catalog copy and the offloaded heavy jobs (Task 9). */
 @Module({
-  imports: [TypeOrmModule.forFeature([JoshCatalogProduct])],
-  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights],
-  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights],
+  imports: [TypeOrmModule.forFeature([JoshCatalogProduct]), WebhookSubscriptionModule],
+  controllers: [ShopReportsController],
+  providers: [JoshReplica, JoshCatalogSyncService, CustomerMetricsOffloadJob, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces],
+  exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces],
 })
 export class JoshModule {}

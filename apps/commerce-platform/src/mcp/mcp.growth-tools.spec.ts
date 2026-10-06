@@ -62,6 +62,43 @@ async function setup(role: 'marketing' | 'admin' = 'marketing', scopes = [MCP_WR
 }
 
 describe('MCP Growth tools through the SDK', () => {
+  it('compares whole SKUs across shops, keeps every offer and suppresses ambiguous own-price gaps', async () => {
+    const s = await setup('marketing', []);
+    const offer = (sku: string, shop: string, path: string, ready = true, ourRate = 100) => ({
+      id: `${sku}-${path}`, ourProduct: { sku, name: `Product ${sku}` }, sourceName: shop,
+      sourceUrl: `https://${shop === 'Makro' ? 'makro.pro' : `${shop.toLowerCase().replace(/\s/g, '')}.example`}/${path}`,
+      competitorName: `${shop} product`, sourceContext: path, ourPricePerKgIncVat: ourRate,
+      competitorPricePerKgIncVat: 120, differencePerKgIncVat: ready ? 20 : null,
+      differencePercent: ready ? 16.67 : null, comparisonReady: ready, verified: ready,
+      comparisonReason: ready ? null : 'ยังไม่ยืนยันคู่สินค้า', observedAt: '2026-10-06T10:00:00Z',
+      ourWeightKg: 1, competitorWeightKg: 1,
+    });
+    const offers = [offer('A', 'Makro', 'normal'), { ...offer('A', 'Makro', 'member'), sourceUrl: 'https://www.makro.pro/member' },
+      offer('A', 'Big C', 'big-c'), offer('A', 'Freshket', 'unverified', false), offer('B', 'Makro', 'only')];
+    const list = jest.fn(async () => offers);
+    Object.assign(s.tools, { competitor: { list } });
+    try {
+      const matrix = await s.call('competitor_prices', { view: 'matrix', search: 'Makro', limit: 1 });
+      expect(matrix.isError).toBe(false);
+      expect(matrix.total).toBe(2); expect(matrix.totalPairs).toBe(5);
+      expect(matrix.shops).toHaveLength(3); expect(matrix.products).toHaveLength(1);
+      expect(matrix.products[0].competitors.map((shop: any) => shop.offers.length)).toEqual([2, 1, 1]);
+      expect(matrix.products[0].competitors[2].offers[0]).toMatchObject({ comparable: false, differencePerKg: null });
+      const second = await s.call('competitor_prices', { view: 'matrix', limit: 1, page: 2 });
+      expect(second.products[0].sku).toBe('B');
+      expect(second.products[0].competitors.map((shop: any) => shop.offers.length)).toEqual([1, 0, 0]);
+      const review = await s.call('competitor_prices', { view: 'matrix', filter: 'needs_review' });
+      expect(review.products[0].competitors.map((shop: any) => shop.offers.length)).toEqual([2, 1, 1]);
+      expect((await s.call('competitor_prices', { search: 'Makro' })).pairs).toHaveLength(3);
+      offers[1].ourPricePerKgIncVat = 200;
+      const ambiguous = await s.call('competitor_prices', { view: 'matrix', search: 'A' });
+      expect(ambiguous.products[0].ourPerKg).toBeNull();
+      expect(ambiguous.products[0].ourPriceReason).toContain('ต้องตรวจน้ำหนัก');
+      expect(ambiguous.products[0].competitors.flatMap((shop: any) => shop.offers)
+        .every((row: any) => !row.comparable && row.differencePerKg === null && row.differencePercent === null)).toBe(true);
+    } finally { await s.close(); }
+  });
+
   it('lists role-scoped read tools, validates list filters and delegates reads with the actor', async () => {
     const s = await setup('marketing', []);
     try {

@@ -29,7 +29,7 @@
 
 | Tool | Role | อ่านอะไร |
 |---|---|---|
-| `competitor_prices` | marketing, admin | คู่ SKU ของเรากับสินค้าคู่แข่ง ราคาต่อกก. และส่วนต่าง กรองได้ เช่น `we_are_more_expensive` |
+| `competitor_prices` | marketing, admin | `view: "matrix"` คืนหนึ่ง SKU พร้อมทุกร้านและทุกข้อเสนอในร้านเดียวกัน; `search`/`filter` เลือก SKU โดยเก็บคู่แข่งทั้งหมด, `limit`/`page` นับ SKU; ราคาที่เทียบไม่ได้ไม่มีส่วนต่างและร้านที่ไม่มีคู่คืน offers ว่าง ส่วน `view: "pairs"` (ค่าเดิม) ใช้ตรวจรายคู่ |
 | `scraped_catalog_search` | marketing, admin | สินค้าและราคาที่เก็บจากเว็บคู่แข่ง |
 | `scraping_sources` | marketing, admin | เว็บที่ตั้งให้เก็บ สถานะ และรอบล่าสุด |
 | `research_topics` / `research_report` | marketing, admin | โจทย์ research และรายงานล่าสุดพร้อมหลักฐาน |

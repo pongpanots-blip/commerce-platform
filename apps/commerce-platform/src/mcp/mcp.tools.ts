@@ -328,29 +328,54 @@ export class McpTools {
 
     server.registerTool('competitor_prices', {
       title: 'Competitor price comparison',
-      description: 'Tracked pairs of our SKU vs a competitor product, with price per kg (THB incl. VAT) and the gap. differencePerKg > 0 means we are cheaper.',
+      description: 'Compare our SKU with multiple competitors in THB/kg including VAT. Use view=matrix for one row per SKU with every retailer offer, context and observation time; filters/search select SKUs and retain all their offers. Missing/unverified/stale prices are not comparable; distinct member/promotion contexts do not establish a universal cheapest retailer. view=pairs preserves the individual-pair list. differencePerKg > 0 means we are cheaper. Matrix limit/page count SKU rows, never split a SKU across pages.',
       inputSchema: {
+        view: z.enum(['pairs', 'matrix']).default('pairs'),
+        page: z.number().int().min(1).max(1000).default(1),
         filter: z.enum(['all', 'ready', 'we_are_cheaper', 'we_are_more_expensive', 'needs_review']).default('all')
           .describe('ready = comparable now; needs_review = match not verified yet'),
         search: z.string().max(100).optional().describe('SKU, product name or competitor name'),
         limit: z.number().int().min(1).max(200).default(50),
       },
       annotations: READ_ONLY,
-    }, async ({ filter, search, limit }) => {
+    }, async ({ view, page, filter, search, limit }) => {
       const q = search?.toLowerCase();
-      const rows = (await this.competitor.list()).filter((r) => {
+      const all = await this.competitor.list();
+      const rows = all.filter((r) => {
         const gap = r.differencePerKgIncVat ?? 0;
         const keep = filter === 'all' || (filter === 'ready' && r.comparisonReady) || (filter === 'needs_review' && !r.verified)
           || (filter === 'we_are_cheaper' && r.comparisonReady && gap > 0) || (filter === 'we_are_more_expensive' && r.comparisonReady && gap < 0);
         return keep && (!q || `${r.ourProduct.sku} ${r.ourProduct.name} ${r.competitorName} ${r.sourceName}`.toLowerCase().includes(q));
       });
+      const pair = (r: typeof all[number]) => ({
+        pairId: r.id, sku: r.ourProduct.sku, product: r.ourProduct.name, competitor: r.sourceName, competitorProduct: r.competitorName, url: r.sourceUrl,
+        ourPerKg: r.ourPricePerKgIncVat, theirPerKg: r.competitorPricePerKgIncVat, differencePerKg: r.differencePerKgIncVat,
+        differencePercent: r.differencePercent, comparable: r.comparisonReady, why: r.comparisonReason, observedAt: r.observedAt,
+        context: r.sourceContext, ourWeightKg: r.ourWeightKg, competitorWeightKg: r.competitorWeightKg,
+      });
+      if (view === 'matrix') {
+        const sourceKey = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+        const shops = [...new Map(all.map(r => [sourceKey(r.sourceUrl), { key: sourceKey(r.sourceUrl), name: r.sourceName }])).values()];
+        const wanted = new Set(rows.map(r => r.ourProduct.sku));
+        const grouped = new Map<string, typeof all>();
+        for (const r of all) if (wanted.has(r.ourProduct.sku)) {
+          const offers = grouped.get(r.ourProduct.sku) ?? [];
+          offers.push(r); grouped.set(r.ourProduct.sku, offers);
+        }
+        const products = [...grouped.values()].slice((page - 1) * limit, page * limit).map(offers => {
+          const rates = new Set(offers.map(r => r.ourPricePerKgIncVat));
+          const ourPerKg = rates.size === 1 ? offers[0].ourPricePerKgIncVat : null;
+          const ourPriceReason = rates.size > 1 ? 'ราคาต่อกิโลของเราต่างกันระหว่างคู่สินค้า ต้องตรวจน้ำหนักก่อนเทียบ' : ourPerKg == null ? 'ยังยืนยันราคาต่อกิโลของเราไม่ได้' : null;
+          return { sku: offers[0].ourProduct.sku, product: offers[0].ourProduct.name, ourPerKg, ourPriceReason,
+            competitors: shops.map(shop => ({ ...shop, offers: offers.filter(r => sourceKey(r.sourceUrl) === shop.key).map(r => ({ ...pair(r),
+              ...(ourPriceReason ? { comparable: false, differencePerKg: null, differencePercent: null, why: ourPriceReason } : {}) })) })) };
+        });
+        return json({ total: grouped.size, totalPairs: [...grouped.values()].reduce((n, members) => n + members.length, 0), page, pageSize: limit, shops, products,
+          note: 'Latest stored observations, not price history; missing cells mean no tracked offer. Compare pack/grade/VAT/eligibility and source dates before acting.' });
+      }
       return json({
         total: rows.length,
-        pairs: rows.slice(0, limit).map((r) => ({
-          pairId: r.id, sku: r.ourProduct.sku, product: r.ourProduct.name, competitor: r.sourceName, competitorProduct: r.competitorName, url: r.sourceUrl,
-          ourPerKg: r.ourPricePerKgIncVat, theirPerKg: r.competitorPricePerKgIncVat, differencePerKg: r.differencePerKgIncVat,
-          differencePercent: r.differencePercent, comparable: r.comparisonReady, why: r.comparisonReason, observedAt: r.observedAt,
-        })),
+        pairs: rows.slice(0, limit).map(pair),
       });
     });
 

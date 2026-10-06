@@ -171,7 +171,7 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - ถ้าวันหน้าจะย้าย: แยกตามคอลัมน์ (commerce เป็นเจ้าของนิยาม · josh เป็นเจ้าของตัวนับ) ด้วยกลไก mirror เดียวกับ winback · josh ต้องล้าง cache ตอนรับสำเนา
 
 **winback (แอปฝ่ายขาย saleactivity)** — ย้ายมา commerce แล้ว (ปิดไว้ · สลับด้วยสวิตช์)
-- โค้ด: โมดูล winback ของ josh ทั้งหมด (คัดลอกตรงตัว `modules/platform/winback`, เทส 282 ข้อของ josh ผ่านใน commerce) บนตาราง winback 6 ตารางของ commerce (migration 1793800000000 = schema ของ josh) · ข้อมูล josh ที่อ่าน (users, orders, companies, restaurant_place, erp_sales_history, cuisine) อ่านจาก replica
+- โค้ด: โมดูล winback ของ josh ทั้งหมด (คัดลอกตรงตัว `modules/integration/winback`, เทส 282 ข้อของ josh ผ่านใน commerce) บนตาราง winback 6 ตารางของ commerce (migration 1793800000000 = schema ของ josh) · ข้อมูล josh ที่อ่าน (users, orders, companies, restaurant_place, erp_sales_history, cuisine) อ่านจาก replica
 - แอปยัง login ที่ josh: commerce ตรวจ access token ของ josh เอง (`JOSH_JWT_SECRET` + token_version/role ภายใน จาก replica)
 - แจ้งเตือน 4 แบบ (lead_assigned, appointment_due, lead_aging, daily_digest): commerce เป็นคนตัดสิน · josh เป็นคนส่ง (`winback.notify` ผ่าน outbox) เพราะเครื่องของเซลล์ลงทะเบียน push และ inbox อยู่ที่ josh · josh ล่ม = แจ้งเตือนรอ ไม่หาย · welcome-lead email ก็เช่นกัน (`winback.welcome_email`)
 - รูปกิจกรรม: commerce อัปโหลดเองไป bucket/path เดิมของ josh (S3)

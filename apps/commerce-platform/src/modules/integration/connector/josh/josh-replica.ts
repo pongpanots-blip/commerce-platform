@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { JOSH_WINBACK_TABLES } from './winback/josh-tables';
 import { JOSH_PRICING_TABLES } from './pricing/josh-pricing-tables';
-import { JOSH_REPLICA_TABLES } from '../../../platform/winback/josh-replica-tables';
+import { JOSH_REPLICA_TABLES } from '../../winback/josh-replica-tables';
 
 /**
  * Read-only connection to josh's database (JOSH_DATABASE_URL — the read

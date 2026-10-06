@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { winbackOwnedByCommerce } from '../../../platform/winback/shared/winback.config';
-import type { WinbackStaffActions } from '../../../platform/winback/winback-staff-actions';
+import { winbackOwnedByCommerce } from '../../winback/shared/winback.config';
+import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
 import { JoshCatalogSyncService } from './josh-catalog-sync.service';
@@ -22,7 +22,7 @@ export class JoshActionsController {
   private async winback(action: 'assign' | 'move_stage' | 'set_target', args: Record<string, unknown>, req: StaffRequest) {
     if (!winbackOwnedByCommerce()) return this.josh.run('winback', action, args, this.as(req), 'admin');
     // Resolved lazily: WinbackModule imports this module, so this one cannot import it.
-    const { WinbackStaffActions: cls } = await import('../../../platform/winback/winback-staff-actions');
+    const { WinbackStaffActions: cls } = await import('../../winback/winback-staff-actions');
     return this.modules.get<WinbackStaffActions>(cls, { strict: false }).act(action, args, req.staff.email);
   }
 

@@ -21,6 +21,7 @@ if [[ ${#SERVICES[@]} -eq 0 ]]; then
   SERVICES=("${ALL_SERVICES[@]}")
 fi
 
+TAG_VARS=()
 for svc in "${SERVICES[@]}"; do
   case "$svc" in
     platform) TAG_VAR=PLATFORM_TAG ;;
@@ -29,6 +30,7 @@ for svc in "${SERVICES[@]}"; do
     *) echo "unknown service: $svc"; exit 1 ;;
   esac
   export "$TAG_VAR=$TAG"
+  TAG_VARS+=("$TAG_VAR")
 done
 
 COMPOSE=(docker compose -f docker-compose.prod.yml)
@@ -39,8 +41,12 @@ if [[ " ${SERVICES[*]} " == *" platform "* ]]; then
   "${COMPOSE[@]}" run --rm --no-deps platform node node_modules/typeorm/cli.js migration:run -d src/data-source.js
 fi
 "${COMPOSE[@]}" up -d "${SERVICES[@]}"
-# Public edge, once the first cert exists (./ssl-init.sh issues it).
+# Remember the running tags in .env, so later partial deploys and manual compose commands
+# don't fall back to a :latest tag that CI never pushes.
+touch .env
+for v in "${TAG_VARS[@]}"; do sed -i "/^$v=/d" .env; echo "$v=$TAG" >> .env; done
+# Public edge, once the first cert exists (./ssl-init.sh issues it). --no-deps: never touch the apps.
 if [[ -f certbot/conf/live/commerce.joshapp.io/fullchain.pem ]]; then
-  "${COMPOSE[@]}" up -d nginx certbot
+  "${COMPOSE[@]}" up -d --no-deps nginx certbot
 fi
 docker image prune -f

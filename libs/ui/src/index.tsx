@@ -291,9 +291,9 @@ export function FilterChip({ children, onRemove }: { children: ReactNode; onRemo
 export const panelCls = 'bg-surface-container-lowest rounded-lg border border-secondary-container shadow-[0_1px_2px_rgba(0,0,0,0.03)]';
 
 export function Panel({ children, className, as = 'section', onSubmit }: { children: ReactNode; className?: string; as?: 'section' | 'div' | 'form'; onSubmit?: (e: FormEvent<HTMLFormElement>) => unknown }) {
-  if (as === 'form') return <form className={cx(panelCls, className)} onSubmit={onSubmit}>{children}</form>;
+  if (as === 'form') return <form data-panel className={cx(panelCls, className)} onSubmit={onSubmit}>{children}</form>;
   const As = as;
-  return <As className={cx(panelCls, className)}>{children}</As>;
+  return <As data-panel className={cx(panelCls, className)}>{children}</As>;
 }
 
 /** Panel title bar: title (+ optional icon / badge) left, actions right. */
@@ -425,7 +425,7 @@ export function FormPanel({
 }) {
   const grid = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
-    <form
+    <form data-panel
       className={cx(panelCls, 'overflow-hidden')}
       onSubmit={(e) => {
         e.preventDefault();
@@ -501,7 +501,7 @@ export function DetailSection({ title, icon, actions, children }: { title: React
 /** A detail view as its own panel (when a page shows one record below/next to a list). */
 export function DetailPanel({ title, subtitle, status, actions, onClose, children }: { title: ReactNode; subtitle?: ReactNode; status?: ReactNode; actions?: ReactNode; onClose?: () => void; children: ReactNode }) {
   return (
-    <section className={cx(panelCls, 'overflow-hidden')}>
+    <section data-panel className={cx(panelCls, 'overflow-hidden')}>
       <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-3 border-b border-secondary-container">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">

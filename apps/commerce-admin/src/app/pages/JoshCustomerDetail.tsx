@@ -97,8 +97,8 @@ export function JoshCustomerDetail() {
         <Panel><Empty>ไม่พบลูกค้า</Empty></Panel>
       ) : (
         <>
-          <Panel>
-            <div className="p-4 text-xs text-on-surface-variant space-y-2">
+          <Panel className="p-4">
+            <div className="text-xs text-on-surface-variant space-y-2">
               <div>
                 โทร {d.phone ?? '—'} · ออเดอร์ {d.orders?.orders ?? 0} รายการ · ยอดที่ชำระแล้ว {fmt.baht(d.orders?.paid_value)}
               </div>
@@ -106,7 +106,7 @@ export function JoshCustomerDetail() {
             </div>
           </Panel>
 
-          <Panel>
+          <Panel className="p-4">
             <DetailSection title={`บริษัท ${d.name}`} icon="business">
               <CustomerEdit
                 kind="companies"
@@ -118,7 +118,7 @@ export function JoshCustomerDetail() {
             </DetailSection>
           </Panel>
 
-          <Panel>
+          <Panel className="p-4">
             <DetailSection title="สาขา" icon="store">
               {d.branches && d.branches.length ? (
                 <Table>
@@ -160,7 +160,7 @@ export function JoshCustomerDetail() {
             </DetailSection>
           </Panel>
 
-          <Panel>
+          <Panel className="p-4">
             <DetailSection title="ผู้ใช้" icon="person">
               {d.users && d.users.length ? (
                 <Table>
@@ -202,7 +202,7 @@ export function JoshCustomerDetail() {
             </DetailSection>
           </Panel>
 
-          <Panel>
+          <Panel className="p-4">
             <DetailSection title="KYC และวงเงิน" icon="verified_user">
               <div className="space-y-3 text-xs text-on-surface-variant">
                 <div>

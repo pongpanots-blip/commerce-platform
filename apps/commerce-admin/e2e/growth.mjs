@@ -9,6 +9,7 @@ const ADMIN = process.env.ADMIN_URL ?? 'http://localhost:4403';
 const OUT = '.e2e-out/growth';
 const email = 'growth-admin@example.test';
 const now = '2026-10-06T03:00:00.000Z';
+const analysisId = '00000000-0000-4000-8000-000000000003';
 const evidence = [{ id: 'evidence-1', source: 'Research fixture', title: 'Verified test evidence', url: 'https://example.test/evidence', collectedAt: now, excerpt: 'Deterministic evidence for this browser check.' }];
 const requests = [];
 const listRequests = [];
@@ -57,7 +58,7 @@ try {
     }
     if (path === '/growth/plans' && request.method() === 'POST') {
       assert.match(body.requestId, /^[0-9a-f-]{36}$/);
-      plan = { ...body.plan, id: 'growth-test', version: 1, status: 'draft', createdBy: email, approvedBy: null, approvedVersion: null, workflowId: null, evidence, tasks: [], history: [], createdAt: now, updatedAt: now, canManage: true };
+      plan = { ...body.plan, analysisId, id: 'growth-test', version: 1, status: 'draft', createdBy: email, approvedBy: null, approvedVersion: null, workflowId: null, evidence, tasks: [], history: [], createdAt: now, updatedAt: now, canManage: true };
       return reply(plan);
     }
     if (path === '/growth/plans/growth-test' && request.method() === 'GET') return reply(plan);
@@ -139,6 +140,7 @@ try {
   assert.ok(await page.getByRole('button', { name: 'ส่งตรวจ', exact: true }).isDisabled());
   await page.getByRole('button', { name: 'บันทึกร่าง', exact: true }).click();
   await page.getByText('revision 2', { exact: true }).waitFor();
+  assert.equal(requests.filter(item => item.method === 'PUT').at(-1).body.plan.analysisId, analysisId, 'Editing a linked draft must retain its persisted analysis source.');
 
   await page.getByRole('button', { name: 'เพิ่มงาน', exact: true }).click();
   await page.getByLabel('งาน 1', { exact: true }).fill('Verify stock before any activation');
@@ -171,6 +173,7 @@ try {
   await page.getByRole('link', { name: 'Older future plan', exact: true }).waitFor();
   await page.getByLabel('ค้นแผน', { exact: true }).fill('Older future');
   await page.getByLabel('สถานะ', { exact: true }).selectOption('ready');
+  await page.waitForURL(url => url.searchParams.get('q') === 'Older future' && url.searchParams.get('status') === 'ready');
   await page.getByRole('link', { name: 'Older future plan', exact: true }).waitFor();
   assert.equal(await page.locator('tbody tr').count(), 1);
   assert.deepEqual(listRequests.at(-1), { page: '1', limit: '20', search: 'Older future', status: 'ready' });

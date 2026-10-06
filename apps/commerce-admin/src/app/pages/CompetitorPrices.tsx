@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Alert, ArrowLink, Button, Checkbox, Chip, Empty, ErrorText, Field, Icon, Input, Loading, Page,
@@ -12,6 +12,42 @@ const blank: CompetitorPriceInput = { sku: '', ourWeightKg: 1, sourceUrl: '', co
   sourceContext: '', vatIncluded: false, collectionAllowed: false, autoRefresh: false };
 const weightLabels: Record<CompetitorSkuSuggestion['weightMatch'], string> = { same: 'น้ำหนักตรง', different: 'น้ำหนักต่างกัน', unknown: 'ไม่ทราบน้ำหนัก', per_kg: 'เราขายต่อกก.' };
 const localNow = () => { const n = new Date(); return new Date(n.getTime() - n.getTimezoneOffset() * 60000).toISOString().slice(0, 19); };
+const shopOf = (row: CompetitorPriceComparison) => { try { return new URL(row.sourceUrl).hostname.toLowerCase().replace(/^www\./, ''); } catch { return `ไม่ทราบร้าน (${row.id})`; } };
+const finitePrice = (price: number | null): price is number => typeof price === 'number' && Number.isFinite(price);
+const comparable = (row: CompetitorPriceComparison) => row.comparisonReady && row.verified && finitePrice(row.competitorPricePerKgIncVat) && finitePrice(row.differencePerKgIncVat);
+type SkuComparison = { sku: string; name: string; offers: CompetitorPriceComparison[]; ourPrice: number | null; ourReason: string | null };
+
+function PriceOffer({ offer, ourReason, selectedId, onSelect }: { offer: CompetitorPriceComparison; ourReason: string | null; selectedId: string | null; onSelect: (id: string) => void }) {
+  const ready = !ourReason && comparable(offer);
+  const gap = offer.differencePerKgIncVat;
+  return <Button className="w-full min-h-11 flex-col items-start whitespace-normal! text-left" aria-label={`ดูคู่ ${offer.ourProduct.sku} กับ ${offer.sourceName} ${offer.sourceContext}`} aria-pressed={selectedId === offer.id} onClick={() => onSelect(offer.id)}>
+    <span className="font-semibold break-words">{offer.competitorName}</span>
+    <span className="text-xs text-on-surface-variant break-words">{offer.sourceName} · {offer.sourceContext || 'ยังไม่ระบุเงื่อนไขราคา'}</span>
+    <span className="text-xs text-on-surface-variant">พบเมื่อ {offer.observedAt ? fmt.when(offer.observedAt) : 'ยังไม่มีเวลาที่พบราคา'}</span>
+    {ready ? <><span className="text-sm font-semibold">{fmt.baht(offer.competitorPricePerKgIncVat)}/กก.</span><span className="text-xs">{gap === 0 ? 'ราคาเท่ากัน' : `${(gap ?? 0) > 0 ? 'เราถูกกว่า' : 'เราแพงกว่า'} ${fmt.baht(Math.abs(gap ?? 0))}/กก.`}</span></> : <span className="text-xs text-error">{ourReason || offer.comparisonReason || (!offer.verified ? 'รอตรวจและยืนยันคู่สินค้า' : null) || 'ข้อมูลราคายังไม่ครบ'}</span>}
+  </Button>;
+}
+
+function PriceMatrix({ groups, shops, selectedId, onSelect }: { groups: SkuComparison[]; shops: string[]; selectedId: string | null; onSelect: (id: string) => void }) {
+  const ownPrice = (group: SkuComparison) => group.ourReason ? <span className="text-xs text-error">{group.ourReason}</span> : <span className="font-semibold">{fmt.baht(group.ourPrice)}/กก.</span>;
+  const offers = (group: SkuComparison, shop: string) => {
+    const items = group.offers.filter((offer) => shopOf(offer) === shop);
+    return items.length ? <div className="space-y-2">{items.map((offer) => <PriceOffer key={offer.id} offer={offer} ourReason={group.ourReason} selectedId={selectedId} onSelect={onSelect} />)}</div> : <p className="text-xs text-on-surface-variant">ยังไม่มีคู่สินค้าร้านนี้</p>;
+  };
+  return <>
+    <div className="hidden md:block min-w-0" role="region" aria-label="ตารางราคาหลายร้าน"><Table className="max-w-full"><THead>
+      <th scope="col" className="w-44 min-w-44 max-w-44 px-3 py-3 font-semibold sticky left-0 z-20 bg-surface-container-low">สินค้าของเรา</th><th scope="col" className="w-40 min-w-40 px-3 py-3 font-semibold sticky left-44 z-20 bg-surface-container-low">เรา · บาท/กก.</th>
+      {shops.map((shop) => <th scope="col" key={shop} className="min-w-60 px-3 py-3 font-semibold break-all">{shop}</th>)}
+    </THead><TBody>{groups.map((group) => <TR key={group.sku}>
+      <th scope="row" className="w-44 min-w-44 max-w-44 px-3 py-3 align-top text-left sticky left-0 z-10 bg-surface-container-lowest break-words"><span className="block font-semibold">{group.name}</span><span className="block font-mono text-xs text-on-surface-variant">{group.sku}</span></th>
+      <TD className="w-40 min-w-40 align-top py-3 sticky left-44 z-10 bg-surface-container-lowest">{ownPrice(group)}</TD>{shops.map((shop) => <TD key={shop} className="align-top py-3">{offers(group, shop)}</TD>)}
+    </TR>)}</TBody></Table></div>
+    <div className="md:hidden divide-y divide-secondary-container">{groups.map((group) => <article key={group.sku} className="p-4 space-y-4 min-w-0 break-words" aria-label={`ราคาของ ${group.sku}`}>
+      <div className="space-y-1"><h3 className="text-sm font-semibold">{group.name}</h3><p className="font-mono text-xs text-on-surface-variant">{group.sku}</p><p className="text-sm">เรา · {ownPrice(group)}</p></div>
+      {shops.map((shop) => <section key={shop} className="space-y-2"><h4 className="text-sm font-semibold break-all">{shop}</h4>{offers(group, shop)}</section>)}
+    </article>)}</div>
+  </>;
+}
 
 /** Competitor price comparison (MER) — moved from josh web-admin; same rules and data. */
 export function CompetitorPrices() {
@@ -24,6 +60,8 @@ export function CompetitorPrices() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'review' | 'ready'>('all');
+  const [view, setView] = useState<'matrix' | 'pairs'>('matrix');
+  const detail = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState<CompetitorPriceInput | null>(null);
   const [editId, setEditId] = useState<string>();
   const [preview, setPreview] = useState<CompetitorCatalogProduct | null>(null);
@@ -33,7 +71,7 @@ export function CompetitorPrices() {
   const [price, setPrice] = useState('');
   const [observedAt, setObservedAt] = useState('');
   const all = rows.data ?? [];
-  const selected = all.find((r) => r.id === selectedId) ?? all[0];
+  const selected = all.find((r) => r.id === selectedId) ?? (view === 'pairs' ? all[0] : undefined);
 
   useEffect(() => {
     if (!catalogItemId) return;
@@ -53,6 +91,7 @@ export function CompetitorPrices() {
   }, [catalogItemId]);
 
   useEffect(() => { setPanel(null); setMatchNote(''); setPrice(''); }, [selected?.id, selected?.revision, selected?.ourProductVersion]);
+  useEffect(() => { if (selectedId) { detail.current?.focus(); detail.current?.scrollIntoView({ block: 'start' }); } }, [selectedId]);
 
   async function action(work: () => Promise<unknown>) {
     setBusy(true);
@@ -84,10 +123,21 @@ export function CompetitorPrices() {
     setObservedAt(localNow());
   }
 
-  const visible = all.filter((r) => (filter === 'all' || (filter === 'review' ? !r.verified : r.comparisonReady))
-    && `${r.ourProduct.sku} ${r.ourProduct.name} ${r.competitorName} ${r.sourceName}`.toLowerCase().includes(search.toLowerCase()));
+  const matchesSearch = (r: CompetitorPriceComparison) => `${r.ourProduct.sku} ${r.ourProduct.name} ${r.competitorName} ${r.sourceName} ${r.sourceUrl} ${r.sourceContext}`.toLowerCase().includes(search.trim().toLowerCase());
+  const visible = all.filter((r) => (filter === 'all' || (filter === 'review' ? !r.verified : r.comparisonReady)) && matchesSearch(r));
+  const grouped = new Map<string, CompetitorPriceComparison[]>();
+  for (const row of all) { const offers = grouped.get(row.ourProduct.sku) ?? []; offers.push(row); grouped.set(row.ourProduct.sku, offers); }
+  const groups: SkuComparison[] = [...grouped.entries()].map(([sku, offers]) => {
+    const rates = offers.map((offer) => offer.ourPricePerKgIncVat), prices = [...new Set(rates.filter(finitePrice))];
+    const ourPrice = prices.length === 1 && rates.every(finitePrice) ? prices[0] : null;
+    return { sku, name: offers[0].ourProduct.name, offers, ourPrice, ourReason: prices.length > 1 ? 'ราคาของเราต่อกก.ไม่ตรงกัน · ตรวจน้ำหนักและราคา' : ourPrice === null ? 'ยังยืนยันราคาของเราต่อกก.ไม่ได้' : null };
+  });
+  const shops = [...new Set(all.map(shopOf))].sort();
+  const visibleGroups = groups.filter((group) => group.offers.some(matchesSearch) && (filter === 'all' || (filter === 'review' ? !!group.ourReason || group.offers.some((offer) => !offer.verified) : !group.ourReason && group.offers.some(comparable))));
+  const selectedReason = view === 'matrix' ? groups.find((group) => group.sku === selected?.ourProduct.sku)?.ourReason : null;
+  const selectedReady = !!selected && comparable(selected) && !selectedReason;
+  const selectOffer = (id: string) => { setSelectedId(id); setPanel(null); setForm(null); };
   const pending = all.filter((r) => !r.verified).length;
-  const cheaper = all.filter((r) => r.comparisonReady && (r.differencePerKgIncVat ?? 0) > 0).length;
 
   return (
     <Page>
@@ -109,9 +159,9 @@ export function CompetitorPrices() {
         <Loading />
       ) : (
         <StatGrid cols={3}>
-          <StatTile label="คู่ที่ติดตาม" value={fmt.num(all.length)} />
+          <StatTile label="สินค้าที่ติดตาม" value={fmt.num(groups.length)} foot={`${fmt.num(all.length)} คู่สินค้า`} />
+          <StatTile label="ร้านคู่แข่ง" value={fmt.num(shops.length)} foot="รวมหน้าราคาจากโดเมนเดียวกัน" />
           <StatTile label="รอยืนยันคู่สินค้า" value={fmt.num(pending)} accent tone="warn" icon="pending_actions" />
-          <StatTile label="เราถูกกว่าคู่แข่ง" value={fmt.num(cheaper)} />
         </StatGrid>
       )}
 
@@ -186,7 +236,7 @@ export function CompetitorPrices() {
               <Field label="ลิงก์หน้าสินค้า"><Input type="url" required maxLength={2000} placeholder="https://…" value={form.sourceUrl} onChange={(e) => setForm({ ...form, sourceUrl: e.target.value, catalogItemId: undefined })} /></Field>
               <Field label="น้ำหนักสุทธิต่อแพ็กคู่แข่ง (กก.)"><Input type="number" min="0.0001" max="100000" step="0.0001" required value={form.competitorWeightKg} onChange={(e) => setForm({ ...form, competitorWeightKg: Number(e.target.value) })} /></Field>
             </div>
-            <Field label="เงื่อนไขราคา / สาขา / โปรโมชั่น"><Textarea required maxLength={1000} value={form.sourceContext} onChange={(e) => setForm({ ...form, sourceContext: e.target.value })} /></Field>
+            <Field label="เงื่อนไขราคา / สาขา / โปรโมชั่น"><Textarea aria-label="เงื่อนไขราคา / สาขา / โปรโมชั่น" required maxLength={1000} value={form.sourceContext} onChange={(e) => setForm({ ...form, sourceContext: e.target.value })} /></Field>
             <div className="space-y-2">
               <Checkbox label="ตรวจแล้วว่าราคาคู่แข่งรวม VAT" checked={form.vatIncluded} onChange={(e) => setForm({ ...form, vatIncluded: e.target.checked, autoRefresh: e.target.checked && form.autoRefresh })} />
               <Checkbox label="มีสิทธิ์ดึงข้อมูลอัตโนมัติ" checked={form.collectionAllowed} onChange={(e) => setForm({ ...form, collectionAllowed: e.target.checked, autoRefresh: e.target.checked && form.autoRefresh })} />
@@ -202,25 +252,27 @@ export function CompetitorPrices() {
       )}
 
       {selected && (
-        <Panel aria-label="รายละเอียดเปรียบเทียบ">
+        <div ref={detail} tabIndex={-1} aria-label="รายละเอียดคู่สินค้า"><Panel>
           <PanelHead title={selected.ourProduct.name} sub={`SKU ${selected.ourProduct.sku}`} />
           <div className="space-y-4 p-4">
+            <p className="text-sm break-words">{selected.competitorName} · {selected.sourceName} · {selected.sourceContext} · พบเมื่อ {selected.observedAt ? fmt.when(selected.observedAt) : 'ยังไม่มีราคา'}</p>
             <StatGrid cols={3}>
-              <StatTile label="ราคาของเรา (Josh)" value={fmt.baht(selected.ourPricePerKgIncVat) + '/กก.'} />
+              <StatTile label="ราคาของเรา (Josh)" value={selectedReason || fmt.baht(selected.ourPricePerKgIncVat) + '/กก.'} />
               <StatTile label={selected.sourceName} value={fmt.baht(selected.competitorPricePerKgIncVat) + '/กก.'} />
               <StatTile
-                label={!selected.comparisonReady ? 'ยังคำนวณไม่ได้' : (selected.differencePerKgIncVat ?? 0) > 0 ? 'เราถูกกว่า' : 'เราแพงกว่า'}
-                value={selected.comparisonReady ? fmt.baht(Math.abs(selected.differencePerKgIncVat ?? 0)) + '/กก.' : (selected.comparisonReason || '—')}
-                tone={!selected.comparisonReady ? 'muted' : (selected.differencePerKgIncVat ?? 0) > 0 ? 'ok' : 'danger'}
+                label={!selectedReady ? 'ยังคำนวณไม่ได้' : selected.differencePerKgIncVat === 0 ? 'ราคาเท่ากัน' : (selected.differencePerKgIncVat ?? 0) > 0 ? 'เราถูกกว่า' : 'เราแพงกว่า'}
+                value={selectedReady ? fmt.baht(Math.abs(selected.differencePerKgIncVat ?? 0)) + '/กก.' : (selectedReason || selected.comparisonReason || 'ข้อมูลราคายังไม่ครบ')}
+                tone={!selectedReady ? 'muted' : (selected.differencePerKgIncVat ?? 0) >= 0 ? 'ok' : 'danger'}
               />
             </StatGrid>
             <div className="flex flex-wrap gap-2">
+              <Button icon="edit" variant="ghost" disabled={busy} onClick={() => edit(selected)}>แก้ไขคู่สินค้า</Button>
               <Button icon="check_circle" variant="ghost" type="button" disabled={busy} onClick={() => openPanel('review')}>ตรวจคู่สินค้า</Button>
               <Button icon="edit" variant="ghost" type="button" disabled={busy || !selected.vatIncluded} onClick={() => openPanel('price')}>บันทึกราคา</Button>
               <Button icon="refresh" type="button" disabled={busy || !selected.canRefresh} title={selected.refreshReason ?? undefined} onClick={() => void action(() => competitorPricesApi.refresh(selected.id))}>ดึงราคา</Button>
             </div>
           </div>
-        </Panel>
+        </Panel></div>
       )}
 
       {panel === 'review' && selected && (
@@ -229,7 +281,7 @@ export function CompetitorPrices() {
           <PanelHead title="ตรวจว่าเป็นสินค้าเทียบเคียงกัน" actions={<Button icon="close" variant="ghost" size="sm" type="button" onClick={() => setPanel(null)}>ปิด</Button>} />
           <div className="space-y-4 p-4">
             <Field label="เหตุผลและสเปกที่ตรงกัน">
-              <Textarea required minLength={10} maxLength={1000} value={matchNote} onChange={(e) => setMatchNote(e.target.value)} placeholder="ระบุชนิด เกรด ประเทศ สภาพการเก็บรักษา" />
+              <Textarea aria-label="เหตุผลและสเปกที่ตรงกัน" required minLength={10} maxLength={1000} value={matchNote} onChange={(e) => setMatchNote(e.target.value)} placeholder="ระบุชนิด เกรด ประเทศ สภาพการเก็บรักษา" />
             </Field>
             <Checkbox label="ตรวจสเปกแล้ว" required onChange={() => {}} />
             <div className="flex gap-2">
@@ -264,10 +316,10 @@ export function CompetitorPrices() {
       )}
 
       <Panel>
-        <PanelHead title="สินค้าที่ติดตาม" />
+        <PanelHead title="สินค้าที่ติดตาม" sub={`${groups.length} SKU · ${shops.length} ร้าน · ${all.length} คู่สินค้า`} actions={<Segmented<'matrix' | 'pairs'> options={[{ value: 'matrix', label: 'หลายร้านต่อ SKU' }, { value: 'pairs', label: 'คู่สินค้า / จัดการ' }]} value={view} onChange={setView} />} />
         <div className="space-y-3 p-4 border-b border-secondary-container">
           <div className="grid gap-3 md:grid-cols-2">
-            <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหา SKU / ชื่อสินค้า / ร้าน" />
+            <SearchInput aria-label="ค้นหา SKU หรือร้าน" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหา SKU / ชื่อสินค้า / ร้าน" />
             <Segmented<'all' | 'review' | 'ready'>
               options={[
                 { value: 'all', label: 'ทั้งหมด' },
@@ -278,11 +330,14 @@ export function CompetitorPrices() {
               onChange={(v) => setFilter(v)}
             />
           </div>
+          {view === 'matrix' && <p className="text-xs text-on-surface-variant">ค้นหาหรือกรองสถานะแล้วแสดงทุกร้านของ SKU ที่ตรง · แสดงทุกข้อเสนอแยกตามเงื่อนไขราคา</p>}
         </div>
         {rows.loading ? (
           <Loading />
-        ) : !visible.length ? (
+        ) : !(view === 'matrix' ? visibleGroups.length : visible.length) ? (
           <Empty>{all.length ? 'ไม่พบคู่สินค้า' : 'ยังไม่มีคู่สินค้า'}</Empty>
+        ) : view === 'matrix' ? (
+          <PriceMatrix groups={visibleGroups} shops={shops} selectedId={selectedId} onSelect={selectOffer} />
         ) : (
           <Table>
             <THead>
@@ -296,7 +351,7 @@ export function CompetitorPrices() {
             </THead>
             <TBody>
               {visible.map((r) => (
-                <TR key={r.id} selected={selected?.id === r.id} onClick={() => { setSelectedId(r.id); setPanel(null); setForm(null); }}>
+                <TR key={r.id} selected={selected?.id === r.id} onClick={() => selectOffer(r.id)}>
                   <TD>
                     <div className="font-medium">{r.ourProduct.name}</div>
                     <div className="text-[10px] font-mono text-on-surface-variant">{r.ourProduct.sku}</div>

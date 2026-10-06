@@ -132,6 +132,8 @@ const NAV: NavGroup[] = [
       { to: '/j/company', label: 'บริษัท', end: false },
       { to: '/j/kyc', label: 'KYC', end: false },
       { to: '/j/cs/sample-requests', label: 'Sample requests', end: false },
+      { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', end: false },
+      { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', end: false },
       { to: '/j/price-requests', label: 'Price requests', end: false },
       { to: '/j/active-offers', label: 'Active offers', end: false },
       { to: '/j/admin-access', label: 'Admin access requests', end: false },

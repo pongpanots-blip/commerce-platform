@@ -145,6 +145,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - สวิตช์ฝั่ง josh: `COMMERCE_OWNS_PRICES` (ล็อกหน้าแก้ราคาใน josh, live-price ไม่เขียนทับราคา, MOQ ต้องอนุมัติ) · `COMMERCE_APPROVES_PRODUCTS` (ล็อกปุ่มอนุมัติใน josh)
 - ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS → COMMERCE_OWNS_CATALOG
 
+**เครื่องมือ CS** — ตัดสินแล้ว (2026-10-06)
+- ย้าย (หน้า josh ใต้ /j, ปิดไว้): ตารางรอบส่ง `cs/delivery-schedule` (อ่าน) · หมวดที่ย้ายของในตะกร้าได้ `cs/cart-move-categories` (อ่าน/แก้ → josh `PUT /admin/cart-move-allowed-categories` ผ่าน admin-call) · สวิตช์ josh `COMMERCE_OWNS_CS_ORDERS` ล็อกการแก้หมวดใน josh
+- อยู่ josh: แชต CS (`chat`), `cslogs`, `settings`, `cs/product-tools`, `support/zendesk-settings`
+- หน้า admin ของ josh (135 หน้า ไม่นับ redirect / login): เปิดจาก commerce ได้ 98 (ใต้ /j 85 · หน้า commerce เอง 13) · อยู่ josh 37 (หน้าร้าน/CMS 32 · CS 5) → ครบทุกหน้าที่ต้องย้าย
+
 **supplier / เอกสารภายใน / DBD** — ปิดไว้ (default off)
 - Supplier: josh › Suppliers มีปุ่ม เพิ่ม/แก้/ลบ → josh `internal/commerce/suppliers` → SupplierService · สวิตช์ josh `COMMERCE_OWNS_SUPPLIERS`
 - เอกสารภายใน (docs-web): josh › เอกสารภายใน อัปโหลด .md (≤ 90 KB จาก commerce) / ลบ → josh `internal/commerce/internal-docs` · สวิตช์ josh `COMMERCE_OWNS_INTERNAL_DOCS`

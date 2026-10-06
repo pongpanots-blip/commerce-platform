@@ -17,6 +17,16 @@ describe('JoshAdminCallController', () => {
     await expect(c.call({ method: 'POST', path: '/auth/login' }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
     await expect(c.call({ method: 'GET', path: '/coupon/../users' }, req('admin'))).rejects.toBeInstanceOf(BadRequestException);
     await expect(c.call({ method: 'POST', path: '/cs-admin/accounts/merge' }, req('marketing'))).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(c.call({ method: 'PUT', path: '/admin/cart-move-allowed-categories' }, req('marketing'))).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(c.call({ method: 'GET', path: '/admin/cart-move-allowed-categories/x' }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('CS tools (delivery schedule, cart-move categories) are admin calls', async () => {
+    const josh = { run: jest.fn(async () => ({ status: 200, data: [] })) };
+    const c = new JoshAdminCallController(josh as never);
+    await c.call({ method: 'PUT', path: '/admin/cart-move-allowed-categories', body: { categoryIds: [] } }, req('admin'));
+    await c.call({ method: 'GET', path: '/cs-admin/delivery-schedule' }, req('admin'));
+    expect(josh.run).toHaveBeenCalledTimes(2);
   });
 
   it('josh 4xx becomes the same kind of error with josh\'s message', async () => {

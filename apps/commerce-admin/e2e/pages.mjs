@@ -33,7 +33,7 @@ const ADMIN_ROUTES = [
 ];
 const PORTAL_ROUTES = ['/', '/keys', '/webhooks', '/docs'];
 // josh web-admin pages copied as-is (josh's own look, josh API via admin-call): only "renders without a JS error".
-const JOSH_ROUTES = ['/marketing/workflows/new', '/j/allproducts', '/j/order', '/j/coupons', '/j/segments', '/j/marketing/push-campaigns'];
+const JOSH_ROUTES = ['/marketing/workflows/new', '/j/allproducts', '/j/order', '/j/coupons', '/j/segments', '/j/marketing/push-campaigns', '/j/cs/delivery-schedule', '/j/cs/cart-move-categories'];
 // Detail pages: open the list, follow the first row's link, check the page it lands on.
 const DETAILS = [
   ['/reports/orders', '/reports/orders/'],

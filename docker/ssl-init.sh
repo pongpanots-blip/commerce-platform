@@ -7,6 +7,7 @@
 # Running it means you accept the Let's Encrypt Subscriber Agreement.
 set -euo pipefail
 cd "$(dirname "$0")"
+[[ -f .env ]] || { echo "no .env here — run a deploy from GitHub Actions first (it writes .env)"; exit 1; }
 DOMAIN=commerce.joshapp.io
 COMPOSE=(docker compose -f docker-compose.prod.yml)
 
@@ -17,5 +18,5 @@ if [[ ! -f certbot/conf/live/$DOMAIN/fullchain.pem ]]; then
   "${COMPOSE[@]}" run --rm -p 80:80 --entrypoint certbot certbot \
     certonly --standalone -d "$DOMAIN" --agree-tos -n "${EMAIL_ARGS[@]}"
 fi
-"${COMPOSE[@]}" up -d nginx certbot
+"${COMPOSE[@]}" up -d --no-deps nginx certbot   # --no-deps: never recreate platform/admin
 "${COMPOSE[@]}" ps nginx certbot

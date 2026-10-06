@@ -1,8 +1,8 @@
 // Thin fetch wrapper for the Commerce Platform developer portal API.
-// Base URL is configurable; defaults to the platform's local dev port (3100).
-const BASE =
-  (import.meta as unknown as { env: Record<string, string> }).env
-    ?.VITE_COMMERCE_API || 'http://localhost:3100/api';
+// Base URL is configurable; dev defaults to the platform's local port (3100), production builds to
+// same-origin /api (served behind the same nginx as the platform).
+const env = (import.meta as unknown as { env: Record<string, string | boolean> }).env;
+const BASE = (env?.VITE_COMMERCE_API as string) || (env?.DEV ? 'http://localhost:3100/api' : '/api');
 
 const TOKEN_KEY = 'portal_token';
 

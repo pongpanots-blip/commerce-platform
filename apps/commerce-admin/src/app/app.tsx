@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, NavLink, Navigate, Route, Routes, matchPath, useLocation } from 'react-router-dom';
 import { session } from '../lib/api';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -125,6 +125,54 @@ const NAV = [
   },
 ];
 
+/** Grouped nav with a filter box; only the open groups (and the one holding the current page) show their links. */
+function SideNav() {
+  const { pathname } = useLocation();
+  const [query, setQuery] = useState('');
+  // Groups the user toggled; untouched groups default to open only when they hold the current page.
+  const [toggled, setToggled] = useState<Record<string, boolean>>({});
+  const q = query.trim().toLowerCase();
+  const isCurrent = (l: { to: string; end: boolean }) => Boolean(matchPath({ path: l.to, end: l.end }, pathname));
+
+  return (
+    <nav className="nav">
+      <input
+        className="nav-search"
+        type="search"
+        placeholder="ค้นหาเมนู…"
+        aria-label="ค้นหาเมนู"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {NAV.map((section) => {
+        const links = q ? section.links.filter((l) => l.label.toLowerCase().includes(q)) : section.links;
+        if (!links.length) return null;
+        const expanded = Boolean(q) || (toggled[section.group] ?? section.links.some(isCurrent));
+        return (
+          <div key={section.group}>
+            <button
+              className="group"
+              type="button"
+              aria-expanded={expanded}
+              onClick={() => setToggled((t) => ({ ...t, [section.group]: !expanded }))}
+            >
+              <span className="chev" aria-hidden="true">{expanded ? '▾' : '▸'}</span>
+              <span className="group-name">{section.group}</span>
+              <span className="count">{links.length}</span>
+            </button>
+            {expanded &&
+              links.map((l) => (
+                <NavLink key={l.to} to={l.to} end={l.end}>
+                  {l.label}
+                </NavLink>
+              ))}
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
+
 export function App() {
   const [signedIn, setSignedIn] = useState(() => Boolean(session.get()));
   useEffect(() => {
@@ -145,18 +193,7 @@ export function App() {
       <div className="layout">
         <aside className="sidebar">
           <div className="brand">Commerce Platform<small>Admin console</small></div>
-          <nav className="nav">
-            {NAV.map((section) => (
-              <div key={section.group}>
-                <div className="group">{section.group}</div>
-                {section.links.map((l) => (
-                  <NavLink key={l.to} to={l.to} end={l.end}>
-                    {l.label}
-                  </NavLink>
-                ))}
-              </div>
-            ))}
-          </nav>
+          <SideNav />
           <div className="side-foot">
             <span>Signed in</span>
             <button className="btn ghost sm" type="button" onClick={signOut}>Sign out</button>

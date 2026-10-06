@@ -17,10 +17,7 @@ const creds = JSON.parse(readFileSync('scripts/.mock-credentials', 'utf8'));
 const only = process.argv[2];
 
 // Known, accepted failures (not UI bugs). Keep this list short and explained.
-const ALLOWED_5XX = [
-  // local josh copy (JOSH_DATABASE_URL) has an older schema: order_refunds.amount is missing
-  /\/api\/reports\/sales/,
-];
+const ALLOWED_5XX = [];
 
 const ADMIN_ROUTES = [
   '/', '/reports/sales', '/reports/products', '/reports/orders', '/reports/customers', '/reports/prices',

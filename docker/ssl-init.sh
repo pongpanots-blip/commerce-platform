@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 DOMAIN=commerce.joshapp.io
 COMPOSE=(docker compose -f docker-compose.prod.yml)
 
-if [[ ! -f certbot/conf/live/$DOMAIN/fullchain.pem ]]; then
+if [[ ! -f certbot/conf/renewal/$DOMAIN.conf ]]; then  # live/ is root-only (0700); renewal/ is readable
   "${COMPOSE[@]}" stop nginx 2>/dev/null || true   # standalone needs port 80
   EMAIL_ARGS=(--register-unsafely-without-email)
   [[ -n "${LETSENCRYPT_EMAIL:-}" ]] && EMAIL_ARGS=(-m "$LETSENCRYPT_EMAIL")

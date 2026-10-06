@@ -17,7 +17,7 @@ const AREAS: { path: RegExp; marketing: boolean }[] = [
   { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink|upload\/image)(\/|$)/, marketing: true },
   { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, marketing: false },
   { path: /^\/(orders|shipments|payment\/kbank\/testing)(\/|$)/, marketing: false },
-  { path: /^\/cs-admin\//, marketing: false },
+  { path: /^\/(cs-admin\/|admin\/cart-move-allowed-categories$)/, marketing: false },
   { path: /^\/(credit-notes|credit-backs)(\/|$)/, marketing: false },
   { path: /^\/(supplier|promotion-mechanics)(\/|$)/, marketing: true },
   { path: /^\/product$/, marketing: true },

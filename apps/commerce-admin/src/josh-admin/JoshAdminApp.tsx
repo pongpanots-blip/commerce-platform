@@ -51,6 +51,8 @@ const CreateSegment = lazy(() => import('./app/page/segment/CreateSegment'));
 const EditSegment = lazy(() => import('./app/page/segment/EditSegment'));
 const SegmentBuilder = lazy(() => import('./app/page/segment/SegmentBuilder'));
 const SampleRequestsAdmin = lazy(() => import('./app/page/CS/SampleRequestsAdmin'));
+const DeliveryScheduleAdmin = lazy(() => import('./app/page/CS/DeliveryScheduleAdmin'));
+const CartMoveCategoriesAdmin = lazy(() => import('./app/page/CS/CartMoveCategoriesAdmin'));
 const AllProduct = lazy(() => import('./app/page/product/AllProduct'));
 const InsertProductForm = lazy(() => import('./app/page/product/CreateProduct'));
 const ProductVideoUpload = lazy(() => import('./app/page/product/ProductVideoUpload'));
@@ -148,6 +150,8 @@ export function JoshAdminApp() {
             <Route path="segments/builder" element={<SegmentBuilder />} />
             <Route path="segments/builder/:id" element={<SegmentBuilder />} />
             <Route path="cs/sample-requests" element={<SampleRequestsAdmin />} />
+            <Route path="cs/delivery-schedule" element={<DeliveryScheduleAdmin />} />
+            <Route path="cs/cart-move-categories" element={<CartMoveCategoriesAdmin />} />
             <Route path="allproducts" element={<AllProduct />} />
             <Route path="product/create" element={<InsertProductForm />} />
             <Route path="product/video-upload" element={<ProductVideoUpload />} />

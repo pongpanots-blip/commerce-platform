@@ -13,14 +13,17 @@ import { McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { McpOAuthProvider } from './mcp-oauth.provider';
 import { McpTools } from './mcp.tools';
 import { McpConnectionsController } from './mcp-connections.controller';
+import { GrowthModule } from '../modules/integration/growth/growth.module';
+import { MarketAnalystService } from './market-analyst.service';
+import { MarketAnalystController } from './market-analyst.controller';
 
 /** MCP server for AI connectors. HTTP routes are mounted in main.ts by mountMcp (they live outside /api). */
 @Module({
   imports: [
     TypeOrmModule.forFeature([McpOAuthClient, McpOAuthGrant, User]),
-    AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule, WebhookSubscriptionModule, IntegrationModule, InventoryModule, JoshModule,
+    AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule, WebhookSubscriptionModule, IntegrationModule, InventoryModule, JoshModule, GrowthModule,
   ],
-  controllers: [McpConnectionsController],
-  providers: [McpOAuthProvider, McpTools],
+  controllers: [McpConnectionsController, MarketAnalystController],
+  providers: [McpOAuthProvider, McpTools, MarketAnalystService],
 })
 export class McpModule {}

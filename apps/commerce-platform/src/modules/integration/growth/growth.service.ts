@@ -10,6 +10,7 @@ import { GrowthCampaignPlan as Plan } from './growth-plan.entity';
 import { GrowthDataService } from './growth-data.service';
 import { GrowthAiService } from './growth-ai.service';
 import { assertCitations, assertReviewable } from './growth.validation';
+import { MarketAnalysis } from './market-analysis.entity';
 
 export interface GrowthActor { userId: string; email: string; role: string }
 const unwrap = (value: unknown): unknown => value && typeof value === 'object' && 'data' in value ? (value as { data: unknown }).data : value;
@@ -50,7 +51,14 @@ export class GrowthService {
   private async evidence(plan: GrowthPlanInput, a: GrowthActor): Promise<GrowthEvidence[]> {
     const facts = (await this.data.workspace()).evidence;
     const research = plan.researchTopicId && plan.researchRunId ? await this.data.researchEvidence(plan.researchTopicId, plan.researchRunId, a) : [];
-    return [...new Map([...facts, ...research].map(e => [e.id, e])).values()];
+    let analysis: GrowthEvidence[] = [];
+    if (plan.analysisId) {
+      const stored = await this.db.manager.findOne(MarketAnalysis, { where: { id: plan.analysisId } });
+      if (!stored) throw new NotFoundException('ไม่พบรายงานวิเคราะห์ตลาด');
+      if (stored.createdBy !== a.userId && a.role !== 'admin') throw new ForbiddenException('รายงานนี้เป็นของผู้ใช้อื่น');
+      analysis = stored.report.evidence;
+    }
+    return [...new Map([...facts, ...research, ...analysis].map(e => [e.id, e])).values()];
   }
   async list(a: GrowthActor, q: { page: number; limit: number; search: string; status?: GrowthStatus; month?: string }): Promise<GrowthPlanPage> {
     const query = this.db.manager.createQueryBuilder(Plan, 'p');

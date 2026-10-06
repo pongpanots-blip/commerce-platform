@@ -1,10 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { createHash, randomUUID } from 'node:crypto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { DataSource, ILike, IsNull } from 'typeorm';
 import { z } from 'zod';
+import type { GrowthPlanInput, GrowthTask } from '@cp/growth';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { CompetitorPricesService } from '../modules/integration/competitor-prices/competitor-prices.service';
 import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-catalog-product.entity';
 import { AuditLog } from '../modules/core/audit/infrastructure/audit-log.entity';
@@ -41,6 +44,10 @@ import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs
 import { PriceShadow } from '../modules/integration/connector/josh/pricing/price-shadow';
 import { StaffPrices } from '../modules/integration/connector/josh/pricing/staff-prices';
 import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
+import { GrowthService } from '../modules/integration/growth/growth.service';
+import { GrowthDataService } from '../modules/integration/growth/growth-data.service';
+import { assertReviewable, planListSchema, planSchema, taskSchema } from '../modules/integration/growth/growth.validation';
+import { analysisInput, MarketAnalystService } from './market-analyst.service';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -80,8 +87,8 @@ const productName = (p: JoshCatalogProduct) =>
   p.translations?.find((t) => t.language_code === 'th')?.product_name ?? p.translations?.[0]?.product_name ?? p.sku;
 
 /**
- * Read-only tools for AI connectors. Every tool only reads; an AI can look up
- * and summarize, never change anything. What a caller sees follows the staff
+ * Tools for AI connectors. Writes require an opted-in scope and confirmation.
+ * What a caller sees follows the staff
  * role behind the token: marketing tools for `marketing` + `admin`, ERP/ops
  * tools for `admin` only — same split as commerce-admin.
  */
@@ -116,6 +123,9 @@ export class McpTools {
     private readonly promotions: JoshPromotions,
     private readonly workflows: JoshMarketingWorkflows,
     private readonly joshActions: JoshActions,
+    private readonly growth: GrowthService,
+    private readonly growthData: GrowthDataService,
+    private readonly analyst: MarketAnalystService,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -127,6 +137,8 @@ export class McpTools {
         ', shop traffic' +
         (staff.role === 'admin' ? ', plus shop sales, system health/errors, ERP intake, webhook delivery failures and stock per warehouse.' : '.') +
         (canWrite ? ' A few tools change data; each one first returns a preview and a confirmCode — always show the preview and get the user\'s explicit OK before calling it again with the code.' : ' This connection is read-only.') +
+        ' Growth tools connect evidence to a reviewed campaign draft. Market analysis combines the same read-only MCP tools with public web sources; recommendations do not create or activate campaigns.' +
+        ' Do not invent prices, costs, profit, social coverage or evidence. Cite source dates and limitations; shop_traffic purchase events are not paid orders and do not prove GA4/GTM tracking coverage.' +
         ' Prices are THB including VAT. Answer in the user\'s language.' },
     );
     // Every tool call is recorded in audit_logs: who, which AI client, which tool, with what arguments.
@@ -137,9 +149,58 @@ export class McpTools {
         return cb(args, extra);
       }) as never)) as typeof server.registerTool;
     this.marketing(server, staff);
+    this.growthReads(server, staff);
     if (staff.role === 'admin') this.ops(server);
     if (canWrite) this.writes(server, staff, clientId);
     return server;
+  }
+
+  /** The in-app analyst reads through the same audited MCP tools, without any write scope. */
+  async openReadClient(staff: McpStaff): Promise<{ client: Client; close(): Promise<void> }> {
+    const server = this.server(staff, 'in-app-marketing-analyst', []);
+    const client = new Client({ name: 'in-app-marketing-analyst', version: '1.0.0' });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const close = async () => { await Promise.all([client.close(), server.close()]); };
+    try {
+      await server.connect(serverTransport);
+      await client.connect(clientTransport);
+      return { client, close };
+    } catch (error) {
+      await Promise.allSettled([client.close(), server.close()]);
+      throw error;
+    }
+  }
+
+  private growthReads(server: McpServer, staff: McpStaff) {
+    server.registerTool('growth_workspace', {
+      title: 'Growth opportunities and evidence (marketing)',
+      description: 'Read paid-order metrics, idle carts, reorder opportunities, source evidence with collection dates, availability and activation blockers. Missing costs or connections remain unknown; never replace them with guessed profit, price or coverage.',
+      inputSchema: {}, annotations: READ_ONLY,
+    }, async () => json({ ...(await this.growthData.workspace()), readiness: this.growth.readiness(), analysisReadiness: this.analyst.readiness() }));
+
+    server.registerTool('growth_plans', {
+      title: 'Growth campaign plans and review history (marketing)',
+      description: 'Read one campaign plan by id, including version, full content, evidence, tasks, review/export status and canManage, or a paginated list. Reading a plan grants no edit permission. Dates use Bangkok time for month filters.',
+      inputSchema: planListSchema.extend({ id: z.string().uuid().optional() }), annotations: READ_ONLY,
+    }, async ({ id, ...filters }) => json(id ? await this.growth.detail(id, staff) : await this.growth.list(staff, filters)));
+
+    server.registerTool('growth_results', {
+      title: 'Growth workflow results and measurement limits (marketing)',
+      description: 'Read a workflow funnel, attributed paid revenue, holdout comparison, failed operations and missing costs. Attribution is not proven incremental revenue; event counts and enrollment cohorts can cover different periods. Contribution remains unknown until actual costs exist.',
+      inputSchema: { workflowId: z.string().uuid() }, annotations: READ_ONLY,
+    }, async ({ workflowId }) => json(await this.growthData.results(workflowId, staff)));
+
+    server.registerTool('market_analysis_reports', {
+      title: 'Saved market analysis and source evidence (marketing)',
+      description: 'List your saved market analyses, or read one report by id; admin can inspect another user\'s report by explicit id. Includes source dates, actual MCP tool trace, cited public-web evidence, hypotheses, recommendations and coverage limitations. Recommendations are not campaign drafts.',
+      inputSchema: { id: z.string().uuid().optional() }, annotations: READ_ONLY,
+    }, async ({ id }) => json(id ? await this.analyst.detail(id, staff) : await this.analyst.list(staff)));
+
+    if (staff.role === 'admin') server.registerTool('growth_timeline', {
+      title: 'Customer-company Growth timeline (admin)',
+      description: 'Read the latest 100 order, contact-metadata and workflow events in 90 days for one company. Contacts exclude personal names and message text; company membership and replica freshness have stated limitations.',
+      inputSchema: { companyId: z.string().uuid() }, annotations: READ_ONLY,
+    }, async ({ companyId }) => json(await this.growthData.timeline(companyId, staff)));
   }
 
   private async audit(staff: McpStaff, clientId: string, tool: string, args: unknown) {
@@ -201,7 +262,7 @@ export class McpTools {
 
     server.registerTool('shop_traffic', {
       title: 'Shop traffic (josh)',
-      description: 'Visits (sessions), visitors, product views, searches, add-to-cart, checkout and purchase counts on the josh shop for a period, by platform and by day, the funnel, and the top searches (with how many found nothing). Compared with the previous period of the same length.',
+      description: 'Visits (sessions), visitors, product views, searches, add-to-cart, checkout and purchase event counts on the josh shop for a period, by platform and by day, the funnel, and top searches (including zero results). Reads Josh analytics_events / analytics_funnel_daily and search aggregates; purchase events are not verified paid orders. These aggregates do not prove GA4/GTM installation, consent, tag coverage or attribution. Compared with the previous period of the same length.',
       inputSchema: PERIOD_INPUT,
       annotations: READ_ONLY,
     }, async ({ period, fromDate, toDate }) => {
@@ -393,6 +454,7 @@ export class McpTools {
   private writes(server: McpServer, staff: McpStaff, clientId: string) {
     const actor = { sub: staff.userId, role: staff.role };
     const joshActor = { userId: staff.userId, email: staff.email, role: staff.role };
+    this.growthWrites(server, staff, clientId);
 
     server.registerTool('marketing_save', {
       title: 'Create or edit marketing setup on josh — always switched off (needs confirmation)',
@@ -622,6 +684,72 @@ export class McpTools {
         const r = await this.ingest.apply(args.recordId);
         return { recordId: r.id, status: r.status, error: r.error };
       }));
+  }
+
+  private growthWrites(server: McpServer, staff: McpStaff, clientId: string) {
+    const current = async (id: string, version: number, reconcile = false) => {
+      const plan = await this.growth.detail(id, staff);
+      if (!plan.canManage) throw new ForbiddenException('Only the plan creator or admin may change this plan');
+      if (plan.version !== version) throw new ConflictException('Plan changed; read its latest version before continuing');
+      const uncertain = ['exporting', 'export_unknown'].includes(plan.status);
+      if (uncertain !== reconcile) throw new ConflictException(uncertain ? 'Reconcile the previous export before changing or exporting again' : 'Plan has no export outcome to reconcile');
+      return plan;
+    };
+
+    server.registerTool('growth_plan_save', {
+      title: 'Create or revise a Growth campaign draft (needs confirmation)',
+      description: 'Save a typed campaign plan with evidence citations, audience, variants, budget and guardrails. id without version creates an idempotent draft (id is the requestId); supply the latest version to revise a plan you own or an admin manages. Revision resets approval. This never sends messages or activates a workflow.',
+      inputSchema: { id: z.string().uuid(), version: z.number().int().positive().optional(), plan: planSchema, confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'growth_plan_save', args,
+      async () => ({ action: args.version === undefined ? 'create Growth draft' : 'revise Growth draft and reset approval', id: args.id,
+        before: args.version === undefined ? null : await current(args.id, args.version), after: args.plan,
+        note: 'Saved as draft; no messages sent or workflow activated' }),
+      () => args.version === undefined ? this.growth.create(args.id, args.plan as GrowthPlanInput, staff) : this.growth.update(args.id, args.version, args.plan as GrowthPlanInput, staff)));
+
+    server.registerTool('growth_plan_tasks', {
+      title: 'Replace Growth plan tasks (needs confirmation)',
+      description: 'Replace the complete task list of a plan you own or an admin manages, using its latest version. Task edits advance the version but preserve the approved campaign content. Preview includes the complete current plan and replacement tasks.',
+      inputSchema: { id: z.string().uuid(), update: taskSchema, confirmCode: CONFIRM }, annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'growth_plan_tasks', args,
+      async () => ({ action: 'replace Growth tasks', plan: await current(args.id, args.update.version), tasksAfter: args.update.tasks }),
+      () => this.growth.tasks(args.id, args.update.version, args.update.tasks as GrowthTask[], staff)));
+
+    server.registerTool('growth_plan_action', {
+      title: 'Review or export a Growth campaign draft (needs confirmation)',
+      description: 'submit sends a complete draft for review; approve is admin-only; export creates a stopped Josh workflow draft from approved content. reconcile is admin-only and links a verified draft/paused workflow after an uncertain export (workflowId required only for reconcile). Every preview includes the complete saved plan, evidence and current version. Never activates or sends.',
+      inputSchema: {
+        id: z.string().uuid(), version: z.number().int().positive(),
+        action: z.enum(staff.role === 'admin' ? ['submit', 'approve', 'export', 'reconcile'] : ['submit', 'export']),
+        workflowId: z.string().uuid().optional(), confirmCode: CONFIRM,
+      }, annotations: WRITE,
+    }, async (args) => {
+      if (['approve', 'reconcile'].includes(args.action) && staff.role !== 'admin') throw new ForbiddenException('admin only');
+      if ((args.action === 'reconcile') !== !!args.workflowId) throw new BadRequestException('workflowId is required only for reconcile');
+      return this.twoStep(staff, clientId, 'growth_plan_action', args,
+        async () => {
+          const plan = await current(args.id, args.version, args.action === 'reconcile');
+          const expected = { submit: 'draft', approve: 'review', export: 'approved', reconcile: null }[args.action];
+          if (expected && plan.status !== expected) throw new ConflictException(`Plan must be ${expected}`);
+          if (args.action !== 'reconcile') assertReviewable(plan);
+          if (args.action === 'export' && (!plan.approvedBy || !plan.approvedVersion)) throw new ConflictException('Approve this campaign content before exporting');
+          return { action: args.action, plan, workflowId: args.workflowId, readiness: this.growth.readiness(),
+            note: args.action === 'export' ? 'Creates a stopped workflow draft; unknown export outcomes must be reconciled before retrying' : 'No messages sent or workflow activated' };
+        }, () => args.action === 'submit' || args.action === 'approve'
+          ? this.growth.review(args.id, args.version, args.action === 'approve', staff)
+          : args.action === 'export' ? this.growth.export(args.id, args.version, staff)
+            : this.growth.reconcile(args.id, args.version, args.workflowId!, staff));
+    });
+
+    server.registerTool('market_analyse', {
+      title: 'Analyse a market question using MCP and public web evidence (needs confirmation)',
+      description: 'After confirmation, use the same role-scoped read-only MCP context (including shop_traffic) plus public web search to save a cited market analysis with recommendations. Keep prices, costs, social coverage and tracking coverage unknown unless evidenced. This saves a report, never creates a campaign draft, sends messages or activates workflows; use growth_plan_save explicitly after reviewing recommendations.',
+      inputSchema: analysisInput.extend({ requestId: z.string().uuid(), area: analysisInput.shape.area.default('กรุงเทพมหานคร'),
+        days: analysisInput.shape.days.default(30), confirmCode: CONFIRM }), annotations: { ...WRITE, openWorldHint: true },
+    }, async (args) => this.twoStep(staff, clientId, 'market_analyse', args,
+      async () => ({ action: 'save market analysis with recommendations', requestId: args.requestId, question: args.question, area: args.area, days: args.days,
+        readiness: this.analyst.readiness(), note: 'Reads through your read-only MCP tools and public web; no campaign draft or live send' }),
+      () => this.analyst.generate(args.requestId, { question: args.question, area: args.area, days: args.days }, staff, () => this.openReadClient(staff))));
   }
 
   private ops(server: McpServer) {

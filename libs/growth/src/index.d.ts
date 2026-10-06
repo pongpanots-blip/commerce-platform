@@ -14,6 +14,7 @@ export interface GrowthPlanInput {
   holdoutPercent: number; cooldownDays: number; conversionWindowDays: number;
   variants: GrowthContent[]; selectedVariant: number;
   researchTopicId: string | null; researchRunId: string | null;
+  analysisId?: string | null;
 }
 export interface GrowthTask { id: string; title: string; owner: string; dueAt: string | null; done: boolean }
 export interface GrowthPlanPage { items: GrowthPlan[]; totalCount: number; page: number; limit: number }
@@ -54,3 +55,12 @@ export interface GrowthTimeline {
   limitations: string[];
 }
 export interface GrowthAiDraft { variants: GrowthContent[]; rationale: string; evidenceIds: string[] }
+export interface MarketAnalysisInput { question: string; area: string; days: number }
+export interface MarketAnalysisReport extends MarketAnalysisInput {
+  id: string; createdBy: string; createdAt: string; summary: string;
+  findings: { title: string; detail: string; kind: 'fact' | 'hypothesis'; evidenceIds: string[] }[];
+  recommendations: { id: string; title: string; why: string; nextStep: string; successMetric: string; productSkus: string[]; evidenceIds: string[] }[];
+  evidence: GrowthEvidence[];
+  trace: { tool: string; status: 'read' | 'unavailable'; detail: string }[];
+  limitations: string[];
+}

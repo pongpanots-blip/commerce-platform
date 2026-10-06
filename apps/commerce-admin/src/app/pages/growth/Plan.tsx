@@ -7,8 +7,8 @@ import { useAsync } from '../../hooks';
 import { Evidence, LoadState, PlanStatus, localDateTime, templateLabels } from './shared';
 
 function inputOf(plan: GrowthPlan): GrowthPlanInput {
-  const { title, goal, template, owner, segmentIds, excludeSegmentIds, productSkus, notifyTemplateKey, scheduleAt, budgetThb, minimumMarginPercent, holdoutPercent, cooldownDays, conversionWindowDays, variants, selectedVariant, researchTopicId, researchRunId } = plan;
-  return { title, goal, template, owner, segmentIds, excludeSegmentIds, productSkus, notifyTemplateKey, scheduleAt, budgetThb, minimumMarginPercent, holdoutPercent, cooldownDays, conversionWindowDays, variants, selectedVariant, researchTopicId, researchRunId };
+  const { title, goal, template, owner, segmentIds, excludeSegmentIds, productSkus, notifyTemplateKey, scheduleAt, budgetThb, minimumMarginPercent, holdoutPercent, cooldownDays, conversionWindowDays, variants, selectedVariant, researchTopicId, researchRunId, analysisId } = plan;
+  return { title, goal, template, owner, segmentIds, excludeSegmentIds, productSkus, notifyTemplateKey, scheduleAt, budgetThb, minimumMarginPercent, holdoutPercent, cooldownDays, conversionWindowDays, variants, selectedVariant, researchTopicId, researchRunId, analysisId };
 }
 const commaList = (value: string) => [...new Set(value.split(',').map((item) => item.trim()).filter(Boolean))];
 function CommaInput({ value, onChange, placeholder, uuid = false }: { value: string[]; onChange: (value: string[]) => void; placeholder?: string; uuid?: boolean }) {

@@ -17,6 +17,7 @@ export const planSchema = z.object({
   cooldownDays: z.number().int().min(1).max(365), conversionWindowDays: z.number().int().min(1).max(90),
   variants: z.array(contentSchema).min(1).max(2), selectedVariant: z.number().int().min(0).max(1),
   researchTopicId: z.string().uuid().nullable(), researchRunId: z.string().uuid().nullable(),
+  analysisId: z.string().uuid().nullable().optional(),
 }).strict().superRefine((p, ctx) => {
   if (p.selectedVariant >= p.variants.length) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'selectedVariant is missing' });
   if (!!p.researchTopicId !== !!p.researchRunId) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'research topic and run must be supplied together' });

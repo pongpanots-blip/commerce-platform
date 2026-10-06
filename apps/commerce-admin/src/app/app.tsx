@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
+import { AppShell, Button, IconButton, Loading, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
 import { AdminStats, api, reportsApi, session, staffApi } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
@@ -55,6 +55,8 @@ import { GrowthPlans } from './pages/growth/Plans';
 import { GrowthPlanPage } from './pages/growth/Plan';
 import { GrowthResults, GrowthTimeline } from './pages/growth/Results';
 
+const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
+
 const NAV: NavGroup[] = [
   { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
   {
@@ -95,6 +97,7 @@ const NAV: NavGroup[] = [
   {
     group: 'Marketing', icon: 'campaign',
     links: [
+      { to: '/marketing/analyst', label: 'ถาม Marketing Analyst', end: false },
       { to: '/marketing/growth', label: 'Growth Workspace', end: true },
       { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน Growth', end: false },
       { to: '/marketing/research', label: 'Research', end: false },
@@ -336,6 +339,7 @@ export function App() {
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
+            <Route path="/marketing/analyst" element={<Suspense fallback={<Loading />}><MarketingAnalyst /></Suspense>} />
             <Route path="/marketing/growth" element={<GrowthWorkspace />} />
             <Route path="/marketing/growth/plans" element={<GrowthPlans />} />
             <Route path="/marketing/growth/plans/new" element={<GrowthPlanPage />} />

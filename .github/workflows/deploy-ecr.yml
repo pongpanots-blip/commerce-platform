@@ -127,6 +127,16 @@ jobs:
     needs: [resolve, build-push]
     runs-on: [self-hosted, linux, commerce-platform]
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: docker
+      # Keep the EC2's compose/nginx/scripts in step with the repo (certbot/ certs live only on the box).
+      - name: Sync docker/ files to the deploy dir
+        run: |
+          D="${{ secrets.EC2_DEPLOY_DIR }}/docker"
+          mkdir -p "$D/nginx"
+          cp docker/docker-compose.prod.yml docker/ec2-deploy.sh docker/ssl-init.sh docker/github-runner-setup.sh "$D/"
+          cp docker/nginx/commerce-proxy.conf "$D/nginx/"
       - name: Pull + restart on this EC2
         env:
           TAG: ${{ needs.resolve.outputs.tag }}
@@ -141,6 +151,10 @@ jobs:
           COMMERCE_CORS_ORIGINS: ${{ secrets.COMMERCE_CORS_ORIGINS }}
           JOSH_DATABASE_URL: ${{ secrets.JOSH_DATABASE_URL }}
           JOSH_MONGO_URL: ${{ secrets.JOSH_MONGO_URL }}
+          JOSH_MONGO_DB: ${{ secrets.JOSH_MONGO_DB }}
+          JOSH_API_URL: ${{ secrets.JOSH_API_URL }}
+          JOSH_EVENTS_SECRET: ${{ secrets.JOSH_EVENTS_SECRET }}
+          JOSH_JWT_SECRET: ${{ secrets.JOSH_JWT_SECRET }}
         run: |
           cd "${{ secrets.EC2_DEPLOY_DIR }}/docker"
           SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')

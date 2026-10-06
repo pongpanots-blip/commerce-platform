@@ -31,6 +31,16 @@ for svc in "${SERVICES[@]}"; do
   export "$TAG_VAR=$TAG"
 done
 
-docker compose -f docker-compose.prod.yml pull "${SERVICES[@]}"
-docker compose -f docker-compose.prod.yml up -d "${SERVICES[@]}"
+COMPOSE=(docker compose -f docker-compose.prod.yml)
+"${COMPOSE[@]}" pull "${SERVICES[@]}"
+# Schema first: the app never runs migrations itself (migrationsRun is off). A failed migration
+# stops the deploy before the new platform container replaces the running one.
+if [[ " ${SERVICES[*]} " == *" platform "* ]]; then
+  "${COMPOSE[@]}" run --rm --no-deps platform node node_modules/typeorm/cli.js migration:run -d src/data-source.js
+fi
+"${COMPOSE[@]}" up -d "${SERVICES[@]}"
+# Public edge, once the first cert exists (./ssl-init.sh issues it).
+if [[ -f certbot/conf/live/commerce.joshapp.io/fullchain.pem ]]; then
+  "${COMPOSE[@]}" up -d nginx certbot
+fi
 docker image prune -f

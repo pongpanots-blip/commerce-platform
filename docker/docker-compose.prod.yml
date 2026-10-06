@@ -1,9 +1,9 @@
 # Commerce Platform prod stack — pulled from ECR, run directly on EC2 (no Fargate/ECS).
 # Same pattern as the josh monorepo's docker/docker-compose.yml + ec2-deploy.sh.
 #
-# Networking: this compose does NOT include nginx/TLS — domain routing (commerce.joshapp.io,
-# commerce-admin.joshapp.io, ...) is an infra decision to make when DNS/certs are set up.
-# For now each service publishes its port directly on the host.
+# Networking: nginx (80/443) is the public edge for commerce.joshapp.io → admin + /api, /mcp → platform.
+# platform:3100 stays published for josh's servers (SG: 3100 from josh only); admin/portal ports are
+# for SSM port-forwarding. First TLS cert: ./ssl-init.sh.
 
 services:
   platform:
@@ -31,6 +31,14 @@ services:
       # josh's databases, READ-ONLY users (scripts/josh-db-readonly-users.sh). Unset = josh pages show "not configured".
       JOSH_DATABASE_URL: ${JOSH_DATABASE_URL:-}
       JOSH_MONGO_URL: ${JOSH_MONGO_URL:-}
+      JOSH_MONGO_DB: ${JOSH_MONGO_DB:-}
+      # Writes back to josh (offload results, actions); HMAC secret must equal josh's. Unset = off.
+      JOSH_API_URL: ${JOSH_API_URL:-}
+      JOSH_EVENTS_SECRET: ${JOSH_EVENTS_SECRET:-}
+      JOSH_JWT_SECRET: ${JOSH_JWT_SECRET:-}
+      # MCP server for AI clients; Cloudflare → nginx → app = 2 proxy hops for rate-limit client IPs.
+      MCP_PUBLIC_URL: ${MCP_PUBLIC_URL:-https://commerce.joshapp.io}
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-2}
 
     depends_on:
       - redis
@@ -58,6 +66,31 @@ services:
       - '4404:80'
     depends_on:
       - platform
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/commerce-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    # Reload every 6h so renewed certs are served.
+    command: ['/bin/sh', '-c', 'while :; do sleep 6h & wait $$!; nginx -s reload; done & exec nginx -g "daemon off;"']
+    depends_on:
+      - platform
+      - admin
+
+  certbot:
+    image: certbot/certbot:latest
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    # Renews only when <30 days left.
+    entrypoint: ['/bin/sh', '-c', 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $$!; done']
 
 volumes:
   redis_data:

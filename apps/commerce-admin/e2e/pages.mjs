@@ -46,6 +46,28 @@ const DETAILS = [
 const LEGACY = '.panel, .btn, .badge, .page-head, .stat, .hint, .err, .empty, .stat-grid, pre.payload';
 
 const failures = [];
+
+/** Text that sits flush against its panel's left/top border (a <Panel> with content but no padding). */
+const crampedPanels = (page) => page.evaluate(() => {
+  const MIN = 8;
+  const out = [];
+  for (const panel of document.querySelectorAll('main [data-panel]')) {
+    const box = panel.getBoundingClientRect();
+    if (!box.width || !box.height) continue;
+    const walker = document.createTreeWalker(panel, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.textContent.trim() ? 1 : 2) });
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      const r = range.getBoundingClientRect();
+      if (!r.width) continue;
+      if (r.left - box.left < MIN || r.top - box.top < MIN) {
+        out.push(`"${n.textContent.trim().slice(0, 30)}" ${Math.round(r.left - box.left)}px/${Math.round(r.top - box.top)}px from the panel edge`);
+        break;
+      }
+    }
+  }
+  return out;
+});
 const fail = (where, what) => failures.push(`${where}: ${what}`);
 
 async function check(page, app, route, label) {
@@ -68,6 +90,7 @@ async function check(page, app, route, label) {
   if (legacy) fail(name, `${legacy} element(s) with legacy CSS classes`);
   for (const e of consoleErrors) fail(name, `console: ${e.slice(0, 160)}`);
   for (const e of serverErrors) fail(name, `server: ${e}`);
+  for (const e of await crampedPanels(page)) fail(name, `no padding: ${e}`);
   await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: true });
   page.off('console', onConsole);
   page.off('response', onResponse);
@@ -92,13 +115,19 @@ try {
     const name = `josh${r.replace(/[/:]/g, '-')}`;
     const errors = [];
     const onErr = (e) => errors.push(String(e));
+    // Any API error fails: 503 = commerce cannot reach josh (JOSH_API_URL / JOSH_EVENTS_SECRET), 403/404 = josh
+    // refused the relayed call (staff email not a josh staff user, or josh lacks the endpoint) — the page would show no data.
+    const onRes = (r) => { if (r.status() >= 400 && r.url().includes('/api/')) errors.push(`api ${r.status()} ${r.url()}`); };
     page.on('pageerror', onErr);
+    page.on('response', onRes);
     await page.goto(ADMIN + r, { waitUntil: 'networkidle' }).catch((e) => errors.push(e.message));
     await page.waitForTimeout(500);
     const text = (await page.locator('main').innerText().catch(() => '')).trim();
     if (!text) fail(name, 'renders nothing');
     for (const e of errors) fail(name, `page error: ${e.slice(0, 160)}`);
+    for (const e of await crampedPanels(page)) fail(name, `no padding: ${e}`);
     page.off('pageerror', onErr);
+    page.off('response', onRes);
     await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: true });
     console.log(`${failures.some((f) => f.startsWith(name + ':')) ? 'FAIL' : 'PASS'}  ${name}`);
   }

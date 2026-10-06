@@ -25,12 +25,11 @@ const EDIT_FIELDS: { key: string; label: string; get: (p: JoshProductDetailType)
   { key: 'low_stock_threshold', label: 'เตือนใกล้หมดที่', get: (p) => p.low_stock_threshold, kind: 'number' },
 ];
 
-function ProductEditor({ p, categories, onSaved }: { p: JoshProductDetailType; categories: { id: string; category_name_th: string | null; category_path: string | null }[]; onSaved: (msg: string) => void }) {
+function ProductEditor({ p, categories, onSaved, onClose }: { p: JoshProductDetailType; categories: { id: string; category_name_th: string | null; category_path: string | null }[]; onSaved: (msg: string) => void; onClose: () => void }) {
   const initial = (): Record<string, string> => ({
     ...Object.fromEntries(EDIT_FIELDS.map((f) => [f.key, f.get(p) == null ? '' : String(f.get(p))])),
     product_status: p.product_status ?? '', category_id: p.category_id ?? '',
   });
-  const [open, setOpen] = useState(false);
   const [v, setV] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
@@ -49,12 +48,10 @@ function ProductEditor({ p, categories, onSaved }: { p: JoshProductDetailType; c
     }
     if (!window.confirm(`บันทึก ${changed.length} ช่องของ ${p.product_inventory_sku} ไปที่ josh?\n\n${changed.join(', ')}\n\n(josh บันทึกในชื่อบัญชี josh ที่อีเมลตรงกับคุณ · หน้าร้านเห็นทันที)`)) return;
     setBusy(true); setErr('');
-    try { await joshActionsApi.updateProduct(p.product_inventory_id, fields); setOpen(false); onSaved(`บันทึก ${p.product_inventory_sku} แล้ว (${changed.join(', ')})`); }
+    try { await joshActionsApi.updateProduct(p.product_inventory_id, fields); onClose(); onSaved(`บันทึก ${p.product_inventory_sku} แล้ว (${changed.join(', ')})`); }
     catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(false); }
   }
-
-  if (!open) return <Button size="sm" variant="ghost" onClick={() => { setV(initial()); setOpen(true); }}>แก้ข้อมูลสินค้า</Button>;
 
   return (
     <FormPanel
@@ -64,7 +61,7 @@ function ProductEditor({ p, categories, onSaved }: { p: JoshProductDetailType; c
       error={err}
       busy={busy}
       onSubmit={save}
-      onCancel={() => setOpen(false)}
+      onCancel={onClose}
       submitLabel={`บันทึก${changed.length ? ` (${changed.length})` : ''}`}
       description="ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน"
     >
@@ -104,6 +101,7 @@ export function JoshProductDetail() {
   const { id = '' } = useParams();
   const location = useLocation();
   const [msg, setMsg] = useState('');
+  const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const detail = useAsync(() => joshProductApi.detail(id), [id]);
   const categories = useAsync(() => joshProductApi.categories(), []);
@@ -130,6 +128,7 @@ export function JoshProductDetail() {
         title={p ? p.product_inventory_sku : id}
         badge={p && <Chip tone={p.product_status === 'active' ? 'ok' : 'muted'}>{STATUS[p.product_status] ?? p.product_status}</Chip>}
         subtitle={p ? [p.name_th || p.name_en, p.brand_name, p.pack_size].filter(Boolean).join(' · ') : undefined}
+        actions={p && !editing && <Button icon="edit" onClick={() => setEditing(true)}>แก้ข้อมูลสินค้า</Button>}
       />
 
       <ErrorText error={detail.error} />
@@ -149,9 +148,7 @@ export function JoshProductDetail() {
             </div>
           </Panel>
 
-          <Panel>
-            <ProductEditor key={p.updated_at} p={p} categories={categories.data ?? []} onSaved={(m) => { setMsg(m); detail.reload(); }} />
-          </Panel>
+          {editing && <ProductEditor key={p.updated_at} p={p} categories={categories.data ?? []} onClose={() => setEditing(false)} onSaved={(m) => { setMsg(m); detail.reload(); }} />}
 
           {p.pendingChanges && p.pendingChanges.length > 0 && (
             <Panel>

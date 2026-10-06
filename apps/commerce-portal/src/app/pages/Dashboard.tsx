@@ -37,7 +37,7 @@ export function Dashboard() {
 
       {/* Getting started checklist */}
       {checklist && (
-        <Panel className="mb-6">
+        <Panel className="mb-6 p-5">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-outline-variant/20">
             <div className="flex items-center gap-2.5">
               <Icon name="task_alt" className="text-primary" />
@@ -115,7 +115,7 @@ export function Dashboard() {
       {/* Summary cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* API Keys card */}
-        <Panel>
+        <Panel className="p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
@@ -153,7 +153,7 @@ export function Dashboard() {
         </Panel>
 
         {/* Webhooks card */}
-        <Panel>
+        <Panel className="p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
@@ -192,7 +192,7 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Recent deliveries table */}
         <div className="lg:col-span-2">
-          <Panel>
+          <Panel className="overflow-hidden">
             <PanelHead
               title="Recent webhook deliveries"
               sub={`(Last ${deliveriesList.length} events)`}
@@ -248,7 +248,7 @@ export function Dashboard() {
         {/* Right sidebar: Docs card + Rate limit info */}
         <div className="space-y-6">
           {/* Docs card */}
-          <Panel>
+          <Panel className="p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Icon name="menu_book" className="text-primary" />

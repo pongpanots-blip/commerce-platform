@@ -49,7 +49,7 @@ export function JoshOrderDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Main content */}
             <div className="lg:col-span-2 space-y-4">
-              <Panel>
+              <Panel className="p-4">
                 <DetailSection title="ข้อมูลออเดอร์" icon="receipt_long">
                   <KeyValueGrid
                     items={[
@@ -66,7 +66,7 @@ export function JoshOrderDetail() {
                 </DetailSection>
               </Panel>
 
-              <Panel>
+              <Panel className="p-4">
                 <DetailSection title={`สินค้า (${d.items?.length ?? 0})`} icon="inventory_2">
                   {d.items && d.items.length ? (
                     <div className="rounded-lg border border-secondary-container overflow-hidden bg-surface-container-lowest">
@@ -102,7 +102,7 @@ export function JoshOrderDetail() {
 
             {/* Sidebar */}
             <div className="space-y-4">
-              <Panel>
+              <Panel className="p-4">
                 <DetailSection title="Jagota (ERP)" icon="sync_alt">
                   {d.jagotaSync && d.jagotaSync.length ? (
                     <ol className="space-y-1.5 text-xs">
@@ -121,7 +121,7 @@ export function JoshOrderDetail() {
                 </DetailSection>
               </Panel>
 
-              <Panel>
+              <Panel className="p-4">
                 <DetailSection title="จัดส่ง / ชำระเงิน" icon="local_shipping">
                   <KeyValueGrid
                     cols={2}
@@ -139,7 +139,7 @@ export function JoshOrderDetail() {
                 </DetailSection>
               </Panel>
 
-              <Panel>
+              <Panel className="p-4">
                 <DetailSection title="สถานะชำระเงิน" icon="payments">
                   <KeyValueGrid
                     cols={2}

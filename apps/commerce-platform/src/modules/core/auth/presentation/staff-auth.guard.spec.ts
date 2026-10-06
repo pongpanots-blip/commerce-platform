@@ -25,7 +25,11 @@ function ctx(opts: { token?: string; meta?: Record<string, unknown>; type?: stri
 const sign = (role: string) => jwt.signAsync({ sub: 'u-1', email: 'a@b.c', role });
 
 describe('StaffAuthGuard (global default-deny)', () => {
-  const guard = new StaffAuthGuard(jwt, new Reflector());
+  // the account row as it is now; tokens only say who
+  let account: { id: string; email: string; role: string; status: string } | null;
+  const users = { findOne: jest.fn(async () => account) };
+  const guard = new StaffAuthGuard(jwt, new Reflector(), users as never);
+  beforeEach(() => { account = { id: 'u-1', email: 'a@b.c', role: 'admin', status: 'active' }; });
 
   it('lets @Public() routes through without a token', async () => {
     await expect(guard.canActivate(ctx({ meta: { [IS_PUBLIC_KEY]: true } }).context)).resolves.toBe(true);
@@ -51,7 +55,23 @@ describe('StaffAuthGuard (global default-deny)', () => {
   });
 
   it('marketing only where @StaffRoles("marketing") allows it', async () => {
+    account!.role = 'marketing';
     const token = await sign('marketing');
+    await expect(guard.canActivate(ctx({ token }).context)).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(guard.canActivate(ctx({ token, meta: { [STAFF_ROLES_KEY]: ['marketing'] } }).context)).resolves.toBe(true);
+  });
+
+  it('a disabled or removed account is out at once, whatever its token says', async () => {
+    const token = await sign('admin');
+    account!.status = 'disabled';
+    await expect(guard.canActivate(ctx({ token }).context)).rejects.toBeInstanceOf(UnauthorizedException);
+    account = null;
+    await expect(guard.canActivate(ctx({ token }).context)).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('the current role decides, not the one in the token', async () => {
+    const token = await sign('admin');
+    account!.role = 'marketing';
     await expect(guard.canActivate(ctx({ token }).context)).rejects.toBeInstanceOf(ForbiddenException);
     await expect(guard.canActivate(ctx({ token, meta: { [STAFF_ROLES_KEY]: ['marketing'] } }).context)).resolves.toBe(true);
   });

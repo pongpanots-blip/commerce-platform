@@ -25,7 +25,7 @@ export const session = {
     try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
   },
   /** Who is signed in, for display only — read from the JWT payload, not verified (the API verifies). */
-  claims(): { email?: string; role?: string } | null {
+  claims(): { sub?: string; email?: string; role?: string } | null {
     const token = this.get();
     try {
       const part = token?.split('.')[1];
@@ -268,6 +268,17 @@ export const ordersApi = {
   pay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/pay`, {}),
   failPay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/fail`, {}),
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
+};
+
+// commerce-admin staff accounts (admin / marketing) — commerce's own logins, not josh's.
+export type StaffRole = 'admin' | 'marketing';
+export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: 'active' | 'disabled'; createdAt: string }
+export const staffApi = {
+  list: () => api.get<StaffAccount[]>('/admin/staff'),
+  create: (data: { email: string; name?: string; role: StaffRole }) => api.post<{ account: StaffAccount; temporaryPassword: string }>('/admin/staff', data),
+  update: (id: string, data: Partial<Pick<StaffAccount, 'name' | 'role' | 'status'>>) => api.patch<StaffAccount>(`/admin/staff/${id}`, data),
+  resetPassword: (id: string) => api.post<{ temporaryPassword: string }>(`/admin/staff/${id}/reset-password`, {}),
+  changeOwnPassword: (currentPassword: string, newPassword: string) => api.post<{ changed: boolean }>('/admin/auth/password', { currentPassword, newPassword }),
 };
 
 export const customersApi = {

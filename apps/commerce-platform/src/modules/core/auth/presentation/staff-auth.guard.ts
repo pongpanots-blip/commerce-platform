@@ -1,7 +1,10 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { IS_PUBLIC_KEY, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { IS_PUBLIC_KEY, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { User } from '../../user/infrastructure/user.entity';
 
 export interface StaffPrincipal {
   userId: string;
@@ -14,10 +17,17 @@ export interface StaffPrincipal {
  * staff bearer token unless marked @Public(). A new controller that forgets
  * auth is therefore closed, not open. Portal developer tokens share the JWT
  * secret but carry role 'developer', so they never pass here.
+ *
+ * The token only says who; the account row decides the rest on every request — a disabled
+ * account or a changed role takes effect at once, not when the 12 h token runs out.
  */
 @Injectable()
 export class StaffAuthGuard implements CanActivate {
-  constructor(private readonly jwt: JwtService, private readonly reflector: Reflector) {}
+  constructor(
+    private readonly jwt: JwtService,
+    private readonly reflector: Reflector,
+    @InjectRepository(User) private readonly users: Repository<User>,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const targets = [context.getHandler(), context.getClass()];
@@ -42,11 +52,17 @@ export class StaffAuthGuard implements CanActivate {
       throw new UnauthorizedException('invalid or expired token');
     }
 
-    const allowed = new Set<string>(['admin', ...(this.reflector.getAllAndOverride<StaffRole[]>(STAFF_ROLES_KEY, targets) ?? [])]);
-    if (!payload.role || !allowed.has(payload.role)) {
+    if (!payload.role || !STAFF_ROLES.includes(payload.role as StaffRole)) {
       throw new ForbiddenException('this account cannot use this part of commerce-admin');
     }
-    request.staff = { userId: payload.sub, email: payload.email, role: payload.role } as StaffPrincipal;
+    const account = payload.sub ? await this.users.findOne({ where: { id: payload.sub }, select: { id: true, email: true, role: true, status: true } }) : null;
+    if (!account || account.status !== 'active') throw new UnauthorizedException('account disabled or removed');
+
+    const allowed = new Set<string>(['admin', ...(this.reflector.getAllAndOverride<StaffRole[]>(STAFF_ROLES_KEY, targets) ?? [])]);
+    if (!allowed.has(account.role)) {
+      throw new ForbiddenException('this account cannot use this part of commerce-admin');
+    }
+    request.staff = { userId: account.id, email: account.email, role: account.role } as StaffPrincipal;
     return true;
   }
 }

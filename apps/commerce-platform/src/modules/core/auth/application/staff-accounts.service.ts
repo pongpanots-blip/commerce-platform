@@ -1,0 +1,91 @@
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { randomBytes } from 'crypto';
+import * as bcrypt from 'bcrypt';
+import { In, Repository } from 'typeorm';
+import { AuditLog } from '../../audit/infrastructure/audit-log.entity';
+import { User } from '../../user/infrastructure/user.entity';
+import { STAFF_ROLES, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+
+export type StaffStatus = 'active' | 'disabled';
+export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: StaffStatus; createdAt: Date }
+export interface StaffActor { userId: string; email: string }
+
+export const MIN_PASSWORD = 10;
+const temporaryPassword = () => randomBytes(12).toString('base64url');
+const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.name, role: u.role as StaffRole, status: u.status as StaffStatus, createdAt: u.createdAt });
+
+/**
+ * commerce-admin staff accounts (admin / marketing) — commerce's own, nothing shared with josh.
+ * New accounts and resets get a random temporary password, returned once and never stored or logged.
+ * An admin cannot lock themselves out, and the last active admin cannot be removed or demoted.
+ */
+@Injectable()
+export class StaffAccountsService {
+  constructor(
+    @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(AuditLog) private readonly audit: Repository<AuditLog>,
+  ) {}
+
+  async list(): Promise<StaffAccount[]> {
+    const rows = await this.users.find({ where: { role: In([...STAFF_ROLES]) }, order: { createdAt: 'ASC' } });
+    return rows.map(view);
+  }
+
+  async create(input: { email: string; name?: string | null; role: StaffRole }, actor: StaffActor) {
+    const email = input.email.trim().toLowerCase();
+    if (await this.users.findOne({ where: { email }, withDeleted: true })) throw new ConflictException(`${email} already has an account`);
+    const password = temporaryPassword();
+    const saved = await this.users.save(this.users.create({
+      email, name: input.name?.trim() || null, role: input.role, status: 'active', passwordHash: await bcrypt.hash(password, 10),
+    }));
+    await this.log(actor, 'staff.create', saved.id, null, { email, role: input.role });
+    return { account: view(saved), temporaryPassword: password };
+  }
+
+  async update(id: string, changes: { name?: string | null; role?: StaffRole; status?: StaffStatus }, actor: StaffActor) {
+    const user = await this.staff(id);
+    const before = view(user);
+    const losesAdmin = user.role === 'admin' && user.status === 'active'
+      && ((changes.role && changes.role !== 'admin') || changes.status === 'disabled');
+    if (losesAdmin && id === actor.userId) throw new BadRequestException('you cannot remove your own admin access');
+    if (losesAdmin && (await this.users.count({ where: { role: 'admin', status: 'active' } })) <= 1) {
+      throw new BadRequestException('this is the last active admin');
+    }
+    if (changes.name !== undefined) user.name = changes.name?.trim() || null;
+    if (changes.role) user.role = changes.role;
+    if (changes.status) user.status = changes.status;
+    const saved = await this.users.save(user);
+    await this.log(actor, 'staff.update', id, before, view(saved));
+    return view(saved);
+  }
+
+  async resetPassword(id: string, actor: StaffActor) {
+    const user = await this.staff(id);
+    const password = temporaryPassword();
+    user.passwordHash = await bcrypt.hash(password, 10);
+    await this.users.save(user);
+    await this.log(actor, 'staff.reset_password', id, null, { email: user.email });
+    return { temporaryPassword: password };
+  }
+
+  async changeOwnPassword(actor: StaffActor, current: string, next: string) {
+    if (next.length < MIN_PASSWORD) throw new BadRequestException(`new password: at least ${MIN_PASSWORD} characters`);
+    const user = await this.staff(actor.userId);
+    if (!user.passwordHash || !(await bcrypt.compare(current, user.passwordHash))) throw new UnauthorizedException('current password is wrong');
+    user.passwordHash = await bcrypt.hash(next, 10);
+    await this.users.save(user);
+    await this.log(actor, 'staff.change_own_password', user.id, null, null);
+    return { changed: true };
+  }
+
+  private async staff(id: string): Promise<User> {
+    const user = await this.users.findOne({ where: { id } });
+    if (!user || !STAFF_ROLES.includes(user.role as StaffRole)) throw new NotFoundException('staff account not found');
+    return user;
+  }
+
+  private log(actor: StaffActor, action: string, entityId: string, before: object | null, after: object | null) {
+    return this.audit.insert({ actorId: actor.userId, action, entityType: 'staff_account', entityId, before, after, context: { email: actor.email } });
+  }
+}

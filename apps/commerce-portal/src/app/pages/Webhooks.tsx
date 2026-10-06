@@ -143,14 +143,12 @@ export function Webhooks() {
         ) : (
           <Table>
             <THead>
-              <TR>
                 <TH>Name</TH>
                 <TH>Target URL</TH>
                 <TH>Events</TH>
                 <TH>Status</TH>
                 <TH className="text-right">Actions</TH>
-              </TR>
-            </THead>
+              </THead>
             <TBody>
               {data.map((w) => (
                 <TR key={w.id}>

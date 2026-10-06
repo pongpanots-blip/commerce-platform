@@ -216,14 +216,12 @@ export function Dashboard() {
             ) : (
               <Table>
                 <THead>
-                  <TR>
                     <TH>Event</TH>
                     <TH>Status</TH>
                     <TH className="text-right">Attempts</TH>
                     <TH className="text-right">Time</TH>
                     <TH className="text-right">Actions</TH>
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {deliveriesList.map((d) => (
                     <TR key={d.id}>

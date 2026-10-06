@@ -51,12 +51,10 @@ export function Docs() {
         <PanelHead title="Storefront Endpoints" />
         <Table>
           <THead>
-            <TR>
               <TH>Method</TH>
               <TH>Path</TH>
               <TH>Description</TH>
-            </TR>
-          </THead>
+            </THead>
           <TBody>
             {ENDPOINTS.map((e) => (
               <TR key={`${e.method} ${e.path}`}>

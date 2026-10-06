@@ -133,7 +133,6 @@ export function JoshProducts() {
             {list.data.items.length ? (
               <Table>
                 <THead>
-                  <TR>
                     <TH></TH>
                     <TH></TH>
                     <TH>SKU</TH>
@@ -143,8 +142,7 @@ export function JoshProducts() {
                     <TH>สต็อก</TH>
                     <TH>สถานะ</TH>
                     <TH />
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {list.data.items.map((p) => (
                     <Fragment key={p.product_inventory_id}>
@@ -219,12 +217,10 @@ export function JoshProducts() {
                                     </div>
                                     <Table>
                                       <THead>
-                                        <TR>
                                           <TH>ฟิลด์ ERP</TH>
                                           <TH>ตอนนี้</TH>
                                           <TH>ERP ส่งมา</TH>
-                                        </TR>
-                                      </THead>
+                                        </THead>
                                       <TBody>
                                         {detail.data.pendingChanges.map((c) => (
                                           <TR key={c.field}>

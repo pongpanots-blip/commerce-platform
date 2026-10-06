@@ -107,11 +107,9 @@ export function JoshBackoffice() {
             {d.items.length ? (
               <Table>
                 <THead>
-                  <TR>
                     {ACTION_VIEWS.has(view) && <TH />}
                     {d.columns.map((c) => <TH key={c.key}>{c.label}</TH>)}
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {d.items.map((r, i) => (
                     <TR key={i}>

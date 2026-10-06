@@ -128,7 +128,6 @@ export function ApiKeys() {
         ) : (
           <Table>
             <THead>
-              <TR>
                 <TH>Name</TH>
                 <TH>Key prefix</TH>
                 <TH>Scopes</TH>
@@ -136,8 +135,7 @@ export function ApiKeys() {
                 <TH>Last used</TH>
                 <TH>Status</TH>
                 <TH className="text-right">Actions</TH>
-              </TR>
-            </THead>
+              </THead>
             <TBody>
               {data.map((k) => (
                 <TR key={k.id} muted={!k.active}>

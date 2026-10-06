@@ -1,7 +1,8 @@
 import { FormEvent, Fragment, ReactNode, useState } from 'react';
 import {
-  Button, Chip, Empty, ErrorText, Field, FormPanel, Icon, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager,
-  SearchInput, Select, SectionTitle, Span, StatGrid, StatTile, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
+  Button, Chip, DetailSection, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FilterChip, FormPanel, Hint, Icon, Input, KeyValueGrid, Loading,
+  Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Segmented, Select, SectionTitle, Span, Stack2, StatGrid, StatTile, StatusChip, StatusDot,
+  TBody, TD, TH, THead, TR, Table, TitleBadge, fmt,
 } from '@cp/ui';
 import { joshActionsApi, JoshRow, joshCustomerApi, joshOrderApi, joshPriceApi } from '../../lib/api';
 import { useAsync } from '../hooks';
@@ -17,204 +18,255 @@ function SyncChip({ s }: { s: string | null }) {
   return <Chip tone={tone as any}>{label}</Chip>;
 }
 
-/** josh orders, read-only: status, payment, and whether each reached Jagota. Orders are still created, paid and sent by josh. */
+/** josh orders, read-only: status, payment, and whether each reached Jagota. Orders are still created, paid and sent by josh.
+ *  Stitch screen: docs/design/stitch/admin-list-table.html */
+const SYNC_TILES: { key: string; label: string; field: string; tone: 'danger' | 'warn' | 'ok' }[] = [
+  { key: 'failed', label: 'ส่ง Jagota ไม่สำเร็จ', field: 'sync_failed', tone: 'danger' },
+  { key: 'not_sent', label: 'จ่ายแล้วแต่ยังไม่ส่ง Jagota', field: 'sync_not_sent', tone: 'warn' },
+  { key: 'pending', label: 'รอส่ง Jagota', field: 'sync_pending', tone: 'warn' },
+  { key: 'sent', label: 'ส่ง Jagota แล้ว', field: 'sync_sent', tone: 'ok' },
+  // 'payment_missing' filters by payment, not by Jagota state.
+  { key: 'payment_missing', label: 'จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ', field: 'settled_without_payment', tone: 'warn' },
+];
+const PAYMENT_TONE = (p: string | null | undefined) => (!p ? 'muted' : /success|paid|complete/i.test(p) ? 'ok' : /fail|cancel|expire/i.test(p) ? 'danger' : /credit/i.test(p) ? 'info' : 'warn');
+const ORDER_TONE: Record<string, 'ok' | 'warn' | 'danger' | 'info' | 'muted'> = { payment_pending: 'warn', paid: 'ok', preparing: 'info', shipped: 'info', delivered: 'ok', cancelled: 'muted', refunded: 'danger' };
+const SYNC_DOT: Record<string, 'ok' | 'warn' | 'danger' | 'muted'> = { sent: 'ok', confirmed: 'ok', reserved: 'ok', skipped: 'muted', pending: 'warn', failed: 'danger' };
+
+function csv(rows: JoshRow[]) {
+  const cols = ['order_number', 'create_date', 'company_name', 'branch_name', 'customer_code', 'total_price', 'status', 'payment_status', 'jagota_sync_status', 'doc_book', 'doc_no'];
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const blob = new Blob(['﻿' + [cols.join(','), ...rows.map((r) => cols.map((c) => esc(r[c])).join(','))].join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `josh-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 export function JoshOrdersPage() {
-  const [draft, setDraft] = useState({ search: '', status: '', from: '', to: '' });
-  const [f, setF] = useState({ ...draft, sync: '' });
+  const empty = { search: '', status: '', from: '', to: '' };
+  const [draft, setDraft] = useState(empty);
+  const [f, setF] = useState({ ...empty, sync: '' });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(LIMIT);
   const [open, setOpen] = useState<string | null>(null);
   const summary = useAsync(() => joshOrderApi.summary({ ...f, sync: undefined }), [f.search, f.status, f.from, f.to]);
-  // The 'payment_missing' tile filters by payment, not by Jagota state.
   const list = useAsync(() => joshOrderApi.list({ ...f, ...(f.sync === 'payment_missing' ? { sync: '', payment: 'missing' } : {}), page, limit: pageSize }), [f, page, pageSize]);
   const detail = useAsync(() => (open ? joshOrderApi.detail(open) : Promise.resolve(null)), [open]);
   const s = summary.data;
   const d = detail.data;
 
+  const apply = (next: Partial<typeof f>) => { setPage(1); setF({ ...f, ...next }); };
+  const chips = [
+    f.sync && { label: `Jagota: ${SYNC_TILES.find((t) => t.key === f.sync)?.label ?? f.sync}`, clear: () => apply({ sync: '' }) },
+    f.status && { label: `สถานะ: ${ORDER_STATUS[f.status] ?? f.status}`, clear: () => { setDraft({ ...draft, status: '' }); apply({ status: '' }); } },
+    f.search && { label: `ค้นหา: ${f.search}`, clear: () => { setDraft({ ...draft, search: '' }); apply({ search: '' }); } },
+    (f.from || f.to) && { label: `ช่วงเวลา: ${f.from || '…'} – ${f.to || '…'}`, clear: () => { setDraft({ ...draft, from: '', to: '' }); apply({ from: '', to: '' }); } },
+  ].filter(Boolean) as { label: string; clear: () => void }[];
+
   return (
     <Page>
       <PageHeader
+        crumbs={['รายงานร้าน (josh)', 'Orders']}
         title="Orders (josh)"
-        subtitle="ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง · ดูอย่างเดียว อ่านจาก replica ของ josh"
-        actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>}
+        badge={<TitleBadge icon="visibility">อ่านอย่างเดียว · ข้อมูลจาก josh</TitleBadge>}
+        subtitle="ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง"
+        actions={
+          <>
+            <Button icon="download" disabled={!list.data?.items.length} onClick={() => list.data && csv(list.data.items)}>Export CSV</Button>
+            <Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>
+          </>
+        }
       />
-      <div className="border-t border-secondary-container" />
 
       <ErrorText error={summary.error || list.error} />
 
       {s && (
-        <div>
-          <SectionTitle note="Click to filter; click again to clear">Status</SectionTitle>
-          <StatGrid cols={3}>
-            <StatTile
-              accent
-              tone={s.sync_failed > 0 ? 'danger' : 'ok'}
-              icon={s.sync_failed > 0 ? 'error' : 'check_circle'}
-              label="ส่ง Jagota ไม่สำเร็จ"
-              value={fmt.num(s.sync_failed)}
-              selected={f.sync === 'failed'}
-              onClick={() => { setPage(1); setF({ ...f, sync: f.sync === 'failed' ? '' : 'failed' }); }}
-            />
-            <StatTile
-              accent
-              tone={s.sync_not_sent > 0 ? 'warn' : 'ok'}
-              icon={s.sync_not_sent > 0 ? 'hourglass_top' : 'check_circle'}
-              label="จ่ายแล้วแต่ยังไม่ส่ง Jagota"
-              value={fmt.num(s.sync_not_sent)}
-              selected={f.sync === 'not_sent'}
-              onClick={() => { setPage(1); setF({ ...f, sync: f.sync === 'not_sent' ? '' : 'not_sent' }); }}
-            />
-            <StatTile
-              tone="warn"
-              icon="hourglass_top"
-              label="รอส่ง Jagota"
-              value={fmt.num(s.sync_pending)}
-              selected={f.sync === 'pending'}
-              onClick={() => { setPage(1); setF({ ...f, sync: f.sync === 'pending' ? '' : 'pending' }); }}
-            />
-            <StatTile
-              tone="ok"
-              icon="check_circle"
-              label="ส่ง Jagota แล้ว"
-              value={fmt.num(s.sync_sent)}
-              selected={f.sync === 'sent'}
-              onClick={() => { setPage(1); setF({ ...f, sync: f.sync === 'sent' ? '' : 'sent' }); }}
-            />
-            <StatTile
-              accent
-              tone={s.settled_without_payment > 0 ? 'warn' : 'ok'}
-              icon={s.settled_without_payment > 0 ? 'warning' : 'check_circle'}
-              label="สถานะจ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ"
-              value={fmt.num(s.settled_without_payment)}
-              selected={f.sync === 'payment_missing'}
-              onClick={() => { setPage(1); setF({ ...f, sync: f.sync === 'payment_missing' ? '' : 'payment_missing' }); }}
-            />
-          </StatGrid>
-          <div className="px-4 py-2 text-xs text-on-surface-variant">
-            ทั้งหมด {fmt.num(s.total)} · รอชำระ {fmt.num(s.awaiting_payment)} · มูลค่าที่ชำระแล้ว {fmt.baht(s.paid_value)} · {s.byStatus.map((b: JoshRow) => `${ORDER_STATUS[b.status] ?? b.status} ${b.n}`).join(' · ')}
-          </div>
-        </div>
+        <StatGrid cols={5}>
+          {SYNC_TILES.map((t) => {
+            const n = Number(s[t.field] ?? 0);
+            return (
+              <StatTile
+                key={t.key}
+                label={t.label}
+                value={fmt.num(n)}
+                tone={n > 0 && t.tone !== 'ok' ? t.tone : undefined}
+                icon={t.tone === 'ok' ? 'task_alt' : n > 0 ? (t.tone === 'danger' ? 'error' : 'hourglass_top') : 'check_circle'}
+                selected={f.sync === t.key}
+                onClick={() => apply({ sync: f.sync === t.key ? '' : t.key })}
+              />
+            );
+          })}
+        </StatGrid>
       )}
 
-      <Panel className="overflow-hidden">
-        <form className="flex flex-wrap items-end gap-3 p-4" onSubmit={(e: FormEvent) => { e.preventDefault(); setPage(1); setF({ ...draft, sync: f.sync }); }}>
-          <Field label="ค้นหา" className="flex-1 min-w-48">
-            <Input value={draft.search} onChange={(e) => setDraft({ ...draft, search: e.target.value })} placeholder="เลข order / รหัสลูกค้า / PO / บริษัท" />
-          </Field>
-          <Field label="สถานะ">
-            <Select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value })}>
-              <option value="">ทั้งหมด</option>
-              {Object.entries(ORDER_STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-            </Select>
-          </Field>
-          <Field label="ตั้งแต่">
-            <Input type="date" value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
-          </Field>
-          <Field label="ถึงก่อน">
-            <Input type="date" value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
-          </Field>
-          <Button type="submit">ค้นหา</Button>
-        </form>
+      <Panel as="form" className="p-3 space-y-3" onSubmit={(e) => { e.preventDefault(); apply({ search: draft.search, from: draft.from, to: draft.to }); }}>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
+          <SearchInput
+            className="md:col-span-5"
+            value={draft.search}
+            onChange={(e) => setDraft({ ...draft, search: e.target.value })}
+            placeholder="ค้นหาเลข order / รหัสลูกค้า / PO / บริษัท…"
+            aria-label="ค้นหา"
+          />
+          <label className="md:col-span-2 flex items-center gap-1.5">
+            <Icon name="calendar_today" size={15} className="text-outline shrink-0" />
+            <Input type="date" aria-label="ตั้งแต่" value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
+          </label>
+          <label className="md:col-span-2 flex items-center gap-1.5">
+            <span className="text-outline text-xs">–</span>
+            <Input type="date" aria-label="ถึงก่อน" value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+          </label>
+          <div className="md:col-span-3 flex items-center justify-end gap-2">
+            <Button type="submit" variant="primary" icon="search">ค้นหา</Button>
+            <Button variant="ghost" onClick={() => { setDraft(empty); setPage(1); setF({ ...empty, sync: '' }); }}>ล้างตัวกรอง</Button>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <Segmented
+            value={f.status}
+            onChange={(v) => { setDraft({ ...draft, status: v }); apply({ status: v }); }}
+            options={[{ value: '', label: 'ทั้งหมด' }, ...Object.entries(ORDER_STATUS).map(([k, v]) => ({ value: k, label: v }))]}
+          />
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-secondary-container text-[11px]">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-on-surface-variant">ตัวกรองปัจจุบัน:</span>
+            {chips.length ? chips.map((c) => <FilterChip key={c.label} onRemove={c.clear}>{c.label}</FilterChip>) : <span className="text-outline">ไม่มี</span>}
+          </div>
+          {list.data && (
+            <div className="text-on-surface-variant font-mono">
+              พบ <span className="font-bold text-on-surface tabular-nums">{fmt.num(list.data.total)}</span> รายการ
+              {s && <span className="ml-2 font-sans">· มูลค่าที่ชำระแล้ว {fmt.baht(s.paid_value)}</span>}
+            </div>
+          )}
+        </div>
       </Panel>
 
-      {list.loading && !list.data ? (
-        <Loading />
-      ) : list.data ? (
-        <>
-          <Panel className="overflow-hidden">
-            <Table>
+      <Panel className="overflow-hidden">
+        {list.loading && !list.data ? (
+          <Loading />
+        ) : list.data && list.data.items.length === 0 ? (
+          <Empty icon="receipt_long">ไม่พบออเดอร์ตามตัวกรองนี้</Empty>
+        ) : list.data ? (
+          <>
+            <Table maxHeight="calc(100vh - 330px)">
               <THead>
-                <TR>
-                  <TH>Order</TH>
-                  <TH>ลูกค้า</TH>
-                  <TH>ยอด</TH>
-                  <TH>สถานะ</TH>
-                  <TH>ชำระ</TH>
-                  <TH>Jagota</TH>
-                  <TH />
-                </TR>
+                <TH className="min-w-[150px]">Order No.</TH>
+                <TH className="min-w-[130px]">วันที่</TH>
+                <TH className="min-w-[240px]">บริษัท / สาขา</TH>
+                <TH right className="min-w-[110px]">ยอดรวม ฿</TH>
+                <TH>การชำระเงิน</TH>
+                <TH>สถานะออเดอร์</TH>
+                <TH className="min-w-[170px]">Jagota (ERP)</TH>
+                <TH />
               </THead>
               <TBody>
                 {list.data.items.map((o) => (
                   <Fragment key={o.orders_id}>
-                    <TR>
-                      <TD kind="code">
-                        {o.order_number}
-                        <div className="text-[11px] text-on-surface-variant">{fmt.when(o.create_date)}</div>
-                      </TD>
-                      <TD>
-                        {o.company_name ?? '—'}
-                        <div className="text-[11px] text-on-surface-variant">{o.branch_name} · {o.customer_code}</div>
-                      </TD>
+                    <TR selected={open === o.orders_id} onClick={() => setOpen(open === o.orders_id ? null : o.orders_id)}>
+                      <TD kind="link">{o.order_number}</TD>
+                      <TD kind="time">{fmt.when(o.create_date)}</TD>
+                      <TD><Stack2 top={o.company_name ?? '—'} bottom={[o.branch_name, o.customer_code].filter(Boolean).join(' · ')} /></TD>
                       <TD kind="money">{fmt.baht(o.total_price)}</TD>
-                      <TD>{ORDER_STATUS[o.status] ?? o.status}</TD>
-                      <TD>{o.payment_status ?? '—'}</TD>
+                      <TD><Chip tone={PAYMENT_TONE(o.payment_status)}>{o.payment_status ?? 'ไม่มีการจ่าย'}</Chip></TD>
+                      <TD><Chip tone={ORDER_TONE[o.status] ?? 'muted'}>{ORDER_STATUS[o.status] ?? o.status}</Chip></TD>
                       <TD>
-                        <SyncChip s={o.jagota_sync_status} />
-                        {o.jagota_error && <div className="text-[11px] text-danger mt-1">{o.jagota_error}</div>}
-                        {o.doc_no && <div className="font-mono text-[11px] text-on-surface-variant">{o.doc_book}{o.doc_no}</div>}
+                        <StatusDot tone={o.jagota_sync_status ? SYNC_DOT[o.jagota_sync_status] ?? 'muted' : 'muted'}>
+                          {o.jagota_sync_status ? SYNC[o.jagota_sync_status]?.[0] ?? o.jagota_sync_status : 'ยังไม่ส่ง'}
+                          {o.doc_no && <span className="font-mono text-on-surface-variant">{o.doc_book}{o.doc_no}</span>}
+                        </StatusDot>
+                        {o.jagota_error && <div className="text-[10px] text-[#c2333f] truncate max-w-[220px]" title={o.jagota_error}>{o.jagota_error}</div>}
                       </TD>
-                      <TD>
-                        <Button size="sm" variant="ghost" onClick={() => setOpen(open === o.orders_id ? null : o.orders_id)}>
-                          {open === o.orders_id ? 'ซ่อน' : 'รายละเอียด'}
-                        </Button>
-                      </TD>
+                      <TD kind="actions"><ExpandToggle open={open === o.orders_id} onClick={() => setOpen(open === o.orders_id ? null : o.orders_id)} /></TD>
                     </TR>
                     {open === o.orders_id && (
-                      <TR>
-                        <TD colSpan={7}>
-                          {detail.error ? (
-                            <ErrorText error={detail.error} />
-                          ) : !d ? (
-                            <Loading />
-                          ) : (
-                            <div className="space-y-3 p-4">
-                              <div className="text-xs text-on-surface-variant">
-                                ส่ง {d.delivery_date ?? '—'} · สั่งโดย {d.orderedBy.name.first_name} {d.orderedBy.name.last_name ?? ''} ({d.orderedBy.email ?? d.orderedBy.phone ?? '—'}) · ก่อน VAT {fmt.baht(d.subtotal_ex_vat)} · VAT {fmt.baht(d.vat_amount)} · ส่วนลด {fmt.baht(d.discount_inc_vat)} · ค่าส่ง {fmt.baht(d.delivery_fee)}
-                              </div>
-                              <Table>
-                                <THead>
-                                  <TR>
+                      <ExpandRow colSpan={8}>
+                        {detail.error ? (
+                          <ErrorText error={detail.error} />
+                        ) : !d ? (
+                          <Loading />
+                        ) : (
+                          <>
+                            <DetailSection title="ข้อมูลออเดอร์" icon="receipt_long">
+                              <KeyValueGrid
+                                items={[
+                                  { label: 'วันส่ง', value: d.delivery_date ?? '—' },
+                                  { label: 'สั่งโดย', value: `${d.orderedBy.name.first_name} ${d.orderedBy.name.last_name ?? ''} (${d.orderedBy.email ?? d.orderedBy.phone ?? '—'})` },
+                                  { label: 'PO', value: o.po_number ?? '—', mono: true },
+                                  { label: 'ก่อน VAT', value: fmt.baht(d.subtotal_ex_vat) },
+                                  { label: 'VAT', value: fmt.baht(d.vat_amount) },
+                                  { label: 'ส่วนลด', value: fmt.baht(d.discount_inc_vat) },
+                                  { label: 'ค่าส่ง', value: fmt.baht(d.delivery_fee) },
+                                  { label: 'ยอดรวม', value: <span className="font-semibold">{fmt.baht(o.total_price)}</span> },
+                                ]}
+                              />
+                            </DetailSection>
+                            <DetailSection title={`สินค้า (${d.items.length})`} icon="inventory_2">
+                              <div className="rounded-lg border border-secondary-container overflow-hidden bg-surface-container-lowest">
+                                <Table>
+                                  <THead>
                                     <TH>SKU</TH>
                                     <TH>สินค้า</TH>
-                                    <TH>จำนวน</TH>
-                                    <TH>ราคา/หน่วย</TH>
+                                    <TH right>จำนวน</TH>
+                                    <TH right>ราคา/หน่วย</TH>
                                     <TH>ที่มาราคา</TH>
-                                    <TH>รวม</TH>
-                                  </TR>
-                                </THead>
-                                <TBody>
-                                  {d.items.map((i: JoshRow) => (
-                                    <TR key={i.sku}>
-                                      <TD kind="code">{i.sku}</TD>
-                                      <TD>{i.name}</TD>
-                                      <TD>{i.qty}</TD>
-                                      <TD kind="money">{fmt.baht(i.unit_price)}</TD>
-                                      <TD>{i.price_source}</TD>
-                                      <TD kind="money">{fmt.baht(i.line_revenue)}</TD>
-                                    </TR>
-                                  ))}
-                                </TBody>
-                              </Table>
-                              <div className="text-xs text-on-surface-variant">
-                                Jagota: {d.jagotaSync.length ? d.jagotaSync.map((j: JoshRow) => `${fmt.when(j.created_at)} ${j.sync_status}${j.doc_no ? ` ${j.doc_book}${j.doc_no}` : ''}${j.error_message ? ` (${j.error_message})` : ''}`).join(' → ') : 'ยังไม่เคยส่ง'}
+                                    <TH right>รวม</TH>
+                                  </THead>
+                                  <TBody>
+                                    {d.items.map((i: JoshRow) => (
+                                      <TR key={i.sku}>
+                                        <TD kind="mono">{i.sku}</TD>
+                                        <TD>{i.name}</TD>
+                                        <TD kind="num">{fmt.num(i.qty)}</TD>
+                                        <TD kind="money">{fmt.baht(i.unit_price)}</TD>
+                                        <TD kind="muted">{i.price_source}</TD>
+                                        <TD kind="money">{fmt.baht(i.line_revenue)}</TD>
+                                      </TR>
+                                    ))}
+                                  </TBody>
+                                </Table>
                               </div>
-                              <div className="text-xs text-on-surface-variant">
-                                Shipment: {d.shipments.map((sh: JoshRow) => `${sh.shipment_number} ${sh.delivered_at ? 'ส่งถึง' : sh.shipped_at ? 'ออกส่ง' : 'รอ'}`).join(' · ') || '—'} · ชำระ: {d.payments.map((p: JoshRow) => `${p.status} ${fmt.baht(p.amount)} ${p.payment_method ?? ''}`).join(' · ') || '—'}
-                              </div>
+                            </DetailSection>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                              <DetailSection title="Jagota (ERP)" icon="sync_alt">
+                                {d.jagotaSync.length ? (
+                                  <ol className="space-y-1.5 text-xs">
+                                    {d.jagotaSync.map((j: JoshRow, k: number) => (
+                                      <li key={k} className="flex flex-wrap items-center gap-2">
+                                        <span className="font-mono text-[11px] text-on-surface-variant">{fmt.when(j.created_at)}</span>
+                                        <StatusChip status={j.sync_status} />
+                                        {j.doc_no && <span className="font-mono text-[11px]">{j.doc_book}{j.doc_no}</span>}
+                                        {j.error_message && <span className="text-[#c2333f] text-[11px]">{j.error_message}</span>}
+                                      </li>
+                                    ))}
+                                  </ol>
+                                ) : (
+                                  <Hint>ยังไม่เคยส่ง</Hint>
+                                )}
+                              </DetailSection>
+                              <DetailSection title="จัดส่ง / ชำระเงิน" icon="local_shipping">
+                                <KeyValueGrid
+                                  cols={2}
+                                  items={[
+                                    { label: 'Shipment', value: d.shipments.map((sh: JoshRow) => `${sh.shipment_number} ${sh.delivered_at ? 'ส่งถึง' : sh.shipped_at ? 'ออกส่ง' : 'รอ'}`).join(' · ') || '—' },
+                                    { label: 'ชำระ', value: d.payments.map((p: JoshRow) => `${p.status} ${fmt.baht(p.amount)} ${p.payment_method ?? ''}`).join(' · ') || '—' },
+                                  ]}
+                                />
+                              </DetailSection>
                             </div>
-                          )}
-                        </TD>
-                      </TR>
+                          </>
+                        )}
+                      </ExpandRow>
                     )}
                   </Fragment>
                 ))}
               </TBody>
             </Table>
-          </Panel>
-          <Pager page={page} pageSize={pageSize} total={list.data.total} onPage={setPage} onPageSize={setPageSize} />
-        </>
-      ) : null}
+            <Pager page={page} pageSize={pageSize} total={list.data.total} onPage={setPage} onPageSize={(n) => { setPage(1); setPageSize(n); }} sizes={[20, 50, 100, 200]} />
+          </>
+        ) : null}
+      </Panel>
     </Page>
   );
 }
@@ -327,7 +379,6 @@ export function JoshCustomersPage() {
           <Panel className="overflow-hidden">
             <Table>
               <THead>
-                <TR>
                   <TH>บริษัท</TH>
                   <TH>รหัส ERP</TH>
                   <TH>วงเงิน</TH>
@@ -336,8 +387,7 @@ export function JoshCustomersPage() {
                   <TH>KYC</TH>
                   <TH>สั่งล่าสุด</TH>
                   <TH />
-                </TR>
-              </THead>
+                </THead>
               <TBody>
                 {list.data.items.map((c) => {
                   const over = c.credit_limit > 0 && c.credit_used > c.credit_limit;
@@ -385,15 +435,13 @@ export function JoshCustomersPage() {
                                 />
                                 <Table>
                                   <THead>
-                                    <TR>
                                       <TH>สาขา</TH>
                                       <TH>รหัส ERP</TH>
                                       <TH>sync</TH>
                                       <TH>วันส่ง</TH>
                                       <TH>โทร</TH>
                                       <TH />
-                                    </TR>
-                                  </THead>
+                                    </THead>
                                   <TBody>
                                     {d.branches.map((b: JoshRow) => (
                                       <TR key={b.id}>
@@ -420,15 +468,13 @@ export function JoshCustomersPage() {
                                 </Table>
                                 <Table>
                                   <THead>
-                                    <TR>
                                       <TH>ผู้ใช้</TH>
                                       <TH>อีเมล</TH>
                                       <TH>โทร</TH>
                                       <TH>role</TH>
                                       <TH>เข้าแอปล่าสุด</TH>
                                       <TH />
-                                    </TR>
-                                  </THead>
+                                    </THead>
                                   <TBody>
                                     {d.users.map((u: JoshRow) => (
                                       <TR key={u.id}>
@@ -546,7 +592,6 @@ export function JoshPricesPage() {
             ) : prices.data && prices.data.items.length ? (
               <Table>
                 <THead>
-                  <TR>
                     <TH>SKU</TH>
                     <TH>สินค้า</TH>
                     <TH>ราคาปกติ</TH>
@@ -555,8 +600,7 @@ export function JoshPricesPage() {
                     <TH>พิเศษสาขา</TH>
                     <TH>ขั้นบันได</TH>
                     <TH>วันนี้ลูกค้าจ่าย</TH>
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {prices.data.items.map((p) => (
                     <TR key={p.id}>
@@ -588,15 +632,13 @@ export function JoshPricesPage() {
             ) : quotes.data && quotes.data.length ? (
               <Table>
                 <THead>
-                  <TR>
                     <TH>สินค้า</TH>
                     <TH>ราคา</TH>
                     <TH>หน่วย</TH>
                     <TH>ใช้ได้</TH>
                     <TH>สถานะ</TH>
                     <TH>เอกสาร</TH>
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {quotes.data.map((q, i) => (
                     <TR key={i}>

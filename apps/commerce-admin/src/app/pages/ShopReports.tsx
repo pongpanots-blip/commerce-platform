@@ -121,13 +121,11 @@ export function SalesReport() {
             {data.topProducts.length ? (
               <Table>
                 <THead>
-                  <TR>
                     <TH>SKU</TH>
                     <TH>สินค้า</TH>
                     <TH>จำนวน</TH>
                     <TH>ยอดขาย</TH>
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {data.topProducts.map((p) => (
                     <TR key={p.sku}>
@@ -242,12 +240,10 @@ export function TrafficReport() {
             {data.topSearches.length ? (
               <Table>
                 <THead>
-                  <TR>
                     <TH>คำค้น</TH>
                     <TH>ครั้ง</TH>
                     <TH>ไม่เจอสินค้า</TH>
-                  </TR>
-                </THead>
+                  </THead>
                 <TBody>
                   {data.topSearches.map((s) => (
                     <TR key={s.query}>
@@ -350,12 +346,10 @@ export function HealthReportPage() {
                 {!!data.josh.jagotaOrderSyncErrors?.length && (
                   <Table>
                     <THead>
-                      <TR>
                         <TH>Jagota sync error</TH>
                         <TH>ครั้ง</TH>
                         <TH>ล่าสุด</TH>
-                      </TR>
-                    </THead>
+                      </THead>
                     <TBody>
                       {data.josh.jagotaOrderSyncErrors.map((e) => (
                         <TR key={String(e.error)}>

@@ -123,6 +123,11 @@ export interface Product {
   sku: string;
   name: string;
   status: string;
+  description?: string | null;
+  fulfillmentMode?: string;
+  leadTimeDays?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export interface InventoryLevel {
   id: string;
@@ -262,6 +267,16 @@ export const ordersApi = {
   pay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/pay`, {}),
   failPay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/fail`, {}),
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
+};
+
+export const customersApi = {
+  get: (id: string) => api.get<Customer>(`/customers/${id}`),
+  update: (id: string, data: Partial<Customer>) => api.patch<Customer>(`/customers/${id}`, data),
+};
+
+export const productsApi = {
+  get: (id: string) => api.get<Product>(`/products/${id}`),
+  update: (id: string, data: Partial<Product>) => api.patch<Product>(`/products/${id}`, data),
 };
 
 // ---- Marketing research + web scraping (moved from josh) ----

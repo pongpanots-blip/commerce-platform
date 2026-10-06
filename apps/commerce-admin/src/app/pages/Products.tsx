@@ -1,9 +1,9 @@
-import { StatusChip } from '@cp/ui';
+import { StatusChip, RowLink } from '@cp/ui';
 import { Product } from '../../lib/api';
 import { ResourcePage, Column, Field } from '../components/ResourcePage';
 
 const columns: Column<Product>[] = [
-  { label: 'SKU', render: (r) => <span className="font-mono text-[11px]">{r.sku}</span> },
+  { label: 'SKU', render: (r) => <RowLink to={`/products/${r.id}`}>{r.sku}</RowLink> },
   { label: 'Name', render: (r) => r.name },
   { label: 'Status', render: (r) => <StatusChip status={r.status} /> },
 ];

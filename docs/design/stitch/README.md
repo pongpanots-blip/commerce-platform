@@ -20,3 +20,20 @@ Design source: Stitch project "Commerce Platform — Admin + Portal refresh". Ex
 6. Keep pages accessible: buttons are `<button>`, icon-only buttons have `title`/`aria-label`, inputs have labels (`Field`), tables keep `<th>`.
 7. **Create / edit forms and detail views are part of the redesign, not optional.** Every "+ New / สร้าง / แก้ไข" form → `FormPanel` (title + icon + description, `Field` grid, `Span` for wide fields like JSON `Textarea`, footer Cancel + primary Submit, errors as `Alert`). Every detail (expanded row or record panel) → `ExpandRow` / `DetailPanel` containing `DetailSection`s: a `KeyValueGrid` of facts first, then sub-tables (`Table` inside), then `CodeBlock`s for payloads, with record actions in the section/panel header. Inline row editors use the same `FormPanel` (cols 2–4) inside the `ExpandRow`.
 8. Verify: `./node_modules/.bin/tsc -p apps/commerce-admin/tsconfig.app.json --noEmit` (and portal) must be clean.
+
+## Detail pages
+
+A record opens on its own page (own URL), never an expanded row: `/reports/orders/:id`, `/reports/customers/:id`,
+`/reports/products/:id`, `/orders/:id`, `/customers/:id`, `/products/:id`. Lists link the identifier cell with
+`RowLink` (a real link — ctrl/cmd-click, keyboard) and keep filters/paging in the query string so going back
+restores the list. Detail pages use `PageHeader back={…}` and the same `KeyValueGrid` / `DetailSection` / table parts.
+
+## Checking a change
+
+```bash
+npm run seed:mock                         # local mock data + logins in scripts/.mock-credentials
+node apps/commerce-admin/e2e/pages.mjs     # every admin + portal page and detail page; screenshots in .e2e-out/screens
+```
+
+The page e2e fails on console errors, 5xx responses, horizontal overflow, a missing `<h1>`, legacy CSS classes,
+list rows without a detail link, and detail pages without a back link. Look at the screenshots too — it can't judge looks.

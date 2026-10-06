@@ -1,9 +1,10 @@
-import { Stack2, StatusChip } from '@cp/ui';
+import { useState } from 'react';
+import { Stack2, StatusChip, RowLink } from '@cp/ui';
 import { Customer } from '../../lib/api';
 import { ResourcePage, Column, Field } from '../components/ResourcePage';
 
 const columns: Column<Customer>[] = [
-  { label: 'Name', render: (r) => <Stack2 top={r.name} bottom={r.code ?? undefined} /> },
+  { label: 'Name', render: (r) => <Stack2 top={<RowLink mono={false} to={`/customers/${r.id}`}>{r.name}</RowLink>} bottom={r.code ?? undefined} /> },
   { label: 'Email', render: (r) => r.email ?? '—' },
   { label: 'Phone', render: (r) => r.phone ?? '—' },
   { label: 'Status', render: (r) => <StatusChip status={r.status} /> },

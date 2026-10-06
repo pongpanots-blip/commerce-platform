@@ -4,6 +4,12 @@ import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar, Nav
 import { AdminStats, api, reportsApi, session } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
+import { ProductDetail } from './pages/ProductDetail';
+import { CustomerDetail } from './pages/CustomerDetail';
+import { OrderDetail } from './pages/OrderDetail';
+import { JoshProductDetail } from './pages/JoshProductDetail';
+import { JoshCustomerDetail } from './pages/JoshCustomerDetail';
+import { JoshOrderDetail } from './pages/JoshOrderDetail';
 import { Dashboard } from './pages/Dashboard';
 import { Integrations } from './pages/Integrations';
 import { Webhooks } from './pages/Webhooks';
@@ -205,13 +211,16 @@ export function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
+            <Route path="/reports/orders/:id" element={<JoshOrderDetail />} />
             <Route path="/josh/:view" element={<JoshBackoffice />} />
             <Route path="/josh-api-logs" element={<JoshApiLogs />} />
             <Route path="/reports/price-shadow" element={<PriceShadow />} />
             <Route path="/prices/staff" element={<StaffPrices />} />
             <Route path="/reports/customers" element={<JoshCustomersPage />} />
+            <Route path="/reports/customers/:id" element={<JoshCustomerDetail />} />
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
+            <Route path="/reports/products/:id" element={<JoshProductDetail />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />
@@ -238,9 +247,12 @@ export function App() {
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/sync-jobs" element={<SyncJobs />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/:id" element={<CustomerDetail />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/reservations" element={<Reservations />} />
             <Route path="/erp-stock" element={<ErpStock />} />
             <Route path="/erp-ingest" element={<ErpIngest />} />

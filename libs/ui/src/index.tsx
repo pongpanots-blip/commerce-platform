@@ -318,12 +318,15 @@ export function PanelHead({ title, icon, badge, sub, actions }: { title: ReactNo
 /** Page title block: breadcrumb, H1 (+badge), subtitle, right-hand actions. */
 export function PageHeader({
   crumbs: crumbsProp,
+  back,
   title,
   badge,
   subtitle,
   actions,
 }: {
   crumbs?: string[];
+  /** Detail pages: link back to the list they came from. */
+  back?: { to: string; label: string };
   title: ReactNode;
   badge?: ReactNode;
   subtitle?: ReactNode;
@@ -342,6 +345,12 @@ export function PageHeader({
             </span>
           ))}
         </nav>
+      )}
+      {back && (
+        <Link to={back.to} className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+          <Icon name="arrow_back" size={14} />
+          {back.label}
+        </Link>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-0.5">
         <div className="min-w-0">
@@ -708,6 +717,21 @@ export function TD({ children, kind = 'text', className, colSpan, title }: { chi
     <td colSpan={colSpan} title={title} className={cx('px-3 py-1.5', TD_CLS[kind], className)}>
       {children}
     </td>
+  );
+}
+
+/** The record's identifier in a list row: a real link to its detail page (works with ctrl/cmd-click and
+ *  the keyboard) that doesn't also fire the row's own click handler. */
+export function RowLink({ to, state, mono = true, children }: { to: string; state?: unknown; mono?: boolean; children: ReactNode }) {
+  return (
+    <Link
+      to={to}
+      state={state}
+      onClick={(e) => e.stopPropagation()}
+      className={cx('text-primary hover:underline', mono ? 'font-mono font-semibold' : 'font-medium')}
+    >
+      {children}
+    </Link>
   );
 }
 

@@ -35,13 +35,22 @@ const ADMIN_ROUTES = [
   '/customers', '/products', '/inventory', '/orders', '/reservations',
 ];
 const PORTAL_ROUTES = ['/', '/keys', '/webhooks', '/docs'];
+// Detail pages: open the list, follow the first row's link, check the page it lands on.
+const DETAILS = [
+  ['/reports/orders', '/reports/orders/'],
+  ['/reports/customers', '/reports/customers/'],
+  ['/reports/products', '/reports/products/'],
+  ['/orders', '/orders/'],
+  ['/customers', '/customers/'],
+  ['/products', '/products/'],
+];
 const LEGACY = '.panel, .btn, .badge, .page-head, .stat, .hint, .err, .empty, .stat-grid, pre.payload';
 
 const failures = [];
 const fail = (where, what) => failures.push(`${where}: ${what}`);
 
-async function check(page, app, route) {
-  const name = `${app}${route === '/' ? '-home' : route.replace(/[/:]/g, '-')}`;
+async function check(page, app, route, label) {
+  const name = label ?? `${app}${route === '/' ? '-home' : route.replace(/[/:]/g, '-')}`;
   const consoleErrors = [];
   const serverErrors = [];
   const onConsole = (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) consoleErrors.push(m.text()); };
@@ -49,7 +58,8 @@ async function check(page, app, route) {
   page.on('console', onConsole);
   page.on('pageerror', (e) => consoleErrors.push(String(e)));
   page.on('response', onResponse);
-  await page.goto((app === 'admin' ? ADMIN : PORTAL) + route, { waitUntil: 'networkidle' }).catch((e) => fail(name, `navigation: ${e.message}`));
+  if (route) await page.goto((app === 'admin' ? ADMIN : PORTAL) + route, { waitUntil: 'networkidle' }).catch((e) => fail(name, `navigation: ${e.message}`));
+  else await page.waitForLoadState('networkidle');
   await page.waitForTimeout(400);
   const h1 = await page.locator('main h1').first().textContent({ timeout: 4000 }).catch(() => null);
   if (!h1) fail(name, 'no <h1> in main');
@@ -78,6 +88,18 @@ try {
   await page.getByRole('button', { name: /sign in|เข้าสู่ระบบ/i }).click();
   await page.locator('aside').waitFor({ timeout: 10_000 });
   for (const r of ADMIN_ROUTES) if (!only || r.includes(only)) await check(page, 'admin', r);
+  for (const [list, prefix] of DETAILS) {
+    if (only && !list.includes(only)) continue;
+    const name = `admin-detail${list.replace(/\//g, '-')}`;
+    await page.goto(ADMIN + list, { waitUntil: 'networkidle' });
+    const link = page.locator(`main a[href^="${prefix}"]`).first();
+    if (!(await link.count())) { fail(name, `no row link to ${prefix}… on ${list}`); console.log(`FAIL  ${name}`); continue; }
+    await link.click();
+    await page.waitForURL((u) => u.pathname.startsWith(prefix) && u.pathname.length > prefix.length, { timeout: 10_000 }).catch(() => fail(name, 'row link did not open a detail URL'));
+    await check(page, 'admin', null, name);
+    const back = page.locator('main a', { hasText: /./ }).filter({ has: page.locator('.material-symbols-outlined', { hasText: 'arrow_back' }) }).first();
+    if (!(await back.count())) fail(name, 'no back link to the list');
+  }
 
   await page.goto(PORTAL + '/login');
   await page.getByLabel(/email/i).fill(creds.partner.email);

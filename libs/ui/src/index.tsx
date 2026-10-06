@@ -12,6 +12,7 @@ import {
   TextareaHTMLAttributes,
   createContext,
   useContext,
+  useId,
   useState,
 } from 'react';
 import { Link, NavLink, matchPath, useLocation } from 'react-router-dom';
@@ -999,6 +1000,8 @@ export function Sidebar({
 }) {
   const { pathname } = useLocation();
   const [query, setQuery] = useState('');
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navId = useId();
   const [toggled, setToggled] = useState<Record<string, boolean>>({});
   const q = query.trim().toLowerCase();
   const isCurrent = (l: NavItem) => Boolean(matchPath({ path: l.to, end: l.end ?? false }, pathname));
@@ -1015,8 +1018,8 @@ export function Sidebar({
     );
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-60 z-30 flex flex-col justify-between py-3 px-2 border-r border-secondary-container bg-surface-container-lowest select-none">
-      <div className="flex flex-col flex-1 min-h-0 overflow-y-auto pr-1">
+    <aside className="relative md:fixed top-0 left-0 md:h-screen w-full md:w-60 z-30 flex flex-col justify-between py-3 px-2 border-b md:border-b-0 md:border-r border-secondary-container bg-surface-container-lowest select-none">
+      <div className="flex flex-col flex-1 min-h-0 max-h-[70vh] md:max-h-none overflow-y-auto pr-1">
         <div className="px-2.5 pt-1 pb-3 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shrink-0 shadow-sm">
             <Icon name={brand.icon ?? 'hub'} size={20} />
@@ -1026,10 +1029,11 @@ export function Sidebar({
             {brand.subtitle && <div className="text-[11px] text-on-surface-variant truncate">{brand.subtitle}</div>}
             {env && <div className="text-[11px] text-on-surface-variant font-mono flex items-center gap-1.5 mt-0.5">{env}</div>}
           </div>
+          <Button className="md:hidden ml-auto shrink-0" variant="ghost" icon={mobileOpen ? 'close' : 'menu'} aria-expanded={mobileOpen} aria-controls={navId} onClick={() => setMobileOpen(!mobileOpen)}>เมนู</Button>
         </div>
 
         {searchable && (
-          <div className="px-1.5 mb-3">
+          <div className={cx('px-1.5 mb-3', !mobileOpen && 'hidden md:block')}>
             <div className="relative flex items-center w-full">
               <Icon name="search" size={16} className="absolute left-2 text-outline pointer-events-none" />
               <input
@@ -1044,7 +1048,7 @@ export function Sidebar({
           </div>
         )}
 
-        <nav className="space-y-3">
+        <nav id={navId} className={cx('space-y-3', !mobileOpen && 'hidden md:block')} onClick={(event) => { if ((event.target as HTMLElement).closest('a')) setMobileOpen(false); }}>
           {nav.map((section, gi) => {
             const links = q ? section.links.filter((l) => l.label.toLowerCase().includes(q)) : section.links;
             if (!links.length) return null;
@@ -1103,7 +1107,7 @@ export function Sidebar({
       </div>
 
       {(user || footer) && (
-        <div className="pt-2 mt-2 border-t border-secondary-container space-y-1">
+        <div className={cx('pt-2 mt-2 border-t border-secondary-container space-y-1', !mobileOpen && 'hidden md:block')}>
           {footer}
           {user && (
             <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg bg-surface-container-low">
@@ -1130,10 +1134,10 @@ export function Sidebar({
 /** Slim sticky top bar to the right of the sidebar. */
 export function TopBar({ left, right }: { left?: ReactNode; right?: ReactNode }) {
   return (
-    <header className="sticky top-0 z-20 w-full bg-surface-container-lowest border-b border-secondary-container h-12 flex items-center">
-      <div className="flex justify-between items-center h-full px-6 w-full gap-4">
-        <div className="flex items-center gap-5 text-xs text-on-surface-variant min-w-0">{left}</div>
-        <div className="flex items-center gap-2.5">{right}</div>
+    <header className="sticky top-0 z-20 w-full bg-surface-container-lowest border-b border-secondary-container min-h-12 flex items-center">
+      <div className="flex flex-wrap justify-between items-center px-3 md:px-6 py-2 w-full gap-2 md:gap-4">
+        <div className="flex flex-wrap items-center gap-2 md:gap-5 text-xs text-on-surface-variant min-w-0">{left}</div>
+        <div className="flex flex-wrap items-center gap-2.5 min-w-0">{right}</div>
       </div>
     </header>
   );
@@ -1154,9 +1158,9 @@ export function AppShell({ sidebar, topbar, children }: { sidebar: ReactNode; to
   return (
     <div className="min-h-screen bg-background">
       {sidebar}
-      <div className="ml-60 min-w-0 flex flex-col min-h-screen">
+      <div className="md:ml-60 min-w-0 flex flex-col min-h-screen">
         {topbar}
-        <main className="flex-1 min-w-0 p-6">{children}</main>
+        <main className="flex-1 min-w-0 p-3 md:p-6">{children}</main>
       </div>
     </div>
   );

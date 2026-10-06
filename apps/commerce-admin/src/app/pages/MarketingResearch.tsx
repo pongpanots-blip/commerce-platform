@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { Alert, Button, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
+import { Alert, Button, ButtonLink, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
 import {
   marketingResearchApi, RESEARCH_AREAS, RESEARCH_KINDS, RESEARCH_SECTORS,
   ResearchKind, ResearchRun, ResearchTopic, ResearchTopicInput,
@@ -189,6 +189,7 @@ export function MarketingResearch() {
                                 </details>
                               ) : null}
                               {r.report?.limitations?.map((l, i) => <div key={i} className="text-xs text-on-surface-variant mb-1">ข้อจำกัด: {l}</div>)}
+                              {!!r.report?.evidence?.length && <div className="my-2"><ButtonLink to={`/marketing/growth/plans/new?${new URLSearchParams({ template: 'market', topicId: t.id, runId: r.id, title: t.title, goal: r.report.summary ?? '' })}`} icon="edit_note">ร่างแผน Growth จากหลักฐานนี้</ButtonLink></div>}
                               {r.report && !r.keptAt && <Button variant="ghost" size="sm" disabled={busy === `keep-${r.id}`} onClick={() => act(`keep-${r.id}`, () => marketingResearchApi.keepRun(r.id), 'เก็บรายงานไว้แล้ว')}>เก็บรายงานนี้</Button>}
                             </div>
                           ))}

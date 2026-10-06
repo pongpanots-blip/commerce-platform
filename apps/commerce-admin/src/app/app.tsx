@@ -48,6 +48,10 @@ import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
 import { CsDesk } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
+import { GrowthWorkspace } from './pages/growth/Workspace';
+import { GrowthPlans } from './pages/growth/Plans';
+import { GrowthPlanPage } from './pages/growth/Plan';
+import { GrowthResults, GrowthTimeline } from './pages/growth/Results';
 
 const NAV: NavGroup[] = [
   { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
@@ -89,6 +93,8 @@ const NAV: NavGroup[] = [
   {
     group: 'Marketing', icon: 'campaign',
     links: [
+      { to: '/marketing/growth', label: 'Growth Workspace', end: true },
+      { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน Growth', end: false },
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
       { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
@@ -299,6 +305,12 @@ export function App() {
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
+            <Route path="/marketing/growth" element={<GrowthWorkspace />} />
+            <Route path="/marketing/growth/plans" element={<GrowthPlans />} />
+            <Route path="/marketing/growth/plans/new" element={<GrowthPlanPage />} />
+            <Route path="/marketing/growth/plans/:id" element={<GrowthPlanPage />} />
+            <Route path="/marketing/growth/results/:workflowId" element={<GrowthResults />} />
+            <Route path="/marketing/growth/companies/:companyId" element={<GrowthTimeline />} />
             <Route path="/marketing/workflows/new" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />

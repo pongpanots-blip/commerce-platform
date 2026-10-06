@@ -54,4 +54,27 @@ describe('JoshActions (commerce asks josh to act)', () => {
     await expect(actions.run('push-campaigns', 'send', { id: 'x' }, actor, 'admin')).rejects.toBeInstanceOf(ServiceUnavailableException);
     expect(global.fetch).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['marketing-workflows', 'activate', { id: '22222222-2222-4222-8222-222222222222' }],
+    ['admin-call', 'call', { method: 'POST', path: '/marketing-workflows/22222222-2222-4222-8222-222222222222/activate' }],
+    ['admin-call', 'call', { method: 'POST', path: '/marketing-workflows/22222222-2222-4222-8222-222222222222/test', body: { dryRun: false } }],
+  ])('blocks Growth sending through %s/%s before any external mutation', async (target, action, args) => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, text: async () => JSON.stringify({ status: 200, data: { data: {
+      name: 'Growth [11111111-1111-4111-8111-111111111111:v3] Campaign', status: 'draft',
+    } } }) }) as never;
+    await expect(actions.run(target as 'marketing-workflows' | 'admin-call', action, args, actor, 'mcp')).rejects.toBeInstanceOf(ForbiddenException);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body).args.method).toBe('GET');
+  });
+  it('does not let another marketing user change a marked workflow or invalidate its approval', async () => {
+    const plan = { createdBy: 'another-owner', workflowId: '22222222-2222-4222-8222-222222222222', status: 'ready', version: 3 };
+    const manager = { findOne: jest.fn().mockResolvedValueOnce(plan).mockResolvedValueOnce({ role: 'marketing', status: 'active' }), save: jest.fn() };
+    actions = new JoshActions({ getRepository: () => ({ insert }), transaction: async (fn: (m: unknown) => unknown) => fn(manager) } as never);
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 200, text: async () => JSON.stringify({ status: 200, data: { data: {
+      name: 'Growth [11111111-1111-4111-8111-111111111111:v3] Campaign', status: 'draft',
+    } } }) }) as never;
+    await expect(actions.run('marketing-workflows', 'update', { id: plan.workflowId, workflow: { steps: [] } }, actor, 'admin')).rejects.toBeInstanceOf(ForbiddenException);
+    expect(manager.save).not.toHaveBeenCalled(); expect(global.fetch).toHaveBeenCalledTimes(1); expect(plan.version).toBe(3);
+  });
 });

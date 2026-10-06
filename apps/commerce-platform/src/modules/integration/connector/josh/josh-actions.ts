@@ -114,7 +114,9 @@ function withoutFileBytes(args: object) {
 function joshError(status: number, answer: unknown) {
   const m = (answer as { message?: unknown; error?: { message?: unknown } })?.message ?? (answer as { error?: { message?: unknown } })?.error?.message;
   const message = `josh: ${Array.isArray(m) ? m.join(', ') : String(m ?? status)}`;
-  if (status === 400) return new BadRequestException(message);
+  // josh's promotion SKU-clash check lists the clashing SKUs; the form highlights them
+  const duplicateSkus = (answer as { duplicate_skus?: unknown })?.duplicate_skus;
+  if (status === 400) return new BadRequestException(Array.isArray(duplicateSkus) ? { message, duplicate_skus: duplicateSkus } : message);
   if (status === 403) return new ForbiddenException(message);
   if (status === 404) return new NotFoundException(`${message} (or commerce actions are off on josh: COMMERCE_ACTIONS_ENABLED)`);
   return new BadGatewayException(message);

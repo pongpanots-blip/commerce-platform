@@ -1,5 +1,5 @@
 import { createHash, createHmac } from 'node:crypto';
-import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import { JoshActions } from './josh-actions';
 
 describe('JoshActions (commerce asks josh to act)', () => {
@@ -33,6 +33,13 @@ describe('JoshActions (commerce asks josh to act)', () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 403, text: async () => '{"message":"เฉพาะ manager ที่ตั้งเป้ายอดขายได้"}' }) as never;
     await expect(actions.run('winback', 'set_target', {}, actor, 'admin')).rejects.toThrow(ForbiddenException);
     expect(insert).toHaveBeenCalledWith(expect.objectContaining({ context: expect.objectContaining({ joshStatus: 403 }) }));
+  });
+
+  it('a josh 400 keeps the clashing SKUs (promotion SKU check) next to the message', async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 400, text: async () => '{"message":"SKU ซ้ำกับโปรอื่นใน campaign เดียวกัน","duplicate_skus":["A1","B2"]}' }) as never;
+    const err = await actions.run('promotions', 'update', {}, actor, 'admin').catch((e: BadRequestException) => e) as BadRequestException;
+    expect(err).toBeInstanceOf(BadRequestException);
+    expect(err.getResponse()).toEqual({ message: 'josh: SKU ซ้ำกับโปรอื่นใน campaign เดียวกัน', duplicate_skus: ['A1', 'B2'] });
   });
 
   it('upload: multipart to /admin-call/upload, envelope in a header signed with each file\'s sha256; audit keeps no file bytes', async () => {

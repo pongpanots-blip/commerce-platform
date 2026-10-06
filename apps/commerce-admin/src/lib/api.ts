@@ -64,7 +64,7 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!res.ok) {
     const message =
       body?.error?.message || body?.message || `${res.status} ${res.statusText}`;
-    throw new Error(Array.isArray(message) ? message.join(', ') : String(message));
+    throw Object.assign(new Error(Array.isArray(message) ? message.join(', ') : String(message)), { status: res.status, details: body?.error ?? body });
   }
   return body as T;
 }

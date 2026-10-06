@@ -17,8 +17,8 @@ const HEAD = `o.orders_id::text AS orders_id, o.order_number, o.status::text AS 
   o.total_price, o.subtotal_ex_vat, o.vat_amount, o.delivery_fee, o.discount_amount, o.discount_inc_vat, o.product_discount_ex_vat, o.gross_ex_vat,
   o.delivery_date::text AS delivery_date, o.po_number, o.document_no, o.remark, o.create_date, o.end_date`;
 
-type Row = Record<string, unknown>;
-const toHead = (r: Row): Partial<JoshOrderCopy> => ({
+export type Row = Record<string, unknown>;
+export const toHead = (r: Row): Partial<JoshOrderCopy> => ({
   ordersId: r.orders_id as string, orderNumber: r.order_number as string, status: r.status as string, paymentType: r.payment_type as string, paid: !!r.paid,
   fulfillmentType: r.fulfillment_type as string, userId: r.user_id as string, companyId: r.company_id as string, branchId: r.branch_id as string,
   customerCode: r.customer_code as string, checkoutBatchId: r.checkout_batch_id as string, totalPrice: r.total_price as string, subtotalExVat: r.subtotal_ex_vat as string,
@@ -26,7 +26,7 @@ const toHead = (r: Row): Partial<JoshOrderCopy> => ({
   productDiscountExVat: r.product_discount_ex_vat as string, grossExVat: r.gross_ex_vat as string, deliveryDate: r.delivery_date as string, poNumber: r.po_number as string,
   documentNo: r.document_no as string, remark: r.remark as string, createDate: r.create_date as Date, endDate: r.end_date as Date, copiedAt: new Date(),
 });
-const toLine = (r: Row): Partial<JoshOrderLineCopy> => ({
+export const toLine = (r: Row): Partial<JoshOrderLineCopy> => ({
   id: r.id as string, ordersId: r.order_id as string, productInventoryId: r.product_inventory_id as string, sku: r.sku as string, productPrice: r.product_price as string,
   productQuantity: Number(r.product_quantity), status: r.status as string, fulfillmentType: r.fulfillment_type as string, priceSource: r.price_source as string,
   promotionMechanicId: r.promotion_mechanic_id as string, unitListPriceIncVat: r.unit_list_price_inc_vat as string, lineRevenue: r.line_revenue as string, shipmentId: r.shipment_id as string,

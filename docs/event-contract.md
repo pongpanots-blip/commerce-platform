@@ -82,7 +82,7 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 |---|---|
 | `2xx` | สำเร็จ |
 | `4xx` (ยกเว้น 408, 429) | ข้อมูลใช้ไม่ได้ (payload ผิด / SKU ไม่มี) — **ไม่ retry** · ขึ้นใน dead-letter ให้คนดู |
-| `5xx`, `408`, `429`, timeout (10 วินาที), ต่อไม่ติด | retry 5 ครั้ง backoff 30s → 60s → 2m → 4m · เกินนั้นเข้า dead-letter |
+| `5xx`, `408`, `429`, timeout (10 วินาที), ต่อไม่ติด | retry สูงสุด 200 ครั้ง backoff 1s·2^n สูงสุดทีละ 60 วิ (≈3 ชม.) · เกินนั้นเข้า dead-letter |
 
 4. ทำงานเร็ว — ถ้าต้องทำงานหนัก ให้รับไว้แล้วตอบ `2xx` ก่อน (commerce รอไม่เกิน 10 วินาที)
 
@@ -97,3 +97,29 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `product.moq.changed` | `handleMoqChange([data.erp])` |
 
 `failed` ที่ handler คืน (SKU ไม่มีใน shop) → ตอบ `422` · error อื่น → `5xx`
+
+qty ที่มี `CHANGED_AT` ผ่านตัวกันข้อมูลเก่า (`commerce_applied_versions`) — ทั้งที่มาจาก commerce และที่ ERP ยิงตรง
+เข้า josh: ตัวที่เก่ากว่าค่าที่ใช้ไปแล้วถูกข้ามและนับเป็น `stale` ในคำตอบ
+
+## 6. ทาง josh → commerce
+
+josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `order_items` / `payment_transactions` /
+`payment_transaction_orders` / `users` ที่เป็นลูกค้า) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
+(ค่าเริ่มต้นปิด: trigger ยังบันทึก แต่ไม่ส่ง)
+
+- `POST {COMMERCE_PLATFORM_BASE_URL}/internal/josh-events` · header `x-event-type`, `x-delivery-id`
+  (`<type>:<aggregateId>:<version>`), `x-signature` = HMAC-SHA256 hex ของ body ด้วย `COMMERCE_EVENTS_SECRET`
+  (josh) — ค่าเดียวกับ `JOSH_EVENTS_SECRET` (commerce)
+- body `{ type, aggregateId, version, occurredAt, data }` · `version` = `commerce_snapshot_seq` ของ josh (ตัวเลข string)
+- commerce รับเฉพาะ version ที่ใหม่กว่าที่เก็บไว้ ตัวเก่า/ซ้ำตอบ `200` แล้วทิ้ง
+- josh ส่งซ้ำเมื่อไม่ได้ `2xx` (backoff 1s·2^n สูงสุด 60 วิ ไม่ทิ้ง) · แถวเก่ากว่า 7 วันถูก prune → ซ่อมด้วย backfill
+
+| type | data |
+|---|---|
+| `order.snapshot` | `{ order, items }` — คอลัมน์เดียวกับ `josh_orders` / `josh_order_lines` |
+| `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`) + `branch_ids` |
+| `customer.deleted` | `{ id }` — commerce ล้างข้อมูล เก็บ tombstone กัน snapshot เก่ามาสร้างกลับ |
+| `erp.fallback.received` | `{ method, path, body, receivedAt }` — ERP ยิงตรงเข้า josh `/api/erp/*` |
+
+Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"}` → josh
+`POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)

@@ -36,6 +36,8 @@ export class JoshOrderCopy {
   @Column({ name: 'create_date', type: 'timestamptz' }) createDate: Date;
   @Column({ name: 'end_date', type: 'timestamptz', nullable: true }) endDate: Date | null;
   @Column({ name: 'copied_at', type: 'timestamptz', default: () => 'now()' }) copiedAt: Date;
+  /** josh commerce_snapshot_seq of the snapshot this row came from; 0 = old replica copy. */
+  @Column({ name: 'source_version', type: 'bigint', default: 0 }) sourceVersion: string;
 }
 
 /** Lines of a copied josh order (josh order_items + the SKU). */

@@ -20,7 +20,7 @@ const only = process.argv[2];
 const ALLOWED_5XX = [];
 
 const ADMIN_ROUTES = [
-  '/', '/reports/sales', '/reports/products', '/reports/orders', '/reports/customers', '/reports/prices',
+  '/', '/settings/staff', '/account/password', '/reports/sales', '/reports/products', '/reports/orders', '/reports/customers', '/reports/prices',
   '/reports/price-shadow', '/prices/staff', '/reports/traffic', '/reports/health', '/reports/order-targetgroup',
   '/reports/winback', '/josh/kyc', '/josh/credit_terms', '/josh/admin_access', '/josh/shipments', '/josh/payments',
   '/josh/credit_notes', '/josh/credit_backs', '/josh/invoices', '/josh/coupons', '/josh/campaigns', '/josh/segments',

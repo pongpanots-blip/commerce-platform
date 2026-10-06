@@ -4,6 +4,8 @@ import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar, Nav
 import { AdminStats, api, reportsApi, session } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
+import { StaffAccounts } from './pages/StaffAccounts';
+import { ChangePassword } from './pages/ChangePassword';
 import { ProductDetail } from './pages/ProductDetail';
 import { CustomerDetail } from './pages/CustomerDetail';
 import { OrderDetail } from './pages/OrderDetail';
@@ -211,7 +213,17 @@ const NAV: NavGroup[] = [
       { to: '/reservations', label: 'Reservations', end: false },
     ],
   },
+  {
+    group: 'ตั้งค่า', icon: 'settings',
+    links: [
+      { to: '/settings/staff', label: 'บัญชี staff', end: false },
+      { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', end: false },
+    ],
+  },
 ];
+/** Staff accounts are admin-only (the API refuses others too); everyone can change their own password. */
+const navFor = (role?: string): NavGroup[] =>
+  role === 'admin' ? NAV : NAV.map((g) => ({ ...g, links: g.links.filter((l) => l.to !== '/settings/staff') }));
 
 /** Live operations strip above every page (Stitch "Overview" top bar), fed by the same endpoints the pages use. */
 function AdminTopBar() {
@@ -267,6 +279,7 @@ export function App() {
   if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
 
   const claims = session.claims();
+  const nav = navFor(claims?.role);
 
   function signOut() {
     session.clear();
@@ -275,13 +288,13 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <NavProvider nav={NAV}>
+      <NavProvider nav={nav}>
       <AppShell
         sidebar={
           <Sidebar
             brand={{ title: 'Commerce Platform', subtitle: 'Admin console' }}
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? 'Prod' : 'Local dev'}</>}
-            nav={NAV}
+            nav={nav}
             searchable
             user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${claims.role}` : undefined, onSignOut: signOut }}
           />
@@ -290,6 +303,8 @@ export function App() {
       >
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/settings/staff" element={<StaffAccounts />} />
+            <Route path="/account/password" element={<ChangePassword />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
             <Route path="/reports/orders/:id" element={<JoshOrderDetail />} />
             <Route path="/josh/:view" element={<JoshBackoffice />} />

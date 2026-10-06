@@ -404,11 +404,29 @@ export class PublicWebReader {
     });
   }
 
+  /** Chromium processes running on this server right now; extra sessions wait in FIFO order for a slot. */
+  private browsers = 0;
+  private readonly browserWaiters: (() => void)[] = [];
+
+  // Every browser read (scheduled runs, admin previews, link crawls) goes through here, so this caps the whole box.
+  // ponytail: in-process cap; a second API replica gets its own N — move scraping to one worker container if that matters.
   private async session<T>(input: string, config: ScrapingConfig, origin: string, login: SiteLogin | undefined,
     work: (page: Page, grant: () => void) => Promise<T>): Promise<T> {
+    const max = Math.max(1, Number(process.env.SCRAPING_MAX_BROWSERS) || 2);
+    if (this.browsers < max) this.browsers++;
+    else await new Promise<void>(resolve => this.browserWaiters.push(resolve)); // slot handed over by the finishing session
+    try { return await this.browserSession(input, config, origin, login, work); } finally {
+      const next = this.browserWaiters.shift();
+      if (next) next(); else this.browsers--;
+    }
+  }
+
+  private async browserSession<T>(input: string, config: ScrapingConfig, origin: string, login: SiteLogin | undefined,
+    work: (page: Page, grant: () => void) => Promise<T>): Promise<T> {
     const loginOrigin = login ? publicUrl(login.url).origin : null;
+    // --disable-dev-shm-usage: Docker's default 64 MB /dev/shm crashes Chromium on large pages.
     const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
-      args: ['--force-webrtc-ip-handling-policy=disable_non_proxied_udp', '--disable-background-networking'] })
+      args: ['--force-webrtc-ip-handling-policy=disable_non_proxied_udp', '--disable-background-networking', '--disable-dev-shm-usage'] })
       .catch(() => { throw new BadRequestException('เบราว์เซอร์ยังไม่พร้อมบนเซิร์ฟเวอร์ ให้ผู้ดูแลติดตั้ง Chromium หรือลองโหมด HTML'); });
     try {
       const context = await browser.newContext({ serviceWorkers: 'block', acceptDownloads: false });

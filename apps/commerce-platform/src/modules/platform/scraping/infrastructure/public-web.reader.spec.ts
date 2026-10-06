@@ -126,3 +126,26 @@ it('explains HTTP failures in plain words and reports bot challenges instead of 
   expect(httpProblem(429, {}, '')).toMatch(/429/);
   expect(httpProblem(503, {}, '')).toMatch(/ขัดข้อง \(503\)/);
 });
+
+it('caps concurrent Chromium sessions at SCRAPING_MAX_BROWSERS and runs waiters in order', async () => {
+  process.env.SCRAPING_MAX_BROWSERS = '2';
+  const reader = new PublicWebReader();
+  let running = 0, peak = 0;
+  const order: number[] = [];
+  const finish: (() => void)[] = [];
+  jest.spyOn(reader as any, 'browserSession').mockImplementation(async (_input: unknown, _c: unknown, _o: unknown, _l: unknown, work: any) => {
+    running++; peak = Math.max(peak, running);
+    try { return await work(); } finally { running--; }
+  });
+  const open = (id: number, fail = false) => (reader as any).session('https://example.com', {}, 'https://example.com', undefined,
+    () => new Promise<void>((resolve, reject) => { order.push(id); finish.push(() => (fail ? reject(new Error('x')) : resolve())); }));
+  const sessions = [open(1, true).catch(() => 'failed'), open(2), open(3), open(4)];
+  await new Promise(r => setImmediate(r));
+  expect(order).toEqual([1, 2]);
+  while (finish.length) { finish.shift()!(); await new Promise(r => setImmediate(r)); }
+  await Promise.all(sessions);
+  expect(order).toEqual([1, 2, 3, 4]);
+  expect(peak).toBe(2);
+  expect((reader as any).browsers).toBe(0); // a failed session still frees its slot
+  delete process.env.SCRAPING_MAX_BROWSERS;
+});

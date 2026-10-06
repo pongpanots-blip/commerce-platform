@@ -55,6 +55,11 @@ concurrency:
   group: deploy-ecr
   cancel-in-progress: false
 
+# id-token: AWS_ROLE_ARN (GitHub OIDC → IAM role commerce-platform-github-ecr), no long-lived AWS keys.
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
@@ -104,11 +109,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - uses: aws-actions/amazon-ecr-login@v2
+      # EC2 is Graviton (m7g) → arm64 image, cross-built via QEMU (hosted arm runners aren't free on private repos).
+      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v6
         with:
           context: .
           file: docker/Dockerfile.${{ matrix.service }}
+          platforms: linux/arm64
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
           push: true
           tags: ${{ env.ECR_REGISTRY }}/commerce-${{ matrix.service }}:${{ needs.resolve.outputs.tag }}
 

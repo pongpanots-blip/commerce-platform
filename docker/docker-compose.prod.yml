@@ -20,14 +20,28 @@ services:
       COMMERCE_DB_PASSWORD: ${COMMERCE_DB_PASSWORD}
       COMMERCE_DB_NAME: ${COMMERCE_DB_NAME:-commerce_db}
       COMMERCE_DB_SSL: ${COMMERCE_DB_SSL:-true}
-      REDIS_HOST: ${REDIS_HOST}
+      REDIS_HOST: ${REDIS_HOST:-redis}
       REDIS_PORT: ${REDIS_PORT:-6379}
+      # Chromium on an 8 GB box: 1 long scheduled session + 1 slot for admin previews/link crawls (~0.5-1.5 GB each).
+      SCRAPING_MAX_BROWSER_SESSIONS: ${SCRAPING_MAX_BROWSER_SESSIONS:-1}
+      SCRAPING_MAX_BROWSERS: ${SCRAPING_MAX_BROWSERS:-2}
       STOREFRONT_API_KEYS: ${STOREFRONT_API_KEYS}
       PORTAL_JWT_SECRET: ${PORTAL_JWT_SECRET}
       COMMERCE_CORS_ORIGINS: ${COMMERCE_CORS_ORIGINS}
       # josh's databases, READ-ONLY users (scripts/josh-db-readonly-users.sh). Unset = josh pages show "not configured".
       JOSH_DATABASE_URL: ${JOSH_DATABASE_URL:-}
       JOSH_MONGO_URL: ${JOSH_MONGO_URL:-}
+
+    depends_on:
+      - redis
+
+  # BullMQ queues. Internal only (no published port); BullMQ requires noeviction.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory', '512mb', '--maxmemory-policy', 'noeviction']
+    volumes:
+      - redis_data:/data
 
   admin:
     image: ${ECR_REGISTRY}/commerce-admin:${ADMIN_TAG:-latest}
@@ -44,3 +58,6 @@ services:
       - '4404:80'
     depends_on:
       - platform
+
+volumes:
+  redis_data:

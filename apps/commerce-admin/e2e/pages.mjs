@@ -28,13 +28,15 @@ const ADMIN_ROUTES = [
   '/reports/winback', '/josh/kyc', '/josh/credit_terms', '/josh/admin_access', '/josh/shipments', '/josh/payments',
   '/josh/credit_notes', '/josh/credit_backs', '/josh/invoices', '/josh/coupons', '/josh/campaigns', '/josh/segments',
   '/josh/suppliers', '/josh/internal_docs', '/josh-api-logs', '/marketing/research', '/marketing/restaurants',
-  '/marketing/push-campaigns', '/marketing/promotions', '/marketing/workflows', '/marketing/competitor-prices',
+  '/marketing/workflows', '/cs', '/livechat', '/marketing/competitor-prices',
   '/marketing/scraping-sources', '/marketing/scraped-catalog', '/ai/connectors', '/erp/inbound-log', '/erp/josh-logs',
   '/erp/webhook-dead-letter', '/erp/webhook-platforms', '/erp/inventory-warehouse', '/erp/simulator',
   '/erp/jagota-shadow', '/integrations', '/webhooks', '/subscriptions', '/sync-jobs', '/erp-stock', '/erp-ingest',
   '/customers', '/products', '/inventory', '/orders', '/reservations',
 ];
 const PORTAL_ROUTES = ['/', '/keys', '/webhooks', '/docs'];
+// josh web-admin pages copied as-is (josh's own look, josh API via admin-call): only "renders without a JS error".
+const JOSH_ROUTES = ['/marketing/workflows/new', '/j/allproducts', '/j/order', '/j/coupons', '/j/segments', '/j/marketing/push-campaigns'];
 // Detail pages: open the list, follow the first row's link, check the page it lands on.
 const DETAILS = [
   ['/reports/orders', '/reports/orders/'],
@@ -88,6 +90,21 @@ try {
   await page.getByRole('button', { name: /sign in|เข้าสู่ระบบ/i }).click();
   await page.locator('aside').waitFor({ timeout: 10_000 });
   for (const r of ADMIN_ROUTES) if (!only || r.includes(only)) await check(page, 'admin', r);
+  for (const r of JOSH_ROUTES) {
+    if (only && !r.includes(only)) continue;
+    const name = `josh${r.replace(/[/:]/g, '-')}`;
+    const errors = [];
+    const onErr = (e) => errors.push(String(e));
+    page.on('pageerror', onErr);
+    await page.goto(ADMIN + r, { waitUntil: 'networkidle' }).catch((e) => errors.push(e.message));
+    await page.waitForTimeout(500);
+    const text = (await page.locator('main').innerText().catch(() => '')).trim();
+    if (!text) fail(name, 'renders nothing');
+    for (const e of errors) fail(name, `page error: ${e.slice(0, 160)}`);
+    page.off('pageerror', onErr);
+    await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: true });
+    console.log(`${failures.some((f) => f.startsWith(name + ':')) ? 'FAIL' : 'PASS'}  ${name}`);
+  }
   for (const [list, prefix] of DETAILS) {
     if (only && !list.includes(only)) continue;
     const name = `admin-detail${list.replace(/\//g, '-')}`;

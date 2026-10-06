@@ -1,0 +1,80 @@
+import { createBotTemplate } from '@josh/shared-api';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminInsertLayout from '../../components/AdminInsertLayout';
+import BotTemplateBuilder, {
+  BotTemplateFormValue,
+} from '../../components/bot/BotTemplateBuilder';
+import { ADMIN_ROUTES } from '../../config/admin-routes';
+
+const CreateBotTemplate = () => {
+  const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  const [schemaError, setSchemaError] = useState('');
+  const [exampleError, setExampleError] = useState('');
+  const [form, setForm] = useState<BotTemplateFormValue>({
+    name: '',
+    type: 'card',
+    schemaText: '{"fields":[]}',
+    exampleText: '{}',
+    active: true,
+  });
+
+  const handleSubmit = async () => {
+    if (!form.name) {
+      alert('กรุณากรอกชื่อ Template');
+      return;
+    }
+    let schema: any;
+    let example: any;
+    setSchemaError('');
+    setExampleError('');
+    try {
+      schema = JSON.parse(form.schemaText);
+    } catch {
+      setSchemaError('Schema ไม่ใช่ JSON ที่ถูกต้อง');
+      return;
+    }
+    try {
+      example = JSON.parse(form.exampleText);
+    } catch {
+      setExampleError('Example ไม่ใช่ JSON ที่ถูกต้อง');
+      return;
+    }
+    setSaving(true);
+    try {
+      await createBotTemplate({
+        name: form.name,
+        type: form.type,
+        schema,
+        example,
+        active: form.active,
+      });
+      navigate(ADMIN_ROUTES.botTemplates);
+    } catch {
+      alert('เกิดข้อผิดพลาดในการบันทึก');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <AdminInsertLayout
+      title="เพิ่ม Template"
+      subtitle="กำหนดรูปแบบการตอบกลับของ chatbot"
+      backPath={ADMIN_ROUTES.botTemplates}
+      saving={saving}
+      onSave={handleSubmit}
+      wide
+    >
+      <BotTemplateBuilder
+        value={form}
+        onChange={setForm}
+        schemaError={schemaError}
+        exampleError={exampleError}
+      />
+    </AdminInsertLayout>
+  );
+};
+
+export default CreateBotTemplate;

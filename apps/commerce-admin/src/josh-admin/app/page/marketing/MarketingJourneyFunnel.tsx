@@ -1,0 +1,243 @@
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import {
+  getAnalyticsFunnel,
+  type AnalyticsFunnelResponse,
+  type AnalyticsFunnelStep,
+  type AnalyticsPlatform,
+  type GetAnalyticsFunnelParams,
+} from '@josh/shared-api';
+import { Table, TableColumn } from '@josh/shared-ui-web';
+import AdminListHeader from '../../components/AdminListHeader';
+
+type AudienceFilter = GetAnalyticsFunnelParams['audience'] & string;
+type PlatformFilter = AnalyticsPlatform | 'all';
+
+const AUDIENCE_OPTIONS: { value: AudienceFilter; label: string }[] = [
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 'guest', label: 'Guest' },
+  { value: 'logged_in', label: 'Logged in' },
+];
+
+const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 'web', label: 'Web' },
+  { value: 'ios', label: 'iOS' },
+  { value: 'android', label: 'Android' },
+];
+
+const STEP_LABELS: Record<AnalyticsFunnelStep, string> = {
+  view_item: 'View Item',
+  add_to_cart: 'Add to Cart',
+  begin_checkout: 'Begin Checkout',
+  purchase: 'Purchase',
+};
+
+type FunnelRow = {
+  step: AnalyticsFunnelStep;
+  label: string;
+  session_count: number;
+  conversion_from_previous: number | null;
+};
+
+function toDateInputValue(date: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok' }).format(date);
+}
+
+function defaultFrom(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 6);
+  return toDateInputValue(d);
+}
+
+function defaultTo(): string {
+  return toDateInputValue(new Date());
+}
+
+function formatPercent(value: number | null): string {
+  if (value === null) return '—';
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+export default function MarketingJourneyFunnel() {
+  const [from, setFrom] = useState(defaultFrom());
+  const [to, setTo] = useState(defaultTo());
+  const [audience, setAudience] = useState<AudienceFilter>('all');
+  const [platform, setPlatform] = useState<PlatformFilter>('all');
+  const [data, setData] = useState<AnalyticsFunnelResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const fromInputId = useId();
+  const toInputId = useId();
+
+  const load = useCallback(() => {
+    if (!from || !to) return;
+    setLoading(true);
+    setError(null);
+    getAnalyticsFunnel({ from, to, audience, platform })
+      .then(setData)
+      .catch((err: { response?: { data?: { message?: string } } }) => {
+        setError(err?.response?.data?.message || 'โหลด journey funnel ไม่สำเร็จ');
+        setData(null);
+      })
+      .finally(() => setLoading(false));
+  }, [from, to, audience, platform]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const rows: FunnelRow[] = useMemo(
+    () =>
+      (data?.steps ?? []).map((step) => ({
+        step: step.step,
+        label: STEP_LABELS[step.step] ?? step.step,
+        session_count: step.session_count,
+        conversion_from_previous: step.conversion_from_previous,
+      })),
+    [data],
+  );
+
+  const columns: TableColumn<FunnelRow>[] = [
+    { key: 'label', label: 'Step' },
+    {
+      key: 'session_count',
+      label: 'Sessions',
+      render: (value: number) => (
+        <span className="font-semibold tabular-nums text-gray-900">{value.toLocaleString()}</span>
+      ),
+    },
+    {
+      key: 'conversion_from_previous',
+      label: 'Conversion (จาก step ก่อนหน้า)',
+      render: (value: number | null) => (
+        <span className={`tabular-nums ${value !== null ? 'text-emerald-700' : 'text-gray-400'}`}>
+          {formatPercent(value)}
+        </span>
+      ),
+    },
+  ];
+
+  const firstStepCount = rows[0]?.session_count ?? 0;
+  const lastStepCount = rows[rows.length - 1]?.session_count ?? 0;
+  const overallConversion = firstStepCount > 0 ? lastStepCount / firstStepCount : null;
+
+  return (
+    <div className="flex flex-col gap-5 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <AdminListHeader
+          title="Journey Funnel"
+          subtitle="View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform"
+        />
+        <button
+          type="button"
+          onClick={load}
+          disabled={loading}
+          className="rounded-md border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-gray-50 disabled:opacity-50"
+        >
+          {loading ? 'กำลังโหลด...' : 'รีเฟรช'}
+        </button>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor={fromInputId} className="mb-1 block text-[11px] font-medium text-gray-500">จาก</label>
+          <input
+            id={fromInputId}
+            type="date"
+            value={from}
+            max={to}
+            onChange={(e) => setFrom(e.target.value)}
+            className="rounded-md border border-gray-200 px-2 py-1.5 text-xs text-gray-700 focus:border-primary focus:outline-none"
+          />
+        </div>
+        <div>
+          <label htmlFor={toInputId} className="mb-1 block text-[11px] font-medium text-gray-500">ถึง</label>
+          <input
+            id={toInputId}
+            type="date"
+            value={to}
+            min={from}
+            max={defaultTo()}
+            onChange={(e) => setTo(e.target.value)}
+            className="rounded-md border border-gray-200 px-2 py-1.5 text-xs text-gray-700 focus:border-primary focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <span className="mb-1 block text-[11px] font-medium text-gray-500">Audience</span>
+          <div className="flex gap-1">
+            {AUDIENCE_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setAudience(option.value)}
+                className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
+                  audience === option.value
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <span className="mb-1 block text-[11px] font-medium text-gray-500">Platform</span>
+          <div className="flex gap-1">
+            {PLATFORM_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setPlatform(option.value)}
+                className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
+                  platform === option.value
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {error && (
+        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+          {error}
+        </p>
+      )}
+
+      {!error && loading && !data && (
+        <p className="text-xs text-gray-400">กำลังโหลด...</p>
+      )}
+
+      {!error && data && (
+        <>
+          <Table columns={columns} data={rows} idKey="step" />
+
+          <div className="flex flex-wrap items-center gap-4 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-600">
+            <span>
+              Login sessions (annotation):{' '}
+              <span className="font-semibold tabular-nums text-gray-900">
+                {data.login_sessions.toLocaleString()}
+              </span>
+            </span>
+            <span>
+              Overall conversion (View Item → Purchase):{' '}
+              <span className="font-semibold tabular-nums text-emerald-700">
+                {formatPercent(overallConversion)}
+              </span>
+            </span>
+          </div>
+
+          {firstStepCount === 0 && (
+            <p className="text-xs text-gray-400">ยังไม่มีข้อมูลในช่วง / filter ที่เลือก</p>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

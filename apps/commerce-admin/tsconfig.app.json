@@ -7,7 +7,22 @@
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts",
       "vite/client"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@cp/ui": [
+        "../../libs/ui/src/index.tsx"
+      ],
+      "@josh/shared-api": [
+        "src/josh-admin/libs/shared-api/index.ts"
+      ],
+      "@josh/shared-ui-web": [
+        "src/josh-admin/libs/shared-ui-web/index.ts"
+      ],
+      "@josh/shared-models": [
+        "src/josh-admin/libs/shared-models/index.ts"
+      ]
+    }
   },
   "exclude": [
     "src/**/*.spec.ts",
@@ -19,5 +34,10 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }

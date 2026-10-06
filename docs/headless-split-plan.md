@@ -10,7 +10,7 @@
 | **commerce** | ระบบหลัก (system of record) + หลังบ้าน: สินค้า ราคา โปรโมชัน สต็อก ลูกค้า/บริษัท order การชำระเงิน บัญชี ERP/Jagota รายงาน marketing engine AI | รับการ**เขียน**ทั้งหมด · ส่ง event ให้ platform |
 | **josh** | หน้าร้าน (shop-web, landing, mobile API) + CMS + login + ตัวกลางให้หน้าบ้าน (BFF) | **อ่านจากสำเนาในเครื่องตัวเอง**ที่ commerce ส่ง event มาอัปเดต — ไม่เรียก commerce ตอนลูกค้าเปิดหน้า · เรียก commerce สดเฉพาะ "สั่งซื้อ/จ่ายเงิน" |
 
-ข้อตกลงที่ต้องยอมรับ: หลังย้าย checkout แล้ว commerce ล่ม = ดูสินค้าได้แต่สั่งซื้อไม่ได้ → commerce ต้อง HA ก่อนถึงขั้นนั้น
+~~ข้อตกลงที่ต้องยอมรับ: หลังย้าย checkout แล้ว commerce ล่ม = ดูสินค้าได้แต่สั่งซื้อไม่ได้ → commerce ต้อง HA ก่อนถึงขั้นนั้น~~ → ตัดสินแล้ว: checkout อยู่ที่ josh ถาวร (ดู **checkout / orders**) commerce ล่ม josh ยังขายได้
 
 ## 1. ข้อเท็จจริงที่กำหนดแผน
 
@@ -30,7 +30,7 @@
 - ลูกค้า/หลังบ้าน: `kyc`, `pii`, `customer-import`, `cs-admin`, `cs-crm-claims`, `winback`, `push-campaign`, `internal-docs-library`, `webhook` (Zendesk/support หลังบ้าน), `shared/pdf`, `shared/notification` (OneSignal)
 
 **อยู่ josh (JOSH)**
-- CMS: `banner`, `carousel`, `copy`, `figma-sync`, `trusted-brand`, `trusted-user`, `cuisine`, `marketing-link`, `smart-link`, `popup-definition`*, `web-brand`*, หน้า legal/policies/about, landing SEO, articles (Strapi demo)
+- CMS (ตัดสิน 2026-10-05: ทั้งกลุ่ม Storefront ของ josh admin อยู่ที่ josh — homepage, categories, carousels, banners, banner targeting, trusted brands/restaurants, cuisine; ไม่มีล็อก, commerce อ่านหมวด/cuisine ได้อย่างเดียวสำหรับตัวเลือกในหน้าสินค้า): `banner`, `carousel`, `copy`, `product-category`, `figma-sync`, `trusted-brand`, `trusted-user`, `cuisine`, `marketing-link`, `smart-link`, `popup-definition`*, `web-brand`*, หน้า legal/policies/about, landing SEO, articles (Strapi demo)
 - หน้าร้าน: `search` (ต้องเร็ว), `livechat`, `cache-warmup`, `shared/revalidate`, `users` (สำเนา), `commerce-platform` (กลายเป็น client ของ commerce สำหรับ checkout)
 - `customer-metrics` เหลือแค่ตัวรับ (ทำแล้ว)
 - (*ไม่มี frontend เรียก — ตรวจซ้ำแล้วอาจเลิกใช้)
@@ -165,10 +165,23 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - พิจารณาคำขอวงเงิน: มีแล้ว (josh › Credit terms)
 - สวิตช์ josh `COMMERCE_OWNS_CUSTOMERS` ล็อกการแก้เหล่านี้ใน josh · ลูกค้าแก้โปรไฟล์บริษัทตัวเองและการรวมบัญชียังเหมือนเดิม
 
-**checkout / orders** (3 ขั้น: shadow quote → dual-write → สลับ)
-1. shadow quote — ทำแล้ว (ปิดไว้): commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (สำเนา `checkout/order-totals.ts`: แยก VAT ต่อหน่วย, กลุ่มตามประเภทการส่ง, ค่าส่ง 100 เมื่อกลุ่มต่ำกว่า 2,500 ก่อน VAT, กระจายส่วนลดแบบเศษมากสุด) แล้วเทียบ 8 ช่อง · ราคาแต่ละบรรทัดเทียบใน price shadow · ส่วนลดคูปอง/เครดิตใช้ตัวเลขของ josh · รายงานร้าน › ราคา: commerce คิดคู่กัน (ส่วนล่าง) · MCP `price_shadow` (`orderTotals`) · `CRON_ORDER_QUOTE_SHADOW_ENABLED`
-2. dual-write — ยังไม่ทำ: รอ shadow ราคา + ยอดรวม ตรง ~100% ต่อเนื่อง แล้ว commerce เก็บสำเนา order ทุกใบตอน checkout
-3. สลับให้ commerce เป็นเจ้าของ order — ยังไม่ทำ
+**campaign / โปรโมชัน / คูปอง / segment / push** — ตัดสินแล้ว (2026-10-06): **ข้อมูลและการเขียนอยู่ที่ josh · commerce เป็นที่สั่งงาน** (หน้า admin ตัวเต็มใต้ /j, MCP สร้าง/แก้แบบยืนยันก่อน, รายงาน, price shadow)
+- ตรวจโค้ดแล้ว: checkout ของ josh เขียนตารางเหล่านี้เอง (`coupons.global_used_count`, `promotion_mechanics.sold_units`, `coupon_usages`, `promotion_mechanic_usages`, `coupons.status` จาก cron) และทุกการแก้ใน admin ของ josh ล้าง cache ราคา SKU / การแสดงโปร / แคตตาล็อก และ revalidate หน้าร้าน · โมดูลคูปองรวม logic ใช้คูปองตอน checkout กับ admin ไว้ในชุดเดียวกัน (5.5k บรรทัด) · promotion page พึ่ง product / banner service
+- ย้ายเจ้าของมา commerce = คัดลอก ~10k บรรทัดที่ผูกกับหน้าร้าน + ต้องดูแลสูตรราคาสองที่ · ถ้าสองที่ไม่ตรงกัน checkout คิดราคาผิด · และ commerce ล่มก็ยังขายได้อยู่แล้วเพราะข้อมูลอยู่ josh — ไม่คุ้มความเสี่ยง
+- ถ้าวันหน้าจะย้าย: แยกตามคอลัมน์ (commerce เป็นเจ้าของนิยาม · josh เป็นเจ้าของตัวนับ) ด้วยกลไก mirror เดียวกับ winback · josh ต้องล้าง cache ตอนรับสำเนา
+
+**winback (แอปฝ่ายขาย saleactivity)** — ย้ายมา commerce แล้ว (ปิดไว้ · สลับด้วยสวิตช์)
+- โค้ด: โมดูล winback ของ josh ทั้งหมด (คัดลอกตรงตัว `modules/integration/winback`, เทส 282 ข้อของ josh ผ่านใน commerce) บนตาราง winback 6 ตารางของ commerce (migration 1793800000000 = schema ของ josh) · ข้อมูล josh ที่อ่าน (users, orders, companies, restaurant_place, erp_sales_history, cuisine) อ่านจาก replica
+- แอปยัง login ที่ josh: commerce ตรวจ access token ของ josh เอง (`JOSH_JWT_SECRET` + token_version/role ภายใน จาก replica)
+- แจ้งเตือน 4 แบบ (lead_assigned, appointment_due, lead_aging, daily_digest): commerce เป็นคนตัดสิน · josh เป็นคนส่ง (`winback.notify` ผ่าน outbox) เพราะเครื่องของเซลล์ลงทะเบียน push และ inbox อยู่ที่ josh · josh ล่ม = แจ้งเตือนรอ ไม่หาย · welcome-lead email ก็เช่นกัน (`winback.welcome_email`)
+- รูปกิจกรรม: commerce อัปโหลดเองไป bucket/path เดิมของ josh (S3)
+- ข้อมูลสองฝั่งตรงกันด้วยการเทียบ hash ทุกแถว (`CRON_WINBACK_MIRROR_ENABLED`): ก่อนสลับ josh → commerce · หลังสลับ commerce → josh (`winback.row` แบบล่าสุดชนะ) ทำให้ restaurant-place link / PII / รายงานบน replica ฝั่ง josh ใช้ได้เหมือนเดิม · ทดสอบกับ DB จริงแล้ว (เพิ่ม แก้ ลบ ไม่ซ้ำ ไทย/เวลา hash ตรง)
+- วันสลับ: (1) commerce `CRON_WINBACK_MIRROR_ENABLED=true` รอให้ซิงก์ครบ (2) josh subscription เพิ่ม event `winback.notify`, `winback.welcome_email`, `winback.row` (3) ตั้ง josh `WINBACK_OWNED_BY_COMMERCE=true` + commerce `WINBACK_OWNER=commerce` + เปิด cron แจ้งเตือนฝั่ง commerce (4) nginx ส่ง `/api/winback/*` ไป commerce · josh จะปฏิเสธการเขียน winback (409), ปิด cron แจ้งเตือน, ส่ง promote-on-login ไป commerce
+- ข้อจำกัด: commerce ล่ม = แอปฝ่ายขายใช้ไม่ได้ (หน้าร้านไม่กระทบ) · login ยังอยู่ josh
+
+**checkout / orders** — ตัดสินแล้ว (2026-10-05): **checkout อยู่ที่ josh ถาวร** — josh คิดราคา/ยอดรวม สร้าง order, split shipment, การชำระเงิน (บัตร/QR) และ KBank reconcile cron · commerce รับสำเนา order แล้วเป็นคนส่งไป ERP · ไม่มี shadow เทียบยอด (เอาออกแล้ว; ตาราง `order_quote_checks` ยังค้างใน DB ไม่มีโค้ดใช้)
+1. สำเนา order — ทำแล้ว (ปิดไว้): commerce เก็บทุก order + บรรทัดของ josh (`josh_orders`, `josh_order_lines`, ชื่อช่องแบบ josh) · ดึงย้อนหลังและอ่าน order ที่ยังเปลี่ยนได้ซ้ำทุกรอบ (`CRON_JOSH_ORDER_COPY_ENABLED`) · josh `ORDERS_COPY_TO_COMMERCE=true` แจ้งทันทีหลัง checkout แบบไม่รอ (2 วินาที) · checkout ของ josh ไม่ขึ้นกับ commerce
+2. ส่ง ERP ผ่าน commerce — ทำแล้ว (ปิดไว้): josh สร้าง request `add-order-create` เหมือนเดิม แล้วให้ commerce ส่ง (`JAGOTA_GATEWAY_ENABLED` ฝั่ง commerce, `JAGOTA_VIA_COMMERCE_BRANCHES` ฝั่ง josh ทีละสาขาหรือ `*`) · commerce ล่ม/ไม่ตอบใน 40 วินาที → josh ส่งตรงเหมือนเดิม · ไม่ซ้ำเพราะ commerce กันซ้ำตามเลข order และ ERP ปฏิเสธเลขซ้ำ
 
 **โปรโมชัน** — ปิดไว้ (default off)
 - ทดลองคู่กัน: ใช้ price shadow ตัวเดิม นับเฉพาะบรรทัดที่มีโปร ว่า commerce เลือกโปรเดียวกับ josh กี่ % · Marketing › โปรโมชัน · MCP `josh_promotions`

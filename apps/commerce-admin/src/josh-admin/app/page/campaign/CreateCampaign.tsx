@@ -1,0 +1,87 @@
+import { createCampaign } from '@josh/shared-api';
+import { DateTimeRangeInput, Input } from '@josh/shared-ui-web';
+import { useId, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminInsertLayout from '../../components/AdminInsertLayout';
+import { ADMIN_ROUTES } from '../../config/admin-routes';
+import { Section } from '../coupon/CouponCoreForm';
+import { CouponFormErrorBanner } from '../coupon/CouponFormSections';
+import { getErrorMessage } from '../promotion-common';
+import {
+  buildCreateCampaignPayload,
+  emptyCampaignForm,
+  validateCampaignForm,
+  type CampaignForm,
+  type CampaignFormErrors,
+} from './campaign.helpers';
+
+/** Name + dates only — the promotions, coupons and page are added from the campaign's own page. */
+export default function CreateCampaign() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState<CampaignForm>(emptyCampaignForm);
+  const [errors, setErrors] = useState<CampaignFormErrors>({});
+  const [saveError, setSaveError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const dateLabelId = useId();
+  const datesErrorId = useId();
+
+  const patch = (partial: Partial<CampaignForm>) => setForm((current) => ({ ...current, ...partial }));
+
+  const handleSave = async () => {
+    if (saving) return;
+    const found = validateCampaignForm(form);
+    setErrors(found);
+    if (Object.keys(found).length > 0) {
+      setSaveError('กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง');
+      return;
+    }
+    setSaveError('');
+    setSaving(true);
+    try {
+      const created = await createCampaign(buildCreateCampaignPayload(form));
+      navigate(ADMIN_ROUTES.campaignDetail(created.id));
+    } catch (err) {
+      setSaveError(getErrorMessage(err, 'สร้าง Campaign ไม่สำเร็จ'));
+      setSaving(false);
+    }
+  };
+
+  return (
+    <AdminInsertLayout
+      title="สร้าง Campaign"
+      subtitle="ตั้งชื่อและช่วงเวลา แล้วเพิ่มโปร คูปอง และหน้าโปรในหน้าถัดไป"
+      backPath={ADMIN_ROUTES.campaigns}
+      saving={saving}
+      onSave={() => void handleSave()}
+    >
+      <CouponFormErrorBanner error={saveError} />
+      <Section title="ข้อมูล Campaign">
+        <Input
+          label="ชื่อ Campaign"
+          required
+          value={form.name}
+          error={errors.name}
+          aria-invalid={!!errors.name}
+          placeholder="เช่น 11.11 Beef Fest"
+          onChange={(event) => patch({ name: event.target.value })}
+        />
+        <div role="group" aria-labelledby={dateLabelId} aria-describedby={errors.dates ? datesErrorId : undefined}>
+          <p id={dateLabelId} className="mb-1 text-sm text-ink-secondary">
+            ระยะเวลา<span className="text-alert"> *</span>
+          </p>
+          <DateTimeRangeInput
+            startValue={form.startAt}
+            endValue={form.endAt}
+            onStartChange={(value) => patch({ startAt: value })}
+            onEndChange={(value) => patch({ endAt: value })}
+          />
+          {errors.dates && (
+            <p id={datesErrorId} className="mt-1 text-sm text-alert">
+              {errors.dates}
+            </p>
+          )}
+        </div>
+      </Section>
+    </AdminInsertLayout>
+  );
+}

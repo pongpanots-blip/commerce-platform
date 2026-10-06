@@ -1,5 +1,5 @@
 import { BadRequestException, ServiceUnavailableException } from '@nestjs/common';
-import { erpAccepted, erpFailureReason, JagotaGateway } from './jagota-gateway';
+import { erpAccepted, erpCustomerCode, erpFailureReason, JagotaGateway } from './jagota-gateway';
 import type { ErpCreateOrderRequest } from './erp-order-request';
 
 const request: ErpCreateOrderRequest = {
@@ -31,7 +31,7 @@ describe('JagotaGateway.createOrder', () => {
     repo = { query: jest.fn().mockResolvedValue([{ id: 'row-1' }]), findOneByOrFail: jest.fn(), update: jest.fn() };
     fetchMock = jest.fn();
     global.fetch = fetchMock;
-    gateway = new JagotaGateway(repo as never);
+    gateway = new JagotaGateway(repo as never, repo as never);
   });
   afterEach(() => { process.env = { ...saved }; });
 
@@ -110,5 +110,57 @@ describe('JagotaGateway.createOrder', () => {
     fetchMock.mockResolvedValueOnce(json(200, { token: 't' })).mockRejectedValueOnce(new Error('aborted'));
     await expect(gateway.createOrder(request)).resolves.toEqual({ attempted: true, replayed: false, response: null });
     expect(repo.update).toHaveBeenCalledWith({ id: 'row-1' }, expect.objectContaining({ status: 'failed', lastError: 'no response from ERP' }));
+  });
+});
+
+describe('JagotaGateway.createCustomer', () => {
+  const saved = { ...process.env };
+  const customer = { custCode: '', slelectedBusinessType: 'business', skipMagento: true, customer: { CustomerName: 'ร้านทดสอบ' }, customerContact: [{ Email: 'Buyer@Shop.test' }] };
+  let repo: { query: jest.Mock; findOneByOrFail: jest.Mock; update: jest.Mock };
+  let fetchMock: jest.Mock;
+  let gateway: JagotaGateway;
+
+  beforeEach(() => {
+    Object.assign(process.env, ENV);
+    repo = { query: jest.fn().mockResolvedValue([{ id: 'row-1' }]), findOneByOrFail: jest.fn(), update: jest.fn() };
+    fetchMock = jest.fn();
+    global.fetch = fetchMock;
+    gateway = new JagotaGateway({} as never, repo as never);
+  });
+  afterEach(() => { process.env = { ...saved }; });
+
+  it('reads the CUST_CODE the way josh does: converted INA… code first, else the prospect', () => {
+    expect(erpCustomerCode({ data: { createActualCustomer: { data: { result: [{ CUST_CODE: 'INA0001' }] } }, created: { data: { result: [{ CUST_CODE: 'P-1' }] } } } })).toBe('INA0001');
+    expect(erpCustomerCode({ data: { created: { data: { result: [{ CUST_CODE: 'P-1' }] } } } })).toBe('P-1');
+    expect(erpCustomerCode({ error: true, message: 'under approval' })).toBeNull();
+  });
+
+  it('claims the email (lower-cased), sends once with the token, records the code', async () => {
+    fetchMock.mockResolvedValueOnce(json(200, { data: { token: 'tok' } }))
+      .mockResolvedValueOnce(json(200, { error: false, data: { created: { data: { result: [{ CUST_CODE: 'P-1' }] } } } }));
+    await expect(gateway.createCustomer(customer)).resolves.toMatchObject({ attempted: true, replayed: false });
+    expect(repo.query.mock.calls[0][1][0]).toBe('buyer@shop.test');
+    expect(fetchMock.mock.calls[1][0]).toBe('https://erp.test/customers/create-customer');
+    expect(fetchMock.mock.calls[1][1].headers.token).toBe('Bearer tok');
+    expect(repo.update).toHaveBeenCalledWith({ id: 'row-1' }, expect.objectContaining({ status: 'sent', custCode: 'P-1', lastError: null }));
+  });
+
+  it('a sent email is replayed, a running one is in flight (no second ERP call); ERP refusal is failed (retryable)', async () => {
+    repo.query.mockResolvedValue([]);
+    repo.findOneByOrFail.mockResolvedValueOnce({ status: 'sent', response: { error: false } }).mockResolvedValueOnce({ status: 'sending' });
+    await expect(gateway.createCustomer(customer)).resolves.toEqual({ attempted: true, replayed: true, response: { error: false } });
+    await expect(gateway.createCustomer(customer)).resolves.toEqual({ attempted: false, reason: 'in_flight' });
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    repo.query.mockResolvedValue([{ id: 'row-2' }]);
+    fetchMock.mockResolvedValueOnce(json(200, { data: { token: 'tok' } })).mockResolvedValueOnce(json(400, { error: true, message: 'Email is under approval' }));
+    await gateway.createCustomer(customer);
+    expect(repo.update).toHaveBeenCalledWith({ id: 'row-2' }, expect.objectContaining({ status: 'failed', lastError: 'Email is under approval' }));
+  });
+
+  it('refuses a body that is not create-customer; off → 503', async () => {
+    await expect(gateway.createCustomer({ customerContact: [{ Email: 'x' }] })).rejects.toBeInstanceOf(BadRequestException);
+    delete process.env.JAGOTA_GATEWAY_ENABLED;
+    await expect(gateway.createCustomer(customer)).rejects.toBeInstanceOf(ServiceUnavailableException);
   });
 });

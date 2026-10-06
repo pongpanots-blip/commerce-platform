@@ -1,0 +1,77 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-left: 1px solid #e5e7eb;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.section input,
+.section select,
+.section textarea {
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.section input:focus,
+.section select:focus,
+.section textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.save,
+.cancel {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save {
+  background: #3b82f6;
+  color: white;
+}
+
+.save:hover {
+  background: #2563eb;
+}
+
+.cancel {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.cancel:hover {
+  background: #d1d5db;
+}

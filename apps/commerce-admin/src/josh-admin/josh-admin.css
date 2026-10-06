@@ -1,0 +1,6 @@
+/* josh web-admin utilities for the copied josh admin pages (see tailwind.config.cjs: scoped to .josh-tw, no preflight). */
+@tailwind components;
+@tailwind utilities;
+.josh-tw { font-family: 'Noto Sans Thai', ui-sans-serif, system-ui, sans-serif; color: #041a3d; }
+.josh-tw *, .josh-tw ::before, .josh-tw ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+.josh-tw button, .josh-tw input, .josh-tw select, .josh-tw textarea { font: inherit; color: inherit; }

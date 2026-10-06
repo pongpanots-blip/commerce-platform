@@ -49,7 +49,8 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
+      // FormData sets its own multipart boundary.
+      ...(init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
@@ -622,24 +623,6 @@ export const winbackApi = {
   leadSignals: () => api.get<WbEnvelope<{ leads: WbLead[]; stageMedianDays: Record<string, number> }>>('/reports/winback/lead-signals?limit=50'),
 };
 
-// josh push campaigns (read-only) — josh's own field names.
-export interface PushCampaign {
-  id: string; name: string; status: string; title: string; body: string; audience: { include: Record<string, string[]>; exclude: Record<string, string[]> };
-  ab_enabled: boolean; scheduled_at: string | null; sent_at: string | null; created_at: string; last_error: string | null;
-  stats: { queued: number; sent: number; skipped: number; failed: number; clicked: number };
-}
-export interface PushDelivery {
-  deliveryStats: null | { totals: { attempted: number; sent: number; skipped: number; failed: number; clicked: number; deliveryRate: number; clickRate: number };
-    byTypeChannel: { channel: string; attempted: number; sent: number; skipped: number; failed: number; clicked: number; clickRate: number }[];
-    topSkipAndFailReasons: { reason: string; count: number }[] };
-  note?: string;
-}
-export const pushCampaignApi = {
-  overview: () => api.get<{ campaigns: number; scheduled: number; sentToday: number; totalQueued: number; totalSent: number }>('/reports/push-campaigns/overview'),
-  list: () => api.get<PushCampaign[]>('/reports/push-campaigns'),
-  delivery: (id: string) => api.get<PushDelivery>(`/reports/push-campaigns/${id}/delivery`),
-};
-
 // josh catalog, read-only — josh's column names.
 export interface JoshProductRow {
   product_inventory_id: string; product_inventory_sku: string; product_status: string; name_th: string | null; name_en: string | null;
@@ -650,7 +633,7 @@ export interface JoshProductRow {
   erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
 }
 export interface JoshProductDetail extends JoshProductRow {
-  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { source: string; media_type: string; sort_order: number }[];
+  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { id: string; source: string; media_type: string; sort_order: number }[];
   pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
 }
 export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';
@@ -714,20 +697,6 @@ export const jagotaHistoryApi = {
   run: () => api.post<{ added: number; refreshed: number }>('/reports/jagota-sync-history/run', {}),
 };
 
-export interface PromotionRow { id: string; name: string; badge_text: string | null; badge_text_en: string | null; is_active: boolean; start_date: string; end_date: string;
-  campaign_id: string | null; campaign_name: string | null; max_units: number | null; sold_units: number; audience: string; audience_companies: number;
-  value: Record<string, unknown> | null; product_set_ids: string[]; sku_count: number; state: 'running' | 'scheduled' | 'ended' | 'sold_out' | 'off'; updated_at: string }
-export const promotionsApi = {
-  list: (f: { state: string; search: string }) => api.get<PromotionRow[]>(`/reports/promotions?state=${encodeURIComponent(f.state)}&search=${encodeURIComponent(f.search)}`),
-  detail: (id: string) => api.get<PromotionRow & { skus: { sku: string; name_th: string | null; badge_text: string | null; value: unknown; quantity_rules: unknown }[] }>(`/reports/promotions/${id}`),
-  productSets: () => api.get<{ id: string; name: string; is_active: boolean; products: number }[]>('/reports/promotions/product-sets'),
-  shadow: (days: number) => api.get<{ days: number; lines: number; same_mechanic: number; matched: number; sameMechanicRate: number | null }>(`/reports/promotions/shadow?days=${days}`),
-  /** Body in josh's CreatePromotionMechanicDto shape; josh validates it. */
-  create: (mechanic: Record<string, unknown>) => api.post<unknown>('/josh/promotions', { mechanic }),
-  update: (id: string, changes: Record<string, unknown>) => api.post<unknown>(`/josh/promotions/${id}/update`, { changes }),
-  remove: (id: string) => api.post<unknown>(`/josh/promotions/${id}/remove`, {}),
-};
-
 export interface WorkflowRow { id: string; name: string; status: 'draft' | 'active' | 'paused'; trigger_type: string; schedule: unknown; cooldown_days: number | null;
   holdout_percent: number | null; conversion_window_days: number | null; updated_at: string; enrolled: number; running: number; failed: number; converted: number;
   holdout: number; last_run_at: string | null; failed_runs: number }
@@ -741,6 +710,42 @@ export const workflowsApi = {
   /** josh's UpdateMarketingWorkflowDto fields; josh validates. */
   update: (id: string, workflow: Record<string, unknown>) => api.post<unknown>(`/josh/marketing-workflows/${id}/update`, { workflow }),
 };
+
+/**
+ * Call one of josh's own admin routes through commerce (POST /josh/admin-call): josh runs it as you,
+ * with josh's validation; the answer is josh's. `path` is josh's path without /api, e.g. `/coupon`.
+ */
+export const joshAdmin = {
+  call: <T = unknown>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string, body?: unknown,
+    opts: { query?: Record<string, string | number | boolean>; files?: { field: string; filename: string; contentType?: string; base64: string }[] } = {}) =>
+    api.post<T>('/josh/admin-call', { method, path, body, query: opts.query, files: opts.files }),
+  get: <T = unknown>(path: string, query?: Record<string, string | number | boolean>) => joshAdmin.call<T>('GET', path, undefined, { query }),
+  /** Real multipart (videos, bulk images, any size josh's own route takes): `fields` are josh's form fields, `files` keep josh's field names. */
+  upload: <T = unknown>(method: 'POST' | 'PATCH' | 'PUT', path: string, fields: Record<string, unknown>, files: { field: string; file: File }[],
+    query?: Record<string, string | number | boolean>) => {
+    const form = new FormData();
+    form.append('request', JSON.stringify({ method, path, query, body: fields }));
+    for (const f of files) form.append(f.field, f.file, f.file.name);
+    return request<T>('/josh/admin-call/upload', { method: 'POST', body: form });
+  },
+};
+
+/** A josh binary answer (CSV / PDF export) as admin-call returns it. */
+export interface JoshFileAnswer { file: { contentType: string; filename: string | null; base64: string } }
+export const isJoshFile = (v: unknown): v is JoshFileAnswer =>
+  !!v && typeof v === 'object' && typeof (v as JoshFileAnswer).file?.base64 === 'string';
+export function joshFileBlob(a: JoshFileAnswer): Blob {
+  const bin = atob(a.file.base64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: a.file.contentType });
+}
+
+export interface LivechatLogRow { id: string; direction: 'to_cs_crm' | 'to_shop'; route: string; visitorId: string | null; text: string | null; status: number; createdAt: string }
+export const livechatApi = {
+  list: (visitorId: string, page: number) => api.get<{ items: LivechatLogRow[]; total: number }>(`/reports/livechat?visitorId=${encodeURIComponent(visitorId)}&page=${page}`),
+};
+
 
 export interface BackofficeColumn { key: string; label: string; kind: 'text' | 'money' | 'number' | 'date' | 'datetime' | 'bool' | 'status' | 'code' | 'phone' | 'email' }
 export interface BackofficeList { key: string; title: string; joshPage: string; columns: BackofficeColumn[]; byStatus: { status: string | null; n: number }[];
@@ -795,14 +800,6 @@ export const priceShadowApi = {
   recheck: (id: string) => api.post<PriceShadowRow>(`/reports/price-shadow/recheck/${id}`, {}),
 };
 
-export interface OrderQuoteRow { id: string; joshOrderId: string; orderNumber: string | null; orderedAt: string; matched: boolean;
-  diffs: { field: string; josh: number; commerce: number }[]; note: string | null }
-export const orderQuoteApi = {
-  summary: (days: number) => api.get<{ days: number; checked: number; matched: number; mismatched: number; matchRate: number | null; last_at: string | null;
-    mismatchByField: { field: string; n: number }[] }>(`/reports/order-quote-shadow/summary?days=${days}`),
-  list: (filter: string, page: number) => api.get<{ items: OrderQuoteRow[]; total: number }>(`/reports/order-quote-shadow?filter=${filter}&page=${page}`),
-  run: () => api.post<{ checked: number }>('/reports/order-quote-shadow/run', {}),
-};
 
 export interface StaffPriceRow { id: string; kind: 'customer' | 'contract'; companyId: string | null; branchId: string | null; productInventoryId: string; sku: string | null;
   price: number; contractRef: string | null; startDate: string; endDate: string | null; joshId: string | null; status: 'synced' | 'pending' | 'failed';

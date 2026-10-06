@@ -1,11 +1,11 @@
 import { FormEvent, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import {
-  Button, Chip, DetailSection, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading,
-  Page, PageHeader, Panel, Select, Span, Textarea,
+  Alert, Button, Chip, DetailSection, Empty, ErrorText, Field, FormPanel, Hint, Input, KeyValueGrid, Loading,
+  Page, PageHeader, Panel, PanelHead, Select, Span, Textarea,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { joshActionsApi, joshProductApi, JoshProductDetail as JoshProductDetailType } from '../../lib/api';
+import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const STATUS: Record<string, string> = { active: 'เปิดขาย', draft: 'draft (ยังไม่เปิด)', inactive: 'ปิด' };
@@ -141,15 +141,7 @@ export function JoshProductDetail() {
         <Panel><Empty>ไม่พบสินค้า</Empty></Panel>
       ) : (
         <>
-          {p.media && p.media.length > 0 && (
-            <Panel>
-              <div className="p-4 flex flex-wrap gap-3">
-                {p.media.map((m) => (
-                  <img key={m.source} src={m.source} alt="" width={120} height={120} className="object-cover rounded border border-secondary-container bg-surface-container-low" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
-                ))}
-              </div>
-            </Panel>
-          )}
+          <ProductImages p={p} onSaved={(m) => { setMsg(m); detail.reload(); }} />
 
           <Panel>
             <div className="p-4 text-xs text-on-surface-variant">
@@ -194,5 +186,75 @@ export function JoshProductDetail() {
         </>
       )}
     </Page>
+  );
+}
+
+/**
+ * Product images (COMMERCE_OWNS_CATALOG): josh's own PATCH /product/:id with only images — files to add
+ * and `removed_media_ids`. josh keeps at most 3 images, stores them in its media storage, makes thumbnails.
+ */
+function ProductImages({ p, onSaved }: { p: JoshProductDetailType; onSaved: (msg: string) => void }) {
+  const images = p.media.filter((m) => m.media_type === 'image');
+  const [removed, setRemoved] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const keep = images.filter((m) => !removed.includes(m.id)).length;
+  const dirty = files.length > 0 || removed.length > 0;
+  async function save() {
+    if (keep + files.length > 3) return setErr('รูปได้สูงสุด 3 รูป (josh)');
+    if (!window.confirm(`${files.length ? `เพิ่ม ${files.length} รูป` : ''}${files.length && removed.length ? ' · ' : ''}${removed.length ? `ลบ ${removed.length} รูป` : ''} ของ ${p.product_inventory_sku}? หน้าร้าน josh เห็นทันที`)) return;
+    setBusy(true);
+    setErr('');
+    try {
+      const fields = { removed_media_ids: JSON.stringify(removed) };
+      await (files.length
+        ? joshAdmin.upload('PATCH', `/product/${p.product_inventory_id}`, fields, files.map((file) => ({ field: 'images', file })))
+        : joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, fields));
+      setRemoved([]);
+      setFiles([]);
+      onSaved(`บันทึกรูปของ ${p.product_inventory_sku} แล้ว`);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Panel>
+      <PanelHead
+        icon="photo_library"
+        title="รูปสินค้า"
+        sub={`${keep}/3 รูป`}
+        actions={dirty && (
+          <>
+            <Button variant="ghost" size="sm" onClick={() => { setFiles([]); setRemoved([]); setErr(''); }}>ยกเลิก</Button>
+            <Button variant="primary" size="sm" icon="cloud_upload" disabled={busy} onClick={save}>{busy ? 'กำลังอัปโหลด…' : 'บันทึกรูป'}</Button>
+          </>
+        )}
+      />
+      <div className="p-4 space-y-3">
+        <div className="flex flex-wrap gap-3">
+          {images.map((m) => {
+            const gone = removed.includes(m.id);
+            return (
+              <figure key={m.id} className={`m-0 space-y-1 ${gone ? 'opacity-35' : ''}`}>
+                <img src={m.source} alt="" width={120} height={120} className="object-cover rounded border border-secondary-container bg-surface-container-low w-[120px] h-[120px]" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
+                <figcaption>
+                  <Button variant={gone ? 'ghost' : 'danger-ghost'} size="sm" icon={gone ? 'undo' : 'delete'} onClick={() => setRemoved(gone ? removed.filter((x) => x !== m.id) : [...removed, m.id])}>
+                    {gone ? 'ไม่ลบ' : 'ลบ'}
+                  </Button>
+                </figcaption>
+              </figure>
+            );
+          })}
+          {!images.length && <Hint>ยังไม่มีรูป</Hint>}
+        </div>
+        <Field label="เพิ่มรูป" hint={files.length ? files.map((f) => f.name).join(', ') : 'jpg / png / webp / gif — รวมแล้วไม่เกิน 3 รูป'}>
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} className="text-xs file:mr-3 file:rounded-lg file:border file:border-secondary-container file:bg-surface-container-lowest file:px-3 file:py-1.5 file:text-xs" />
+        </Field>
+        {err && <Alert tone="danger">{err}</Alert>}
+      </div>
+    </Panel>
   );
 }

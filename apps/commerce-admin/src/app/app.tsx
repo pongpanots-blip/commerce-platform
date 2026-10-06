@@ -36,7 +36,6 @@ import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReport
 import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
 import { JoshErpLogs } from './pages/JoshErpLogs';
 import { Winback } from './pages/Winback';
-import { PushCampaigns } from './pages/PushCampaigns';
 import { JoshProducts } from './pages/JoshProducts';
 import { JoshCustomersPage, JoshOrdersPage, JoshPricesPage } from './pages/JoshCommerce';
 import { JagotaShadow } from './pages/JagotaShadow';
@@ -44,8 +43,11 @@ import { JoshBackoffice } from './pages/JoshBackoffice';
 import { JoshApiLogs } from './pages/JoshApiLogs';
 import { PriceShadow } from './pages/PriceShadow';
 import { StaffPrices } from './pages/StaffPrices';
-import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
+import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
+import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
+import { CsDesk } from './pages/CsDesk';
+import { Livechat } from './pages/Livechat';
 
 const NAV: NavGroup[] = [
   { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
@@ -66,7 +68,7 @@ const NAV: NavGroup[] = [
     ],
   },
   {
-    group: 'หลังบ้าน josh (อ่านอย่างเดียว)', icon: 'inventory_2',
+    group: 'หลังบ้าน josh (อ่านจาก replica ใช้ได้แม้ josh ล่ม)', icon: 'inventory_2',
     links: [
       { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
       { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
@@ -89,12 +91,82 @@ const NAV: NavGroup[] = [
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
-      { to: '/marketing/push-campaigns', label: 'Push campaigns', end: false },
-      { to: '/marketing/promotions', label: 'โปรโมชัน', end: false },
       { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
+      { to: '/j/coupons', label: 'Coupons', end: false },
+      { to: '/j/promotion-product-sets', label: 'Promotion product sets', end: false },
+      { to: '/j/promotions-mechanic', label: 'Promotion mechanics', end: false },
+      { to: '/j/promotion-pages', label: 'Promotion pages', end: false },
+      { to: '/j/promotions/campaigns', label: 'Campaigns', end: false },
+      { to: '/j/segments', label: 'Segments', end: false },
+      { to: '/j/marketing/push-campaigns', label: 'Push campaigns', end: false },
+      { to: '/j/cs/notification-catalog', label: 'Notification catalog', end: false },
+      { to: '/j/cs/notification-log', label: 'Notification log', end: false },
+      { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
+      { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', end: false },
       { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
       { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
+    ],
+  },
+  {
+    group: 'CS / แชต', icon: 'support_agent',
+    links: [
+      { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
+      { to: '/livechat', label: 'Live chat', end: false },
+      { to: '/j/bot/intent-rules', label: 'Bot · intent rules', end: false },
+      { to: '/j/bot/workflows', label: 'Bot · workflows', end: false },
+      { to: '/j/bot/templates', label: 'Bot · templates', end: false },
+    ],
+  },
+  {
+    group: 'สินค้า / ลูกค้า (จาก josh)', icon: 'shelves',
+    links: [
+      { to: '/j/allproducts', label: 'สินค้า (จัดการ)', end: false },
+      { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true },
+      { to: '/j/product/video-upload', label: 'Video upload', end: true },
+      { to: '/j/product/bulk-image-upload', label: 'Bulk image upload', end: true },
+      { to: '/j/suppliers', label: 'Suppliers', end: false },
+      { to: '/j/brands', label: 'แบรนด์', end: false },
+      { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
+      { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
+      { to: '/j/company', label: 'บริษัท', end: false },
+      { to: '/j/kyc', label: 'KYC', end: false },
+      { to: '/j/cs/sample-requests', label: 'Sample requests', end: false },
+      { to: '/j/price-requests', label: 'Price requests', end: false },
+      { to: '/j/active-offers', label: 'Active offers', end: false },
+      { to: '/j/admin-access', label: 'Admin access requests', end: false },
+    ],
+  },
+  {
+    group: 'Order / การเงิน (จาก josh)', icon: 'receipt_long',
+    links: [
+      { to: '/j/order', label: 'Orders (จัดการ)', end: false },
+      { to: '/j/shipments', label: 'Shipments (จัดการ)', end: false },
+      { to: '/j/payment-transactions', label: 'รายการชำระเงิน (จัดการ)', end: false },
+      { to: '/j/order/import', label: 'นำเข้า order', end: true },
+      { to: '/j/batch-sticker', label: 'พิมพ์ sticker', end: false },
+      { to: '/j/kbank/testing-console', label: 'KBank testing console', end: false },
+      { to: '/j/invoices', label: 'Overdue invoices', end: false },
+      { to: '/j/credit-notes', label: 'Credit notes', end: false },
+      { to: '/j/credit-backs', label: 'Credit backs', end: false },
+      { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', end: false },
+      { to: '/j/billing', label: 'Billing', end: false },
+      { to: '/j/refunds', label: 'Returns & refunds', end: false },
+      { to: '/j/jagota/payment-testing', label: 'Jagota payment testing', end: false },
+      { to: '/j/erp/webhook-simulator', label: 'ERP webhook simulator (josh)', end: false },
+    ],
+  },
+  {
+    group: 'Marketing (จาก josh)', icon: 'campaign',
+    links: [
+      { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', end: false },
+      { to: '/j/smart-links', label: 'Smart links', end: false },
+      { to: '/j/marketing-links', label: 'Marketing links', end: false },
+      { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', end: false },
+      { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', end: false },
+      { to: '/j/marketing/queue', label: 'คิวงานการตลาด', end: false },
+      { to: '/j/marketing/journey-funnel', label: 'Journey funnel', end: false },
+      { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', end: false },
     ],
   },
   { group: 'AI', icon: 'smart_toy', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
@@ -226,9 +298,14 @@ export function App() {
             <Route path="/reports/health" element={<HealthReportPage />} />
             <Route path="/reports/winback" element={<Winback />} />
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
-            <Route path="/marketing/push-campaigns" element={<PushCampaigns />} />
-            <Route path="/marketing/promotions" element={<Promotions />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
+            <Route path="/marketing/workflows/new" element={<WorkflowEditor />} />
+            <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />
+            <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
+            <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
+            <Route path="/j/*" element={<JoshAdminApp />} />
+            <Route path="/cs" element={<CsDesk />} />
+            <Route path="/livechat" element={<Livechat />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
             <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />

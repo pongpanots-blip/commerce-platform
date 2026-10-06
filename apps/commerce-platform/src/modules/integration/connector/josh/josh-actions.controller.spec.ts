@@ -5,8 +5,19 @@ describe('JoshActionsController — back-office actions', () => {
   const req = { staff: { userId: 'staff-1', email: 'ba@jagota.co.th' } } as never;
   const josh = { run: jest.fn(async () => ({ ok: true })) };
   const catalog = { syncId: jest.fn(async () => undefined) };
-  const c = new JoshActionsController(josh as never, catalog as never);
-  beforeEach(() => { josh.run.mockClear(); catalog.syncId.mockClear(); });
+  const local = { act: jest.fn(async () => ({ local: true })) };
+  const c = new JoshActionsController(josh as never, catalog as never, { get: () => local } as never);
+  beforeEach(() => { josh.run.mockClear(); catalog.syncId.mockClear(); local.act.mockClear(); });
+  afterEach(() => { delete process.env.WINBACK_OWNER; });
+
+  it('winback buttons go to josh until commerce runs winback, then to commerce\'s own services', async () => {
+    await c.assign(ID, { assignedSalesUserId: null }, req);
+    expect(josh.run).toHaveBeenCalledWith('winback', 'assign', { accountId: ID, assignedSalesUserId: null }, { userId: 'staff-1', email: 'ba@jagota.co.th' }, 'admin');
+    process.env.WINBACK_OWNER = 'commerce';
+    await expect(c.setTarget({ period_month: '2026-10' }, req)).resolves.toEqual({ local: true });
+    expect(local.act).toHaveBeenCalledWith('set_target', { period_month: '2026-10' }, 'ba@jagota.co.th');
+    expect(josh.run).toHaveBeenCalledTimes(1);
+  });
 
   it('credit review passes only the review fields josh\'s DTO knows', async () => {
     await c.reviewCredit(ID, { status: 'APPROVED', approved_credit_limit: 50000, approved_term_days: 30, company_id: 'x', credit_limit: 9e9 }, req);

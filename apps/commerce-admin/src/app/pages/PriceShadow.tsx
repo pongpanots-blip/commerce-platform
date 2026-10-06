@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import {
   Button, Empty, ErrorText, ExpandRow, ExpandToggle, Hint, Loading, Page, PageHeader, Panel, Segmented, StatGrid, StatTile, StatusChip, Table, TBody, TD, TH, THead, TR, fmt,
 } from '@cp/ui';
-import { orderQuoteApi, priceShadowApi } from '../../lib/api';
+import { priceShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const DIFF: Record<string, string> = { price: 'ราคา', source: 'แหล่งราคา', mechanic: 'โปรโมชัน' };
@@ -142,102 +142,6 @@ export function PriceShadow() {
         )}
       </div>
 
-      <OrderQuotes />
     </Page>
-  );
-}
-
-const FIELD: Record<string, string> = { total_price: 'ยอดสุทธิ', subtotal_ex_vat: 'ยอดก่อน VAT', vat_amount: 'VAT', delivery_fee: 'ค่าส่ง',
-  discount_amount: 'ส่วนลด (ก่อน VAT)', discount_inc_vat: 'ส่วนลด (รวม VAT)', product_discount_ex_vat: 'ส่วนลดสินค้า', gross_ex_vat: 'ยอดก่อนส่วนลด' };
-
-/**
- * Checkout step 1 (shadow quote): each josh order's totals rebuilt with josh's checkout math — VAT split,
- * groups by fulfillment type, delivery fee rule, discount spread. Line prices are the section above.
- */
-function OrderQuotes() {
-  const [filter, setFilter] = useState('mismatched');
-  const [busy, setBusy] = useState(false);
-  const summary = useAsync(() => orderQuoteApi.summary(7), []);
-  const list = useAsync(() => orderQuoteApi.list(filter, 1), [filter]);
-  const s = summary.data;
-
-  async function runNow() {
-    setBusy(true);
-    try { await orderQuoteApi.run(); summary.reload(); list.reload(); } finally { setBusy(false); }
-  }
-
-  return (
-    <div className="pt-6">
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h2 className="text-sm font-semibold text-on-surface">ยอดรวม order · commerce คิดคู่กับ josh</h2>
-          <p className="text-xs text-on-surface-variant mt-1">commerce คิดยอดของทุก order ใหม่ของ josh ด้วยสูตร checkout ของ josh (VAT ค่าส่ง ส่วนลด ยอดสุทธิ) แล้วเทียบ · ส่วนลดคูปองใช้ตัวเลขที่ josh คิด · ไม่ส่งอะไรให้ josh</p>
-        </div>
-        <Button size="sm" variant="secondary" disabled={busy} onClick={runNow}>{busy ? 'กำลังคิด…' : 'คิดตอนนี้'}</Button>
-      </div>
-
-      <ErrorText error={summary.error || list.error} />
-
-      {s && (
-        <StatGrid cols={2}>
-          <StatTile
-            label="ตรงกัน (7 วัน)"
-            value={s.matchRate == null ? '—' : `${s.matchRate}%`}
-            foot={`${s.matched} / ${s.checked} order`}
-            tone={s.matchRate != null && s.matchRate < 100 ? 'warn' : 'ok'}
-          />
-          <StatTile
-            label="ไม่ตรง"
-            value={fmt.num(s.mismatched)}
-            foot={s.mismatchByField.map((f) => `${FIELD[f.field] ?? f.field} ${f.n}`).join(' · ') || '—'}
-          />
-        </StatGrid>
-      )}
-
-      <div className="space-y-3">
-        <Segmented
-          options={[
-            { value: 'mismatched', label: 'ไม่ตรง' },
-            { value: 'matched', label: 'ตรง' },
-            { value: 'all', label: 'ทั้งหมด' },
-          ]}
-          value={filter}
-          onChange={setFilter}
-        />
-
-        <Panel className="overflow-hidden">
-          {list.loading && !list.data ? (
-            <Loading />
-          ) : !list.data?.items.length ? (
-            <Empty>ไม่มีรายการ</Empty>
-          ) : (
-            <Table>
-              <THead>
-                <TH>Order</TH>
-                <TH>สั่งเมื่อ</TH>
-                <TH>ช่องที่ต่าง (josh → commerce)</TH>
-                <TH>หมายเหตุ</TH>
-              </THead>
-              <TBody>
-                {list.data.items.map((r) => (
-                  <TR key={r.id}>
-                    <TD kind="mono">{r.orderNumber ?? r.joshOrderId}</TD>
-                    <TD kind="time">{fmt.when(r.orderedAt)}</TD>
-                    <TD>
-                      {r.matched ? (
-                        <StatusChip status="ok" />
-                      ) : (
-                        r.diffs.map((d) => `${FIELD[d.field] ?? d.field}: ${d.josh} → ${d.commerce}`).join(' · ')
-                      )}
-                    </TD>
-                    <TD>{r.note ?? '—'}</TD>
-                  </TR>
-                ))}
-              </TBody>
-            </Table>
-          )}
-        </Panel>
-      </div>
-    </div>
   );
 }

@@ -9,3 +9,6 @@ dist/
 
 # credentials written by scripts/josh-mongo-readonly-user.mjs
 *.secret
+
+# mock seed credentials
+scripts/.mock-credentials

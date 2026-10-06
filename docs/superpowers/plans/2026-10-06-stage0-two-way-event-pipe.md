@@ -363,7 +363,7 @@ const ORDER_ITEMS = `SELECT oi.id::text AS id, oi.order_id::text AS order_id, oi
 
 /** Marketing-safe customer columns only — never password / token_version (spec §2.2). */
 const CUSTOMER = `u.id::text AS id, u.first_name, u.last_name, u.email, u.mobile_phone, u.nickname, u.company_id::text AS company_id, u.role,
-  u.account_type, u.custype, u.custcode, u.is_active, u.marketing_consent, u.pdpa_consent, u.pdpa_consent_at, u.preferred_language,
+  u.account_type, u.custype, u.custcode, u.is_active, u.marketing_consent, u.pdpa_consent, u.pdpa_consented_at, u.preferred_language,
   u.created_at, u.first_app_login_at, u.last_app_login_at,
   COALESCE((SELECT array_agg(ub.branch_id::text) FROM user_branches ub WHERE ub.user_id = u.id), '{}') AS branch_ids`;
 

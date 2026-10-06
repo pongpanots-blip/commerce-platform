@@ -5,6 +5,7 @@ import {
   DragDropUpload,
   Button,
 } from '@josh/shared-ui-web';
+import { saveErrorMessage } from './catalog-price';
 import React, { useEffect, useState } from 'react';
 import {
   buildNutritionPayload,
@@ -165,14 +166,12 @@ export default function InsertProductForm() {
     });
 
     try {
-      const response = await createProduct(data)
+      const response = await createProduct(data);
+      const result = response.data as { product_inventory_id?: string; product_inventory_sku?: string; message?: string };
 
-      const result = await response.data
-      console.log({result});
-      
-      if (response) {
+      if (result?.product_inventory_id) {
         alert(
-          `🎉 สร้างสินค้าใหม่และอัปโหลดรูปภาพสำเร็จ! ID: ${result.product_id}`,
+          `🎉 สร้างสินค้าใหม่และอัปโหลดรูปภาพสำเร็จ! SKU ${result.product_inventory_sku ?? formData.product_sku} · ID: ${result.product_inventory_id}`,
         );
         // ตั้งค่าเคลียร์ฟอร์มตามใจชอบหลังจากทำรายการสำเร็จ
       } else {
@@ -180,7 +179,7 @@ export default function InsertProductForm() {
       }
     } catch (error) {
       console.error('Submit Product Form Failed:', error);
-      alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์หลังบ้านได้ในขณะนี้');
+      alert(`❌ สร้างสินค้าไม่สำเร็จ: ${saveErrorMessage(error, 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์หลังบ้านได้ในขณะนี้')}`);
     }
   };
 

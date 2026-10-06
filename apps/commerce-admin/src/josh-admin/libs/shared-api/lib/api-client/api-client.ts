@@ -62,7 +62,7 @@ export async function viaCommerceAction<T>(path: string, body: unknown): Promise
   } catch (e) {
     const message = e instanceof Error ? e.message.replace(/^josh: /, '') : String(e);
     const status = (e as { status?: number }).status ?? 400;
-    throw Object.assign(new Error(message), { isAxiosError: true, response: { status, data: { message, ...((e as { details?: object }).details ?? {}) } } });
+    throw Object.assign(new Error(message), { isAxiosError: true, response: { status, data: { ...((e as { details?: object }).details ?? {}), message } } });
   }
 }
 

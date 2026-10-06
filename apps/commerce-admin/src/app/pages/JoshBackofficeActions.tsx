@@ -12,7 +12,7 @@ export const ACTION_VIEWS = new Set(['credit_terms', 'admin_access', 'coupons', 
 const SUPPLIER_FIELDS: [string, string][] = [['supplier_name', 'ชื่อ'], ['contact_name', 'ผู้ติดต่อ'], ['phone', 'โทร'], ['email', 'อีเมล'], ['address', 'ที่อยู่']];
 const DOC_CATEGORIES = ['backend', 'webshop', 'landing', 'api', 'mobileapp'];
 const DOC_MAX_BYTES = 90_000;
-const confirmJosh = (text: string) => window.confirm(`${text}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในชื่อบัญชี josh ที่อีเมลตรงกับคุณ)`);
+const confirmJosh = (text: string) => window.confirm(`${text}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`);
 
 /**
  * The one button per row that asks josh to act, with a confirm step. josh decides with its own rules
@@ -26,7 +26,7 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
   const set = (k: string, v: string) => setForm({ ...form, [k]: v });
 
   async function run(confirmText: string, fn: () => Promise<unknown>, done: string) {
-    if (!window.confirm(`${confirmText}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในชื่อบัญชี josh ที่อีเมลตรงกับคุณ)`)) return;
+    if (!window.confirm(`${confirmText}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`)) return;
     setBusy(true); setErr('');
     try { await fn(); setOpen(false); setForm({}); onDone(done); } catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }

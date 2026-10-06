@@ -1,6 +1,6 @@
 /**
  * commerce-admin replacement for josh web-admin's admin-auth: the signed-in person is commerce's staff
- * session (josh acts as the josh staff account with the same email). Roles map admin → admin,
+ * session (josh acts as its commerce-platform account and records this email). Roles map admin → admin,
  * marketing → marketing, which is what josh's own pages check.
  */
 import { session } from '../../../lib/api';

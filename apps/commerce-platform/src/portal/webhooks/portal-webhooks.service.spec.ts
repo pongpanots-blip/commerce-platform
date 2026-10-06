@@ -1,6 +1,6 @@
 import { PortalWebhooksService } from './portal-webhooks.service';
 
-function makeService(rows: Record<string, unknown>[] = []) {
+function makeService(rows: Record<string, unknown>[] = [], deliveries: Record<string, unknown>[] = []) {
   const repo = {
     find: jest.fn().mockResolvedValue(rows),
     findOne: jest.fn().mockImplementation(async ({ where }: { where: Record<string, unknown> }) =>
@@ -8,7 +8,15 @@ function makeService(rows: Record<string, unknown>[] = []) {
     save: jest.fn().mockImplementation(async (r) => ({ id: 'w1', ...r })),
     create: (r: unknown) => r,
   };
-  return { service: new PortalWebhooksService(repo as never), repo };
+  const deliveriesRepo = {
+    createQueryBuilder: jest.fn().mockReturnValue({
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(deliveries),
+    }),
+  };
+  return { service: new PortalWebhooksService(repo as never, deliveriesRepo as never), repo, deliveriesRepo };
 }
 
 describe('PortalWebhooksService', () => {
@@ -101,5 +109,26 @@ describe('PortalWebhooksService', () => {
     expect(fetchSpy).toHaveBeenCalledWith('https://crm.example.com/hook', expect.objectContaining({ method: 'POST' }));
     expect(res).toMatchObject({ ok: true, status: 200 });
     fetchSpy.mockRestore();
+  });
+
+  it('recentDeliveriesForAccount returns deliveries for account subscriptions', async () => {
+    const { service } = makeService(
+      [{ id: 'w1', accountId: 'acc1' }, { id: 'w2', accountId: 'acc1' }],
+      [
+        { id: 'd1', subscriptionId: 'w1', eventType: 'order.created', targetUrl: 'https://a.com', status: 'success', statusCode: 200, attempts: 1, createdAt: '2024-01-01' },
+        { id: 'd2', subscriptionId: 'w2', eventType: 'order.updated', targetUrl: 'https://b.com', status: 'failed', statusCode: 500, attempts: 3, createdAt: '2024-01-02' },
+      ],
+    );
+    const deliveries = await service.recentDeliveriesForAccount('acc1', 10);
+    expect(deliveries).toHaveLength(2);
+    expect(deliveries[0].eventType).toBe('order.created');
+    expect(deliveries[0]).toMatchObject({ status: 'success', statusCode: 200 });
+    expect(deliveries[1]).toMatchObject({ status: 'failed', statusCode: 500 });
+  });
+
+  it('recentDeliveriesForAccount returns empty for account with no subscriptions', async () => {
+    const { service } = makeService([], []);
+    const deliveries = await service.recentDeliveriesForAccount('acc-no-subs', 10);
+    expect(deliveries).toEqual([]);
   });
 });

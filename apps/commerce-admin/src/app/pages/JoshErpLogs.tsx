@@ -1,15 +1,13 @@
 import { FormEvent, Fragment, useState } from 'react';
 import { joshErpLogApi } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, Field, Input, DetailSection, Button } from '@cp/ui';
 
-// Same list as josh's ERP_LOG_ENDPOINTS (shared-api erp-log.api.ts).
 const ENDPOINTS = ['products/qty', 'products/price', 'products/moq', 'products', 'products/bulk', 'products/image', 'customers', 'companies',
   'orders/status', 'invoices/status', 'quotations', 'quotations/status', 'order-periods'];
 const LIMIT = 50;
-/** <input type="datetime-local"> value (local time) → ISO, or undefined. */
 const iso = (v: string) => (v ? new Date(v).toISOString() : undefined);
 
-/** josh's ERP inbound log (moved from josh web-admin "ERP logs"): read from josh's log DB, kept 14 days there. */
 export function JoshErpLogs() {
   const [draft, setDraft] = useState({ endpoint: '', status: 'all', from: '', to: '', q: '' });
   const [f, setF] = useState(draft);
@@ -20,77 +18,70 @@ export function JoshErpLogs() {
     [f, page],
   );
   const detail = useAsync(() => (open ? joshErpLogApi.get(open) : Promise.resolve(null)), [open]);
-  const maxPage = Math.max(1, Math.ceil((data?.total ?? 0) / LIMIT));
   const set = (k: keyof typeof draft) => (e: { target: { value: string } }) => setDraft({ ...draft, [k]: e.target.value });
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>ERP log ของ josh</h1>
-          <p>สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน</p>
-        </div>
-        <button className="btn ghost" type="button" onClick={reload}>Refresh</button>
-      </div>
-      <section className="panel">
-        <form className="stack" onSubmit={(e: FormEvent) => { e.preventDefault(); setPage(1); setF(draft); }}>
-          <div className="row" style={{ alignItems: 'flex-end' }}>
-            <label className="field">Endpoint
-              <select value={draft.endpoint} onChange={set('endpoint')}>
-                <option value="">ทั้งหมด</option>
-                {ENDPOINTS.map((e) => <option key={e} value={e}>{e}</option>)}
-              </select>
-            </label>
-            <label className="field">ผล
-              <select value={draft.status} onChange={set('status')}>
-                <option value="all">ทั้งหมด</option><option value="ok">สำเร็จ</option><option value="fail">ไม่สำเร็จ</option>
-              </select>
-            </label>
-            <label className="field">ตั้งแต่<input type="datetime-local" value={draft.from} onChange={set('from')} /></label>
-            <label className="field">ถึง<input type="datetime-local" value={draft.to} onChange={set('to')} /></label>
-            <label className="field">ค้นหา<input value={draft.q} onChange={set('q')} placeholder="รหัสสินค้า / เลข order / รหัสลูกค้า" /></label>
-            <button className="btn" type="submit">ค้นหา</button>
+    <Page>
+      <PageHeader title="ERP log ของ josh" subtitle="สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน" actions={<Button icon="refresh" onClick={reload}>Refresh</Button>} />
+
+      <Panel>
+        <PanelHead title="Filters" />
+        <form className="space-y-3 px-4 py-3" onSubmit={(e: FormEvent) => { e.preventDefault(); setPage(1); setF(draft); }}>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <select value={draft.endpoint} onChange={set('endpoint')} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
+              <option value="">ทั้งหมด (Endpoint)</option>
+              {ENDPOINTS.map((e) => <option key={e} value={e}>{e}</option>)}
+            </select>
+            <select value={draft.status} onChange={set('status')} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
+              <option value="all">ทั้งหมด (ผล)</option><option value="ok">สำเร็จ</option><option value="fail">ไม่สำเร็จ</option>
+            </select>
+            <input type="datetime-local" value={draft.from} onChange={set('from')} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60" placeholder="ตั้งแต่" />
+            <input type="datetime-local" value={draft.to} onChange={set('to')} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60" placeholder="ถึง" />
+            <input value={draft.q} onChange={set('q')} placeholder="ค้นหา: รหัสสินค้า / เลข order / รหัสลูกค้า" className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60 md:col-span-2" />
+            <Button variant="primary" type="submit">ค้นหา</Button>
           </div>
         </form>
-      </section>
-      {error && <div className="err">{error}</div>}
-      {loading && !data && <div className="empty">Loading…</div>}
-      {data && (
+      </Panel>
+
+      <ErrorText error={error} />
+      {loading && !data ? <Loading /> : data && (
         <>
-          <p className="hint">{data.total.toLocaleString('th-TH')} รายการ</p>
-          <section className="panel">
+          <Panel>
+            <PanelHead title="Results" sub={`${data.total.toLocaleString('th-TH')} รายการ`} />
             {data.items.length ? (
-              <table>
-                <thead><tr><th>เวลา</th><th>Endpoint</th><th>ผล</th><th>ms</th><th>สรุป</th><th></th></tr></thead>
-                <tbody>
+              <Table>
+                <THead>
+                  <TH>เวลา</TH><TH>Endpoint</TH><TH>ผล</TH><TH right>ms</TH><TH>สรุป</TH><TH></TH>
+                </THead>
+                <TBody>
                   {data.items.map((r) => (
                     <Fragment key={r.id}>
-                      <tr>
-                        <td className="mono">{new Date(r.createdAt).toLocaleString('th-TH')}</td>
-                        <td className="mono">{r.method} {r.endpoint}</td>
-                        <td><span className={`badge ${r.isSuccess ? 'ok' : 'danger'}`}>{r.statusCode}</span></td>
-                        <td>{r.durationMs}</td>
-                        <td>{r.summary ?? '—'}</td>
-                        <td><button className="btn ghost sm" type="button" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? 'ซ่อน' : 'ดู payload'}</button></td>
-                      </tr>
+                      <TR>
+                        <TD kind="time">{fmt.when(r.createdAt)}</TD>
+                        <TD kind="mono">{r.method} {r.endpoint}</TD>
+                        <TD><StatusChip status={r.isSuccess ? 'ok' : 'error'} /></TD>
+                        <TD kind="num">{r.durationMs}</TD>
+                        <TD className="text-on-surface-variant text-xs">{r.summary ?? '—'}</TD>
+                        <TD kind="actions"><ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} /></TD>
+                      </TR>
                       {open === r.id && (
-                        <tr><td colSpan={6}>
-                          {detail.error ? <div className="err">{detail.error}</div> : <pre className="payload">{detail.data ? JSON.stringify(detail.data, null, 2) : 'Loading…'}</pre>}
-                        </td></tr>
+                        <ExpandRow colSpan={6}>
+                          {detail.error ? <ErrorText error={detail.error} /> : detail.data ? (
+                            <DetailSection title="Payload">
+                              <CodeBlock title="" value={detail.data} maxHeight={400} />
+                            </DetailSection>
+                          ) : <Loading />}
+                        </ExpandRow>
                       )}
                     </Fragment>
                   ))}
-                </tbody>
-              </table>
-            ) : <div className="empty">ไม่มีรายการในช่วงนี้</div>}
-          </section>
-          <div className="row" style={{ marginTop: 12, alignItems: 'center' }}>
-            <button className="btn ghost sm" disabled={page <= 1 || loading} onClick={() => setPage(page - 1)}>ก่อนหน้า</button>
-            <span className="hint">หน้า {page} / {maxPage}</span>
-            <button className="btn ghost sm" disabled={page >= maxPage || loading} onClick={() => setPage(page + 1)}>ถัดไป</button>
-          </div>
+                </TBody>
+              </Table>
+            ) : <Empty>ไม่มีรายการในช่วงนี้</Empty>}
+            <Pager page={page} pageSize={LIMIT} total={data.total} onPage={setPage} />
+          </Panel>
         </>
       )}
-    </div>
+    </Page>
   );
 }

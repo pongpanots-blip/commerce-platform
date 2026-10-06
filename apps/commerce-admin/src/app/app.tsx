@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, NavLink, Navigate, Route, Routes, matchPath, useLocation } from 'react-router-dom';
-import { session } from '../lib/api';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
+import { AdminStats, api, reportsApi, session } from '../lib/api';
+import { useAsync } from './hooks';
 import { Login } from './pages/Login';
+import { ProductDetail } from './pages/ProductDetail';
+import { CustomerDetail } from './pages/CustomerDetail';
+import { OrderDetail } from './pages/OrderDetail';
+import { JoshProductDetail } from './pages/JoshProductDetail';
+import { JoshCustomerDetail } from './pages/JoshCustomerDetail';
+import { JoshOrderDetail } from './pages/JoshOrderDetail';
 import { Dashboard } from './pages/Dashboard';
 import { Integrations } from './pages/Integrations';
 import { Webhooks } from './pages/Webhooks';
@@ -41,10 +49,10 @@ import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pa
 import { CsDesk } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
 
-const NAV = [
-  { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
+const NAV: NavGroup[] = [
+  { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
   {
-    group: 'รายงานร้าน (josh)',
+    group: 'รายงานร้าน (josh)', icon: 'storefront',
     links: [
       { to: '/reports/sales', label: 'ยอดขาย', end: false },
       { to: '/reports/products', label: 'สินค้า (josh)', end: false },
@@ -60,7 +68,7 @@ const NAV = [
     ],
   },
   {
-    group: 'หลังบ้าน josh (อ่านจาก replica ใช้ได้แม้ josh ล่ม)',
+    group: 'หลังบ้าน josh (อ่านจาก replica ใช้ได้แม้ josh ล่ม)', icon: 'inventory_2',
     links: [
       { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
       { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
@@ -79,7 +87,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Marketing',
+    group: 'Marketing', icon: 'campaign',
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
@@ -101,7 +109,7 @@ const NAV = [
     ],
   },
   {
-    group: 'CS / แชต',
+    group: 'CS / แชต', icon: 'support_agent',
     links: [
       { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
       { to: '/livechat', label: 'Live chat', end: false },
@@ -111,7 +119,7 @@ const NAV = [
     ],
   },
   {
-    group: 'สินค้า / ลูกค้า (จาก josh)',
+    group: 'สินค้า / ลูกค้า (จาก josh)', icon: 'shelves',
     links: [
       { to: '/j/allproducts', label: 'สินค้า (จัดการ)', end: false },
       { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true },
@@ -130,7 +138,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Order / การเงิน (จาก josh)',
+    group: 'Order / การเงิน (จาก josh)', icon: 'receipt_long',
     links: [
       { to: '/j/order', label: 'Orders (จัดการ)', end: false },
       { to: '/j/shipments', label: 'Shipments (จัดการ)', end: false },
@@ -149,7 +157,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Marketing (จาก josh)',
+    group: 'Marketing (จาก josh)', icon: 'campaign',
     links: [
       { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', end: false },
       { to: '/j/smart-links', label: 'Smart links', end: false },
@@ -161,9 +169,9 @@ const NAV = [
       { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', end: false },
     ],
   },
-  { group: 'AI', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
+  { group: 'AI', icon: 'smart_toy', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
   {
-    group: 'ERP hub',
+    group: 'ERP hub', icon: 'hub',
     links: [
       { to: '/erp/inbound-log', label: 'Inbound log', end: false },
       { to: '/erp/josh-logs', label: 'ERP log ของ josh', end: false },
@@ -175,7 +183,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Integration',
+    group: 'Integration', icon: 'cable',
     links: [
       { to: '/integrations', label: 'Integrations', end: false },
       { to: '/webhooks', label: 'Webhook events (in)', end: false },
@@ -186,7 +194,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Commerce data',
+    group: 'Commerce data', icon: 'database',
     links: [
       { to: '/customers', label: 'Customers', end: false },
       { to: '/products', label: 'Products', end: false },
@@ -197,51 +205,46 @@ const NAV = [
   },
 ];
 
-/** Grouped nav with a filter box; only the open groups (and the one holding the current page) show their links. */
-function SideNav() {
-  const { pathname } = useLocation();
-  const [query, setQuery] = useState('');
-  // Groups the user toggled; untouched groups default to open only when they hold the current page.
-  const [toggled, setToggled] = useState<Record<string, boolean>>({});
-  const q = query.trim().toLowerCase();
-  const isCurrent = (l: { to: string; end: boolean }) => Boolean(matchPath({ path: l.to, end: l.end }, pathname));
-
+/** Live operations strip above every page (Stitch "Overview" top bar), fed by the same endpoints the pages use. */
+function AdminTopBar() {
+  const navigate = useNavigate();
+  const stats = useAsync(() => api.get<AdminStats>('/admin/stats'));
+  const health = useAsync(() => reportsApi.health({ period: 'today' }));
+  const problems = health.data?.now.problems.length ?? 0;
+  const failed = stats.data?.webhooksFailed ?? 0;
   return (
-    <nav className="nav">
-      <input
-        className="nav-search"
-        type="search"
-        placeholder="ค้นหาเมนู…"
-        aria-label="ค้นหาเมนู"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      {NAV.map((section) => {
-        const links = q ? section.links.filter((l) => l.label.toLowerCase().includes(q)) : section.links;
-        if (!links.length) return null;
-        const expanded = Boolean(q) || (toggled[section.group] ?? section.links.some(isCurrent));
-        return (
-          <div key={section.group}>
-            <button
-              className="group"
-              type="button"
-              aria-expanded={expanded}
-              onClick={() => setToggled((t) => ({ ...t, [section.group]: !expanded }))}
-            >
-              <span className="chev" aria-hidden="true">{expanded ? '▾' : '▸'}</span>
-              <span className="group-name">{section.group}</span>
-              <span className="count">{links.length}</span>
-            </button>
-            {expanded &&
-              links.map((l) => (
-                <NavLink key={l.to} to={l.to} end={l.end}>
-                  {l.label}
-                </NavLink>
-              ))}
-          </div>
-        );
-      })}
-    </nav>
+    <TopBar
+      left={
+        <>
+          <span className="font-headline text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Commerce Operations</span>
+          <span className="h-3 w-px bg-secondary-container" />
+          {health.data ? (
+            <StatusDot tone={problems ? 'danger' : 'ok'}>
+              <span className="text-on-surface font-medium">{problems ? `System: ${problems} problem${problems > 1 ? 's' : ''}` : 'System: healthy'}</span>
+            </StatusDot>
+          ) : (
+            <StatusDot tone="muted">System: …</StatusDot>
+          )}
+          {stats.data && (
+            <span className="hidden md:inline-flex">
+              <StatusDot tone={stats.data.webhooksPending ? 'warn' : 'primary'}>
+                <span className="text-on-surface-variant tabular-nums">Webhooks pending: {stats.data.webhooksPending.toLocaleString()}</span>
+              </StatusDot>
+            </span>
+          )}
+        </>
+      }
+      right={
+        <>
+          <Button icon="sync_alt" onClick={() => navigate('/sync-jobs')}>Manual Sync Trigger</Button>
+          <Button onClick={() => navigate('/erp/inbound-log')}>Export Logs</Button>
+          <span className="h-4 w-px bg-secondary-container mx-1" />
+          <IconButton icon="notifications" title={failed ? `${failed} failed webhooks` : 'Notifications'} dot={failed > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />
+          <IconButton icon="terminal" title="API docs" onClick={() => window.open('/api/docs', '_blank', 'noopener')} />
+          <IconButton icon="help_outline" title="AI connectors / help" onClick={() => navigate('/ai/connectors')} />
+        </>
+      }
+    />
   );
 }
 
@@ -255,6 +258,8 @@ export function App() {
 
   if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
 
+  const claims = session.claims();
+
   function signOut() {
     session.clear();
     setSignedIn(false);
@@ -262,26 +267,32 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <div className="layout">
-        <aside className="sidebar">
-          <div className="brand">Commerce Platform<small>Admin console</small></div>
-          <SideNav />
-          <div className="side-foot">
-            <span>Signed in</span>
-            <button className="btn ghost sm" type="button" onClick={signOut}>Sign out</button>
-          </div>
-        </aside>
-        <main className="main">
+      <NavProvider nav={NAV}>
+      <AppShell
+        sidebar={
+          <Sidebar
+            brand={{ title: 'Commerce Platform', subtitle: 'Admin console' }}
+            env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? 'Prod' : 'Local dev'}</>}
+            nav={NAV}
+            searchable
+            user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${claims.role}` : undefined, onSignOut: signOut }}
+          />
+        }
+        topbar={<AdminTopBar />}
+      >
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
+            <Route path="/reports/orders/:id" element={<JoshOrderDetail />} />
             <Route path="/josh/:view" element={<JoshBackoffice />} />
             <Route path="/josh-api-logs" element={<JoshApiLogs />} />
             <Route path="/reports/price-shadow" element={<PriceShadow />} />
             <Route path="/prices/staff" element={<StaffPrices />} />
             <Route path="/reports/customers" element={<JoshCustomersPage />} />
+            <Route path="/reports/customers/:id" element={<JoshCustomerDetail />} />
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
+            <Route path="/reports/products/:id" element={<JoshProductDetail />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />
@@ -313,16 +324,19 @@ export function App() {
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/sync-jobs" element={<SyncJobs />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/:id" element={<CustomerDetail />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/reservations" element={<Reservations />} />
             <Route path="/erp-stock" element={<ErpStock />} />
             <Route path="/erp-ingest" element={<ErpIngest />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </main>
-      </div>
+      </AppShell>
+      </NavProvider>
     </BrowserRouter>
   );
 }

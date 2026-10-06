@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import { Alert, Button, Chip, ErrorText, Field, FormPanel, Icon, Input, Loading, Page, PageHeader, Panel, PanelHead, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { keys, CreateKeyResponse } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -11,8 +12,7 @@ export function ApiKeys() {
   const [copied, setCopied] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  async function submit(e: FormEvent) {
-    e.preventDefault();
+  async function submit() {
     setSubmitting(true);
     setFormError(null);
     try {
@@ -43,94 +43,149 @@ export function ApiKeys() {
     try {
       await navigator.clipboard.writeText(created.fullKey);
       setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       /* clipboard unavailable */
     }
   }
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>API keys</h1>
-          <p>Keys authenticate your app against the storefront API (X-Api-Key header).</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        title="API Keys"
+        subtitle="Keys authenticate your server with the X-Api-Key header. Keep them secret."
+      />
 
-      <div className="panel">
-        <div className="panel-head">Create a key</div>
-        <form className="stack" onSubmit={submit}>
-          <div className="row">
-            <label className="field">
-              Name
-              <input required value={name} onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Production key" />
-            </label>
+      {/* Success banner (one-time only) */}
+      {created && (
+        <Alert
+          tone="ok"
+          title="New API Key Created"
+          onClose={() => setCreated(null)}
+          actions={
+            <button
+              className="text-xs font-medium text-on-surface-variant hover:text-on-surface"
+              onClick={() => setCreated(null)}
+            >
+              Dismiss
+            </button>
+          }
+        >
+          <div className="mt-2 space-y-3">
+            <p className="text-xs text-on-surface-variant">Copy this key now — you won't see it again.</p>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                readOnly
+                value={created.fullKey}
+                className="flex-1 bg-surface-container-low text-on-surface border border-outline-variant/30 text-xs font-mono rounded-lg px-3 py-2 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary select-all cursor-text"
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                icon={copied ? undefined : 'content_copy'}
+                onClick={copyKey}
+              >
+                {copied ? 'Copied' : 'Copy'}
+              </Button>
+            </div>
           </div>
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={submitting}>{submitting ? 'Creating…' : 'Create key'}</button></div>
-        </form>
+        </Alert>
+      )}
+
+      {/* Create key form */}
+      <div className="mb-6">
+        <FormPanel
+          title="Create a new key"
+          icon="add_circle"
+          description="Generate an API key to authenticate your requests"
+          cols={1}
+          error={formError}
+          submitLabel={submitting ? 'Creating…' : 'Create key'}
+          busy={submitting}
+          onSubmit={submit}
+        >
+        <Field label="Key Name" hint="e.g., Production Backend">
+          <Input
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., Production Backend"
+          />
+        </Field>
+        </FormPanel>
       </div>
 
-      <div className="panel">
-        <div className="panel-head">All keys</div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.length ? (
-          <div className="empty">No API keys yet.</div>
+      {/* Keys table */}
+      <Panel>
+        <PanelHead title="Your API Keys" />
+        {error ? (
+          <ErrorText error={error} />
+        ) : loading ? (
+          <Loading />
+        ) : !data?.length ? (
+          <div className="p-6"><p className="text-xs text-on-surface-variant">No API keys yet. Create one to get started.</p></div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th><th>Key prefix</th><th>Scope</th><th>Active</th>
-                <th>Last used</th><th>Created</th><th></th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <THead>
+                <TH>Name</TH>
+                <TH>Key prefix</TH>
+                <TH>Scopes</TH>
+                <TH>Created</TH>
+                <TH>Last used</TH>
+                <TH>Status</TH>
+                <TH className="text-right">Actions</TH>
+              </THead>
+            <TBody>
               {data.map((k) => (
-                <tr key={k.id}>
-                  <td>{k.name}</td>
-                  <td className="mono">{k.keyPrefix}…</td>
-                  <td>{k.scope}</td>
-                  <td>{k.active
-                    ? <span className="badge ok">active</span>
-                    : <span className="badge muted">revoked</span>}</td>
-                  <td>{k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : <span className="hint">never</span>}</td>
-                  <td>{new Date(k.createdAt).toLocaleString()}</td>
-                  <td style={{ textAlign: 'right' }}>
+                <TR key={k.id} muted={!k.active}>
+                  <TD>
+                    <span className="font-medium text-on-surface">{k.name}</span>
+                  </TD>
+                  <TD>
+                    <code className="font-mono text-xs text-on-surface-variant">{k.keyPrefix}…</code>
+                  </TD>
+                  <TD>
+                    <div className="flex flex-wrap gap-1">
+                      {k.scope.split(',').map((s) => (
+                        <Chip key={s} tone="primary">{s.trim()}</Chip>
+                      ))}
+                    </div>
+                  </TD>
+                  <TD className="text-on-surface-variant text-xs whitespace-nowrap tabular-nums">
+                    {fmt.date(k.createdAt)}
+                  </TD>
+                  <TD className="text-on-surface-variant text-xs whitespace-nowrap tabular-nums">
+                    {k.lastUsedAt ? fmt.ago(k.lastUsedAt) : 'Never'}
+                  </TD>
+                  <TD>
+                    <Chip tone={k.active ? 'ok' : 'muted'}>
+                      {k.active ? 'Active' : 'Revoked'}
+                    </Chip>
+                  </TD>
+                  <TD className="text-right">
                     {k.active && (
-                      <button className="btn ghost sm" disabled={busyId === k.id} onClick={() => revoke(k.id)}>
+                      <button
+                        className="text-error hover:text-error-dim text-xs font-medium transition-colors hover:underline"
+                        disabled={busyId === k.id}
+                        onClick={() => revoke(k.id)}
+                      >
                         {busyId === k.id ? '…' : 'Revoke'}
                       </button>
                     )}
-                  </td>
-                </tr>
+                  </TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
+      </Panel>
 
-      {created && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-head">
-              Key created
-              <button className="btn ghost sm" onClick={() => setCreated(null)}>Close</button>
-            </div>
-            <div className="modal-body">
-              <p className="hint">Name: {created.name}</p>
-              <div className="key-box">
-                <code>{created.fullKey}</code>
-                <button className="btn sm" onClick={copyKey}>{copied ? 'Copied' : 'Copy'}</button>
-              </div>
-              <div className="warn-box">
-                คีย์นี้จะแสดงครั้งเดียว โปรดคัดลอกเก็บทันที
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      {/* Footer hint */}
+      <div className="flex items-center gap-1.5 text-xs text-on-surface-variant mt-4">
+        <Icon name="info" size={16} />
+        <span>Revoked keys stop working immediately.</span>
+      </div>
+    </Page>
   );
 }

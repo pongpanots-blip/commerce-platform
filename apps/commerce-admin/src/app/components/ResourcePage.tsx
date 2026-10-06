@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, Select, Span, TBody, TD, TH, THead, TR, Table } from '@cp/ui';
 import { api, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -18,7 +19,7 @@ export interface Field {
 interface Props<T> {
   title: string;
   subtitle: string;
-  endpoint: string; // e.g. "/customers"
+  endpoint: string;
   columns: Column<T>[];
   fields: Field[];
   createLabel: string;
@@ -37,8 +38,7 @@ export function ResourcePage<T extends { id: string }>(props: Props<T>) {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit() {
     setSubmitting(true);
     setFormError(null);
     try {
@@ -58,66 +58,74 @@ export function ResourcePage<T extends { id: string }>(props: Props<T>) {
   }
 
   const total = data?.total ?? 0;
-  const maxPage = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>{title}</h1>
-          <p>{subtitle}</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        title={title}
+        subtitle={subtitle}
+        actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
+      />
 
-      <div className="panel">
-        <div className="panel-head">{createLabel}</div>
-        <form className="stack" onSubmit={submit}>
-          <div className="row">
-            {fields.map((f) => (
-              <label className="field" key={f.name}>
-                {f.label}
-                {f.options ? (
-                  <select value={form[f.name] ?? ''} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}>
-                    <option value="">—</option>
-                    {f.options.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                ) : (
-                  <input required={f.required} placeholder={f.placeholder}
-                    value={form[f.name] ?? ''}
-                    onChange={(e) => setForm({ ...form, [f.name]: e.target.value })} />
-                )}
-              </label>
-            ))}
-          </div>
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={submitting}>{submitting ? 'Saving…' : createLabel}</button></div>
-        </form>
-      </div>
+      <FormPanel
+        title={createLabel}
+        icon="add_circle"
+        cols={2}
+        error={formError}
+        submitLabel={createLabel}
+        busy={submitting}
+        onSubmit={handleSubmit}
+      >
+        {fields.map((f) => (
+          <Field key={f.name} label={f.label}>
+            {f.options ? (
+              <Select value={form[f.name] ?? ''} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}>
+                <option value="">—</option>
+                {f.options.map((o) => (
+                  <option key={o} value={o}>{o}</option>
+                ))}
+              </Select>
+            ) : (
+              <Input
+                required={f.required}
+                placeholder={f.placeholder}
+                value={form[f.name] ?? ''}
+                onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
+              />
+            )}
+          </Field>
+        ))}
+      </FormPanel>
 
-      <div className="panel">
-        <div className="panel-head">
-          <span>{total} total</span>
-          <span>
-            <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>{' '}
-            <span className="hint">{page} / {maxPage}</span>{' '}
-            <button className="btn ghost sm" disabled={page >= maxPage} onClick={() => setPage(page + 1)}>Next</button>
-          </span>
-        </div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.items.length ? (
-          <div className="empty">Nothing here yet.</div>
+      <Panel>
+        <PanelHead title={`${total.toLocaleString()} total`} />
+        <ErrorText error={error} />
+        {loading && !data ? (
+          <Loading />
+        ) : !data?.items.length ? (
+          <Empty>Nothing here yet.</Empty>
         ) : (
-          <table>
-            <thead><tr>{columns.map((c) => <th key={c.label}>{c.label}</th>)}</tr></thead>
-            <tbody>
-              {data.items.map((row) => (
-                <tr key={row.id}>{columns.map((c) => <td key={c.label}>{c.render(row)}</td>)}</tr>
-              ))}
-            </tbody>
-          </table>
+          <>
+            <Table>
+              <THead>
+                {columns.map((c) => (
+                  <TH key={c.label}>{c.label}</TH>
+                ))}
+              </THead>
+              <TBody>
+                {data.items.map((row) => (
+                  <TR key={row.id}>
+                    {columns.map((c) => (
+                      <TD key={c.label}>{c.render(row)}</TD>
+                    ))}
+                  </TR>
+                ))}
+              </TBody>
+            </Table>
+            <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
+          </>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Page>
   );
 }

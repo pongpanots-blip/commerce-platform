@@ -10,6 +10,9 @@
     ],
     "baseUrl": ".",
     "paths": {
+      "@cp/ui": [
+        "../../libs/ui/src/index.tsx"
+      ],
       "@josh/shared-api": [
         "src/josh-admin/libs/shared-api/index.ts"
       ],

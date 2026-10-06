@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Button, Chip, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Span, StatusChip, TBody, TD, TH, THead, TR, Table, TogglePill, fmt } from '@cp/ui';
 import { api, EVENT_TYPES, WebhookDelivery, WebhookSubscription } from '../../lib/api';
-import { useAsync, statusBadgeClass } from '../hooks';
+import { useAsync } from '../hooks';
 
 export function Subscriptions() {
   const subs = useAsync(() => api.get<WebhookSubscription[]>('/webhook-subscriptions'));
@@ -40,102 +41,137 @@ export function Subscriptions() {
     }
   }
 
+  function reloadAll() {
+    subs.reload();
+    deliveries.reload();
+  }
+
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Outgoing webhooks</h1>
-          <p>Notify external systems when platform events happen — they subscribe, we deliver (signed).</p>
-        </div>
-        <button className="btn ghost" onClick={() => { subs.reload(); deliveries.reload(); }}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        title="Outgoing webhooks"
+        subtitle="Notify external systems when platform events happen — they subscribe, we deliver (signed)."
+        actions={<Button icon="refresh" variant="secondary" onClick={reloadAll}>Refresh</Button>}
+      />
 
-      <div className="panel">
-        <div className="panel-head">New subscription</div>
-        <form className="stack" onSubmit={submit}>
-          <div className="row">
-            <label className="field">
-              Name
-              <input required value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="e.g. Our e-commerce store" />
-            </label>
-            <label className="field">
-              Target URL
-              <input required value={form.targetUrl}
-                onChange={(e) => setForm({ ...form, targetUrl: e.target.value })}
-                placeholder="https://shop.example.com/hooks/platform" />
-            </label>
-            <label className="field">
-              Signing secret
-              <input value={form.secret}
-                onChange={(e) => setForm({ ...form, secret: e.target.value })}
-                placeholder="we HMAC-sign each delivery" />
-            </label>
+      <FormPanel
+        title="New subscription"
+        icon="mail"
+        cols={2}
+        error={formError}
+        submitLabel="Create subscription"
+        busy={submitting}
+        onSubmit={submit}
+      >
+        <Field label="Name">
+          <Input
+            required
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder="e.g. Our e-commerce store"
+          />
+        </Field>
+        <Field label="Target URL">
+          <Input
+            required
+            value={form.targetUrl}
+            onChange={(e) => setForm({ ...form, targetUrl: e.target.value })}
+            placeholder="https://shop.example.com/hooks/platform"
+          />
+        </Field>
+        <Field label="Signing secret">
+          <Input
+            value={form.secret}
+            onChange={(e) => setForm({ ...form, secret: e.target.value })}
+            placeholder="we HMAC-sign each delivery"
+          />
+        </Field>
+        <Field label="Description">
+          <Input
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            placeholder="optional notes"
+          />
+        </Field>
+        <Span>
+          <div className="text-xs font-medium text-on-surface-variant mb-2">Events to send</div>
+          <div className="flex flex-wrap gap-2">
+            {EVENT_TYPES.map((evt) => (
+              <TogglePill key={evt} on={events.includes(evt)} onClick={() => toggle(evt)}>
+                {evt}
+              </TogglePill>
+            ))}
           </div>
-          <div>
-            <div className="hint" style={{ marginBottom: 6 }}>Events to send</div>
-            <div className="checks">
-              {EVENT_TYPES.map((evt) => (
-                <label key={evt} className={`check${events.includes(evt) ? ' on' : ''}`}>
-                  <input type="checkbox" checked={events.includes(evt)} onChange={() => toggle(evt)} />
-                  {evt}
-                </label>
-              ))}
-            </div>
-          </div>
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={submitting}>{submitting ? 'Saving…' : 'Create subscription'}</button></div>
-        </form>
-      </div>
+        </Span>
+      </FormPanel>
 
-      <div className="panel">
-        <div className="panel-head">Subscriptions</div>
-        {subs.loading ? <div className="empty">Loading…</div> : !subs.data?.length ? (
-          <div className="empty">No subscriptions yet.</div>
+      <Panel>
+        <PanelHead title="Subscriptions" />
+        {subs.loading && !subs.data ? (
+          <Loading />
+        ) : !subs.data?.length ? (
+          <Empty>No subscriptions yet.</Empty>
         ) : (
-          <table>
-            <thead><tr><th>Name</th><th>Target URL</th><th>Events</th><th>Secret</th><th>Status</th></tr></thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>Name</TH>
+              <TH>Target URL</TH>
+              <TH>Events</TH>
+              <TH>Secret</TH>
+              <TH>Status</TH>
+            </THead>
+            <TBody>
               {subs.data.map((s) => (
-                <tr key={s.id}>
-                  <td>{s.name}</td>
-                  <td className="mono">{s.targetUrl}</td>
-                  <td>{s.eventTypes.map((e) => <span key={e} className="badge muted" style={{ marginRight: 4 }}>{e}</span>)}</td>
-                  <td>{s.secret ? <span className="badge muted">set</span> : <span className="hint">—</span>}</td>
-                  <td><span className={statusBadgeClass(s.active ? 'active' : 'disabled')}>{s.active ? 'active' : 'disabled'}</span></td>
-                </tr>
+                <TR key={s.id}>
+                  <TD>{s.name}</TD>
+                  <TD kind="mono">{s.targetUrl}</TD>
+                  <TD>
+                    <div className="flex flex-wrap gap-1">
+                      {s.eventTypes.map((e) => (
+                        <Chip key={e} tone="muted">{e}</Chip>
+                      ))}
+                    </div>
+                  </TD>
+                  <TD>{s.secret ? <Chip tone="muted">set</Chip> : '—'}</TD>
+                  <TD><StatusChip status={s.active ? 'active' : 'disabled'} /></TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
+      </Panel>
 
-      <div className="panel">
-        <div className="panel-head">
-          Delivery log
-          <button className="btn ghost sm" onClick={deliveries.reload}>Reload</button>
-        </div>
-        {deliveries.loading ? <div className="empty">Loading…</div> : !deliveries.data?.length ? (
-          <div className="empty">No deliveries yet — trigger an event (e.g. update a customer).</div>
+      <Panel>
+        <PanelHead title="Delivery log" actions={<Button variant="ghost" size="sm" onClick={deliveries.reload}>Reload</Button>} />
+        {deliveries.loading && !deliveries.data ? (
+          <Loading />
+        ) : !deliveries.data?.length ? (
+          <Empty>No deliveries yet — trigger an event (e.g. update a customer).</Empty>
         ) : (
-          <table>
-            <thead><tr><th>When</th><th>Event</th><th>Target</th><th>Status</th><th>HTTP</th><th>Tries</th></tr></thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>When</TH>
+              <TH>Event</TH>
+              <TH>Target</TH>
+              <TH>Status</TH>
+              <TH>HTTP</TH>
+              <TH right>Tries</TH>
+            </THead>
+            <TBody>
               {deliveries.data.map((d) => (
-                <tr key={d.id}>
-                  <td>{new Date(d.createdAt).toLocaleTimeString()}</td>
-                  <td className="mono">{d.eventType}</td>
-                  <td className="mono">{d.targetUrl}</td>
-                  <td><span className={statusBadgeClass(d.status)}>{d.status}</span></td>
-                  <td>{d.statusCode ?? '—'}</td>
-                  <td>{d.attempts}</td>
-                </tr>
+                <TR key={d.id}>
+                  <TD kind="time">{fmt.when(d.createdAt)}</TD>
+                  <TD kind="mono">{d.eventType}</TD>
+                  <TD kind="mono">{d.targetUrl}</TD>
+                  <TD><StatusChip status={d.status} /></TD>
+                  <TD>{d.statusCode ?? '—'}</TD>
+                  <TD kind="num">{d.attempts}</TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Page>
   );
 }

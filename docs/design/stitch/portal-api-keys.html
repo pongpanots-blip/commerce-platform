@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>API Keys - Commerce Platform Developer Portal</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#f0f3ff",
+            "tertiary-fixed": "#e7dafc",
+            "tertiary-container": "#e7dafc",
+            "secondary-fixed-dim": "#d6d3d8",
+            "error-container": "#ff8b9a",
+            "on-surface": "#1b3353",
+            "secondary": "#5f5e62",
+            "primary": "#3052d2",
+            "surface-container-highest": "#d5e3ff",
+            "primary-container": "#dde1ff",
+            "tertiary-fixed-dim": "#d8cced",
+            "on-error": "#fff7f7",
+            "primary-fixed-dim": "#cbd2ff",
+            "on-tertiary-fixed-variant": "#5e5571",
+            "surface-container-lowest": "#ffffff",
+            "inverse-on-surface": "#969dac",
+            "primary-dim": "#2044c5",
+            "inverse-surface": "#070e19",
+            "surface-tint": "#3052d2",
+            "on-surface-variant": "#4a6083",
+            "on-error-container": "#782232",
+            "on-tertiary-fixed": "#423953",
+            "on-secondary-container": "#525155",
+            "outline-variant": "#9cb3da",
+            "on-primary-fixed": "#002fab",
+            "secondary-dim": "#535356",
+            "on-primary-fixed-variant": "#2d4ecf",
+            "primary-fixed": "#dde1ff",
+            "tertiary-dim": "#584f6a",
+            "on-background": "#1b3353",
+            "on-tertiary": "#fdf7ff",
+            "on-secondary-fixed": "#3f3f43",
+            "error": "#9e3f4e",
+            "surface-bright": "#f9f9ff",
+            "outline": "#657ca0",
+            "on-tertiary-container": "#544c67",
+            "secondary-fixed": "#e4e1e6",
+            "tertiary": "#645b77",
+            "on-primary": "#f9f6ff",
+            "inverse-primary": "#6d88ff",
+            "surface-variant": "#d5e3ff",
+            "on-secondary": "#fbf8fc",
+            "surface-container-high": "#dee8ff",
+            "on-secondary-fixed-variant": "#5c5b5f",
+            "on-primary-container": "#1e43c5",
+            "error-dim": "#4f0116",
+            "surface-dim": "#c7dbff",
+            "secondary-container": "#e4e1e6",
+            "background": "#f9f9ff",
+            "surface": "#f9f9ff",
+            "surface-container": "#e7eeff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"],
+            "mono": ["'JetBrains Mono'", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f7f9] text-[#1a1f29] font-body antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar Anchor -->
+<aside class="fixed top-0 bottom-0 left-0 w-60 z-30 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant/30 dark:border-outline/30 shadow-sm dark:shadow-none flex flex-col justify-between h-screen p-4">
+<div class="flex flex-col gap-6">
+<!-- Header Brand -->
+<div class="flex items-center gap-2.5 px-2 pt-1 pb-2">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="terminal">terminal</span>
+</div>
+<div class="overflow-hidden">
+<div class="text-sm font-semibold text-on-surface dark:text-surface leading-tight truncate">Commerce Platform</div>
+<div class="text-xs text-on-surface-variant dark:text-inverse-on-surface leading-tight mt-0.5">Developer portal</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1">
+<!-- Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:text-on-surface dark:hover:text-surface hover:bg-surface-container-low dark:hover:bg-surface-container/10 transition-colors duration-150 text-sm font-normal" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- API Keys (Active Match) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-container/40 dark:bg-primary/20 text-primary dark:text-inverse-primary font-medium text-sm transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary font-medium" data-icon="key">key</span>
+<span>API Keys</span>
+</a>
+<!-- Webhooks (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:text-on-surface dark:hover:text-surface hover:bg-surface-container-low dark:hover:bg-surface-container/10 transition-colors duration-150 text-sm font-normal" href="#">
+<span class="material-symbols-outlined" data-icon="webhook">webhook</span>
+<span>Webhooks</span>
+</a>
+<!-- Docs (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:text-on-surface dark:hover:text-surface hover:bg-surface-container-low dark:hover:bg-surface-container/10 transition-colors duration-150 text-sm font-normal" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Docs</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer / Account -->
+<div class="border-t border-outline-variant/20 pt-3 flex flex-col gap-1">
+<div class="flex items-center gap-2.5 px-3 py-2 mb-1">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-semibold text-on-surface">
+          CP
+        </div>
+<div class="overflow-hidden">
+<p class="text-xs font-medium text-on-surface leading-snug truncate">dev-ops@merchant.co</p>
+<p class="text-[11px] text-on-surface-variant leading-none">Admin Workspace</p>
+</div>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:text-on-surface dark:hover:text-surface hover:bg-surface-container-low dark:hover:bg-surface-container/10 transition-colors duration-150 text-sm font-normal" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign out</span>
+</a>
+</div>
+</aside>
+<!-- Right App Content Canvas -->
+<div class="flex-1 flex flex-col pl-60 min-w-0">
+<!-- TopNavBar Anchor -->
+<header class="sticky top-0 z-20 flex justify-between items-center h-14 px-8 w-full bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant/30 dark:border-outline/30 shadow-none">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-xs font-medium">
+<span class="text-on-surface-variant">Commerce Platform</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface">Developer portal</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-medium">API Keys</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<!-- Environment Switcher Pill -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-[#f0f9f4] border border-[#d1e7dd] text-[#157347] rounded-full text-xs font-medium tracking-tight">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>Environment: Production</span>
+</div>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<!-- Secondary Actions & Icon buttons -->
+<div class="flex items-center gap-1">
+<a class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-md transition-colors" href="#" title="Docs">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</a>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-md transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</button>
+</div>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container border border-outline-variant/30 flex items-center justify-center text-xs font-medium text-on-surface-variant">
+            OP
+          </div>
+</div>
+</div>
+</header>
+<!-- Main Content Viewport (Desktop 1440px target max-w-7xl) -->
+<main class="w-full max-w-6xl mx-auto px-8 py-8 flex flex-col gap-6">
+<!-- Page Header -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="text-xl font-bold tracking-tight text-on-surface">API Keys</h1>
+<p class="text-xs sm:text-sm text-on-surface-variant mt-1">
+            Keys authenticate your server with the <code class="px-1.5 py-0.5 rounded bg-[#ebedf0] font-mono text-xs text-on-surface border border-outline-variant/20">X-Api-Key</code> header. Keep them secret.
+          </p>
+</div>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary hover:bg-primary-dim text-white text-xs font-semibold rounded-lg shadow-sm transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+<span>+ Create key</span>
+</button>
+</div>
+</section>
+<!-- Created Key Success Banner (Operational Callout) -->
+<section class="bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start gap-3 min-w-0">
+<div class="w-8 h-8 rounded-full bg-[#dcfce7] text-[#157347] flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="space-y-1">
+<h2 class="text-xs font-semibold text-[#14532d] uppercase tracking-wider">New API Key Created</h2>
+<p class="text-xs text-[#166534]">Copy this key now — you won't see it again.</p>
+</div>
+</div>
+<!-- Key Copy Field -->
+<div class="flex items-center gap-2 w-full md:w-auto">
+<div class="relative flex-1 md:w-96">
+<input class="w-full bg-white border border-[#86efac] text-[#14532d] text-xs font-mono rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#22c55e] select-all cursor-text" id="raw-key-input" readonly="" type="text" value="cp_live_9a7d83f12e8b0934c718a2048d0e7b99"/>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#157347] hover:bg-[#125837] text-white text-xs font-medium rounded-lg transition-colors flex-shrink-0" onclick="navigator.clipboard.writeText(document.getElementById('raw-key-input').value); this.innerText='Copied!';" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="content_copy">content_copy</span>
+<span>Copy</span>
+</button>
+</div>
+</section>
+<!-- API Keys Table Panel -->
+<section class="bg-surface-container-lowest border border-[#e5e7eb] rounded-lg shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-[#f9fafb] border-b border-[#e5e7eb] text-on-surface-variant font-medium text-[11px] uppercase tracking-wider h-9">
+<th class="py-2.5 px-4 font-semibold" scope="col">Name</th>
+<th class="py-2.5 px-4 font-semibold" scope="col">Key prefix</th>
+<th class="py-2.5 px-4 font-semibold" scope="col">Scopes</th>
+<th class="py-2.5 px-4 font-semibold" scope="col">Created</th>
+<th class="py-2.5 px-4 font-semibold" scope="col">Last used</th>
+<th class="py-2.5 px-4 font-semibold" scope="col">Status</th>
+<th class="py-2.5 px-4 font-semibold text-right" scope="col">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e5e7eb]">
+<!-- Row 1: Production Backend -->
+<tr class="h-10 hover:bg-[#f9fafb] transition-colors duration-100 group">
+<td class="py-2 px-4 font-medium text-on-surface whitespace-nowrap">
+                  Production Backend
+                </td>
+<td class="py-2 px-4 font-mono text-xs text-on-surface-variant whitespace-nowrap">
+                  cp_live_8f2a…
+                </td>
+<td class="py-2 px-4">
+<div class="flex flex-wrap gap-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-low text-primary text-[10px] font-mono border border-outline-variant/30">orders:read</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-low text-primary text-[10px] font-mono border border-outline-variant/30">products:write</span>
+</div>
+</td>
+<td class="py-2 px-4 text-on-surface-variant whitespace-nowrap tabular-nums">
+                  Oct 24, 2023
+                </td>
+<td class="py-2 px-4 text-on-surface-variant whitespace-nowrap tabular-nums">
+                  2 min ago
+                </td>
+<td class="py-2 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#f0f9f4] text-[#157347] border border-[#d1e7dd]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-2 px-4 text-right whitespace-nowrap">
+<button class="text-error hover:text-error-dim font-medium text-xs transition-colors hover:underline" type="button">
+                    Revoke
+                  </button>
+</td>
+</tr>
+<!-- Row 2: Shopify Sync Worker -->
+<tr class="h-10 hover:bg-[#f9fafb] transition-colors duration-100 group">
+<td class="py-2 px-4 font-medium text-on-surface whitespace-nowrap">
+                  Shopify Sync Worker
+                </td>
+<td class="py-2 px-4 font-mono text-xs text-on-surface-variant whitespace-nowrap">
+                  cp_live_4b91…
+                </td>
+<td class="py-2 px-4">
+<div class="flex flex-wrap gap-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-low text-primary text-[10px] font-mono border border-outline-variant/30">products:read</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-low text-primary text-[10px] font-mono border border-outline-variant/30">inventory:write</span>
+</div>
+</td>
+<td class="py-2 px-4 text-on-surface-variant whitespace-nowrap tabular-nums">
+                  Oct 12, 2023
+                </td>
+<td class="py-2 px-4 text-on-surface-variant whitespace-nowrap tabular-nums">
+                  14 min ago
+                </td>
+<td class="py-2 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#f0f9f4] text-[#157347] border border-[#d1e7dd]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-2 px-4 text-right whitespace-nowrap">
+<button class="text-error hover:text-error-dim font-medium text-xs transition-colors hover:underline" type="button">
+                    Revoke
+                  </button>
+</td>
+</tr>
+<!-- Row 3: ERP Sync Cron -->
+<tr class="h-10 hover:bg-[#f9fafb] transition-colors duration-100 group">
+<td class="py-2 px-4 font-medium text-on-surface whitespace-nowrap">
+                  ERP Sync Cron
+                </td>
+<td class="py-2 px-4 font-mono text-xs text-on-surface-variant whitespace-nowrap">
+                  cp_live_1c7e…
+                </td>
+<td class="py-2 px-4">
+<div class="flex flex-wrap gap-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-low text-primary text-[10px] font-mono border border-outline-variant/30">orders:read</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-low text-primary text-[10px] font-mono border border-outline-variant/30">orders:write</span>
+</div>
+</td>
+<td class="py-2 px-4 text-on-surface-variant whitespace-nowrap tabular-nums">
+                  Sep 28, 2023
+                </td>
+<td class="py-2 px-4 text-on-surface-variant whitespace-nowrap tabular-nums">
+                  2 hours ago
+                </td>
+<td class="py-2 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#f0f9f4] text-[#157347] border border-[#d1e7dd]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-2 px-4 text-right whitespace-nowrap">
+<button class="text-error hover:text-error-dim font-medium text-xs transition-colors hover:underline" type="button">
+                    Revoke
+                  </button>
+</td>
+</tr>
+<!-- Row 4: Staging Test Key (Revoked) -->
+<tr class="h-10 bg-[#fbfcfd] text-[#6b7280] opacity-80">
+<td class="py-2 px-4 font-medium line-through text-[#6b7280] whitespace-nowrap">
+                  Staging Test Key
+                </td>
+<td class="py-2 px-4 font-mono text-xs text-[#9ca3af] whitespace-nowrap">
+                  cp_live_0d33…
+                </td>
+<td class="py-2 px-4">
+<div class="flex flex-wrap gap-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[#f3f4f6] text-[#6b7280] text-[10px] font-mono border border-[#e5e7eb]">orders:read</span>
+</div>
+</td>
+<td class="py-2 px-4 text-[#9ca3af] whitespace-nowrap tabular-nums">
+                  Aug 15, 2023
+                </td>
+<td class="py-2 px-4 text-[#9ca3af] whitespace-nowrap tabular-nums">
+                  Never
+                </td>
+<td class="py-2 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#f3f4f6] text-[#6b7280] border border-[#e5e7eb]">
+                    Revoked
+                  </span>
+</td>
+<td class="py-2 px-4 text-right whitespace-nowrap">
+<span class="text-xs text-[#9ca3af] cursor-not-allowed">Revoked</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Table Footnote / Hint text -->
+<div class="flex items-center gap-1.5 text-xs text-[#6b7280]">
+<span class="material-symbols-outlined text-[15px] text-[#9ca3af]" data-icon="info">info</span>
+<span>Revoked keys stop working immediately.</span>
+</div>
+</main>
+</div>
+</body></html>

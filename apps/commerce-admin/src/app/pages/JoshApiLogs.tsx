@@ -1,17 +1,13 @@
 import { Fragment, useState } from 'react';
 import { apiLogsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, StackedBars, DetailSection, Button } from '@cp/ui';
 
-const when = (v: string) => new Date(v).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'medium' });
 const SELECTS = {
   status: ['all', '2xx', '4xx', '5xx'], source: ['all', 'internal', 'jagota', 'kbank', 'erp_webhook'],
   method: ['all', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'], sort: ['newest', 'slowest'],
 } as const;
 
-/**
- * josh's general API log (web-admin › API logs), read-only from josh's Mongo with josh's own query
- * code: calls josh served and calls it made to Jagota / KBank. ERP inbound is on "ERP log ของ josh".
- */
 export function JoshApiLogs() {
   const [f, setF] = useState<Record<string, string>>({ status: 'all', source: 'all', method: 'all', sort: 'newest', q: '', page: '1' });
   const [draft, setDraft] = useState('');
@@ -24,80 +20,114 @@ export function JoshApiLogs() {
   const page = Number(f.page);
   const pages = list.data ? Math.max(1, Math.ceil(list.data.total / list.data.limit)) : 1;
   const s = stats.data;
-  const max = s ? Math.max(1, ...s.buckets.map((b) => b.count)) : 1;
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>API log ของ josh</h1>
-          <p>อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ "ERP log ของ josh"</p>
-        </div>
-        <button className="btn ghost" onClick={() => { stats.reload(); list.reload(); }}>Refresh</button>
-      </div>
-      <form className="row" style={{ flexWrap: 'wrap', marginBottom: 12 }} onSubmit={(e) => { e.preventDefault(); set('q', draft.trim()); }}>
-        {Object.entries(SELECTS).map(([k, opts]) => (
-          <label key={k} className="field">{k}<select value={f[k]} onChange={(e) => set(k, e.target.value)}>{opts.map((o) => <option key={o}>{o}</option>)}</select></label>
-        ))}
-        <label className="field">ค้นใน URL / message<input value={draft} onChange={(e) => setDraft(e.target.value)} /></label>
-        <button className="btn" style={{ alignSelf: 'flex-end' }}>ค้นหา</button>
-      </form>
-      {(stats.error || list.error) && <div className="err">{stats.error || list.error}</div>}
-      {s && (
-        <section className="panel" style={{ marginBottom: 12 }}>
-          <div className="hint">จำนวน call ต่อช่วง (แดง = error) · {when(s.from)} – {when(s.to)}</div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 80, marginTop: 6 }} aria-label="กราฟจำนวน call">
-            {s.buckets.map((b) => (
-              <div key={b.start} title={`${when(b.start)} · ${b.count} call · error ${b.errors} · เฉลี่ย ${b.avgMs}ms`} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%' }}>
-                <div style={{ height: `${((b.count - b.errors) / max) * 100}%`, background: 'var(--accent, #4b6bfb)' }} />
-                <div style={{ height: `${(b.errors / max) * 100}%`, background: 'var(--danger, #d64545)' }} />
-              </div>
+    <Page>
+      <PageHeader title="API log ของ josh" subtitle="อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ &#34;ERP log ของ josh&#34;" actions={<Button icon="refresh" onClick={() => { stats.reload(); list.reload(); }}>Refresh</Button>} />
+
+      <Panel>
+        <PanelHead title="Filters" />
+        <form className="space-y-3 px-4 py-3" onSubmit={(e) => { e.preventDefault(); set('q', draft.trim()); }}>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {Object.entries(SELECTS).map(([k, opts]) => (
+              <select key={k} value={f[k]} onChange={(e) => set(k, e.target.value)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
+                <option value="">{k}</option>
+                {opts.map((o) => <option key={o} value={o}>{o}</option>)}
+              </select>
             ))}
+            <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="ค้นใน URL / message" className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60 lg:col-span-2" />
+            <Button variant="primary">ค้นหา</Button>
           </div>
-          {!!s.topEndpoints.length && (
-            <table style={{ marginTop: 10 }}>
-              <thead><tr><th>Route ที่ช้าที่สุด</th><th>call</th><th>error</th><th>เฉลี่ย</th><th>สูงสุด</th></tr></thead>
-              <tbody>{s.topEndpoints.slice(0, 10).map((t) => (
-                <tr key={t.method + t.route}><td className="mono">{t.method} {t.route}</td><td>{t.count}</td><td>{t.errors || '—'}</td><td>{t.avgMs}ms</td><td>{t.maxMs}ms</td></tr>
-              ))}</tbody>
-            </table>
-          )}
-        </section>
-      )}
-      {list.data && (
-        <section className="panel" style={{ overflowX: 'auto' }}>
-          {list.data.items.length ? (
-            <table>
-              <thead><tr><th>เวลา</th><th>Method</th><th>URL</th><th>Status</th><th>ms</th><th>ที่มา</th><th></th></tr></thead>
-              <tbody>{list.data.items.map((r) => (
-                <Fragment key={r.id}>
-                  <tr>
-                    <td>{when(r.createdAt)}</td><td className="mono">{r.method}</td><td className="mono" style={{ wordBreak: 'break-all' }}>{r.url}</td>
-                    <td><span className={`badge ${r.isSuccess ? 'ok' : 'danger'}`}>{r.statusCode}</span></td><td>{r.durationMs}</td><td>{r.source}</td>
-                    <td><button className="btn ghost sm" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? 'ซ่อน' : 'ดู'}</button></td>
-                  </tr>
-                  {open === r.id && <tr><td colSpan={7}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
-                    <div style={{ display: 'grid', gap: 8 }}>
-                      {detail.data.errorMessage && <div className="err">{detail.data.errorMessage}</div>}
-                      {!!detail.data.steps.length && <div className="hint">{detail.data.steps.map((st) => `${st.label} ${st.ms}ms`).join(' · ')}</div>}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                        <div><div className="hint">request</div><pre className="payload">{JSON.stringify({ query: detail.data.query, payload: detail.data.payload }, null, 2)}</pre></div>
-                        <div><div className="hint">response</div><pre className="payload">{JSON.stringify(detail.data.response, null, 2) ?? '—'}</pre></div>
-                      </div>
-                    </div>)}</td></tr>}
-                </Fragment>
-              ))}</tbody>
-            </table>
-          ) : <div className="empty">ไม่มี log ในช่วงนี้</div>}
-        </section>
-      )}
-      {list.data && list.data.total > list.data.limit && (
-        <div className="row" style={{ marginTop: 12, alignItems: 'center' }}>
-          <button className="btn ghost sm" disabled={page <= 1} onClick={() => setF({ ...f, page: String(page - 1) })}>ก่อนหน้า</button>
-          <span className="hint">หน้า {page} / {pages}</span>
-          <button className="btn ghost sm" disabled={page >= pages} onClick={() => setF({ ...f, page: String(page + 1) })}>ถัดไป</button>
+        </form>
+      </Panel>
+
+      <ErrorText error={stats.error || list.error} />
+
+      {s && (
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="md:col-span-2">
+            <Panel>
+              <PanelHead title="Requests per hour" sub={`${fmt.when(s.from)} – ${fmt.when(s.to)}`} />
+              <div className="px-4 py-3">
+                <StackedBars bars={s.buckets.map((b) => ({ label: new Date(b.start).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }), ok: b.count - b.errors, err: b.errors }))} height={120} />
+              </div>
+            </Panel>
+          </div>
+
+          <div>
+            <Panel>
+              <PanelHead title="Slowest routes" />
+              {s.topEndpoints.length ? (
+                <Table maxHeight="400px">
+                  <THead>
+                    <TH>Route</TH><TH right>ms</TH>
+                  </THead>
+                  <TBody>
+                    {s.topEndpoints.slice(0, 10).map((t) => (
+                      <TR key={t.method + t.route}>
+                        <TD kind="mono" className="text-[10px]">{t.method} {t.route}</TD>
+                        <TD kind="num" className="text-[10px]">{t.avgMs}</TD>
+                      </TR>
+                    ))}
+                  </TBody>
+                </Table>
+              ) : <Empty icon="trending_flat">No data</Empty>}
+            </Panel>
+          </div>
         </div>
       )}
-    </div>
+
+      {list.data && (
+        <Panel>
+          <PanelHead title="Log entries" sub={`${list.data.total.toLocaleString()} requests`} />
+          {list.data.items.length ? (
+            <Table>
+              <THead>
+                <TH>เวลา</TH><TH>Method</TH><TH>URL</TH><TH>Status</TH><TH right>ms</TH><TH>ที่มา</TH><TH></TH>
+              </THead>
+              <TBody>
+                {list.data.items.map((r) => (
+                  <Fragment key={r.id}>
+                    <TR>
+                      <TD kind="time">{fmt.when(r.createdAt)}</TD><TD kind="mono">{r.method}</TD><TD kind="mono" className="text-[11px]">{r.url}</TD>
+                      <TD><StatusChip status={r.isSuccess ? 'ok' : 'error'} /></TD><TD kind="num">{r.durationMs}</TD><TD className="text-on-surface-variant text-xs">{r.source}</TD>
+                      <TD kind="actions"><ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} /></TD>
+                    </TR>
+                    {open === r.id && (
+                      <ExpandRow colSpan={7}>
+                        {detail.error ? <ErrorText error={detail.error} /> : !detail.data ? <Loading /> : (
+                          <>
+                            {detail.data.errorMessage && <DetailSection title="Error"><ErrorText error={detail.data.errorMessage} /></DetailSection>}
+                            {!!detail.data.steps.length && (
+                              <DetailSection title="Timeline">
+                                <div className="space-y-1">
+                                  {detail.data.steps.map((st, i) => (
+                                    <div key={i} className="text-[11px] text-on-surface flex justify-between">
+                                      <span>{st.label}</span>
+                                      <span className="font-mono text-on-surface-variant">{st.ms}ms</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </DetailSection>
+                            )}
+                            <DetailSection title="Payload">
+                              <div className="grid md:grid-cols-2 gap-3">
+                                <CodeBlock title="Request" value={{ query: detail.data.query, payload: detail.data.payload }} maxHeight={300} />
+                                <CodeBlock title="Response" value={detail.data.response} maxHeight={300} />
+                              </div>
+                            </DetailSection>
+                          </>
+                        )}
+                      </ExpandRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TBody>
+            </Table>
+          ) : <Empty>ไม่มี log ในช่วงนี้</Empty>}
+          <Pager page={page} pageSize={list.data.limit} total={list.data.total} onPage={(p) => setF({ ...f, page: String(p) })} />
+        </Panel>
+      )}
+    </Page>
   );
 }

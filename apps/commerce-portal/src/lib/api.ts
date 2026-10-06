@@ -18,6 +18,16 @@ export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+/** Signed-in partner, for display only — read from the JWT payload, not verified (the API verifies). */
+export function tokenClaims(): { email?: string; role?: string } | null {
+  try {
+    const part = getToken()?.split('.')[1];
+    return part ? JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/'))) : null;
+  } catch {
+    return null;
+  }
+}
+
 interface RequestOptions {
   /**
    * Bypass the global 401 clear-token-and-redirect interceptor. Used ONLY by
@@ -180,4 +190,22 @@ export const webhooks = {
 
 export const events = {
   list: () => api.get<{ items: CatalogEvent[] }>('/v1/portal/events'),
+};
+
+export interface WebhookDelivery {
+  id: string;
+  webhookId: string;
+  eventType: string;
+  url: string;
+  /** pending | success | failed | superseded */
+  status: string;
+  /** HTTP status your endpoint answered (null before the first attempt or on a connection error) */
+  statusCode: number | null;
+  attempts: number;
+  createdAt: string;
+  error?: string;
+}
+
+export const deliveries = {
+  recent: (limit = 10) => api.get<WebhookDelivery[]>(`/v1/portal/deliveries?limit=${limit}`),
 };

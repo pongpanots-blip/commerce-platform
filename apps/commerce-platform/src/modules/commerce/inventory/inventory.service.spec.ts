@@ -56,3 +56,22 @@ describe('InventoryService', () => {
     );
   });
 });
+
+describe('InventoryService.findMany with productId filter', () => {
+  it('passes productId filter to repo', async () => {
+    const eventBus = { publish: jest.fn() } as unknown as IEventBus;
+    const repo = {
+      findMany: jest.fn().mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 20 }),
+    } as unknown as InventoryRepository;
+    const dataSource = { transaction: jest.fn() } as unknown as DataSource;
+
+    const svc = new InventoryService(repo, dataSource, eventBus);
+    await svc.findMany({ page: 1, pageSize: 20, where: { productId: 'test-product-id' } });
+
+    expect(repo.findMany).toHaveBeenCalledWith({
+      page: 1,
+      pageSize: 20,
+      where: { productId: 'test-product-id' },
+    });
+  });
+});

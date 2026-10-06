@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import { Button, Checkbox, ErrorText, Field, FormPanel, Icon, Input, Loading, Page, PageHeader, Panel, PanelHead, Span, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { webhooks, events, TestWebhookResult } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -19,10 +20,9 @@ export function Webhooks() {
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]);
   }
 
-  async function submit(e: FormEvent) {
-    e.preventDefault();
+  async function submit() {
     if (!selectedEvents.length) {
-      setFormError('เลือกอย่างน้อย 1 event');
+      setFormError('Select at least 1 event');
       return;
     }
     setSubmitting(true);
@@ -65,110 +65,145 @@ export function Webhooks() {
   }
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Webhooks</h1>
-          <p>Subscribe an endpoint to receive platform events as they happen.</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        title="Webhooks"
+        subtitle="Subscribe an endpoint to receive platform events as they happen."
+      />
 
-      <div className="panel">
-        <div className="panel-head">Create a webhook</div>
-        <form className="stack" onSubmit={submit}>
-          <div className="row">
-            <label className="field">
-              Name
-              <input required value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="e.g. Order sync" />
-            </label>
-            <label className="field">
-              Target URL
-              <input required type="url" value={form.targetUrl}
-                onChange={(e) => setForm({ ...form, targetUrl: e.target.value })}
-                placeholder="https://example.com/webhooks/josh" />
-            </label>
-            <label className="field">
-              Secret (optional)
-              <input value={form.secret}
-                onChange={(e) => setForm({ ...form, secret: e.target.value })}
-                placeholder="for HMAC signature" />
-            </label>
-          </div>
+      {/* Create webhook form */}
+      <div className="mb-6">
+        <FormPanel
+          title="Create a new webhook"
+          icon="add_circle"
+          description="Subscribe to events and receive HTTP notifications"
+          cols={1}
+          error={formError}
+          submitLabel={submitting ? 'Creating…' : '+ Create webhook'}
+          busy={submitting}
+          onSubmit={submit}
+        >
+        <Field label="Name" hint="e.g., Order sync worker">
+          <Input
+            required
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder="e.g., Order sync worker"
+          />
+        </Field>
+        <Field label="Target URL" hint="Your webhook receiver endpoint">
+          <Input
+            required
+            type="url"
+            value={form.targetUrl}
+            onChange={(e) => setForm({ ...form, targetUrl: e.target.value })}
+            placeholder="https://example.com/webhooks/josh"
+          />
+        </Field>
+        <Field label="Secret (optional)" hint="For HMAC signature verification">
+          <Input
+            value={form.secret}
+            onChange={(e) => setForm({ ...form, secret: e.target.value })}
+            placeholder="for HMAC signature"
+          />
+        </Field>
+
+        {/* Event selection */}
+        <Span>
           <div>
-            <div className="hint" style={{ marginBottom: 6 }}>Events</div>
-            <div className="checks">
+            <label className="block text-xs font-medium text-on-surface mb-2">Events</label>
+            <div className="space-y-2">
               {catalog.map((ev) => (
-                <label key={ev.type}
-                  className={`check${selectedEvents.includes(ev.type) ? ' on' : ''}`}
-                  title={ev.description}>
-                  <input type="checkbox" checked={selectedEvents.includes(ev.type)}
-                    onChange={() => toggleEvent(ev.type)} />
-                  {ev.type}
+                <label key={ev.type} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedEvents.includes(ev.type)}
+                    onChange={() => toggleEvent(ev.type)}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-xs text-on-surface font-mono">{ev.type}</span>
+                  <span className="text-[11px] text-on-surface-variant">— {ev.description}</span>
                 </label>
               ))}
             </div>
-            {catalog.length > 0 && (
-              <ul style={{ margin: '10px 0 0', paddingLeft: 18 }}>
-                {catalog.filter((ev) => selectedEvents.includes(ev.type)).map((ev) => (
-                  <li key={ev.type} className="hint">{ev.type} — {ev.description}</li>
-                ))}
-              </ul>
-            )}
           </div>
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={submitting}>{submitting ? 'Creating…' : 'Create webhook'}</button></div>
-        </form>
+        </Span>
+        </FormPanel>
       </div>
 
-      <div className="panel">
-        <div className="panel-head">All webhooks</div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.length ? (
-          <div className="empty">No webhooks yet.</div>
+      {/* Webhooks table */}
+      <Panel>
+        <PanelHead title="Your Webhooks" />
+        {error ? (
+          <ErrorText error={error} />
+        ) : loading ? (
+          <Loading />
+        ) : !data?.length ? (
+          <div className="p-6"><p className="text-xs text-on-surface-variant">No webhooks yet. Create one to get started.</p></div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th><th>Target URL</th><th>Events</th><th>Active</th><th></th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <THead>
+                <TH>Name</TH>
+                <TH>Target URL</TH>
+                <TH>Events</TH>
+                <TH>Status</TH>
+                <TH className="text-right">Actions</TH>
+              </THead>
+            <TBody>
               {data.map((w) => (
-                <tr key={w.id}>
-                  <td>{w.name}</td>
-                  <td className="mono">{w.targetUrl}</td>
-                  <td>{w.eventTypes.join(', ')}</td>
-                  <td>
-                    <label className="hint" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                      <input type="checkbox" checked={w.active} disabled={busyId === w.id}
-                        onChange={() => toggleActive(w.id, w.active)} />
-                      {w.active ? 'active' : 'inactive'}
+                <TR key={w.id}>
+                  <TD>
+                    <span className="font-medium text-on-surface">{w.name}</span>
+                  </TD>
+                  <TD>
+                    <code className="font-mono text-xs text-on-surface-variant truncate">{w.targetUrl}</code>
+                  </TD>
+                  <TD>
+                    <div className="text-xs text-on-surface-variant">
+                      {w.eventTypes.length} event{w.eventTypes.length !== 1 ? 's' : ''}
+                    </div>
+                  </TD>
+                  <TD>
+                    <label className="inline-flex items-center gap-2 cursor-pointer text-xs">
+                      <input
+                        type="checkbox"
+                        checked={w.active}
+                        disabled={busyId === w.id}
+                        onChange={() => toggleActive(w.id, w.active)}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-on-surface-variant">
+                        {w.active ? 'Active' : 'Inactive'}
+                      </span>
                     </label>
-                  </td>
-                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                    <button className="btn ghost sm" disabled={busyId === w.id} onClick={() => test(w.id)}>
+                  </TD>
+                  <TD className="text-right">
+                    <button
+                      className="text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors"
+                      disabled={busyId === w.id}
+                      onClick={() => test(w.id)}
+                    >
                       {busyId === w.id ? '…' : 'Test'}
                     </button>
                     {testResults[w.id] && (
-                      <div className="hint" style={{ marginTop: 4 }}>
-                        {testResults[w.id].ok
-                          ? <span className="badge ok">ok · {testResults[w.id].status}</span>
-                          : <span className="badge danger">
-                              failed{testResults[w.id].status ? ` · ${testResults[w.id].status}` : ''}
-                              {testResults[w.id].error ? ` · ${testResults[w.id].error}` : ''}
-                            </span>}
+                      <div className="text-[11px] mt-1">
+                        {testResults[w.id].ok ? (
+                          <span className="text-primary font-medium">✓ OK · {testResults[w.id].status}</span>
+                        ) : (
+                          <span className="text-error font-medium">
+                            ✗ Failed {testResults[w.id].status ? `· ${testResults[w.id].status}` : ''}
+                            {testResults[w.id].error ? ` · ${testResults[w.id].error}` : ''}
+                          </span>
+                        )}
                       </div>
                     )}
-                  </td>
-                </tr>
+                  </TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Page>
   );
 }

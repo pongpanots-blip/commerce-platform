@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { Integration } from '../modules/integration/integration/infrastructure/integration.entity';
 import { WebhookEvent } from '../modules/integration/webhook/infrastructure/webhook-event.entity';
 import { SyncJob } from '../modules/integration/sync-job/infrastructure/sync-job.entity';
@@ -31,7 +31,19 @@ export interface AdminStats {
   customers: number;
   products: number;
   inventoryLevels: number;
+  /** Secondary figures shown under the Overview cards. */
+  details: {
+    /** createdAt of the oldest webhook still waiting to be processed (null = none waiting). */
+    oldestPendingWebhookAt: string | null;
+    syncJobs24h: { total: number; completed: number; failed: number };
+    customersNew7d: number;
+    integrationsActive: number;
+    warehouses: number;
+    inventoryUpdatedAt: string | null;
+  };
 }
+
+const HOUR = 3_600_000;
 
 /**
  * App-level dashboard aggregator (a BFF concern that legitimately reads across
@@ -52,6 +64,9 @@ export class AdminService {
   ) {}
 
   async stats(): Promise<AdminStats> {
+    const now = Date.now();
+    const since24h = new Date(now - 24 * HOUR);
+    const since7d = new Date(now - 7 * 24 * HOUR);
     const [
       integrations,
       webhooksPending,
@@ -61,6 +76,14 @@ export class AdminService {
       customers,
       products,
       inventoryLevels,
+      oldestPending,
+      syncTotal24h,
+      syncCompleted24h,
+      syncFailed24h,
+      customersNew7d,
+      integrationsActive,
+      warehouseRows,
+      latestInventory,
     ] = await Promise.all([
       this.integrations.count(),
       this.webhooks.count({ where: { status: 'received' } }),
@@ -70,10 +93,26 @@ export class AdminService {
       this.customers.count(),
       this.products.count(),
       this.inventory.count(),
+      this.webhooks.findOne({ where: { status: 'received' }, order: { createdAt: 'ASC' }, select: { id: true, createdAt: true } }),
+      this.syncJobs.count({ where: { createdAt: MoreThanOrEqual(since24h) } }),
+      this.syncJobs.count({ where: { createdAt: MoreThanOrEqual(since24h), status: 'completed' } }),
+      this.syncJobs.count({ where: { createdAt: MoreThanOrEqual(since24h), status: 'failed' } }),
+      this.customers.count({ where: { createdAt: MoreThanOrEqual(since7d) } }),
+      this.integrations.count({ where: { status: 'active' } }),
+      this.inventory.createQueryBuilder('i').select('COUNT(DISTINCT i.warehouse_id)', 'n').getRawOne<{ n: string }>(),
+      this.inventory.findOne({ where: {}, order: { updatedAt: 'DESC' }, select: { id: true, updatedAt: true } }),
     ]);
     return {
       integrations, webhooksPending, webhooksFailed, outboxBacklog,
       syncJobsRecent, customers, products, inventoryLevels,
+      details: {
+        oldestPendingWebhookAt: oldestPending?.createdAt ? new Date(oldestPending.createdAt).toISOString() : null,
+        syncJobs24h: { total: syncTotal24h, completed: syncCompleted24h, failed: syncFailed24h },
+        customersNew7d,
+        integrationsActive,
+        warehouses: Number(warehouseRows?.n ?? 0),
+        inventoryUpdatedAt: latestInventory?.updatedAt ? new Date(latestInventory.updatedAt).toISOString() : null,
+      },
     };
   }
 

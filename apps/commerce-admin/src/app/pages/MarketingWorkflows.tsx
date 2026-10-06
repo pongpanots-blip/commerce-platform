@@ -1,11 +1,11 @@
-import { FormEvent, Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Fragment, useState } from 'react';
+import { Alert, Button, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink } from '@cp/ui';
 import { WorkflowRow, workflowsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
-const STATUS: Record<WorkflowRow['status'], [string, string]> = { active: ['ทำงาน', 'ok'], paused: ['หยุด', 'warn'], draft: ['ร่าง', ''] };
+const STATUS: Record<WorkflowRow['status'], 'ok' | 'warn' | 'muted'> = { active: 'ok', paused: 'warn', draft: 'muted' };
+const STATUS_LABEL: Record<WorkflowRow['status'], string> = { active: 'ทำงาน', paused: 'หยุด', draft: 'ร่าง' };
 const when = (v: string | null) => (v ? new Date(v).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '—');
-/** Fields of josh's UpdateMarketingWorkflowDto that are edited as JSON here. */
 const EDITABLE = ['name', 'trigger_type', 'trigger_config', 'steps', 'schedule', 'cooldown_days', 'holdout_percent', 'conversion_window_days', 'exit_on_goal'];
 
 /**
@@ -35,68 +35,158 @@ export function MarketingWorkflows() {
   };
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Marketing workflows</h1>
-          <p>ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh</p>
-        </div>
-        <Link className="btn sm" to="/marketing/workflows/new">สร้าง workflow</Link>
-        <label className="row" style={{ gap: 6 }}>ช่วง
-          <select value={days} onChange={(e) => setDays(Number(e.target.value))}>{[7, 30, 90].map((d) => <option key={d} value={d}>{d} วัน</option>)}</select>
-        </label>
-      </div>
-      {msg && <div className="hint" role="status">{msg}</div>}
-      {list.error && <div className="err">{list.error}</div>}
+    <Page>
+      <PageHeader
+        title="Marketing workflows"
+        subtitle="ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh"
+        actions={
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1.5 text-xs">
+              <span className="text-on-surface-variant">ช่วง</span>
+              <Select value={days} onChange={(e) => setDays(Number(e.target.value))} className="max-w-[120px]">
+                {[7, 30, 90].map((d) => <option key={d} value={d}>{d} วัน</option>)}
+              </Select>
+            </label>
+            <ButtonLink variant="primary" icon="add" to="/marketing/workflows/new">สร้าง workflow</ButtonLink>
+          </div>
+        }
+      />
+
+      {msg && <Alert tone="ok">{msg}</Alert>}
+      <ErrorText error={list.error} />
+
       {list.data && (
-        <section className="panel" style={{ overflowX: 'auto' }}>
+        <Panel className="overflow-hidden">
           {list.data.length ? (
-            <table>
-              <thead><tr><th>Workflow</th><th>สถานะ</th><th>เริ่มเมื่อ</th><th>เข้า</th><th>กำลังไป</th><th>ล้มเหลว</th><th>ซื้อ (conversion)</th><th>รอบล่าสุด</th><th></th></tr></thead>
-              <tbody>{list.data.map((w) => (
-                <Fragment key={w.id}>
-                  <tr>
-                    <td>{w.name}</td>
-                    <td><span className={`badge ${STATUS[w.status]?.[1] ?? ''}`}>{STATUS[w.status]?.[0] ?? w.status}</span></td>
-                    <td className="mono">{w.trigger_type}</td>
-                    <td>{w.enrolled ?? 0}</td><td>{w.running ?? 0}</td>
-                    <td className={w.failed ? 'attn' : ''}>{w.failed ?? 0}</td>
-                    <td>{w.converted ?? 0}{w.enrolled ? ` (${Math.round(((w.converted ?? 0) / w.enrolled) * 100)}%)` : ''}</td>
-                    <td>{when(w.last_run_at)}{w.failed_runs ? <div className="hint">ล้มเหลว {w.failed_runs} รอบ</div> : null}</td>
-                    <td className="row" style={{ gap: 4 }}>
-                      <button className="btn ghost sm" onClick={() => setOpen(open === w.id ? null : w.id)}>{open === w.id ? 'ซ่อน' : 'ดู'}</button>
-                      <Link className="btn ghost sm" to={`/marketing/workflows/${w.id}/edit`}>กราฟ</Link>
-                      <button className="btn ghost sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>แก้ JSON</button>
-                      <button className={`btn sm ${w.status === 'active' ? 'ghost' : ''}`} disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? 'หยุด' : 'เปิด'}</button>
-                    </td>
-                  </tr>
-                  {open === w.id && <tr><td colSpan={9}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : editing === w.id ? (
-                    <EditJson initial={JSON.stringify(Object.fromEntries(EDITABLE.filter((k) => k in detail.data!).map((k) => [k, detail.data![k]])), null, 2)}
-                      busy={busy} onCancel={() => setEditing(null)} onSave={(v) => run(`บันทึก "${w.name}" แล้ว`, () => workflowsApi.update(w.id, v))} />
-                  ) : (
-                    <div style={{ display: 'grid', gap: 10 }}>
-                      <div className="row" style={{ flexWrap: 'wrap', gap: 6 }}>{detail.data.enrollmentsByStatus.map((s) => <span key={s.status} className="badge">{s.status}: {s.n}</span>)}</div>
-                      {!!detail.data.recentFailures.length && <div><div className="hint">ส่งไม่สำเร็จล่าสุด</div>
-                        <table><tbody>{detail.data.recentFailures.map((f, i) => <tr key={i}><td>{when(f.created_at)}</td><td className="mono">{f.action_kind}</td><td className="mono">{JSON.stringify(f.detail)}</td></tr>)}</tbody></table></div>}
-                      {!!detail.data.recentRuns.length && <div><div className="hint">รอบที่รันล่าสุด</div>
-                        <table><tbody>{detail.data.recentRuns.map((r, i) => <tr key={i}><td>{when(r.fired_at)}</td><td>{r.status}</td><td>{r.enrolled_count ?? 0} / {r.audience_count ?? 0} คน</td><td>{r.error_message ?? r.skip_reason ?? ''}</td></tr>)}</tbody></table></div>}
-                      <div><div className="hint">ขั้นตอน (steps)</div><pre className="payload">{JSON.stringify(detail.data.steps, null, 2)}</pre></div>
-                    </div>)}</td></tr>}
-                </Fragment>
-              ))}</tbody>
-            </table>
-          ) : <div className="empty">ยังไม่มี workflow</div>}
-        </section>
+            <Table>
+              <THead>
+                <TH>Workflow</TH>
+                <TH>สถานะ</TH>
+                <TH>เริ่มเมื่อ</TH>
+                <TH right>เข้า</TH>
+                <TH right>กำลังไป</TH>
+                <TH right>ล้มเหลว</TH>
+                <TH right>ซื้อ (conversion)</TH>
+                <TH>รอบล่าสุด</TH>
+                <TH className="w-24" />
+              </THead>
+              <TBody>
+                {list.data.map((w) => (
+                  <Fragment key={w.id}>
+                    <TR>
+                      <TD>{w.name}</TD>
+                      <TD>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATUS[w.status] === 'ok' ? 'bg-[#e7f5ec] text-[#157347]' : STATUS[w.status] === 'warn' ? 'bg-[#fef7e0] text-[#b08900]' : 'bg-surface-container text-on-surface-variant'}`}>
+                          {STATUS_LABEL[w.status] ?? w.status}
+                        </span>
+                      </TD>
+                      <TD kind="mono">{w.trigger_type}</TD>
+                      <TD kind="num">{w.enrolled ?? 0}</TD>
+                      <TD kind="num">{w.running ?? 0}</TD>
+                      <TD kind="num" className={w.failed ? 'text-[#c2333f]' : ''}>{w.failed ?? 0}</TD>
+                      <TD kind="num">{w.converted ?? 0}{w.enrolled ? ` (${Math.round(((w.converted ?? 0) / w.enrolled) * 100)}%)` : ''}</TD>
+                      <TD kind="time">
+                        {when(w.last_run_at)}
+                        {w.failed_runs ? <div className="text-[10px] text-[#c2333f]">ล้มเหลว {w.failed_runs} รอบ</div> : null}
+                      </TD>
+                      <TD kind="actions">
+                        <div className="inline-flex items-center gap-1">
+                        <ExpandToggle open={open === w.id} onClick={() => setOpen(open === w.id ? null : w.id)} label="ดู" />
+                        <ButtonLink variant="ghost" icon="account_tree" className="!px-2 !py-1 !text-[11px]" to={`/marketing/workflows/${w.id}/edit`}>กราฟ</ButtonLink>
+                        <Button variant="ghost" size="sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>แก้ JSON</Button>
+                        <Button variant={w.status === 'active' ? 'ghost' : 'primary'} size="sm" disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? 'หยุด' : 'เปิด'}</Button>
+                        </div>
+                      </TD>
+                    </TR>
+                    {open === w.id && (
+                      <ExpandRow colSpan={9}>
+                        <ErrorText error={detail.error} />
+                        {!detail.data ? (
+                          <Loading />
+                        ) : editing === w.id ? (
+                          <EditJson initial={JSON.stringify(Object.fromEntries(EDITABLE.filter((k) => k in detail.data!).map((k) => [k, detail.data![k]])), null, 2)}
+                            busy={busy} onCancel={() => setEditing(null)} onSave={(v) => run(`บันทึก "${w.name}" แล้ว`, () => workflowsApi.update(w.id, v))} />
+                        ) : (
+                          <div className="space-y-4">
+                            <div>
+                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">Enrollment</div>
+                              <div className="flex flex-wrap gap-2">
+                                {detail.data.enrollmentsByStatus.map((s) => (
+                                  <span key={s.status} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-on-surface">
+                                    {s.status}: {fmt.num(s.n)}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            {!!detail.data.recentFailures.length && (
+                              <div>
+                                <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">ส่งไม่สำเร็จล่าสุด</div>
+                                <Table>
+                                  <THead>
+                                    <TH>เวลา</TH>
+                                    <TH>ประเภท</TH>
+                                    <TH>รายละเอียด</TH>
+                                  </THead>
+                                  <TBody>
+                                    {detail.data.recentFailures.map((f, i) => (
+                                      <TR key={i}>
+                                        <TD kind="time">{when(f.created_at)}</TD>
+                                        <TD kind="mono">{f.action_kind}</TD>
+                                        <TD kind="mono">{JSON.stringify(f.detail)}</TD>
+                                      </TR>
+                                    ))}
+                                  </TBody>
+                                </Table>
+                              </div>
+                            )}
+                            {!!detail.data.recentRuns.length && (
+                              <div>
+                                <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">รอบที่รันล่าสุด</div>
+                                <Table>
+                                  <THead>
+                                    <TH>เวลา</TH>
+                                    <TH>สถานะ</TH>
+                                    <TH>ผู้ใช้</TH>
+                                    <TH>ข้อความ</TH>
+                                  </THead>
+                                  <TBody>
+                                    {detail.data.recentRuns.map((r, i) => (
+                                      <TR key={i}>
+                                        <TD kind="time">{when(r.fired_at)}</TD>
+                                        <TD kind="muted">{r.status}</TD>
+                                        <TD kind="num">{r.enrolled_count ?? 0} / {r.audience_count ?? 0}</TD>
+                                        <TD kind="muted">{r.error_message ?? r.skip_reason ?? '—'}</TD>
+                                      </TR>
+                                    ))}
+                                  </TBody>
+                                </Table>
+                              </div>
+                            )}
+                            <div>
+                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">ขั้นตอน (steps)</div>
+                              <CodeBlock value={detail.data.steps} />
+                            </div>
+                          </div>
+                        )}
+                      </ExpandRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TBody>
+            </Table>
+          ) : (
+            <div className="px-4 py-8"><Empty icon="automation">ยังไม่มี workflow</Empty></div>
+          )}
+        </Panel>
       )}
-    </div>
+    </Page>
   );
 }
 
 function EditJson({ initial, busy, onSave, onCancel }: { initial: string; busy: boolean; onSave: (v: Record<string, unknown>) => void; onCancel: () => void }) {
   const [text, setText] = useState(initial);
   const [err, setErr] = useState('');
-  function save(e: FormEvent) {
-    e.preventDefault();
+  function save() {
     let v: unknown;
     try { v = JSON.parse(text); } catch { return setErr('JSON ไม่ถูกต้อง'); }
     if (!v || typeof v !== 'object' || Array.isArray(v)) return setErr('ต้องเป็น object');
@@ -104,11 +194,20 @@ function EditJson({ initial, busy, onSave, onCancel }: { initial: string; busy: 
     onSave(v as Record<string, unknown>);
   }
   return (
-    <form onSubmit={save} style={{ display: 'grid', gap: 8 }}>
-      <div className="hint">แก้แบบ JSON (รูปแบบเดียวกับ josh) · josh ตรวจเงื่อนไขก่อนบันทึก · ตัวแก้แบบกราฟยังอยู่ที่ josh</div>
-      <textarea aria-label="workflow (JSON)" rows={16} className="mono" value={text} onChange={(e) => setText(e.target.value)} />
-      {err && <div className="err">{err}</div>}
-      <div className="row"><button className="btn sm" disabled={busy}>บันทึก</button><button type="button" className="btn ghost sm" onClick={onCancel}>ยกเลิก</button></div>
-    </form>
+    <FormPanel
+      title="แก้ Workflow"
+      icon="edit"
+      cols={1}
+      description="รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก"
+      busy={busy}
+      error={err}
+      onSubmit={save}
+      onCancel={onCancel}
+    >
+      <Field label="ข้อมูล Workflow (JSON)">
+        <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={16} />
+      </Field>
+    </FormPanel>
   );
 }
+

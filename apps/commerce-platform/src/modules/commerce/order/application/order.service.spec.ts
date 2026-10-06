@@ -65,3 +65,19 @@ describe('OrderService.createWithLines', () => {
       .rejects.toThrow('at least one line');
   });
 });
+
+describe('OrderService.findMany with customerId filter', () => {
+  it('passes customerId filter to repo', async () => {
+    const { service } = makeService();
+    const mockResult = { items: [], total: 0, page: 1, pageSize: 20 };
+    service['repo'].findMany = jest.fn().mockResolvedValue(mockResult);
+
+    await service.findMany({ page: 1, pageSize: 20, where: { customerId: 'test-customer-id' } });
+
+    expect(service['repo'].findMany).toHaveBeenCalledWith({
+      page: 1,
+      pageSize: 20,
+      where: { customerId: 'test-customer-id' },
+    });
+  });
+});

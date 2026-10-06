@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { api, ErpStubStockRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -9,8 +10,7 @@ export function ErpStock() {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  async function upsert(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit() {
     setSubmitting(true);
     setFormError(null);
     try {
@@ -25,56 +25,64 @@ export function ErpStock() {
   }
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>ERP stub stock</h1>
-          <p>Simulated ERP inventory — set stock levels for the on_hand fulfillment mode.</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        title="ERP stub stock"
+        subtitle="Simulated ERP inventory — set stock levels for the on_hand fulfillment mode."
+        actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
+      />
 
-      <div className="panel">
-        <div className="panel-head">Set stock level</div>
-        <form className="stack" onSubmit={upsert}>
-          <div className="row">
-            <label className="field">
-              SKU
-              <input required value={form.sku}
-                onChange={(e) => setForm({ ...form, sku: e.target.value })}
-                placeholder="e.g. SKU-A" />
-            </label>
-            <label className="field">
-              Quantity
-              <input required value={form.qty}
-                onChange={(e) => setForm({ ...form, qty: e.target.value })}
-                placeholder="0" />
-            </label>
-          </div>
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={submitting}>{submitting ? 'Saving…' : 'Set stock'}</button></div>
-        </form>
-      </div>
+      <FormPanel
+        title="Set stock level"
+        icon="inventory_2"
+        cols={2}
+        error={formError}
+        submitLabel="Set stock"
+        busy={submitting}
+        onSubmit={handleSubmit}
+      >
+        <Field label="SKU">
+          <Input
+            required
+            value={form.sku}
+            onChange={(e) => setForm({ ...form, sku: e.target.value })}
+            placeholder="e.g. SKU-A"
+          />
+        </Field>
+        <Field label="Quantity">
+          <Input
+            required
+            value={form.qty}
+            onChange={(e) => setForm({ ...form, qty: e.target.value })}
+            placeholder="0"
+          />
+        </Field>
+      </FormPanel>
 
-      <div className="panel">
-        <div className="panel-head">Stock levels</div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.items.length ? (
-          <div className="empty">No stock rows yet.</div>
+      <Panel>
+        <PanelHead title="Stock levels" />
+        <ErrorText error={error} />
+        {loading && !data ? (
+          <Loading />
+        ) : !data?.items.length ? (
+          <Empty>No stock rows yet.</Empty>
         ) : (
-          <table>
-            <thead><tr><th>SKU</th><th>Qty</th></tr></thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>SKU</TH>
+              <TH right>Qty</TH>
+            </THead>
+            <TBody>
               {data.items.map((s) => (
-                <tr key={s.id}>
-                  <td className="mono">{s.sku}</td>
-                  <td>{s.qty}</td>
-                </tr>
+                <TR key={s.id}>
+                  <TD kind="mono">{s.sku}</TD>
+                  <TD kind="num">{fmt.num(s.qty)}</TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Page>
   );
 }

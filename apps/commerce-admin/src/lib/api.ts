@@ -24,6 +24,16 @@ export const session = {
   clear() {
     try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
   },
+  /** Who is signed in, for display only — read from the JWT payload, not verified (the API verifies). */
+  claims(): { email?: string; role?: string } | null {
+    const token = this.get();
+    try {
+      const part = token?.split('.')[1];
+      return part ? JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/'))) : null;
+    } catch {
+      return null;
+    }
+  },
 };
 
 export async function login(email: string, password: string): Promise<{ role: string }> {
@@ -97,7 +107,9 @@ export interface SyncJob {
   operation: string;
   status: string;
   result: unknown;
+  error?: string | null;
   createdAt: string;
+  updatedAt?: string;
 }
 export interface Customer {
   id: string;
@@ -112,6 +124,11 @@ export interface Product {
   sku: string;
   name: string;
   status: string;
+  description?: string | null;
+  fulfillmentMode?: string;
+  leadTimeDays?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export interface InventoryLevel {
   id: string;
@@ -177,6 +194,14 @@ export interface AdminStats {
   customers: number;
   products: number;
   inventoryLevels: number;
+  details: {
+    oldestPendingWebhookAt: string | null;
+    syncJobs24h: { total: number; completed: number; failed: number };
+    customersNew7d: number;
+    integrationsActive: number;
+    warehouses: number;
+    inventoryUpdatedAt: string | null;
+  };
 }
 
 export interface OrderRow {
@@ -243,6 +268,16 @@ export const ordersApi = {
   pay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/pay`, {}),
   failPay: (paymentId: string) => api.post<PaymentRow>(`/payments/${paymentId}/fail`, {}),
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
+};
+
+export const customersApi = {
+  get: (id: string) => api.get<Customer>(`/customers/${id}`),
+  update: (id: string, data: Partial<Customer>) => api.patch<Customer>(`/customers/${id}`, data),
+};
+
+export const productsApi = {
+  get: (id: string) => api.get<Product>(`/products/${id}`),
+  update: (id: string, data: Partial<Product>) => api.patch<Product>(`/products/${id}`, data),
 };
 
 // ---- Marketing research + web scraping (moved from josh) ----
@@ -670,6 +705,7 @@ export const workflowsApi = {
   detail: (id: string) => api.get<Record<string, unknown> & { enrollmentsByStatus: { status: string; n: number }[];
     recentRuns: { fired_at: string; source: string; status: string; skip_reason: string | null; audience_count: number | null; enrolled_count: number | null; error_message: string | null }[];
     recentFailures: { created_at: string; step_id: string; action_kind: string; detail: unknown }[] }>(`/reports/marketing-workflows/${id}`),
+  create: (workflow: Record<string, unknown>) => api.post<WorkflowRow>(`/josh/marketing-workflows`, { workflow }),
   setState: (id: string, action: 'activate' | 'pause') => api.post<unknown>(`/josh/marketing-workflows/${id}/${action}`, {}),
   /** josh's UpdateMarketingWorkflowDto fields; josh validates. */
   update: (id: string, workflow: Record<string, unknown>) => api.post<unknown>(`/josh/marketing-workflows/${id}/update`, { workflow }),

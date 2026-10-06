@@ -1,11 +1,11 @@
+import { StatusChip, RowLink } from '@cp/ui';
 import { Product } from '../../lib/api';
 import { ResourcePage, Column, Field } from '../components/ResourcePage';
-import { statusBadgeClass } from '../hooks';
 
 const columns: Column<Product>[] = [
-  { label: 'SKU', render: (r) => <span className="mono">{r.sku}</span> },
+  { label: 'SKU', render: (r) => <RowLink to={`/products/${r.id}`}>{r.sku}</RowLink> },
   { label: 'Name', render: (r) => r.name },
-  { label: 'Status', render: (r) => <span className={statusBadgeClass(r.status)}>{r.status}</span> },
+  { label: 'Status', render: (r) => <StatusChip status={r.status} /> },
 ];
 
 const fields: Field[] = [
@@ -17,7 +17,12 @@ const fields: Field[] = [
 export function Products() {
   return (
     <ResourcePage<Product>
-      title="Products" subtitle="Canonical product catalog (SKU unique per org)."
-      endpoint="/products" columns={columns} fields={fields} createLabel="Add product" />
+      title="Products"
+      subtitle="Canonical product catalog (SKU unique per org)."
+      endpoint="/products"
+      columns={columns}
+      fields={fields}
+      createLabel="Add product"
+    />
   );
 }

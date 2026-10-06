@@ -1,121 +1,189 @@
 import { FormEvent, Fragment, ReactNode, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Button, Chip, DetailSection, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FilterChip, FormPanel, Hint, Icon, Input, KeyValueGrid, Loading,
+  Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Segmented, Select, SectionTitle, Span, Stack2, StatGrid, StatTile, StatusChip, StatusDot,
+  TBody, TD, TH, THead, TR, Table, TitleBadge, fmt, RowLink } from '@cp/ui';
 import { joshActionsApi, JoshRow, joshCustomerApi, joshOrderApi, joshPriceApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
-const baht = (n: unknown) => (n == null ? '—' : '฿' + Number(n).toLocaleString('th-TH', { maximumFractionDigits: 2 }));
-const when = (v: unknown) => (v ? new Date(String(v)).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '—');
 const LIMIT = 50;
-
-function Head({ title, sub, onRefresh }: { title: string; sub: string; onRefresh: () => void }) {
-  return (
-    <div className="page-head">
-      <div><h1>{title}</h1><p>{sub}</p></div>
-      <button className="btn ghost" onClick={onRefresh}>Refresh</button>
-    </div>
-  );
-}
-
-/** Clickable issue tiles: one active at a time, click again to clear. */
-function Tiles({ tiles, active, onPick }: { tiles: { key: string; label: string; value: ReactNode; attn?: boolean }[]; active: string; onPick: (k: string) => void }) {
-  return (
-    <div className="stat-grid">
-      {tiles.map((t) => (
-        <button key={t.key} type="button" className="stat" aria-pressed={active === t.key} onClick={() => onPick(active === t.key ? '' : t.key)}
-          style={{ textAlign: 'left', cursor: 'pointer', font: 'inherit', borderColor: active === t.key ? 'var(--accent)' : undefined }}>
-          <div className="label">{t.label}</div><div className={`value${t.attn ? ' attn' : ''}`}>{t.value}</div>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function Pager({ page, total, setPage }: { page: number; total: number; setPage: (p: number) => void }) {
-  const max = Math.max(1, Math.ceil(total / LIMIT));
-  return (
-    <div className="row" style={{ marginTop: 12, alignItems: 'center' }}>
-      <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</button>
-      <span className="hint">หน้า {page} / {max} · {total.toLocaleString('th-TH')} รายการ</span>
-      <button className="btn ghost sm" disabled={page >= max} onClick={() => setPage(page + 1)}>ถัดไป</button>
-    </div>
-  );
-}
 
 const ORDER_STATUS: Record<string, string> = { payment_pending: 'รอชำระ', paid: 'ชำระแล้ว', preparing: 'กำลังเตรียม', shipped: 'จัดส่งแล้ว', delivered: 'ส่งถึงแล้ว', cancelled: 'ยกเลิก', refunded: 'คืนเงิน' };
 const SYNC: Record<string, [string, string]> = { sent: ['ส่งแล้ว', 'ok'], confirmed: ['ยืนยันแล้ว', 'ok'], reserved: ['จองแล้ว', 'ok'], skipped: ['ข้าม', 'muted'], pending: ['รอส่ง', 'warn'], failed: ['ส่งไม่สำเร็จ', 'danger'] };
-function SyncBadge({ s }: { s: string | null }) {
-  if (!s) return <span className="badge muted">ยังไม่ส่ง</span>;
-  const [label, cls] = SYNC[s] ?? [s, 'muted'];
-  return <span className={`badge ${cls}`}>{label}</span>;
+
+function SyncChip({ s }: { s: string | null }) {
+  if (!s) return <Chip tone="muted">ยังไม่ส่ง</Chip>;
+  const [label, tone] = SYNC[s] ?? [s, 'muted'];
+  return <Chip tone={tone as any}>{label}</Chip>;
 }
 
-/** josh orders, read-only: status, payment, and whether each reached Jagota. Orders are still created, paid and sent by josh. */
+/** josh orders, read-only: status, payment, and whether each reached Jagota. Orders are still created, paid and sent by josh.
+ *  Stitch screen: docs/design/stitch/admin-list-table.html */
+const SYNC_TILES: { key: string; label: string; field: string; tone: 'danger' | 'warn' | 'ok' }[] = [
+  { key: 'failed', label: 'ส่ง Jagota ไม่สำเร็จ', field: 'sync_failed', tone: 'danger' },
+  { key: 'not_sent', label: 'จ่ายแล้วแต่ยังไม่ส่ง Jagota', field: 'sync_not_sent', tone: 'warn' },
+  { key: 'pending', label: 'รอส่ง Jagota', field: 'sync_pending', tone: 'warn' },
+  { key: 'sent', label: 'ส่ง Jagota แล้ว', field: 'sync_sent', tone: 'ok' },
+  // 'payment_missing' filters by payment, not by Jagota state.
+  { key: 'payment_missing', label: 'จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ', field: 'settled_without_payment', tone: 'warn' },
+];
+const PAYMENT_TONE = (p: string | null | undefined) => (!p ? 'muted' : /success|paid|complete/i.test(p) ? 'ok' : /fail|cancel|expire/i.test(p) ? 'danger' : /credit/i.test(p) ? 'info' : 'warn');
+const ORDER_TONE: Record<string, 'ok' | 'warn' | 'danger' | 'info' | 'muted'> = { payment_pending: 'warn', paid: 'ok', preparing: 'info', shipped: 'info', delivered: 'ok', cancelled: 'muted', refunded: 'danger' };
+const SYNC_DOT: Record<string, 'ok' | 'warn' | 'danger' | 'muted'> = { sent: 'ok', confirmed: 'ok', reserved: 'ok', skipped: 'muted', pending: 'warn', failed: 'danger' };
+
+function csv(rows: JoshRow[]) {
+  const cols = ['order_number', 'create_date', 'company_name', 'branch_name', 'customer_code', 'total_price', 'status', 'payment_status', 'jagota_sync_status', 'doc_book', 'doc_no'];
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const blob = new Blob(['﻿' + [cols.join(','), ...rows.map((r) => cols.map((c) => esc(r[c])).join(','))].join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `josh-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 export function JoshOrdersPage() {
-  const [draft, setDraft] = useState({ search: '', status: '', from: '', to: '' });
-  const [f, setF] = useState({ ...draft, sync: '' });
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const empty = { search: '', status: '', from: '', to: '' };
+  const [draft, setDraft] = useState(empty);
+  const [f, setF] = useState({ ...empty, sync: '' });
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState<string | null>(null);
+  const [pageSize, setPageSize] = useState(LIMIT);
   const summary = useAsync(() => joshOrderApi.summary({ ...f, sync: undefined }), [f.search, f.status, f.from, f.to]);
-  // The 'payment_missing' tile filters by payment, not by Jagota state.
-  const list = useAsync(() => joshOrderApi.list({ ...f, ...(f.sync === 'payment_missing' ? { sync: '', payment: 'missing' } : {}), page, limit: LIMIT }), [f, page]);
-  const detail = useAsync(() => (open ? joshOrderApi.detail(open) : Promise.resolve(null)), [open]);
+  const list = useAsync(() => joshOrderApi.list({ ...f, ...(f.sync === 'payment_missing' ? { sync: '', payment: 'missing' } : {}), page, limit: pageSize }), [f, page, pageSize]);
   const s = summary.data;
-  const d = detail.data;
+
+  const apply = (next: Partial<typeof f>) => { setPage(1); setF({ ...f, ...next }); };
+  const chips = [
+    f.sync && { label: `Jagota: ${SYNC_TILES.find((t) => t.key === f.sync)?.label ?? f.sync}`, clear: () => apply({ sync: '' }) },
+    f.status && { label: `สถานะ: ${ORDER_STATUS[f.status] ?? f.status}`, clear: () => { setDraft({ ...draft, status: '' }); apply({ status: '' }); } },
+    f.search && { label: `ค้นหา: ${f.search}`, clear: () => { setDraft({ ...draft, search: '' }); apply({ search: '' }); } },
+    (f.from || f.to) && { label: `ช่วงเวลา: ${f.from || '…'} – ${f.to || '…'}`, clear: () => { setDraft({ ...draft, from: '', to: '' }); apply({ from: '', to: '' }); } },
+  ].filter(Boolean) as { label: string; clear: () => void }[];
+
   return (
-    <div>
-      <Head title="Orders (josh)" sub="ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง · ดูอย่างเดียว อ่านจาก replica ของ josh" onRefresh={() => { summary.reload(); list.reload(); }} />
-      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
-      {s && <Tiles active={f.sync} onPick={(k) => { setPage(1); setF({ ...f, sync: k }); }} tiles={[
-        { key: 'failed', label: 'ส่ง Jagota ไม่สำเร็จ', value: s.sync_failed, attn: s.sync_failed > 0 },
-        { key: 'not_sent', label: 'จ่ายแล้วแต่ยังไม่ส่ง Jagota', value: s.sync_not_sent, attn: s.sync_not_sent > 0 },
-        { key: 'pending', label: 'รอส่ง Jagota', value: s.sync_pending },
-        { key: 'sent', label: 'ส่ง Jagota แล้ว', value: s.sync_sent },
-        { key: 'payment_missing', label: 'สถานะจ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ', value: s.settled_without_payment, attn: s.settled_without_payment > 0 },
-      ]} />}
-      {s && <p className="hint" style={{ marginTop: 8 }}>ทั้งหมด {s.total.toLocaleString('th-TH')} · รอชำระ {s.awaiting_payment} · มูลค่าที่ชำระแล้ว {baht(s.paid_value)} · {s.byStatus.map((b: JoshRow) => `${ORDER_STATUS[b.status] ?? b.status} ${b.n}`).join(' · ')}</p>}
-      <section className="panel" style={{ marginTop: 12 }}>
-        <form className="stack" onSubmit={(e: FormEvent) => { e.preventDefault(); setPage(1); setF({ ...draft, sync: f.sync }); }}>
-          <div className="row" style={{ alignItems: 'flex-end' }}>
-            <label className="field">ค้นหา<input value={draft.search} onChange={(e) => setDraft({ ...draft, search: e.target.value })} placeholder="เลข order / รหัสลูกค้า / PO / บริษัท" /></label>
-            <label className="field">สถานะ<select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value })}>
-              <option value="">ทั้งหมด</option>{Object.entries(ORDER_STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
-            <label className="field">ตั้งแต่<input type="date" value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} /></label>
-            <label className="field">ถึงก่อน<input type="date" value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} /></label>
-            <button className="btn" type="submit">ค้นหา</button>
-          </div>
-        </form>
-      </section>
-      {list.data && (
-        <>
-          <section className="panel">
-            <table>
-              <thead><tr><th>Order</th><th>ลูกค้า</th><th>ยอด</th><th>สถานะ</th><th>ชำระ</th><th>Jagota</th><th></th></tr></thead>
-              <tbody>{list.data.items.map((o) => (
-                <Fragment key={o.orders_id}>
-                  <tr>
-                    <td className="mono">{o.order_number}<div className="hint">{when(o.create_date)}</div></td>
-                    <td>{o.company_name ?? '—'}<div className="hint">{o.branch_name} · {o.customer_code}</div></td>
-                    <td>{baht(o.total_price)}</td>
-                    <td>{ORDER_STATUS[o.status] ?? o.status}</td>
-                    <td>{o.payment_status ?? '—'}</td>
-                    <td><SyncBadge s={o.jagota_sync_status} />{o.jagota_error && <div className="hint" style={{ color: 'var(--danger)' }}>{o.jagota_error}</div>}{o.doc_no && <div className="hint mono">{o.doc_book}{o.doc_no}</div>}</td>
-                    <td><button className="btn ghost sm" onClick={() => setOpen(open === o.orders_id ? null : o.orders_id)}>{open === o.orders_id ? 'ซ่อน' : 'รายละเอียด'}</button></td>
-                  </tr>
-                  {open === o.orders_id && <tr><td colSpan={7}>{detail.error ? <div className="err">{detail.error}</div> : !d ? 'Loading…' : (
-                    <div style={{ display: 'grid', gap: 10 }}>
-                      <div className="hint">ส่ง {d.delivery_date ?? '—'} · สั่งโดย {d.orderedBy.name.first_name} {d.orderedBy.name.last_name ?? ''} ({d.orderedBy.email ?? d.orderedBy.phone ?? '—'}) · ก่อน VAT {baht(d.subtotal_ex_vat)} · VAT {baht(d.vat_amount)} · ส่วนลด {baht(d.discount_inc_vat)} · ค่าส่ง {baht(d.delivery_fee)}</div>
-                      <table><thead><tr><th>SKU</th><th>สินค้า</th><th>จำนวน</th><th>ราคา/หน่วย</th><th>ที่มาราคา</th><th>รวม</th></tr></thead>
-                        <tbody>{d.items.map((i: JoshRow) => <tr key={i.sku}><td className="mono">{i.sku}</td><td>{i.name}</td><td>{i.qty}</td><td>{baht(i.unit_price)}</td><td>{i.price_source}</td><td>{baht(i.line_revenue)}</td></tr>)}</tbody></table>
-                      <div className="hint">Jagota: {d.jagotaSync.length ? d.jagotaSync.map((j: JoshRow) => `${when(j.created_at)} ${j.sync_status}${j.doc_no ? ` ${j.doc_book}${j.doc_no}` : ''}${j.error_message ? ` (${j.error_message})` : ''}`).join(' → ') : 'ยังไม่เคยส่ง'}</div>
-                      <div className="hint">Shipment: {d.shipments.map((sh: JoshRow) => `${sh.shipment_number} ${sh.delivered_at ? 'ส่งถึง' : sh.shipped_at ? 'ออกส่ง' : 'รอ'}`).join(' · ') || '—'} · ชำระ: {d.payments.map((p: JoshRow) => `${p.status} ${baht(p.amount)} ${p.payment_method ?? ''}`).join(' · ') || '—'}</div>
-                    </div>)}</td></tr>}
-                </Fragment>
-              ))}</tbody>
-            </table>
-          </section>
-          <Pager page={page} total={list.data.total} setPage={setPage} />
-        </>
+    <Page>
+      <PageHeader
+        title="Orders (josh)"
+        badge={<TitleBadge icon="visibility">อ่านอย่างเดียว · ข้อมูลจาก josh</TitleBadge>}
+        subtitle="ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง"
+        actions={
+          <>
+            <Button icon="download" disabled={!list.data?.items.length} onClick={() => list.data && csv(list.data.items)}>Export CSV</Button>
+            <Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>
+          </>
+        }
+      />
+
+      <ErrorText error={summary.error || list.error} />
+
+      {s && (
+        <StatGrid cols={5}>
+          {SYNC_TILES.map((t) => {
+            const n = Number(s[t.field] ?? 0);
+            return (
+              <StatTile
+                key={t.key}
+                label={t.label}
+                value={fmt.num(n)}
+                tone={n > 0 && t.tone !== 'ok' ? t.tone : undefined}
+                icon={t.tone === 'ok' ? 'task_alt' : n > 0 ? (t.tone === 'danger' ? 'error' : 'hourglass_top') : 'check_circle'}
+                selected={f.sync === t.key}
+                onClick={() => apply({ sync: f.sync === t.key ? '' : t.key })}
+              />
+            );
+          })}
+        </StatGrid>
       )}
-    </div>
+
+      <Panel as="form" className="p-3 space-y-3" onSubmit={(e) => { e.preventDefault(); apply({ search: draft.search, from: draft.from, to: draft.to }); }}>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
+          <SearchInput
+            className="md:col-span-5"
+            value={draft.search}
+            onChange={(e) => setDraft({ ...draft, search: e.target.value })}
+            placeholder="ค้นหาเลข order / รหัสลูกค้า / PO / บริษัท…"
+            aria-label="ค้นหา"
+          />
+          <label className="md:col-span-2 flex items-center gap-1.5">
+            <Icon name="calendar_today" size={15} className="text-outline shrink-0" />
+            <Input type="date" aria-label="ตั้งแต่" value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
+          </label>
+          <label className="md:col-span-2 flex items-center gap-1.5">
+            <span className="text-outline text-xs">–</span>
+            <Input type="date" aria-label="ถึงก่อน" value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+          </label>
+          <div className="md:col-span-3 flex items-center justify-end gap-2">
+            <Button type="submit" variant="primary" icon="search">ค้นหา</Button>
+            <Button variant="ghost" onClick={() => { setDraft(empty); setPage(1); setF({ ...empty, sync: '' }); }}>ล้างตัวกรอง</Button>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <Segmented
+            value={f.status}
+            onChange={(v) => { setDraft({ ...draft, status: v }); apply({ status: v }); }}
+            options={[{ value: '', label: 'ทั้งหมด' }, ...Object.entries(ORDER_STATUS).map(([k, v]) => ({ value: k, label: v }))]}
+          />
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-secondary-container text-[11px]">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-on-surface-variant">ตัวกรองปัจจุบัน:</span>
+            {chips.length ? chips.map((c) => <FilterChip key={c.label} onRemove={c.clear}>{c.label}</FilterChip>) : <span className="text-outline">ไม่มี</span>}
+          </div>
+          {list.data && (
+            <div className="text-on-surface-variant font-mono">
+              พบ <span className="font-bold text-on-surface tabular-nums">{fmt.num(list.data.total)}</span> รายการ
+              {s && <span className="ml-2 font-sans">· มูลค่าที่ชำระแล้ว {fmt.baht(s.paid_value)}</span>}
+            </div>
+          )}
+        </div>
+      </Panel>
+
+      <Panel className="overflow-hidden">
+        {list.loading && !list.data ? (
+          <Loading />
+        ) : list.data && list.data.items.length === 0 ? (
+          <Empty icon="receipt_long">ไม่พบออเดอร์ตามตัวกรองนี้</Empty>
+        ) : list.data ? (
+          <>
+            <Table maxHeight="calc(100vh - 330px)">
+              <THead>
+                <TH className="min-w-[150px]">Order No.</TH>
+                <TH className="min-w-[130px]">วันที่</TH>
+                <TH className="min-w-[240px]">บริษัท / สาขา</TH>
+                <TH right className="min-w-[110px]">ยอดรวม ฿</TH>
+                <TH>การชำระเงิน</TH>
+                <TH>สถานะออเดอร์</TH>
+                <TH className="min-w-[170px]">Jagota (ERP)</TH>
+                <TH />
+              </THead>
+              <TBody>
+                {list.data.items.map((o) => (
+                  <TR key={o.orders_id} onClick={() => navigate(`/reports/orders/${o.orders_id}`, { state: { from: '/reports/orders', search: `?${searchParams.toString()}` } })}>
+                    <TD><RowLink to={`/reports/orders/${o.orders_id}`} state={{ from: '/reports/orders', search: `?${searchParams.toString()}` }}>{o.order_number}</RowLink></TD>
+                    <TD kind="time">{fmt.when(o.create_date)}</TD>
+                    <TD><Stack2 top={o.company_name ?? '—'} bottom={[o.branch_name, o.customer_code].filter(Boolean).join(' · ')} /></TD>
+                    <TD kind="money">{fmt.baht(o.total_price)}</TD>
+                    <TD><Chip tone={PAYMENT_TONE(o.payment_status)}>{o.payment_status ?? 'ไม่มีการจ่าย'}</Chip></TD>
+                    <TD><Chip tone={ORDER_TONE[o.status] ?? 'muted'}>{ORDER_STATUS[o.status] ?? o.status}</Chip></TD>
+                    <TD>
+                      <StatusDot tone={o.jagota_sync_status ? SYNC_DOT[o.jagota_sync_status] ?? 'muted' : 'muted'}>
+                        {o.jagota_sync_status ? SYNC[o.jagota_sync_status]?.[0] ?? o.jagota_sync_status : 'ยังไม่ส่ง'}
+                        {o.doc_no && <span className="font-mono text-on-surface-variant">{o.doc_book}{o.doc_no}</span>}
+                      </StatusDot>
+                      {o.jagota_error && <div className="text-[10px] text-[#c2333f] truncate max-w-[220px]" title={o.jagota_error}>{o.jagota_error}</div>}
+                    </TD>
+                  </TR>
+                ))}
+              </TBody>
+            </Table>
+            <Pager page={page} pageSize={pageSize} total={list.data.total} onPage={setPage} onPageSize={(n) => { setPage(1); setPageSize(n); }} sizes={[20, 50, 100, 200]} />
+          </>
+        ) : null}
+      </Panel>
+    </Page>
   );
 }
 
@@ -123,84 +191,151 @@ const KYC: Record<string, [string, string]> = { none: ['ไม่มีเอก
 
 /** josh business customers, read-only and masked like josh winback. */
 export function JoshCustomersPage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [f, setF] = useState({ search: '', issue: '' });
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState<string | null>(null);
+  const [pageSize, setPageSize] = useState(LIMIT);
   const summary = useAsync(() => joshCustomerApi.summary(), []);
-  const list = useAsync(() => joshCustomerApi.list({ ...f, page, limit: LIMIT }), [f, page]);
-  const detail = useAsync(() => (open ? joshCustomerApi.detail(open) : Promise.resolve(null)), [open]);
+  const list = useAsync(() => joshCustomerApi.list({ ...f, page, limit: pageSize }), [f, page, pageSize]);
   const s = summary.data;
-  const d = detail.data;
+
   return (
-    <div>
-      <Head title="ลูกค้า / บริษัท (josh)" sub="บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว" onRefresh={() => { summary.reload(); list.reload(); }} />
-      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
-      {s && <Tiles active={f.issue} onPick={(k) => { setPage(1); setF({ ...f, issue: k }); }} tiles={[
-        { key: 'kyc_pending', label: 'KYC รอตรวจ', value: s.kyc_pending, attn: s.kyc_pending > 0 },
-        { key: 'kyc_none', label: 'ยังไม่ส่ง KYC', value: s.kyc_none },
-        { key: 'credit_application_pending', label: 'ขอวงเงินค้าง', value: s.credit_application_pending, attn: s.credit_application_pending > 0 },
-        { key: 'over_credit', label: 'เกินวงเงิน', value: s.over_credit, attn: s.over_credit > 0 },
-        { key: 'near_credit', label: 'ใกล้เต็มวงเงิน (≥90%)', value: s.near_credit },
-        { key: 'no_erp_code', label: 'ไม่มีรหัสลูกค้า ERP', value: s.no_erp_code, attn: s.no_erp_code > 0 },
-      ]} />}
-      {s && <p className="hint" style={{ marginTop: 8 }}>{s.total} บริษัท · ใช้วงเงินรวม {baht(s.credit_used_total)} / {baht(s.credit_limit_total)}</p>}
-      <section className="panel" style={{ marginTop: 12 }}>
-        <form className="row" style={{ padding: 12 }} onSubmit={(e) => { e.preventDefault(); setPage(1); setF({ ...f, search: search.trim() }); }}>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ชื่อบริษัท หรือรหัสลูกค้า ERP" style={{ flex: 1 }} />
-          <button className="btn" type="submit">ค้นหา</button>
-        </form>
-      </section>
-      {list.data && (
-        <>
-          <section className="panel">
-            <table>
-              <thead><tr><th>บริษัท</th><th>รหัส ERP</th><th>วงเงิน</th><th>เครดิต</th><th>สาขา / คน</th><th>KYC</th><th>สั่งล่าสุด</th><th></th></tr></thead>
-              <tbody>{list.data.items.map((c) => {
-                const over = c.credit_limit > 0 && c.credit_used > c.credit_limit;
-                const [kl, kc] = KYC[c.kyc_status] ?? [c.kyc_status, 'muted'];
-                return (
-                  <Fragment key={c.id}>
-                    <tr>
-                      <td>{c.name}<div className="hint mono">{c.register_number}</div></td>
-                      <td className="mono">{c.erp_customer_code ?? <span className="badge warn">ไม่มี</span>}</td>
-                      <td>{baht(c.credit_used)} / {baht(c.credit_limit)}{over && <div><span className="badge danger">เกินวงเงิน</span></div>}</td>
-                      <td>{c.credit_term_days ? `${c.credit_term_days} วัน` : 'เงินสด'}</td>
-                      <td>{c.branch_count} / {c.user_count}</td>
-                      <td><span className={`badge ${kc}`}>{kl}</span></td>
-                      <td>{when(c.last_order_at)}</td>
-                      <td><button className="btn ghost sm" onClick={() => setOpen(open === c.id ? null : c.id)}>{open === c.id ? 'ซ่อน' : 'รายละเอียด'}</button></td>
-                    </tr>
-                    {open === c.id && <tr><td colSpan={8}>{detail.error ? <div className="err">{detail.error}</div> : !d ? 'Loading…' : (
-                      <div style={{ display: 'grid', gap: 10 }}>
-                        <div className="hint">โทร {d.phone ?? '—'} · ออเดอร์ {d.orders?.orders ?? 0} รายการ · ยอดที่ชำระแล้ว {baht(d.orders?.paid_value)}</div>
-                        <CustomerEdit kind="companies" id={d.id} label={`บริษัท ${d.name}`} onDone={() => { detail.reload(); list.reload(); }}
-                          fields={[['name', 'ชื่อบริษัท', d.name], ['credit_limit', 'วงเงิน (บาท)', d.credit_limit, 'number'], ['credit_term_days', 'เครดิต (วัน)', d.credit_term_days, 'number'], ['address', 'ที่อยู่', null], ['phone', 'โทร', null]]} />
-                        <table><thead><tr><th>สาขา</th><th>รหัส ERP</th><th>sync</th><th>วันส่ง</th><th>โทร</th><th></th></tr></thead>
-                          <tbody>{d.branches.map((b: JoshRow) => <tr key={b.id}><td>{b.name}{b.is_default_delivery && <span className="badge" style={{ marginLeft: 6 }}>หลัก</span>}</td><td className="mono">{b.erp_branch_code ?? '—'}</td><td>{b.erp_sync_status ?? '—'}</td><td>{b.delivery_days ?? '—'}</td><td>{b.phone ?? '—'}</td>
-                            <td><CustomerEdit kind="branches" id={b.id} label={`สาขา ${b.name}`} onDone={detail.reload}
-                              fields={[['name', 'ชื่อสาขา', b.name], ['recipient_name', 'ผู้รับ', null], ['phone', 'โทร', null], ['delivery_address', 'ที่อยู่ส่ง', null]]} /></td></tr>)}</tbody></table>
-                        <table><thead><tr><th>ผู้ใช้</th><th>อีเมล</th><th>โทร</th><th>role</th><th>เข้าแอปล่าสุด</th><th></th></tr></thead>
-                          <tbody>{d.users.map((u: JoshRow) => <tr key={u.id}><td>{u.first_name} {u.last_name ?? ''}{!u.is_active && <span className="badge muted" style={{ marginLeft: 6 }}>ปิด</span>}</td><td>{u.email ?? '—'}</td><td>{u.mobile_phone ?? '—'}</td><td>{u.role}</td><td>{when(u.last_app_login_at)}</td>
-                            <td><CustomerEdit kind="users" id={u.id} label="ผู้ใช้นี้" onDone={detail.reload}
-                              fields={[['first_name', 'ชื่อ', null], ['last_name', 'นามสกุล', null], ['email', 'อีเมล', null], ['mobile_phone', 'มือถือ', null]]} /></td></tr>)}</tbody></table>
-                        <div className="hint">KYC: {d.kycDocuments.map((k: JoshRow) => `${k.document_type} ${KYC[k.status]?.[0] ?? k.status}${k.rejection_reason ? ` (${k.rejection_reason})` : ''}`).join(' · ') || 'ยังไม่มีเอกสาร'}</div>
-                        <div className="hint">ขอวงเงิน: {d.creditApplications.map((a: JoshRow) => `${a.status} ขอ ${baht(a.requested_credit_limit)} / ${a.requested_term_days} วัน${a.approved_credit_limit ? ` → อนุมัติ ${baht(a.approved_credit_limit)}` : ''}`).join(' · ') || '—'}</div>
-                      </div>)}</td></tr>}
-                  </Fragment>
-                );
-              })}</tbody>
-            </table>
-          </section>
-          <Pager page={page} total={list.data.total} setPage={setPage} />
-        </>
+    <Page>
+      <PageHeader
+        title="ลูกค้า / บริษัท (josh)"
+        subtitle="บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว"
+        actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>}
+      />
+      <div className="border-t border-secondary-container" />
+
+      <ErrorText error={summary.error || list.error} />
+
+      {s && (
+        <div>
+          <SectionTitle note="Click to filter; click again to clear">Issues</SectionTitle>
+          <StatGrid cols={3}>
+            <StatTile
+              accent
+              tone={s.kyc_pending > 0 ? 'warn' : 'ok'}
+              icon={s.kyc_pending > 0 ? 'hourglass_top' : 'check_circle'}
+              label="KYC รอตรวจ"
+              value={fmt.num(s.kyc_pending)}
+              selected={f.issue === 'kyc_pending'}
+              onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'kyc_pending' ? '' : 'kyc_pending' }); }}
+            />
+            <StatTile
+              tone="info"
+              icon="info"
+              label="ยังไม่ส่ง KYC"
+              value={fmt.num(s.kyc_none)}
+              selected={f.issue === 'kyc_none'}
+              onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'kyc_none' ? '' : 'kyc_none' }); }}
+            />
+            <StatTile
+              accent
+              tone={s.credit_application_pending > 0 ? 'warn' : 'ok'}
+              icon={s.credit_application_pending > 0 ? 'hourglass_top' : 'check_circle'}
+              label="ขอวงเงินค้าง"
+              value={fmt.num(s.credit_application_pending)}
+              selected={f.issue === 'credit_application_pending'}
+              onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'credit_application_pending' ? '' : 'credit_application_pending' }); }}
+            />
+            <StatTile
+              accent
+              tone={s.over_credit > 0 ? 'danger' : 'ok'}
+              icon={s.over_credit > 0 ? 'error' : 'check_circle'}
+              label="เกินวงเงิน"
+              value={fmt.num(s.over_credit)}
+              selected={f.issue === 'over_credit'}
+              onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'over_credit' ? '' : 'over_credit' }); }}
+            />
+            <StatTile
+              tone="warn"
+              icon="warning"
+              label="ใกล้เต็มวงเงิน (≥90%)"
+              value={fmt.num(s.near_credit)}
+              selected={f.issue === 'near_credit'}
+              onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'near_credit' ? '' : 'near_credit' }); }}
+            />
+            <StatTile
+              accent
+              tone={s.no_erp_code > 0 ? 'danger' : 'ok'}
+              icon={s.no_erp_code > 0 ? 'error' : 'check_circle'}
+              label="ไม่มีรหัสลูกค้า ERP"
+              value={fmt.num(s.no_erp_code)}
+              selected={f.issue === 'no_erp_code'}
+              onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'no_erp_code' ? '' : 'no_erp_code' }); }}
+            />
+          </StatGrid>
+          <div className="px-4 py-2 text-xs text-on-surface-variant">
+            {s.total} บริษัท · ใช้วงเงินรวม {fmt.baht(s.credit_used_total)} / {fmt.baht(s.credit_limit_total)}
+          </div>
+        </div>
       )}
-    </div>
+
+      <Panel className="overflow-hidden">
+        <form className="p-4 flex gap-3" onSubmit={(e) => { e.preventDefault(); setPage(1); setF({ ...f, search: search.trim() }); }}>
+          <Input
+            className="flex-1"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="ชื่อบริษัท หรือรหัสลูกค้า ERP"
+          />
+          <Button type="submit">ค้นหา</Button>
+        </form>
+      </Panel>
+
+      {list.loading && !list.data ? (
+        <Loading />
+      ) : list.data ? (
+        <>
+          <Panel className="overflow-hidden">
+            <Table>
+              <THead>
+                  <TH>บริษัท</TH>
+                  <TH>รหัส ERP</TH>
+                  <TH>วงเงิน</TH>
+                  <TH>เครดิต</TH>
+                  <TH>สาขา / คน</TH>
+                  <TH>KYC</TH>
+                  <TH>สั่งล่าสุด</TH>
+                </THead>
+              <TBody>
+                {list.data.items.map((c) => {
+                  const over = c.credit_limit > 0 && c.credit_used > c.credit_limit;
+                  const [kl, kc] = KYC[c.kyc_status] ?? [c.kyc_status, 'muted'];
+                  return (
+                    <TR key={c.id} onClick={() => navigate(`/reports/customers/${c.id}`, { state: { from: '/reports/customers', search: `?${searchParams.toString()}` } })}>
+                      <TD>
+                        <RowLink mono={false} to={`/reports/customers/${c.id}`} state={{ from: '/reports/customers', search: `?${searchParams.toString()}` }}>{c.name}</RowLink>
+                        <div className="font-mono text-[11px] text-on-surface-variant">{c.register_number}</div>
+                      </TD>
+                      <TD kind="code">{c.erp_customer_code ?? <Chip tone="warn">ไม่มี</Chip>}</TD>
+                      <TD kind="money">
+                        {fmt.baht(c.credit_used)} / {fmt.baht(c.credit_limit)}
+                        {over && <div className="mt-1"><Chip tone="danger">เกินวงเงิน</Chip></div>}
+                      </TD>
+                      <TD>{c.credit_term_days ? `${c.credit_term_days} วัน` : 'เงินสด'}</TD>
+                      <TD>{c.branch_count} / {c.user_count}</TD>
+                      <TD><Chip tone={kc as any}>{kl}</Chip></TD>
+                      <TD>{fmt.when(c.last_order_at)}</TD>
+                    </TR>
+                  );
+                })}
+              </TBody>
+            </Table>
+          </Panel>
+          <Pager page={page} pageSize={pageSize} total={list.data.total} onPage={setPage} onPageSize={setPageSize} />
+        </>
+      ) : null}
+    </Page>
   );
 }
 
 const SOURCE: Record<string, string> = { customer_sku: 'ราคาเฉพาะบริษัท', contract_sku: 'ราคาสัญญาสาขา', promotion: 'ราคาพิเศษสาขา', promotion_mechanic: 'โปรโมชัน', base: 'ราคาปกติ' };
-const rowsText = (rows: JoshRow[]) => rows.map((r) => `${baht(r.price)} (${r.start_date ?? '…'} – ${r.end_date ?? '…'})`).join(', ') || '—';
+const rowsText = (rows: JoshRow[]) => rows.map((r) => `${fmt.baht(r.price)} (${r.start_date ?? '…'} – ${r.end_date ?? '…'})`).join(', ') || '—';
 
 /** What a josh customer branch pays per unit today, layer by layer in josh's order, plus its ERP quotations. */
 export function JoshPricesPage() {
@@ -212,107 +347,132 @@ export function JoshPricesPage() {
   const [skuQ, setSkuQ] = useState('');
   const prices = useAsync(() => (branch ? joshPriceApi.forBranch(branch.branch_id, skuQ) : Promise.resolve(null)), [branch?.branch_id, skuQ]);
   const quotes = useAsync(() => (branch?.erp_customer_code ? joshPriceApi.quotations(branch.erp_customer_code) : Promise.resolve([])), [branch?.erp_customer_code]);
+
   return (
-    <div>
-      <Head title="ราคาที่ลูกค้าเห็น (josh)" sub="เลือกสาขา → ราคาต่อหน่วยที่ josh คิดวันนี้ ทีละชั้นตามลำดับของ josh และ quotation จาก ERP · ดูอย่างเดียว" onRefresh={() => { branches.reload(); prices.reload(); quotes.reload(); }} />
-      <section className="panel">
-        <form className="row" style={{ padding: 12 }} onSubmit={(e) => { e.preventDefault(); setBq(branchSearch.trim()); }}>
-          <input value={branchSearch} onChange={(e) => setBranchSearch(e.target.value)} placeholder="ค้นหาบริษัท / สาขา / รหัสลูกค้า ERP" style={{ flex: 1 }} />
-          <button className="btn" type="submit">ค้นหาสาขา</button>
+    <Page>
+      <PageHeader
+        title="ราคาที่ลูกค้าเห็น (josh)"
+        subtitle="เลือกสาขา → ราคาต่อหน่วยที่ josh คิดวันนี้ ทีละชั้นตามลำดับของ josh และ quotation จาก ERP · ดูอย่างเดียว"
+        actions={<Button icon="refresh" onClick={() => { branches.reload(); prices.reload(); quotes.reload(); }}>Refresh</Button>}
+      />
+      <div className="border-t border-secondary-container" />
+
+      <Panel>
+        <form className="space-y-3 p-4">
+          <Field label="ค้นหา">
+            <Input
+              value={branchSearch}
+              onChange={(e) => setBranchSearch(e.target.value)}
+              placeholder="ค้นหาบริษัท / สาขา / รหัสลูกค้า ERP"
+            />
+          </Field>
+          <Button type="button" onClick={() => setBq(branchSearch.trim())}>ค้นหาสาขา</Button>
         </form>
-        {branches.error && <div className="err" style={{ padding: '0 12px' }}>{branches.error}</div>}
-        <div className="row" style={{ padding: '0 12px 12px' }}>
+        {branches.error && <ErrorText error={branches.error} />}
+        <div className="flex flex-wrap gap-2 p-4">
           {(branches.data ?? []).slice(0, 30).map((b) => (
-            <button key={b.branch_id} type="button" className={`btn sm ${branch?.branch_id === b.branch_id ? '' : 'ghost'}`} onClick={() => setBranch(b)}>
+            <Button
+              key={b.branch_id}
+              size="sm"
+              variant={branch?.branch_id === b.branch_id ? 'primary' : 'secondary'}
+              onClick={() => setBranch(b)}
+            >
               {b.company_name ?? '—'} · {b.branch_name}
-            </button>
+            </Button>
           ))}
         </div>
-      </section>
+      </Panel>
+
       {branch && (
         <>
-          <section className="panel">
-            <div className="panel-head">{branch.company_name} · {branch.branch_name} <span className="mono hint">{branch.erp_customer_code}</span></div>
-            <form className="row" style={{ padding: 12 }} onSubmit={(e) => { e.preventDefault(); setSkuQ(sku.trim()); }}>
-              <input value={sku} onChange={(e) => setSku(e.target.value)} placeholder="ว่าง = เฉพาะสินค้าที่มีราคาเฉพาะลูกค้า · หรือพิมพ์ SKU / ชื่อเพื่อดูสินค้าใดก็ได้" style={{ flex: 1 }} />
-              <button className="btn ghost" type="submit">แสดง</button>
+          <Panel>
+            <PanelHead title={`${branch.company_name} · ${branch.branch_name}`} sub={<span className="font-mono text-xs">{branch.erp_customer_code}</span>} />
+            <form className="space-y-3 p-4">
+              <Field label="SKU">
+                <Input
+                  value={sku}
+                  onChange={(e) => setSku(e.target.value)}
+                  placeholder="ว่าง = เฉพาะสินค้าที่มีราคาเฉพาะลูกค้า · หรือพิมพ์ SKU / ชื่อเพื่อดูสินค้าใดก็ได้"
+                />
+              </Field>
+              <Button type="button" variant="ghost" onClick={() => setSkuQ(sku.trim())}>แสดง</Button>
             </form>
-            {prices.error && <div className="err" style={{ padding: '0 12px' }}>{prices.error}</div>}
-            {prices.data && (prices.data.items.length ? (
-              <table>
-                <thead><tr><th>SKU</th><th>สินค้า</th><th>ราคาปกติ</th><th>เฉพาะบริษัท</th><th>สัญญาสาขา</th><th>พิเศษสาขา</th><th>ขั้นบันได</th><th>วันนี้ลูกค้าจ่าย</th></tr></thead>
-                <tbody>{prices.data.items.map((p) => (
-                  <tr key={p.id}>
-                    <td className="mono">{p.sku}</td><td>{p.name}</td><td>{baht(p.base)}</td>
-                    <td>{rowsText(p.layers.privatePrice)}</td><td>{rowsText(p.layers.contract)}</td><td>{rowsText(p.layers.branchSpecial)}</td>
-                    <td>{p.layers.qtyRules.map((r: JoshRow) => `${r.min_qty}${r.max_qty ? `–${r.max_qty}` : '+'}: ${baht(r.promotion_price)}`).join(', ') || (p.layers.hasActiveMechanic ? 'มีโปรโมชัน' : '—')}</td>
-                    <td><strong>{p.winner.price == null ? 'คำนวณที่ josh' : baht(p.winner.price)}</strong><div className="hint">{SOURCE[p.winner.source] ?? p.winner.source}</div></td>
-                  </tr>
-                ))}</tbody>
-              </table>
-            ) : <div className="empty">ไม่มีราคาเฉพาะลูกค้าสำหรับสาขานี้ — พิมพ์ SKU เพื่อดูสินค้าอื่น</div>)}
-            {prices.data && <div className="hint" style={{ padding: '8px 16px' }}>{prices.data.note}</div>}
-          </section>
-          <section className="panel">
-            <div className="panel-head">Quotation จาก ERP ({branch.erp_customer_code ?? 'ไม่มีรหัสลูกค้า'})</div>
-            {quotes.data?.length ? (
-              <table>
-                <thead><tr><th>สินค้า</th><th>ราคา</th><th>หน่วย</th><th>ใช้ได้</th><th>สถานะ</th><th>เอกสาร</th></tr></thead>
-                <tbody>{quotes.data.map((q, i) => (
-                  <tr key={i}><td>{q.name}<div className="hint mono">{q.product_code}</div></td><td>{baht(q.rate)}</td><td>{q.unit}</td>
-                    <td>{q.start_date ?? '…'} – {q.expiry_date ?? '…'}</td><td><span className={`badge ${q.status === 'Y' ? 'ok' : 'muted'}`}>{q.status === 'Y' ? 'ใช้งาน' : q.status === 'Z' ? 'ยกเลิก' : q.status}</span></td>
-                    <td className="mono">{q.doc_book}{q.doc_no}</td></tr>
-                ))}</tbody>
-              </table>
-            ) : <div className="empty">ไม่มี quotation</div>}
-          </section>
+            {prices.error && <ErrorText error={prices.error} />}
+            {prices.loading && !prices.data ? (
+              <Loading />
+            ) : prices.data && prices.data.items.length ? (
+              <Table>
+                <THead>
+                    <TH>SKU</TH>
+                    <TH>สินค้า</TH>
+                    <TH>ราคาปกติ</TH>
+                    <TH>เฉพาะบริษัท</TH>
+                    <TH>สัญญาสาขา</TH>
+                    <TH>พิเศษสาขา</TH>
+                    <TH>ขั้นบันได</TH>
+                    <TH>วันนี้ลูกค้าจ่าย</TH>
+                  </THead>
+                <TBody>
+                  {prices.data.items.map((p) => (
+                    <TR key={p.id}>
+                      <TD kind="code">{p.sku}</TD>
+                      <TD>{p.name}</TD>
+                      <TD kind="money">{fmt.baht(p.base)}</TD>
+                      <TD>{rowsText(p.layers.privatePrice)}</TD>
+                      <TD>{rowsText(p.layers.contract)}</TD>
+                      <TD>{rowsText(p.layers.branchSpecial)}</TD>
+                      <TD>{p.layers.qtyRules.map((r: JoshRow) => `${r.min_qty}${r.max_qty ? `–${r.max_qty}` : '+'}: ${fmt.baht(r.promotion_price)}`).join(', ') || (p.layers.hasActiveMechanic ? 'มีโปรโมชัน' : '—')}</TD>
+                      <TD>
+                        <strong>{p.winner.price == null ? 'คำนวณที่ josh' : fmt.baht(p.winner.price)}</strong>
+                        <div className="text-[11px] text-on-surface-variant">{SOURCE[p.winner.source] ?? p.winner.source}</div>
+                      </TD>
+                    </TR>
+                  ))}
+                </TBody>
+              </Table>
+            ) : prices.data ? (
+              <Empty>ไม่มีราคาเฉพาะลูกค้าสำหรับสาขานี้ — พิมพ์ SKU เพื่อดูสินค้าอื่น</Empty>
+            ) : null}
+            {prices.data && <div className="px-4 py-3 text-xs text-on-surface-variant border-t border-secondary-container">{prices.data.note}</div>}
+          </Panel>
+
+          <Panel>
+            <PanelHead title={`Quotation จาก ERP (${branch.erp_customer_code ?? 'ไม่มีรหัสลูกค้า'})`} />
+            {quotes.loading && !quotes.data ? (
+              <Loading />
+            ) : quotes.data && quotes.data.length ? (
+              <Table>
+                <THead>
+                    <TH>สินค้า</TH>
+                    <TH>ราคา</TH>
+                    <TH>หน่วย</TH>
+                    <TH>ใช้ได้</TH>
+                    <TH>สถานะ</TH>
+                    <TH>เอกสาร</TH>
+                  </THead>
+                <TBody>
+                  {quotes.data.map((q, i) => (
+                    <TR key={i}>
+                      <TD>
+                        {q.name}
+                        <div className="font-mono text-[11px] text-on-surface-variant">{q.product_code}</div>
+                      </TD>
+                      <TD kind="money">{fmt.baht(q.rate)}</TD>
+                      <TD>{q.unit}</TD>
+                      <TD>{q.start_date ?? '…'} – {q.expiry_date ?? '…'}</TD>
+                      <TD><Chip tone={q.status === 'Y' ? 'ok' : 'muted'}>{q.status === 'Y' ? 'ใช้งาน' : q.status === 'Z' ? 'ยกเลิก' : q.status}</Chip></TD>
+                      <TD kind="code">{q.doc_book}{q.doc_no}</TD>
+                    </TR>
+                  ))}
+                </TBody>
+              </Table>
+            ) : quotes.data ? (
+              <Empty>ไม่มี quotation</Empty>
+            ) : null}
+          </Panel>
         </>
       )}
-    </div>
+    </Page>
   );
 }
 
-/**
- * Edit customer data through josh (COMMERCE_OWNS_CUSTOMERS). Masked values start empty: fill a field only to
- * change it. josh validates with its own DTOs; company edits (credit limit / term) need an admin role in josh.
- */
-function CustomerEdit({ kind, id, label, fields, onDone }: {
-  kind: 'users' | 'branches' | 'companies'; id: string; label: string; onDone: () => void;
-  fields: [key: string, label: string, current: unknown, type?: 'number'][];
-}) {
-  const start = () => Object.fromEntries(fields.map(([k, , v]) => [k, v == null ? '' : String(v)]));
-  const [v, setV] = useState<Record<string, string> | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState('');
-  if (!v) return <button className="btn ghost sm" onClick={() => setV(start())}>แก้</button>;
-  const initial = start();
-  const changed = fields.filter(([k]) => v[k].trim() !== '' && v[k] !== initial[k]);
-  async function save() {
-    const changes: Record<string, unknown> = {};
-    for (const [k, l, , type] of changed) {
-      if (type === 'number') {
-        const n = Number(v![k]);
-        if (!Number.isFinite(n) || n < 0) return setErr(`${l}: ต้องเป็นตัวเลขไม่ติดลบ`);
-        changes[k] = n;
-      } else changes[k] = v![k].trim();
-    }
-    if (!window.confirm(`บันทึก ${label}: ${changed.map(([, l]) => l).join(', ')}?\n\njosh บันทึกจริงในชื่อบัญชี josh ที่อีเมลตรงกับคุณ`)) return;
-    setBusy(true); setErr('');
-    try { await joshActionsApi.updateCustomer(kind, id, changes); setV(null); onDone(); }
-    catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
-    finally { setBusy(false); }
-  }
-  return (
-    <div style={{ display: 'grid', gap: 6, minWidth: 220, maxWidth: 420 }}>
-      {fields.map(([k, l, , type]) => (
-        <label key={k} className="field">{l}{initial[k] === '' ? ' (ว่าง = คงเดิม)' : ''}
-          <input inputMode={type === 'number' ? 'decimal' : undefined} type={k === 'email' ? 'email' : 'text'} value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })} /></label>
-      ))}
-      {err && <div className="err">{err}</div>}
-      <div className="row">
-        <button className="btn sm" disabled={busy || !changed.length} onClick={save}>{busy ? 'กำลังบันทึก…' : 'บันทึก'}</button>
-        <button className="btn ghost sm" onClick={() => setV(null)}>ยกเลิก</button>
-      </div>
-    </div>
-  );
-}

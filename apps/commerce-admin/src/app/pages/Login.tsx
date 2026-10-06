@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import { Button, Field, FormPanel, Hint, Input, Icon } from '@cp/ui';
 import { login } from '../../lib/api';
 
 export function Login({ onSignedIn }: { onSignedIn: () => void }) {
@@ -7,8 +8,7 @@ export function Login({ onSignedIn }: { onSignedIn: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function submit(e: FormEvent) {
-    e.preventDefault();
+  async function handleSubmit() {
     setBusy(true);
     setError(null);
     try {
@@ -22,21 +22,39 @@ export function Login({ onSignedIn }: { onSignedIn: () => void }) {
   }
 
   return (
-    <div className="login-wrap">
-      <form className="panel login" onSubmit={submit}>
-        <div className="brand">Commerce Platform<small>Admin console</small></div>
-        <label className="field">
-          Email
-          <input type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <label className="field">
-          Password
-          <input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        {error && <div className="err" role="alert">{error}</div>}
-        <button className="btn" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
-        <p className="hint">No account? Ask an admin to run <code>npm run create-staff</code>.</p>
-      </form>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <FormPanel
+        title="Commerce Platform"
+        icon="hub"
+        description="Admin console"
+        cols={1}
+        error={error}
+        submitLabel="Sign in"
+        busy={busy}
+        onSubmit={handleSubmit}
+      >
+        <Field label="Email">
+          <Input
+            type="email"
+            autoComplete="username"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@example.com"
+          />
+        </Field>
+        <Field label="Password">
+          <Input
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+        </Field>
+        <Hint>No account? Ask an admin to run <code className="font-mono text-[11px]">npm run create-staff</code>.</Hint>
+      </FormPanel>
     </div>
   );
 }

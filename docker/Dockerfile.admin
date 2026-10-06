@@ -13,6 +13,7 @@ ARG VITE_COMMERCE_API_URL=https://commerce.joshapp.io/api
 ENV VITE_COMMERCE_API_URL=$VITE_COMMERCE_API_URL
 
 COPY nx.json tsconfig.base.json ./
+COPY libs libs
 COPY apps/commerce-admin apps/commerce-admin
 
 RUN npx nx build commerce-admin

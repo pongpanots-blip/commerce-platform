@@ -8,6 +8,7 @@ RUN npm install -g npm@11 && npm ci --ignore-scripts
 
 FROM deps AS builder
 COPY nx.json tsconfig.base.json ./
+COPY libs libs
 COPY apps/commerce-platform apps/commerce-platform
 
 RUN npx nx build commerce-platform

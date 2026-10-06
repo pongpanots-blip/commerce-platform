@@ -34,7 +34,7 @@ export function JoshProducts() {
 
   async function decide(action: 'approve' | 'reject', ids: string[]) {
     const verb = action === 'approve' ? 'อนุมัติ' : 'ไม่อนุมัติ';
-    if (!ids.length || !window.confirm(`${verb}ข้อมูลจาก ERP ของสินค้า ${ids.length} รายการ?\n\n${action === 'approve' ? 'สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที' : 'ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม'} (josh ทำในชื่อบัญชี josh ที่อีเมลตรงกับคุณ)`)) return;
+    if (!ids.length || !window.confirm(`${verb}ข้อมูลจาก ERP ของสินค้า ${ids.length} รายการ?\n\n${action === 'approve' ? 'สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที' : 'ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม'} (josh ทำในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`)) return;
     setBusy(true); setMsg('');
     try {
       const r = action === 'approve' ? await joshActionsApi.approveProducts(ids) : await joshActionsApi.rejectProducts(ids);

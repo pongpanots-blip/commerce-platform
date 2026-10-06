@@ -37,7 +37,7 @@ function CustomerEdit({ kind, id, label, fields, onDone }: {
         changes[k] = n;
       } else changes[k] = v![k].trim();
     }
-    if (!window.confirm(`บันทึก ${label}: ${changed.map(([, l]) => l).join(', ')}?\n\njosh บันทึกจริงในชื่อบัญชี josh ที่อีเมลตรงกับคุณ`)) return;
+    if (!window.confirm(`บันทึก ${label}: ${changed.map(([, l]) => l).join(', ')}?\n\njosh บันทึกจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit`)) return;
     setBusy(true); setErr('');
     try { await joshActionsApi.updateCustomer(kind, id, changes); setV(null); onDone(); }
     catch (e) { setErr(e instanceof Error ? e.message : String(e)); }

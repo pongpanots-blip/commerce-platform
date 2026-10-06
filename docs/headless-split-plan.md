@@ -145,6 +145,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - สวิตช์ฝั่ง josh: `COMMERCE_OWNS_PRICES` (ล็อกหน้าแก้ราคาใน josh, live-price ไม่เขียนทับราคา, MOQ ต้องอนุมัติ) · `COMMERCE_APPROVES_PRODUCTS` (ล็อกปุ่มอนุมัติใน josh)
 - ลำดับเปิด: price shadow ตรง 100% → import ราคาครั้งแรก → เปิด COMMERCE_ACTIONS_ENABLED → COMMERCE_OWNS_PRICES → COMMERCE_APPROVES_PRODUCTS → COMMERCE_OWNS_CATALOG
 
+**การยืนยันตัวตน** — ตัดสินแล้ว (2026-10-06): commerce กับ josh คนละ platform
+- staff login ที่ commerce ด้วยบัญชีของ commerce เอง (หน้า ตั้งค่า › บัญชี staff, รหัสที่คนอื่นตั้งต้องเปลี่ยนตอน login ครั้งแรก) · ไม่ต้องมีบัญชี josh
+- josh เชื่อ commerce เป็นระบบ: ทุกคำสั่ง (relay + `/internal/commerce/*`) เซ็นด้วย `COMMERCE_EVENTS_SECRET` · josh ทำในนามบัญชีระบบ `commerce-platform@system.josh.internal` (migration ของ josh, login ไม่ได้, ปิดบัญชีนี้ = ตัด commerce) และบันทึกอีเมล staff ของ commerce ใน audit ของ josh · commerce ตัดสินสิทธิ์ตาม role ของ commerce
+- ยังไม่ย้าย: แอปฝ่ายขาย (winback) ยัง login ที่ josh · SSO ของบริษัทเป็นขั้นต่อไป
+
 **เครื่องมือ CS** — ตัดสินแล้ว (2026-10-06)
 - ย้าย (หน้า josh ใต้ /j, ปิดไว้): ตารางรอบส่ง `cs/delivery-schedule` (อ่าน) · หมวดที่ย้ายของในตะกร้าได้ `cs/cart-move-categories` (อ่าน/แก้ → josh `PUT /admin/cart-move-allowed-categories` ผ่าน admin-call) · สวิตช์ josh `COMMERCE_OWNS_CS_ORDERS` ล็อกการแก้หมวดใน josh
 - อยู่ josh: แชต CS (`chat`), `cslogs`, `settings`, `cs/product-tools`, `support/zendesk-settings`

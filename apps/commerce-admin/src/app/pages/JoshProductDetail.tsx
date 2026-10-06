@@ -46,7 +46,7 @@ function ProductEditor({ p, categories, onSaved, onClose }: { p: JoshProductDeta
         fields[k] = n;
       } else fields[k] = k === 'category_id' && v[k] === '' ? null : v[k];
     }
-    if (!window.confirm(`บันทึก ${changed.length} ช่องของ ${p.product_inventory_sku} ไปที่ josh?\n\n${changed.join(', ')}\n\n(josh บันทึกในชื่อบัญชี josh ที่อีเมลตรงกับคุณ · หน้าร้านเห็นทันที)`)) return;
+    if (!window.confirm(`บันทึก ${changed.length} ช่องของ ${p.product_inventory_sku} ไปที่ josh?\n\n${changed.join(', ')}\n\n(josh บันทึกในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit · หน้าร้านเห็นทันที)`)) return;
     setBusy(true); setErr('');
     try { await joshActionsApi.updateProduct(p.product_inventory_id, fields); onClose(); onSaved(`บันทึก ${p.product_inventory_sku} แล้ว (${changed.join(', ')})`); }
     catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
@@ -112,7 +112,7 @@ export function JoshProductDetail() {
   async function decide(action: 'approve' | 'reject') {
     if (!p) return;
     const verb = action === 'approve' ? 'อนุมัติ' : 'ไม่อนุมัติ';
-    if (!window.confirm(`${verb}ข้อมูลจาก ERP ของสินค้า ${p.product_inventory_sku}?\n\n${action === 'approve' ? 'สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที' : 'ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม'} (josh ทำในชื่อบัญชี josh ที่อีเมลตรงกับคุณ)`)) return;
+    if (!window.confirm(`${verb}ข้อมูลจาก ERP ของสินค้า ${p.product_inventory_sku}?\n\n${action === 'approve' ? 'สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที' : 'ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม'} (josh ทำในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`)) return;
     setBusy(true); setMsg('');
     try {
       const r = action === 'approve' ? await joshActionsApi.approveProducts([p.product_inventory_id]) : await joshActionsApi.rejectProducts([p.product_inventory_id]);

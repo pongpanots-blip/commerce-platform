@@ -12,7 +12,8 @@ export interface JoshActionActor { userId: string; email: string }
  * Staff actions commerce asks josh to do (josh `POST /api/internal/commerce/{winback,push-campaigns}`).
  * josh's own services do the work, so josh stays the only writer and sender. The whole envelope —
  * action, args, who, when, nonce — is HMAC-signed with JOSH_EVENTS_SECRET (= josh's
- * COMMERCE_EVENTS_SECRET); josh acts as the josh staff user with the same email. Every call is
+ * COMMERCE_EVENTS_SECRET); josh acts as its commerce-platform service account and records the staff
+ * email in its audit — commerce staff need no josh account, commerce decides who may do what. Every call is
  * audited here, success or not.
  */
 @Injectable()

@@ -33,7 +33,7 @@ export function CsDesk() {
   const [tab, setTab] = useState<Tab>('order');
   return (
     <Page>
-      <PageHeader title="งาน CS (josh)" subtitle="สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในชื่อบัญชี josh ที่อีเมลตรงกับคุณ" />
+      <PageHeader title="งาน CS (josh)" subtitle="สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit" />
       <div className="overflow-x-auto">
         <Segmented<Tab>
           value={tab}

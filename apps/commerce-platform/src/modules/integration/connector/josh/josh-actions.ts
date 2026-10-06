@@ -1,7 +1,9 @@
-import { BadGatewayException, BadRequestException, ForbiddenException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { createHash, createHmac, randomUUID } from 'node:crypto';
 import { DataSource } from 'typeorm';
 import { AuditLog } from '../../../core/audit/infrastructure/audit-log.entity';
+import { GrowthCampaignPlan } from '../../growth/growth-plan.entity';
+import { User } from '../../../core/user/infrastructure/user.entity';
 
 export type JoshActionTarget = 'winback' | 'push-campaigns' | 'credit-applications' | 'admin-access' | 'coupons' | 'customer-prices' | 'contract-prices' | 'products' | 'promotions' | 'suppliers' | 'internal-docs' | 'marketing-workflows' | 'customers' | 'admin-call';
 export interface JoshActionActor { userId: string; email: string }
@@ -44,6 +46,7 @@ export class JoshActions {
   private async send<T>(target: JoshActionTarget, action: string, args: Record<string, unknown>, actor: JoshActionActor, via: string,
     request: (text: string, signature: string) => { url: string; timeout: number; init: { body: BodyInit; headers: Record<string, string> } }, audited: object = args): Promise<T> {
     if (!this.configured) throw new ServiceUnavailableException('josh is not connected on this server (JOSH_API_URL / JOSH_EVENTS_SECRET).');
+    await this.guardGrowthWorkflow(target, action, args, actor);
     const body = { action, args, actorEmail: actor.email, at: new Date().toISOString(), nonce: randomUUID() };
     const text = JSON.stringify(body);
     const r = request(text, createHmac('sha256', process.env.JOSH_EVENTS_SECRET!.trim()).update(text).digest('hex'));
@@ -62,6 +65,40 @@ export class JoshActions {
         after: (target === 'admin-call' ? withoutFileBytes(audited) : audited) as object, context: { via, email: actor.email, joshStatus: status },
       });
     }
+  }
+
+  /** All commerce doors (editor, controller and MCP) share this boundary. Growth exports cannot send until runtime guard support exists. */
+  private async guardGrowthWorkflow(target: JoshActionTarget, action: string, args: Record<string, unknown>, actor: JoshActionActor) {
+    let id: string | undefined, operation = action;
+    if (target === 'marketing-workflows' && ['update', 'activate'].includes(action)) id = String(args.id ?? '');
+    if (target === 'admin-call') {
+      const method = String(args.method ?? '').toUpperCase();
+      const match = String(args.path ?? '').match(/^\/marketing-workflows\/([0-9a-f-]{36})(?:\/(.*))?$/i);
+      if (!match || method === 'GET' || method === 'DELETE' || ['pause', 'preview'].includes(match[2])) return;
+      id = match[1]; operation = match[2] || 'update';
+    }
+    if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return;
+    const response = await this.run<{ status: number; data: unknown }>('admin-call', 'call', { method: 'GET', path: `/marketing-workflows/${id}` }, actor, 'growth-guard');
+    if (response.status >= 400) throw new BadGatewayException('ตรวจสถานะ workflow ก่อนเปลี่ยนแปลงไม่สำเร็จ');
+    const body = response.data as { data?: { name?: string }; name?: string };
+    const workflow = body?.data ?? body;
+    const marker = workflow?.name?.match(/^Growth \[([0-9a-f-]{36}):v\d+\]/i);
+    if (!marker) return;
+    if (operation !== 'update') throw new ForbiddenException('Growth workflow นี้เปิดส่งหรือทดสอบส่งจริงไม่ได้: ต้องรองรับ stock/margin/budget/consent guards ก่อน');
+    const edit = (target === 'admin-call' ? args.body : args.workflow) as { name?: unknown } | undefined;
+    if (edit?.name !== undefined && (typeof edit.name !== 'string' || !edit.name.startsWith(`${marker[0]} `))) throw new ForbiddenException('เก็บรหัสแผน Growth ไว้ในชื่อ workflow');
+    await this.db.transaction(async manager => {
+      const plan = await manager.findOne(GrowthCampaignPlan, { where: { id: marker[1] }, lock: { mode: 'pessimistic_write' } });
+      if (plan && plan.createdBy !== actor.userId) {
+        const staff = await manager.findOne(User, { where: { id: actor.userId } });
+        if (staff?.role !== 'admin' || staff.status !== 'active') throw new ForbiddenException('เฉพาะเจ้าของแผน Growth หรือ admin ที่แก้ workflow นี้ได้');
+      }
+      if (plan && ['exporting', 'export_unknown'].includes(plan.status)) throw new ConflictException('ตรวจสอบผลส่งออกก่อนแก้ workflow');
+      if (plan?.workflowId !== id) return;
+      plan.version++; plan.status = 'draft'; plan.approvedBy = null; plan.approvedVersion = null;
+      plan.history.push({ at: new Date().toISOString(), actor: actor.email, action: 'workflow_edit_requires_review', version: plan.version, snapshot: plan.plan });
+      await manager.save(plan);
+    });
   }
 }
 

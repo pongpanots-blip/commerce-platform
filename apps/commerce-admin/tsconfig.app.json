@@ -13,6 +13,9 @@
       "@cp/ui": [
         "../../libs/ui/src/index.tsx"
       ],
+      "@cp/growth": [
+        "../../libs/growth/src/index.d.ts"
+      ],
       "@josh/shared-api": [
         "src/josh-admin/libs/shared-api/index.ts"
       ],

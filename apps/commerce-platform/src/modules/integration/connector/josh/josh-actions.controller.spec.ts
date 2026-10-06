@@ -45,6 +45,17 @@ describe('JoshActionsController — back-office actions', () => {
     expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: {} }, expect.anything(), 'admin');
   });
 
+  it('product create goes to josh and refreshes the copy of the new product; cuisine tags go as a list', async () => {
+    josh.run.mockResolvedValueOnce({ product_inventory_id: ID } as never);
+    await c.createProduct({ product: { product_inventory_sku: 'SKU-1' } }, req);
+    expect(josh.run).toHaveBeenCalledWith('products', 'create', { product: { product_inventory_sku: 'SKU-1' } }, expect.anything(), 'admin');
+    expect(catalog.syncId).toHaveBeenCalledWith(ID);
+    await c.setProductCuisines(ID, { cuisineIds: ['c-1'] }, req);
+    expect(josh.run).toHaveBeenLastCalledWith('products', 'set_cuisines', { id: ID, cuisine_ids: ['c-1'] }, expect.anything(), 'admin');
+    await c.setProductCuisines(ID, { cuisineIds: 'x' }, req);
+    expect(josh.run).toHaveBeenLastCalledWith('products', 'set_cuisines', { id: ID, cuisine_ids: [] }, expect.anything(), 'admin');
+  });
+
   it('customer edits map to josh customers actions; suppliers and docs too', async () => {
     await c.updateUser(ID, { changes: { mobile_phone: '0812345678' } }, req);
     await c.updateBranch(ID, { changes: ['x'] as never }, req);

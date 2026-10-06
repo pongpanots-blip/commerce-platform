@@ -390,8 +390,10 @@ const EditProduct = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label="รหัสสินค้า (SKU) *"
+          hint="มาจาก ERP — แก้ที่นี่ไม่ได้"
           value={form.product_inventory_sku}
-          onChange={(e) => handleInput('product_inventory_sku', e.target.value)}
+          disabled
+          readOnly
         />
         <Input
           label="สถานะสินค้า"

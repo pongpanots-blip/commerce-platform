@@ -1,5 +1,5 @@
 import { Product } from '@josh/shared-models';
-import { apiClient } from '../api-client/api-client';
+import { apiClient, viaCommerceAction } from '../api-client/api-client';
 import type {
   FilterGroup,
   ListingAvailability,
@@ -127,16 +127,43 @@ export const getMyProducts = async (
   return response;
 };
 
-export const createProduct = async (data: any): Promise<any> => {
-  const response = await apiClient.post<any>(`/product`, data);
-  return response;
+/**
+ * commerce-admin: josh's product form is split in two. Field values go through commerce's product
+ * actions (ProductService.create / update in josh, open once COMMERCE_OWNS_CATALOG locks josh admin);
+ * images and removed_media_ids stay an image-only edit on josh's own route, which that lock keeps open.
+ */
+function splitProductForm(data: FormData) {
+  const fields: Record<string, string> = {};
+  const images: File[] = [];
+  let removed = '[]';
+  for (const [key, value] of (data as unknown as { entries(): Iterable<[string, FormDataEntryValue]> }).entries()) {
+    if (key === 'images' && typeof value !== 'string') images.push(value);
+    else if (key === 'removed_media_ids') removed = String(value);
+    else if (typeof value === 'string') fields[key] = value;
+  }
+  return { fields, images, removed };
+}
+
+const imageEdit = (id: string, images: File[], removed: string) => {
+  const form = new FormData();
+  form.append('removed_media_ids', removed);
+  images.forEach((file) => form.append('images', file));
+  return apiClient.patch<any>(`/product/${id}`, form, { headers: { 'Content-Type': 'multipart/form-data' } });
+};
+
+export const createProduct = async (data: FormData): Promise<any> => {
+  const { fields, images } = splitProductForm(data);
+  const created = await viaCommerceAction<{ product_inventory_id?: string }>('/josh/products', { product: fields });
+  if (images.length && created?.product_inventory_id) await imageEdit(created.product_inventory_id, images, '[]');
+  return { data: created, status: 200 };
 };
 
 export const updateProduct = async (id: string, data: FormData): Promise<any> => {
-  const response = await apiClient.patch<any>(`/product/${id}`, data, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return response;
+  const { fields, images, removed } = splitProductForm(data);
+  delete fields.product_inventory_sku; // identity from the ERP — read-only in commerce's form
+  if (Object.keys(fields).length) await viaCommerceAction(`/josh/products/${id}/update`, { fields });
+  if (images.length || removed !== '[]') await imageEdit(id, images, removed);
+  return { data: { statusCode: 200 }, status: 200 };
 };
 
 export const uploadProductVideo = async (data: FormData): Promise<any> => {

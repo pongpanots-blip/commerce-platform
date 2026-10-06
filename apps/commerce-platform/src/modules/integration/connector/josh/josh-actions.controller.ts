@@ -105,6 +105,24 @@ export class JoshActionsController {
     return result;
   }
 
+  /**
+   * Create a product (COMMERCE_OWNS_CATALOG): josh's ProductService.create with the create form's
+   * fields. Images are added afterwards as an image-only edit, which josh keeps open.
+   */
+  @Post('products') @HttpCode(HttpStatus.OK)
+  async createProduct(@Body() b: { product?: Record<string, unknown> }, @Req() req: StaffRequest) {
+    const product = b?.product && typeof b.product === 'object' && !Array.isArray(b.product) ? b.product : {};
+    const result = await this.josh.run<{ product_inventory_id?: string }>('products', 'create', { product }, this.as(req), 'admin');
+    if (result?.product_inventory_id) await this.catalog.syncId(result.product_inventory_id).catch(() => undefined);
+    return result;
+  }
+
+  /** Replace a product's cuisine tags (COMMERCE_OWNS_CATALOG): josh's CuisineService.setProductCuisines. */
+  @Post('products/:id/cuisines') @HttpCode(HttpStatus.OK)
+  setProductCuisines(@Param('id', ParseUUIDPipe) id: string, @Body() b: { cuisineIds?: unknown }, @Req() req: StaffRequest) {
+    return this.josh.run('products', 'set_cuisines', { id, cuisine_ids: Array.isArray(b?.cuisineIds) ? b.cuisineIds : [] }, this.as(req), 'admin');
+  }
+
   /** Suppliers (josh SupplierService validates with its DTO; supplier_name is required on update too). */
   @Post('suppliers') @HttpCode(HttpStatus.OK)
   createSupplier(@Body() b: { supplier?: Record<string, unknown> }, @Req() req: StaffRequest) {

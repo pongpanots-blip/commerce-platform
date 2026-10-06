@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 const API_BASE =
   (typeof import.meta !== 'undefined' &&
     (import.meta as { env?: Record<string, string> }).env?.VITE_API_BASE_URL) ||
-  'http://localhost:3000';
+  'https://joshapp.io/api';
 
 type CouponImageFieldProps = {
   imageUrl?: string | null;

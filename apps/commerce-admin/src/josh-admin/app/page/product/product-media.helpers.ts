@@ -11,7 +11,7 @@ export type ProductTranslation = {
   product_description?: string;
 };
 
-export const API_BASE = 'http://localhost:3000';
+export const API_BASE = 'https://joshapp.io/api';
 
 export function resolveMediaUrl(source: string): string {
   if (!source) return '';

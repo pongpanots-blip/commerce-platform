@@ -6,7 +6,7 @@ declare const process: { env?: Record<string, string | undefined> } | undefined;
 /** Same origin resolution as the Banner admin page — asset paths are relative. */
 const APP_URL = (
   (typeof process !== 'undefined' && (process.env?.VITE_APP_URL || process.env?.VITE_API_URL)) ||
-  'http://localhost:3000/api'
+  'https://joshapp.io/api'
 ).replace(/\/api\/?$/, '');
 
 /** Banner library rows carry relative asset paths; push/popup need absolute URLs. */

@@ -46,7 +46,7 @@ fi
 touch .env
 for v in "${TAG_VARS[@]}"; do sed -i "/^$v=/d" .env; echo "$v=$TAG" >> .env; done
 # Public edge, once the first cert exists (./ssl-init.sh issues it). --no-deps: never touch the apps.
-if [[ -f certbot/conf/live/commerce.joshapp.io/fullchain.pem ]]; then
+if [[ -f certbot/conf/renewal/commerce.joshapp.io.conf ]]; then  # live/ is root-only (0700); renewal/ is readable
   "${COMPOSE[@]}" up -d --no-deps nginx certbot
 fi
 docker image prune -f

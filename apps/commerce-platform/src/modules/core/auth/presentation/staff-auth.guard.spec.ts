@@ -2,7 +2,7 @@ import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@ne
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { StaffAuthGuard } from './staff-auth.guard';
-import { IS_PUBLIC_KEY, STAFF_ROLES_KEY } from '../../../../shared-kernel/presentation/auth.decorators';
+import { ALLOW_PENDING_PASSWORD_KEY, IS_PUBLIC_KEY, STAFF_ROLES_KEY } from '../../../../shared-kernel/presentation/auth.decorators';
 
 const jwt = new JwtService({ secret: 'test-secret' });
 
@@ -13,6 +13,7 @@ function ctx(opts: { token?: string; meta?: Record<string, unknown>; type?: stri
   const handler = () => undefined;
   Reflect.defineMetadata(IS_PUBLIC_KEY, opts.meta?.[IS_PUBLIC_KEY], handler);
   Reflect.defineMetadata(STAFF_ROLES_KEY, opts.meta?.[STAFF_ROLES_KEY], handler);
+  Reflect.defineMetadata(ALLOW_PENDING_PASSWORD_KEY, opts.meta?.[ALLOW_PENDING_PASSWORD_KEY], handler);
   const context = {
     getType: () => opts.type ?? 'http',
     getHandler: () => handler,
@@ -26,7 +27,7 @@ const sign = (role: string) => jwt.signAsync({ sub: 'u-1', email: 'a@b.c', role 
 
 describe('StaffAuthGuard (global default-deny)', () => {
   // the account row as it is now; tokens only say who
-  let account: { id: string; email: string; role: string; status: string } | null;
+  let account: { id: string; email: string; role: string; status: string; mustChangePassword?: boolean } | null;
   const users = { findOne: jest.fn(async () => account) };
   const guard = new StaffAuthGuard(jwt, new Reflector(), users as never);
   beforeEach(() => { account = { id: 'u-1', email: 'a@b.c', role: 'admin', status: 'active' }; });
@@ -51,7 +52,7 @@ describe('StaffAuthGuard (global default-deny)', () => {
   it('admin passes and is attached to the request', async () => {
     const { context, request } = ctx({ token: await sign('admin') });
     await expect(guard.canActivate(context)).resolves.toBe(true);
-    expect(request.staff).toEqual({ userId: 'u-1', email: 'a@b.c', role: 'admin' });
+    expect(request.staff).toMatchObject({ userId: 'u-1', email: 'a@b.c', role: 'admin' });
   });
 
   it('marketing only where @StaffRoles("marketing") allows it', async () => {
@@ -74,6 +75,15 @@ describe('StaffAuthGuard (global default-deny)', () => {
     account!.role = 'marketing';
     await expect(guard.canActivate(ctx({ token }).context)).rejects.toBeInstanceOf(ForbiddenException);
     await expect(guard.canActivate(ctx({ token, meta: { [STAFF_ROLES_KEY]: ['marketing'] } }).context)).resolves.toBe(true);
+  });
+
+  it('a password someone else set: only "who am I" and "change it" until the owner changes it', async () => {
+    const token = await sign('admin');
+    account!.mustChangePassword = true;
+    const blocked = await guard.canActivate(ctx({ token }).context).catch((e) => e);
+    expect(blocked).toBeInstanceOf(ForbiddenException);
+    expect(blocked.getResponse()).toMatchObject({ code: 'PASSWORD_CHANGE_REQUIRED' });
+    await expect(guard.canActivate(ctx({ token, meta: { [ALLOW_PENDING_PASSWORD_KEY]: true } }).context)).resolves.toBe(true);
   });
 
   it('ignores non-HTTP contexts (workers, schedulers)', async () => {

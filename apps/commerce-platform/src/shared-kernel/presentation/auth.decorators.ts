@@ -16,6 +16,10 @@ export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 /** Allow these staff roles in addition to `admin` (default: admin only). */
 export const StaffRoles = (...roles: StaffRole[]) => SetMetadata(STAFF_ROLES_KEY, roles);
 
+export const ALLOW_PENDING_PASSWORD_KEY = 'auth:allowPendingPassword';
+/** Open to a staff member who still has to change a password someone else set (only "who am I" and "change it"). */
+export const AllowPendingPassword = () => SetMetadata(ALLOW_PENDING_PASSWORD_KEY, true);
+
 /** What the global staff guard attaches to an authenticated request. */
 export interface StaffRequest {
   staff: { userId: string; email: string; role: StaffRole };

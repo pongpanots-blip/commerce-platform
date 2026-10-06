@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
-import { AdminStats, api, reportsApi, session } from '../lib/api';
+import { AdminStats, api, reportsApi, session, staffApi } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { StaffAccounts } from './pages/StaffAccounts';
@@ -270,6 +270,17 @@ function AdminTopBar() {
 
 export function App() {
   const [signedIn, setSignedIn] = useState(() => Boolean(session.get()));
+  // null = not checked yet; the API refuses everything else while true, so the app waits for the change
+  const [mustChangePassword, setMustChangePassword] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (!signedIn) return setMustChangePassword(null);
+    staffApi.me().then((me) => setMustChangePassword(!!me.mustChangePassword), () => setMustChangePassword(false));
+  }, [signedIn]);
+  useEffect(() => {
+    const required = () => setMustChangePassword(true);
+    window.addEventListener('cp-password-change-required', required);
+    return () => window.removeEventListener('cp-password-change-required', required);
+  }, []);
   useEffect(() => {
     const expired = () => setSignedIn(false);
     window.addEventListener('cp-session-expired', expired);
@@ -285,6 +296,9 @@ export function App() {
     session.clear();
     setSignedIn(false);
   }
+
+  if (mustChangePassword === null) return null;
+  if (mustChangePassword) return <BrowserRouter><ChangePassword forced onDone={() => setMustChangePassword(false)} onSignOut={signOut} /></BrowserRouter>;
 
   return (
     <BrowserRouter>

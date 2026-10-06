@@ -78,6 +78,7 @@ export class PortalAuthService {
     return {
       accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }),
       role: user.role,
+      mustChangePassword: !!user.mustChangePassword,
     };
   }
 }

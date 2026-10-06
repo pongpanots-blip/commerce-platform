@@ -2,7 +2,7 @@ import { Body, Controller, ForbiddenException, Get, HttpCode, Post, Req } from '
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 import { PortalAuthService } from '../application/portal-auth.service';
 import { MIN_PASSWORD, StaffAccountsService } from '../application/staff-accounts.service';
-import { Public, STAFF_ROLES, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
+import { AllowPendingPassword, Public, STAFF_ROLES, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { StaffPrincipal } from './staff-auth.guard';
 
 class StaffLoginDto {
@@ -32,6 +32,7 @@ export class StaffAuthController {
   }
 
   @StaffRoles('marketing')
+  @AllowPendingPassword()
   @Get('me')
   me(@Req() req: { staff: StaffPrincipal }) {
     return req.staff;
@@ -39,6 +40,7 @@ export class StaffAuthController {
 
   /** Any staff member changes their own password (the current one is checked). */
   @StaffRoles('marketing')
+  @AllowPendingPassword()
   @Post('password')
   @HttpCode(200)
   changePassword(@Body() dto: ChangePasswordDto, @Req() req: { staff: StaffPrincipal }) {

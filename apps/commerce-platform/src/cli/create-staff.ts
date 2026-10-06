@@ -5,7 +5,8 @@
  *   npm run create-staff -- someone@jagota.com admin
  *   npm run create-staff -- someone@jagota.com marketing
  *
- * Password: STAFF_PASSWORD env if set, otherwise a random one printed once.
+ * Password: STAFF_PASSWORD env if set (automation, e.g. test setups), otherwise a random one printed
+ * once — that one must be changed at first sign-in.
  */
 import 'reflect-metadata';
 import { randomBytes } from 'crypto';
@@ -28,12 +29,12 @@ async function main() {
   const repo = AppDataSource.getRepository(User);
   const existing = await repo.findOne({ where: { email } });
   await repo.save(repo.create({
-    ...(existing ?? {}), email, role, status: 'active', passwordHash: await bcrypt.hash(password, 10),
+    ...(existing ?? {}), email, role, status: 'active', passwordHash: await bcrypt.hash(password, 10), mustChangePassword: generated,
   }));
   await AppDataSource.destroy();
 
   console.log(`${existing ? 'updated' : 'created'} ${email} (${role})`);
-  if (generated) console.log(`password (shown once): ${password}`);
+  if (generated) console.log(`password (shown once, must be changed at first sign-in): ${password}`);
 }
 
 main().catch((error) => {

@@ -3,13 +3,14 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IS_PUBLIC_KEY, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { ALLOW_PENDING_PASSWORD_KEY, IS_PUBLIC_KEY, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { User } from '../../user/infrastructure/user.entity';
 
 export interface StaffPrincipal {
   userId: string;
   email: string;
   role: StaffRole;
+  mustChangePassword?: boolean;
 }
 
 /**
@@ -55,14 +56,19 @@ export class StaffAuthGuard implements CanActivate {
     if (!payload.role || !STAFF_ROLES.includes(payload.role as StaffRole)) {
       throw new ForbiddenException('this account cannot use this part of commerce-admin');
     }
-    const account = payload.sub ? await this.users.findOne({ where: { id: payload.sub }, select: { id: true, email: true, role: true, status: true } }) : null;
+    const account = payload.sub ? await this.users.findOne({ where: { id: payload.sub }, select: { id: true, email: true, role: true, status: true, mustChangePassword: true } }) : null;
     if (!account || account.status !== 'active') throw new UnauthorizedException('account disabled or removed');
+
+    // a password someone else set (new account, reset): nothing but "who am I" and "change it" until changed
+    if (account.mustChangePassword && !this.reflector.getAllAndOverride<boolean>(ALLOW_PENDING_PASSWORD_KEY, targets)) {
+      throw new ForbiddenException({ message: 'change your password first', code: 'PASSWORD_CHANGE_REQUIRED' });
+    }
 
     const allowed = new Set<string>(['admin', ...(this.reflector.getAllAndOverride<StaffRole[]>(STAFF_ROLES_KEY, targets) ?? [])]);
     if (!allowed.has(account.role)) {
       throw new ForbiddenException('this account cannot use this part of commerce-admin');
     }
-    request.staff = { userId: account.id, email: account.email, role: account.role } as StaffPrincipal;
+    request.staff = { userId: account.id, email: account.email, role: account.role, mustChangePassword: account.mustChangePassword } as StaffPrincipal;
     return true;
   }
 }

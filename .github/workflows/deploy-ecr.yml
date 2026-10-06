@@ -109,7 +109,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - uses: aws-actions/amazon-ecr-login@v2
-      # EC2 is Graviton (m7g) → arm64 image, cross-built via QEMU (hosted arm runners aren't free on private repos).
+      # EC2 is Graviton → arm64 image. npm ci/nx build run natively (--platform=$BUILDPLATFORM stages);
+      # QEMU only runs the small final stage (apk add, copy).
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v6

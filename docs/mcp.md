@@ -51,6 +51,7 @@
 | Tool | Role | ทำอะไร |
 |---|---|---|
 | `research_create_topic` | marketing, admin | สร้างโจทย์ research |
+| `marketing_workflow_create` | marketing, admin | ร่าง marketing workflow ใหม่บน josh — บันทึกเป็น **draft** เสมอ ยังไม่ส่งอะไรถึงลูกค้าจนกว่าคนจะกด activate ใน commerce-admin › Marketing workflows (ต้องตั้ง `JOSH_API_URL` + `JOSH_EVENTS_SECRET`) |
 | `research_request_run` | marketing, admin | สั่งรันโจทย์ (ของตัวเอง ส่วน admin รันของทุกคนได้) |
 | `competitor_record_price` | marketing, admin | บันทึกราคาคู่แข่งที่ผู้ใช้เห็นจากหน้าเว็บ **ยืนยันคู่สินค้าให้ไม่ได้** ยังต้องให้คนทำ |
 | `scraping_update_source` | marketing, admin | เปิด/ปิดการเก็บข้อมูลอัตโนมัติ และเปลี่ยนรอบเก็บ (24 = วันละครั้ง, 168 = สัปดาห์ละครั้ง, 720 = เดือนละครั้ง) ถ้ากำลังเก็บอยู่ ตัวอย่างจะเตือนว่าการบันทึกจะหยุดรอบนั้น |

@@ -11,6 +11,8 @@ import { AuditLog } from '../modules/core/audit/infrastructure/audit-log.entity'
 import { ScrapingService } from '../modules/platform/scraping/application/scraping.service';
 import { MarketingResearchService } from '../modules/platform/marketing-research/application/marketing-research.service';
 import { MCP_WRITE_SCOPE, McpOAuthProvider, McpStaff } from './mcp-oauth.provider';
+import { previewWorkflow, toJoshWorkflow, workflowDraftSchema } from './mcp-workflow-draft';
+import { JoshActions } from '../modules/integration/connector/josh/josh-actions';
 import { CreateResearchTopicDto } from '../modules/platform/marketing-research/dto/research.dto';
 import { RESEARCH_KINDS, RESEARCH_SOURCES } from '../modules/platform/marketing-research/research.types';
 import { WebhookSubscriptionService } from '../modules/integration/webhook-subscription/application/webhook-subscription.service';
@@ -96,6 +98,7 @@ export class McpTools {
     private readonly jagotaHistory: JagotaSyncHistoryImport,
     private readonly promotions: JoshPromotions,
     private readonly workflows: JoshMarketingWorkflows,
+    private readonly joshActions: JoshActions,
     private readonly orderQuotes: OrderQuoteShadow,
   ) {}
 
@@ -138,7 +141,7 @@ export class McpTools {
   private marketing(server: McpServer, staff: McpStaff) {
     server.registerTool('marketing_workflows', {
       title: 'Marketing automations on josh (marketing)',
-      description: 'josh marketing workflows (trigger → steps → LINE / push / email): status (draft / active / paused), trigger, schedule, and for the last `days` how many customers were enrolled, still running, failed, converted and held out, plus the last scheduled run. Pass id for one workflow with its steps, enrollments by status, recent runs and failed sends. Read-only; changes happen in commerce-admin › Marketing workflows.',
+      description: 'josh marketing workflows (trigger → steps → LINE / push / email): status (draft / active / paused), trigger, schedule, and for the last `days` how many customers were enrolled, still running, failed, converted and held out, plus the last scheduled run. Pass id for one workflow with its steps, enrollments by status, recent runs and failed sends. Read-only; to draft a new workflow use marketing_workflow_create (write connections only); activating, pausing and editing happen in commerce-admin › Marketing workflows.',
       inputSchema: { id: z.string().uuid().optional(), days: z.number().int().min(1).max(365).default(30) },
       annotations: READ_ONLY,
     }, async ({ id, days }) => {
@@ -375,6 +378,20 @@ export class McpTools {
         if (errors.length) throw new Error(errors.map((e) => Object.values(e.constraints ?? {}).join(', ')).join('; '));
         const topic = await this.research.create(dto, actor);
         return { topicId: topic.id, title: topic.title };
+      }));
+
+    server.registerTool('marketing_workflow_create', {
+      title: 'Draft a marketing workflow on josh (needs confirmation)',
+      description: 'Create a new josh marketing workflow (trigger → steps → push / email / in-app). It is always saved as DRAFT: nobody is messaged until a person activates it in commerce-admin › Marketing workflows. Read existing ones with marketing_workflows (pass id) to copy a valid steps structure.',
+      inputSchema: { ...workflowDraftSchema, confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => this.twoStep(staff, clientId, 'marketing_workflow_create', args,
+      async () => previewWorkflow(toJoshWorkflow(args)),
+      async () => {
+        const saved = await this.joshActions.run<{ data?: { id?: string; status?: string; name?: string } }>(
+          'marketing-workflows', 'create', { workflow: toJoshWorkflow(args) }, { userId: staff.userId, email: staff.email }, 'mcp');
+        return { workflowId: saved?.data?.id ?? null, name: saved?.data?.name ?? args.name, status: saved?.data?.status ?? 'draft',
+          next: 'Review and activate it in commerce-admin › Marketing workflows.' };
       }));
 
     server.registerTool('research_request_run', {

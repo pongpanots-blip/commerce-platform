@@ -76,7 +76,7 @@ export function WebhookPlatforms() {
 
   return (
     <Page>
-      <PageHeader crumbs={['Webhooks', 'Platforms']} title="Webhook Platforms" subtitle="Manage webhook subscriptions and platform integrations." actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={reload}>Refresh</button>} />
+      <PageHeader title="Webhook Platforms" subtitle="Manage webhook subscriptions and platform integrations." actions={<Button icon="refresh" onClick={reload}>Refresh</Button>} />
 
       {message && <Alert tone="ok">{message}</Alert>}
       {error && <Alert tone="danger">{error}</Alert>}
@@ -148,7 +148,7 @@ export function WebhookPlatforms() {
                     <TD kind="mono">{sub.targetUrl}</TD>
                     <TD>{sub.eventTypes.length} events</TD>
                     <TD><StatusChip status={sub.active ? 'active' : 'inactive'} /></TD>
-                    <TD kind="actions"><ExpandToggle open={expandedId === sub.id} onClick={() => setExpandedId((cur) => (cur === sub.id ? null : sub.id))} /> <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" disabled={busy === `toggle-${sub.id}`} onClick={() => toggleSubscription(sub.id, sub.active)}>{busy === `toggle-${sub.id}` ? '…' : sub.active ? 'Disable' : 'Enable'}</button> <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" disabled={busy === `delete-${sub.id}`} onClick={() => deleteSubscription(sub.id)}>{busy === `delete-${sub.id}` ? '…' : 'Delete'}</button></TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === sub.id} onClick={() => setExpandedId((cur) => (cur === sub.id ? null : sub.id))} /> <Button disabled={busy === `toggle-${sub.id}`} onClick={() => toggleSubscription(sub.id, sub.active)}>{busy === `toggle-${sub.id}` ? '…' : sub.active ? 'Disable' : 'Enable'}</Button> <Button disabled={busy === `delete-${sub.id}`} onClick={() => deleteSubscription(sub.id)}>{busy === `delete-${sub.id}` ? '…' : 'Delete'}</Button></TD>
                   </TR>
                   {expandedId === sub.id && (
                     <ExpandRow colSpan={5}>

@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { webhookApi, WebhookDeliveryFull } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Alert, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Alert, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection, Button } from '@cp/ui';
 
 export function WebhookDeadLetter() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export function WebhookDeadLetter() {
 
   return (
     <Page>
-      <PageHeader crumbs={['Webhooks', 'Dead Letter']} title="Webhook Dead Letter" subtitle="View and retry failed webhook deliveries." actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={reload}>Refresh</button>} />
+      <PageHeader title="Webhook Dead Letter" subtitle="View and retry failed webhook deliveries." actions={<Button icon="refresh" onClick={reload}>Refresh</Button>} />
 
       {message && <Alert tone="ok">{message}</Alert>}
       {error && <Alert tone="danger">{error}</Alert>}
@@ -62,7 +62,7 @@ export function WebhookDeadLetter() {
                     <TD>{delivery.attempts}</TD>
                     <TD className="text-on-surface-variant text-xs">{delivery.error ? delivery.error.substring(0, 40) + '…' : '—'}</TD>
                     <TD kind="time">{fmt.when(delivery.createdAt)}</TD>
-                    <TD kind="actions"><ExpandToggle open={expandedId === delivery.id} onClick={() => setExpandedId((cur) => (cur === delivery.id ? null : delivery.id))} /> <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs" disabled={busy === `retry-${delivery.id}`} onClick={() => retryDelivery(delivery.id)}>{busy === `retry-${delivery.id}` ? '…' : 'Retry'}</button></TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === delivery.id} onClick={() => setExpandedId((cur) => (cur === delivery.id ? null : delivery.id))} /> <Button variant="primary" disabled={busy === `retry-${delivery.id}`} onClick={() => retryDelivery(delivery.id)}>{busy === `retry-${delivery.id}` ? '…' : 'Retry'}</Button></TD>
                   </TR>
                   {expandedId === delivery.id && (
                     <ExpandRow colSpan={7}>

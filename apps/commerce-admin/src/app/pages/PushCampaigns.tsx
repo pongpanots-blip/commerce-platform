@@ -22,7 +22,7 @@ export function PushCampaigns() {
       <PageHeader
         title="Push campaigns"
         subtitle="แคมเปญแจ้งเตือนที่ส่งจาก josh และผลการส่งจริงแต่ละช่องทาง · ดูอย่างเดียว — สร้าง/ส่งยังทำที่ josh admin"
-        actions={<Button variant="ghost" onClick={() => { overview.reload(); list.reload(); }}>Refresh</Button>}
+        actions={<Button icon="refresh" onClick={() => { overview.reload(); list.reload(); }}>Refresh</Button>}
       />
 
       <ErrorText error={overview.error || list.error} />

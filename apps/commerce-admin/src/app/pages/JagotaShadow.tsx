@@ -121,9 +121,7 @@ export function JagotaShadow() {
                         {c.note && c.diffs.length > 0 && <div className="text-[10px] text-on-surface-variant">{c.note}</div>}
                       </TD>
                       <TD kind="actions" className="space-x-1">
-                        <button type="button" className="text-primary hover:underline text-xs font-medium" onClick={() => setOpen(open === c.id ? null : c.id)}>
-                          <ExpandToggle open={open === c.id} onClick={() => {}} label={open === c.id ? 'ซ่อน' : 'ดู'} />
-                        </button>
+                        <ExpandToggle open={open === c.id} onClick={() => setOpen(open === c.id ? null : c.id)} label={open === c.id ? 'ซ่อน' : 'ดู'} />
                         <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => act(c.joshSyncId, () => jagotaShadowApi.recheck(c.joshSyncId), (r: { matched: boolean }) => `ตรวจซ้ำ: ${r.matched ? 'ตรง' : 'ยังไม่ตรง'}`)}>ตรวจซ้ำ</Button>
                       </TD>
                     </TR>
@@ -263,9 +261,7 @@ function GatewaySends() {
                       <TD kind="time">{fmt.when(r.updatedAt)}</TD>
                       <TD>{r.lastError ?? '—'}</TD>
                       <TD kind="actions">
-                        <button type="button" className="text-primary hover:underline text-xs font-medium" onClick={() => setOpen(open === r.id ? null : r.id)}>
-                          <ExpandToggle open={open === r.id} onClick={() => {}} label={open === r.id ? 'ซ่อน' : 'ดู'} />
-                        </button>
+                        <ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} label={open === r.id ? 'ซ่อน' : 'ดู'} />
                       </TD>
                     </TR>
                     {open === r.id && (
@@ -396,9 +392,7 @@ function SyncHistory() {
                       <TD kind="time">{fmt.when(r.createdAt)}</TD>
                       <TD>{r.errorMessage ?? '—'}</TD>
                       <TD kind="actions">
-                        <button type="button" className="text-primary hover:underline text-xs font-medium" onClick={() => setOpen(open === r.id ? null : r.id)}>
-                          <ExpandToggle open={open === r.id} onClick={() => {}} label={open === r.id ? 'ซ่อน' : 'ดู'} />
-                        </button>
+                        <ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} label={open === r.id ? 'ซ่อน' : 'ดู'} />
                       </TD>
                     </TR>
                     {open === r.id && (

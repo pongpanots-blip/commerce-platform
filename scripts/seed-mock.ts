@@ -293,7 +293,7 @@ async function seedIntegrations(client: Client): Promise<string[]> {
     ids.push(id);
     await q(client, `INSERT INTO integrations (id, organization_id, name, type, slug, status, config, signing_secret, created_at, updated_at, deleted_at)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW(), NULL)`,
-      [id, MOCK_ORG_ID, `${MOCK_PREFIX}Int-${i}`, ['erp', 'pos', 'marketplace'][i], `${MOCK_PREFIX}int-${i}`, 'active', '{}', hashApiKey(`secret-${i}`)]);
+      [id, MOCK_ORG_ID, `${MOCK_PREFIX}Int-${i}`, ['wms', 'pos', 'marketplace'][i] /* never a real connector type: e2e and webhooks look integrations up by type */, `${MOCK_PREFIX}int-${i}`, 'active', '{}', hashApiKey(`secret-${i}`)]);
   }
   rowCounts['integrations'] = 3;
   return ids;

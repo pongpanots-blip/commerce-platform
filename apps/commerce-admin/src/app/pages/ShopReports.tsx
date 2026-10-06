@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react';
 import {
-  BarList, Button, Chip, Empty, ErrorText, Field, Loading, Page, PageHeader, Panel, PanelHead, Select, StatGrid,
+  Alert, BarList, Button, Chip, Empty, ErrorText, Field, Loading, Page, PageHeader, Panel, PanelHead, Select, StatGrid,
   StatTile, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
 import { HealthReport, PeriodParams, REPORT_PERIODS, ReportPeriod, reportsApi } from '../../lib/api';
@@ -27,7 +27,7 @@ function useReport<T>(load: (p: PeriodParams) => Promise<T>) {
           <input type="date" value={p.toDate ?? ''} onChange={(e) => setP({ ...p, toDate: e.target.value })} aria-label="ถึง" className="px-2 py-1 border border-secondary-container rounded text-xs" />
         </>
       )}
-      <Button variant="ghost" onClick={state.reload}>Refresh</Button>
+      <Button onClick={state.reload} icon="refresh">Refresh</Button>
     </div>
   );
   return { ...state, picker };
@@ -58,9 +58,8 @@ export function SalesReport() {
         <Loading />
       ) : data && t ? (
         <>
-          <div className="px-4 py-2 text-xs text-on-surface-variant">
-            {data.period} · เทียบกับ {data.vsPreviousPeriod.period}
-          </div>
+          <Alert tone="muted">
+            {data.period} · เทียบกับ {data.vsPreviousPeriod.period}</Alert>
 
           <StatGrid cols={4}>
             <StatTile
@@ -172,9 +171,8 @@ export function TrafficReport() {
         <Loading />
       ) : data && t ? (
         <>
-          <div className="px-4 py-2 text-xs text-on-surface-variant">
-            {data.period} · เทียบกับ {data.vsPreviousPeriod.period} · {data.note}
-          </div>
+          <Alert tone="muted">
+            {data.period} · เทียบกับ {data.vsPreviousPeriod.period} · {data.note}</Alert>
 
           <StatGrid cols={4}>
             <StatTile
@@ -324,14 +322,13 @@ export function HealthReportPage() {
               <Empty>การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง</Empty>
             ) : (
               <ul className="list-disc list-inside px-4 py-3 space-y-1 text-xs">
-                {data.now.problems.map((p) => <li key={p}>{p}</li>)}
+                {data.now.problems.map((p, i) => <li key={i}>{p}</li>)}
               </ul>
             )}
           </Panel>
 
-          <div className="px-4 py-2 text-xs text-on-surface-variant">
-            {data.period}
-          </div>
+          <Alert tone="muted">
+            {data.period}</Alert>
 
           <Panel>
             <PanelHead title="Commerce" />

@@ -197,7 +197,10 @@ export interface WebhookDelivery {
   webhookId: string;
   eventType: string;
   url: string;
-  status: number | null;
+  /** pending | success | failed | superseded */
+  status: string;
+  /** HTTP status your endpoint answered (null before the first attempt or on a connection error) */
+  statusCode: number | null;
   attempts: number;
   createdAt: string;
   error?: string;

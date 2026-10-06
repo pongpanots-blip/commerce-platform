@@ -27,7 +27,7 @@ export function Winback() {
       <PageHeader
         title="Win-back (ฝ่ายขาย)"
         subtitle="ลูกค้าที่หยุดสั่ง / เสี่ยงหาย และผลงานทีมขาย เดือนนี้ · มุมหัวหน้า · อ่านจาก replica ของ josh ด้วยโค้ดรายงานของ josh เอง (ตัวเลขตรงกับแอปเซลล์)"
-        actions={<Button variant="ghost" onClick={() => { overview.reload(); team.reload(); dash.reload(); score.reload(); signals.reload(); }}>Refresh</Button>}
+        actions={<Button icon="refresh" onClick={() => { overview.reload(); team.reload(); dash.reload(); score.reload(); signals.reload(); }}>Refresh</Button>}
       />
 
       <ErrorText error={err} />

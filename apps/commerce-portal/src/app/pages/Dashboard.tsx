@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   ArrowLink, Chip, CodeBlock, ErrorText, Icon, Loading, Page, PageHeader, Panel, PanelHead,
-  TBody, TD, TH, THead, TR, Table, fmt,
+  StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
 import { keys, webhooks, deliveries, ApiKeyRow, WebhookRow, WebhookDelivery } from '../../lib/api';
 import { useAsync } from '../hooks';
@@ -19,7 +19,7 @@ export function Dashboard() {
   const activeKeys = keysList.filter((k) => k.active);
   const activeWebhooks = webhooksList.filter((w) => w.active);
   const latestKey = keysList[0] ?? null;
-  const successfulDeliveries = deliveriesList.filter((d) => d.status === 200);
+  const successfulDeliveries = deliveriesList.filter((d) => d.status === 'success');
   const lastDelivery = deliveriesList[0];
 
   // Checklist items
@@ -177,10 +177,10 @@ export function Dashboard() {
             <div className="pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${lastDelivery.status === 200 ? 'bg-primary' : 'bg-error'}`} />
-                  <span className={`relative inline-flex rounded-full h-2 w-2 ${lastDelivery.status === 200 ? 'bg-primary' : 'bg-error'}`} />
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${lastDelivery.status === 'success' ? 'bg-primary' : lastDelivery.status === 'pending' ? 'bg-amber-500' : 'bg-error'}`} />
+                  <span className={`relative inline-flex rounded-full h-2 w-2 ${lastDelivery.status === 'success' ? 'bg-primary' : lastDelivery.status === 'pending' ? 'bg-amber-500' : 'bg-error'}`} />
                 </span>
-                <span className="text-on-surface font-medium text-[11px]">{lastDelivery.status ?? '—'}</span>
+                <span className="text-on-surface font-medium text-[11px]">{lastDelivery.status}{lastDelivery.statusCode ? ` · HTTP ${lastDelivery.statusCode}` : ''}</span>
                 <span className="text-on-surface-variant text-[11px]">· {fmt.ago(lastDelivery.createdAt)}</span>
               </div>
             </div>
@@ -227,13 +227,8 @@ export function Dashboard() {
                     <TR key={d.id}>
                       <TD><code className="font-mono text-primary text-[12px]">{d.eventType}</code></TD>
                       <TD>
-                        {d.status ? (
-                          <Chip tone={d.status === 200 ? 'ok' : 'danger'}>
-                            {d.status}
-                          </Chip>
-                        ) : (
-                          <Chip tone="muted">—</Chip>
-                        )}
+                        <StatusChip status={d.status} />
+                        {d.statusCode && <span className="ml-1.5 font-mono text-[10px] text-on-surface-variant">HTTP {d.statusCode}</span>}
                       </TD>
                       <TD kind="text" className="text-right num-tabular text-on-surface">{d.attempts}</TD>
                       <TD className="text-right text-on-surface-variant text-[12px] whitespace-nowrap">{fmt.ago(d.createdAt)}</TD>

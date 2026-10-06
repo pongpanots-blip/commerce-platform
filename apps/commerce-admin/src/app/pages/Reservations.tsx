@@ -43,7 +43,6 @@ export function Reservations() {
   return (
     <Page>
       <PageHeader
-        crumbs={['Reservations']}
         title="Reservations"
         subtitle="Stock holds created during checkout — held, confirmed, released, or expired."
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}

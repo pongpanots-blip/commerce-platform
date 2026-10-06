@@ -67,7 +67,6 @@ export function JoshOrdersPage() {
   return (
     <Page>
       <PageHeader
-        crumbs={['รายงานร้าน (josh)', 'Orders']}
         title="Orders (josh)"
         badge={<TitleBadge icon="visibility">อ่านอย่างเดียว · ข้อมูลจาก josh</TitleBadge>}
         subtitle="ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง"

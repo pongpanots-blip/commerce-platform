@@ -12,3 +12,5 @@ dist/
 
 # mock seed credentials
 scripts/.mock-credentials
+scripts/.e2e-credentials
+.e2e-out/

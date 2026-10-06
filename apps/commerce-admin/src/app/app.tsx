@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar } from '@cp/ui';
+import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
 import { AdminStats, api, reportsApi, session } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
@@ -189,6 +189,7 @@ export function App() {
 
   return (
     <BrowserRouter>
+      <NavProvider nav={NAV}>
       <AppShell
         sidebar={
           <Sidebar
@@ -246,6 +247,7 @@ export function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
       </AppShell>
+      </NavProvider>
     </BrowserRouter>
   );
 }

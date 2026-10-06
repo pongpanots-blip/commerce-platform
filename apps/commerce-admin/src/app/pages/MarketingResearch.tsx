@@ -54,7 +54,7 @@ export function MarketingResearch() {
       <PageHeader
         title="Marketing Research"
         subtitle="ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง"
-        actions={<Button variant="ghost" onClick={topics.reload}>Refresh</Button>}
+        actions={<Button onClick={topics.reload} icon="refresh">Refresh</Button>}
       />
 
       {note && <Alert tone={note.ok ? 'ok' : 'danger'}>{note.text}</Alert>}

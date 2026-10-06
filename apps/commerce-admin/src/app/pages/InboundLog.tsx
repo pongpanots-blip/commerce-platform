@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { erpIngestApi, ErpIngestRecordRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection, Button } from '@cp/ui';
 
 const ENTITY_TYPES = ['product_qty', 'product_price', 'product_moq', 'product', 'stock', 'customer', 'sale_order'];
 const STATUSES = ['received', 'applied', 'failed', 'skipped', 'stale', 'ignored'];
@@ -47,7 +47,7 @@ export function InboundLog() {
 
   return (
     <Page>
-      <PageHeader crumbs={['ERP', 'Inbound Log']} title="ERP Inbound Log" subtitle="Staged ERP payloads — review parse/apply outcomes and retry failures." actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={reload}>Refresh</button>} />
+      <PageHeader title="ERP Inbound Log" subtitle="Staged ERP payloads — review parse/apply outcomes and retry failures." actions={<Button icon="refresh" onClick={reload}>Refresh</Button>} />
 
       <Panel>
         <PanelHead title="Filters" actions={<div className="flex flex-wrap gap-2">
@@ -78,7 +78,7 @@ export function InboundLog() {
                     <TD kind="mono">{r.externalId ?? '—'}</TD>
                     <TD><StatusChip status={r.status} /></TD>
                     <TD className="text-on-surface-variant text-xs">{r.error ?? '—'}</TD>
-                    <TD kind="actions"><ExpandToggle open={expandedId === r.id} onClick={() => setExpandedId(cur => cur === r.id ? null : r.id)} /> {(r.status === 'received' || r.status === 'failed') && <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs" disabled={busy === r.id} onClick={() => applyOrRetry(r.id)}>{busy === r.id ? '…' : r.status === 'failed' ? 'Retry' : 'Apply'}</button>}</TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === r.id} onClick={() => setExpandedId(cur => cur === r.id ? null : r.id)} /> {(r.status === 'received' || r.status === 'failed') && <Button variant="primary" disabled={busy === r.id} onClick={() => applyOrRetry(r.id)}>{busy === r.id ? '…' : r.status === 'failed' ? 'Retry' : 'Apply'}</Button>}</TD>
                   </TR>
                   {expandedId === r.id && (
                     <ExpandRow colSpan={6}>

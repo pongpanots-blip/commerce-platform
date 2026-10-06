@@ -95,7 +95,6 @@ export function Orders() {
   return (
     <Page>
       <PageHeader
-        crumbs={['Orders']}
         title="Orders"
         subtitle="Create orders, walk checkout / payment, and inspect reservations."
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}

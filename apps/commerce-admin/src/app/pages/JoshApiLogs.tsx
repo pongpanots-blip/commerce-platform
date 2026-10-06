@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { apiLogsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, StackedBars, DetailSection } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, StackedBars, DetailSection, Button } from '@cp/ui';
 
 const SELECTS = {
   status: ['all', '2xx', '4xx', '5xx'], source: ['all', 'internal', 'jagota', 'kbank', 'erp_webhook'],
@@ -23,9 +23,9 @@ export function JoshApiLogs() {
 
   return (
     <Page>
-      <PageHeader crumbs={['Josh', 'API Logs']} title="API log ของ josh" subtitle="อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ &#34;ERP log ของ josh&#34;" actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={() => { stats.reload(); list.reload(); }}>Refresh</button>} />
+      <PageHeader title="API log ของ josh" subtitle="อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ &#34;ERP log ของ josh&#34;" actions={<Button icon="refresh" onClick={() => { stats.reload(); list.reload(); }}>Refresh</Button>} />
 
-      <Panel as="form">
+      <Panel>
         <PanelHead title="Filters" />
         <form className="space-y-3 px-4 py-3" onSubmit={(e) => { e.preventDefault(); set('q', draft.trim()); }}>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -36,7 +36,7 @@ export function JoshApiLogs() {
               </select>
             ))}
             <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="ค้นใน URL / message" className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60 lg:col-span-2" />
-            <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs">ค้นหา</button>
+            <Button variant="primary">ค้นหา</Button>
           </div>
         </form>
       </Panel>

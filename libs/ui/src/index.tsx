@@ -10,6 +10,8 @@ import {
   ReactNode,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
+  createContext,
+  useContext,
   useState,
 } from 'react';
 import { Link, NavLink, matchPath, useLocation } from 'react-router-dom';
@@ -315,7 +317,7 @@ export function PanelHead({ title, icon, badge, sub, actions }: { title: ReactNo
 
 /** Page title block: breadcrumb, H1 (+badge), subtitle, right-hand actions. */
 export function PageHeader({
-  crumbs,
+  crumbs: crumbsProp,
   title,
   badge,
   subtitle,
@@ -327,6 +329,8 @@ export function PageHeader({
   subtitle?: ReactNode;
   actions?: ReactNode;
 }) {
+  const derived = useNavCrumbs();
+  const crumbs = crumbsProp ?? derived;
   return (
     <section className="space-y-1.5">
       {crumbs && crumbs.length > 0 && (
@@ -889,7 +893,7 @@ export function CopyValue({ value, className }: { value: string; className?: str
 export function BarList({ rows, tone = 'primary' }: { rows: { label: ReactNode; value: number; text?: ReactNode }[]; tone?: 'primary' | 'danger' }) {
   const max = Math.max(1, ...rows.map((r) => r.value));
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 px-4 py-3">
       {rows.map((r, i) => (
         <div key={i} className="grid grid-cols-[minmax(80px,160px)_1fr_auto] items-center gap-3 text-xs">
           <span className="truncate text-on-surface-variant">{r.label}</span>
@@ -928,6 +932,24 @@ export function StackedBars({ bars, height = 120 }: { bars: { label: string; ok:
 }
 
 // ---------------------------------------------------------------- shell
+
+const NavContext = createContext<NavGroup[]>([]);
+
+/** Makes the app's nav available to PageHeader so every page gets the same "group / page" breadcrumb. */
+export function NavProvider({ nav, children }: { nav: NavGroup[]; children: ReactNode }) {
+  return <NavContext.Provider value={nav}>{children}</NavContext.Provider>;
+}
+
+/** [group, page] for the current route, from the nav (undefined for top-level pages like Overview). */
+function useNavCrumbs(): string[] | undefined {
+  const nav = useContext(NavContext);
+  const { pathname } = useLocation();
+  for (const g of nav) {
+    const hit = g.links.find((l) => matchPath({ path: l.to, end: l.end ?? false }, pathname) && (l.to !== '/' || pathname === '/'));
+    if (hit) return g.group ? [g.group, hit.label] : undefined;
+  }
+  return undefined;
+}
 
 export type NavItem = { to: string; label: string; end?: boolean; icon?: string; badge?: ReactNode };
 export type NavGroup = { group?: string; icon?: string; links: NavItem[] };

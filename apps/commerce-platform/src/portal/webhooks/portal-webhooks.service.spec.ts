@@ -115,14 +115,15 @@ describe('PortalWebhooksService', () => {
     const { service } = makeService(
       [{ id: 'w1', accountId: 'acc1' }, { id: 'w2', accountId: 'acc1' }],
       [
-        { id: 'd1', subscriptionId: 'w1', eventType: 'order.created', targetUrl: 'https://a.com', statusCode: 200, attempts: 1, createdAt: '2024-01-01' },
-        { id: 'd2', subscriptionId: 'w2', eventType: 'order.updated', targetUrl: 'https://b.com', statusCode: 500, attempts: 3, createdAt: '2024-01-02' },
+        { id: 'd1', subscriptionId: 'w1', eventType: 'order.created', targetUrl: 'https://a.com', status: 'success', statusCode: 200, attempts: 1, createdAt: '2024-01-01' },
+        { id: 'd2', subscriptionId: 'w2', eventType: 'order.updated', targetUrl: 'https://b.com', status: 'failed', statusCode: 500, attempts: 3, createdAt: '2024-01-02' },
       ],
     );
     const deliveries = await service.recentDeliveriesForAccount('acc1', 10);
     expect(deliveries).toHaveLength(2);
     expect(deliveries[0].eventType).toBe('order.created');
-    expect(deliveries[0].status).toBe(200);
+    expect(deliveries[0]).toMatchObject({ status: 'success', statusCode: 200 });
+    expect(deliveries[1]).toMatchObject({ status: 'failed', statusCode: 500 });
   });
 
   it('recentDeliveriesForAccount returns empty for account with no subscriptions', async () => {

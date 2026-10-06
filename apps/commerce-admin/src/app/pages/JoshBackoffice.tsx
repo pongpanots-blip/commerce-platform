@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Button, Empty, ErrorText, Input, Loading, Page, PageHeader, Panel, Pager, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
+  Alert, Button, Empty, ErrorText, Loading, Page, PageHeader, Panel, Pager, SearchInput, Segmented, StatusChip, TBody, TD, TH, THead, TR, Table,
+  TitleBadge, fmt,
 } from '@cp/ui';
 import { backofficeApi, BackofficeColumn } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { ACTION_VIEWS, RowAction, ViewCreate } from './JoshBackofficeActions';
 
 const money = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const tdKind = (k: BackofficeColumn['kind']) => (k === 'money' ? 'money' : k === 'number' ? 'num' : k === 'datetime' || k === 'date' ? 'time' : 'text');
 
 function cell(col: BackofficeColumn, v: unknown) {
   if (v === null || v === undefined || v === '') return <span className="text-on-surface-variant">—</span>;
@@ -16,9 +19,9 @@ function cell(col: BackofficeColumn, v: unknown) {
     case 'number': return Number(v).toLocaleString('th-TH');
     case 'datetime': return fmt.when(String(v));
     case 'date': return String(v).slice(0, 10);
-    case 'bool': return v ? '✓' : '—';
+    case 'bool': return v ? <span className="text-[#157347]">✓</span> : <span className="text-on-surface-variant">—</span>;
     case 'status': return <StatusChip status={String(v)} />;
-    case 'code': return <span className="font-mono">{String(v)}</span>;
+    case 'code': return <span className="font-mono text-[11px] block max-w-[180px] truncate" title={String(v)}>{String(v)}</span>;
     default: return String(v);
   }
 }
@@ -43,98 +46,70 @@ export function JoshBackoffice() {
     <Page>
       <PageHeader
         title={d?.title ?? '…'}
-        subtitle={ACTION_VIEWS.has(view) ? 'ดูจาก josh · ปุ่มในตารางสั่งให้ josh ทำ (ตามสิทธิ์ใน josh)' : 'อ่านอย่างเดียวจาก josh'}
+        badge={<TitleBadge icon={ACTION_VIEWS.has(view) ? 'touch_app' : 'visibility'}>{ACTION_VIEWS.has(view) ? 'สั่ง josh ได้ · ตามสิทธิ์ใน josh' : 'อ่านอย่างเดียว · ข้อมูลจาก josh'}</TitleBadge>}
+        subtitle={d && <>แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (<span className="font-mono">{d.joshPage}</span>) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง</>}
         actions={<Button icon="refresh" onClick={list.reload}>Refresh</Button>}
       />
-      <div className="border-t border-secondary-container" />
 
-      <div className="px-4 py-2 text-xs text-on-surface-variant">
-        {d && (
-          <>
-            แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (<span className="font-mono">{d.joshPage}</span>) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง
-          </>
-        )}
-      </div>
-
-      <Panel className="overflow-hidden">
-        <form className="flex gap-2 p-4" onSubmit={(e) => { e.preventDefault(); setQ(search.trim()); setPage(1); }}>
-          <Input
-            className="flex-1"
-            placeholder="ค้นหา…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="ค้นหา"
-          />
-          <Button type="submit">ค้นหา</Button>
-          <Button type="button" variant="ghost" onClick={list.reload}>Refresh</Button>
-        </form>
-      </Panel>
-
-      <div className="px-4 py-2">
-        <ViewCreate key={view} view={view} onDone={(m) => { setMsg(m); list.reload(); }} />
-      </div>
-
-      {msg && <div className="px-4 py-2 text-xs text-on-surface-variant bg-surface-container-low">{msg}</div>}
+      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{msg}</Alert>}
       <ErrorText error={list.error} />
 
-      {d && !!d.byStatus.length && (
-        <div className="flex flex-wrap gap-2 px-4 py-3 border-y border-secondary-container">
-          <Button
-            size="sm"
-            variant={status === '' ? 'primary' : 'secondary'}
-            onClick={() => { setStatus(''); setPage(1); }}
-          >
-            ทั้งหมด ({d.byStatus.reduce((a, s) => a + s.n, 0)})
-          </Button>
-          {d.byStatus.map((s) => s.status && (
-            <Button
-              key={s.status}
-              size="sm"
-              variant={status === s.status ? 'primary' : 'secondary'}
-              onClick={() => { setStatus(s.status!); setPage(1); }}
-            >
-              {s.status} ({s.n})
-            </Button>
-          ))}
+      <ViewCreate key={view} view={view} onDone={(m) => { setMsg(m); list.reload(); }} />
+
+      <Panel as="form" className="p-3 space-y-3" onSubmit={(e) => { e.preventDefault(); setQ(search.trim()); setPage(1); }}>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <SearchInput className="flex-1 min-w-60" placeholder="ค้นหา…" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="ค้นหา" />
+          <Button type="submit" variant="primary" icon="search">ค้นหา</Button>
+          {(q || status) && <Button variant="ghost" onClick={() => { setSearch(''); setQ(''); setStatus(''); setPage(1); }}>ล้างตัวกรอง</Button>}
         </div>
-      )}
+        {d && !!d.byStatus.length && (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="overflow-x-auto">
+              <Segmented
+                value={status}
+                onChange={(v) => { setStatus(v); setPage(1); }}
+                options={[
+                  { value: '', label: 'ทั้งหมด', count: d.byStatus.reduce((a, s) => a + s.n, 0) },
+                  ...d.byStatus.filter((s) => s.status).map((s) => ({ value: s.status as string, label: s.status as string, count: s.n })),
+                ]}
+              />
+            </div>
+            <span className="text-[11px] text-on-surface-variant font-mono">พบ <span className="font-bold text-on-surface">{fmt.num(d.total)}</span> รายการ</span>
+          </div>
+        )}
+      </Panel>
 
-      {list.loading && !d ? (
-        <Loading />
-      ) : d ? (
-        <>
-          <Panel className="overflow-x-auto overflow-hidden">
-            {d.items.length ? (
-              <Table>
-                <THead>
-                    {ACTION_VIEWS.has(view) && <TH />}
-                    {d.columns.map((c) => <TH key={c.key}>{c.label}</TH>)}
-                  </THead>
-                <TBody>
-                  {d.items.map((r, i) => (
-                    <TR key={i}>
-                      {ACTION_VIEWS.has(view) && (
-                        <TD>
-                          <RowAction view={view} row={r} onDone={(m) => { setMsg(m); list.reload(); }} />
-                        </TD>
-                      )}
-                      {d.columns.map((c) => (
-                        <TD key={c.key}>{cell(c, r[c.key])}</TD>
-                      ))}
-                    </TR>
-                  ))}
-                </TBody>
-              </Table>
-            ) : (
-              <Empty>ไม่มีรายการ</Empty>
-            )}
-          </Panel>
-
-          {d.total > d.limit && (
+      <Panel className="overflow-hidden">
+        {list.loading && !d ? (
+          <Loading />
+        ) : d && d.items.length ? (
+          <>
+            <Table maxHeight="calc(100vh - 330px)">
+              <THead>
+                {ACTION_VIEWS.has(view) && <TH>จัดการ</TH>}
+                {d.columns.map((c) => <TH key={c.key} kind={tdKind(c.kind)}>{c.label}</TH>)}
+              </THead>
+              <TBody>
+                {d.items.map((r, i) => (
+                  <TR key={i}>
+                    {ACTION_VIEWS.has(view) && (
+                      <TD>
+                        <RowAction view={view} row={r} onDone={(m) => { setMsg(m); list.reload(); }} />
+                      </TD>
+                    )}
+                    {d.columns.map((c) => (
+                      <TD key={c.key} kind={tdKind(c.kind)}>{cell(c, r[c.key])}</TD>
+                    ))}
+                  </TR>
+                ))}
+              </TBody>
+            </Table>
             <Pager page={page} pageSize={d.limit} total={d.total} onPage={setPage} />
-          )}
-        </>
-      ) : null}
+          </>
+        ) : d ? (
+          <Empty>ไม่มีรายการ</Empty>
+        ) : null}
+      </Panel>
     </Page>
   );
 }

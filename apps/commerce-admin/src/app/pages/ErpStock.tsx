@@ -27,7 +27,6 @@ export function ErpStock() {
   return (
     <Page>
       <PageHeader
-        crumbs={['ERP Stock']}
         title="ERP stub stock"
         subtitle="Simulated ERP inventory — set stock levels for the on_hand fulfillment mode."
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}

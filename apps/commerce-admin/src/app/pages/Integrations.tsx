@@ -34,7 +34,6 @@ export function Integrations() {
   return (
     <Page>
       <PageHeader
-        crumbs={['Integrations']}
         title="Integrations"
         subtitle="External systems connected to the platform."
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}

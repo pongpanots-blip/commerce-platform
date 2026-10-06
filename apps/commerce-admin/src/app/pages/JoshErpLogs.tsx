@@ -1,7 +1,7 @@
 import { FormEvent, Fragment, useState } from 'react';
 import { joshErpLogApi } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, Field, Input, DetailSection } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, Field, Input, DetailSection, Button } from '@cp/ui';
 
 const ENDPOINTS = ['products/qty', 'products/price', 'products/moq', 'products', 'products/bulk', 'products/image', 'customers', 'companies',
   'orders/status', 'invoices/status', 'quotations', 'quotations/status', 'order-periods'];
@@ -22,9 +22,9 @@ export function JoshErpLogs() {
 
   return (
     <Page>
-      <PageHeader crumbs={['ERP', 'Josh Logs']} title="ERP log ของ josh" subtitle="สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน" actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={reload}>Refresh</button>} />
+      <PageHeader title="ERP log ของ josh" subtitle="สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน" actions={<Button icon="refresh" onClick={reload}>Refresh</Button>} />
 
-      <Panel as="form">
+      <Panel>
         <PanelHead title="Filters" />
         <form className="space-y-3 px-4 py-3" onSubmit={(e: FormEvent) => { e.preventDefault(); setPage(1); setF(draft); }}>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -38,7 +38,7 @@ export function JoshErpLogs() {
             <input type="datetime-local" value={draft.from} onChange={set('from')} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60" placeholder="ตั้งแต่" />
             <input type="datetime-local" value={draft.to} onChange={set('to')} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60" placeholder="ถึง" />
             <input value={draft.q} onChange={set('q')} placeholder="ค้นหา: รหัสสินค้า / เลข order / รหัสลูกค้า" className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60 md:col-span-2" />
-            <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs" type="submit">ค้นหา</button>
+            <Button variant="primary" type="submit">ค้นหา</Button>
           </div>
         </form>
       </Panel>

@@ -37,7 +37,7 @@ export function MarketExplorer() {
         actions={
           <>
             <Button variant="ghost" onClick={csv}>Export CSV</Button>
-            <Button variant="ghost" onClick={reload}>Refresh</Button>
+            <Button onClick={reload} icon="refresh">Refresh</Button>
           </>
         }
       />
@@ -152,7 +152,7 @@ export function OrderTargetgroup() {
       <PageHeader
         title="Order target group"
         subtitle="ลูกค้าแต่ละรายสั่ง SKU แบบ order-taking กี่ตัว และส่งของได้กี่วันต่อสัปดาห์ · อ่านจาก replica ของ josh"
-        actions={<Button variant="ghost" onClick={reload}>Refresh</Button>}
+        actions={<Button onClick={reload} icon="refresh">Refresh</Button>}
       />
 
       <Panel as="form" onSubmit={(e) => { e.preventDefault(); setPage(1); setSearch(custCode.trim()); }}>

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { AppShell, Button, IconButton, NavGroup, Sidebar, TopBar } from '@cp/ui';
+import { AppShell, Button, IconButton, NavGroup, Sidebar, TopBar, NavProvider } from '@cp/ui';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -75,6 +75,7 @@ export function App() {
           path="/*"
           element={
             <RequireAuth>
+              <NavProvider nav={NAV}>
               <AppShell
                 sidebar={
                   <Sidebar
@@ -100,6 +101,7 @@ export function App() {
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </AppShell>
+              </NavProvider>
             </RequireAuth>
           }
         />

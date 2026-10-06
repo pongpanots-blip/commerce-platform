@@ -49,7 +49,6 @@ export function Subscriptions() {
   return (
     <Page>
       <PageHeader
-        crumbs={['Subscriptions']}
         title="Outgoing webhooks"
         subtitle="Notify external systems when platform events happen — they subscribe, we deliver (signed)."
         actions={<Button icon="refresh" variant="secondary" onClick={reloadAll}>Refresh</Button>}

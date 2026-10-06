@@ -62,7 +62,6 @@ export function ResourcePage<T extends { id: string }>(props: Props<T>) {
   return (
     <Page>
       <PageHeader
-        crumbs={[title]}
         title={title}
         subtitle={subtitle}
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}

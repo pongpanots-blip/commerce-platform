@@ -30,7 +30,6 @@ export function SyncJobs() {
   return (
     <Page>
       <PageHeader
-        crumbs={['Sync jobs']}
         title="Sync jobs"
         subtitle="Run a connector sync operation and track its result."
         actions={<Button icon="refresh" variant="secondary" onClick={jobs.reload}>Refresh</Button>}

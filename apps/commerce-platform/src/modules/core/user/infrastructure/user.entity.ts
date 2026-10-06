@@ -19,4 +19,8 @@ export class User extends BaseEntity {
   /** 'developer' for portal signups; admins/staff come later. */
   @Column({ type: 'varchar', length: 24, default: 'developer' })
   role: string;
+
+  /** Someone else set this password (new staff account, reset): the owner must change it before anything else. */
+  @Column({ type: 'boolean', name: 'must_change_password', default: false })
+  mustChangePassword: boolean;
 }

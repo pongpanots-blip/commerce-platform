@@ -8,16 +8,17 @@ import { User } from '../../user/infrastructure/user.entity';
 import { STAFF_ROLES, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 
 export type StaffStatus = 'active' | 'disabled';
-export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: StaffStatus; createdAt: Date }
+export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: StaffStatus; mustChangePassword: boolean; createdAt: Date }
 export interface StaffActor { userId: string; email: string }
 
 export const MIN_PASSWORD = 10;
 const temporaryPassword = () => randomBytes(12).toString('base64url');
-const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.name, role: u.role as StaffRole, status: u.status as StaffStatus, createdAt: u.createdAt });
+const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.name, role: u.role as StaffRole, status: u.status as StaffStatus, mustChangePassword: !!u.mustChangePassword, createdAt: u.createdAt });
 
 /**
  * commerce-admin staff accounts (admin / marketing) — commerce's own, nothing shared with josh.
- * New accounts and resets get a random temporary password, returned once and never stored or logged.
+ * New accounts and resets get a random temporary password, returned once and never stored or logged,
+ * and must change it at first sign-in (the guard lets nothing else through until they do).
  * An admin cannot lock themselves out, and the last active admin cannot be removed or demoted.
  */
 @Injectable()
@@ -37,7 +38,7 @@ export class StaffAccountsService {
     if (await this.users.findOne({ where: { email }, withDeleted: true })) throw new ConflictException(`${email} already has an account`);
     const password = temporaryPassword();
     const saved = await this.users.save(this.users.create({
-      email, name: input.name?.trim() || null, role: input.role, status: 'active', passwordHash: await bcrypt.hash(password, 10),
+      email, name: input.name?.trim() || null, role: input.role, status: 'active', passwordHash: await bcrypt.hash(password, 10), mustChangePassword: true,
     }));
     await this.log(actor, 'staff.create', saved.id, null, { email, role: input.role });
     return { account: view(saved), temporaryPassword: password };
@@ -64,6 +65,7 @@ export class StaffAccountsService {
     const user = await this.staff(id);
     const password = temporaryPassword();
     user.passwordHash = await bcrypt.hash(password, 10);
+    user.mustChangePassword = true;
     await this.users.save(user);
     await this.log(actor, 'staff.reset_password', id, null, { email: user.email });
     return { temporaryPassword: password };
@@ -73,7 +75,9 @@ export class StaffAccountsService {
     if (next.length < MIN_PASSWORD) throw new BadRequestException(`new password: at least ${MIN_PASSWORD} characters`);
     const user = await this.staff(actor.userId);
     if (!user.passwordHash || !(await bcrypt.compare(current, user.passwordHash))) throw new UnauthorizedException('current password is wrong');
+    if (await bcrypt.compare(next, user.passwordHash)) throw new BadRequestException('new password must differ from the current one');
     user.passwordHash = await bcrypt.hash(next, 10);
+    user.mustChangePassword = false;
     await this.users.save(user);
     await this.log(actor, 'staff.change_own_password', user.id, null, null);
     return { changed: true };

@@ -75,7 +75,8 @@ export class McpOAuthProvider implements OAuthServerProvider {
 
   private async staff(userId: string | null): Promise<McpStaff | null> {
     const user = userId ? await this.users.findOneBy({ id: userId }) : null;
-    return user && user.status === 'active' && STAFF_ROLES.includes(user.role as StaffRole)
+    // a password someone else set must be changed in commerce-admin before an AI can use the account
+    return user && user.status === 'active' && !user.mustChangePassword && STAFF_ROLES.includes(user.role as StaffRole)
       ? { userId: user.id, email: user.email, role: user.role as StaffRole } : null;
   }
 
@@ -102,6 +103,7 @@ export class McpOAuthProvider implements OAuthServerProvider {
     const canWrite = (request.data.scopes ?? '').split(' ').includes(MCP_WRITE_SCOPE);
     let user: User;
     try { user = await this.auth.verifyCredentials(email, password); } catch { return { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', clientName, canWrite }; }
+    if (user.mustChangePassword) return { error: 'ต้องเปลี่ยนรหัสผ่านใน commerce-admin ก่อน (เมนู ตั้งค่า › เปลี่ยนรหัสผ่าน) แล้วค่อยเชื่อมต่อ AI', clientName, canWrite };
     const staff = await this.staff(user.id);
     if (!staff) return { error: 'บัญชีนี้ไม่ใช่ staff ของ commerce จึงเชื่อมต่อ AI ไม่ได้', clientName, canWrite };
     if (!(await this.consume(request))) return { error: 'คำขอนี้ถูกใช้ไปแล้ว กรุณากดเชื่อมต่อจากแอป AI ใหม่', clientName, canWrite };

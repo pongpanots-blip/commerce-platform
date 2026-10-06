@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, NotFoundException, Unauthorized
 import * as bcrypt from 'bcrypt';
 import { StaffAccountsService } from './staff-accounts.service';
 
-type Row = { id: string; email: string; name: string | null; role: string; status: string; passwordHash: string | null; createdAt: Date };
+type Row = { id: string; email: string; name: string | null; role: string; status: string; passwordHash: string | null; mustChangePassword?: boolean; createdAt: Date };
 
 describe('StaffAccountsService', () => {
   let rows: Row[];
@@ -31,7 +31,7 @@ describe('StaffAccountsService', () => {
 
   it('creates an account with a one-time temporary password (hashed, never audited); an email in use is a 409', async () => {
     const { account, temporaryPassword } = await svc.create({ email: ' New@Jagota.co.th ', role: 'marketing' }, me);
-    expect(account).toMatchObject({ email: 'new@jagota.co.th', role: 'marketing', status: 'active' });
+    expect(account).toMatchObject({ email: 'new@jagota.co.th', role: 'marketing', status: 'active', mustChangePassword: true });
     const saved = rows.find((r) => r.email === 'new@jagota.co.th')!;
     expect(await bcrypt.compare(temporaryPassword, saved.passwordHash!)).toBe(true);
     expect(JSON.stringify(audit.insert.mock.calls)).not.toContain(temporaryPassword);
@@ -54,9 +54,12 @@ describe('StaffAccountsService', () => {
   it('reset gives a new temporary password; changing your own needs the current one', async () => {
     const { temporaryPassword } = await svc.resetPassword('u-admin', me);
     expect(await bcrypt.compare(temporaryPassword, rows.find((r) => r.id === 'u-admin')!.passwordHash!)).toBe(true);
+    expect(rows.find((r) => r.id === 'u-admin')!.mustChangePassword).toBe(true);
+    await expect(svc.changeOwnPassword(me, temporaryPassword, temporaryPassword)).rejects.toThrow('must differ');
     await expect(svc.changeOwnPassword(me, 'wrong', 'a-long-new-password')).rejects.toBeInstanceOf(UnauthorizedException);
     await expect(svc.changeOwnPassword(me, temporaryPassword, 'short')).rejects.toBeInstanceOf(BadRequestException);
     await expect(svc.changeOwnPassword(me, temporaryPassword, 'a-long-new-password')).resolves.toEqual({ changed: true });
     expect(await bcrypt.compare('a-long-new-password', rows.find((r) => r.id === 'u-admin')!.passwordHash!)).toBe(true);
+    expect(rows.find((r) => r.id === 'u-admin')!.mustChangePassword).toBe(false);
   });
 });

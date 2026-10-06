@@ -61,6 +61,10 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
     session.clear();
     window.dispatchEvent(new Event('cp-session-expired'));
   }
+  if (res.status === 403 && body?.error?.code === 'PASSWORD_CHANGE_REQUIRED') {
+    // a password someone else set — the app shows the change-password screen until it is changed
+    window.dispatchEvent(new Event('cp-password-change-required'));
+  }
   if (!res.ok) {
     const message =
       body?.error?.message || body?.message || `${res.status} ${res.statusText}`;
@@ -278,6 +282,7 @@ export const staffApi = {
   create: (data: { email: string; name?: string; role: StaffRole }) => api.post<{ account: StaffAccount; temporaryPassword: string }>('/admin/staff', data),
   update: (id: string, data: Partial<Pick<StaffAccount, 'name' | 'role' | 'status'>>) => api.patch<StaffAccount>(`/admin/staff/${id}`, data),
   resetPassword: (id: string) => api.post<{ temporaryPassword: string }>(`/admin/staff/${id}/reset-password`, {}),
+  me: () => api.get<{ userId: string; email: string; role: StaffRole; mustChangePassword?: boolean }>('/admin/auth/me'),
   changeOwnPassword: (currentPassword: string, newPassword: string) => api.post<{ changed: boolean }>('/admin/auth/password', { currentPassword, newPassword }),
 };
 

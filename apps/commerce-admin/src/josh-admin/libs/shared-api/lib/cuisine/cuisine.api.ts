@@ -1,4 +1,4 @@
-import { apiClient } from '../api-client/api-client';
+import { apiClient, viaCommerceAction } from '../api-client/api-client';
 import type {
   FilterGroup,
   ListingAvailability,
@@ -390,13 +390,11 @@ export const setProductCuisines = async (
   productInventoryId: string,
   cuisineIds: string[],
 ): Promise<ProductCuisineTag[]> => {
-  const response = await apiClient.put<{
-    statusCode: number;
-    data: ProductCuisineTag[];
-  }>(`/product/${productInventoryId}/cuisines`, {
-    cuisine_ids: cuisineIds,
-  });
-  return response.data?.data ?? [];
+  // through commerce's product action (CuisineService.setProductCuisines; open under COMMERCE_OWNS_CATALOG)
+  const answer = await viaCommerceAction<ProductCuisineTag[] | { data?: ProductCuisineTag[] }>(
+    `/josh/products/${productInventoryId}/cuisines`, { cuisineIds },
+  );
+  return (Array.isArray(answer) ? answer : answer?.data) ?? [];
 };
 
 export type CuisineNameAdminRow = {

@@ -1,5 +1,4 @@
-import { api } from '../../../../../lib/api';
-import { apiClient } from '../api-client/api-client';
+import { apiClient, viaCommerceAction } from '../api-client/api-client';
 import type { FilterGroup } from '../filter-groups/filter-groups.api';
 import type { CampaignStatus } from '../campaign/campaign.api';
 
@@ -286,20 +285,12 @@ export const getPromotionMechanic = async (
  * PromotionMechanicService as its own admin route, and the action keeps working once josh's
  * COMMERCE_OWNS_PROMOTIONS lock is on (the relayed admin route does not).
  */
-const viaCommerce = async <T>(path: string, body: unknown): Promise<T> => {
-  try {
-    return await api.post<T>(path, body);
-  } catch (e) {
-    const dup = (e as { details?: { duplicate_skus?: unknown } }).details?.duplicate_skus;
-    throw Object.assign(new Error((e as Error).message.replace(/^josh: /, '')), Array.isArray(dup) ? { duplicate_skus: dup } : {}) as MechanicError;
-  }
-};
 
 export const createPromotionMechanic = (payload: CreatePromotionMechanicPayload): Promise<PromotionMechanicRecord> =>
-  viaCommerce<PromotionMechanicRecord>('/josh/promotions', { mechanic: payload });
+  viaCommerceAction<PromotionMechanicRecord>('/josh/promotions', { mechanic: payload });
 
 export const updatePromotionMechanic = (id: string, payload: UpdatePromotionMechanicPayload): Promise<PromotionMechanicRecord> =>
-  viaCommerce<PromotionMechanicRecord>(`/josh/promotions/${id}/update`, { changes: payload });
+  viaCommerceAction<PromotionMechanicRecord>(`/josh/promotions/${id}/update`, { changes: payload });
 
 /** Admin: the cap of every CAPPED mechanic (a mechanic with no row has no cap). */
 export const listPromotionMechanicCaps = async (): Promise<PromotionMechanicCap[]> => {
@@ -343,5 +334,5 @@ export const getPromotionMechanicProductSets = async (
 };
 
 export const deletePromotionMechanic = async (id: string): Promise<void> => {
-  await viaCommerce(`/josh/promotions/${id}/remove`, {});
+  await viaCommerceAction(`/josh/promotions/${id}/remove`, {});
 };

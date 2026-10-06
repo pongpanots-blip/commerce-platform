@@ -8,7 +8,7 @@
  * as a Blob, which is what josh's `responseType: 'blob'` callers expect.
  */
 import type { AxiosResponse } from 'axios';
-import { isJoshFile, joshAdmin, joshFileBlob } from '../../../../../lib/api';
+import { api, isJoshFile, joshAdmin, joshFileBlob } from '../../../../../lib/api';
 
 type Config = { params?: Record<string, unknown>; headers?: Record<string, string>; responseType?: string; signal?: AbortSignal; timeout?: number };
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -51,6 +51,20 @@ export const apiClient = {
   interceptors: { request: { use: () => 0 }, response: { use: () => 0 } },
   defaults: { headers: { common: {} as Record<string, string> }, baseURL: '' },
 };
+
+/**
+ * A write through one of commerce's josh actions (POST /api/josh/…) — the way in once josh's
+ * COMMERCE_OWNS_* lock refuses the relayed admin route. Errors reject like axios, as `call` does.
+ */
+export async function viaCommerceAction<T>(path: string, body: unknown): Promise<T> {
+  try {
+    return await api.post<T>(path, body);
+  } catch (e) {
+    const message = e instanceof Error ? e.message.replace(/^josh: /, '') : String(e);
+    const status = (e as { status?: number }).status ?? 400;
+    throw Object.assign(new Error(message), { isAxiosError: true, response: { status, data: { message, ...((e as { details?: object }).details ?? {}) } } });
+  }
+}
 
 /** josh's absolute API URL — only for links josh builds itself (e.g. an export opened in a new tab). */
 export function resolveApiBaseUrl(): string { return '/api'; }

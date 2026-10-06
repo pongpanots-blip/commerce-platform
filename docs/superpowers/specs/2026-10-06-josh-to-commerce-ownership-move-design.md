@@ -201,9 +201,11 @@ commerce อ่าน `order.snapshot` แล้วบันทึก movement �
 - consumer `inventory.sellable.snapshot`
 
 **commerce:**
-- `POST /api/internal/josh-events` + ตาราง `josh_orders`, `josh_order_items`, `josh_customers` + domain events
-- ส่ง `inventory.sellable.snapshot` (รวมทุกคลัง)
-- ต่อ `erp.fallback.received` เข้า ledger / ข้อมูลของตัวเอง
+- `POST /api/internal/josh-events` + ใช้ตาราง `josh_orders` / `josh_order_lines` ที่มีอยู่ (เพิ่ม `source_version`)
+  + ตารางใหม่ `josh_customers`, `josh_erp_fallback_calls`
+- (ขั้น 3 — stock) ส่ง `inventory.sellable.snapshot` (รวมทุกคลัง) + consumer ฝั่ง josh, แปลง
+  `erp.fallback.received` เป็น movement ใน ledger, domain event ภายในเมื่อมี consumer จริง
+  (ขั้น 0 เก็บ fallback call ไว้ก่อน — แผน: `docs/superpowers/plans/2026-10-06-stage0-two-way-event-pipe.md`)
 - แก้ `event-contract.md` บรรทัด 85 และเพิ่มหัวข้อทาง josh → commerce
 
 **ops (user ต้องทำเอง — ระบบไม่ให้ Claude แก้ josh prod):** เปิด flag บน josh prod, ตั้ง

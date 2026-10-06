@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { erpIngestApi, ErpIngestRecordRow, Paginated } from '../../lib/api';
-import { useAsync, statusBadgeClass } from '../hooks';
+import { useAsync } from '../hooks';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection } from '@cp/ui';
 
 const ENTITY_TYPES = ['product_qty', 'product_price', 'product_moq', 'product', 'stock', 'customer', 'sale_order'];
 const STATUSES = ['received', 'applied', 'failed', 'skipped', 'stale', 'ignored'];
@@ -18,10 +19,6 @@ export function InboundLog() {
     () => erpIngestApi.list({ entityType: entityType || undefined, status: status || undefined, page, pageSize }),
     [entityType, status, page],
   );
-
-  function toggleExpand(id: string) {
-    setExpandedId((cur) => (cur === id ? null : id));
-  }
 
   function changeEntityType(v: string) {
     setEntityType(v);
@@ -47,137 +44,64 @@ export function InboundLog() {
   }
 
   const total = data?.total ?? 0;
-  const maxPage = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>ERP Inbound Log</h1>
-          <p>Staged ERP payloads — review parse/apply outcomes and retry failures.</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>
-          Refresh
-        </button>
-      </div>
+    <Page>
+      <PageHeader crumbs={['ERP', 'Inbound Log']} title="ERP Inbound Log" subtitle="Staged ERP payloads — review parse/apply outcomes and retry failures." actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={reload}>Refresh</button>} />
 
-      <div className="panel">
-        <div className="panel-head">
-          <div className="row">
-            <label className="field">
-              Entity type
-              <select value={entityType} onChange={(e) => changeEntityType(e.target.value)}>
-                <option value="">All</option>
-                {ENTITY_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              Status
-              <select value={status} onChange={(e) => changeStatus(e.target.value)}>
-                <option value="">All</option>
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <span>
-            <span>{total} total</span>{' '}
-            <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-              Prev
-            </button>{' '}
-            <span className="hint">
-              {page} / {maxPage}
-            </span>{' '}
-            <button className="btn ghost sm" disabled={page >= maxPage} onClick={() => setPage(page + 1)}>
-              Next
-            </button>
-          </span>
-        </div>
-        {error && (
-          <div className="err" style={{ padding: 16 }}>
-            {error}
-          </div>
-        )}
-        {actionError && (
-          <div className="err" style={{ padding: 16 }}>
-            {actionError}
-          </div>
-        )}
-        {loading ? (
-          <div className="empty">Loading…</div>
-        ) : !data?.items.length ? (
-          <div className="empty">No staged ERP rows yet.</div>
+      <Panel>
+        <PanelHead title="Filters" actions={<div className="flex flex-wrap gap-2">
+          <select value={entityType} onChange={(e) => changeEntityType(e.target.value)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
+            <option value="">All entity types</option>
+            {ENTITY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+          <select value={status} onChange={(e) => changeStatus(e.target.value)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
+            <option value="">All statuses</option>
+            {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>} />
+        <ErrorText error={error} />
+        <ErrorText error={actionError} />
+        {loading && !data ? <Loading /> : !data?.items.length ? (
+          <Empty>No staged ERP rows yet.</Empty>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Created</th>
-                <th>Entity type</th>
-                <th>External id</th>
-                <th>Status</th>
-                <th>Error</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>Created</TH><TH>Entity type</TH><TH>External ID</TH><TH>Status</TH><TH>Error</TH><TH></TH>
+            </THead>
+            <TBody>
               {data.items.map((r) => (
                 <Fragment key={r.id}>
-                  <tr>
-                    <td>{new Date(r.createdAt).toLocaleString()}</td>
-                    <td className="mono">{r.entityType}</td>
-                    <td className="mono">{r.externalId ?? '—'}</td>
-                    <td>
-                      <span className={statusBadgeClass(r.status)}>{r.status}</span>
-                    </td>
-                    <td>{r.error ?? '—'}</td>
-                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      <button className="btn ghost sm" onClick={() => toggleExpand(r.id)}>
-                        {expandedId === r.id ? 'Hide' : 'View'}
-                      </button>{' '}
-                      {(r.status === 'received' || r.status === 'failed') && (
-                        <button
-                          className="btn sm"
-                          disabled={busy === r.id}
-                          onClick={() => applyOrRetry(r.id)}
-                        >
-                          {busy === r.id ? '…' : r.status === 'failed' ? 'Retry' : 'Apply'}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
+                  <TR>
+                    <TD kind="time">{fmt.when(r.createdAt)}</TD>
+                    <TD kind="mono">{r.entityType}</TD>
+                    <TD kind="mono">{r.externalId ?? '—'}</TD>
+                    <TD><StatusChip status={r.status} /></TD>
+                    <TD className="text-on-surface-variant text-xs">{r.error ?? '—'}</TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === r.id} onClick={() => setExpandedId(cur => cur === r.id ? null : r.id)} /> {(r.status === 'received' || r.status === 'failed') && <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs" disabled={busy === r.id} onClick={() => applyOrRetry(r.id)}>{busy === r.id ? '…' : r.status === 'failed' ? 'Retry' : 'Apply'}</button>}</TD>
+                  </TR>
                   {expandedId === r.id && (
-                    <tr>
-                      <td colSpan={6} style={{ padding: 16 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                          <div>
-                            <div className="hint" style={{ marginBottom: 6 }}>
-                              Raw payload
-                            </div>
-                            <pre className="payload">{JSON.stringify(r.rawPayload, null, 2)}</pre>
-                          </div>
-                          <div>
-                            <div className="hint" style={{ marginBottom: 6 }}>
-                              Parsed payload
-                            </div>
-                            <pre className="payload">{JSON.stringify(r.parsedPayload, null, 2)}</pre>
-                          </div>
+                    <ExpandRow colSpan={6}>
+                      <DetailSection title="Payloads">
+                        <div className="grid md:grid-cols-2 gap-3">
+                          <CodeBlock title="Raw" value={r.rawPayload} maxHeight={300} />
+                          <CodeBlock title="Parsed" value={r.parsedPayload} maxHeight={300} />
                         </div>
-                      </td>
-                    </tr>
+                      </DetailSection>
+                      {r.error && (
+                        <DetailSection title="Error">
+                          <p className="text-xs text-on-surface whitespace-pre-wrap break-words">{r.error}</p>
+                        </DetailSection>
+                      )}
+                    </ExpandRow>
                   )}
                 </Fragment>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
-    </div>
+        <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
+      </Panel>
+    </Page>
   );
 }

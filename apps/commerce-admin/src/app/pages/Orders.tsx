@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import {
+  Button, DetailPanel, DetailSection, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Page, PageHeader, Panel, PanelHead, Pager, Span, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
+} from '@cp/ui';
 import { api, ordersApi, OrderFull, OrderRow, Paginated } from '../../lib/api';
-import { useAsync, statusBadgeClass } from '../hooks';
-
-const MAX_LINES = 3;
+import { useAsync } from '../hooks';
 
 interface LineForm {
   productId: string;
@@ -90,209 +91,242 @@ export function Orders() {
   }
 
   const total = data?.total ?? 0;
-  const maxPage = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Orders</h1>
-          <p>Create orders, walk checkout / payment, and inspect reservations.</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        crumbs={['Orders']}
+        title="Orders"
+        subtitle="Create orders, walk checkout / payment, and inspect reservations."
+        actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
+      />
 
-      <div className="panel">
-        <div className="panel-head">New order</div>
-        <form className="stack" onSubmit={submit}>
-          <div className="row">
-            <label className="field">
-              Customer ID
-              <input required value={customerId}
-                onChange={(e) => setCustomerId(e.target.value)}
-                placeholder="uuid" />
-            </label>
+      <FormPanel
+        title="New order"
+        icon="add_circle"
+        cols={3}
+        error={formError}
+        submitLabel="Create order"
+        busy={submitting}
+        onSubmit={submit}
+      >
+        <Field label="Customer ID">
+          <Input
+            required
+            value={customerId}
+            onChange={(e) => setCustomerId(e.target.value)}
+            placeholder="uuid"
+          />
+        </Field>
+        {lines.map((l, i) => (
+          <div key={i} className="col-span-full grid grid-cols-3 gap-3">
+            <Field label={i === 0 ? 'Product ID' : undefined}>
+              <Input
+                value={l.productId}
+                onChange={(e) => updateLine(i, { productId: e.target.value })}
+                placeholder="uuid"
+              />
+            </Field>
+            <Field label={i === 0 ? 'Qty' : undefined}>
+              <Input
+                value={l.qty}
+                onChange={(e) => updateLine(i, { qty: e.target.value })}
+                placeholder="1"
+              />
+            </Field>
+            <Field label={i === 0 ? 'Unit price' : undefined}>
+              <Input
+                value={l.unitPrice}
+                onChange={(e) => updateLine(i, { unitPrice: e.target.value })}
+                placeholder="0.00"
+              />
+            </Field>
           </div>
-          {lines.map((l, i) => (
-            <div className="row" key={i}>
-              <label className="field">
-                Product ID (line {i + 1})
-                <input value={l.productId}
-                  onChange={(e) => updateLine(i, { productId: e.target.value })}
-                  placeholder="uuid" />
-              </label>
-              <label className="field">
-                Qty
-                <input value={l.qty}
-                  onChange={(e) => updateLine(i, { qty: e.target.value })}
-                  placeholder="1" />
-              </label>
-              <label className="field">
-                Unit price
-                <input value={l.unitPrice}
-                  onChange={(e) => updateLine(i, { unitPrice: e.target.value })}
-                  placeholder="0.00" />
-              </label>
-            </div>
-          ))}
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={submitting}>{submitting ? 'Creating…' : 'Create order'}</button></div>
-        </form>
-      </div>
+        ))}
+      </FormPanel>
 
-      <div className="panel">
-        <div className="panel-head">
-          <span>{total} total</span>
-          <span>
-            <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>{' '}
-            <span className="hint">{page} / {maxPage}</span>{' '}
-            <button className="btn ghost sm" disabled={page >= maxPage} onClick={() => setPage(page + 1)}>Next</button>
-          </span>
-        </div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.items.length ? (
-          <div className="empty">No orders yet.</div>
+      <Panel>
+        <PanelHead title={`${total.toLocaleString()} total`} />
+        <ErrorText error={error} />
+        {loading && !data ? (
+          <Loading />
+        ) : !data?.items.length ? (
+          <Empty>No orders yet.</Empty>
         ) : (
-          <table>
-            <thead><tr><th>Code</th><th>Status</th><th>Total</th><th>Created</th><th></th></tr></thead>
-            <tbody>
-              {data.items.map((o) => (
-                <tr key={o.id}>
-                  <td className="mono">{o.code ?? o.id.slice(0, 8) + '…'}</td>
-                  <td><span className={statusBadgeClass(o.status)}>{o.status}</span></td>
-                  <td>{o.currency} {o.total}</td>
-                  <td>{new Date(o.createdAt).toLocaleString()}</td>
-                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                    <button className="btn ghost sm" onClick={() => toggleExpand(o.id)}>
-                      {expandedId === o.id ? 'Hide' : 'View'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <>
+            <Table>
+              <THead>
+                <TH>Code</TH>
+                <TH>Status</TH>
+                <TH>Total</TH>
+                <TH>Created</TH>
+                <TH>Actions</TH>
+              </THead>
+              <TBody>
+                {data.items.map((o) => (
+                  <TR key={o.id}>
+                    <TD kind="mono">{o.code ?? o.id.slice(0, 8) + '…'}</TD>
+                    <TD><StatusChip status={o.status} /></TD>
+                    <TD kind="money">{fmt.baht(o.total)}</TD>
+                    <TD kind="time">{fmt.when(o.createdAt)}</TD>
+                    <TD kind="actions">
+                      <Button variant="ghost" size="sm" onClick={() => toggleExpand(o.id)}>
+                        {expandedId === o.id ? 'Hide' : 'View'}
+                      </Button>
+                    </TD>
+                  </TR>
+                ))}
+              </TBody>
+            </Table>
+            <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
+          </>
         )}
-      </div>
+      </Panel>
 
       {expandedId && (
-        <div className="panel">
-          <div className="panel-head">
-            Order detail · {expandedId.slice(0, 8)}…
-            <button className="btn ghost sm" onClick={() => setExpandedId(null)}>Close</button>
-          </div>
-          {detail.loading ? <div className="empty">Loading…</div> : detail.error ? (
-            <div className="err" style={{ padding: 16 }}>{detail.error}</div>
-          ) : !detail.data ? (
-            <div className="empty">No detail.</div>
-          ) : (
-            <div style={{ padding: 16 }} className="stack">
-              {actionError && <div className="err">{actionError}</div>}
-
-              <div className="row">
+        <DetailPanel
+          title={`Order`}
+          subtitle={expandedId.slice(0, 8) + '…'}
+          status={detail.data ? <StatusChip status={detail.data.order.status} /> : undefined}
+          actions={
+            detail.data ? (
+              <>
                 {detail.data.order.status === 'draft' && (
-                  <button className="btn sm" disabled={actionBusy === 'checkout'}
-                    onClick={() => runAction('checkout', () => ordersApi.checkout(detail.data!.order.id))}>
+                  <Button size="sm" disabled={actionBusy === 'checkout'} onClick={() => runAction('checkout', () => ordersApi.checkout(detail.data!.order.id))}>
                     {actionBusy === 'checkout' ? '…' : 'Checkout'}
-                  </button>
+                  </Button>
                 )}
                 {detail.data.order.status === 'pending_payment' && detail.data.payment?.status === 'pending' && (
                   <>
-                    <button className="btn sm" disabled={actionBusy === 'pay'}
-                      onClick={() => runAction('pay', () => ordersApi.pay(detail.data!.payment!.id))}>
+                    <Button size="sm" disabled={actionBusy === 'pay'} onClick={() => runAction('pay', () => ordersApi.pay(detail.data!.payment!.id))}>
                       {actionBusy === 'pay' ? '…' : 'Mark paid'}
-                    </button>
-                    <button className="btn ghost sm" disabled={actionBusy === 'fail'}
-                      onClick={() => runAction('fail', () => ordersApi.failPay(detail.data!.payment!.id))}>
+                    </Button>
+                    <Button variant="ghost" size="sm" disabled={actionBusy === 'fail'} onClick={() => runAction('fail', () => ordersApi.failPay(detail.data!.payment!.id))}>
                       {actionBusy === 'fail' ? '…' : 'Mark failed'}
-                    </button>
+                    </Button>
                   </>
                 )}
                 {detail.data.reservations.some((r) => r.status === 'held') && (
-                  <button className="btn ghost sm" disabled={actionBusy === 'release'}
-                    onClick={() => runAction('release', () => ordersApi.releaseReservations(detail.data!.order.id))}>
+                  <Button variant="ghost" size="sm" disabled={actionBusy === 'release'} onClick={() => runAction('release', () => ordersApi.releaseReservations(detail.data!.order.id))}>
                     {actionBusy === 'release' ? '…' : 'Release holds'}
-                  </button>
+                  </Button>
                 )}
-              </div>
+              </>
+            ) : undefined
+          }
+          onClose={() => setExpandedId(null)}
+        >
+          {detail.loading && !detail.data ? (
+            <Loading />
+          ) : detail.error ? (
+            <ErrorText error={detail.error} />
+          ) : !detail.data ? (
+            <Empty>No detail.</Empty>
+          ) : (
+            <>
+              <ErrorText error={actionError} />
 
-              <div>
-                <div className="hint" style={{ marginBottom: 6 }}>Lines</div>
-                {!detail.data.lines.length ? <div className="empty">No lines.</div> : (
-                  <table>
-                    <thead><tr><th>Product</th><th>Qty</th><th>Unit price</th><th>Line total</th></tr></thead>
-                    <tbody>
+              <DetailSection title="Lines">
+                {!detail.data.lines.length ? (
+                  <Empty>No lines.</Empty>
+                ) : (
+                  <Table>
+                    <THead>
+                      <TH>Product</TH>
+                      <TH>Qty</TH>
+                      <TH>Unit price</TH>
+                      <TH right>Line total</TH>
+                    </THead>
+                    <TBody>
                       {detail.data.lines.map((l) => (
-                        <tr key={l.id}>
-                          <td className="mono">{l.productId.slice(0, 8)}…</td>
-                          <td>{l.qty}</td>
-                          <td>{l.unitPrice}</td>
-                          <td>{l.lineTotal}</td>
-                        </tr>
+                        <TR key={l.id}>
+                          <TD kind="mono">{l.productId.slice(0, 8)}…</TD>
+                          <TD>{l.qty}</TD>
+                          <TD kind="money">{fmt.baht(l.unitPrice)}</TD>
+                          <TD kind="money">{fmt.baht(l.lineTotal)}</TD>
+                        </TR>
                       ))}
-                    </tbody>
-                  </table>
+                    </TBody>
+                  </Table>
                 )}
-              </div>
+              </DetailSection>
 
-              <div>
-                <div className="hint" style={{ marginBottom: 6 }}>Fulfillments</div>
-                {!detail.data.fulfillments.length ? <div className="empty">No fulfillments.</div> : (
-                  <table>
-                    <thead><tr><th>Source</th><th>Mode</th><th>Status</th></tr></thead>
-                    <tbody>
+              <DetailSection title="Fulfillments">
+                {!detail.data.fulfillments.length ? (
+                  <Empty>No fulfillments.</Empty>
+                ) : (
+                  <Table>
+                    <THead>
+                      <TH>Source</TH>
+                      <TH>Mode</TH>
+                      <TH>Status</TH>
+                    </THead>
+                    <TBody>
                       {detail.data.fulfillments.map((f) => (
-                        <tr key={f.id}>
-                          <td className="mono">{f.source}</td>
-                          <td className="mono">{f.mode}</td>
-                          <td><span className={statusBadgeClass(f.status)}>{f.status}</span></td>
-                        </tr>
+                        <TR key={f.id}>
+                          <TD kind="mono">{f.source}</TD>
+                          <TD kind="mono">{f.mode}</TD>
+                          <TD><StatusChip status={f.status} /></TD>
+                        </TR>
                       ))}
-                    </tbody>
-                  </table>
+                    </TBody>
+                  </Table>
                 )}
-              </div>
+              </DetailSection>
 
-              <div>
-                <div className="hint" style={{ marginBottom: 6 }}>Reservations</div>
-                {!detail.data.reservations.length ? <div className="empty">No reservations.</div> : (
-                  <table>
-                    <thead><tr><th>SKU</th><th>Qty</th><th>Status</th><th>External ref</th><th>Expires</th><th>Promised</th><th>Fail reason</th></tr></thead>
-                    <tbody>
+              <DetailSection title="Reservations">
+                {!detail.data.reservations.length ? (
+                  <Empty>No reservations.</Empty>
+                ) : (
+                  <Table>
+                    <THead>
+                      <TH>SKU</TH>
+                      <TH>Qty</TH>
+                      <TH>Status</TH>
+                      <TH>External ref</TH>
+                      <TH>Expires</TH>
+                      <TH>Promised</TH>
+                      <TH>Fail reason</TH>
+                    </THead>
+                    <TBody>
                       {detail.data.reservations.map((r) => (
-                        <tr key={r.id}>
-                          <td className="mono">{r.sku}</td>
-                          <td>{r.qty}</td>
-                          <td><span className={statusBadgeClass(r.status)}>{r.status}</span></td>
-                          <td className="mono">{r.externalRef ?? '—'}</td>
-                          <td>{r.expiresAt ? new Date(r.expiresAt).toLocaleString() : '—'}</td>
-                          <td>{r.promisedDate ?? '—'}</td>
-                          <td>{r.failReason ?? '—'}</td>
-                        </tr>
+                        <TR key={r.id}>
+                          <TD kind="mono">{r.sku}</TD>
+                          <TD>{r.qty}</TD>
+                          <TD><StatusChip status={r.status} /></TD>
+                          <TD kind="mono">{r.externalRef ?? '—'}</TD>
+                          <TD kind="time">{r.expiresAt ? fmt.when(r.expiresAt) : '—'}</TD>
+                          <TD>{r.promisedDate ?? '—'}</TD>
+                          <TD>{r.failReason ?? '—'}</TD>
+                        </TR>
                       ))}
-                    </tbody>
-                  </table>
+                    </TBody>
+                  </Table>
                 )}
-              </div>
+              </DetailSection>
 
               {detail.data.payment && (
-                <div>
-                  <div className="hint" style={{ marginBottom: 6 }}>Payment</div>
-                  <table>
-                    <thead><tr><th>Status</th><th>Method</th><th>Amount</th></tr></thead>
-                    <tbody>
-                      <tr>
-                        <td><span className={statusBadgeClass(detail.data.payment.status)}>{detail.data.payment.status}</span></td>
-                        <td>{detail.data.payment.method ?? '—'}</td>
-                        <td>{detail.data.payment.currency} {detail.data.payment.amount}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <DetailSection title="Payment">
+                  <Table>
+                    <THead>
+                      <TH>Status</TH>
+                      <TH>Method</TH>
+                      <TH right>Amount</TH>
+                    </THead>
+                    <TBody>
+                      <TR>
+                        <TD><StatusChip status={detail.data.payment.status} /></TD>
+                        <TD>{detail.data.payment.method ?? '—'}</TD>
+                        <TD kind="money">{fmt.baht(detail.data.payment.amount)}</TD>
+                      </TR>
+                    </TBody>
+                  </Table>
+                </DetailSection>
               )}
-            </div>
+            </>
           )}
-        </div>
+        </DetailPanel>
       )}
-    </div>
+    </Page>
   );
 }

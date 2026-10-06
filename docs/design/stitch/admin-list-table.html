@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background text-on-surface" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orders (josh) - Commerce Platform</title>
+<!-- Google Fonts: Inter & Noto Sans Thai -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "error": "#9e3f4e",
+            "error-dim": "#4f0116",
+            "surface-bright": "#f9f9ff",
+            "secondary": "#5f5e62",
+            "on-surface-variant": "#4a6083",
+            "outline": "#657ca0",
+            "surface-container-high": "#dee8ff",
+            "inverse-on-surface": "#969dac",
+            "inverse-primary": "#6d88ff",
+            "on-tertiary-container": "#544c67",
+            "tertiary-dim": "#584f6a",
+            "surface-dim": "#c7dbff",
+            "on-secondary-container": "#525155",
+            "on-primary-fixed-variant": "#2d4ecf",
+            "background": "#f9f9ff",
+            "on-secondary": "#fbf8fc",
+            "tertiary-fixed-dim": "#d8cced",
+            "secondary-dim": "#535356",
+            "on-background": "#1b3353",
+            "on-surface": "#1b3353",
+            "tertiary": "#645b77",
+            "surface-variant": "#d5e3ff",
+            "on-secondary-fixed-variant": "#5c5b5f",
+            "on-tertiary": "#fdf7ff",
+            "on-primary-container": "#1e43c5",
+            "surface-container-highest": "#d5e3ff",
+            "on-primary-fixed": "#002fab",
+            "primary-fixed": "#dde1ff",
+            "secondary-fixed-dim": "#d6d3d8",
+            "surface-tint": "#3052d2",
+            "surface-container-low": "#f0f3ff",
+            "surface": "#f9f9ff",
+            "secondary-fixed": "#e4e1e6",
+            "on-tertiary-fixed": "#423953",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#782232",
+            "error-container": "#ff8b9a",
+            "tertiary-container": "#e7dafc",
+            "inverse-surface": "#070e19",
+            "primary-fixed-dim": "#cbd2ff",
+            "primary-dim": "#2044c5",
+            "surface-container": "#e7eeff",
+            "on-error": "#fff7f7",
+            "primary": "#3052d2",
+            "tertiary-fixed": "#e7dafc",
+            "secondary-container": "#e4e1e6",
+            "on-tertiary-fixed-variant": "#5e5571",
+            "primary-container": "#dde1ff",
+            "outline-variant": "#9cb3da",
+            "on-secondary-fixed": "#3f3f43",
+            "on-primary": "#f9f6ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "display": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "body": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "label": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .tnum {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom scrollbar for dense data console */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd2ff;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9cb3da;
+    }
+  </style>
+</head>
+<body class="h-full bg-background text-on-surface antialiased flex flex-row overflow-hidden text-xs">
+<!-- ================= SIDEBAR ================= -->
+<aside class="fixed top-0 left-0 h-screen w-60 z-30 flex flex-col justify-between py-3 px-2 border-r border-secondary-container bg-surface-container-lowest select-none">
+<!-- Top Scrollable Content -->
+<div class="flex flex-col flex-1 overflow-y-auto pr-1">
+<!-- Brand Header -->
+<div class="px-2.5 pt-1 pb-3 flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shrink-0 shadow-sm">
+<span class="material-symbols-outlined" data-icon="hub" style="font-size: 20px;">hub</span>
+</div>
+<div class="min-w-0">
+<div class="font-headline text-sm font-semibold tracking-tight text-on-surface leading-tight truncate">
+            Commerce Platform
+          </div>
+<div class="text-[11px] text-on-surface-variant font-mono flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block"></span>
+            Prod • ap-southeast-1
+          </div>
+</div>
+</div>
+<!-- Nav Search Input -->
+<div class="px-1.5 mb-3">
+<div class="relative flex items-center w-full">
+<span class="material-symbols-outlined absolute left-2 text-outline text-[16px] pointer-events-none" data-icon="search">search</span>
+<input class="w-full pl-7 pr-2 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-transparent focus:border-outline-variant focus:bg-surface-container-lowest rounded-lg text-xs outline-none transition-all" placeholder="ค้นหาเมนู... (Cmd+K)" type="text"/>
+</div>
+</div>
+<!-- Navigation Hierarchy -->
+<nav class="space-y-4">
+<!-- Group: PLATFORM -->
+<div>
+<div class="px-2.5 pb-1.5 text-[10px] font-semibold tracking-wider text-outline uppercase">
+            Platform
+          </div>
+<div class="space-y-0.5">
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 font-normal transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 font-normal transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="sync_alt">sync_alt</span>
+<span>Catalog &amp; Sync</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 font-normal transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span>Order Processing</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between font-normal transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined" data-icon="error_outline">error_outline</span>
+<span>Dead Letter Queue</span>
+</div>
+<span class="px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-error-container text-on-error-container font-mono">3</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 font-normal transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="api">api</span>
+<span>API &amp; Webhooks</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 font-normal transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</div>
+<!-- Group: รายงานร้าน (JOSH) - EXPANDED -->
+<div>
+<div class="px-2.5 pb-1 flex items-center justify-between text-on-surface font-semibold text-[11px] cursor-pointer">
+<span class="uppercase tracking-wide text-primary">รายงานร้าน (JOSH)</span>
+<span class="material-symbols-outlined text-outline text-[16px]" data-icon="expand_more">expand_more</span>
+</div>
+<div class="mt-0.5 space-y-0.5 pl-1.5 border-l-2 border-primary/20 ml-3">
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2 py-1.5 flex items-center gap-2 font-normal transition-colors duration-150" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>ยอดขาย</span>
+</a>
+<!-- Active Screen Link: Orders (josh) -->
+<a class="bg-primary-container text-on-primary-container font-medium rounded-lg px-2 py-1.5 flex items-center justify-between shadow-xs transition-colors duration-150" href="#">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="font-semibold text-primary">Orders (josh)</span>
+</div>
+<span class="text-[9px] bg-primary text-on-primary px-1.5 py-0.5 rounded font-mono uppercase tracking-tighter">live</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2 py-1.5 flex items-center gap-2 font-normal transition-colors duration-150" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>ลูกค้า / บริษัท</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2 py-1.5 flex items-center gap-2 font-normal transition-colors duration-150" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>Traffic</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2 py-1.5 flex items-center gap-2 font-normal transition-colors duration-150" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>Error / สุขภาพระบบ</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2 py-1.5 flex items-center gap-2 font-normal transition-colors duration-150" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span>Win-back</span>
+</a>
+</div>
+</div>
+<!-- Other Collapsed Groups -->
+<div class="space-y-1 pt-1 border-t border-secondary-container">
+<button class="w-full px-2.5 py-1.5 flex items-center justify-between text-on-surface-variant hover:bg-surface-container-low rounded-lg text-left transition-colors">
+<span class="text-[11px] font-medium">หลังบ้าน JOSH</span>
+<span class="text-[10px] text-outline font-mono bg-surface-container px-1.5 py-0.5 rounded">14</span>
+</button>
+<button class="w-full px-2.5 py-1.5 flex items-center justify-between text-on-surface-variant hover:bg-surface-container-low rounded-lg text-left transition-colors">
+<span class="text-[11px] font-medium">MARKETING</span>
+<span class="text-[10px] text-outline font-mono bg-surface-container px-1.5 py-0.5 rounded">8</span>
+</button>
+<button class="w-full px-2.5 py-1.5 flex items-center justify-between text-on-surface-variant hover:bg-surface-container-low rounded-lg text-left transition-colors">
+<span class="text-[11px] font-medium">AI HUB</span>
+<span class="text-[10px] text-outline font-mono bg-surface-container px-1.5 py-0.5 rounded">1</span>
+</button>
+<button class="w-full px-2.5 py-1.5 flex items-center justify-between text-on-surface-variant hover:bg-surface-container-low rounded-lg text-left transition-colors">
+<span class="text-[11px] font-medium">ERP HUB</span>
+<span class="text-[10px] text-outline font-mono bg-surface-container px-1.5 py-0.5 rounded">7</span>
+</button>
+<button class="w-full px-2.5 py-1.5 flex items-center justify-between text-on-surface-variant hover:bg-surface-container-low rounded-lg text-left transition-colors">
+<span class="text-[11px] font-medium">INTEGRATION</span>
+<span class="text-[10px] text-outline font-mono bg-surface-container px-1.5 py-0.5 rounded">6</span>
+</button>
+<button class="w-full px-2.5 py-1.5 flex items-center justify-between text-on-surface-variant hover:bg-surface-container-low rounded-lg text-left transition-colors">
+<span class="text-[11px] font-medium">COMMERCE DATA</span>
+<span class="text-[10px] text-outline font-mono bg-surface-container px-1.5 py-0.5 rounded">5</span>
+</button>
+</div>
+</nav>
+</div>
+<!-- Footer User Profile -->
+<div class="pt-2 border-t border-secondary-container mt-2 px-1">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low/70">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-7 h-7 rounded-full bg-primary-fixed-dim text-on-primary-fixed font-bold flex items-center justify-center text-xs shrink-0">
+            OP
+          </div>
+<div class="min-w-0">
+<div class="font-medium text-xs text-on-surface truncate leading-tight">Operator (admin)</div>
+<div class="text-[10px] text-on-surface-variant truncate font-mono">ops@commerce.local</div>
+</div>
+</div>
+<button class="text-outline hover:text-error p-1 rounded transition-colors" title="ออกจากระบบ">
+<span class="material-symbols-outlined text-[17px]" data-icon="logout">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ================= MAIN CONTENT CANVAS ================= -->
+<!-- pl-60 anchors next to the 240px sidebar, w-full with max-w-[1440px] for desktop -->
+<main class="ml-60 flex-1 min-w-0 h-screen overflow-y-auto bg-background p-6">
+<div class="max-w-[1240px] mx-auto space-y-4">
+<!-- ================= HEADER SECTION ================= -->
+<section class="space-y-1.5">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium">
+<span class="hover:text-primary transition-colors cursor-pointer">รายงานร้าน (josh)</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Orders</span>
+</nav>
+<!-- Main Title Bar -->
+<div class="flex flex-wrap items-center justify-between gap-3 pt-0.5">
+<div class="flex items-center gap-3">
+<h1 class="text-xl font-bold tracking-tight text-on-surface font-headline flex items-center gap-2">
+              Orders (josh)
+            </h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-surface-container text-on-surface-variant border border-secondary-container">
+<span class="material-symbols-outlined text-[14px]" data-icon="visibility">visibility</span>
+              อ่านอย่างเดียว · ข้อมูลจาก josh
+            </span>
+</div>
+<!-- Right Action Controls -->
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-medium transition-colors active:scale-[0.99]">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="download">download</span>
+<span>Export CSV</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-medium transition-colors active:scale-[0.99]">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="refresh">refresh</span>
+<span>Refresh</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ================= FILTER PANEL ================= -->
+<section class="bg-surface-container-lowest rounded-lg border border-secondary-container p-3 space-y-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+<!-- Controls Row -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
+<!-- Search Input -->
+<div class="md:col-span-4 relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px] pointer-events-none" data-icon="search">search</span>
+<input class="w-full pl-8 pr-3 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors" placeholder="ค้นหาเลข order / บริษัท..." type="text"/>
+</div>
+<!-- Status Segmented Control Pills -->
+<div class="md:col-span-4 flex items-center bg-surface-container-low p-0.5 rounded-lg border border-secondary-container">
+<button class="flex-1 py-1 px-2 text-center rounded-md bg-surface-container-lowest font-semibold text-primary shadow-xs text-xs transition-all">ทั้งหมด</button>
+<button class="flex-1 py-1 px-2 text-center rounded-md text-on-surface-variant hover:text-on-surface text-xs transition-all">รอชำระ</button>
+<button class="flex-1 py-1 px-2 text-center rounded-md text-on-surface-variant hover:text-on-surface text-xs transition-all">ชำระแล้ว</button>
+<button class="flex-1 py-1 px-2 text-center rounded-md text-on-surface-variant hover:text-on-surface text-xs transition-all">จัดส่งแล้ว</button>
+<button class="flex-1 py-1 px-2 text-center rounded-md text-on-surface-variant hover:text-on-surface text-xs transition-all">ยกเลิก</button>
+</div>
+<!-- Date Range Picker Dropdown -->
+<div class="md:col-span-2 relative">
+<button class="w-full flex items-center justify-between px-2.5 py-1.5 bg-surface-container-lowest border border-secondary-container rounded-lg text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="calendar_today">calendar_today</span>
+<span class="font-mono text-[11px]">01/10/23-24/10/23</span>
+</span>
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+<!-- Branch Dropdown -->
+<div class="md:col-span-1 relative">
+<button class="w-full flex items-center justify-between px-2 py-1.5 bg-surface-container-lowest border border-secondary-container rounded-lg text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="truncate">ทุกสาขา</span>
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+<!-- Clear Filters Button -->
+<div class="md:col-span-1 text-right">
+<button class="text-xs font-medium text-primary hover:text-primary-dim transition-colors py-1 px-1">
+              ล้างตัวกรอง
+            </button>
+</div>
+</div>
+<!-- Active Filter Chips Row -->
+<div class="pt-2 border-t border-secondary-container flex flex-wrap items-center justify-between gap-2 text-[11px]">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="text-on-surface-variant font-medium">ตัวกรองปัจจุบัน:</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container border border-secondary-container text-on-surface">
+              สถานะ: ทั้งหมด
+              <span class="material-symbols-outlined text-[13px] text-outline hover:text-error cursor-pointer" data-icon="close">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container border border-secondary-container text-on-surface">
+              ช่วงเวลา: 30 วันล่าสุด
+              <span class="material-symbols-outlined text-[13px] text-outline hover:text-error cursor-pointer" data-icon="close">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container border border-secondary-container text-on-surface">
+              สาขา: ทั้งหมด
+              <span class="material-symbols-outlined text-[13px] text-outline hover:text-error cursor-pointer" data-icon="close">close</span>
+</span>
+</div>
+<div class="text-on-surface-variant font-mono font-medium">
+            พบ <span class="font-bold text-on-surface tnum">2,341</span> รายการ
+          </div>
+</div>
+</section>
+<!-- ================= TABLE PANEL ================= -->
+<section class="bg-surface-container-lowest rounded-lg border border-secondary-container overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+<div class="overflow-x-auto max-h-[calc(100vh-275px)]">
+<table class="w-full border-collapse text-left text-xs">
+<!-- Sticky Table Header -->
+<thead class="sticky top-0 z-10 bg-surface-container-low/95 backdrop-blur-xs border-b border-secondary-container text-on-surface-variant font-semibold select-none">
+<tr class="h-10">
+<th class="w-10 px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</th>
+<th class="px-3 min-w-[130px]">Order No.</th>
+<th class="px-3 min-w-[140px]">วันที่</th>
+<th class="px-3 min-w-[240px]">บริษัท / สาขา</th>
+<th class="px-3 text-right min-w-[70px]">Items</th>
+<th class="px-3 text-right min-w-[110px]">ยอดรวม ฿</th>
+<th class="px-3 min-w-[110px]">การชำระเงิน</th>
+<th class="px-3 min-w-[110px]">สถานะออเดอร์</th>
+<th class="px-3 min-w-[180px]">ERP Sync Status</th>
+</tr>
+</thead>
+<!-- Table Body: Exactly 12 Realistic Rows (40px compact height) -->
+<tbody class="divide-y divide-secondary-container/70 text-on-surface font-body">
+<!-- ROW 1 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88219
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  24 ต.ค. 2023 10:42
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. สยาม ซัพพลายเชน โลจิสติกส์</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขาพระราม 9 (#002)</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">14</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿142,500.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    ชำระแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    จัดส่งแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 2 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88218
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  24 ต.ค. 2023 10:35
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บมจ. เจริญโภคภัณฑ์ รีเทล กรุ๊ป</div>
+<div class="text-[10px] text-on-surface-variant truncate">คลังสินค้าวังน้อย DC-4</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">52</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿489,000.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    เครดิต 30 วัน
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    กำลังจัดส่ง
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 3 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88217
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  24 ต.ค. 2023 09:58
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">หจก. ธนากร พาณิชย์วัสดุก่อสร้าง</div>
+<div class="text-[10px] text-on-surface-variant truncate">สำนักงานใหญ่ บางนา-ตราด</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">8</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿38,420.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fef7e0] text-[#b08900]">
+                    รอชำระ
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fef7e0] text-[#b08900]">
+                    รอการดำเนินการ
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900] animate-pulse"></span>
+                    Pending queue (pos: #4)
+                  </span>
+</td>
+</tr>
+<!-- ROW 4 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88216
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  24 ต.ค. 2023 09:12
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. เอเปกซ์ เมดิคอล เซ็นเตอร์</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขาชิดลม (#014)</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">26</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿214,800.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    ชำระแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    จัดส่งแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 5 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100 bg-error/5">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88215
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  24 ต.ค. 2023 08:45
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. กรีนเฮาส์ ออร์แกนิค ไทยแลนด์</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขาเชียงใหม่ (#005)</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">3</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿12,900.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    ชำระแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fef7e0] text-[#b08900]">
+                    รอการดำเนินการ
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#c2333f] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+                    Sync failed: Timeout retry 2/3
+                  </span>
+</td>
+</tr>
+<!-- ROW 6 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88214
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  24 ต.ค. 2023 08:30
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. ยูไนเต็ด ฟู้ดส์ แอนด์ เบฟเวอเรจ</div>
+<div class="text-[10px] text-on-surface-variant truncate">คลังลาดกระบัง B-12</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">80</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿620,150.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    เครดิต 30 วัน
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    กำลังจัดส่ง
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 7 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88213
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  23 ต.ค. 2023 18:22
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. พลังงานสยาม ไฮเทค คอร์ป</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขาระยอง มาบตาพุด</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">5</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿44,000.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-secondary">
+                    ยกเลิกคำขอ
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-secondary">
+                    ยกเลิก
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    Voided in ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 8 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88212
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  23 ต.ค. 2023 17:50
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. บางกอก ออโตโมทีฟ พาร์ทส์</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขาสมุทรปราการ (#008)</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">19</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿98,750.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    ชำระแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    จัดส่งแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 9 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88211
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  23 ต.ค. 2023 16:15
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บมจ. ไทยเพรซิเดนท์ อุตสาหกรรม</div>
+<div class="text-[10px] text-on-surface-variant truncate">โรงงานชลบุรี DC-2</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">120</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿1,250,000.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    เครดิต 60 วัน
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    จัดส่งแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 10 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88210
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  23 ต.ค. 2023 15:40
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">หจก. ศิริชัย แมชชีนเนอรี่</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขานครราชสีมา (#001)</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">11</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿76,200.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fef7e0] text-[#b08900]">
+                    รอชำระ
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fef7e0] text-[#b08900]">
+                    รอการดำเนินการ
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+                    Pending queue (pos: #12)
+                  </span>
+</td>
+</tr>
+<!-- ROW 11 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88209
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  23 ต.ค. 2023 14:10
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. โอเชี่ยน เน็ตเวิร์ค เอ็กซ์เพรส</div>
+<div class="text-[10px] text-on-surface-variant truncate">สาขาท่าเรือแหลมฉบัง</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">34</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿310,000.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    ชำระแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
+                    จัดส่งแล้ว
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+<!-- ROW 12 -->
+<tr class="h-10 hover:bg-surface-container-low transition-colors duration-100">
+<td class="px-3 text-center">
+<input class="rounded border-secondary text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="px-3 font-mono font-semibold text-primary hover:underline cursor-pointer">
+                  JSH-2023-88208
+                </td>
+<td class="px-3 text-on-surface-variant font-mono whitespace-nowrap text-[11px]">
+                  23 ต.ค. 2023 13:05
+                </td>
+<td class="px-3 py-1">
+<div class="font-medium text-on-surface truncate max-w-[230px]">บจก. เดลต้า อิเล็กโทรนิกส์ คอร์ป</div>
+<div class="text-[10px] text-on-surface-variant truncate">นิคมบางปู ซอย 9</div>
+</td>
+<td class="px-3 text-right font-mono tnum text-on-surface">45</td>
+<td class="px-3 text-right font-mono font-semibold tnum">฿412,600.00</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    เครดิต 30 วัน
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9f2ff] text-[#2044c5]">
+                    กำลังจัดส่ง
+                  </span>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1.5 text-[11px] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Synced to SAP ERP
+                  </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- ================= FOOTER PAGINATION ================= -->
+<div class="h-11 px-4 border-t border-secondary-container bg-surface-container-lowest flex items-center justify-between text-xs text-on-surface-variant">
+<!-- Left Status -->
+<div class="font-medium">
+            แสดง <span class="font-mono text-on-surface font-semibold tnum">1–50</span> จาก <span class="font-mono text-on-surface font-semibold tnum">2,341</span> รายการ
+          </div>
+<!-- Right Controls -->
+<div class="flex items-center gap-4">
+<!-- Page Size Dropdown -->
+<div class="flex items-center gap-1.5">
+<span class="text-[11px]">แถวต่อหน้า:</span>
+<select class="py-1 pl-2 pr-6 bg-surface-container-low border border-secondary-container rounded text-xs font-mono text-on-surface focus:outline-none focus:border-primary">
+<option selected="">50 / หน้า</option>
+<option>100 / หน้า</option>
+<option>200 / หน้า</option>
+</select>
+</div>
+<!-- Page Buttons (< 1 2 3 ... 47 >) -->
+<div class="flex items-center gap-1 font-mono">
+<button class="w-7 h-7 flex items-center justify-center rounded border border-secondary-container hover:bg-surface-container-low disabled:opacity-40 disabled:pointer-events-none transition-colors" disabled="">
+<span class="material-symbols-outlined text-[15px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center rounded bg-primary text-on-primary font-semibold text-xs transition-colors">
+                1
+              </button>
+<button class="w-7 h-7 flex items-center justify-center rounded hover:bg-surface-container-low text-on-surface font-medium text-xs transition-colors">
+                2
+              </button>
+<button class="w-7 h-7 flex items-center justify-center rounded hover:bg-surface-container-low text-on-surface font-medium text-xs transition-colors">
+                3
+              </button>
+<span class="px-1 text-outline">...</span>
+<button class="w-7 h-7 flex items-center justify-center rounded hover:bg-surface-container-low text-on-surface font-medium text-xs transition-colors">
+                47
+              </button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-secondary-container hover:bg-surface-container-low text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[15px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

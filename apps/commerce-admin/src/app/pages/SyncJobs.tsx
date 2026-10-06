@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Button, Empty, ErrorText, Field, FormPanel, Loading, Page, PageHeader, Panel, PanelHead, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { api, Integration, SyncJob } from '../../lib/api';
-import { useAsync, statusBadgeClass } from '../hooks';
+import { useAsync } from '../hooks';
 
 const OPERATIONS = ['customers', 'products', 'inventory', 'prices'] as const;
 
@@ -27,60 +28,67 @@ export function SyncJobs() {
   }
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Sync jobs</h1>
-          <p>Run a connector sync operation and track its result.</p>
-        </div>
-        <button className="btn ghost" onClick={jobs.reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        crumbs={['Sync jobs']}
+        title="Sync jobs"
+        subtitle="Run a connector sync operation and track its result."
+        actions={<Button icon="refresh" variant="secondary" onClick={jobs.reload}>Refresh</Button>}
+      />
 
-      <div className="panel">
-        <div className="panel-head">Trigger a sync</div>
-        <form className="stack" onSubmit={trigger}>
-          <div className="row">
-            <label className="field">
-              Integration
-              <select required value={integrationId} onChange={(e) => setIntegrationId(e.target.value)}>
-                <option value="" disabled>Select…</option>
-                {integrations.data?.map((i) => (
-                  <option key={i.id} value={i.id}>{i.name} ({i.type})</option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              Operation
-              <select value={operation} onChange={(e) => setOperation(e.target.value as typeof operation)}>
-                {OPERATIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-              </select>
-            </label>
-          </div>
-          {formError && <div className="err">{formError}</div>}
-          <div><button className="btn" disabled={busy || !integrationId}>{busy ? 'Triggering…' : 'Run sync'}</button></div>
-        </form>
-      </div>
+      <FormPanel
+        title="Trigger a sync"
+        icon="sync"
+        cols={2}
+        error={formError}
+        submitLabel="Run sync"
+        busy={busy}
+        onSubmit={trigger}
+      >
+        <Field label="Integration">
+          <Select required value={integrationId} onChange={(e) => setIntegrationId(e.target.value)}>
+            <option value="">Select…</option>
+            {integrations.data?.map((i) => (
+              <option key={i.id} value={i.id}>{i.name} ({i.type})</option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Operation">
+          <Select value={operation} onChange={(e) => setOperation(e.target.value as typeof operation)}>
+            {OPERATIONS.map((o) => (
+              <option key={o} value={o}>{o}</option>
+            ))}
+          </Select>
+        </Field>
+      </FormPanel>
 
-      <div className="panel">
-        <div className="panel-head">Job history</div>
-        {jobs.loading ? <div className="empty">Loading…</div> : !jobs.data?.length ? (
-          <div className="empty">No sync jobs yet.</div>
+      <Panel>
+        <PanelHead title="Job history" />
+        {jobs.loading && !jobs.data ? (
+          <Loading />
+        ) : !jobs.data?.length ? (
+          <Empty>No sync jobs yet.</Empty>
         ) : (
-          <table>
-            <thead><tr><th>Started</th><th>Operation</th><th>Status</th><th>Result</th></tr></thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>Started</TH>
+              <TH>Operation</TH>
+              <TH>Status</TH>
+              <TH>Result</TH>
+            </THead>
+            <TBody>
               {jobs.data.map((j) => (
-                <tr key={j.id}>
-                  <td>{new Date(j.createdAt).toLocaleString()}</td>
-                  <td className="mono">{j.operation}</td>
-                  <td><span className={statusBadgeClass(j.status)}>{j.status}</span></td>
-                  <td className="mono">{j.result ? JSON.stringify(j.result) : '—'}</td>
-                </tr>
+                <TR key={j.id}>
+                  <TD kind="time">{fmt.when(j.createdAt)}</TD>
+                  <TD kind="mono">{j.operation}</TD>
+                  <TD><StatusChip status={j.status} /></TD>
+                  <TD kind="mono">{j.result ? JSON.stringify(j.result) : '—'}</TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Page>
   );
 }

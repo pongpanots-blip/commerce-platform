@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Operations - Overview</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts: Inter & Noto Sans Thai -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Thai:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN with forms & container-queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config as specified in Design System -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "on-primary": "#f9f6ff",
+            "on-secondary": "#fbf8fc",
+            "secondary-dim": "#535356",
+            "tertiary": "#645b77",
+            "surface-dim": "#c7dbff",
+            "error-dim": "#4f0116",
+            "surface-bright": "#f9f9ff",
+            "inverse-surface": "#070e19",
+            "on-background": "#1b3353",
+            "surface-container": "#e7eeff",
+            "surface-container-low": "#f0f3ff",
+            "secondary-fixed": "#e4e1e6",
+            "surface-container-highest": "#d5e3ff",
+            "on-surface": "#1b3353",
+            "primary-fixed": "#dde1ff",
+            "on-surface-variant": "#4a6083",
+            "surface-tint": "#3052d2",
+            "background": "#f9f9ff",
+            "inverse-primary": "#6d88ff",
+            "surface-variant": "#d5e3ff",
+            "primary": "#3052d2",
+            "secondary-container": "#e4e1e6",
+            "tertiary-dim": "#584f6a",
+            "tertiary-container": "#e7dafc",
+            "inverse-on-surface": "#969dac",
+            "on-primary-fixed-variant": "#2d4ecf",
+            "on-primary-container": "#1e43c5",
+            "surface": "#f9f9ff",
+            "surface-container-high": "#dee8ff",
+            "tertiary-fixed": "#e7dafc",
+            "error": "#9e3f4e",
+            "on-tertiary-fixed": "#423953",
+            "on-secondary-container": "#525155",
+            "on-error-container": "#782232",
+            "on-secondary-fixed": "#3f3f43",
+            "primary-container": "#dde1ff",
+            "on-secondary-fixed-variant": "#5c5b5f",
+            "outline": "#657ca0",
+            "error-container": "#ff8b9a",
+            "primary-dim": "#2044c5",
+            "secondary-fixed-dim": "#d6d3d8",
+            "on-tertiary-fixed-variant": "#5e5571",
+            "on-tertiary": "#fdf7ff",
+            "secondary": "#5f5e62",
+            "on-primary-fixed": "#002fab",
+            "outline-variant": "#9cb3da",
+            "tertiary-fixed-dim": "#d8cced",
+            "on-error": "#fff7f7",
+            "on-tertiary-container": "#544c67",
+            "primary-fixed-dim": "#cbd2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "display": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "body": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "label": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-size: 18px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f7f9] text-[#1a1f29] font-body text-xs md:text-sm antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- ================= SIDEBAR NAVIGATION (SHARED COMPONENT ANCHOR) ================= -->
+<!-- Target exact width: 240px, fixed left border-r border-[#e5e7eb] -->
+<aside class="fixed top-0 left-0 h-screen w-60 z-30 bg-surface-container-lowest border-r border-secondary-container flex flex-col justify-between select-none">
+<!-- Top & Scrollable Nav Group Area -->
+<div class="flex flex-col h-[calc(100vh-68px)] overflow-hidden">
+<!-- Header / Brand -->
+<div class="px-4 pt-3.5 pb-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-primary text-white flex items-center justify-center font-bold text-xs">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</div>
+<div>
+<h1 class="font-headline text-sm font-semibold tracking-tight text-on-surface leading-tight">Commerce Platform</h1>
+<p class="text-[11px] text-on-surface-variant font-normal leading-tight">Prod • ap-southeast-1</p>
+</div>
+</div>
+</div>
+<!-- Quick Jump / Search box -->
+<div class="relative mt-3">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined !text-[15px]" data-icon="search">search</span>
+</span>
+<input class="w-full bg-[#f6f7f9] text-xs text-on-surface placeholder:text-on-surface-variant/70 pl-8 pr-2.5 py-1.5 rounded-lg border border-secondary-container focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="ค้นหาเมนู… (Cmd+K)" type="text"/>
+</div>
+</div>
+<!-- Navigation Hierarchy -->
+<nav class="flex-1 overflow-y-auto px-2 py-2 space-y-4 text-xs font-label">
+<!-- Group: PLATFORM -->
+<div>
+<div class="px-2.5 py-1 text-[10px] font-semibold tracking-wider uppercase text-on-surface-variant/80 flex items-center justify-between">
+<span>PLATFORM</span>
+</div>
+<div class="mt-0.5 space-y-0.5">
+<!-- Active item: Overview -->
+<a class="bg-primary-container text-on-primary-container font-medium rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined !text-[17px]" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<!-- Sync Alt -->
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined !text-[17px]" data-icon="sync_alt">sync_alt</span>
+<span>Catalog &amp; Sync</span>
+</div>
+</a>
+<!-- Order processing -->
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined !text-[17px]" data-icon="shopping_cart">shopping_cart</span>
+<span>Order Processing</span>
+</div>
+</a>
+<!-- Dead Letter Queue -->
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined !text-[17px] text-error" data-icon="error_outline">error_outline</span>
+<span>Dead Letter Queue</span>
+</div>
+<span class="bg-error-container text-on-error-container text-[10px] font-semibold px-1.5 py-0.2 rounded-full tabular-nums">3</span>
+</a>
+<!-- API & Webhooks -->
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined !text-[17px]" data-icon="api">api</span>
+<span>API &amp; Webhooks</span>
+</div>
+</a>
+<!-- Settings -->
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors duration-150" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined !text-[17px]" data-icon="settings">settings</span>
+<span>Settings</span>
+</div>
+</a>
+</div>
+</div>
+<!-- Group: รายงานร้าน (josh) -->
+<div>
+<div class="px-2.5 py-1 text-[10px] font-semibold tracking-wider uppercase text-on-surface-variant/80 flex items-center justify-between">
+<span>รายงานร้าน (josh)</span>
+<span class="text-[10px] text-on-surface-variant/60 font-mono">6</span>
+</div>
+<div class="mt-0.5 space-y-0.5 font-normal">
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span>ยอดขาย</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span>Orders (josh)</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span>ลูกค้า / บริษัท</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span>Traffic</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors" href="#">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span>Error / สุขภาพระบบ</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center gap-2 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span>Win-back</span>
+</a>
+</div>
+</div>
+<!-- Collapsible Groups -->
+<div class="space-y-0.5 pt-1 border-t border-secondary-container">
+<!-- หลังบ้าน josh -->
+<button class="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-[11px] uppercase tracking-wider">หลังบ้าน josh</span>
+</div>
+<span class="text-[10px] text-on-surface-variant/70 tabular-nums bg-secondary-container px-1.5 py-0.5 rounded">14</span>
+</button>
+<!-- MARKETING -->
+<button class="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-[11px] uppercase tracking-wider">MARKETING</span>
+</div>
+<span class="text-[10px] text-on-surface-variant/70 tabular-nums bg-secondary-container px-1.5 py-0.5 rounded">8</span>
+</button>
+<!-- AI -->
+<button class="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-[11px] uppercase tracking-wider">AI</span>
+</div>
+<span class="text-[10px] text-on-surface-variant/70 tabular-nums bg-secondary-container px-1.5 py-0.5 rounded">1</span>
+</button>
+<!-- ERP HUB -->
+<button class="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-[11px] uppercase tracking-wider">ERP HUB</span>
+</div>
+<span class="text-[10px] text-on-surface-variant/70 tabular-nums bg-secondary-container px-1.5 py-0.5 rounded">7</span>
+</button>
+<!-- INTEGRATION -->
+<button class="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-[11px] uppercase tracking-wider">INTEGRATION</span>
+</div>
+<span class="text-[10px] text-on-surface-variant/70 tabular-nums bg-secondary-container px-1.5 py-0.5 rounded">6</span>
+</button>
+<!-- COMMERCE DATA -->
+<button class="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 flex items-center justify-between transition-colors group">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined !text-[14px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-[11px] uppercase tracking-wider">COMMERCE DATA</span>
+</div>
+<span class="text-[10px] text-on-surface-variant/70 tabular-nums bg-secondary-container px-1.5 py-0.5 rounded">5</span>
+</button>
+</div>
+</nav>
+</div>
+<!-- Sidebar Bottom: Operator Profile & Status -->
+<div class="p-3 border-t border-secondary-container bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-7 h-7 rounded-full bg-surface-container text-on-surface font-semibold text-xs flex items-center justify-center border border-secondary-container shrink-0">
+            OP
+          </div>
+<div class="truncate">
+<div class="text-xs font-medium text-on-surface truncate">Operator (admin)</div>
+<div class="text-[11px] text-on-surface-variant truncate">ops@commerce.local</div>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1 rounded hover:bg-surface-container-low transition-colors" title="Sign out">
+<span class="material-symbols-outlined !text-[16px]" data-icon="logout">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ================= TOP NAV BAR (SHARED COMPONENT ANCHOR) ================= -->
+<header class="sticky top-0 z-20 w-full pl-60 bg-surface-container-lowest border-b border-secondary-container h-12 flex items-center">
+<div class="flex justify-between items-center h-full px-6 w-full max-w-[1280px]">
+<!-- Left: Operational Health Stats -->
+<div class="flex items-center gap-5 text-xs text-on-surface-variant">
+<span class="font-headline text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Commerce Operations</span>
+<div class="h-3 w-[1px] bg-secondary-container"></div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span class="text-on-surface font-medium tabular-nums">Cluster Health: 99.98%</span>
+</div>
+<div class="hidden sm:flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-on-surface-variant tabular-nums">Job Runners: 12/12 Online</span>
+</div>
+</div>
+<!-- Right: Operational Actions & Alerts -->
+<div class="flex items-center gap-2.5">
+<button class="text-xs font-medium text-on-surface-variant border border-secondary-container hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined !text-[15px]" data-icon="sync_alt">sync_alt</span>
+<span>Manual Sync Trigger</span>
+</button>
+<button class="text-xs font-medium text-on-surface-variant border border-secondary-container hover:bg-surface-container-low rounded-lg px-2.5 py-1.5 transition-colors" type="button">
+<span>Export Logs</span>
+</button>
+<div class="h-4 w-[1px] bg-secondary-container mx-1"></div>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined !text-[18px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="Terminal Console">
+<span class="material-symbols-outlined !text-[18px]" data-icon="terminal">terminal</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="Help &amp; Documentation">
+<span class="material-symbols-outlined !text-[18px]" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ================= MAIN CONTENT CANVAS ================= -->
+<main class="ml-60 flex-1 p-6 md:p-8 bg-[#f6f7f9] overflow-y-auto">
+<div class="max-w-[1280px] mx-auto space-y-6">
+<!-- PAGE HEADER -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-gray-200">
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-[#1a1f29]">Overview</h1>
+<p class="text-sm text-gray-500 mt-0.5">Commerce Platform health at a glance.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-xs text-gray-400">
+<span class="material-symbols-outlined !text-[14px]" data-icon="schedule">schedule</span>
+<span>Last updated <span class="tabular-nums">10:42</span></span>
+</div>
+<button class="text-xs font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5 bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5 shadow-sm active:bg-gray-100" type="button">
+<span class="material-symbols-outlined !text-[14px]" data-icon="refresh">refresh</span>
+<span>Refresh</span>
+</button>
+</div>
+</div>
+<!-- SECTION 1: NEEDS ATTENTION -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Needs attention</h2>
+<span class="text-[11px] text-gray-400">Active alerts requiring operator action</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Card 1: Webhooks pending -->
+<div class="bg-white rounded-lg p-4 border border-gray-200 border-l-4 border-l-amber-500 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-medium text-gray-500">Webhooks pending</p>
+<p class="text-2xl md:text-3xl font-semibold text-amber-700 mt-1 tabular-nums">12</p>
+</div>
+<span class="p-1 rounded bg-amber-50 text-amber-600">
+<span class="material-symbols-outlined !text-[18px]" data-icon="hourglass_top">hourglass_top</span>
+</span>
+</div>
+<div class="mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+<span class="text-[11px] text-gray-400">Estimated drain: 42s</span>
+<a class="text-xs font-medium text-amber-700 hover:text-amber-800 hover:underline flex items-center gap-0.5" href="#">
+<span>View</span>
+<span class="material-symbols-outlined !text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 2: Webhooks failed -->
+<div class="bg-white rounded-lg p-4 border border-gray-200 border-l-4 border-l-rose-500 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-medium text-gray-500">Webhooks failed</p>
+<p class="text-2xl md:text-3xl font-semibold text-rose-700 mt-1 tabular-nums">3</p>
+</div>
+<span class="p-1 rounded bg-rose-50 text-rose-600">
+<span class="material-symbols-outlined !text-[18px]" data-icon="error">error</span>
+</span>
+</div>
+<div class="mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+<span class="text-[11px] text-rose-600 font-medium">Critical retry limit reached</span>
+<a class="text-xs font-medium text-rose-700 hover:text-rose-800 hover:underline flex items-center gap-0.5" href="#">
+<span>View</span>
+<span class="material-symbols-outlined !text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 3: Outbox backlog -->
+<div class="bg-white rounded-lg p-4 border border-gray-200 border-l-4 border-l-emerald-500 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-medium text-gray-500">Outbox backlog</p>
+<p class="text-2xl md:text-3xl font-semibold text-gray-700 mt-1 tabular-nums">0</p>
+</div>
+<span class="p-1 rounded bg-emerald-50 text-emerald-600">
+<span class="material-symbols-outlined !text-[18px]" data-icon="check_circle">check_circle</span>
+</span>
+</div>
+<div class="mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+<span class="text-[11px] text-emerald-600">All channels normalized</span>
+<a class="text-xs font-medium text-gray-500 hover:text-gray-800 hover:underline flex items-center gap-0.5" href="#">
+<span>View</span>
+<span class="material-symbols-outlined !text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 2: DATA COUNTERS -->
+<div>
+<h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Data</h2>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+<!-- Card: Integrations -->
+<div class="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 mb-1">
+<span class="text-xs">Integrations</span>
+<span class="material-symbols-outlined !text-[14px] text-gray-400" data-icon="hub">hub</span>
+</div>
+<div class="text-lg font-semibold text-gray-900 tabular-nums">4</div>
+<div class="text-[10px] text-emerald-600 mt-0.5 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>All connected</span>
+</div>
+</div>
+<!-- Card: Sync jobs (24h) -->
+<div class="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 mb-1">
+<span class="text-xs">Sync jobs (24h)</span>
+<span class="material-symbols-outlined !text-[14px] text-gray-400" data-icon="autorenew">autorenew</span>
+</div>
+<div class="text-lg font-semibold text-gray-900 tabular-nums">38</div>
+<div class="text-[10px] text-gray-400 mt-0.5">97.4% success rate</div>
+</div>
+<!-- Card: Customers -->
+<div class="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 mb-1">
+<span class="text-xs">Customers</span>
+<span class="material-symbols-outlined !text-[14px] text-gray-400" data-icon="group">group</span>
+</div>
+<div class="text-lg font-semibold text-gray-900 tabular-nums">1,284</div>
+<div class="text-[10px] text-gray-400 mt-0.5">+18 this week</div>
+</div>
+<!-- Card: Products -->
+<div class="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 mb-1">
+<span class="text-xs">Products</span>
+<span class="material-symbols-outlined !text-[14px] text-gray-400" data-icon="inventory_2">inventory_2</span>
+</div>
+<div class="text-lg font-semibold text-gray-900 tabular-nums">9,402</div>
+<div class="text-[10px] text-gray-400 mt-0.5">Across 3 stores</div>
+</div>
+<!-- Card: Inventory levels -->
+<div class="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 mb-1">
+<span class="text-xs">Inventory levels</span>
+<span class="material-symbols-outlined !text-[14px] text-gray-400" data-icon="layers">layers</span>
+</div>
+<div class="text-lg font-semibold text-gray-900 tabular-nums">27,116</div>
+<div class="text-[10px] text-gray-400 mt-0.5">Updated 4m ago</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3: RECENT JOBS & WEBHOOK FAILURES -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Panel: Recent sync jobs (col-span-7) -->
+<div class="lg:col-span-7 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
+<div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-gray-900">Recent sync jobs</h3>
+<span class="px-2 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-600 rounded">Live Feed</span>
+</div>
+<a class="text-xs font-medium text-primary hover:underline flex items-center gap-1" href="#">
+<span>View all jobs</span>
+<span class="material-symbols-outlined !text-[13px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="border-b border-gray-200 bg-gray-50/75 text-gray-500 font-medium">
+<th class="py-2.5 px-3.5 font-medium">Job</th>
+<th class="py-2.5 px-3 font-medium">Platform</th>
+<th class="py-2.5 px-3 font-medium">Status</th>
+<th class="py-2.5 px-3 font-medium">Started</th>
+<th class="py-2.5 px-3.5 font-medium text-right">Duration</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100">
+<!-- Row 1 -->
+<tr class="hover:bg-gray-50/80 transition-colors">
+<td class="py-2.5 px-3.5 font-medium text-gray-900 flex items-center gap-2">
+<span class="material-symbols-outlined !text-[15px] text-gray-400" data-icon="dataset">dataset</span>
+<span>Catalog Full Sync</span>
+</td>
+<td class="py-2.5 px-3 text-gray-600">Shopify Plus</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      Success
+                    </span>
+</td>
+<td class="py-2.5 px-3 font-mono text-gray-500 tabular-nums">10:38:12</td>
+<td class="py-2.5 px-3.5 text-right font-mono text-gray-600 tabular-nums">1m 24s</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-gray-50/80 transition-colors">
+<td class="py-2.5 px-3.5 font-medium text-gray-900 flex items-center gap-2">
+<span class="material-symbols-outlined !text-[15px] text-gray-400" data-icon="sync">sync</span>
+<span>Inventory Delta</span>
+</td>
+<td class="py-2.5 px-3 text-gray-600">Shopee TH</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200 animate-pulse">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                      Running
+                    </span>
+</td>
+<td class="py-2.5 px-3 font-mono text-gray-500 tabular-nums">10:41:05</td>
+<td class="py-2.5 px-3.5 text-right font-mono text-gray-600 tabular-nums">55s</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-gray-50/80 transition-colors">
+<td class="py-2.5 px-3.5 font-medium text-gray-900 flex items-center gap-2">
+<span class="material-symbols-outlined !text-[15px] text-gray-400" data-icon="grid_4x4">grid_4x4</span>
+<span>Price Matrix Batch</span>
+</td>
+<td class="py-2.5 px-3 text-gray-600">Lazada TH</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-rose-50 text-rose-700 border border-rose-200">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                      Failed
+                    </span>
+</td>
+<td class="py-2.5 px-3 font-mono text-gray-500 tabular-nums">10:35:00</td>
+<td class="py-2.5 px-3.5 text-right font-mono text-gray-600 tabular-nums">12s</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-gray-50/80 transition-colors">
+<td class="py-2.5 px-3.5 font-medium text-gray-900 flex items-center gap-2">
+<span class="material-symbols-outlined !text-[15px] text-gray-400" data-icon="dynamic_feed">dynamic_feed</span>
+<span>Order Feed Pull</span>
+</td>
+<td class="py-2.5 px-3 text-gray-600">TikTok Shop</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      Success
+                    </span>
+</td>
+<td class="py-2.5 px-3 font-mono text-gray-500 tabular-nums">10:30:20</td>
+<td class="py-2.5 px-3.5 text-right font-mono text-gray-600 tabular-nums">45s</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-gray-50/80 transition-colors">
+<td class="py-2.5 px-3.5 font-medium text-gray-900 flex items-center gap-2">
+<span class="material-symbols-outlined !text-[15px] text-gray-400" data-icon="switch_account">switch_account</span>
+<span>Customer Sync</span>
+</td>
+<td class="py-2.5 px-3 text-gray-600">Salesforce</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      Success
+                    </span>
+</td>
+<td class="py-2.5 px-3 font-mono text-gray-500 tabular-nums">10:15:10</td>
+<td class="py-2.5 px-3.5 text-right font-mono text-gray-600 tabular-nums">2m 10s</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-gray-50/80 transition-colors">
+<td class="py-2.5 px-3.5 font-medium text-gray-900 flex items-center gap-2">
+<span class="material-symbols-outlined !text-[15px] text-gray-400" data-icon="warehouse">warehouse</span>
+<span>Warehouse Stock Poll</span>
+</td>
+<td class="py-2.5 px-3 text-gray-600">SAP ERP</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      Success
+                    </span>
+</td>
+<td class="py-2.5 px-3 font-mono text-gray-500 tabular-nums">10:00:00</td>
+<td class="py-2.5 px-3.5 text-right font-mono text-gray-600 tabular-nums">3m 40s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Panel: Recent webhook failures (col-span-5) -->
+<div class="lg:col-span-5 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
+<div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+<div class="flex items-center gap-2">
+<h3 class="text-sm font-semibold text-gray-900">Recent webhook failures</h3>
+<span class="w-2 h-2 rounded-full bg-rose-500"></span>
+</div>
+<a class="text-xs font-medium text-primary hover:underline flex items-center gap-1" href="#">
+<span>Open dead letter</span>
+<span class="material-symbols-outlined !text-[13px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="divide-y divide-gray-100 flex-1">
+<!-- Failure Item 1 -->
+<div class="p-3 hover:bg-gray-50/90 transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">order.created</span>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-medium text-gray-600">Shopify</span>
+<span class="text-[10px] text-gray-400 font-mono">2m ago</span>
+</div>
+</div>
+<p class="font-mono text-[11px] text-gray-600 mt-1 truncate" title="HTTP 504 Gateway Timeout: upstream service did not respond within 3000ms">
+                HTTP 504 Gateway Timeout: upstream service...
+              </p>
+</div>
+<!-- Failure Item 2 -->
+<div class="p-3 hover:bg-gray-50/90 transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">inventory.depleted</span>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-medium text-gray-600">Shopee</span>
+<span class="text-[10px] text-gray-400 font-mono">14m ago</span>
+</div>
+</div>
+<p class="font-mono text-[11px] text-gray-600 mt-1 truncate" title="Signature mismatch (0x4f88ba... != expected HMAC SHA256)">
+                Signature mismatch (0x4f...)
+              </p>
+</div>
+<!-- Failure Item 3 -->
+<div class="p-3 hover:bg-gray-50/90 transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">refund.processed</span>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-medium text-gray-600">Lazada</span>
+<span class="text-[10px] text-gray-400 font-mono">32m ago</span>
+</div>
+</div>
+<p class="font-mono text-[11px] text-gray-600 mt-1 truncate" title="Connection reset by peer: /v2/orders/refunds/ack">
+                Connection reset by peer: /v2/orders
+              </p>
+</div>
+<!-- Failure Item 4 -->
+<div class="p-3 hover:bg-gray-50/90 transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">fulfillment.updated</span>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-medium text-gray-600">TikTok Shop</span>
+<span class="text-[10px] text-gray-400 font-mono">1h ago</span>
+</div>
+</div>
+<p class="font-mono text-[11px] text-gray-600 mt-1 truncate" title="Schema validation error: field 'tracking_number' empty">
+                Schema validation error: missing tracking...
+              </p>
+</div>
+<!-- Failure Item 5 -->
+<div class="p-3 hover:bg-gray-50/90 transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-mono text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">customer.address_changed</span>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-medium text-gray-600">Salesforce</span>
+<span class="text-[10px] text-gray-400 font-mono">2h ago</span>
+</div>
+</div>
+<p class="font-mono text-[11px] text-gray-600 mt-1 truncate" title="Target object locked by batch sync job #90812">
+                Target object locked by batch sync #90812
+              </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

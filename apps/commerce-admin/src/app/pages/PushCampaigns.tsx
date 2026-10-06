@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
+import { Button, Empty, ErrorText, ExpandRow, ExpandToggle, Loading, Page, PageHeader, Panel, PanelHead, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
 import { pushCampaignApi } from '../../lib/api';
-import { statusBadgeClass, useAsync } from '../hooks';
+import { useAsync } from '../hooks';
 
 const STATUS: Record<string, string> = { draft: 'ร่าง', scheduled: 'ตั้งเวลาแล้ว', sending: 'กำลังส่ง', sent: 'ส่งแล้ว', failed: 'ล้มเหลว', cancelled: 'ยกเลิก' };
 const pct = (n: number) => `${Math.round(n * 1000) / 10}%`;
@@ -17,63 +18,108 @@ export function PushCampaigns() {
   const o = overview.data;
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Push campaigns</h1>
-          <p>แคมเปญแจ้งเตือนที่ส่งจาก josh และผลการส่งจริงแต่ละช่องทาง · ดูอย่างเดียว — สร้าง/ส่งยังทำที่ josh admin</p>
-        </div>
-        <button className="btn ghost" onClick={() => { overview.reload(); list.reload(); }}>Refresh</button>
-      </div>
-      {(overview.error || list.error) && <div className="err">{overview.error || list.error}</div>}
+    <Page>
+      <PageHeader
+        title="Push campaigns"
+        subtitle="แคมเปญแจ้งเตือนที่ส่งจาก josh และผลการส่งจริงแต่ละช่องทาง · ดูอย่างเดียว — สร้าง/ส่งยังทำที่ josh admin"
+        actions={<Button variant="ghost" onClick={() => { overview.reload(); list.reload(); }}>Refresh</Button>}
+      />
+
+      <ErrorText error={overview.error || list.error} />
+
       {o && (
-        <div className="stat-grid">
-          <div className="stat"><div className="label">แคมเปญ</div><div className="value">{o.campaigns}</div></div>
-          <div className="stat"><div className="label">รอส่ง (ตั้งเวลา)</div><div className="value">{o.scheduled}</div></div>
-          <div className="stat"><div className="label">ส่งวันนี้</div><div className="value">{o.sentToday}</div></div>
-          <div className="stat"><div className="label">ส่งสำเร็จรวม</div><div className="value">{o.totalSent}</div><div className="hint">จาก {o.totalQueued} คน</div></div>
-        </div>
+        <StatGrid>
+          <StatTile label="แคมเปญ" value={fmt.num(o.campaigns)} tone="info" />
+          <StatTile label="รอส่ง (ตั้งเวลา)" value={fmt.num(o.scheduled)} tone="warn" />
+          <StatTile label="ส่งวันนี้" value={fmt.num(o.sentToday)} tone="info" />
+          <StatTile label="ส่งสำเร็จรวม" value={fmt.num(o.totalSent)} tone="ok" foot={`จาก ${fmt.num(o.totalQueued)} คน`} />
+        </StatGrid>
       )}
-      <div className="panel" style={{ marginTop: 16 }}>
+
+      <Panel className="overflow-hidden">
         {list.data?.length ? (
-          <table>
-            <thead><tr><th>แคมเปญ</th><th>สถานะ</th><th>กลุ่มเป้าหมาย</th><th>ส่ง / ข้าม / พลาด</th><th>เวลา</th><th></th></tr></thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>แคมเปญ</TH>
+              <TH>สถานะ</TH>
+              <TH>กลุ่มเป้าหมาย</TH>
+              <TH right>ส่ง / ข้าม / พลาด</TH>
+              <TH>เวลา</TH>
+              <TH className="w-12" />
+            </THead>
+            <TBody>
               {list.data.map((c) => (
                 <Fragment key={c.id}>
-                  <tr>
-                    <td>{c.name}<div className="hint">{c.title}{c.ab_enabled ? ' · A/B' : ''}</div></td>
-                    <td><span className={statusBadgeClass(c.status === 'sent' ? 'completed' : c.status)}>{STATUS[c.status] ?? c.status}</span>
-                      {c.last_error && <div className="hint" style={{ color: 'var(--danger)' }}>{c.last_error}</div>}</td>
-                    <td>{audience(c.audience)}</td>
-                    <td>{c.stats.sent} / {c.stats.skipped} / {c.stats.failed}</td>
-                    <td>{c.status === 'scheduled' ? `จะส่ง ${when(c.scheduled_at)}` : when(c.sent_at ?? c.created_at)}</td>
-                    <td>{c.status === 'sent' && <button className="btn ghost sm" onClick={() => setOpen(open === c.id ? null : c.id)}>{open === c.id ? 'ซ่อน' : 'ผลการส่ง'}</button>}</td>
-                  </tr>
+                  <TR>
+                    <TD>
+                      <div className="font-medium">{c.name}</div>
+                      <div className="text-[10px] text-on-surface-variant">{c.title}{c.ab_enabled ? ' · A/B' : ''}</div>
+                    </TD>
+                    <TD>
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">{STATUS[c.status] ?? c.status}</div>
+                      {c.last_error && <div className="text-[10px] text-[#c2333f] mt-1">{c.last_error}</div>}
+                    </TD>
+                    <TD kind="muted">{audience(c.audience)}</TD>
+                    <TD kind="num">{c.stats.sent} / {c.stats.skipped} / {c.stats.failed}</TD>
+                    <TD kind="time">{c.status === 'scheduled' ? `จะส่ง ${when(c.scheduled_at)}` : when(c.sent_at ?? c.created_at)}</TD>
+                    <TD className="text-right">
+                      {c.status === 'sent' && (
+                        <ExpandToggle open={open === c.id} onClick={() => setOpen(open === c.id ? null : c.id)} label="ผลการส่ง" />
+                      )}
+                    </TD>
+                  </TR>
                   {open === c.id && (
-                    <tr><td colSpan={6}>
-                      {detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : !detail.data.deliveryStats ? <div className="hint">{detail.data.note}</div> : (
-                        <div>
-                          <div className="hint">ส่งถึง {pct(detail.data.deliveryStats.totals.deliveryRate)} · คลิก {detail.data.deliveryStats.totals.clicked} ({pct(detail.data.deliveryStats.totals.clickRate)})</div>
-                          <table>
-                            <thead><tr><th>ช่องทาง</th><th>พยายาม</th><th>สำเร็จ</th><th>ข้าม</th><th>พลาด</th><th>คลิก</th></tr></thead>
-                            <tbody>{detail.data.deliveryStats.byTypeChannel.map((r) => (
-                              <tr key={r.channel}><td>{r.channel}</td><td>{r.attempted}</td><td>{r.sent}</td><td>{r.skipped}</td><td>{r.failed}</td><td>{r.clicked} ({pct(r.clickRate)})</td></tr>
-                            ))}</tbody>
-                          </table>
+                    <ExpandRow colSpan={6}>
+                      {detail.error ? (
+                        <div className="text-sm text-red-600">{detail.error}</div>
+                      ) : !detail.data ? (
+                        <Loading />
+                      ) : !detail.data.deliveryStats ? (
+                        <div className="text-xs text-on-surface-variant">{detail.data.note}</div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="text-xs text-on-surface-variant">
+                            ส่งถึง {pct(detail.data.deliveryStats.totals.deliveryRate)} · คลิก {detail.data.deliveryStats.totals.clicked} ({pct(detail.data.deliveryStats.totals.clickRate)})
+                          </div>
+                          <Table>
+                            <THead>
+                              <TH>ช่องทาง</TH>
+                              <TH right>พยายาม</TH>
+                              <TH right>สำเร็จ</TH>
+                              <TH right>ข้าม</TH>
+                              <TH right>พลาด</TH>
+                              <TH right>คลิก</TH>
+                            </THead>
+                            <TBody>
+                              {detail.data.deliveryStats.byTypeChannel.map((r) => (
+                                <TR key={r.channel}>
+                                  <TD kind="muted">{r.channel}</TD>
+                                  <TD kind="num">{r.attempted}</TD>
+                                  <TD kind="num">{r.sent}</TD>
+                                  <TD kind="num">{r.skipped}</TD>
+                                  <TD kind="num">{r.failed}</TD>
+                                  <TD kind="num">{r.clicked} ({pct(r.clickRate)})</TD>
+                                </TR>
+                              ))}
+                            </TBody>
+                          </Table>
                           {!!detail.data.deliveryStats.topSkipAndFailReasons.length && (
-                            <div className="hint" style={{ marginTop: 6 }}>เหตุผลที่ข้าม/พลาด: {detail.data.deliveryStats.topSkipAndFailReasons.map((r) => `${r.reason} (${r.count})`).join(', ')}</div>
+                            <div className="text-xs text-on-surface-variant">
+                              เหตุผลที่ข้าม/พลาด: {detail.data.deliveryStats.topSkipAndFailReasons.map((r) => `${r.reason} (${r.count})`).join(', ')}
+                            </div>
                           )}
                         </div>
                       )}
-                    </td></tr>
+                    </ExpandRow>
                   )}
                 </Fragment>
               ))}
-            </tbody>
-          </table>
-        ) : <div className="empty">{list.loading ? 'Loading…' : 'ยังไม่มีแคมเปญ'}</div>}
-      </div>
-    </div>
+            </TBody>
+          </Table>
+        ) : (
+          <div className="px-4 py-8">{list.loading ? <Loading /> : <Empty icon="mail">ยังไม่มีแคมเปญ</Empty>}</div>
+        )}
+      </Panel>
+    </Page>
   );
 }

@@ -1,9 +1,11 @@
 import { Fragment, useState } from 'react';
+import {
+  Button, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Hint, Icon, Loading, Page, PageHeader, Panel, PanelHead, SectionTitle, Segmented, StatGrid, StatTile, StatusChip, Table, TBody, TD, TH, THead, TR, fmt,
+} from '@cp/ui';
 import { jagotaGatewayApi, jagotaHistoryApi, jagotaShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const show = (v: unknown) => (v === undefined ? '—' : JSON.stringify(v));
-const when = (v: string | null) => (v ? new Date(v).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '—');
 
 /**
  * Step 1 of "orders reach Jagota through commerce": josh keeps sending as today; commerce rebuilds
@@ -28,77 +30,150 @@ export function JagotaShadow() {
   }
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>ส่ง order ผ่าน commerce · ทดลองคู่กัน</h1>
-          <p>josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · <b>ไม่ส่งอะไรไป ERP</b></p>
-        </div>
-        <div className="row">
-          <button className="btn" disabled={!!busy} onClick={() => act('run', jagotaShadowApi.run, (r: { checked: number }) => `ตรวจเพิ่ม ${r.checked} รายการ`)}>{busy === 'run' ? 'กำลังตรวจ…' : 'ตรวจตอนนี้'}</button>
-          <button className="btn ghost" onClick={refresh}>Refresh</button>
-        </div>
-      </div>
-      {msg && <div className="hint" style={{ marginBottom: 8 }}>{msg}</div>}
-      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
+    <Page>
+      <PageHeader
+        title="ส่ง order ผ่าน commerce · ทดลองคู่กัน"
+        subtitle="josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP"
+        actions={
+          <>
+            <Button variant="primary" disabled={!!busy} onClick={() => act('run', jagotaShadowApi.run, (r: { checked: number }) => `ตรวจเพิ่ม ${r.checked} รายการ`)}>{busy === 'run' ? 'กำลังตรวจ…' : 'ตรวจตอนนี้'}</Button>
+            <Button icon="refresh" onClick={refresh}>Refresh</Button>
+          </>
+        }
+      />
+
+      {msg && <Hint>{msg}</Hint>}
+      <ErrorText error={summary.error || list.error} />
+
       {s && (
-        <div className="stat-grid">
-          <div className="stat"><div className="label">ตรง ({days} วัน)</div><div className="value">{s.matchRate == null ? '—' : `${s.matchRate}%`}</div><div className="hint">{s.matched} / {s.checked} รายการ</div></div>
-          <div className="stat"><div className="label">ไม่ตรง</div><div className={`value${s.mismatched ? ' attn' : ''}`}>{s.mismatched}</div></div>
-          <div className="stat"><div className="label">commerce สร้างไม่ได้</div><div className={`value${s.could_not_build ? ' attn' : ''}`}>{s.could_not_build}</div></div>
-          <div className="stat"><div className="label">ช่วงที่ตรวจ</div><div className="hint" style={{ marginTop: 10 }}>{when(s.first_at)} – {when(s.last_at)}</div>
-            <select value={days} onChange={(e) => setDays(Number(e.target.value))} style={{ marginTop: 6 }}>{[1, 7, 30].map((d) => <option key={d} value={d}>{d} วัน</option>)}</select></div>
-        </div>
+        <>
+          <SectionTitle>ตรวจ ({days} วัน)</SectionTitle>
+          <StatGrid cols={4}>
+            <StatTile
+              label="ตรง"
+              value={s.matchRate == null ? '—' : `${s.matchRate}%`}
+              foot={`${s.matched} / ${s.checked} รายการ`}
+              tone="ok"
+            />
+            <StatTile
+              label="ไม่ตรง"
+              value={fmt.num(s.mismatched)}
+              tone={s.mismatched ? 'warn' : 'ok'}
+            />
+            <StatTile
+              label="commerce สร้างไม่ได้"
+              value={fmt.num(s.could_not_build)}
+              tone={s.could_not_build ? 'danger' : 'ok'}
+            />
+            <StatTile
+              label="ช่วงที่ตรวจ"
+              value={
+                <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface border border-secondary-container rounded-lg text-xs">
+                  {[1, 7, 30].map((d) => <option key={d} value={d}>{d} วัน</option>)}
+                </select>
+              }
+              foot={`${fmt.date(s.first_at)} – ${fmt.date(s.last_at)}`}
+            />
+          </StatGrid>
+
+          {!!s?.topFields.length && (
+            <Hint>ช่องที่ต่างบ่อย: {s.topFields.map((f) => `${f.field} (${f.n})`).join(' · ')}</Hint>
+          )}
+        </>
       )}
-      {!!s?.topFields.length && <p className="hint" style={{ marginTop: 8 }}>ช่องที่ต่างบ่อย: {s.topFields.map((f) => `${f.field} (${f.n})`).join(' · ')}</p>}
-      <div className="row" role="tablist" style={{ margin: '12px 0' }}>
-        {[['mismatched', 'ไม่ตรง / สร้างไม่ได้'], ['matched', 'ตรง'], ['all', 'ทั้งหมด']].map(([k, label]) => (
-          <button key={k} className={`btn sm ${filter === k ? '' : 'ghost'}`} aria-selected={filter === k} onClick={() => { setFilter(k); setPage(1); }}>{label}</button>
-        ))}
+
+      <div className="space-y-3">
+        <Segmented
+          options={[
+            { value: 'mismatched', label: 'ไม่ตรง / สร้างไม่ได้' },
+            { value: 'matched', label: 'ตรง' },
+            { value: 'all', label: 'ทั้งหมด' },
+          ]}
+          value={filter}
+          onChange={(v) => { setFilter(v); setPage(1); }}
+        />
+
+        <Panel className="overflow-hidden">
+          {list.loading && !list.data ? (
+            <Loading />
+          ) : !list.data?.items.length ? (
+            <Empty>{filter === 'mismatched' ? 'ไม่มีรายการที่ไม่ตรง' : 'ยังไม่มีรายการ'}</Empty>
+          ) : (
+            <Table>
+              <THead>
+                <TH>Shipment / order</TH>
+                <TH>josh ส่งเมื่อ</TH>
+                <TH>ผล josh</TH>
+                <TH>เทียบ</TH>
+                <TH>ช่องที่ต่าง</TH>
+                <TH></TH>
+              </THead>
+              <TBody>
+                {list.data.items.map((c) => (
+                  <Fragment key={c.id}>
+                    <TR>
+                      <TD kind="mono">{c.orderReference ?? '—'}</TD>
+                      <TD kind="time">{fmt.when(c.joshSentAt)}</TD>
+                      <TD>{c.joshSyncStatus}</TD>
+                      <TD><StatusChip status={c.matched ? 'ok' : 'error'} /></TD>
+                      <TD>
+                        {c.diffs.map((d) => d.path).join(', ') || c.note || '—'}
+                        {c.note && c.diffs.length > 0 && <div className="text-[10px] text-on-surface-variant">{c.note}</div>}
+                      </TD>
+                      <TD kind="actions" className="space-x-1">
+                        <button type="button" className="text-primary hover:underline text-xs font-medium" onClick={() => setOpen(open === c.id ? null : c.id)}>
+                          <ExpandToggle open={open === c.id} onClick={() => {}} label={open === c.id ? 'ซ่อน' : 'ดู'} />
+                        </button>
+                        <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => act(c.joshSyncId, () => jagotaShadowApi.recheck(c.joshSyncId), (r: { matched: boolean }) => `ตรวจซ้ำ: ${r.matched ? 'ตรง' : 'ยังไม่ตรง'}`)}>ตรวจซ้ำ</Button>
+                      </TD>
+                    </TR>
+                    {open === c.id && (
+                      <ExpandRow colSpan={6}>
+                        <ErrorText error={detail.error} />
+                        {detail.loading ? (
+                          <Loading />
+                        ) : detail.data ? (
+                          <div className="space-y-3">
+                            {!!detail.data.diffs.length && (
+                              <div>
+                                <p className="text-xs font-semibold text-on-surface-variant mb-2">ช่องที่ต่าง</p>
+                                <Table maxHeight="240px">
+                                  <THead>
+                                    <TH>ช่อง</TH>
+                                    <TH>josh ส่ง</TH>
+                                    <TH>commerce จะส่ง</TH>
+                                  </THead>
+                                  <TBody>
+                                    {detail.data.diffs.map((d) => (
+                                      <TR key={d.path}>
+                                        <TD kind="mono">{d.path}</TD>
+                                        <TD kind="mono" className="bg-error-container/20">{show(d.josh)}</TD>
+                                        <TD kind="mono" className="bg-ok-container/20">{show(d.commerce)}</TD>
+                                      </TR>
+                                    ))}
+                                  </TBody>
+                                </Table>
+                              </div>
+                            )}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <CodeBlock title="josh ส่งไป Jagota" value={detail.data.joshRequest} maxHeight={280} />
+                              <CodeBlock title="commerce จะส่ง" value={detail.data.commerceRequest} maxHeight={280} />
+                            </div>
+                          </div>
+                        ) : null}
+                      </ExpandRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TBody>
+            </Table>
+          )}
+        </Panel>
       </div>
-      {list.data && (
-        <section className="panel">
-          {list.data.items.length ? (
-            <table>
-              <thead><tr><th>Shipment / order</th><th>josh ส่งเมื่อ</th><th>ผล josh</th><th>เทียบ</th><th>ช่องที่ต่าง</th><th></th></tr></thead>
-              <tbody>{list.data.items.map((c) => (
-                <Fragment key={c.id}>
-                  <tr>
-                    <td className="mono">{c.orderReference ?? '—'}</td><td>{when(c.joshSentAt)}</td><td>{c.joshSyncStatus}</td>
-                    <td><span className={`badge ${c.matched ? 'ok' : 'danger'}`}>{c.matched ? 'ตรง' : 'ไม่ตรง'}</span></td>
-                    <td>{c.diffs.map((d) => d.path).join(', ') || c.note || '—'}{c.note && c.diffs.length > 0 && <div className="hint">{c.note}</div>}</td>
-                    <td className="row">
-                      <button className="btn ghost sm" onClick={() => setOpen(open === c.id ? null : c.id)}>{open === c.id ? 'ซ่อน' : 'ดู'}</button>
-                      <button className="btn ghost sm" disabled={!!busy} onClick={() => act(c.joshSyncId, () => jagotaShadowApi.recheck(c.joshSyncId), (r: { matched: boolean }) => `ตรวจซ้ำ: ${r.matched ? 'ตรง' : 'ยังไม่ตรง'}`)}>ตรวจซ้ำ</button>
-                    </td>
-                  </tr>
-                  {open === c.id && <tr><td colSpan={6}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
-                    <div style={{ display: 'grid', gap: 10 }}>
-                      {!!detail.data.diffs.length && (
-                        <table><thead><tr><th>ช่อง</th><th>josh ส่ง</th><th>commerce จะส่ง</th></tr></thead>
-                          <tbody>{detail.data.diffs.map((d) => <tr key={d.path}><td className="mono">{d.path}</td><td className="mono">{show(d.josh)}</td><td className="mono">{show(d.commerce)}</td></tr>)}</tbody></table>
-                      )}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                        <div><div className="hint">josh ส่งไป Jagota</div><pre className="payload">{JSON.stringify(detail.data.joshRequest, null, 2)}</pre></div>
-                        <div><div className="hint">commerce จะส่ง</div><pre className="payload">{JSON.stringify(detail.data.commerceRequest, null, 2) ?? '—'}</pre></div>
-                      </div>
-                    </div>)}</td></tr>}
-                </Fragment>
-              ))}</tbody>
-            </table>
-          ) : <div className="empty">{filter === 'mismatched' ? 'ไม่มีรายการที่ไม่ตรง' : 'ยังไม่มีรายการ'}</div>}
-        </section>
-      )}
-      {list.data && list.data.total > 50 && (
-        <div className="row" style={{ marginTop: 12, alignItems: 'center' }}>
-          <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</button>
-          <span className="hint">หน้า {page} / {Math.ceil(list.data.total / 50)}</span>
-          <button className="btn ghost sm" disabled={page >= Math.ceil(list.data.total / 50)} onClick={() => setPage(page + 1)}>ถัดไป</button>
-        </div>
-      )}
+
       <GatewaySends />
       <SyncHistory />
-    </div>
+    </Page>
   );
 }
 
@@ -114,54 +189,106 @@ function GatewaySends() {
   const detail = useAsync(() => (open ? jagotaGatewayApi.detail(open) : Promise.resolve(null)), [open]);
   const s = summary.data;
   return (
-    <section style={{ marginTop: 28 }}>
-      <div className="page-head">
-        <div>
-          <h2>ส่งจริงผ่าน commerce</h2>
-          <p>order ของ branch ที่ josh เปิดให้ส่งผ่าน commerce (<span className="mono">JAGOTA_VIA_COMMERCE_BRANCHES</span>) · commerce ส่งไป Jagota แทน josh · ส่งซ้ำไม่ได้ (1 แถวต่อเลข order)
-            {s && <> · สถานะฝั่ง commerce: <span className={`badge ${s.enabled ? 'ok' : ''}`}>{s.enabled ? 'เปิด' : 'ปิด (josh ส่งเอง)'}</span></>}</p>
-        </div>
-      </div>
-      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
+    <div className="pt-6">
+      <SectionTitle>ส่งจริงผ่าน commerce</SectionTitle>
+
+      <ErrorText error={summary.error || list.error} />
+
       {s && (
-        <div className="stat-grid">
-          <div className="stat"><div className="label">ส่งสำเร็จ (7 วัน)</div><div className="value">{s.sent}</div><div className="hint">จาก {s.total} รายการ</div></div>
-          <div className="stat"><div className="label">ล้มเหลว</div><div className={`value${s.failed ? ' attn' : ''}`}>{s.failed}</div><div className="hint">josh จะลองใหม่เอง</div></div>
-          <div className="stat"><div className="label">ส่งมากกว่า 1 ครั้ง</div><div className="value">{s.retried}</div></div>
-          <div className="stat"><div className="label">เวลาเฉลี่ย</div><div className="value">{s.avg_ms == null ? '—' : `${(s.avg_ms / 1000).toFixed(1)}s`}</div><div className="hint">ล่าสุด {when(s.last_at)}</div></div>
-        </div>
+        <>
+          <StatGrid cols={4}>
+            <StatTile
+              label="ส่งสำเร็จ (7 วัน)"
+              value={fmt.num(s.sent)}
+              foot={`จาก ${fmt.num(s.total)} รายการ`}
+              tone={s.failed ? 'warn' : 'ok'}
+            />
+            <StatTile
+              label="ล้มเหลว"
+              value={fmt.num(s.failed)}
+              foot="josh จะลองใหม่เอง"
+              tone={s.failed ? 'danger' : 'ok'}
+            />
+            <StatTile
+              label="ส่งมากกว่า 1 ครั้ง"
+              value={fmt.num(s.retried)}
+            />
+            <StatTile
+              label="เวลาเฉลี่ย"
+              value={s.avg_ms == null ? '—' : `${(s.avg_ms / 1000).toFixed(1)}s`}
+              foot={`ล่าสุด ${fmt.ago(s.last_at)}`}
+            />
+          </StatGrid>
+        </>
       )}
-      <div className="row" role="tablist" style={{ margin: '12px 0' }}>
-        {[['', 'ทั้งหมด'], ['failed', 'ล้มเหลว'], ['sent', 'สำเร็จ'], ['sending', 'กำลังส่ง']].map(([k, label]) => (
-          <button key={k} className={`btn sm ${status === k ? '' : 'ghost'}`} aria-selected={status === k} onClick={() => setStatus(k)}>{label}</button>
-        ))}
+
+      <div className="space-y-3">
+        <Segmented
+          options={[
+            { value: '', label: 'ทั้งหมด' },
+            { value: 'failed', label: 'ล้มเหลว' },
+            { value: 'sent', label: 'สำเร็จ' },
+            { value: 'sending', label: 'กำลังส่ง' },
+          ]}
+          value={status}
+          onChange={setStatus}
+        />
+
+        <Panel className="overflow-hidden">
+          {list.loading && !list.data ? (
+            <Loading />
+          ) : !list.data?.items.length ? (
+            <Empty>ยังไม่มี order ที่ส่งผ่าน commerce</Empty>
+          ) : (
+            <Table>
+              <THead>
+                <TH>Shipment / order</TH>
+                <TH>สถานะ</TH>
+                <TH>ครั้ง</TH>
+                <TH kind="mono">DOC</TH>
+                <TH right>เวลา</TH>
+                <TH right>ล่าสุด</TH>
+                <TH>ข้อผิดพลาด</TH>
+                <TH></TH>
+              </THead>
+              <TBody>
+                {list.data.items.map((r) => (
+                  <Fragment key={r.id}>
+                    <TR>
+                      <TD kind="mono">{r.orderReference}</TD>
+                      <TD><StatusChip status={r.status} /></TD>
+                      <TD>{r.attempts}</TD>
+                      <TD kind="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</TD>
+                      <TD kind="num">{r.durationMs == null ? '—' : `${(r.durationMs / 1000).toFixed(1)}s`}</TD>
+                      <TD kind="time">{fmt.when(r.updatedAt)}</TD>
+                      <TD>{r.lastError ?? '—'}</TD>
+                      <TD kind="actions">
+                        <button type="button" className="text-primary hover:underline text-xs font-medium" onClick={() => setOpen(open === r.id ? null : r.id)}>
+                          <ExpandToggle open={open === r.id} onClick={() => {}} label={open === r.id ? 'ซ่อน' : 'ดู'} />
+                        </button>
+                      </TD>
+                    </TR>
+                    {open === r.id && (
+                      <ExpandRow colSpan={8}>
+                        <ErrorText error={detail.error} />
+                        {detail.loading ? (
+                          <Loading />
+                        ) : detail.data ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <CodeBlock title="ส่งไป Jagota" value={detail.data.request} maxHeight={280} />
+                            <CodeBlock title="Jagota ตอบ" value={detail.data.response} maxHeight={280} />
+                          </div>
+                        ) : null}
+                      </ExpandRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TBody>
+            </Table>
+          )}
+        </Panel>
       </div>
-      {list.data && (
-        <section className="panel">
-          {list.data.items.length ? (
-            <table>
-              <thead><tr><th>Shipment / order</th><th>สถานะ</th><th>ครั้ง</th><th>DOC</th><th>เวลา</th><th>ล่าสุด</th><th>ข้อผิดพลาด</th><th></th></tr></thead>
-              <tbody>{list.data.items.map((r) => (
-                <Fragment key={r.id}>
-                  <tr>
-                    <td className="mono">{r.orderReference}</td>
-                    <td><span className={`badge ${r.status === 'sent' ? 'ok' : r.status === 'failed' ? 'danger' : ''}`}>{r.status}</span></td>
-                    <td>{r.attempts}</td><td className="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</td>
-                    <td>{r.durationMs == null ? '—' : `${(r.durationMs / 1000).toFixed(1)}s`}</td><td>{when(r.updatedAt)}</td><td>{r.lastError ?? '—'}</td>
-                    <td><button className="btn ghost sm" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? 'ซ่อน' : 'ดู'}</button></td>
-                  </tr>
-                  {open === r.id && <tr><td colSpan={8}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                      <div><div className="hint">ส่งไป Jagota</div><pre className="payload">{JSON.stringify(detail.data.request, null, 2)}</pre></div>
-                      <div><div className="hint">Jagota ตอบ</div><pre className="payload">{JSON.stringify(detail.data.response, null, 2) ?? '—'}</pre></div>
-                    </div>)}</td></tr>}
-                </Fragment>
-              ))}</tbody>
-            </table>
-          ) : <div className="empty">ยังไม่มี order ที่ส่งผ่าน commerce</div>}
-        </section>
-      )}
-    </section>
+    </div>
   );
 }
 
@@ -182,74 +309,126 @@ function SyncHistory() {
   const detail = useAsync(() => (open ? jagotaHistoryApi.detail(open) : Promise.resolve(null)), [open]);
   const s = summary.data;
   const pages = list.data ? Math.max(1, Math.ceil(list.data.total / 50)) : 1;
+
   async function importNow() {
     setBusy(true);
     try { const r = await jagotaHistoryApi.run(); setMsg(`ดึงใหม่ ${r.added} รายการ · อัปเดต ${r.refreshed} รายการล่าสุด`); }
     catch (e) { setMsg(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(false); }
   }
+
   return (
-    <section style={{ marginTop: 28 }}>
-      <div className="page-head">
-        <div>
-          <h2>ประวัติส่ง ERP (สำเนาจาก josh)</h2>
-          <p>ทุกครั้งที่ josh ส่ง order / shipment ไป Jagota (<span className="mono">jagota_order_sync</span>) เก็บสำเนาไว้ที่ commerce · ดูได้แม้ josh ล่ม
-            {s && <> · ทั้งหมด {s.total} รายการ · ดึงล่าสุด {when(s.last_import_at)}</>}</p>
-        </div>
-        <button className="btn sm" disabled={busy} onClick={importNow}>{busy ? 'กำลังดึง…' : 'ดึงจาก josh ตอนนี้'}</button>
+    <div className="pt-6">
+      <div className="flex items-center justify-between mb-3">
+        <SectionTitle>ประวัติส่ง ERP (สำเนาจาก josh)</SectionTitle>
+        <Button size="sm" variant="secondary" disabled={busy} onClick={importNow}>{busy ? 'กำลังดึง…' : 'ดึงจาก josh ตอนนี้'}</Button>
       </div>
-      {msg && <div className="hint">{msg}</div>}
-      {(summary.error || list.error) && <div className="err">{summary.error || list.error}</div>}
+
+      {msg && <Hint>{msg}</Hint>}
+      <ErrorText error={summary.error || list.error} />
+
       {s && s.byStatus.length > 0 && (
-        <div className="stat-grid">
+        <StatGrid cols={Math.min(4, s.byStatus.length)}>
           {s.byStatus.map((b) => (
-            <div className="stat" key={b.sync_status}><div className="label">{b.sync_status} (7 วัน)</div>
-              <div className={`value${b.sync_status === 'failed' && b.n ? ' attn' : ''}`}>{b.n}</div></div>
+            <StatTile
+              key={b.sync_status}
+              label={`${b.sync_status} (7 วัน)`}
+              value={fmt.num(b.n)}
+              tone={b.sync_status === 'failed' && b.n ? 'danger' : 'ok'}
+            />
           ))}
-        </div>
+        </StatGrid>
       )}
-      <div className="row" style={{ margin: '12px 0', gap: 8, flexWrap: 'wrap' }}>
-        {[['', 'ทั้งหมด'], ['failed', 'ล้มเหลว'], ['sent', 'ส่งแล้ว'], ['pending', 'รอส่ง']].map(([k, label]) => (
-          <button key={k} className={`btn sm ${status === k ? '' : 'ghost'}`} aria-pressed={status === k} onClick={() => { setStatus(k); setPage(1); }}>{label}</button>
-        ))}
-        <form onSubmit={(e) => { e.preventDefault(); setSearch(q.trim()); setPage(1); }} className="row" style={{ gap: 6 }}>
-          <input aria-label="ค้นหาเลข order หรือเลขเอกสาร ERP" placeholder="เลข order / DOC no." value={q} onChange={(e) => setQ(e.target.value)} />
-          <button className="btn ghost sm">ค้นหา</button>
-        </form>
+
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Segmented
+            options={[
+              { value: '', label: 'ทั้งหมด' },
+              { value: 'failed', label: 'ล้มเหลว' },
+              { value: 'sent', label: 'ส่งแล้ว' },
+              { value: 'pending', label: 'รอส่ง' },
+            ]}
+            value={status}
+            onChange={(v) => { setStatus(v); setPage(1); }}
+          />
+          <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(q.trim()); setPage(1); }}>
+            <div className="flex-1">
+              <input
+                aria-label="ค้นหาเลข order หรือเลขเอกสาร ERP"
+                placeholder="เลข order / DOC no."
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs"
+              />
+            </div>
+            <Button size="sm" variant="secondary" type="submit">ค้นหา</Button>
+          </form>
+        </div>
+
+        <Panel className="overflow-hidden">
+          {list.loading && !list.data ? (
+            <Loading />
+          ) : !list.data?.items.length ? (
+            <Empty>{s?.total ? 'ไม่พบรายการ' : 'ยังไม่ได้ดึงประวัติจาก josh'}</Empty>
+          ) : (
+            <Table>
+              <THead>
+                <TH>Order</TH>
+                <TH>สถานะ</TH>
+                <TH>ชำระ</TH>
+                <TH kind="mono">DOC</TH>
+                <TH>ส่งเมื่อ</TH>
+                <TH>ข้อผิดพลาด</TH>
+                <TH></TH>
+              </THead>
+              <TBody>
+                {list.data.items.map((r) => (
+                  <Fragment key={r.id}>
+                    <TR>
+                      <TD kind="mono">
+                        {r.orderNumber ?? r.orderId}
+                        {r.shipmentId && <div className="text-[10px] text-on-surface-variant">shipment</div>}
+                      </TD>
+                      <TD><StatusChip status={r.syncStatus} /></TD>
+                      <TD>{r.paymentMethod}{r.paymentSuccess ? ' ✓' : ''}</TD>
+                      <TD kind="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</TD>
+                      <TD kind="time">{fmt.when(r.createdAt)}</TD>
+                      <TD>{r.errorMessage ?? '—'}</TD>
+                      <TD kind="actions">
+                        <button type="button" className="text-primary hover:underline text-xs font-medium" onClick={() => setOpen(open === r.id ? null : r.id)}>
+                          <ExpandToggle open={open === r.id} onClick={() => {}} label={open === r.id ? 'ซ่อน' : 'ดู'} />
+                        </button>
+                      </TD>
+                    </TR>
+                    {open === r.id && (
+                      <ExpandRow colSpan={7}>
+                        <ErrorText error={detail.error} />
+                        {detail.loading ? (
+                          <Loading />
+                        ) : detail.data ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <CodeBlock title="josh ส่ง" value={detail.data.requestJson} maxHeight={280} />
+                            <CodeBlock title="Jagota ตอบ" value={detail.data.jagotaResponseJson} maxHeight={280} />
+                          </div>
+                        ) : null}
+                      </ExpandRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TBody>
+            </Table>
+          )}
+        </Panel>
+
+        {pages > 1 && (
+          <div className="flex items-center gap-3 justify-center py-2">
+            <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</Button>
+            <Hint>หน้า {page} / {pages}</Hint>
+            <Button size="sm" variant="secondary" disabled={page >= pages} onClick={() => setPage(page + 1)}>ถัดไป</Button>
+          </div>
+        )}
       </div>
-      {list.data && (
-        <section className="panel">
-          {list.data.items.length ? (
-            <table>
-              <thead><tr><th>Order</th><th>สถานะ</th><th>ชำระ</th><th>DOC</th><th>ส่งเมื่อ</th><th>ข้อผิดพลาด</th><th></th></tr></thead>
-              <tbody>{list.data.items.map((r) => (
-                <Fragment key={r.id}>
-                  <tr>
-                    <td className="mono">{r.orderNumber ?? r.orderId}{r.shipmentId && <div className="hint">shipment</div>}</td>
-                    <td><span className={`badge ${r.syncStatus === 'sent' ? 'ok' : r.syncStatus === 'failed' ? 'danger' : ''}`}>{r.syncStatus}</span></td>
-                    <td>{r.paymentMethod}{r.paymentSuccess ? ' ✓' : ''}</td>
-                    <td className="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</td>
-                    <td>{when(r.createdAt)}</td><td>{r.errorMessage ?? '—'}</td>
-                    <td><button className="btn ghost sm" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? 'ซ่อน' : 'ดู'}</button></td>
-                  </tr>
-                  {open === r.id && <tr><td colSpan={7}>{detail.error ? <div className="err">{detail.error}</div> : !detail.data ? 'Loading…' : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
-                      <div><div className="hint">josh ส่ง</div><pre className="payload">{JSON.stringify(detail.data.requestJson, null, 2) ?? '—'}</pre></div>
-                      <div><div className="hint">Jagota ตอบ</div><pre className="payload">{JSON.stringify(detail.data.jagotaResponseJson, null, 2) ?? '—'}</pre></div>
-                    </div>)}</td></tr>}
-                </Fragment>
-              ))}</tbody>
-            </table>
-          ) : <div className="empty">{s?.total ? 'ไม่พบรายการ' : 'ยังไม่ได้ดึงประวัติจาก josh'}</div>}
-        </section>
-      )}
-      {pages > 1 && (
-        <div className="row" style={{ gap: 8, marginTop: 8 }}>
-          <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</button>
-          <span className="hint">หน้า {page} / {pages}</span>
-          <button className="btn ghost sm" disabled={page >= pages} onClick={() => setPage(page + 1)}>ถัดไป</button>
-        </div>
-      )}
-    </section>
+    </div>
   );
 }

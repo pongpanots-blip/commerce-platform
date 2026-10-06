@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, NavLink, Navigate, Route, Routes, matchPath, useLocation } from 'react-router-dom';
-import { session } from '../lib/api';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { AppShell, Button, IconButton, NavGroup, Sidebar, StatusDot, TopBar } from '@cp/ui';
+import { AdminStats, api, reportsApi, session } from '../lib/api';
+import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Integrations } from './pages/Integrations';
@@ -39,10 +41,10 @@ import { StaffPrices } from './pages/StaffPrices';
 import { Promotions } from './pages/Promotions';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
 
-const NAV = [
-  { group: 'Platform', links: [{ to: '/', label: 'Overview', end: true }] },
+const NAV: NavGroup[] = [
+  { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
   {
-    group: 'รายงานร้าน (josh)',
+    group: 'รายงานร้าน (josh)', icon: 'storefront',
     links: [
       { to: '/reports/sales', label: 'ยอดขาย', end: false },
       { to: '/reports/products', label: 'สินค้า (josh)', end: false },
@@ -58,7 +60,7 @@ const NAV = [
     ],
   },
   {
-    group: 'หลังบ้าน josh (อ่านอย่างเดียว)',
+    group: 'หลังบ้าน josh (อ่านอย่างเดียว)', icon: 'inventory_2',
     links: [
       { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
       { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
@@ -77,7 +79,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Marketing',
+    group: 'Marketing', icon: 'campaign',
     links: [
       { to: '/marketing/research', label: 'Research', end: false },
       { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
@@ -89,9 +91,9 @@ const NAV = [
       { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
     ],
   },
-  { group: 'AI', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
+  { group: 'AI', icon: 'smart_toy', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
   {
-    group: 'ERP hub',
+    group: 'ERP hub', icon: 'hub',
     links: [
       { to: '/erp/inbound-log', label: 'Inbound log', end: false },
       { to: '/erp/josh-logs', label: 'ERP log ของ josh', end: false },
@@ -103,7 +105,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Integration',
+    group: 'Integration', icon: 'cable',
     links: [
       { to: '/integrations', label: 'Integrations', end: false },
       { to: '/webhooks', label: 'Webhook events (in)', end: false },
@@ -114,7 +116,7 @@ const NAV = [
     ],
   },
   {
-    group: 'Commerce data',
+    group: 'Commerce data', icon: 'database',
     links: [
       { to: '/customers', label: 'Customers', end: false },
       { to: '/products', label: 'Products', end: false },
@@ -125,51 +127,46 @@ const NAV = [
   },
 ];
 
-/** Grouped nav with a filter box; only the open groups (and the one holding the current page) show their links. */
-function SideNav() {
-  const { pathname } = useLocation();
-  const [query, setQuery] = useState('');
-  // Groups the user toggled; untouched groups default to open only when they hold the current page.
-  const [toggled, setToggled] = useState<Record<string, boolean>>({});
-  const q = query.trim().toLowerCase();
-  const isCurrent = (l: { to: string; end: boolean }) => Boolean(matchPath({ path: l.to, end: l.end }, pathname));
-
+/** Live operations strip above every page (Stitch "Overview" top bar), fed by the same endpoints the pages use. */
+function AdminTopBar() {
+  const navigate = useNavigate();
+  const stats = useAsync(() => api.get<AdminStats>('/admin/stats'));
+  const health = useAsync(() => reportsApi.health({ period: 'today' }));
+  const problems = health.data?.now.problems.length ?? 0;
+  const failed = stats.data?.webhooksFailed ?? 0;
   return (
-    <nav className="nav">
-      <input
-        className="nav-search"
-        type="search"
-        placeholder="ค้นหาเมนู…"
-        aria-label="ค้นหาเมนู"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      {NAV.map((section) => {
-        const links = q ? section.links.filter((l) => l.label.toLowerCase().includes(q)) : section.links;
-        if (!links.length) return null;
-        const expanded = Boolean(q) || (toggled[section.group] ?? section.links.some(isCurrent));
-        return (
-          <div key={section.group}>
-            <button
-              className="group"
-              type="button"
-              aria-expanded={expanded}
-              onClick={() => setToggled((t) => ({ ...t, [section.group]: !expanded }))}
-            >
-              <span className="chev" aria-hidden="true">{expanded ? '▾' : '▸'}</span>
-              <span className="group-name">{section.group}</span>
-              <span className="count">{links.length}</span>
-            </button>
-            {expanded &&
-              links.map((l) => (
-                <NavLink key={l.to} to={l.to} end={l.end}>
-                  {l.label}
-                </NavLink>
-              ))}
-          </div>
-        );
-      })}
-    </nav>
+    <TopBar
+      left={
+        <>
+          <span className="font-headline text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Commerce Operations</span>
+          <span className="h-3 w-px bg-secondary-container" />
+          {health.data ? (
+            <StatusDot tone={problems ? 'danger' : 'ok'}>
+              <span className="text-on-surface font-medium">{problems ? `System: ${problems} problem${problems > 1 ? 's' : ''}` : 'System: healthy'}</span>
+            </StatusDot>
+          ) : (
+            <StatusDot tone="muted">System: …</StatusDot>
+          )}
+          {stats.data && (
+            <span className="hidden md:inline-flex">
+              <StatusDot tone={stats.data.webhooksPending ? 'warn' : 'primary'}>
+                <span className="text-on-surface-variant tabular-nums">Webhooks pending: {stats.data.webhooksPending.toLocaleString()}</span>
+              </StatusDot>
+            </span>
+          )}
+        </>
+      }
+      right={
+        <>
+          <Button icon="sync_alt" onClick={() => navigate('/sync-jobs')}>Manual Sync Trigger</Button>
+          <Button onClick={() => navigate('/erp/inbound-log')}>Export Logs</Button>
+          <span className="h-4 w-px bg-secondary-container mx-1" />
+          <IconButton icon="notifications" title={failed ? `${failed} failed webhooks` : 'Notifications'} dot={failed > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />
+          <IconButton icon="terminal" title="API docs" onClick={() => window.open('/api/docs', '_blank', 'noopener')} />
+          <IconButton icon="help_outline" title="AI connectors / help" onClick={() => navigate('/ai/connectors')} />
+        </>
+      }
+    />
   );
 }
 
@@ -183,6 +180,8 @@ export function App() {
 
   if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
 
+  const claims = session.claims();
+
   function signOut() {
     session.clear();
     setSignedIn(false);
@@ -190,16 +189,18 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <div className="layout">
-        <aside className="sidebar">
-          <div className="brand">Commerce Platform<small>Admin console</small></div>
-          <SideNav />
-          <div className="side-foot">
-            <span>Signed in</span>
-            <button className="btn ghost sm" type="button" onClick={signOut}>Sign out</button>
-          </div>
-        </aside>
-        <main className="main">
+      <AppShell
+        sidebar={
+          <Sidebar
+            brand={{ title: 'Commerce Platform', subtitle: 'Admin console' }}
+            env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? 'Prod' : 'Local dev'}</>}
+            nav={NAV}
+            searchable
+            user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${claims.role}` : undefined, onSignOut: signOut }}
+          />
+        }
+        topbar={<AdminTopBar />}
+      >
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
@@ -244,8 +245,7 @@ export function App() {
             <Route path="/erp-ingest" element={<ErpIngest />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </main>
-      </div>
+      </AppShell>
     </BrowserRouter>
   );
 }

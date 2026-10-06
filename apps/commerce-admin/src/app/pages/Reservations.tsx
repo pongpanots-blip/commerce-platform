@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Button, Empty, ErrorText, Loading, Page, PageHeader, Panel, PanelHead, Pager, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { api, Paginated, ReservationRow, ordersApi } from '../../lib/api';
-import { useAsync, statusBadgeClass } from '../hooks';
+import { useAsync } from '../hooks';
 
 const STATUSES = ['', 'held', 'confirmed', 'released', 'expired', 'failed', 'reconcile'];
 
@@ -38,76 +39,85 @@ export function Reservations() {
   }
 
   const total = data?.total ?? 0;
-  const maxPage = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Reservations</h1>
-          <p>Stock holds created during checkout — held, confirmed, released, or expired.</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader
+        crumbs={['Reservations']}
+        title="Reservations"
+        subtitle="Stock holds created during checkout — held, confirmed, released, or expired."
+        actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
+      />
 
-      <div className="panel">
-        <div className="panel-head">
-          <span>
-            <label className="field" style={{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              Status
-              <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
-                {STATUSES.map((s) => <option key={s} value={s}>{s || 'all'}</option>)}
-              </select>
-            </label>
-          </span>
-          <span>
-            <button className="btn ghost sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>{' '}
-            <span className="hint">{page} / {maxPage}</span>{' '}
-            <button className="btn ghost sm" disabled={page >= maxPage} onClick={() => setPage(page + 1)}>Next</button>
-          </span>
-        </div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {actionError && <div className="err" style={{ padding: '0 16px' }}>{actionError}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.items.length ? (
-          <div className="empty">No reservations yet.</div>
+      <Panel>
+        <PanelHead
+          title={`${total.toLocaleString()} total`}
+          actions={
+            <Select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} className="w-48">
+              {STATUSES.map((s) => (
+                <option key={s} value={s}>{s || 'all statuses'}</option>
+              ))}
+            </Select>
+          }
+        />
+        <ErrorText error={error} />
+        <ErrorText error={actionError} />
+        {loading && !data ? (
+          <Loading />
+        ) : !data?.items.length ? (
+          <Empty>No reservations yet.</Empty>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>SKU</th><th>Qty</th><th>Mode</th><th>Status</th><th>External ref</th>
-                <th>Expires</th><th>Promised</th><th>Fail reason</th><th>Order</th><th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.items.map((r) => {
-                const remaining = remainingHint(r.expiresAt);
-                return (
-                  <tr key={r.id}>
-                    <td className="mono">{r.sku}</td>
-                    <td>{r.qty}</td>
-                    <td className="mono">{r.mode}</td>
-                    <td><span className={statusBadgeClass(r.status)}>{r.status}</span></td>
-                    <td className="mono">{r.externalRef ?? '—'}</td>
-                    <td>
-                      {r.expiresAt ? new Date(r.expiresAt).toLocaleString() : '—'}
-                      {remaining && <div className="hint">{remaining}</div>}
-                    </td>
-                    <td>{r.promisedDate ?? '—'}</td>
-                    <td>{r.failReason ?? '—'}</td>
-                    <td className="mono">{r.orderId.slice(0, 8)}…</td>
-                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      <button className="btn ghost sm" disabled={r.status !== 'held' || busy === r.orderId}
-                        title="Releases ALL held reservations on this order" onClick={() => release(r.orderId)}>
-                        {busy === r.orderId ? '…' : 'Release order holds'}
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <>
+            <Table>
+              <THead>
+                <TH>SKU</TH>
+                <TH>Qty</TH>
+                <TH>Mode</TH>
+                <TH>Status</TH>
+                <TH>External ref</TH>
+                <TH>Expires</TH>
+                <TH>Promised</TH>
+                <TH>Fail reason</TH>
+                <TH>Order</TH>
+                <TH>Actions</TH>
+              </THead>
+              <TBody>
+                {data.items.map((r) => {
+                  const remaining = remainingHint(r.expiresAt);
+                  return (
+                    <TR key={r.id}>
+                      <TD kind="mono">{r.sku}</TD>
+                      <TD>{r.qty}</TD>
+                      <TD kind="mono">{r.mode}</TD>
+                      <TD><StatusChip status={r.status} /></TD>
+                      <TD kind="mono">{r.externalRef ?? '—'}</TD>
+                      <TD kind="time">
+                        {r.expiresAt ? fmt.when(r.expiresAt) : '—'}
+                        {remaining && <div className="text-[10px] text-on-surface-variant">{remaining}</div>}
+                      </TD>
+                      <TD>{r.promisedDate ?? '—'}</TD>
+                      <TD>{r.failReason ?? '—'}</TD>
+                      <TD kind="mono">{r.orderId.slice(0, 8)}…</TD>
+                      <TD kind="actions">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={r.status !== 'held' || busy === r.orderId}
+                          title="Releases ALL held reservations on this order"
+                          onClick={() => release(r.orderId)}
+                        >
+                          {busy === r.orderId ? '…' : 'Release'}
+                        </Button>
+                      </TD>
+                    </TR>
+                  );
+                })}
+              </TBody>
+            </Table>
+            <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
+          </>
         )}
-      </div>
-    </div>
+      </Panel>
+    </Page>
   );
 }

@@ -1,0 +1,94 @@
+/*
+ * Shared design tokens for commerce-admin and commerce-portal.
+ * Source of truth: the Stitch project "Commerce Platform — Admin + Portal refresh"
+ * (exported screens live in docs/design/stitch/). Names match Stitch's Tailwind config,
+ * so classes copied from a Stitch export (bg-surface-container-low, text-on-surface-variant…) work as-is.
+ *
+ * Each app's styles.css does: @import "tailwindcss"; @import "<this file>"; @source "<libs/ui/src>";
+ */
+@theme {
+  --font-sans: Inter, 'Noto Sans Thai', ui-sans-serif, system-ui, sans-serif;
+  --font-headline: Inter, 'Noto Sans Thai', sans-serif;
+  --font-body: Inter, 'Noto Sans Thai', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-background: #f9f9ff;
+  --color-surface: #f9f9ff;
+  --color-surface-bright: #f9f9ff;
+  --color-surface-dim: #c7dbff;
+  --color-surface-tint: #3052d2;
+  --color-surface-variant: #d5e3ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f3ff;
+  --color-surface-container: #e7eeff;
+  --color-surface-container-high: #dee8ff;
+  --color-surface-container-highest: #d5e3ff;
+  --color-on-background: #1b3353;
+  --color-on-surface: #1b3353;
+  --color-on-surface-variant: #4a6083;
+  --color-inverse-surface: #070e19;
+  --color-inverse-on-surface: #969dac;
+  --color-inverse-primary: #6d88ff;
+  --color-outline: #657ca0;
+  --color-outline-variant: #9cb3da;
+
+  --color-primary: #3052d2;
+  --color-primary-dim: #2044c5;
+  --color-on-primary: #f9f6ff;
+  --color-primary-container: #dde1ff;
+  --color-on-primary-container: #1e43c5;
+  --color-primary-fixed: #dde1ff;
+  --color-primary-fixed-dim: #cbd2ff;
+  --color-on-primary-fixed: #002fab;
+  --color-on-primary-fixed-variant: #2d4ecf;
+
+  --color-secondary: #5f5e62;
+  --color-secondary-dim: #535356;
+  --color-on-secondary: #fbf8fc;
+  --color-secondary-container: #e4e1e6;
+  --color-on-secondary-container: #525155;
+  --color-secondary-fixed: #e4e1e6;
+  --color-secondary-fixed-dim: #d6d3d8;
+  --color-on-secondary-fixed: #3f3f43;
+  --color-on-secondary-fixed-variant: #5c5b5f;
+
+  --color-tertiary: #645b77;
+  --color-tertiary-dim: #584f6a;
+  --color-on-tertiary: #fdf7ff;
+  --color-tertiary-container: #e7dafc;
+  --color-on-tertiary-container: #544c67;
+  --color-tertiary-fixed: #e7dafc;
+  --color-tertiary-fixed-dim: #d8cced;
+  --color-on-tertiary-fixed: #423953;
+  --color-on-tertiary-fixed-variant: #5e5571;
+
+  --color-error: #9e3f4e;
+  --color-error-dim: #4f0116;
+  --color-on-error: #fff7f7;
+  --color-error-container: #ff8b9a;
+  --color-on-error-container: #782232;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    background: var(--color-background);
+    color: var(--color-on-surface);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+  }
+  td, .tabular-nums { font-variant-numeric: tabular-nums; }
+}
+
+/* Material Symbols (font loaded in each app's index.html), sized like the Stitch exports. */
+.material-symbols-outlined {
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}

@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Button, ErrorText, Field, Icon, Input } from '@cp/ui';
 import { auth } from '../../lib/api';
 
 export function Register() {
@@ -24,26 +25,68 @@ export function Register() {
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <h1>Create developer account</h1>
-        <p>Register to get API keys and subscribe webhooks to platform events.</p>
-        <form onSubmit={submit}>
-          <label className="field">
-            Email
-            <input type="email" required value={email} autoComplete="username"
-              onChange={(e) => setEmail(e.target.value)} placeholder="dev@example.com" />
-          </label>
-          <label className="field">
-            Password
-            <input type="password" required minLength={8} value={password} autoComplete="new-password"
-              onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" />
-          </label>
-          {error && <div className="err">{error}</div>}
-          <button className="btn" disabled={submitting}>{submitting ? 'Creating account…' : 'Register'}</button>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Brand section */}
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+              <Icon name="polyline" size={24} />
+            </div>
+            <div className="text-left">
+              <div className="font-headline text-lg font-semibold text-on-surface">Commerce Platform</div>
+              <div className="text-xs text-on-surface-variant">Developer portal</div>
+            </div>
+          </div>
+          <h1 className="font-headline text-2xl font-semibold text-on-surface">Create account</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Get API keys and subscribe to webhooks</p>
+        </div>
+
+        {/* Form card */}
+        <form
+          onSubmit={submit}
+          className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-6 space-y-4"
+        >
+          <Field label="Email" hint="Your account email">
+            <Input
+              type="email"
+              required
+              value={email}
+              autoComplete="username"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="dev@example.com"
+            />
+          </Field>
+
+          <Field label="Password" hint="At least 8 characters">
+            <Input
+              type="password"
+              required
+              minLength={8}
+              value={password}
+              autoComplete="new-password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </Field>
+
+          {error && <ErrorText error={error} />}
+
+          <Button
+            variant="primary"
+            className="w-full"
+            disabled={submitting}
+            type="submit"
+          >
+            {submitting ? 'Creating account…' : 'Register'}
+          </Button>
         </form>
-        <div className="auth-switch">
-          Already have an account? <Link to="/login">Sign in</Link>
+
+        {/* Sign in link */}
+        <div className="text-center mt-4">
+          <span className="text-sm text-on-surface-variant">
+            Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Sign in</Link>
+          </span>
         </div>
       </div>
     </div>

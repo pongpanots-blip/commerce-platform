@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { api, WebhookEvent } from '../../lib/api';
-import { useAsync, statusBadgeClass } from '../hooks';
+import { useAsync } from '../hooks';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection } from '@cp/ui';
 
 export function Webhooks() {
   const { data, loading, error, reload } = useAsync(() => api.get<WebhookEvent[]>('/webhooks'));
-  const [selected, setSelected] = useState<WebhookEvent | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
   async function replay(id: string) {
@@ -18,58 +19,43 @@ export function Webhooks() {
   }
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Webhook events</h1>
-          <p>Inbound webhooks — stored raw, processed asynchronously, replayable.</p>
-        </div>
-        <button className="btn ghost" onClick={reload}>Refresh</button>
-      </div>
+    <Page>
+      <PageHeader crumbs={['Webhooks', 'Events']} title="Webhook events" subtitle="Inbound webhooks — stored raw, processed asynchronously, replayable." actions={<button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface" onClick={reload}>Refresh</button>} />
 
-      <div className="panel">
-        <div className="panel-head">Recent events</div>
-        {error && <div className="err" style={{ padding: 16 }}>{error}</div>}
-        {loading ? <div className="empty">Loading…</div> : !data?.length ? (
-          <div className="empty">No webhook events yet.</div>
+      <Panel>
+        <PanelHead title="Recent events" />
+        <ErrorText error={error} />
+        {loading ? <Loading /> : !data?.length ? (
+          <Empty>No webhook events yet.</Empty>
         ) : (
-          <table>
-            <thead><tr><th>Received</th><th>Integration</th><th>Signature</th><th>Status</th><th>Attempts</th><th></th></tr></thead>
-            <tbody>
+          <Table>
+            <THead>
+              <TH>Received</TH><TH>Integration</TH><TH>Signature</TH><TH>Status</TH><TH>Attempts</TH><TH></TH>
+            </THead>
+            <TBody>
               {data.map((w) => (
-                <tr key={w.id}>
-                  <td>{new Date(w.createdAt).toLocaleString()}</td>
-                  <td className="mono">{w.integrationId.slice(0, 8)}…</td>
-                  <td>{w.signatureValid
-                    ? <span className="badge ok">valid</span>
-                    : <span className="badge danger">invalid</span>}</td>
-                  <td><span className={statusBadgeClass(w.status)}>{w.status}</span></td>
-                  <td>{w.attempts}</td>
-                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                    <button className="btn ghost sm" onClick={() => setSelected(w)}>View</button>{' '}
-                    <button className="btn sm" disabled={busy === w.id || !w.signatureValid}
-                      onClick={() => replay(w.id)}>
-                      {busy === w.id ? '…' : 'Replay'}
-                    </button>
-                  </td>
-                </tr>
+                <Fragment key={w.id}>
+                  <TR>
+                    <TD kind="time">{fmt.when(w.createdAt)}</TD>
+                    <TD kind="mono">{w.integrationId.slice(0, 8)}…</TD>
+                    <TD><StatusChip status={w.signatureValid ? 'valid' : 'invalid'} /></TD>
+                    <TD><StatusChip status={w.status} /></TD>
+                    <TD>{w.attempts}</TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === w.id} onClick={() => setExpandedId(cur => cur === w.id ? null : w.id)} /> <button className="inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 px-3 py-1.5 text-xs bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs" disabled={busy === w.id || !w.signatureValid} onClick={() => replay(w.id)}>{busy === w.id ? '…' : 'Replay'}</button></TD>
+                  </TR>
+                  {expandedId === w.id && (
+                    <ExpandRow colSpan={6}>
+                      <DetailSection title="Payload">
+                        <CodeBlock title="" value={w.payload} maxHeight={400} />
+                      </DetailSection>
+                    </ExpandRow>
+                  )}
+                </Fragment>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         )}
-      </div>
-
-      {selected && (
-        <div className="panel">
-          <div className="panel-head">
-            Payload · {selected.id.slice(0, 8)}…
-            <button className="btn ghost sm" onClick={() => setSelected(null)}>Close</button>
-          </div>
-          <div style={{ padding: 16 }}>
-            <pre className="payload">{JSON.stringify(selected.payload, null, 2)}</pre>
-          </div>
-        </div>
-      )}
-    </div>
+      </Panel>
+    </Page>
   );
 }

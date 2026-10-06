@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine AS deps
+# JS build runs natively on the CI host (arch-independent output); only the final stage is the target arch.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./

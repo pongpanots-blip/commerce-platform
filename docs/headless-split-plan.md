@@ -165,6 +165,11 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 - พิจารณาคำขอวงเงิน: มีแล้ว (josh › Credit terms)
 - สวิตช์ josh `COMMERCE_OWNS_CUSTOMERS` ล็อกการแก้เหล่านี้ใน josh · ลูกค้าแก้โปรไฟล์บริษัทตัวเองและการรวมบัญชียังเหมือนเดิม
 
+**campaign / โปรโมชัน / คูปอง / segment / push** — ตัดสินแล้ว (2026-10-06): **ข้อมูลและการเขียนอยู่ที่ josh · commerce เป็นที่สั่งงาน** (หน้า admin ตัวเต็มใต้ /j, MCP สร้าง/แก้แบบยืนยันก่อน, รายงาน, price shadow)
+- ตรวจโค้ดแล้ว: checkout ของ josh เขียนตารางเหล่านี้เอง (`coupons.global_used_count`, `promotion_mechanics.sold_units`, `coupon_usages`, `promotion_mechanic_usages`, `coupons.status` จาก cron) และทุกการแก้ใน admin ของ josh ล้าง cache ราคา SKU / การแสดงโปร / แคตตาล็อก และ revalidate หน้าร้าน · โมดูลคูปองรวม logic ใช้คูปองตอน checkout กับ admin ไว้ในชุดเดียวกัน (5.5k บรรทัด) · promotion page พึ่ง product / banner service
+- ย้ายเจ้าของมา commerce = คัดลอก ~10k บรรทัดที่ผูกกับหน้าร้าน + ต้องดูแลสูตรราคาสองที่ · ถ้าสองที่ไม่ตรงกัน checkout คิดราคาผิด · และ commerce ล่มก็ยังขายได้อยู่แล้วเพราะข้อมูลอยู่ josh — ไม่คุ้มความเสี่ยง
+- ถ้าวันหน้าจะย้าย: แยกตามคอลัมน์ (commerce เป็นเจ้าของนิยาม · josh เป็นเจ้าของตัวนับ) ด้วยกลไก mirror เดียวกับ winback · josh ต้องล้าง cache ตอนรับสำเนา
+
 **winback (แอปฝ่ายขาย saleactivity)** — ย้ายมา commerce แล้ว (ปิดไว้ · สลับด้วยสวิตช์)
 - โค้ด: โมดูล winback ของ josh ทั้งหมด (คัดลอกตรงตัว `modules/platform/winback`, เทส 282 ข้อของ josh ผ่านใน commerce) บนตาราง winback 6 ตารางของ commerce (migration 1793800000000 = schema ของ josh) · ข้อมูล josh ที่อ่าน (users, orders, companies, restaurant_place, erp_sales_history, cuisine) อ่านจาก replica
 - แอปยัง login ที่ josh: commerce ตรวจ access token ของ josh เอง (`JOSH_JWT_SECRET` + token_version/role ภายใน จาก replica)

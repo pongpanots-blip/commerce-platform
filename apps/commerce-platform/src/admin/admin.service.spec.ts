@@ -63,3 +63,34 @@ describe('AdminService.applyErpIngest', () => {
     expect(res).toEqual({ id: 'r-1', status: 'applied' });
   });
 });
+
+describe('AdminService.stats', () => {
+  it('returns the counts plus the Overview card details', async () => {
+    const oldest = new Date('2026-10-06T01:00:00Z');
+    const stockAt = new Date('2026-10-06T02:00:00Z');
+    // count() answers in call order: integrations, webhooks x2, outbox, syncJobs, customers, products, inventory, then the detail counts.
+    const repo = (counts: number[], extra: Record<string, unknown> = {}) => ({ count: jest.fn().mockImplementation(() => Promise.resolve(counts.shift())), ...extra });
+    const integrations = repo([3, 2]);
+    const webhooks = repo([12, 3], { findOne: jest.fn().mockResolvedValue({ id: 'w', createdAt: oldest }) });
+    const syncJobs = repo([300, 40, 38, 2]);
+    const outbox = repo([0]);
+    const customers = repo([150, 18]);
+    const products = repo([400]);
+    const qb = { select: jest.fn().mockReturnThis(), getRawOne: jest.fn().mockResolvedValue({ n: '3' }) };
+    const inventory = repo([1200], { findOne: jest.fn().mockResolvedValue({ id: 'i', updatedAt: stockAt }), createQueryBuilder: jest.fn().mockReturnValue(qb) });
+    const service = new AdminService(
+      integrations as never, webhooks as never, syncJobs as never, outbox as never,
+      customers as never, products as never, inventory as never, {} as never, {} as never,
+    );
+    const res = await service.stats();
+    expect(res).toMatchObject({ integrations: 3, webhooksPending: 12, webhooksFailed: 3, outboxBacklog: 0, syncJobsRecent: 300, customers: 150, products: 400, inventoryLevels: 1200 });
+    expect(res.details).toEqual({
+      oldestPendingWebhookAt: oldest.toISOString(),
+      syncJobs24h: { total: 40, completed: 38, failed: 2 },
+      customersNew7d: 18,
+      integrationsActive: 2,
+      warehouses: 3,
+      inventoryUpdatedAt: stockAt.toISOString(),
+    });
+  });
+});

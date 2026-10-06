@@ -2,17 +2,45 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WebhookSubscription } from '../../modules/integration/webhook-subscription/infrastructure/webhook-subscription.entity';
+import { WebhookDelivery } from '../../modules/integration/webhook-subscription/infrastructure/webhook-delivery.entity';
 import { EVENT_CATALOG } from './event-catalog';
 
 @Injectable()
 export class PortalWebhooksService {
   constructor(
     @InjectRepository(WebhookSubscription) private readonly repo: Repository<WebhookSubscription>,
+    @InjectRepository(WebhookDelivery) private readonly deliveriesRepo: Repository<WebhookDelivery>,
   ) {}
 
   async listForAccount(accountId: string): Promise<Omit<WebhookSubscription, 'secret'>[]> {
     const rows = await this.repo.find({ where: { accountId }, order: { createdAt: 'DESC' } });
     return rows.map((r) => this.stripSecret(r));
+  }
+
+  async recentDeliveriesForAccount(accountId: string, limit = 10): Promise<any[]> {
+    // Get all subscriptions for this account
+    const subs = await this.repo.find({ where: { accountId }, select: ['id'] });
+    if (!subs.length) return [];
+    const subIds = subs.map((s) => s.id);
+
+    // Get recent deliveries for those subscriptions
+    const deliveries = await this.deliveriesRepo
+      .createQueryBuilder('d')
+      .where('d.subscriptionId IN (:...subIds)', { subIds })
+      .orderBy('d.createdAt', 'DESC')
+      .limit(limit)
+      .getMany();
+
+    return deliveries.map((d) => ({
+      id: d.id,
+      webhookId: d.subscriptionId,
+      eventType: d.eventType,
+      url: d.targetUrl,
+      status: d.statusCode,
+      attempts: d.attempts,
+      createdAt: d.createdAt,
+      error: d.error,
+    }));
   }
 
   async createForAccount(accountId: string, dto: {

@@ -20,6 +20,11 @@ export class PortalWebhooksController {
     return { items: EVENT_CATALOG };
   }
 
+  @Get('deliveries')
+  deliveries(@Req() req: { portalAccount: { accountId: string } }) {
+    return this.service.recentDeliveriesForAccount(req.portalAccount.accountId);
+  }
+
   @Get('webhooks')
   list(@Req() req: { portalAccount: { accountId: string } }) {
     return this.service.listForAccount(req.portalAccount.accountId);

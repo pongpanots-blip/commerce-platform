@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { ErpFeedEntityType, ErpIngestRecord } from '../erp-ingest-record.entity';
 import { ErpIngestService } from './erp-ingest.service';
@@ -10,6 +10,9 @@ import { InventoryLedgerService } from '../../../../commerce/inventory/applicati
 import { Product } from '../../../../commerce/product/infrastructure/product.entity';
 import { Warehouse } from '../../../../commerce/warehouse/infrastructure/warehouse.entity';
 import { EVENT_BUS, IEventBus } from '../../../../../shared-kernel/interfaces/event-bus.interface';
+import { ownsPrices, ProductPricesService } from '../../../../commerce/product-prices/product-prices.service';
+
+const toNum = (v: string | number | null | undefined) => (v == null || v === '' ? null : Number(v));
 
 export type ErpFeedKind = 'qty' | 'price' | 'moq';
 
@@ -39,6 +42,8 @@ export class ErpFeedService {
     private readonly mapping: MappingService,
     private readonly ledger: InventoryLedgerService,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
+    /** Stage 4a: ERP price / MOQ go to commerce's MER queue once it owns prices. */
+    @Optional() private readonly prices?: ProductPricesService,
   ) {}
 
   async receive(kind: ErpFeedKind, items: unknown[]): Promise<void> {
@@ -93,12 +98,17 @@ export class ErpFeedService {
         });
       } else if (kind === 'price') {
         const price = parsed as ParsedFeedPrice;
+        // Stage 4a: once commerce owns prices, ERP price changes wait in commerce's MER queue.
+        if (ownsPrices() && this.prices) {
+          await this.prices.stage(manager, parsed.sku, { sellingUnitPrice: toNum(price.sellingUnitPrice), orderingPrice: toNum(price.orderingPrice) }, receivedAt);
+        }
         event = new ProductPriceChanged(product.id, {
           ...base, changedAt: receivedAt.toISOString(),
           orderingPrice: price.orderingPrice, sellingUnitPrice: price.sellingUnitPrice,
         });
       } else {
         const moq = parsed as ParsedFeedMoq;
+        if (ownsPrices() && this.prices) await this.prices.stage(manager, parsed.sku, { moq: toNum(moq.moq) }, receivedAt);
         event = new ProductMoqChanged(product.id, { ...base, changedAt: receivedAt.toISOString(), moq: moq.moq });
       }
 

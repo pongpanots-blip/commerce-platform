@@ -83,6 +83,19 @@ describe('JoshActionsController — back-office actions', () => {
     } finally { delete process.env.COMMERCE_OWNS_PRODUCT_CONTENT; }
   });
 
+  it('stage 4d: once commerce owns the product master, status / category / units go to commerce, the rest to josh', async () => {
+    const masters = { edit: jest.fn(async () => ({})) };
+    const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : masters) } as never);
+    process.env.COMMERCE_OWNS_PRODUCT_MASTER = 'true';
+    try {
+      await ctl.updateProduct(ID, { fields: { product_status: 'inactive', category_id: 'cat-1', selling_unit: 'KG', low_stock_threshold: 5 } }, req);
+      expect(masters.edit).toHaveBeenCalledWith('SKU-1', { product_status: 'inactive', selling_unit: 'KG', category_id: 'cat-1' }, 'staff-1');
+      expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { low_stock_threshold: 5 } }, expect.anything(), 'admin');
+      await expect(ctl.updateProduct(ID, { fields: { product_status: 'gone' } }, req)).rejects.toThrow('product_status');
+    } finally { delete process.env.COMMERCE_OWNS_PRODUCT_MASTER; }
+  });
+
   it('a product not in the catalog copy yet is pulled from josh once before its content / price is saved', async () => {
     const contents = { edit: jest.fn(async () => ({})) };
     const db = { query: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([{ sku: 'SKU-9' }]) };

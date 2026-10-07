@@ -9,6 +9,7 @@
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- prices   (stage 4a; prices + MER queue, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- contents   (stage 4b; product content, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- categories   (stage 4c; category tree + brands, replaced, before the switch)
+ *   JOSH_DATABASE_URL=… npm run import-from-josh -- masters   (stage 4d; ERP product master of live SKUs + its MER queue, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- all
  *
  * - Reads josh with SELECTs only (use a read-only user / the replica).
@@ -34,8 +35,9 @@ import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-c
 import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 import { JOSH_CONTENT_SQL } from '../modules/commerce/product-contents/content-fields';
 import { CATEGORY_COLUMNS } from '../modules/commerce/product-categories/category-rules';
+import { JOSH_MASTER_SQL, MASTER_KEYS } from '../modules/commerce/product-masters/master-fields';
 
-type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history' | 'prices' | 'contents' | 'categories';
+type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history' | 'prices' | 'contents' | 'categories' | 'masters';
 /**
  * userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key, comma-separated
  * for a composite one (default id) · target: commerce table when it differs · customerColumn: keep only rows whose
@@ -69,6 +71,8 @@ const PLANS: Record<Scope, Plan[]> = {
   contents: [],
   // Stage 4c: replaced whole in importCategories (codes are unique, so a row-by-row upsert can collide).
   categories: [],
+  // Stage 4d: built by JOSH_MASTER_SQL in importMasters.
+  masters: [],
 };
 
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`;
@@ -188,6 +192,39 @@ async function importCategories(josh: DataSource, commerce: DataSource) {
   console.log(`product_category → product_categories: ${tree.length} · brand → product_brands: ${brands.length}`);
 }
 
+/**
+ * Stage 4d: josh's live products' ERP master → product_masters (paged by SKU), and the master part of josh's MER queue
+ * (erp_pending_payload of live products) → product_master_pending (replaced).
+ */
+async function importMasters(josh: DataSource, commerce: DataSource) {
+  let last = '';
+  let total = 0;
+  for (;;) {
+    const rows: Array<{ sku: string; fields: Record<string, unknown> }> = await josh.query(
+      `${JOSH_MASTER_SQL} AND p.product_inventory_sku > $1 ORDER BY p.product_inventory_sku LIMIT 1000`, [last]);
+    if (!rows.length) break;
+    await commerce.query(
+      `INSERT INTO product_masters (product_inventory_sku, fields, source, updated_by, updated_at)
+       SELECT r.sku, r.fields, 'import', NULL, now() FROM jsonb_to_recordset($1::jsonb) AS r(sku varchar, fields jsonb)
+       ON CONFLICT (product_inventory_sku) DO UPDATE SET fields = EXCLUDED.fields, source = 'import', updated_by = NULL, updated_at = now()`,
+      [JSON.stringify(rows)]);
+    total += rows.length;
+    last = rows[rows.length - 1].sku;
+  }
+  const keys = MASTER_KEYS.map((k) => `'${k}'`).join(', ');
+  const pending: Array<{ sku: string; patch: Record<string, unknown>; at: Date | null }> = await josh.query(
+    `SELECT product_inventory_sku AS sku, (SELECT jsonb_object_agg(k, v) FROM jsonb_each(erp_pending_payload) e(k, v) WHERE k IN (${keys})) AS patch,
+            erp_pending_at AS at
+       FROM product_inventory WHERE product_status IS DISTINCT FROM 'draft' AND erp_pending_payload ?| array[${keys}]`);
+  await commerce.transaction(async (m) => {
+    await m.query(`DELETE FROM product_master_pending`);
+    for (const r of pending) {
+      await m.query(`INSERT INTO product_master_pending (product_inventory_sku, patch, changed_at) VALUES ($1, $2, $3)`, [r.sku, JSON.stringify(r.patch), r.at]);
+    }
+  });
+  console.log(`product_inventory (live) → product_masters: ${total} SKUs · erp_pending_payload (master keys) → product_master_pending: ${pending.length}`);
+}
+
 const PAGE = 5000;
 
 /** Big tables: pages of PAGE rows by plan.pageBy, one multi-row upsert each, so memory stays flat. */
@@ -215,15 +252,15 @@ async function copyPaged(josh: DataSource, commerce: DataSource, plan: Plan, int
 async function main() {
   const scope = process.argv[2] as Scope | 'all' | undefined;
   const url = process.env.JOSH_DATABASE_URL;
-  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'all'].includes(scope)) {
-    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|all>');
+  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'masters', 'all'].includes(scope)) {
+    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|masters|all>');
     process.exit(1);
   }
   const josh = await new DataSource({ type: 'postgres', url, entities: [] }).initialize();
   const commerce = await AppDataSource.initialize();
   try {
     const users = await userMaps(josh, commerce);
-    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories'] as const) : [scope];
+    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'masters'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
         const replica = new JoshReplica();
@@ -234,6 +271,7 @@ async function main() {
       if (s === 'prices') await importPendingPrices(josh, commerce);
       if (s === 'contents') await importContents(josh, commerce);
       if (s === 'categories') await importCategories(josh, commerce);
+      if (s === 'masters') await importMasters(josh, commerce);
     }
   } finally {
     await josh.destroy();

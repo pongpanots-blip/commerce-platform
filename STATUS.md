@@ -1,6 +1,6 @@
 # Status — Stage 5: data jobs read commerce copies (branch `feat/stage5-data-jobs`)
 
-Updated 2026-10-07. Not pushed.
+Updated 2026-10-07. Not pushed. Commerce-only items are done; the rest need josh changes (S5-11/12) or owner decisions.
 
 ## Done
 - **Inventory + plan:** `docs/superpowers/plans/2026-10-08-stage5-data-jobs.md`.
@@ -58,6 +58,8 @@ Updated 2026-10-07. Not pushed.
 - **S5-14, josh-only pages explain themselves:** `joshOnly(why)` in `system-health.ts` replaces the bare replica
   503 at every remaining replica gate. Each page now says, in Thai, whether it is in josh-admin, a cutover tool, or not
   copied yet. Pages already show the backend message, so no frontend change was needed. Spec: 3 passing.
+- **Runbook:** `docs/runbooks/stage5-reports-copies.md` lists every switch, its parity check, the order to flip them,
+  what still needs the replica and why, and which crons to turn off (S5-15).
 - **Customers report: deferred.** It is mostly KYC, credit and branch data. It waits on open question 1 and the
   S5-11 company/branch snapshots.
 

@@ -78,7 +78,7 @@ copy · D = drop/defer (other stage or no report value).
 | 8 | `connector/josh/josh-customers.ts` | `GET /reports/customers[/summary|/:id]`; MCP `josh_customers` | `company`, `branch`, `users`, `orders`, `kyc_document`, `credit_term_applications` (+ paid) | `josh_customers`, `josh_companies`, `josh_orders`, `customer_metrics` | company business/credit fields, `branch`, KYC, credit applications | R* basic; C for company/branch; **KYC/credit = open question** |
 | 9 | `growth/growth-data.service.ts` | `GET /growth/workspace|results/:id|timeline/:companyId`; MCP `growth_*`; `growth.service.evidence()` | `insights.sales`, `cart_snapshot`, `user_devices`, `winback_account`, `winback_activity`, `company`, `orders`, `users`, `marketing_workflow_enrollments`, `marketing_workflows` | sales via #3, commerce `winback_*` (owned since 2b — josh's copy is stale), `josh_companies`, `josh_orders`, `josh_users` | `cart_snapshot`, `user_devices`, marketing workflow tables | **R\* — done (S5-6)**: `GROWTH_SOURCE` (carts/workflows "not copied"); results needs #12 |
 | 10 | `growth/growth.service.ts` | `/growth/readiness`, plans | only `replica.configured` | readiness → "copies" status | – | **R — done (S5-6)**: `dataSource`; josh **writes** via API stay |
-| 11 | `connector/josh/josh-backoffice.ts` | `GET /reports/backoffice[/:view]`; MCP `josh_backoffice` | 16 views: KYC, credit, CN/CB, invoices, shipments, payments, coupons, campaigns, user_segments, supplier, internal docs, admin access requests | segments view → `segments`; rest none | almost all — josh operational back-office | D (stays josh-admin's job; stage 6 staff admin decides) except `segments` view → R |
+| 11 | `connector/josh/josh-backoffice.ts` | `GET /reports/backoffice[/:view]`; MCP `josh_backoffice` | 16 views: KYC, credit, CN/CB, invoices, shipments, payments, coupons, campaigns, user_segments, supplier, internal docs, admin access requests | segments view → `segments`; rest none | almost all — josh operational back-office | D (stays josh-admin's job; stage 6 staff admin decides). `segments` view: already served by `/j/segments` on commerce's own segments (2a) — the backoffice copy is redundant, drop in stage 7 |
 | 12 | `connector/josh/josh-marketing-workflows.ts` (+controller) | `GET /reports/marketing-workflows[/:id]`; MCP | `marketing_workflow*` (4 tables) | none | all | C (`marketing_workflow.snapshot`) — or ownership move with stage 2 marketing; writes already go through `JoshActions` |
 | 13 | `connector/josh/josh-push-campaigns.ts` | `GET /reports/push-campaigns*`; MCP `push_campaigns` | `push_campaigns` (+ Mongo deliveries) | none | `push_campaigns` | C (`push_campaign.snapshot`, small table) |
 | 14 | `connector/josh/josh-products.ts` | `GET /reports/products*`; MCP `josh_products` | `product_inventory`, `product_media`, `product_translation`, `product_category` | `josh_catalog_products` + owned `product_prices/contents/masters/images/categories/brands`, `inventory_levels` | category id/path, original price, sup_code, qty, low-stock, MOQ, order-taking, ERP-pending, image list (see S5-4) | **R\*** — needs `catalog.snapshot` extension (S5-11) |
@@ -351,6 +351,10 @@ Until decided the page stays on the replica. No new snapshot group invented here
 Stage 2c pattern: josh migration (trigger → `commerce_outbox`), `commerce-snapshot.builder.ts` group, drainer type,
 backfill group; commerce migration (real-column copy table + tombstones), `josh-events.service.ts` case, PDPA wipe,
 `docs/event-contract.md`, runbook. One group per commit.
+
+### Ops runbook
+
+All switches, their parity checks and order: `docs/runbooks/stage5-reports-copies.md`.
 
 ### Task S5-14 / S5-16: no more "not configured"
 

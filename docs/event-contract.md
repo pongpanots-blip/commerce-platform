@@ -54,6 +54,11 @@ Body:
 | `inventory.qty.changed` | `PUT /erp/products/qty` **หรือ** การปรับสต็อกในคลังที่ commerce เป็นเจ้าของ | `source` (`erp` / `commerce`), `quantity` (int ≥ 0), `previousQuantity`, `warehouseCode`, `reason`, `ingestRecordId` (erp) หรือ `movementId` (commerce) |
 | `product.price.changed` | `PUT /erp/products/price` | `orderingPrice`, `sellingUnitPrice` (string 2 ตำแหน่ง หรือ null = ไม่เปลี่ยน) |
 | `product.moq.changed` | `PUT /erp/products/moq` | `moq` |
+| `segment.upserted` | สร้าง / แก้ segment ใน commerce-admin (ขั้น 2a, `COMMERCE_OWNS_SEGMENTS=true`) | `id`, `slug`, `name`, `description`, `rule_type`, `rule_config`, `definition`, `priority`, `is_active`, `frozen_at` (ISO หรือ null), `member_count` — id เดียวกับ segment เดิมของ platform |
+| `segment.members` | ตามหลัง `segment.upserted` ของ segment ที่ freeze แล้ว | `segmentId`, `frozenAt`, `part`, `parts`, `userIds` (≤ 5000 ต่อ part) — part ของ freeze เดียวกันใช้ได้ทุกลำดับ ส่งซ้ำได้ ตัว `frozenAt` ใหม่แทนชุดเก่า |
+| `segment.deleted` | ลบ segment | `id` |
+
+segment.* ไม่ใช่ snapshot (ส่งทุกตัว) · ใน transaction เดียวกัน `segment.upserted` ถูกส่งก่อน `segment.members` เสมอ
 
 qty ที่ **เก่ากว่า** ค่าที่ commerce มีอยู่ (ดูจาก `CHANGED_AT`) จะไม่ถูกส่งออก ระบบเก็บไว้เป็น movement `stale` ใน ledger อย่างเดียว
 
@@ -95,6 +100,7 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `inventory.qty.changed` | `handleQtyChange([data.erp])` |
 | `product.price.changed` | `handlePriceChange([data.erp])` — ราคาเข้า staging รอ MER ตามเดิม |
 | `product.moq.changed` | `handleMoqChange([data.erp])` |
+| `segment.upserted` / `segment.members` / `segment.deleted` | `CommerceSegmentsService` เขียน `user_segments` / `segment_membership_snapshots` (คูปอง แบนเนอร์ push workflow อ่านตารางเดิม) — ใช้ payload ใน `data` ตรงๆ ไม่ใช่ `data.erp` |
 
 `failed` ที่ handler คืน (SKU ไม่มีใน shop) → ตอบ `422` · error อื่น → `5xx`
 
@@ -118,7 +124,7 @@ josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `ord
 | type | data |
 |---|---|
 | `order.snapshot` | `{ order, items }` — คอลัมน์เดียวกับ `josh_orders` / `josh_order_lines` |
-| `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`) + `branch_ids` |
+| `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`) + `branch_ids` + `tier_slug`, `cuisine_name`, `cuisine_parent_id` (ค่าเดียวกับ base query ของ segment ใน josh; ส่งใหม่เมื่อ tier หรือ cuisine ของร้านเปลี่ยน) |
 | `customer.deleted` | `{ id }` — commerce ล้างข้อมูล เก็บ tombstone กัน snapshot เก่ามาสร้างกลับ |
 | `catalog.snapshot` | `{ id, sku, status, brand_code, brand_name, country_code_source, storage_temperature, packaging_type, pack_size, units_per_box, weight_per_unit, selling_unit, vat_type, selling_unit_price, ordering_price, order_taking_unit, category_name_th, category_name_en, image_url, updated_at, translations }` — ค่าดิบตามที่ josh เก็บ → `josh_catalog_products` (ใช้จับคู่ราคาคู่แข่ง) |
 | `catalog.deleted` | `{ id }` — commerce ตั้ง `removed_at` (ไม่ลบแถว คู่ราคาคู่แข่งยังอยู่) |

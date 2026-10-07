@@ -15,6 +15,8 @@
  * - competitor: first pulls josh's catalog into josh_catalog_products (same as
  *   the scheduled JoshCatalogSyncService), then copies competitor_prices and the
  *   review grid's answers (competitor_match_rejections / _reviews);
+ * - segments (stage 2a): user_segments → segments (same ids) and their frozen members
+ *   segment_membership_snapshots → segment_members, customers only (staff are matched in josh);
  *   verified_by (a josh user id) becomes that josh user's email.
  * Commerce side: uses the normal COMMERCE_DB_* / COMMERCE_DATABASE_URL env.
  */
@@ -25,9 +27,13 @@ import { JoshCatalogSyncService } from '../modules/integration/connector/josh/jo
 import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-catalog-product.entity';
 import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 
-type Scope = 'research' | 'scraping' | 'competitor';
-/** userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key (default id). */
-type Plan = { table: string; userColumns?: string[]; emailColumns?: string[]; key?: string };
+type Scope = 'research' | 'scraping' | 'competitor' | 'segments';
+/**
+ * userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key, comma-separated
+ * for a composite one (default id) · target: commerce table when it differs · customerColumn: keep only rows whose
+ * user is in commerce's customer copy (josh_customers).
+ */
+type Plan = { table: string; userColumns?: string[]; emailColumns?: string[]; key?: string; target?: string; customerColumn?: string };
 const PLANS: Record<Scope, Plan[]> = {
   research: [
     { table: 'marketing_research_topics', userColumns: ['createdBy'] },
@@ -39,6 +45,10 @@ const PLANS: Record<Scope, Plan[]> = {
     { table: 'competitor_prices', emailColumns: ['verified_by'] },
     { table: 'competitor_match_rejections', emailColumns: ['created_by'] },
     { table: 'competitor_match_reviews', emailColumns: ['reviewed_by'], key: 'product_id' },
+  ],
+  segments: [
+    { table: 'user_segments', target: 'segments' },
+    { table: 'segment_membership_snapshots', target: 'segment_members', key: 'segment_id,user_id', customerColumn: 'user_id' },
   ],
 };
 
@@ -65,18 +75,27 @@ async function userMaps(josh: DataSource, commerce: DataSource): Promise<UserMap
 }
 
 async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: UserMaps) {
-  const target = await columnsOf(commerce, plan.table);
+  const into = plan.target ?? plan.table;
+  const target = await columnsOf(commerce, into);
   const source = new Set(await columnsOf(josh, plan.table));
-  if (!target.length) throw new Error(`commerce has no table ${plan.table} — run migrations first`);
+  if (!target.length) throw new Error(`commerce has no table ${into} — run migrations first`);
   if (!source.size) throw new Error(`josh has no table ${plan.table}`);
-  const key = plan.key ?? 'id';
+  const keys = (plan.key ?? 'id').split(',');
   const cols = target.filter((c) => source.has(c));
   const missing = target.filter((c) => !source.has(c));
 
-  const rows: Record<string, unknown>[] = await josh.query(`SELECT ${cols.map(q).join(', ')} FROM ${q(plan.table)}`);
+  let rows: Record<string, unknown>[] = await josh.query(`SELECT ${cols.map(q).join(', ')} FROM ${q(plan.table)}`);
+  let skipped = 0;
+  if (plan.customerColumn) {
+    const customers = new Set((await commerce.query(`SELECT id::text AS id FROM josh_customers WHERE deleted_at IS NULL`)).map((r: { id: string }) => r.id));
+    const kept = rows.filter((row) => customers.has(String(row[plan.customerColumn!])));
+    skipped = rows.length - kept.length;
+    rows = kept;
+  }
   let unmatchedUsers = 0;
-  const sql = `INSERT INTO ${q(plan.table)} (${cols.map(q).join(', ')}) VALUES (${cols.map((_, i) => `$${i + 1}`).join(', ')})
-    ON CONFLICT (${q(key)}) DO UPDATE SET ${cols.filter((c) => c !== key).map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}`;
+  const rest = cols.filter((c) => !keys.includes(c));
+  const sql = `INSERT INTO ${q(into)} (${cols.map(q).join(', ')}) VALUES (${cols.map((_, i) => `$${i + 1}`).join(', ')})
+    ON CONFLICT (${keys.map(q).join(', ')}) DO ${rest.length ? `UPDATE SET ${rest.map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}` : 'NOTHING'}`;
 
   await commerce.transaction(async (m) => {
     for (const row of rows) {
@@ -92,7 +111,8 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
       await m.query(sql, cols.map((c) => (row[c] !== null && typeof row[c] === 'object' && !(row[c] instanceof Date) ? JSON.stringify(row[c]) : row[c])));
     }
   });
-  console.log(`${plan.table}: ${rows.length} rows upserted` +
+  console.log(`${plan.table}${into !== plan.table ? ` → ${into}` : ''}: ${rows.length} rows upserted` +
+    (skipped ? ` · ${skipped} rows of users not in the customer copy skipped` : '') +
     (missing.length ? ` · columns only in commerce (left default): ${missing.join(', ')}` : '') +
     (plan.userColumns || plan.emailColumns ? ` · user ids without a matching commerce staff email: ${unmatchedUsers}` : ''));
 }
@@ -100,15 +120,15 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
 async function main() {
   const scope = process.argv[2] as Scope | 'all' | undefined;
   const url = process.env.JOSH_DATABASE_URL;
-  if (!url || !scope || !['research', 'scraping', 'competitor', 'all'].includes(scope)) {
-    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|all>');
+  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'all'].includes(scope)) {
+    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|all>');
     process.exit(1);
   }
   const josh = await new DataSource({ type: 'postgres', url, entities: [] }).initialize();
   const commerce = await AppDataSource.initialize();
   try {
     const users = await userMaps(josh, commerce);
-    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor'] as const) : [scope];
+    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
         const replica = new JoshReplica();

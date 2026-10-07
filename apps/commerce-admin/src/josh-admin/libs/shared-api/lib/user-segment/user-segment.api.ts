@@ -1,4 +1,11 @@
 import { apiClient } from '../api-client/api-client';
+import { commerceClient, ownership } from '../api-client/commerce-client';
+
+/**
+ * Segment writes go to whoever owns segments (stage 2a): commerce once COMMERCE_OWNS_SEGMENTS=true, josh before.
+ * Reads, preview, members and promotion mappings always read josh's copy (commerce keeps it current via events).
+ */
+const writeClient = async () => ((await ownership()).segments ? commerceClient : apiClient);
 
 export const USER_SEGMENT_RULE_TYPES = [
   'guest',
@@ -201,7 +208,7 @@ export const getUserSegmentById = async (
 };
 
 export const createUserSegment = async (payload: CreateUserSegmentPayload) => {
-  const response = await apiClient.post('/user-segments', payload);
+  const response = await (await writeClient()).post('/user-segments', payload);
   return response;
 };
 
@@ -209,12 +216,12 @@ export const updateUserSegment = async (
   id: string,
   payload: UpdateUserSegmentPayload,
 ) => {
-  const response = await apiClient.patch(`/user-segments/${id}`, payload);
+  const response = await (await writeClient()).patch(`/user-segments/${id}`, payload);
   return response;
 };
 
 export const deleteUserSegment = async (id: string) => {
-  const response = await apiClient.delete(`/user-segments/${id}`);
+  const response = await (await writeClient()).delete(`/user-segments/${id}`);
   return response;
 };
 

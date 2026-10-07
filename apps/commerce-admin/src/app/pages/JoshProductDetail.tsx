@@ -5,7 +5,7 @@ import {
   Page, PageHeader, Panel, PanelHead, Select, Span, Textarea,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, productContentsApi, productPricesApi } from '../../lib/api';
+import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, productContentsApi, productMastersApi, productPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const STATUS: Record<string, string> = { active: 'เปิดขาย', draft: 'draft (ยังไม่เปิด)', inactive: 'ปิด' };
@@ -43,7 +43,7 @@ function ProductEditor({ p, content, categories, onSaved, onClose }: { p: JoshPr
   const valueOf = (f: (typeof EDIT_FIELDS)[number]) => (content && f.key in content ? content[f.key] : f.get(p));
   const initial = (): Record<string, string> => ({
     ...Object.fromEntries(EDIT_FIELDS.map((f) => [f.key, valueOf(f) == null ? '' : String(valueOf(f))])),
-    product_status: p.product_status ?? '', category_id: p.category_id ?? '',
+    product_status: String((content && 'product_status' in content ? content.product_status : p.product_status) ?? ''), category_id: p.category_id ?? '',
   });
   const [v, setV] = useState(initial);
   const [busy, setBusy] = useState(false);
@@ -123,10 +123,15 @@ export function JoshProductDetail() {
   const detail = useAsync(() => joshProductApi.detail(id), [id]);
   const categories = useAsync(() => joshProductApi.categories(), []);
   const p = detail.data;
-  // Stage 4b: commerce's content row (none yet → josh's values stand).
+  // Stage 4b / 4d: commerce's content and ERP master rows (none yet → josh's values stand). Category stays josh's id.
   const content = useAsync(async () => {
-    if (!p || !(await productPricesApi.ownership()).productContent) return null;
-    return productContentsApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({}));
+    const owned = p ? await productPricesApi.ownership() : null;
+    if (!p || !owned || (!owned.productContent && !owned.productMaster)) return null;
+    const [c, m] = await Promise.all([
+      owned.productContent ? productContentsApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
+      owned.productMaster ? productMastersApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
+    ]);
+    return { ...c, ...m };
   }, [p?.product_inventory_sku, p?.updated_at]);
 
   const backTo = `${location.state?.from ?? '/reports/products'}${location.state?.search ?? ''}`;

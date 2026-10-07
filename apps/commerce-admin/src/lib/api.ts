@@ -360,7 +360,7 @@ export interface PricePending {
 }
 const q = (search: string) => (search ? `?search=${encodeURIComponent(search)}` : '');
 export const productPricesApi = {
-  ownership: () => api.get<{ prices?: boolean; productContent?: boolean }>('/ownership'),
+  ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean }>('/ownership'),
   list: (search: string) => api.get<PriceRow[]>(`/product-prices${q(search)}`),
   pending: (search: string) => api.get<PricePending[]>(`/product-prices/pending${q(search)}`),
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-prices/pending/approve', { skus }),
@@ -372,6 +372,15 @@ export const productPricesApi = {
 // ---- Product content (stage 4b: names / descriptions, ingredients, cost … owned by commerce; edited in the product form) ----
 export const productContentsApi = {
   get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown>; updated_at: string }>(`/product-contents/${encodeURIComponent(sku)}`),
+};
+
+// ---- ERP product master (stage 4d: units / pack / status / category … and their MER queue, owned by commerce) ----
+export interface MasterPending { sku: string; patch: Record<string, unknown>; current: Record<string, unknown>; changed_at: string | null; received_at: string }
+export const productMastersApi = {
+  pending: (search: string) => api.get<MasterPending[]>(`/product-masters/pending${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  approve: (skus: string[]) => api.post<{ approved: number }>('/product-masters/pending/approve', { skus }),
+  reject: (skus: string[]) => api.post<{ rejected: number }>('/product-masters/pending/reject', { skus }),
+  get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-masters/${encodeURIComponent(sku)}`),
 };
 
 // ---- Stock moves (stage 3: commerce-owned warehouses, through the ledger) ----

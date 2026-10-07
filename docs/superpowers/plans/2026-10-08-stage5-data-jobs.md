@@ -89,7 +89,7 @@ copy · D = drop/defer (other stage or no report value).
 | 19 | `connector/josh/josh-catalog-sync.service.ts` | cron `joshCatalogSync` (on by default, every 15 min), `syncId`/`syncSku` | `product_inventory`, `product_translation` | `catalog.snapshot` events already feed the same table | – | D: turn the cron off once `catalog` backfill + events are trusted; callers use events |
 | 20 | `mcp/mcp.tools.ts` | MCP tools for #2–#16 | via the readers | follows the readers | – | follows |
 | 21 | `system-health.ts` | `/reports/health` | via #6 | – | – | follows #6 |
-| 22 | `connector/josh/winback/josh-winback.ts` (+controller, `report.service.ts`, `meeting-prep.service.ts`, `winback-pool.service.ts`, `josh-tables.ts`) | `GET /reports/winback/{overview,pool,aging,scorecard,dashboard,team-stats,lead-signals}`; MCP (`mcp.tools.ts:930`) | josh's **stale** `winback_*`, `users`, `orders`, `restaurant_place` | commerce `GET /winback/{team-stats,aging,lead-signals,pool,scorecard,dashboard}` (`integration/winback/winback.controller.ts`) — already on commerce tables + copies | response shapes to check per tab | R (point the admin page + MCP at `/winback/*`, then delete the josh copy of the code) |
+| 22 | `connector/josh/winback/josh-winback.ts` (+controller, `report.service.ts`, `meeting-prep.service.ts`, `winback-pool.service.ts`, `josh-tables.ts`) | `GET /reports/winback/{overview,pool,aging,scorecard,dashboard,team-stats,lead-signals}`; MCP (`mcp.tools.ts:930`) | josh's **stale** `winback_*`, `users`, `orders`, `restaurant_place` | commerce `GET /winback/{team-stats,aging,lead-signals,pool,scorecard,dashboard}` (`integration/winback/winback.controller.ts`) — already on commerce tables + copies | response shapes to check per tab | **R — done (S5-2)**: `WINBACK_REPORTS_SOURCE=copies`; josh copy of the code deleted in stage 7 |
 | 23 | `orders/josh-order-copy.ts` (+controller) | cron `joshOrderCopy`, `POST v1/storefront/josh-orders/:id/placed`, `POST /reports/order-copy/run` | `orders`, `order_items`, `product_inventory` | it **is** a copier into `josh_orders`/lines; `order.snapshot` events + `POST /reports/order-copy/backfill` fill the same tables | – | D: cron off once events are trusted; `placed` 503 is harmless (events cover it); delete in stage 7 |
 | 24 | `jagota/jagota-sync-history.ts` | cron `jagotaSyncImport`, `POST /reports/jagota-sync-history/run` | `jagota_order_sync` ⟕ `orders` | it **is** the copier into `jagota_order_sync_history`; GETs already commerce-only | no event path for `jagota_order_sync` | C (`jagota_sync.snapshot`, josh trigger on `jagota_order_sync`) — needed by #6 and #7 too |
 | 25 | `jagota/jagota-shadow.ts` (+controller) | cron `jagotaShadow`, `POST /reports/jagota-shadow/run|recheck` | `jagota_order_sync`, `orders`, `shipments`, `order_items`, `product_inventory`, `branch` | results in commerce `jagota_shadow_checks` (GETs fine) | live josh rows | D — cutover check for the ERP gateway; retire after it |
@@ -140,7 +140,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | Pri | Slice | Readers | Needs josh change | Risk |
 |---|---|---|---|---|
 | **S5-1** | bestsellers offload on copies (`BESTSELLERS_SOURCE`) | #1 | no | low — **done** |
-| S5-2 | `/reports/winback` page + MCP → commerce's existing `/winback/*` endpoints; delete `connector/josh/winback/*` | #22 | no | low — mostly frontend; the commerce endpoints already serve the sales app |
+| S5-2 | `/reports/winback` page + MCP → commerce's winback services (`WINBACK_REPORTS_SOURCE`) | #22 | no | low — **done** |
 | S5-3 | restaurants report on copies (also stops reading josh's stale `winback_account`) | #2 | no | low |
 | S5-4 | products report on catalog copy + owned tables | #14 | no | low |
 | S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — money numbers; parity endpoint first |
@@ -187,13 +187,26 @@ Known, accepted differences (visible in shadow): copies keep lines of products j
 **Cutover:** prod `BESTSELLERS_SOURCE=shadow` ~1 week (needs order backfill done — `prod-data-from-josh.md` row 0–1) →
 `firstDiffRank` stays null or ≥ 50 (josh shows ≤ 50) → `copies`. Rollback: `replica`.
 
-### Task S5-2: `/reports/winback` → commerce `/winback/*`
+### Task S5-2: `/reports/winback` → commerce's winback services — DONE (this branch)
 
-- [ ] Map each tab of `apps/commerce-admin/src/app/pages/Winback.tsx` (overview, team-stats, dashboard, scorecard,
-      lead-signals) to the commerce route; diff response shapes (`connector/josh/winback/report.service.ts` vs
-      `integration/winback/report.service.ts`); adapt the page, not the API the sales app uses.
-- [ ] MCP winback tool (`mcp.tools.ts:930`) → commerce services.
-- [ ] Delete `connector/josh/winback/*` reports and `JOSH_WINBACK_TABLES` from `JoshReplica` (keep `WinbackMirror`).
+The page cannot call `/winback/*` itself: those routes take **josh's** access token (`AdminWriteGuard`, the sales
+app), commerce-admin sends a commerce staff token. So `/reports/winback/*` stays (commerce staff guard, same paths, same
+`{data, meta}` envelope) and its source moves.
+
+- [x] Shapes: `connector/josh/winback/*` is josh's module copied as is; commerce's `integration/winback` is the same
+      module on commerce tables — `getCounts` / `listProvinces` / `findPool` / `getAging`, `getScorecard` /
+      `getDashboard` / `getTeamStats`, `getLeadSignals`, `revenueRisk` return the same keys. Page unchanged but its text.
+- [x] `integration/winback/winback-reports.ts` `WinbackReports` + `WINBACK_REPORTS_SOURCE=replica|copies` (default
+      replica = `JoshWinback` as before; copies = `WinbackService` / `ReportService` / `MeetingPrepService` + commerce
+      `winback_account`, no replica). Controller moved to `winback/winback-reports.controller.ts` (WinbackModule).
+- [x] MCP `winback_*` tools use `WinbackReports` (McpModule imports WinbackModule).
+- [x] Spec `winback-reports.spec.ts` (3). No shadow mode: until `WINBACK_OWNER=commerce`, `WinbackMirror` already
+      hash-compares every row of the six tables on both sides, so the two sources answer from the same rows.
+- [ ] Deferred to stage 7: delete `connector/josh/winback/*` (except `pii.helper.ts`, used by josh-orders /
+      -customers / -backoffice) and `JOSH_WINBACK_TABLES` in `JoshReplica` once prod runs `copies`.
+
+**Cutover:** prerequisite = commerce's winback tables are current (`WinbackMirror` on, or `WINBACK_OWNER=commerce`).
+Compare `/reports/winback/overview` before/after, then `WINBACK_REPORTS_SOURCE=copies`. Rollback: `replica`.
 
 ### Task S5-3: restaurants report on copies
 

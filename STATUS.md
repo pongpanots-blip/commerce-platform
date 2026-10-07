@@ -13,6 +13,14 @@ Updated 2026-10-07. Not pushed.
     ranking diff against the copies) · `copies` (`josh_orders` / `josh_order_lines`; works without the replica).
   - Spec has 6 tests, all passing (`--runInBand`). `tsc --noEmit` on commerce-platform is clean.
 - `.env.example`: added `BESTSELLERS_SOURCE`, and updated the out-of-date list of what still reads `JOSH_DATABASE_URL`.
+- **S5-2, winback manager reports:** `integration/winback/winback-reports.ts` + `winback-reports.controller.ts`.
+  - The admin page can't call `/winback/*` directly (those routes take josh's token for the sales app), so
+    `/reports/winback/*` keeps its paths and envelope and gets a new switch `WINBACK_REPORTS_SOURCE`:
+    `replica` (default, unchanged) · `copies` (commerce's own winback services and tables; works without the replica).
+  - MCP `winback_*` tools use the same reader. Page text no longer says "replica".
+  - No shadow mode: `WinbackMirror` already compares the six tables row by row while josh owns winback.
+  - Spec has 3 tests, passing; `mcp.restaurant-tools.spec` still passes; `tsc --noEmit` clean.
+  - Deleting `connector/josh/winback/*` is left for stage 7 (the replica path still uses it).
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
@@ -21,14 +29,17 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11.
 
 ## Next (safe, commerce-only, in order)
-1. S5-2 `/reports/winback` page and MCP → commerce's existing `/winback/*` (whole page 503s today).
-2. S5-3 restaurants report → `josh_restaurant_places` + commerce `winback_account`.
-3. S5-4 products report → `josh_catalog_products` + owned `product_*` tables.
-4. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first).
+1. S5-3 restaurants report → `josh_restaurant_places` + commerce `winback_account`.
+2. S5-4 products report → `josh_catalog_products` + owned `product_*` tables.
+3. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first).
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?
 Back-office views stay in josh-admin? One global `REPORTS_SOURCE`, or one switch per reader?
+
+## Cutover for S5-2 (ops)
+Prerequisite: commerce's winback tables are current (`CRON_WINBACK_MIRROR_ENABLED=true`, or `WINBACK_OWNER=commerce`).
+Compare `/reports/winback/overview` before/after, then set `WINBACK_REPORTS_SOURCE=copies`. Rollback: `replica`.
 
 ## Cutover for S5-1 (ops)
 1. Prerequisite: order backfill is done (`docs/runbooks/prod-data-from-josh.md`, rows 0–1).

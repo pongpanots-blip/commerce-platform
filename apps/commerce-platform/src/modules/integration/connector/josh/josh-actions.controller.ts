@@ -1,3 +1,5 @@
+import { ownsPromotions, ProductPromotionRulesService } from '../../../commerce/product-promotion-rules/product-promotion-rules.service';
+import { splitPromotionRules } from '../../../commerce/product-promotion-rules/promotion-rules';
 import { Body, Controller, HttpCode, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { DataSource } from 'typeorm';
@@ -111,7 +113,8 @@ export class JoshActionsController {
    */
   @Post('products/:id/update') @HttpCode(HttpStatus.OK)
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
-    const { selling_unit_price: price, ...others } = plain(b?.fields);
+    const promotion = ownsPromotions() ? splitPromotionRules(plain(b?.fields)) : { rules: undefined, rest: plain(b?.fields) };
+    const { selling_unit_price: price, ...others } = promotion.rest;
     const ownPrice = price !== undefined && price !== '' && ownsPrices();
     // Validated before anything is written (400 on a bad value).
     const { content, rest: afterContent } = ownsProductContent() ? splitContent(others) : { content: {}, rest: others };
@@ -121,10 +124,11 @@ export class JoshActionsController {
     const { logistics, rest } = ownsOrdering() ? splitLogistics(afterMaster) : { logistics: {}, rest: afterMaster };
     const masterBody = categoryId === undefined ? master : { ...master, category_id: categoryId };
     const relay = ownPrice || price === undefined ? rest : { ...rest, selling_unit_price: price };
-    if (!ownPrice && !Object.keys(content).length && !Object.keys(masterBody).length && !Object.keys(logistics).length) return this.relayUpdate(id, relay, req);
+    if (promotion.rules === undefined && !ownPrice && !Object.keys(content).length && !Object.keys(masterBody).length && !Object.keys(logistics).length) return this.relayUpdate(id, relay, req);
 
     const sku = await this.skuOf(id);
     const result: Record<string, unknown> = {};
+    if (promotion.rules !== undefined) result.promotionRules = await this.modules.get(ProductPromotionRulesService, { strict: false }).edit(sku, promotion.rules, req.staff.userId);
     if (ownPrice) {
       result.price = await this.modules.get(ProductPricesService, { strict: false })
         .edit(sku, { sellingUnitPrice: price === null ? null : Number(price) }, req.staff.userId);
@@ -162,11 +166,13 @@ export class JoshActionsController {
    */
   @Post('products') @HttpCode(HttpStatus.OK)
   async createProduct(@Body() b: { product?: Record<string, unknown> }, @Req() req: StaffRequest) {
-    const product = plain(b?.product);
+    const promotion = ownsPromotions() ? splitPromotionRules(plain(b?.product)) : { rules: undefined, rest: plain(b?.product) };
+    const product = promotion.rest;
     const { content } = ownsProductContent() ? splitContent(product) : { content: {} };
     const result = await this.josh.run<{ product_inventory_id?: string }>('products', 'create', { product }, this.as(req), 'admin');
     if (result?.product_inventory_id) await this.catalog.syncId(result.product_inventory_id).catch(() => undefined);
     const sku = typeof product.product_inventory_sku === 'string' ? product.product_inventory_sku.trim() : '';
+    if (sku && result?.product_inventory_id && promotion.rules !== undefined) await this.modules.get(ProductPromotionRulesService, { strict: false }).edit(sku, promotion.rules, req.staff.userId, 'create');
     if (sku && Object.keys(content).length) {
       await this.modules.get(ProductContentsService, { strict: false }).edit(sku, content, req.staff.userId, 'create');
     }

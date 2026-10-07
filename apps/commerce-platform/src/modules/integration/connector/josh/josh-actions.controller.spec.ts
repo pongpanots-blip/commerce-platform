@@ -151,3 +151,33 @@ describe('JoshActionsController — back-office actions', () => {
     ]);
   });
 });
+
+
+describe('G9 product rule routing', () => {
+  afterEach(() => { delete process.env.COMMERCE_OWNS_PROMOTIONS; });
+  it('strips both aliases from relay; clear is a write; mechanic lock failures happen before relay', async () => {
+    process.env.COMMERCE_OWNS_PROMOTIONS = 'true';
+    const edit = jest.fn(async () => ({ rules: [] }));
+    const josh = { run: jest.fn(async (..._args: unknown[]) => ({})) };
+    const ctl = new JoshActionsController(josh as never, { syncId: async () => undefined } as never,
+      { get: (cls: { name: string }) => cls.name === 'DataSource' ? { query: async () => [{ sku: 'SKU' }] } : { edit } } as never);
+    const req = { staff: { userId: 's', email: 's@example.com' } } as never;
+    await ctl.updateProduct('id', { fields: { tier_prices: '[]', product_name: 'A' } }, req);
+    expect(edit).toHaveBeenCalledWith('SKU', [], 's');
+    expect(josh.run).toHaveBeenCalledWith('products', 'update', { id: 'id', fields: { product_name: 'A' } }, expect.anything(), 'admin');
+    josh.run.mockClear();
+    edit.mockRejectedValueOnce(new Error('mechanic lock'));
+    await expect(ctl.updateProduct('id', { fields: { promotion_rules: [], product_name: 'B' } }, req)).rejects.toThrow('mechanic lock');
+    expect(josh.run).not.toHaveBeenCalled();
+    await expect(ctl.updateProduct('id', { fields: { promotion_rules: 'bad' } }, req)).rejects.toThrow();
+  });
+  it('create validates then relays without rules and seeds the returned product in commerce', async () => {
+    process.env.COMMERCE_OWNS_PROMOTIONS = 'true';
+    const edit = jest.fn(async () => ({}));
+    const josh = { run: jest.fn(async (..._args: unknown[]) => ({ product_inventory_id: 'id' })) };
+    const ctl = new JoshActionsController(josh as never, { syncId: async () => undefined } as never, { get: () => ({ edit }) } as never);
+    await ctl.createProduct({ product: { product_inventory_sku: 'SKU', promotion_rules: '[]' } }, { staff: { userId: 's' } } as never);
+    expect(josh.run.mock.calls[0][2]).toEqual({ product: { product_inventory_sku: 'SKU' } });
+    expect(edit).toHaveBeenCalledWith('SKU', [], 's', 'create');
+  });
+});

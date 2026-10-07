@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { bangkokDayKey, estimateTables, toListItem, parseBusyWindow, parseRestaurantFilters, restaurantWhere } from './restaurant-places';
+import { bangkokDayKey, estimateTables, toListItem, parseBusyWindow, parseRestaurantFilters, RestaurantPlaces, restaurantsSource, restaurantWhere } from './restaurant-places';
 
 describe('restaurant places (Market Explorer)', () => {
   it('parses busy windows like josh', () => {
@@ -37,5 +37,44 @@ describe('restaurant places (Market Explorer)', () => {
     expect(item.lat).toBe(0); // josh: null coords → 0
     expect(estimateTables(100)).toBe(20);
     expect(estimateTables(0)).toBeNull();
+  });
+
+  describe('RESTAURANTS_SOURCE', () => {
+    const env = process.env.RESTAURANTS_SOURCE;
+    afterEach(() => { if (env === undefined) delete process.env.RESTAURANTS_SOURCE; else process.env.RESTAURANTS_SOURCE = env; });
+    const summary = { total_count: 1, top_categories: [], top_districts: [] };
+    const make = (configured: boolean) => {
+      const replica = { configured, query: jest.fn(async (sql: string) => (sql.includes('total_count') ? [summary] : [])) };
+      const db = { query: jest.fn(async (sql: string) => (sql.includes('total_count') ? [summary] : [])) };
+      return { places: new RestaurantPlaces(replica as never, db as never), replica, db };
+    };
+
+    it('defaults to the replica (josh table names), unavailable without it', async () => {
+      delete process.env.RESTAURANTS_SOURCE;
+      expect(restaurantsSource()).toBe('replica');
+      expect(make(false).places.available).toBe(false);
+      const { places, replica, db } = make(true);
+      await places.list({ excludeHasTmpLead: true });
+      expect(db.query).not.toHaveBeenCalled();
+      expect(replica.query.mock.calls[0][0]).toContain('FROM restaurant_place p');
+    });
+
+    it('copies: commerce tables only, works without the replica', async () => {
+      process.env.RESTAURANTS_SOURCE = 'copies';
+      const { places, replica, db } = make(false);
+      expect(places.available).toBe(true);
+      const out = await places.list({ excludeHasTmpLead: true, search: 'x' });
+      expect(out.summary.totalCount).toBe(1);
+      expect(replica.query).not.toHaveBeenCalled();
+      for (const [sql] of db.query.mock.calls) {
+        expect(sql).toContain('FROM josh_restaurant_places p');
+        expect(sql).not.toMatch(/\brestaurant_place p\b/);
+      }
+      // the winback link and the "no lead yet" filter read commerce's own winback_account
+      expect(db.query.mock.calls[0][0]).toContain('FROM winback_account WHERE restaurant_place_id = p.id');
+      await places.detail('11111111-1111-4111-8111-111111111111');
+      await places.csv({});
+      expect(db.query).toHaveBeenCalledTimes(4);
+    });
   });
 });

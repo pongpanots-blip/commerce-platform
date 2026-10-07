@@ -21,6 +21,12 @@ Updated 2026-10-07. Not pushed.
   - No shadow mode: `WinbackMirror` already compares the six tables row by row while josh owns winback.
   - Spec has 3 tests, passing; `mcp.restaurant-tools.spec` still passes; `tsc --noEmit` clean.
   - Deleting `connector/josh/winback/*` is left for stage 7 (the replica path still uses it).
+- **S5-3, Market Explorer (restaurants report):** `connector/josh/restaurant-places.ts`.
+  - New switch `RESTAURANTS_SOURCE`: `replica` (default, unchanged) · `copies` (`josh_restaurant_places` and commerce's
+    own `winback_account`; works without the replica). The MCP tool follows it.
+  - New `GET /reports/restaurants/parity` shows both sides' counts. `linked_to_winback` is expected to differ,
+    because josh's `winback_account` has been stale since 2b.
+  - Specs: 7 + MCP restaurant spec passing; `tsc` clean. No scratch-DB spec (documented in the plan).
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
@@ -29,13 +35,16 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11.
 
 ## Next (safe, commerce-only, in order)
-1. S5-3 restaurants report → `josh_restaurant_places` + commerce `winback_account`.
-2. S5-4 products report → `josh_catalog_products` + owned `product_*` tables.
-3. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first).
+1. S5-4 products report → `josh_catalog_products` + owned `product_*` tables.
+2. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first).
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?
 Back-office views stay in josh-admin? One global `REPORTS_SOURCE`, or one switch per reader?
+
+## Cutover for S5-3 (ops)
+Prerequisite: the `restaurant_place` backfill is done (stage 2c runbook). Check `GET /reports/restaurants/parity`:
+`total` and `enriched` should be equal. Then set `RESTAURANTS_SOURCE=copies`. Rollback: `replica`.
 
 ## Cutover for S5-2 (ops)
 Prerequisite: commerce's winback tables are current (`CRON_WINBACK_MIRROR_ENABLED=true`, or `WINBACK_OWNER=commerce`).

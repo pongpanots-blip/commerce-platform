@@ -40,6 +40,10 @@ export class ShopReportsController {
     if (!this.insights.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
   }
 
+  private restaurantsReady() {
+    if (!this.restaurants.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set RESTAURANTS_SOURCE=copies to read commerce's copy.`);
+  }
+
   @Get('sales')
   sales(@Query() q: PeriodQuery) {
     const r = range(q);
@@ -73,7 +77,7 @@ export class ShopReportsController {
   @StaffRoles('marketing')
   restaurantList(@Query() q: Record<string, string>) {
     const filters = parseRestaurantFilters(q);
-    this.replica();
+    this.restaurantsReady();
     return this.restaurants.list(filters, int(q.page, 1, 1, 1e6), int(q.limit, 20, 1, 200));
   }
 
@@ -83,14 +87,22 @@ export class ShopReportsController {
   @Header('Content-Disposition', 'attachment; filename="restaurant-places.csv"')
   async restaurantCsv(@Query() q: Record<string, string>) {
     const filters = parseRestaurantFilters(q);
-    this.replica();
+    this.restaurantsReady();
     return `\uFEFF${await this.restaurants.csv(filters)}`;
+  }
+
+  /** Replica vs commerce's copy (counts, enriched, linked to a winback account, newest update) — check before RESTAURANTS_SOURCE=copies. */
+  @Get('restaurants/parity')
+  @StaffRoles('marketing')
+  restaurantParity() {
+    this.replica();
+    return this.restaurants.parity();
   }
 
   @Get('restaurants/:id')
   @StaffRoles('marketing')
   async restaurantDetail(@Param('id', ParseUUIDPipe) id: string) {
-    this.replica();
+    this.restaurantsReady();
     const row = await this.restaurants.detail(id);
     if (!row) throw new NotFoundException(`restaurant place ${id} not found`);
     return row;

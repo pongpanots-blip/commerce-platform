@@ -69,7 +69,7 @@ copy · D = drop/defer (other stage or no report value).
 | # | Reader (file) | Callers | josh tables read | Commerce source after | Gap | Move |
 |---|---|---|---|---|---|---|
 | 1 | `connector/josh/bestsellers-offload.job.ts` | cron `joshBestsellers` → POST josh `/internal/bestsellers` | `order_items`, `orders`, `product_inventory` | `josh_order_lines.sku` + `josh_orders.status` | none | **R — done in this branch (S5-1)** |
-| 2 | `connector/josh/restaurant-places.ts` | `GET /reports/restaurants[/export|/:id]`; MCP `restaurant_places` | `restaurant_place`, `winback_account` | `josh_restaurant_places` (2c, every column) + commerce-owned `winback_account` | none — note it reads josh's **stale** `winback_account` today | R |
+| 2 | `connector/josh/restaurant-places.ts` | `GET /reports/restaurants[/export|/:id]`; MCP `restaurant_places` | `restaurant_place`, `winback_account` | `josh_restaurant_places` (2c, every column) + commerce-owned `winback_account` | none — note it reads josh's **stale** `winback_account` today | **R — done (S5-3)**: `RESTAURANTS_SOURCE` |
 | 3 | `connector/josh/josh-insights.ts` `sales()` | `GET /reports/sales`; MCP `shop_sales`; growth `workspace()` | `orders`, `order_items`, `product_inventory`, `product_translation`, `payment_transactions(+_orders)`, `customer_metrics`, `order_refunds` | `josh_orders` (`paid` is computed by josh's builder with the same `paidOrderSql`, and `payment_transactions` has an outbox trigger → order re-sent on payment change), `josh_order_lines`, `josh_catalog_products.translations`, commerce `customer_metrics` | `order_refunds` (refund total) | R* (refunds = C or show "n/a") |
 | 4 | `josh-insights.ts` `traffic()` | `GET /reports/traffic`; MCP `shop_traffic` | `analytics_events`, `analytics_funnel_daily`, `user_search_history` | none | all — high-volume event tables | C (daily aggregates only: `analytics.daily.snapshot`) or D |
 | 5 | `josh-insights.ts` `orderTargetgroup()` | `GET /reports/order-targetgroup` | view `customer_order_targetgroup_summary` | rebuild as a commerce view over `josh_orders` + `segment_customers` | view definition must be copied from josh | R* |
@@ -141,7 +141,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 |---|---|---|---|---|
 | **S5-1** | bestsellers offload on copies (`BESTSELLERS_SOURCE`) | #1 | no | low — **done** |
 | S5-2 | `/reports/winback` page + MCP → commerce's winback services (`WINBACK_REPORTS_SOURCE`) | #22 | no | low — **done** |
-| S5-3 | restaurants report on copies (also stops reading josh's stale `winback_account`) | #2 | no | low |
+| S5-3 | restaurants report on copies (also stops reading josh's stale `winback_account`) | #2 | no | low — **done** |
 | S5-4 | products report on catalog copy + owned tables | #14 | no | low |
 | S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — money numbers; parity endpoint first |
 | S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium |
@@ -208,15 +208,25 @@ app), commerce-admin sends a commerce staff token. So `/reports/winback/*` stays
 **Cutover:** prerequisite = commerce's winback tables are current (`WinbackMirror` on, or `WINBACK_OWNER=commerce`).
 Compare `/reports/winback/overview` before/after, then `WINBACK_REPORTS_SOURCE=copies`. Rollback: `replica`.
 
-### Task S5-3: restaurants report on copies
+### Task S5-3: restaurants report on copies — DONE (this branch)
 
 **Files:** `connector/josh/restaurant-places.ts(+spec)`, `shop-reports.controller.ts`, `mcp/mcp.tools.ts`.
 
-- [ ] Inject commerce `DataSource`; `RESTAURANTS_SOURCE`; SQL: `restaurant_place` → `josh_restaurant_places`,
-      `winback_account` → commerce `winback_account` (same columns `id`, `customer_code`, `restaurant_place_id`).
-- [ ] `available` = copies mode or replica configured; controller/MCP guards use the reader's `available`, not
-      `insights.available`.
-- [ ] Spec with a fake `db.query`; opt-in db spec on a scratch DB.
+- [x] Inject commerce `DataSource`; `RESTAURANTS_SOURCE=replica|copies`; SQL: `restaurant_place` →
+      `josh_restaurant_places` (same columns, migration `1794500000000`), `winback_account` → commerce's own (same name).
+- [x] `available` = copies mode or replica configured; the restaurant routes use the reader's `available`, not
+      `insights.available`. MCP `restaurant_places` already checked `restaurants.available`.
+- [x] `GET /reports/restaurants/parity` (needs the replica): total / enriched / linked-to-winback / newest
+      `updated_at` on both sides. Expected difference: `linked_to_winback` — josh's `winback_account` is stale since 2b.
+- [x] Spec: default replica, copies without replica (every query on `josh_restaurant_places`), 7 + MCP spec pass.
+- [ ] Opt-in db spec on a scratch DB — not written; the copies SQL is the replica SQL with one table renamed.
+
+Note: `JoshWinback` (the replica path of S5-2) also lists places through `RestaurantPlaces`, so with
+`RESTAURANTS_SOURCE=copies` its "places not yet leads" comes from the copy — the commerce answer, which is the
+intended end state anyway.
+
+**Cutover:** `restaurant_place` backfill done (stage 2c runbook) → `GET /reports/restaurants/parity`: `total`,
+`enriched` equal (± enrichment in flight) → `RESTAURANTS_SOURCE=copies`. Rollback: `replica`.
 
 ### Task S5-4: products report on the catalog copy
 

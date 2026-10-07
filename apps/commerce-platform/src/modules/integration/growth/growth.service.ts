@@ -5,7 +5,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import type { GrowthEvidence, GrowthPlan, GrowthPlanInput, GrowthPlanPage, GrowthReadiness, GrowthStatus, GrowthTask } from '@cp/growth';
 import { JoshActions } from '../connector/josh/josh-actions';
 import { joshAdminCall } from '../connector/josh/josh-admin-call.controller';
-import { JoshReplica } from '../connector/josh/josh-replica';
+import { growthSource } from './growth-data.service';
 import { GrowthCampaignPlan as Plan } from './growth-plan.entity';
 import { GrowthDataService } from './growth-data.service';
 import { GrowthAiService } from './growth-ai.service';
@@ -21,10 +21,10 @@ const marker = (p: Plan) => `Growth [${p.id}:v${p.approvedVersion}]`;
 @Injectable()
 export class GrowthService {
   constructor(private readonly db: DataSource, private readonly data: GrowthDataService, private readonly ai: GrowthAiService,
-    private readonly josh: JoshActions, private readonly replica: JoshReplica) {}
+    private readonly josh: JoshActions) {}
 
   readiness(): GrowthReadiness {
-    return { ai: this.ai.configured, workflow: this.josh.configured, replica: this.replica.configured,
+    return { ai: this.ai.configured, workflow: this.josh.configured, replica: this.data.available, dataSource: growthSource(),
       activationBlockers: ['ส่งออกได้เฉพาะร่างที่หยุดไว้: engine เดิมยังไม่ยืนยันการตรวจสต็อก/กำไรและเพดานงบทุกครั้งที่ส่ง',
         'ต้องยืนยัน consent, quiet hours และความถี่รวมของช่องทางก่อนเปิดส่ง', 'holdout เดิมสุ่มต่อ enrollment; ยังไม่ใช่การสุ่มคงที่ระดับบริษัท'] };
   }

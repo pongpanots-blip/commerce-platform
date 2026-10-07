@@ -26,7 +26,10 @@ export interface GrowthPlan extends GrowthPlanInput {
   createdAt: string; updatedAt: string; canManage: boolean;
 }
 export interface GrowthReadiness {
-  ai: boolean; workflow: boolean; replica: boolean;
+  ai: boolean; workflow: boolean;
+  /** Shop data reachable (josh's replica, or commerce's copies when dataSource = copies). */
+  replica: boolean;
+  dataSource?: 'replica' | 'copies';
   activationBlockers: string[];
 }
 export interface GrowthMetric { key: string; label: string; value: number | null; unit: 'THB' | 'percent' | 'count' | 'hours'; note: string }

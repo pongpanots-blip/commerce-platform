@@ -504,7 +504,7 @@ export interface PeriodParams { period: ReportPeriod; fromDate?: string; toDate?
 type Row = Record<string, string | number | null>;
 export interface SalesReport {
   period: string;
-  totals: Record<string, number> & { refunds: { n: number; amount: number } };
+  totals: Record<string, number> & { refunds: { n: number | null; amount: number | null; note?: string } };
   vsPreviousPeriod: { period: string; revenue_inc_vat: number; orders: number; revenue_change_percent: number | null; orders_change_percent: number | null };
   byDay?: { bucket: string; orders: number; revenue_inc_vat: number }[];
   byMonth?: { bucket: string; orders: number; revenue_inc_vat: number }[];

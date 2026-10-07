@@ -1,4 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone } from './winback/pii.helper';
 import { paidOrderSql } from './josh-insights';
@@ -11,10 +13,29 @@ const SHOULD_BE_AT_JAGOTA = `('paid','preparing','shipped','delivered')`;
  * Latest Jagota sync per order (josh `jagota_order_sync`, one row per send attempt / shipment).
  * `sent`/`confirmed`/`reserved`/`skipped` = handled; `failed`; `pending`; none = never tried.
  */
-const LATEST_SYNC = `LEFT JOIN LATERAL (
+const latestSync = (table: string) => `LEFT JOIN LATERAL (
     SELECT s.sync_status, s.error_message, s.doc_book, s.doc_no, s.created_at
-      FROM jagota_order_sync s WHERE s.order_id = o.orders_id ORDER BY s.created_at DESC LIMIT 1
+      FROM ${table} s WHERE s.order_id = o.orders_id ORDER BY s.created_at DESC LIMIT 1
   ) js ON TRUE`;
+
+type Source = 'replica' | 'copies';
+/**
+ * ORDERS_SOURCE: replica (default) · copies (stage 5, S5-7): `josh_orders` (`paid` from josh's builder), `josh_companies`,
+ * commerce's `jagota_order_sync_history` (jagota_sync.snapshot events + the old import), lines from `josh_order_lines` +
+ * catalog names; since S5-11 also `josh_branches`, `josh_order_payments` / `_shipments`, `sending_date`, the company's ERP
+ * code and the orderer's phone (customer copy, masked). Copied payments include batch payments (josh's replica detail
+ * lists only the order's own). Not copied, answered as null: a line's order_taking_flag.
+ */
+export const ordersSource = (): Source => (process.env.ORDERS_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica');
+const T = {
+  replica: { orders: 'orders', company: 'company', sync: 'jagota_order_sync', paid: paidOrderSql('o') },
+  copies: { orders: 'josh_orders', company: 'josh_companies', sync: 'jagota_order_sync_history', paid: 'o.paid' },
+} as const;
+const NOT_COPIED = ['items.order_taking_flag'];
+/** Latest copied payment per order — the copy's LATEST_PAYMENT. */
+const LATEST_PAYMENT_COPY = `LEFT JOIN LATERAL (
+    SELECT t.status, t.payment_method, t.paid_at FROM josh_order_payments t WHERE t.orders_id = o.orders_id ORDER BY t.created_at DESC LIMIT 1
+  ) pt ON TRUE`;
 const LATEST_PAYMENT = `LEFT JOIN LATERAL (
     SELECT t.status::text AS status, t.payment_method, t.paid_at FROM payment_transactions t WHERE t.order_id = o.orders_id ORDER BY t.created_at DESC LIMIT 1
   ) pt ON TRUE`;
@@ -28,7 +49,8 @@ export const SYNC_STATES = {
 
 export interface OrderFilters { search?: string; status?: string; sync?: string; companyId?: string; from?: string; to?: string; payment?: string }
 
-export function orderWhere(f: OrderFilters): { where: string; params: unknown[] } {
+/** `paid` = the paid-order test for `o` (the replica's payment_transactions EXISTS, or the copy's `o.paid`). */
+export function orderWhere(f: OrderFilters, paid = paidOrderSql('o')): { where: string; params: unknown[] } {
   const params: unknown[] = [];
   const add = (v: unknown) => `$${params.push(v)}`;
   const w: string[] = [];
@@ -42,7 +64,7 @@ export function orderWhere(f: OrderFilters): { where: string; params: unknown[] 
   if (f.payment) {
     // 'missing' = a paid / fulfilled status but no successful non-test payment (not counted as sales)
     if (f.payment !== 'missing') throw new BadRequestException('payment must be missing');
-    w.push(`o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND NOT ${paidOrderSql('o')}`);
+    w.push(`o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND NOT ${paid}`);
   }
   if (f.companyId) { if (!UUID.test(f.companyId)) throw new BadRequestException('companyId must be a uuid'); w.push(`o.company_id = ${add(f.companyId)}`); }
   for (const [k, op] of [['from', '>='], ['to', '<']] as const) {
@@ -55,46 +77,57 @@ export function orderWhere(f: OrderFilters): { where: string; params: unknown[] 
 }
 
 /**
- * josh orders, READ-ONLY from josh's replica: status, payment, and whether each order reached
- * Jagota (ERP). Orders keep being created, paid and sent by josh. Customer contact data is
+ * josh orders, READ-ONLY from josh's replica or commerce's copies (ORDERS_SOURCE): status, payment, and whether each
+ * order reached Jagota (ERP). Orders keep being created, paid and sent by josh. Customer contact data is
  * masked like josh's winback screens.
  */
 @Injectable()
 export class JoshOrders {
-  constructor(private readonly replica: JoshReplica) {}
+  constructor(private readonly replica: JoshReplica, @InjectDataSource() private readonly db: DataSource) {}
 
-  get available() { return this.replica.configured; }
+  get source() { return ordersSource(); }
+  get available() { return this.source === 'copies' || this.replica.configured; }
+
+  private q<R = Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<R[]> {
+    return this.source === 'copies' ? this.db.query(sql, params) : this.replica.query<R>(sql, params);
+  }
 
   async summary(f: OrderFilters = {}) {
-    const { where, params } = orderWhere(f);
+    const t = T[this.source];
+    const { where, params } = orderWhere(f, t.paid);
     const sync = Object.entries(SYNC_STATES).map(([k, cond]) => `count(*) FILTER (WHERE ${cond})::int AS sync_${k}`).join(', ');
+    const from = `FROM ${t.orders} o LEFT JOIN ${t.company} c ON c.id = o.company_id ${latestSync(t.sync)} ${where}`;
     const [[row], byStatus] = await Promise.all([
-      this.replica.query(`SELECT count(*)::int AS total, ${sync},
+      this.q(`SELECT count(*)::int AS total, ${sync},
           count(*) FILTER (WHERE o.status::text = 'payment_pending')::int AS awaiting_payment,
-          COALESCE(sum(o.total_price) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND ${paidOrderSql('o')}), 0)::float AS paid_value,
-          count(*) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND NOT ${paidOrderSql('o')})::int AS settled_without_payment
-        FROM orders o LEFT JOIN company c ON c.id = o.company_id ${LATEST_SYNC} ${where}`, params),
-      this.replica.query(`SELECT o.status::text AS status, count(*)::int AS n FROM orders o LEFT JOIN company c ON c.id = o.company_id ${LATEST_SYNC} ${where} GROUP BY 1 ORDER BY 2 DESC`, params),
+          COALESCE(sum(o.total_price) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND ${t.paid}), 0)::float AS paid_value,
+          count(*) FILTER (WHERE o.status::text IN ${SHOULD_BE_AT_JAGOTA} AND NOT ${t.paid})::int AS settled_without_payment
+        ${from}`, params),
+      this.q(`SELECT o.status::text AS status, count(*)::int AS n ${from} GROUP BY 1 ORDER BY 2 DESC`, params),
     ]);
-    return { ...row, byStatus };
+    return { ...row, byStatus, source: this.source };
   }
 
   async list(f: OrderFilters, page = 1, limit = 50) {
-    const { where, params } = orderWhere(f);
+    const copies = this.source === 'copies', t = T[this.source];
+    const { where, params } = orderWhere(f, t.paid);
     const n = params.length;
-    const base = `FROM orders o LEFT JOIN company c ON c.id = o.company_id LEFT JOIN branch b ON b.id = o.branch_id ${LATEST_SYNC} ${LATEST_PAYMENT} ${where}`;
+    const base = copies
+      ? `FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_branches b ON b.id = o.branch_id ${latestSync(t.sync)} ${LATEST_PAYMENT_COPY} ${where}`
+      : `FROM orders o LEFT JOIN company c ON c.id = o.company_id LEFT JOIN branch b ON b.id = o.branch_id ${latestSync(t.sync)} ${LATEST_PAYMENT} ${where}`;
+    const payment = `b.name AS branch_name, pt.status AS payment_status, pt.payment_method, pt.paid_at`;
     const [items, [{ total }]] = await Promise.all([
-      this.replica.query(`SELECT o.orders_id, o.order_number, o.status::text AS status, o.create_date, o.delivery_date::text AS delivery_date, o.total_price::float AS total_price,
-          o.customer_code, o.po_number, c.name AS company_name, b.name AS branch_name,
-          pt.status AS payment_status, pt.payment_method, pt.paid_at,
+      this.q(`SELECT o.orders_id, o.order_number, o.status::text AS status, o.create_date, o.delivery_date::text AS delivery_date, o.total_price::float AS total_price,
+          o.customer_code, o.po_number, c.name AS company_name, ${payment},
           js.sync_status AS jagota_sync_status, js.error_message AS jagota_error, js.doc_book, js.doc_no, js.created_at AS jagota_synced_at
         ${base} ORDER BY o.create_date DESC LIMIT $${n + 1} OFFSET $${n + 2}`, [...params, limit, (page - 1) * limit]),
-      this.replica.query(`SELECT count(*)::int AS total ${base}`, params),
+      this.q<{ total: number }>(`SELECT count(*)::int AS total ${base}`, params),
     ]);
-    return { items, total, page, limit };
+    return { items, total, page, limit, ...(copies ? { source: 'copies', notCopied: NOT_COPIED } : {}) };
   }
 
   async detail(idOrNumber: string) {
+    if (this.source === 'copies') return this.detailFromCopies(idOrNumber);
     const byId = UUID.test(idOrNumber);
     const [order] = await this.replica.query<Record<string, unknown>>(
       `SELECT o.orders_id, o.order_number, o.status::text AS status, o.fulfillment_type::text AS fulfillment_type, o.payment_type::text AS payment_type, o.create_date, o.delivery_date::text AS delivery_date, o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
@@ -125,6 +158,42 @@ export class JoshOrders {
       ...rest,
       orderedBy: { name: maskPersonName(first_name as string, last_name as string), email: maskEmail(email as string), phone: maskPhone(mobile_phone as string) },
       items, shipments, jagotaSync: jagota, payments,
+    };
+  }
+
+  /** One order from the copies; what is not copied yet is null and listed in `notCopied`. */
+  private async detailFromCopies(idOrNumber: string) {
+    const byId = UUID.test(idOrNumber);
+    const [order] = await this.db.query(
+      `SELECT o.orders_id, o.order_number, o.status, o.fulfillment_type, o.payment_type, o.create_date, o.delivery_date::text AS delivery_date,
+          o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
+          o.total_price::float AS total_price, o.subtotal_ex_vat::float AS subtotal_ex_vat, o.vat_amount::float AS vat_amount,
+          o.discount_inc_vat::float AS discount_inc_vat, o.delivery_fee::float AS delivery_fee,
+          CASE WHEN o.paid THEN 'success' ELSE 'not paid' END AS payment_status,
+          c.id AS company_id, c.name AS company_name, c.erp_customer_code, b.name AS branch_name, b.erp_branch_code,
+          u.first_name, u.last_name, u.email, jc.data->>'mobile_phone' AS mobile_phone
+        FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_users u ON u.id = o.user_id
+        LEFT JOIN josh_branches b ON b.id = o.branch_id LEFT JOIN josh_customers jc ON jc.id = o.user_id AND jc.deleted_at IS NULL
+       WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} LIMIT 1`, [idOrNumber.trim().slice(0, 64)]);
+    if (!order) throw new NotFoundException(`order ${idOrNumber} not found in commerce's copy of josh orders`);
+    const id = order.orders_id;
+    const [items, jagota, shipments, payments] = await Promise.all([
+      this.db.query(`SELECT l.sku, COALESCE((SELECT t->>'product_name' FROM jsonb_array_elements(cp.translations) t WHERE t->>'language_code' = 'th' LIMIT 1), l.sku) AS name,
+          l.product_quantity::float AS qty, l.product_price::float AS unit_price, l.line_revenue::float AS line_revenue, l.price_source, NULL::text AS order_taking_flag
+        FROM josh_order_lines l LEFT JOIN josh_catalog_products cp ON cp.id = l.product_inventory_id
+       WHERE l.orders_id = $1 ORDER BY l.sku`, [id]),
+      this.db.query(`SELECT sync_status, transaction_type, doc_book, doc_no, error_message, payment_method, payment_success, created_at
+        FROM jagota_order_sync_history WHERE order_id = $1 ORDER BY created_at`, [id]),
+      this.db.query(`SELECT shipment_number, status, fulfillment_type, delivery_date::text AS delivery_date, shipped_at, delivered_at, cancelled_at,
+          total_inc_vat::float AS total_inc_vat, erp_sync_status, three_pl_status FROM josh_order_shipments WHERE orders_id = $1 ORDER BY created_at, id`, [id]),
+      this.db.query(`SELECT status, payment_method, amount::float AS amount, allocated_amount::float AS allocated_amount, gateway_provider, paid_at, created_at
+        FROM josh_order_payments WHERE orders_id = $1 ORDER BY created_at, id`, [id]),
+    ]);
+    const { first_name, last_name, email, mobile_phone, ...rest } = order;
+    return {
+      ...rest,
+      orderedBy: { name: maskPersonName(first_name, last_name), email: maskEmail(email), phone: maskPhone(mobile_phone) },
+      items, shipments, jagotaSync: jagota, payments, source: 'copies', notCopied: NOT_COPIED,
     };
   }
 }

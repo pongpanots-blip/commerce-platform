@@ -12,7 +12,7 @@ type Filters = {
 const LIMIT = 20;
 const WEEKDAYS = ['', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา'];
 
-/** Market Explorer (moved from josh restaurant-place): restaurants for prospecting, read from josh's replica. */
+/** Market Explorer (moved from josh restaurant-place): restaurants for prospecting, read from josh's replica or commerce's copy (backend RESTAURANTS_SOURCE). */
 export function MarketExplorer() {
   const [draft, setDraft] = useState<Filters>({});
   const [filters, setFilters] = useState<Filters>({});

@@ -35,11 +35,32 @@ describe('StaffPrices writes', () => {
   const actor = { userId: 'staff-1', email: 'ba@jagota.co.th' };
   let repo: { findOneBy: jest.Mock; save: jest.Mock; create: jest.Mock; update: jest.Mock };
   let joshActions: { run: jest.Mock };
+  let catalog: { findOne: jest.Mock };
+  let replica: { configured: boolean; query: jest.Mock };
   let svc: StaffPrices;
   beforeEach(() => {
     repo = { findOneBy: jest.fn(async () => null), save: jest.fn(async (r) => ({ id: 'c-new', ...r })), create: jest.fn((r) => r), update: jest.fn() };
     joshActions = { run: jest.fn(async () => ({ data: { id: 'j-new' } })) };
-    svc = new StaffPrices(repo as never, { query: jest.fn(async () => [{ sku: '1007310' }]) } as never, joshActions as never);
+    catalog = { findOne: jest.fn(async () => ({ id: INV, sku: '1007310' })) };
+    replica = { configured: false, query: jest.fn(async () => [{ sku: '1007310' }]) };
+    svc = new StaffPrices(repo as never, replica as never, joshActions as never, catalog as never);
+  });
+
+  it('looks the SKU up in commerce\'s catalog copy — no replica needed (S5-10)', async () => {
+    await svc.create('customer', { companyId: CO, sku: ' 1007310 ', price: 450 }, actor);
+    expect(catalog.findOne).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ sku: '1007310' }) }));
+    expect(replica.query).not.toHaveBeenCalled();
+    expect(repo.save).toHaveBeenCalledWith(expect.objectContaining({ productInventoryId: INV, sku: '1007310' }));
+  });
+
+  it('asks the replica only when it is configured and the copy has no row', async () => {
+    catalog.findOne.mockResolvedValue(null);
+    await expect(svc.create('customer', { companyId: CO, sku: 'NOPE', price: 450 }, actor)).rejects.toThrow('ไม่พบ SKU NOPE');
+    expect(replica.query).not.toHaveBeenCalled();
+    replica.configured = true;
+    replica.query.mockResolvedValueOnce([{ id: INV }]);
+    await svc.create('customer', { companyId: CO, sku: '1007310', price: 450 }, actor);
+    expect(replica.query.mock.calls[0][0]).toContain('FROM product_inventory WHERE product_inventory_sku = $1');
   });
 
   it('a new customer price is stored, sent to josh through PrivatePriceService (upsert) and remembers josh\'s id', async () => {

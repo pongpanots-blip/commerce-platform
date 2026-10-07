@@ -1,5 +1,6 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
 import { JagotaShadow } from './jagota-shadow';
+import { joshOnly } from '../system-health';
 
 /** Shadow mode for orders → Jagota through commerce (admin only, the guard default). Sends nothing. */
 @Controller('reports/jagota-shadow')
@@ -7,7 +8,7 @@ export class JagotaShadowController {
   constructor(private readonly shadow: JagotaShadow) {}
 
   private replica() {
-    if (!this.shadow.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.shadow.available) throw joshOnly('jagotaShadow');
   }
 
   @Get('summary') summary(@Query('days') days?: string) {

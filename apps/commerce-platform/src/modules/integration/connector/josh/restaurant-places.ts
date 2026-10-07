@@ -1,5 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { JoshReplica } from './josh-replica';
+
+type Source = 'replica' | 'copies';
+
+/**
+ * RESTAURANTS_SOURCE: replica (default — josh's `restaurant_place` and josh's own, stale since stage 2b, `winback_account`)
+ * · copies (commerce's `josh_restaurant_places` — restaurant_place.snapshot events, stage 2c, every column — and
+ * commerce's `winback_account`; works without JOSH_DATABASE_URL). Compare first with `GET /reports/restaurants/parity`.
+ */
+export const restaurantsSource = (): Source =>
+  process.env.RESTAURANTS_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica';
+/** The places table on each side; `winback_account` has the same name (and columns) on both. */
+const PLACES = { replica: 'restaurant_place', copies: 'josh_restaurant_places' } as const;
 
 /** A place is "busy" in a window when any hour of today's popular-times curve is above this %. Same as josh. */
 export const BUSY_THRESHOLD_PERCENT = 60;
@@ -108,14 +122,29 @@ const csvCell = (v: unknown) => {
 
 /**
  * Market Explorer (josh `restaurant-place`, read-only) moved to commerce: restaurant
- * master data for marketing/sales prospecting, read from josh's READ REPLICA. The
- * enrichment that fills `restaurant_place` still runs in josh until that moves too.
+ * master data for marketing/sales prospecting, read from josh's READ REPLICA or commerce's
+ * copy (RESTAURANTS_SOURCE). The enrichment that fills `restaurant_place` still runs in josh until that moves too.
  */
 @Injectable()
 export class RestaurantPlaces {
-  constructor(private readonly replica: JoshReplica) {}
+  constructor(private readonly replica: JoshReplica, @InjectDataSource() private readonly db: DataSource) {}
 
-  get available() { return this.replica.configured; }
+  get source() { return restaurantsSource(); }
+  get available() { return this.source === 'copies' || this.replica.configured; }
+
+  private query(sql: string, params: unknown[], source: Source = this.source): Promise<Row[]> {
+    const text = sql.replace(/\brestaurant_place p\b/g, `${PLACES[source]} p`);
+    return source === 'copies' ? this.db.query(text, params) : this.replica.query<Row>(text, params);
+  }
+
+  /** Both sources side by side — what moving to `copies` changes (the winback link comes from commerce's table there). */
+  async parity() {
+    const sql = `SELECT count(*)::int AS total, count(*) FILTER (WHERE p.enriched_at IS NOT NULL)::int AS enriched,
+      count(*) FILTER (WHERE EXISTS (SELECT 1 FROM winback_account wa WHERE wa.restaurant_place_id = p.id))::int AS linked_to_winback,
+      max(p.updated_at) AS last_updated_at FROM restaurant_place p`;
+    const [[replica], [copies]] = await Promise.all([this.query(sql, [], 'replica'), this.query(sql, [], 'copies')]);
+    return { source: this.source, replica, copies };
+  }
 
   async list(f: RestaurantFilters, page = 1, limit = 20, now = Date.now()) {
     const today = bangkokDayKey(now);
@@ -123,9 +152,9 @@ export class RestaurantPlaces {
     const summaryWhere = restaurantWhere(f, today);
     const n = params.length;
     const [rows, [summary]] = await Promise.all([
-      this.replica.query(`SELECT ${COLUMNS} FROM restaurant_place p ${WINBACK_JOIN} ${where} ${ORDER} LIMIT $${n + 1} OFFSET $${n + 2}`,
+      this.query(`SELECT ${COLUMNS} FROM restaurant_place p ${WINBACK_JOIN} ${where} ${ORDER} LIMIT $${n + 1} OFFSET $${n + 2}`,
         [...params, limit, (page - 1) * limit]),
-      this.replica.query(
+      this.query(
         `WITH f AS (SELECT p.district, p.raw_category FROM restaurant_place p ${summaryWhere.where})
          SELECT (SELECT count(*) FROM f)::int AS total_count,
                 COALESCE((SELECT json_agg(t) FROM (SELECT raw_category AS name, count(*)::int AS count FROM f WHERE raw_category IS NOT NULL GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 5) t), '[]') AS top_categories,
@@ -140,7 +169,7 @@ export class RestaurantPlaces {
   }
 
   async detail(id: string, now = Date.now()) {
-    const [row] = await this.replica.query(
+    const [row] = await this.query(
       `SELECT ${COLUMNS}, p.source, p.popular_times, p.opening_hours, p.enriched_at, p.google_place_id, p.fsq_id
          FROM restaurant_place p ${WINBACK_JOIN} WHERE p.id = $2`, [bangkokDayKey(now), id]);
     if (!row) return null;
@@ -155,7 +184,7 @@ export class RestaurantPlaces {
   async csv(f: RestaurantFilters, now = Date.now()) {
     const today = bangkokDayKey(now);
     const { where, params } = restaurantWhere(f, today, [today]);
-    const rows = await this.replica.query(
+    const rows = await this.query(
       `SELECT ${COLUMNS}, p.google_place_id, p.fsq_id, p.source FROM restaurant_place p ${WINBACK_JOIN} ${where} ${ORDER} LIMIT ${MAX_EXPORT_ROWS}`, params);
     const head = ['id', 'name_th', 'name_en', 'district', 'category', 'rating', 'review_count', 'price_range', 'lat', 'lng', 'peak_hour_today',
       'dine_in', 'takeaway', 'delivery', 'is_enriched', 'google_place_id', 'fsq_id', 'source', 'winback_account_id', 'winback_customer_code'];

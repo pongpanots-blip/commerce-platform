@@ -1,6 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { JoshReplica } from './josh-replica';
 import { JoshErpLogs } from './josh-erp-logs';
+
+/**
+ * PUSH_CAMPAIGNS_SOURCE: replica (default) · copies (stage 5, S5-12): `josh_push_campaigns`, fed by josh's
+ * push_campaign.snapshot (same columns); works without the replica. Delivery results stay in josh's Mongo either way.
+ */
+export const pushCampaignsSource = (): 'replica' | 'copies' =>
+  (process.env.PUSH_CAMPAIGNS_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica');
 
 /** josh `push_campaigns` row, all columns, snake_case — the same `data` josh's admin API returns. */
 const CAMPAIGN_COLUMNS = `id, name, notification_type, title, body, title_en, body_en, image_url, deep_link, deep_link_web, audience,
@@ -12,7 +20,7 @@ const rate = (numerator: number, denominator: number) => (denominator <= 0 ? 0 :
 
 /**
  * josh push campaigns (marketing push / in-app blasts), READ side only: list, KPIs, one campaign and
- * how its sends went. Campaigns come from josh's replica (`push_campaigns`), per-user delivery results
+ * how its sends went. Campaigns come from josh's replica (`push_campaigns`) or its copy (PUSH_CAMPAIGNS_SOURCE), per-user delivery results
  * from josh's Mongo (`josh_logs.notification_deliveries`). Logic copied from josh
  * push-campaign.service (overviewKpis, delivery) and notification-delivery.service (stats, list).
  *
@@ -21,23 +29,30 @@ const rate = (numerator: number, denominator: number) => (denominator <= 0 ? 0 :
  */
 @Injectable()
 export class JoshPushCampaigns {
-  constructor(private readonly replica: JoshReplica, private readonly logs: JoshErpLogs) {}
+  constructor(private readonly replica: JoshReplica, private readonly logs: JoshErpLogs, private readonly db: DataSource) {}
 
-  get available() { return this.replica.configured; }
+  get available() { return pushCampaignsSource() === 'copies' || this.replica.configured; }
+
+  /** `FROM <table>` in the SQL is josh's push_campaigns, or commerce's copy in copies mode. */
+  private query(sql: string, params: unknown[] = []): Promise<Campaign[]> {
+    return pushCampaignsSource() === 'copies'
+      ? this.db.query(sql.replace('FROM push_campaigns', 'FROM josh_push_campaigns'), params)
+      : this.replica.query<Campaign>(sql, params);
+  }
 
   list(): Promise<Campaign[]> {
-    return this.replica.query(`SELECT ${CAMPAIGN_COLUMNS} FROM push_campaigns ORDER BY created_at DESC`);
+    return this.query(`SELECT ${CAMPAIGN_COLUMNS} FROM push_campaigns ORDER BY created_at DESC`);
   }
 
   async findOne(id: string): Promise<Campaign> {
-    const [row] = await this.replica.query<Campaign>(`SELECT ${CAMPAIGN_COLUMNS} FROM push_campaigns WHERE id = $1`, [id]);
+    const [row] = await this.query(`SELECT ${CAMPAIGN_COLUMNS} FROM push_campaigns WHERE id = $1`, [id]);
     if (!row) throw new NotFoundException('ไม่พบแคมเปญ');
     return row;
   }
 
   /** josh overviewKpis. Note josh's stats.clicked is never written, so clickRate is 0 there too — real clicks are in deliveryStats. */
   async overview() {
-    const rows = await this.replica.query<Campaign>(`SELECT ${CAMPAIGN_COLUMNS} FROM push_campaigns ORDER BY created_at DESC LIMIT 200`);
+    const rows = await this.query(`SELECT ${CAMPAIGN_COLUMNS} FROM push_campaigns ORDER BY created_at DESC LIMIT 200`);
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     let sentToday = 0;

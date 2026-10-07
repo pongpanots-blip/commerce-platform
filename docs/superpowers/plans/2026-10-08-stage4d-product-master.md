@@ -62,3 +62,29 @@ approves / rejects in commerce-admin; approve and staff edits of these fields in
 - [ ] Contract, env, runbook `docs/runbooks/stage4d-product-master-cutover.md`.
 - [ ] Scratch DBs: import + parity; ERP upsert → queue → approve → snapshot → josh applies → parity.
 - [ ] Full suites; as built; drop scratch DBs; commit.
+
+## As built (2026-10-08)
+
+- **Scope as planned.** New switch `COMMERCE_OWNS_PRODUCT_MASTER` both sides; `GET /api/ownership` → `productMaster`.
+- **commerce:** `product_masters` / `product_master_pending` (jsonb, josh's pending-patch keys). `master-fields.ts` ports
+  josh's `buildProductUpsertPendingPatch` (VAT, status, ordering units rules) for the master keys and validates the
+  product form's master keys. The ERP relay stages product upserts / bulk in the same transaction as the relay; the
+  fallback replay stages `/products` paths. Staging skips SKUs that are neither in `product_masters` nor live in the
+  catalog copy (new SKUs / drafts stay josh's). Approve / staff edit publish `product.master.snapshot` (whole row).
+  New page "คิวข้อมูลสินค้าจาก ERP"; the product form sends status / category / brand / units / pack here and shows
+  commerce's row over josh's copy (category still josh's id).
+- **Found in the end-to-end run:** josh derives packaging type / units per box / weight per unit from `pack_size` only
+  when they are not given; the whole-row snapshot sent the old ones (25 KG pack kept 13 KG). Fix: a write with a new
+  `pack_size` and without those keys drops them from commerce's row, so josh derives them — same result as josh's own approve.
+- **josh:** live products' master keys are no longer staged from the ERP or applied by josh's approve; the Jagota
+  metadata sync puts commerce's values back (and the 4b content it also wrote — shelf life, organic — under
+  `COMMERCE_OWNS_CATALOG`, missed in 4b); `sync-product-status` → 403. `CommerceProductMasterService.apply` =
+  `applyErpPendingPayloadToInventory` + `category_code` → id.
+
+**Verification:** josh — master service / upsert gating specs, erp / product / jagota specs. commerce — builder unit
+spec, opt-in `product-masters.service.db.spec.ts` (merge, live-only staging, approve only changed fields, reject,
+category id → code, pack-derived drop, switch off), relay controller spec. Scratch copies: import 5,888 live SKUs,
+`master-parity` 0; a real ERP upsert (pack 25 KG, unit, brand, VAT, status, category) → queue → approve → josh applied
+(weight 25 KG derived, category 1-1-1-2) → parity 0. Browser: the queue page shows current → new, approve writes the row
+and the snapshot. commerce full suite (`--maxWorkers=2`): 1299 passed (31 opt-in skipped).
+josh full suite (`--maxWorkers=2`): 6745 passed; only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.

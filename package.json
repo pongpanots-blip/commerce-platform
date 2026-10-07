@@ -22,6 +22,7 @@
     "category-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/category-parity.ts",
     "master-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/master-parity.ts",
     "image-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/image-parity.ts",
+    "ordering-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/ordering-parity.ts",
     "migration:generate": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:generate -d apps/commerce-platform/src/data-source.ts",
     "seed:mock": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node scripts/seed-mock.ts"
   },

@@ -52,5 +52,6 @@ describe('logistics fields (stage 4f)', () => {
       delivery_dates: ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'].map((day) => ({ day })) })).toEqual({
       unit_ratio: '12', sub_packing_unit: null, product_unit: 'PC', expected_restock_at: '2026-11-01T00:00:00.000Z', delivery_dates: null,
     });
+    expect(logisticsFromJosh({ delivery_dates: [{ day: 'HOLIDAY' }] })).toMatchObject({ delivery_dates: [{ day: 'HOLIDAY' }], unit_ratio: null });
   });
 });

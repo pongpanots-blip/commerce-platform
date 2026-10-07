@@ -21,9 +21,10 @@ const PENDING_FIELDS: Record<string, string> = {
   BRAND_NAME: 'brand_name', ORDER_TAKING: 'order_taking_flag', STATUS: 'product_status',
 };
 
-/** The rest of the content the product form edits (stage 4b). */
+/** The rest of the content the product form edits (stage 4b) and the logistics fields (stage 4f). */
 const DETAIL_COLUMNS = `p.ingredients, p.allergens, p.expiration_info, p.usage_direction, p.best_paired_food, p.maximum_shelf_life, p.is_organic,
-  p.product_short_code, p.buying_price::float AS buying_price, p.reorder_quantity`;
+  p.product_short_code, p.buying_price::float AS buying_price, p.reorder_quantity,
+  p.unit_ratio, p.sub_packing_unit, p.product_unit, p.expected_restock_at, p.delivery_dates`;
 
 const COLUMNS = `p.product_inventory_id, p.product_inventory_sku, p.product_status, th.product_name AS name_th, en.product_name AS name_en,
   p.category_id, c.category_name_th, c.category_path, p.brand_code, p.brand_name,

@@ -55,9 +55,11 @@ export function splitLogistics(body: Record<string, unknown>): { logistics: Reco
   return { logistics, rest };
 }
 
-/** A josh row's logistics columns → the `fields` commerce stores (import and parity). */
+/** A josh row's logistics columns → the `fields` commerce stores (import and parity). A value commerce would refuse is kept as josh has it. */
 export function logisticsFromJosh(row: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(LOGISTICS_KEYS.map((k) => [k, normLogistics(k, row[k])]));
+  return Object.fromEntries(LOGISTICS_KEYS.map((k) => {
+    try { return [k, normLogistics(k, row[k])]; } catch { return [k, row[k] ?? null]; }
+  }));
 }
 
 /** josh's products (drafts too: staff set these before a product goes live) with the five columns. */

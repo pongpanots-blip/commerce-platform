@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Optional } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { JoshOrderCopy, JoshOrderLineCopy } from '../orders/josh-order-copy.entity';
 import { Row, toHead, toLine } from '../orders/josh-order-copy';
 import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { JoshCustomerCopy } from './josh-customer-copy.entity';
+import { OrderStockService } from '../../../../commerce/inventory/application/order-stock.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
@@ -22,7 +23,11 @@ const REFERENCE_TABLES = { company: 'josh_companies', cuisine: 'josh_cuisines', 
 export class JoshEventsService {
   private readonly columns = new Map<string, string[]>();
 
-  constructor(@InjectDataSource() private readonly db: DataSource) {}
+  constructor(
+    @InjectDataSource() private readonly db: DataSource,
+    /** Stage 3: orders deduct the commerce-owned warehouse (STOCK_ORDER_WAREHOUSE_CODE). */
+    @Optional() private readonly orderStock?: OrderStockService,
+  ) {}
 
   async apply(e: JoshEnvelope): Promise<ApplyResult> {
     if (!e?.aggregateId || !/^\d+$/.test(String(e.version ?? ''))) throw new BadRequestException('aggregateId and numeric version required');
@@ -125,6 +130,8 @@ export class JoshEventsService {
     // Lines are replaced per order: josh can remove or split lines after checkout (claims, shipments).
     await m.getRepository(JoshOrderLineCopy).delete({ ordersId: e.aggregateId });
     if (items.length) await m.getRepository(JoshOrderLineCopy).insert(items.map(toLine));
+    await this.orderStock?.apply(m, { orders_id: e.aggregateId, status: (head.status as string | null) ?? null },
+      items.map((i) => ({ id: String(i.id), sku: (i.sku as string | null) ?? null, product_quantity: i.product_quantity as number })));
   }
 
   /** Raw values exactly as josh stores them (numeric as string): catalogFingerprint must match josh's. */

@@ -29,6 +29,8 @@ export interface OwnStockAdjustment {
   quantity: number;
   reason: string;
   ref: string | null;
+  /** Orders: never refuse — clamp at 0 and ignore reservations (the storefront already sold it). */
+  clampAtZero?: boolean;
 }
 
 export interface ExternalQuantityResult {
@@ -130,9 +132,10 @@ export class InventoryLedgerService {
     const level = await this.lockedLevel(manager, input.productId, input.warehouse.id);
     const previous = Number(level.quantity);
     const reserved = Number(level.reserved);
-    const next = input.mode === 'set' ? input.quantity : previous + input.quantity;
+    const wanted = input.mode === 'set' ? input.quantity : previous + input.quantity;
+    const next = input.clampAtZero ? Math.max(0, wanted) : wanted;
     if (!Number.isInteger(next) || next < 0) throw new BadRequestException(`ยอดหลังปรับต้องเป็นจำนวนเต็มไม่ติดลบ (ได้ ${next})`);
-    if (next < reserved) throw new BadRequestException(`ยอดหลังปรับ (${next}) น้อยกว่าที่ถูกจองไว้ (${reserved}) — ปล่อยการจองก่อน`);
+    if (!input.clampAtZero && next < reserved) throw new BadRequestException(`ยอดหลังปรับ (${next}) น้อยกว่าที่ถูกจองไว้ (${reserved}) — ปล่อยการจองก่อน`);
     const result = await this.recordExternalQuantity(manager, {
       productId: input.productId, warehouse: input.warehouse, source: 'commerce', quantity: next,
       reason: `ADJUST:${input.reason}`.slice(0, 32), occurredAt: new Date(), ref: input.ref,

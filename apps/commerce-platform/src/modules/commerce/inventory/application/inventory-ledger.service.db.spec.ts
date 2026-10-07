@@ -10,6 +10,7 @@ import { InventoryLevel } from '../infrastructure/inventory-level.entity';
 import { InventoryMovement } from '../infrastructure/inventory-movement.entity';
 import { InventoryLedgerService } from './inventory-ledger.service';
 import { StockMovesService } from './stock-moves.service';
+import { OrderStockService } from './order-stock.service';
 
 /*
  * Stage 3: ledger writes under a row lock on an upserted level row. Opt-in, migrated scratch DB:
@@ -22,8 +23,10 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
   let db: DataSource;
   let ledger: InventoryLedgerService;
   let moves: StockMovesService;
+  let orders: OrderStockService;
   const clean = async () => {
     await db.query(`DELETE FROM outbox_messages WHERE aggregate_id = $1`, [P]);
+    await db.query(`DELETE FROM josh_order_stock_moves WHERE product_id = $1`, [P]);
     await db.query(`DELETE FROM inventory_movements WHERE product_id = $1`, [P]);
     await db.query(`DELETE FROM inventory_levels WHERE product_id = $1`, [P]);
     await db.query(`DELETE FROM warehouses WHERE id = ANY($1::uuid[])`, [[W, W2]]);
@@ -33,11 +36,12 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
   beforeAll(async () => {
     const mod = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot({ type: 'postgres', url, entities: [InventoryLevel, InventoryMovement, Warehouse, OutboxMessage] }), TypeOrmModule.forFeature([OutboxMessage])],
-      providers: [InventoryLedgerService, StockMovesService, EventEmitterBus, { provide: EVENT_BUS, useExisting: EventEmitterBus }],
+      providers: [InventoryLedgerService, StockMovesService, OrderStockService, EventEmitterBus, { provide: EVENT_BUS, useExisting: EventEmitterBus }],
     }).compile();
     db = mod.get(DataSource);
     ledger = mod.get(InventoryLedgerService);
     moves = mod.get(StockMovesService);
+    orders = mod.get(OrderStockService);
     await clean();
     await db.query(`INSERT INTO products (id, sku, name) VALUES ($1, 'T3-SKU', 'stage 3 test')`, [P]);
     await db.query(`INSERT INTO warehouses (id, code, name, stock_source, sellable) VALUES ($1, 'T3-OWN', 'own', 'commerce', true), ($2, 'T3-DMG', 'damaged', 'commerce', false)`, [W, W2]);
@@ -79,5 +83,43 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
     expect((await db.query(`SELECT quantity::int AS q FROM inventory_levels WHERE product_id = $1 AND warehouse_id = $2`, [P, W]))[0].q).toBe(9);
     await expect(moves.adjust({ sku: 'NOPE', warehouseCode: 'T3-OWN', mode: 'add', quantity: 1, reason: 'RECEIVE' }, 's')).rejects.toThrow('ไม่พบสินค้า');
     await expect(moves.adjust({ sku: 'T3-SKU', warehouseCode: 'NOPE', mode: 'add', quantity: 1, reason: 'RECEIVE' }, 's')).rejects.toThrow('ไม่พบคลัง');
+  });
+
+  it('orders: paid deducts once, replays do nothing, cancelled gives back once; unknown SKU skipped', async () => {
+    process.env.STOCK_ORDER_WAREHOUSE_CODE = 'T3-OWN';
+    try {
+      const O = '00000000-0000-4000-8000-0000000003c1', L1 = '00000000-0000-4000-8000-0000000003d1', L2 = '00000000-0000-4000-8000-0000000003d2';
+      const level = async () => (await db.query(`SELECT quantity::int AS q FROM inventory_levels WHERE product_id = $1 AND warehouse_id = $2`, [P, W]))[0].q;
+      const run = (status: string) => db.transaction((m) => orders.apply(m, { orders_id: O, status }, [
+        { id: L1, sku: 'T3-SKU', product_quantity: 4 }, { id: L2, sku: 'NOT-IN-COMMERCE', product_quantity: 2 }]));
+      const start = await level();
+      await run('payment_pending');
+      expect(await level()).toBe(start);
+      await run('paid');
+      await run('preparing');
+      await run('paid');
+      expect(await level()).toBe(start - 4);
+      await run('cancelled');
+      await run('cancelled');
+      expect(await level()).toBe(start);
+      expect(await db.query(`SELECT state, quantity::int AS q FROM josh_order_stock_moves WHERE orders_id = $1`, [O])).toEqual([{ state: 'returned', q: 4 }]);
+    } finally {
+      delete process.env.STOCK_ORDER_WAREHOUSE_CODE;
+    }
+  });
+
+  it('orders: a deduction bigger than the shelf clamps at 0 and gives back only what it took', async () => {
+    process.env.STOCK_ORDER_WAREHOUSE_CODE = 'T3-OWN';
+    try {
+      const O = '00000000-0000-4000-8000-0000000003c2', L = '00000000-0000-4000-8000-0000000003d3';
+      await moves.adjust({ sku: 'T3-SKU', warehouseCode: 'T3-OWN', mode: 'set', quantity: 3, reason: 'COUNT' }, 's');
+      const level = async () => (await db.query(`SELECT quantity::int AS q FROM inventory_levels WHERE product_id = $1 AND warehouse_id = $2`, [P, W]))[0].q;
+      await db.transaction((m) => orders.apply(m, { orders_id: O, status: 'paid' }, [{ id: L, sku: 'T3-SKU', product_quantity: 10 }]));
+      expect(await level()).toBe(0);
+      await db.transaction((m) => orders.apply(m, { orders_id: O, status: 'cancelled' }, [{ id: L, sku: 'T3-SKU', product_quantity: 10 }]));
+      expect(await level()).toBe(3);
+    } finally {
+      delete process.env.STOCK_ORDER_WAREHOUSE_CODE;
+    }
   });
 });

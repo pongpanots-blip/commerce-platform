@@ -95,3 +95,6 @@ updated, ingredients / cost / alert level written, older version refused. commer
 `content-parity` → 5,888 same (and it flags an edited / deleted row); after josh applied the snapshot, parity still
 matched. Scratch API + admin: the form shows the new fields, a save goes to commerce (outbox has the snapshot), an
 empty name is a 400. Scratch DBs dropped.
+Full suites (`--maxWorkers=2`): commerce 1295 passed (26 opt-in skipped; the ownership spec was updated for
+`productContent`); josh 6727 passed — the known `pii-leak.spec` fails (pre-existing) and
+`company.admin-view.http.spec` timed out under the parallel run (313 s) but passes alone (19 / 19).

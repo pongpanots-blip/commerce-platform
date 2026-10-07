@@ -27,11 +27,12 @@ What was still missing:
 
 ## Remaining
 
-- **josh repo (follow-ups, not done — this task was commerce-only):** `COMMERCE_OWNS_STAFF` flag; receiver handler
-  `staff.access` (`applyIfNewer('staff.access')`, set `role` / `is_active`, `token_version = GREATEST(token_version,
-  minTokenVersion)`, refuse service account / customers, clear internal-role cache); with the flag on, admin-access
-  approve/reject behind `CommerceOwned` (relay passes); `docs/commerce-erp-receiver.md` row. Details: plan § "josh follow-ups".
-- Ops: runbook part 1 (MER / CS accounts; no flag) can go any time after deploy; part 2 waits for the josh follow-up.
+- **josh repo follow-up implemented and pair-ready (2026-10-07):** `/workspace/webjosh-s6`, branch
+  `feat/stage6-staff-admin`, local commits `f0d02a09` (flag + versioned `staff.access` consumer), `6e1d121f`
+  (approve/reject relay-aware guards), `06409019` (docs + STATUS). Josh: 9 suites / 107 tests and backend typecheck
+  passed; default OFF, not pushed or deployed. Verify/cutover details: `/workspace/webjosh-s6/STATUS.md`.
+- Ops: runbook part 1 (MER / CS accounts; no flag) can go any time after deploy; part 2 waits for both branches to
+  deploy and the live end-to-end cutover checks. Plan/runbook/event-contract still have the earlier "not in josh yet" wording.
 - Not run: full commerce suite (shared machine), commerce-admin in a browser, end-to-end with josh.
 
 ## How to verify
@@ -72,6 +73,6 @@ Key specs: `josh-admin-call.controller.spec.ts` (role areas), `josh-staff-access
 
 Stage 6 coding on the commerce side is **done and ready to hand off toward Stage 7**. Everything is additive. The
 MER / CS roles reach nothing until an admin gives someone that role. Josh-staff writes stay off (409) until
-`COMMERCE_OWNS_STAFF=true`, and the only migration adds an empty table. Cutover part 2 is blocked on the josh-side
-follow-up (the `staff.access` handler and the flag). Stage 7 should not remove anything staff-related. The josh
+`COMMERCE_OWNS_STAFF=true`, and the only migration adds an empty table. Cutover part 2 is blocked on deploying the josh-side
+follow-up (implemented on webjosh-s6; see Remaining). Stage 7 should not remove anything staff-related. The josh
 `admin-access` relay path and `josh_staff` are still in use.

@@ -17,6 +17,7 @@
     "create-staff": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/create-staff.ts",
     "competitor-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/competitor-parity.ts",
     "segment-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/segment-parity.ts",
+    "price-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/price-parity.ts",
     "migration:generate": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:generate -d apps/commerce-platform/src/data-source.ts",
     "seed:mock": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node scripts/seed-mock.ts"
   },

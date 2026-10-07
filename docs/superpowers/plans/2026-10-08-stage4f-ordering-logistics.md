@@ -79,30 +79,53 @@ Not done here (this branch is commerce-only). For the josh session:
 - [ ] Specs (apply, stale, 409, 400, 422, owned ERP push skipped, poll forwarded, PATCH guard); commit.
 
 ### Task 2: commerce — tables, fields, services, events
-- [ ] Migration `1795150000000-OrderingLogistics`: `supplier_order_periods (id uuid PK, sup_code varchar(50),
+- [x] Migration `1795150000000-OrderingLogistics`: `supplier_order_periods (id uuid PK, sup_code varchar(50),
   erp_order_period varchar(50), date_from date, date_to date, close_at timestamptz, status varchar(5), synced_at,
   created_at, updated_at, UNIQUE (sup_code, erp_order_period))`; `product_logistics (product_inventory_sku varchar(64) PK,
   fields jsonb, source, updated_by, updated_at)`.
-- [ ] `order-periods.ts`: `toDateOnly`, `toBangkokTimestamp`, `mapErpOrderPeriods(rows)` (port of josh's mapping, skip
+- [x] `order-periods.ts`: `toDateOnly`, `toBangkokTimestamp`, `mapErpOrderPeriods(rows)` (port of josh's mapping, skip
   incomplete rows, dedupe last-wins per key), `JOSH_ORDER_PERIODS_SQL`.
-- [ ] `logistics-fields.ts`: `LOGISTICS_KEYS`, `splitLogistics(body)` (400 on bad value: strings ≤50, ISO date or empty for
+- [x] `logistics-fields.ts`: `LOGISTICS_KEYS`, `splitLogistics(body)` (400 on bad value: strings ≤50, ISO date or empty for
   `expected_restock_at`, weekday array for `delivery_dates`), `JOSH_LOGISTICS_SQL`.
-- [ ] `OrderingService`: `fromErp(m, body)` (upsert + close missing per supplier, publish one
+- [x] `OrderingService`: `fromErp(m, body)` (upsert + close missing per supplier, publish one
   `SupplierOrderPeriodsSnapshot` per supplier with all rows), `periods(supCode?)`, `republish(supCode)`,
   `getLogistics(sku)`, `editLogistics(sku, body, staff)` (merge, publish `ProductLogisticsSnapshot`). `ownsOrdering()`.
-- [ ] ERP relay (`erp.order_periods.pushed`) and fallback replay (`/order-periods`) call `fromErp` when owned.
-- [ ] Specs (unit: mapping / validation; opt-in DB: upsert + close + snapshot, logistics merge, switch off); commit.
+- [x] ERP relay (`erp.order_periods.pushed`) and fallback replay (`/order-periods`) call `fromErp` when owned.
+- [x] Specs (unit: mapping / validation; opt-in DB: upsert + close + snapshot, logistics merge, switch off); commit.
 
 ### Task 3: commerce — API, product form, admin page, import, parity
-- [ ] `GET /api/order-periods?supCode=`, `POST /api/order-periods/:supCode/republish`, `GET /api/product-logistics/:sku`;
+- [x] `GET /api/order-periods?supCode=`, `POST /api/order-periods/:supCode/republish`, `GET /api/product-logistics/:sku`;
   `GET /api/ownership` → `ordering`.
-- [ ] `JoshActionsController.updateProduct`: owned → logistics keys to `OrderingService.editLogistics`; the form shows
+- [x] `JoshActionsController.updateProduct`: owned → logistics keys to `OrderingService.editLogistics`; the form shows
   commerce's row over josh's copy and gains the five fields.
-- [ ] Admin page "รอบสั่งซื้อ supplier (ERP)": rounds per supplier, status, close time, republish.
-- [ ] `import-from-josh -- ordering` (both tables), `npm run ordering-parity`. Commit.
+- [x] Admin page "รอบสั่งซื้อ supplier (ERP)": rounds per supplier, status, close time, republish.
+- [x] `import-from-josh -- ordering` (both tables), `npm run ordering-parity`. Commit.
 
 ### Task 4: docs, verification, as built
-- [ ] Contract, env, runbook `docs/runbooks/stage4f-ordering-logistics-cutover.md`, prod-data list.
+- [x] Contract, env, runbook `docs/runbooks/stage4f-ordering-logistics-cutover.md`, prod-data list.
 - [ ] Scratch DBs: import + parity; ERP push → snapshot → josh apply → parity (needs Task 1 + a Postgres; not available
   in this session).
-- [ ] commerce suite (`--maxWorkers=2`), typecheck; as built; commit.
+- [x] commerce suite (`--maxWorkers=2`), typecheck; as built; commit.
+
+## As built (2026-10-07, commerce only)
+
+- **Scope as planned** for commerce. New switch `COMMERCE_OWNS_ORDERING`; `GET /api/ownership` → `ordering`.
+- **commerce:** module `modules/commerce/ordering`. `supplier_order_periods` (josh's columns and key) and `product_logistics`
+  (jsonb, five keys). `order-periods.ts` ports josh's push mapping (date digits taken literally, `EST_CLOSE_DATE` as
+  Bangkok wall time, incomplete rows skipped, status default `N`; a round repeated in one push → last wins). The ERP relay
+  (`erp.order_periods.pushed`, same transaction) and the fallback replay (`…/order-periods`) run it when owned: upsert, close
+  the supplier's other rounds, publish `supplier.order_periods.snapshot` with **all** that supplier's rounds (never empty).
+  `logistics-fields.ts` validates the form (strings ≤50, empty → null; restock date → ISO; delivery days → josh's
+  `[{ day }]` in week order, every day / none → null). The product form routes these keys after price / content / master;
+  delivery weekdays only appear when owned (josh's form has no such key). New page "รอบสั่งซื้อ supplier" (read-only,
+  re-send one supplier). `import-from-josh -- ordering` (rounds replaced, logistics paged; a josh value commerce would
+  refuse is kept as is), `npm run ordering-parity` (both ways for rounds).
+- **Migration timestamp** `1795150000000` (between 4e and whatever the parallel promotions branch takes).
+- **josh: not done** (Task 1 is the follow-up). Also found: josh's receiver has no handler for `erp.order_periods.pushed`,
+  which commerce already relays.
+
+**Verification:** commerce — `ordering-fields.spec` (mapping, timezones, validation, josh-row read), relay spec (order-period
+push → `fromErp` in the same transaction), `josh-actions.controller.spec` (logistics keys to commerce, bad value → nothing
+written), ownership spec; opt-in `ordering.service.db.spec.ts` (`ORDERING_TEST_DATABASE_URL`: upsert + close + whole-supplier
+snapshot, logistics merge, unknown SKU, switch off) — **not run: no Postgres in this session**. Typecheck app + spec +
+commerce-admin clean. commerce full suite (`--maxWorkers=2`): 1307 passed (35 opt-in skipped).

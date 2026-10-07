@@ -50,6 +50,21 @@ describe('JoshEventsService', () => {
     expect(repo.save).toHaveBeenCalledWith(expect.objectContaining({ id: 'u1', data: {}, sourceVersion: '9', deletedAt: expect.any(Date) }));
   });
 
+  it('customer.deleted also removes the customer\'s metrics and segment memberships (PDPA, stage 2a)', async () => {
+    const { svc, calls } = makeService(null);
+    await svc.apply({ type: 'customer.deleted', aggregateId: 'u1', version: '9', occurredAt: 'x', data: { id: 'u1' } });
+    const sqls = calls.map(([sql]) => sql);
+    expect(sqls).toContain('DELETE FROM customer_metrics WHERE user_id = $1');
+    expect(sqls).toContain('DELETE FROM segment_members WHERE user_id = $1');
+    expect(calls.find(([sql]) => sql.startsWith('DELETE FROM segment_members'))?.[1]).toEqual(['u1']);
+  });
+
+  it('an older customer.deleted (stale) removes nothing', async () => {
+    const { svc, calls } = makeService('10');
+    expect(await svc.apply({ type: 'customer.deleted', aggregateId: 'u1', version: '9', occurredAt: 'x', data: { id: 'u1' } })).toBe('stale');
+    expect(calls.map(([sql]) => sql).filter((sql) => sql.startsWith('DELETE'))).toEqual([]);
+  });
+
   it('stores erp.fallback.received once per josh outbox id', async () => {
     const { svc, calls } = makeService(null);
     await svc.apply({ type: 'erp.fallback.received', aggregateId: 'e1', version: '77', occurredAt: '2026-10-06T01:00:00Z',

@@ -28,8 +28,13 @@ export class JoshEventsService {
         return this.guarded('josh_customers', 'id', e, (m) =>
           m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: e.data ?? {}, sourceVersion: e.version, deletedAt: null }));
       case 'customer.deleted':
-        return this.guarded('josh_customers', 'id', e, (m) =>
-          m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: {}, sourceVersion: e.version, deletedAt: new Date() }));
+        // PDPA: wipe the copy (tombstone blocks older snapshots) and everything commerce derived from it.
+        // Segment member_count stays as frozen, like josh (its snapshot rows cascade, the count doesn't change).
+        return this.guarded('josh_customers', 'id', e, async (m) => {
+          await m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: {}, sourceVersion: e.version, deletedAt: new Date() });
+          await m.query('DELETE FROM customer_metrics WHERE user_id = $1', [e.aggregateId]);
+          await m.query('DELETE FROM segment_members WHERE user_id = $1', [e.aggregateId]);
+        });
       case 'catalog.snapshot':
         return this.guarded('josh_catalog_products', 'id', e, (m) => this.saveCatalog(m, e));
       case 'catalog.deleted':

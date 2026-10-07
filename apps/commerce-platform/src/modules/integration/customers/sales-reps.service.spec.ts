@@ -1,12 +1,13 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { SalesRepsService } from './sales-reps.service';
 
 const CO = '11111111-1111-4111-8111-111111111111', REP = '22222222-2222-4222-8222-222222222222';
-function setup({ company = true } = {}) {
+function setup({ company = true, rep = true } = {}) {
   const published: Array<{ type: string; payload: unknown; metadata: unknown }> = [];
   const m = {
     query: jest.fn(async (sql: string) => {
       if (sql.includes('company_id')) return company ? [{}] : [];
+      if (sql.includes('FROM josh_users')) return rep ? [{}] : [];
       return [];
     }),
   };
@@ -24,8 +25,9 @@ describe('SalesRepsService (stage 2b)', () => {
     await expect(setup().svc.assign(CO, REP)).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('404s an unknown company, like josh', async () => {
+  it('404s an unknown company or a rep who is not josh staff, like josh', async () => {
     await expect(setup({ company: false }).svc.assign(CO, REP)).rejects.toThrow('ไม่พบบริษัท');
+    await expect(setup({ rep: false }).svc.assign(CO, REP)).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('upserts the assignment and publishes company.sales_rep as a snapshot', async () => {
@@ -37,8 +39,8 @@ describe('SalesRepsService (stage 2b)', () => {
     expect(published[0]).toMatchObject({ type: 'company.sales_rep', payload: { companyId: CO, salesUserId: REP }, metadata: { snapshot: true } });
   });
 
-  it('null clears the rep', async () => {
-    const { svc, published } = setup();
+  it('null clears the rep without a rep check', async () => {
+    const { svc, published } = setup({ rep: false });
     await svc.assign(CO, null);
     expect(published[0]).toMatchObject({ payload: { salesUserId: null } });
   });

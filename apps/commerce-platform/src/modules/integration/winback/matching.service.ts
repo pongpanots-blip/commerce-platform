@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JoshUser as User } from './josh-replica-tables';
-import { JoshOrder as Order } from './josh-replica-tables';
-import { JoshCompany as Company } from './josh-replica-tables';
+import { JoshUser as User } from './josh-copies.entity';
+import { JoshOrder as Order } from './josh-copies.entity';
+import { JoshCompany as Company } from './josh-copies.entity';
 import {
   MatchResult,
   normalizeCustomerCode,

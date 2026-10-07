@@ -21,6 +21,7 @@ const CO = '00000000-0000-4000-8000-0000000002b1', REP = '00000000-0000-4000-800
     await db.query(`DELETE FROM outbox_messages WHERE type = 'company.sales_rep' AND aggregate_id = $1`, [CO]);
     await db.query(`DELETE FROM company_sales_reps WHERE id = $1`, [CO]);
     await db.query(`DELETE FROM josh_customers WHERE id = $1`, [USER]);
+    await db.query(`DELETE FROM josh_staff WHERE id = $1`, [REP]);
   };
 
   beforeAll(async () => {
@@ -33,6 +34,7 @@ const CO = '00000000-0000-4000-8000-0000000002b1', REP = '00000000-0000-4000-800
     svc = mod.get(SalesRepsService);
     await clean();
     await db.query(`INSERT INTO josh_customers (id, data) VALUES ($1, $2)`, [USER, { id: USER, role: 'customer', company_id: CO }]);
+    await db.query(`INSERT INTO josh_staff (id, email, role, user_type) VALUES ($1, 'rep@josh.test', 'sales', 'internal')`, [REP]);
   });
   afterAll(async () => { await clean(); await db?.destroy(); delete process.env.COMMERCE_OWNS_SALES_REPS; });
 
@@ -45,7 +47,8 @@ const CO = '00000000-0000-4000-8000-0000000002b1', REP = '00000000-0000-4000-800
     expect(Date.parse(events[1].payload.assignedAt)).toBeGreaterThan(Date.parse(events[0].payload.assignedAt) - 1);
   });
 
-  it('a company josh never sent is a 404', async () => {
+  it('a company josh never sent, or a rep who is not josh staff, is a 404', async () => {
     await expect(svc.assign('00000000-0000-4000-8000-0000000002ff', REP)).rejects.toThrow('ไม่พบบริษัท');
+    await expect(svc.assign(CO, USER)).rejects.toThrow('ไม่พบพนักงานขาย');
   });
 });

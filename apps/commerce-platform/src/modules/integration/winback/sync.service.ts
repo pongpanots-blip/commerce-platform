@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackStageHistory } from './entities/winback-stage-history.entity';
 import { SYNC_STAGE_ACTOR } from './meeting-prep.helpers';
-import { JoshErpSalesHistory as ErpSalesHistory } from './josh-replica-tables';
-import { JoshUser as User } from './josh-replica-tables';
+import { JoshErpSalesHistory as ErpSalesHistory } from './josh-copies.entity';
+import { JoshUser as User } from './josh-copies.entity';
 import { MatchingService } from './matching.service';
 import {
   buildUserIndex,

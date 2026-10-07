@@ -5,6 +5,7 @@
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- scraping
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- competitor   (needs scraping first)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- sales-reps   (stage 2b; re-run on switch day)
+ *   JOSH_DATABASE_URL=… npm run import-from-josh -- erp-sales-history   (stage 2c; static ERP export)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- all
  *
  * - Reads josh with SELECTs only (use a read-only user / the replica).
@@ -29,13 +30,14 @@ import { JoshCatalogSyncService } from '../modules/integration/connector/josh/jo
 import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-catalog-product.entity';
 import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 
-type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps';
+type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history';
 /**
  * userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key, comma-separated
  * for a composite one (default id) · target: commerce table when it differs · customerColumn: keep only rows whose
- * user is in commerce's customer copy (josh_customers).
+ * user is in commerce's customer copy (josh_customers) · pageBy: read and write in pages ordered by this column (big tables;
+ * no user remapping).
  */
-type Plan = { table: string; userColumns?: string[]; emailColumns?: string[]; key?: string; target?: string; customerColumn?: string };
+type Plan = { table: string; userColumns?: string[]; emailColumns?: string[]; key?: string; target?: string; customerColumn?: string; pageBy?: string };
 const PLANS: Record<Scope, Plan[]> = {
   research: [
     { table: 'marketing_research_topics', userColumns: ['createdBy'] },
@@ -53,6 +55,8 @@ const PLANS: Record<Scope, Plan[]> = {
     { table: 'segment_membership_snapshots', target: 'segment_members', key: 'segment_id,user_id', customerColumn: 'user_id' },
   ],
   'sales-reps': [{ table: 'company', target: 'company_sales_reps' }],
+  // stage 2c: the static ERP invoice export winback's sync reads (~554K lines), only the columns commerce keeps.
+  'erp-sales-history': [{ table: 'erp_sales_history', target: 'josh_erp_sales_history', pageBy: 'id' }],
 };
 
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`;
@@ -87,6 +91,7 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
   const cols = target.filter((c) => source.has(c));
   const missing = target.filter((c) => !source.has(c));
 
+  if (plan.pageBy) return copyPaged(josh, commerce, plan, into, cols, keys);
   let rows: Record<string, unknown>[] = await josh.query(`SELECT ${cols.map(q).join(', ')} FROM ${q(plan.table)}`);
   let skipped = 0;
   if (plan.customerColumn) {
@@ -120,18 +125,42 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
     (plan.userColumns || plan.emailColumns ? ` · user ids without a matching commerce staff email: ${unmatchedUsers}` : ''));
 }
 
+const PAGE = 5000;
+
+/** Big tables: pages of PAGE rows by plan.pageBy, one multi-row upsert each, so memory stays flat. */
+async function copyPaged(josh: DataSource, commerce: DataSource, plan: Plan, into: string, cols: string[], keys: string[]) {
+  const by = q(plan.pageBy!);
+  const rest = cols.filter((c) => !keys.includes(c));
+  let last: unknown = null;
+  let total = 0;
+  for (;;) {
+    const rows: Record<string, unknown>[] = await josh.query(
+      `SELECT ${cols.map(q).join(', ')} FROM ${q(plan.table)} ${last === null ? '' : `WHERE ${by} > $1`} ORDER BY ${by} LIMIT ${PAGE}`,
+      last === null ? [] : [last]);
+    if (!rows.length) break;
+    const values = rows.map((_, r) => `(${cols.map((__, c) => `$${r * cols.length + c + 1}`).join(', ')})`).join(', ');
+    await commerce.query(
+      `INSERT INTO ${q(into)} (${cols.map(q).join(', ')}) VALUES ${values}
+       ON CONFLICT (${keys.map(q).join(', ')}) DO ${rest.length ? `UPDATE SET ${rest.map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}` : 'NOTHING'}`,
+      rows.flatMap((row) => cols.map((c) => row[c])));
+    total += rows.length;
+    last = rows[rows.length - 1][plan.pageBy!];
+  }
+  console.log(`${plan.table} → ${into}: ${total} rows upserted in pages of ${PAGE}`);
+}
+
 async function main() {
   const scope = process.argv[2] as Scope | 'all' | undefined;
   const url = process.env.JOSH_DATABASE_URL;
-  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'all'].includes(scope)) {
-    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|all>');
+  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'all'].includes(scope)) {
+    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|all>');
     process.exit(1);
   }
   const josh = await new DataSource({ type: 'postgres', url, entities: [] }).initialize();
   const commerce = await AppDataSource.initialize();
   try {
     const users = await userMaps(josh, commerce);
-    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps'] as const) : [scope];
+    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
         const replica = new JoshReplica();

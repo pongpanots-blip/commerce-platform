@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JoshReplica } from '../../../integration/connector/josh/josh-replica';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { readBearerToken } from './bearer-token.util';
 
 /** The roles josh's AdminWriteGuard lets through for marketing-only routes (kept for imports that reference it). */
@@ -12,18 +13,18 @@ const CACHE_MS = 60_000;
  * (`POST /api/auth/login`) and sends josh's access token. Same checks josh runs — HybridAuthGuard
  * (signature with josh's JWT secret, not a purpose token, the session still valid: user active and
  * `tokenVersion` = users.token_version) then InternalAuthGuard (app_roles.user_type = 'internal') —
- * read from josh's replica, cached 60s like josh. Always strict here (josh skips it outside prod).
+ * read from commerce's staff copy (josh_staff, staff.snapshot events — stage 2c), cached 60s like josh. Always strict here (josh skips it outside prod).
  */
 @Injectable()
 export class AdminWriteGuard implements CanActivate {
   private readonly cache = new Map<string, { at: number; ok: true } | { at: number; error: Error }>();
   private jwt: JwtService | null = null;
 
-  constructor(private readonly replica: JoshReplica) {}
+  constructor(@InjectDataSource() private readonly db: DataSource) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const secret = process.env.JOSH_JWT_SECRET?.trim();
-    if (!secret || !this.replica.configured) throw new ServiceUnavailableException('winback sign-in is not configured on this server (JOSH_JWT_SECRET / JOSH_DATABASE_URL).');
+    if (!secret) throw new ServiceUnavailableException('winback sign-in is not configured on this server (JOSH_JWT_SECRET).');
     const req = context.switchToHttp().getRequest<{ headers: Record<string, string | undefined>; user?: unknown }>();
     const token = readBearerToken(req.headers.authorization);
     if (!token) throw new UnauthorizedException('ไม่มีสิทธิ์เข้าถึง: กรุณาส่ง Token มายืนยัน');
@@ -58,9 +59,12 @@ export class AdminWriteGuard implements CanActivate {
   }
 
   private async check(userId: string, tokenVersion: number, role: string) {
-    const [row] = await this.replica.query<{ token_version: number; is_active: boolean; internal: boolean }>(
-      `SELECT u.token_version, u.is_active, EXISTS (SELECT 1 FROM app_roles r WHERE r.code = $2 AND r.user_type = 'internal') AS internal
-         FROM users u WHERE u.id = $1`, [userId, role]);
+    // josh checks the token's role against app_roles; the copy has the user's current role type — a token
+    // whose role is no longer the user's is refused (re-login), which is stricter, never looser.
+    const [row]: Array<{ token_version: number; is_active: boolean; internal: boolean }> = await this.db.query(
+      `SELECT token_version, is_active, (user_type = 'internal' AND role = $2) AS internal FROM josh_staff WHERE id = $1`, [userId, role]);
+    // A customer (no staff row) is refused as josh refuses it: 403, not a stale-session 401.
+    if (!row && (await this.db.query(`SELECT 1 FROM josh_users WHERE id = $1`, [userId])).length) throw new ForbiddenException('เฉพาะผู้ใช้งาน internal เท่านั้น');
     if (!row || Number(row.token_version ?? 0) !== tokenVersion) throw new UnauthorizedException('Token หมดอายุ — login ใหม่ที่ POST /api/auth/login');
     if (row.is_active === false) throw new UnauthorizedException({ statusCode: 401, error: 'Unauthorized', message: 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ', code: 'ACCOUNT_SUSPENDED' });
     if (!row.internal) throw new ForbiddenException('เฉพาะผู้ใช้งาน internal เท่านั้น');

@@ -1,8 +1,8 @@
-import { ForbiddenException, Injectable, ParseUUIDPipe, ServiceUnavailableException } from '@nestjs/common';
+import { ForbiddenException, Injectable, ParseUUIDPipe } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { IsOptional, IsUUID, validate, ValidateIf } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
-import { JoshReplica } from '../../integration/connector/josh/josh-replica';
+import { DataSource } from 'typeorm';
 import { ActivityService } from './activity.service';
 import { AnalyticsService } from './analytics.service';
 import { MoveStageDto } from './dto/move-stage.dto';
@@ -25,12 +25,12 @@ async function toDto<T extends object>(cls: new () => T, value: unknown): Promis
 /**
  * The commerce-admin winback buttons (assign, move stage, set target) once commerce runs winback:
  * josh's CommerceWinbackActionsController, here — the same services and rules, acting as the josh
- * staff user with the commerce staff member's email (active, internal role; read on the replica).
+ * staff user with the commerce staff member's email (active, internal role; read on commerce's staff copy).
  */
 @Injectable()
 export class WinbackStaffActions {
   constructor(
-    private readonly replica: JoshReplica,
+    private readonly db: DataSource,
     private readonly leads: LeadService,
     private readonly activities: ActivityService,
     private readonly analytics: AnalyticsService,
@@ -57,10 +57,8 @@ export class WinbackStaffActions {
   }
 
   private async actor(email: string): Promise<{ id: string; role: string }> {
-    if (!this.replica.configured) throw new ServiceUnavailableException('josh replica is not configured (JOSH_DATABASE_URL)');
-    const [user] = await this.replica.query<{ id: string; role: string }>(
-      `SELECT u.id, u.role FROM users u JOIN app_roles r ON r.code = u.role AND r.user_type = 'internal'
-        WHERE lower(u.email) = lower($1) AND u.is_active = true LIMIT 1`, [email]);
+    const [user]: Array<{ id: string; role: string }> = await this.db.query(
+      `SELECT id, role FROM josh_users WHERE internal AND is_active AND lower(email) = lower($1) LIMIT 1`, [email]);
     if (!user) throw new ForbiddenException(`no active josh staff user with the email ${email}`);
     return user;
   }

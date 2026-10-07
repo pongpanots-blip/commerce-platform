@@ -1,9 +1,9 @@
 import { Repository } from 'typeorm';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { JoshRestaurantPlace as RestaurantPlace } from './josh-replica-tables';
+import { JoshRestaurantPlace as RestaurantPlace } from './josh-copies.entity';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackContact } from './entities/winback-contact.entity';
-import { JoshUser as User } from './josh-replica-tables';
+import { JoshUser as User } from './josh-copies.entity';
 import { LeadService } from './lead.service';
 import { MatchingService } from './matching.service';
 import { NotificationService } from './shared/notification.service';

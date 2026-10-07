@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { WinbackService } from './winback.service';
 import { WinbackAccount } from './entities/winback-account.entity';
-import { JoshRestaurantPlace as RestaurantPlace } from './josh-replica-tables';
+import { JoshRestaurantPlace as RestaurantPlace } from './josh-copies.entity';
 import { MatchingService } from './matching.service';
 import { PoolQueryDto } from './dto/pool-query.dto';
 

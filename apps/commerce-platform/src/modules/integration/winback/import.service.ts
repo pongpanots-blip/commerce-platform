@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WinbackAccount } from './entities/winback-account.entity';
-import { JoshUser as User } from './josh-replica-tables';
+import { JoshUser as User } from './josh-copies.entity';
 import { MatchingService } from './matching.service';
 import {
   classifyImportRow,

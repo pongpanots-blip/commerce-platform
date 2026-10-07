@@ -10,6 +10,9 @@ import { JoshCustomerCopy } from './josh-customer-copy.entity';
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
 export type ApplyResult = 'applied' | 'stale';
 
+/** josh group → commerce copy table (stage 2c; columns named as in josh). */
+const REFERENCE_TABLES = { company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff' } as const;
+
 /**
  * Applies josh → commerce events (spec 2026-10-06 §2.2–2.3). A snapshot wins only when its version
  * (josh commerce_snapshot_seq) is newer than the stored one; an advisory lock per aggregate makes the
@@ -17,6 +20,8 @@ export type ApplyResult = 'applied' | 'stale';
  */
 @Injectable()
 export class JoshEventsService {
+  private readonly columns = new Map<string, string[]>();
+
   constructor(@InjectDataSource() private readonly db: DataSource) {}
 
   async apply(e: JoshEnvelope): Promise<ApplyResult> {
@@ -47,8 +52,59 @@ export class JoshEventsService {
       case 'erp.fallback.received':
         return this.saveFallback(e);
       default:
-        throw new BadRequestException(`unsupported josh event ${e.type}`);
+        return this.applyReference(e);
     }
+  }
+
+  /** Stage 2c: `<group>.snapshot` / `<group>.deleted` for the reference rows winback reads (no josh replica). */
+  private applyReference(e: JoshEnvelope): Promise<ApplyResult> {
+    const [group, kind] = e.type.split('.');
+    const table = REFERENCE_TABLES[group as keyof typeof REFERENCE_TABLES];
+    if (table && kind === 'snapshot') return this.reference(table, e, (m) => this.saveReference(m, table, e));
+    if (table && kind === 'deleted') {
+      return this.reference(table, e, async (m) => {
+        await m.query(`DELETE FROM ${table} WHERE id = $1`, [e.aggregateId]);
+        await m.query(`INSERT INTO josh_reference_tombstones (tbl, id, source_version) VALUES ($1, $2, $3)
+          ON CONFLICT (tbl, id) DO UPDATE SET source_version = EXCLUDED.source_version`, [table, e.aggregateId, e.version]);
+        // A deleted staff member is nobody's sales rep any more.
+        if (group === 'staff') {
+          await m.query('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1', [e.aggregateId]);
+        }
+      });
+    }
+    throw new BadRequestException(`unsupported josh event ${e.type}`);
+  }
+
+  /** guarded() for reference copies: an event is also stale against the tombstone of a deleted row. */
+  private reference(table: string, e: JoshEnvelope, write: (m: EntityManager) => Promise<unknown>): Promise<ApplyResult> {
+    return this.db.transaction(async (m) => {
+      await m.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [`${table}:${e.aggregateId}`]);
+      const [row] = await m.query(
+        `SELECT GREATEST((SELECT source_version FROM ${table} WHERE id = $1),
+                         (SELECT source_version FROM josh_reference_tombstones WHERE tbl = $2 AND id = $1))::text AS version`,
+        [e.aggregateId, table]);
+      if (row?.version != null && BigInt(row.version) >= BigInt(e.version)) return 'stale';
+      await write(m);
+      return 'applied';
+    });
+  }
+
+  /** The columns both sides have, as josh sent them (jsonb_populate_record casts), plus the version. */
+  private async saveReference(m: EntityManager, table: string, e: JoshEnvelope) {
+    if (!e.data || e.data.id !== e.aggregateId) throw new BadRequestException(`${e.type} data.id must equal the aggregate id`);
+    let known = this.columns.get(table);
+    if (!known) {
+      known = (await m.query(`SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = $1`, [table]))
+        .map((r: { column_name: string }) => r.column_name) as string[];
+      this.columns.set(table, known);
+    }
+    const cols = known.filter((c) => c !== 'source_version' && c in e.data);
+    const list = cols.map((c) => `"${c}"`).join(', ');
+    const set = [...cols.filter((c) => c !== 'id'), 'source_version'].map((c) => `"${c}" = EXCLUDED."${c}"`).join(', ');
+    await m.query(
+      `INSERT INTO ${table} (${list}, source_version) SELECT ${list}, $2 FROM jsonb_populate_record(NULL::${table}, $1::jsonb)
+       ON CONFLICT (id) DO UPDATE SET ${set}`,
+      [JSON.stringify(e.data), e.version]);
   }
 
   private guarded(table: 'josh_orders' | 'josh_customers' | 'josh_catalog_products', pk: string, e: JoshEnvelope, write: (m: EntityManager) => Promise<unknown>): Promise<ApplyResult> {

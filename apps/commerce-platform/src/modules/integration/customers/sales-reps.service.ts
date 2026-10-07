@@ -15,9 +15,8 @@ export class CompanySalesRepAssigned extends DomainEvent<CompanySalesRepPayload>
 
 /**
  * Company → sales rep, owned by commerce from stage 2b (COMMERCE_OWNS_SALES_REPS, with josh COMMERCE_OWNS_CUSTOMERS).
- * josh CS-admin's assignSalesRep rules: the company must exist (here: in the import or the customer copy); null clears.
- * The rep is not checked here — staff are not in the customer copy — josh clears an id it does not know when it applies
- * the event. Answers in josh's shape so the hosted CS page is unchanged.
+ * josh CS-admin's assignSalesRep rules: the company must exist (here: in the import or the customer copy) and the rep
+ * must be a josh staff member (staff copy, stage 2c); null clears. Answers in josh's shape so the hosted CS page is unchanged.
  */
 @Injectable()
 export class SalesRepsService {
@@ -33,6 +32,10 @@ export class SalesRepsService {
         `SELECT 1 FROM company_sales_reps WHERE id::text = $1
          UNION ALL SELECT 1 FROM josh_customers WHERE data->>'company_id' = $1 AND deleted_at IS NULL LIMIT 1`, [companyId]);
       if (!company) throw new NotFoundException('ไม่พบบริษัท');
+      if (salesUserId) {
+        const [rep] = await m.query(`SELECT 1 FROM josh_users WHERE id = $1 AND internal`, [salesUserId]);
+        if (!rep) throw new NotFoundException('ไม่พบพนักงานขาย');
+      }
       await m.query(
         `INSERT INTO company_sales_reps (id, assigned_sales_user_id, updated_at) VALUES ($1, $2, now())
          ON CONFLICT (id) DO UPDATE SET assigned_sales_user_id = EXCLUDED.assigned_sales_user_id, updated_at = now()`,

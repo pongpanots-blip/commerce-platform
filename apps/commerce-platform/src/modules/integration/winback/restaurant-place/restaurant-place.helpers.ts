@@ -1,6 +1,6 @@
 // Pure logic for the Market Explorer restaurant endpoints — no Nest imports,
 // so every rule here is unit-testable without wiring a module.
-import { JoshRestaurantPlace as RestaurantPlace } from '../josh-replica-tables';
+import { JoshRestaurantPlace as RestaurantPlace } from '../josh-copies.entity';
 import { WinbackAccount } from '../entities/winback-account.entity';
 import {
   RestaurantPlaceListItemDto,

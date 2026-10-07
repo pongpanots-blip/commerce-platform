@@ -124,4 +124,52 @@ describe('JoshEventsService', () => {
     await expect(svc.apply({ type: 'nope', aggregateId: 'x', version: '1', occurredAt: 'x', data: {} })).rejects.toBeInstanceOf(BadRequestException);
     await expect(svc.apply({ ...order('2'), aggregateId: '22222222-2222-2222-2222-222222222222' })).rejects.toBeInstanceOf(BadRequestException);
   });
+
+  describe('reference copies (stage 2c)', () => {
+    const CO = '22222222-2222-4222-8222-222222222222';
+    function ref(stored: { row?: string; tomb?: string } = {}) {
+      const calls: Array<[string, unknown[] | undefined]> = [];
+      const manager = {
+        query: jest.fn(async (sql: string, params?: unknown[]) => {
+          calls.push([sql, params]);
+          if (sql.includes('GREATEST')) {
+            const v = [stored.row, stored.tomb].filter(Boolean).map((x) => BigInt(x!)).sort((a, b) => (a > b ? -1 : 1))[0];
+            return [{ version: v == null ? null : String(v) }];
+          }
+          if (sql.includes('information_schema')) return ['id', 'name', 'register_number', 'source_version'].map((column_name) => ({ column_name }));
+          return [];
+        }),
+      };
+      const dataSource = { transaction: jest.fn(async (fn: (m: unknown) => unknown) => fn(manager)) };
+      return { svc: new JoshEventsService(dataSource as never), calls };
+    }
+    const company = (version: string) => ({ type: 'company.snapshot', aggregateId: CO, version, occurredAt: 'x', data: { id: CO, name: 'ACME', register_number: '0105', extra: 1 } });
+
+    it('upserts the columns commerce has with the version', async () => {
+      const { svc, calls } = ref();
+      expect(await svc.apply(company('5'))).toBe('applied');
+      const insert = calls.find(([sql]) => sql.startsWith('INSERT INTO josh_companies'));
+      expect(insert?.[0]).toContain('("id", "name", "register_number", source_version)');
+      expect(insert?.[0]).toContain('jsonb_populate_record(NULL::josh_companies, $1::jsonb)');
+      expect(insert?.[1]).toEqual([JSON.stringify(company('5').data), '5']);
+    });
+
+    it('a snapshot older than the stored row or the tombstone is stale', async () => {
+      expect(await ref({ row: '6' }).svc.apply(company('5'))).toBe('stale');
+      expect(await ref({ tomb: '9' }).svc.apply(company('8'))).toBe('stale');
+    });
+
+    it('staff.deleted removes the row, leaves a tombstone and unassigns the rep', async () => {
+      const { svc, calls } = ref();
+      expect(await svc.apply({ type: 'staff.deleted', aggregateId: CO, version: '12', occurredAt: 'x', data: { id: CO } })).toBe('applied');
+      const sqls = calls.map(([sql]) => sql.replace(/\s+/g, ' ').trim());
+      expect(sqls).toContain('DELETE FROM josh_staff WHERE id = $1');
+      expect(sqls.some((q) => q.startsWith('INSERT INTO josh_reference_tombstones'))).toBe(true);
+      expect(sqls).toContain('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1');
+    });
+
+    it('rejects a snapshot whose data.id is not the aggregate', async () => {
+      await expect(ref().svc.apply({ ...company('5'), data: { id: 'other' } })).rejects.toBeInstanceOf(BadRequestException);
+    });
+  });
 });

@@ -9,7 +9,7 @@ import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackActivity } from './entities/winback-activity.entity';
 import { WinbackMeetingAck } from './entities/winback-meeting-ack.entity';
 import { WinbackStageHistory } from './entities/winback-stage-history.entity';
-import { JoshUser as User } from './josh-replica-tables';
+import { JoshUser as User } from './josh-copies.entity';
 import {
   CLOSED_WINBACK_STAGES,
   STAGE_HISTORY_LOOKBACK_DAYS,

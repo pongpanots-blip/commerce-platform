@@ -28,6 +28,7 @@
 | 4c | import | `categories` | `npm run category-parity` |
 | 4d | import | `masters` (หลัง `categories`) | `npm run master-parity` |
 | 4e | import | `images` | `npm run image-parity` |
+| 6 | backfill (มีแล้วจาก 2c) | `staff` — `josh_staff_access` เริ่มว่าง (ไม่ import) | runbook 6 (นับ `josh_staff` เทียบ josh) |
 | 4f | import | `ordering` (รอบสั่งซื้อ supplier แทนทั้งชุด + โลจิสติกส์ทุก SKU) | `npm run ordering-parity` |
 
 `npm run import-from-josh -- all` รันทุก import ตามลำดับในตาราง (ไม่รวม backfill)

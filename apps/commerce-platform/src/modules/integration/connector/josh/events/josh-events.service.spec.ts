@@ -200,13 +200,14 @@ describe('JoshEventsService', () => {
       expect(await ref({ tomb: '9' }).svc.apply(company('8'))).toBe('stale');
     });
 
-    it('staff.deleted removes the row, leaves a tombstone and unassigns the rep', async () => {
+    it('staff.deleted removes the row, leaves a tombstone, unassigns the rep and drops commerce\'s access row (stage 6)', async () => {
       const { svc, calls } = ref();
       expect(await svc.apply({ type: 'staff.deleted', aggregateId: CO, version: '12', occurredAt: 'x', data: { id: CO } })).toBe('applied');
       const sqls = calls.map(([sql]) => sql.replace(/\s+/g, ' ').trim());
       expect(sqls).toContain('DELETE FROM josh_staff WHERE id = $1');
       expect(sqls.some((q) => q.startsWith('INSERT INTO josh_reference_tombstones'))).toBe(true);
       expect(sqls).toContain('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1');
+      expect(sqls).toContain('DELETE FROM josh_staff_access WHERE id = $1');
     });
 
     it('branch.snapshot (stage 5) goes to josh_branches like the other reference rows', async () => {

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ArrayMaxSize, ArrayNotEmpty, IsArray, IsInt, IsNumber, IsOptional, IsString, MaxLength, Min, ValidateIf } from 'class-validator';
-import { StaffRequest } from '../../../shared-kernel/presentation/auth.decorators';
+import { StaffRequest, StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { ProductPricesService } from './product-prices.service';
 
 class SkusDto {
@@ -13,8 +13,9 @@ class EditPriceDto {
   @ValidateIf((_, v) => v !== null) @IsOptional() @IsInt() @Min(0) moq?: number | null;
 }
 
-/** Product prices and the MER queue (stage 4a) — admin (the guard's default). */
+/** Product prices and the MER queue (stage 4a) — admin and MER (stage 6). */
 @Controller('product-prices')
+@StaffRoles('merchandising')
 export class ProductPricesController {
   constructor(private readonly prices: ProductPricesService) {}
 

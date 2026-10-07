@@ -5,6 +5,7 @@ import { AdminStats, api, reportsApi, session, staffApi } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { StaffAccounts } from './pages/StaffAccounts';
+import { JoshStaff } from './pages/JoshStaff';
 import { ChangePassword } from './pages/ChangePassword';
 import { ProductDetail } from './pages/ProductDetail';
 import { CustomerDetail } from './pages/CustomerDetail';
@@ -223,13 +224,15 @@ const NAV: NavGroup[] = [
     group: 'ตั้งค่า', icon: 'settings',
     links: [
       { to: '/settings/staff', label: 'บัญชี staff', end: false },
+      { to: '/settings/josh-staff', label: 'บัญชี josh (staff)', end: false },
       { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', end: false },
     ],
   },
 ];
-/** Staff accounts are admin-only (the API refuses others too); everyone can change their own password. */
+/** Staff accounts (commerce's and josh's) are admin-only (the API refuses others too); everyone can change their own password. */
+const ADMIN_ONLY = new Set(['/settings/staff', '/settings/josh-staff']);
 const navFor = (role?: string): NavGroup[] =>
-  role === 'admin' ? NAV : NAV.map((g) => ({ ...g, links: g.links.filter((l) => l.to !== '/settings/staff') }));
+  role === 'admin' ? NAV : NAV.map((g) => ({ ...g, links: g.links.filter((l) => !ADMIN_ONLY.has(l.to)) }));
 
 /** Live operations strip above every page (Stitch "Overview" top bar), fed by the same endpoints the pages use. */
 function AdminTopBar() {
@@ -324,6 +327,7 @@ export function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
+            <Route path="/settings/josh-staff" element={<JoshStaff />} />
             <Route path="/account/password" element={<ChangePassword />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
             <Route path="/reports/orders/:id" element={<JoshOrderDetail />} />

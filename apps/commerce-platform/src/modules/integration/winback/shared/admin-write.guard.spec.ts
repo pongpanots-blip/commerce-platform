@@ -36,4 +36,16 @@ describe('AdminWriteGuard on the staff copy (stage 2c)', () => {
     await expect(guardWith([], true).guard.canActivate(ctx(await sign(0)))).rejects.toBeInstanceOf(ForbiddenException);
     await expect(guardWith([], false).guard.canActivate(ctx(await sign(0)))).rejects.toBeInstanceOf(UnauthorizedException);
   });
+
+  it('stage 6: with COMMERCE_OWNS_STAFF, commerce\'s own access decision is read too (only that switch)', async () => {
+    const off = guardWith([{ token_version: 0, is_active: true, internal: true }]);
+    await off.guard.canActivate(ctx(await sign(0)));
+    expect(off.db.query.mock.calls[0][0]).not.toContain('josh_staff_access');
+    process.env.COMMERCE_OWNS_STAFF = 'true';
+    try {
+      const on = guardWith([{ token_version: 0, is_active: true, internal: true }]);
+      await on.guard.canActivate(ctx(await sign(0)));
+      expect(on.db.query.mock.calls[0][0]).toContain('LEFT JOIN josh_staff_access');
+    } finally { delete process.env.COMMERCE_OWNS_STAFF; }
+  });
 });

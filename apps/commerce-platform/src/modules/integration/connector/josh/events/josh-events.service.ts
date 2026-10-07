@@ -97,6 +97,8 @@ export class JoshEventsService {
         // A deleted staff member is nobody's sales rep any more.
         if (group === 'staff') {
           await m.query('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1', [e.aggregateId]);
+          // stage 6: nothing left for commerce to decide about an account josh deleted
+          await m.query('DELETE FROM josh_staff_access WHERE id = $1', [e.aggregateId]);
         }
       });
     }

@@ -67,6 +67,7 @@ Body:
 | `segment.members` | ตามหลัง `segment.upserted` ของ segment ที่ freeze แล้ว | `segmentId`, `frozenAt`, `part`, `parts`, `userIds` (≤ 5000 ต่อ part) — part ของ freeze เดียวกันใช้ได้ทุกลำดับ ส่งซ้ำได้ ตัว `frozenAt` ใหม่แทนชุดเก่า |
 | `segment.deleted` | ลบ segment | `id` |
 | `company.sales_rep` | มอบหมาย / ล้าง sales ของบริษัท (ขั้น 2b, `COMMERCE_OWNS_SALES_REPS=true`) | `companyId`, `salesUserId` (uuid หรือ null), `assignedAt` (ISO) — snapshot ตัวล่าสุดตาม `assignedAt` ชนะ |
+| `staff.access` | admin เปลี่ยนสิทธิ์ / ปิด-เปิด / ให้ออกจากระบบทุกเครื่อง ของบัญชีพนักงานใน josh ที่ commerce-admin › บัญชี josh (ขั้น 6, `COMMERCE_OWNS_STAFF=true`) | `id` (josh users.id), `email`, `role` (รหัส role ของ josh — ไม่มี `platform_admin`), `isActive`, `minTokenVersion` (josh ยก `token_version` ขึ้นเป็นอย่างน้อยค่านี้ = ออกจากระบบทุกเครื่อง; ไม่ลด), `version` (ISO) — snapshot ตัวใหม่สุดชนะ · ไม่แตะบัญชีระบบ `commerce-platform@system.josh.internal` |
 | `winback.row` / `winback.notify` / `winback.welcome_email` | winback ที่ commerce เป็นเจ้าของ (`WINBACK_OWNER=commerce`) | `winback.row`: `table`, `id`, `row` (null = ลบ) · `winback.notify`: `userId`, `type` (`winback_*`), `category`, `data`, `dedupeKey` · `winback.welcome_email`: `toEmail`, `locale` |
 
 segment.* ไม่ใช่ snapshot (ส่งทุกตัว) · ใน transaction เดียวกัน `segment.upserted` ถูกส่งก่อน `segment.members` เสมอ
@@ -122,6 +123,7 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `product.logistics.snapshot` | ขั้น 4f · `CommerceOrderingService.applyLogistics` (josh `feat/commerce-owns-ordering-logistics` — pair-ready) เขียน `unit_ratio`, `sub_packing_unit`, `product_unit`, `expected_restock_at`, `delivery_dates` (null = ทุกวัน) ผ่านตัวกัน version `'product.logistics'` แล้วล้าง cache สินค้า · ต้องเปิด `COMMERCE_OWNS_ORDERING` (ไม่งั้น 409) · key อื่น → 400 · SKU ไม่รู้จัก → 422 |
 | `inventory.sellable.snapshot` | `handleQtyChange([{ PRODUCT_CODE: sku, QUANTITY: sellableQty, CHANGED_AT: version }])` — ตัวกัน version `'stock'` เดียวกับทางตรงของ ERP · ต้องเปิด `COMMERCE_OWNS_STOCK` (ไม่งั้น 409) · เมื่อเปิดแล้ว `inventory.qty.changed` (ต่อคลัง) ตอบ 200 แต่ไม่เขียน |
 | `company.sales_rep` | `CommerceSalesRepsService` ตั้ง `company.assigned_sales_user_id` (ผ่าน `commerce_applied_versions` ตาม `assignedAt`; ต้องเปิด `COMMERCE_OWNS_CUSTOMERS` ไม่งั้นตอบ 409) |
+| `staff.access` | ขั้น 6 · `CommerceStaffService` (josh `feat/stage6-staff-admin` — pair-ready) ตั้ง `users.role` / `users.is_active` และ `token_version = GREATEST(token_version, minTokenVersion)` ผ่านตัวกัน version `'staff.access'` แล้วล้าง cache role ภายใน · ต้องเปิด `COMMERCE_OWNS_STAFF` (ไม่งั้น 409) · user ไม่รู้จัก / เป็นลูกค้า / บัญชีระบบของ commerce → 422 · trigger เดิมส่ง `staff.snapshot` กลับให้ commerce |
 | `winback.notify` / `winback.welcome_email` / `winback.row` | `CommerceWinbackEventsService` — ส่งแจ้งเตือน / อีเมลด้วยระบบของ josh และเขียนสำเนาตาราง winback (ต้องเปิด `WINBACK_OWNED_BY_COMMERCE`) |
 
 `failed` ที่ handler คืน (SKU ไม่มีใน shop) → ตอบ `422` · error อื่น → `5xx`
@@ -161,7 +163,7 @@ action log ที่ failed → `marketing_workflow`) — เปิดด้ว�
 | `cuisine.snapshot` | `{ id, parent_id, cuisine_name, cuisine_name_th, level, is_active }` (ขั้น 2c) → `josh_cuisines` |
 | `restaurant_place.snapshot` | ทั้งแถวของ `restaurant_place` (ขั้น 2c) → `josh_restaurant_places` (เก็บเฉพาะคอลัมน์ที่มี) |
 | `staff.snapshot` | user ที่ไม่ใช่ลูกค้า: `{ id, email, first_name, last_name, role, user_type, is_active, token_version, company_id, created_at, last_app_login_at }` (ขั้น 2c) → `josh_staff` — ใช้ตรวจ token ของแอปฝ่ายขาย · `token_version` อยู่ที่นี่เท่านั้น ไม่อยู่ใน `customer.snapshot` |
-| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` / `push_campaign.deleted` / `marketing_workflow.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล |
+| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` / `push_campaign.deleted` / `marketing_workflow.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล และลบ `josh_staff_access` (ขั้น 6) |
 
 `version` ของ `*.deleted` มาจาก `commerce_snapshot_seq` เดียวกับ snapshot (ไม่ใช่ id แถว outbox) จึงชนะ snapshot ก่อนหน้าได้
 

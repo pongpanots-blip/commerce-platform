@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { readBearerToken } from './bearer-token.util';
+import { ownsStaff } from '../../customers/josh-staff-access.service';
 
 /** The roles josh's AdminWriteGuard lets through for marketing-only routes (kept for imports that reference it). */
 export const MARKETING_EDITOR_ROLES = new Set(['marketing', 'platform_admin', 'dev']);
@@ -61,8 +62,16 @@ export class AdminWriteGuard implements CanActivate {
   private async check(userId: string, tokenVersion: number, role: string) {
     // josh checks the token's role against app_roles; the copy has the user's current role type — a token
     // whose role is no longer the user's is refused (re-login), which is stricter, never looser.
+    // Stage 6 (COMMERCE_OWNS_STAFF): commerce's own decision (josh_staff_access) counts at once, before josh echoes it
+    // back — a disable / sign-out / role change made in commerce-admin only ever makes this stricter.
+    const owned = ownsStaff();
     const [row]: Array<{ token_version: number; is_active: boolean; internal: boolean }> = await this.db.query(
-      `SELECT token_version, is_active, (user_type = 'internal' AND role = $2) AS internal FROM josh_staff WHERE id = $1`, [userId, role]);
+      owned
+        ? `SELECT CASE WHEN s.token_version < COALESCE(a.min_token_version, 0) THEN -1 ELSE s.token_version END AS token_version,
+             s.is_active AND COALESCE(a.is_active, true) AS is_active,
+             (s.user_type = 'internal' AND s.role = $2 AND COALESCE(a.role, $2) = $2) AS internal
+           FROM josh_staff s LEFT JOIN josh_staff_access a ON a.id = s.id WHERE s.id = $1`
+        : `SELECT token_version, is_active, (user_type = 'internal' AND role = $2) AS internal FROM josh_staff WHERE id = $1`, [userId, role]);
     // A customer (no staff row) is refused as josh refuses it: 403, not a stale-session 401.
     if (!row && (await this.db.query(`SELECT 1 FROM josh_users WHERE id = $1`, [userId])).length) throw new ForbiddenException('เฉพาะผู้ใช้งาน internal เท่านั้น');
     if (!row || Number(row.token_version ?? 0) !== tokenVersion) throw new UnauthorizedException('Token หมดอายุ — login ใหม่ที่ POST /api/auth/login');

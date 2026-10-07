@@ -3,9 +3,13 @@ import { SetMetadata } from '@nestjs/common';
 export const IS_PUBLIC_KEY = 'auth:isPublic';
 export const STAFF_ROLES_KEY = 'auth:staffRoles';
 
-/** Staff roles that can sign in to commerce-admin. `admin` can do everything. */
-export type StaffRole = 'admin' | 'marketing';
-export const STAFF_ROLES: readonly StaffRole[] = ['admin', 'marketing'];
+/**
+ * Staff roles that can sign in to commerce-admin. `admin` can do everything. `merchandising` (MER) and `cs` use
+ * josh's own role codes (stage 6: every employee account lives in commerce); a role reaches only the routes that
+ * list it with @StaffRoles.
+ */
+export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs';
+export const STAFF_ROLES: readonly StaffRole[] = ['admin', 'marketing', 'merchandising', 'cs'];
 
 /**
  * Skip the global staff guard. Only for routes with their OWN auth (API key,

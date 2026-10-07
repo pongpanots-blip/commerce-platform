@@ -39,6 +39,12 @@ Updated 2026-10-07. Not pushed.
   - New `GET /reports/sales/parity` returns both answers side by side, with the totals that differ and the
     top-products ranking diff.
   - Specs: josh-insights (2 files) and the growth specs, 27 passing; `tsc` clean.
+- **S5-8, order target group: blocked and reclassified.** josh's view isn't built from orders. It reads an xlsx
+  staging import, `order_taking_flag`, and `sku_order_period` (a josh cron reading the ERP calendar). Commerce has
+  none of these. Options are in plan Task S5-8 / §4 q5 for the owner. No snapshot group was invented.
+- **S5-9, health:** without the replica, the josh panel now shows ERP-send failures from `jagota_order_sync_history`,
+  including how fresh that copy is, and points to josh-admin for josh-only checks. With the replica, nothing changes.
+  Spec: 2 passing.
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
@@ -47,13 +53,14 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
 
 ## Next (safe, commerce-only, in order)
-1. S5-8 order-targetgroup view rebuilt over copies (view definition from Webjosh).
-2. S5-9 health: ERP part from `jagota_order_sync_history`.
-3. S5-6 / S5-7 growth, orders / customers list+summary.
+1. S5-6 growth workspace / timeline on copies + commerce `winback_*`.
+2. S5-7 orders / customers list + summary on copies (missing columns "—").
+3. S5-14 josh-only pages say so instead of the 503 text.
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?
 Back-office views stay in josh-admin? One global `REPORTS_SOURCE`, or one switch per reader?
+Order target group (S5-8): copy josh's inputs, move them to commerce, or keep it in josh-admin?
 
 ## Cutover for S5-5 (ops)
 Prerequisite: the order backfill is done. Check `GET /reports/sales/parity?period=last_month` and `?period=this_month`:

@@ -72,8 +72,8 @@ copy · D = drop/defer (other stage or no report value).
 | 2 | `connector/josh/restaurant-places.ts` | `GET /reports/restaurants[/export|/:id]`; MCP `restaurant_places` | `restaurant_place`, `winback_account` | `josh_restaurant_places` (2c, every column) + commerce-owned `winback_account` | none — note it reads josh's **stale** `winback_account` today | **R — done (S5-3)**: `RESTAURANTS_SOURCE` |
 | 3 | `connector/josh/josh-insights.ts` `sales()` | `GET /reports/sales`; MCP `shop_sales`; growth `workspace()` | `orders`, `order_items`, `product_inventory`, `product_translation`, `payment_transactions(+_orders)`, `customer_metrics`, `order_refunds` | `josh_orders` (`paid` is computed by josh's builder with the same `paidOrderSql`, and `payment_transactions` has an outbox trigger → order re-sent on payment change), `josh_order_lines`, `josh_catalog_products.translations`, commerce `customer_metrics` | `order_refunds` (refund total) | **R\* — done (S5-5)**: `SALES_SOURCE`; refunds n/a until S5-11 |
 | 4 | `josh-insights.ts` `traffic()` | `GET /reports/traffic`; MCP `shop_traffic` | `analytics_events`, `analytics_funnel_daily`, `user_search_history` | none | all — high-volume event tables | C (daily aggregates only: `analytics.daily.snapshot`) or D |
-| 5 | `josh-insights.ts` `orderTargetgroup()` | `GET /reports/order-targetgroup` | view `customer_order_targetgroup_summary` | rebuild as a commerce view over `josh_orders` + `segment_customers` | view definition must be copied from josh | R* |
-| 6 | `josh-insights.ts` `failures()` | `GET /reports/health` (system-health), MCP `system_health` | `payment_transactions`, `jagota_order_sync`, `marketing_workflow_scheduled_runs`, `push_campaigns` | `jagota_order_sync_history` (commerce) for the ERP part | payments, workflow runs, push | R* for ERP part, D for the rest (josh's own health) |
+| 5 | `josh-insights.ts` `orderTargetgroup()` | `GET /reports/order-targetgroup` | view `customer_order_targetgroup_summary` over `order_targetgroup_import` (xlsx staging of ERP invoice lines), `product_inventory.order_taking_flag`, `sku_order_period` (josh cron probes the ERP delivery calendar) | none — **not** orders: see S5-8 | all three inputs | **C or D** (owner) — corrected 2026-10-07 |
+| 6 | `josh-insights.ts` `failures()` | `GET /reports/health` (system-health), MCP `system_health` | `payment_transactions`, `jagota_order_sync`, `marketing_workflow_scheduled_runs`, `push_campaigns` | `jagota_order_sync_history` (commerce) for the ERP part | payments, workflow runs, push | **R\* — done (S5-9)** for ERP part (fresh as its last import until S5-11); D for the rest |
 | 7 | `connector/josh/josh-orders.ts` | `GET /reports/orders[/summary|/:id]`; MCP `josh_orders` | `orders`, `company`, `branch`, `users`, `jagota_order_sync`, `payment_transactions`, `order_items`, `product_inventory`, `product_translation`, `shipments` | `josh_orders`, `josh_order_lines`, `josh_companies`, `josh_users`/`josh_customers.data->>'mobile_phone'`, `jagota_order_sync_history`, `josh_catalog_products` | `branch` (name, erp code), `company.erp_customer_code`, payment detail (method/paid_at/amount), `shipments`, `orders.sending_date`, `order_taking_flag` | R* list/summary now (degrade missing columns); C for detail (`order.snapshot` gains `payments[]`, `shipments[]`, `sending_date`; new `branch.snapshot`) |
 | 8 | `connector/josh/josh-customers.ts` | `GET /reports/customers[/summary|/:id]`; MCP `josh_customers` | `company`, `branch`, `users`, `orders`, `kyc_document`, `credit_term_applications` (+ paid) | `josh_customers`, `josh_companies`, `josh_orders`, `customer_metrics` | company business/credit fields, `branch`, KYC, credit applications | R* basic; C for company/branch; **KYC/credit = open question** |
 | 9 | `growth/growth-data.service.ts` | `GET /growth/workspace|results/:id|timeline/:companyId`; MCP `growth_*`; `growth.service.evidence()` | `insights.sales`, `cart_snapshot`, `user_devices`, `winback_account`, `winback_activity`, `company`, `orders`, `users`, `marketing_workflow_enrollments`, `marketing_workflows` | sales via #3, commerce `winback_*` (owned since 2b — josh's copy is stale), `josh_companies`, `josh_orders`, `josh_users` | `cart_snapshot`, `user_devices`, marketing workflow tables | R* (workspace/timeline); results needs workflows (#12) |
@@ -146,8 +146,8 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — **done** (parity endpoint) |
 | S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium |
 | S5-7 | orders + customers reports — list / summary on copies, missing columns "—" | #7, #8 | no | medium |
-| S5-8 | order-targetgroup view rebuilt in commerce | #5 | no | low |
-| S5-9 | health: ERP part from `jagota_order_sync_history`; josh-only checks labelled | #6, #21 | no | low |
+| S5-8 | order-targetgroup — **not** an orders view (see task); needs copies or an owner decision | #5 | yes / decision | – blocked |
+| S5-9 | health: ERP part from `jagota_order_sync_history`; josh-only checks labelled | #6, #21 | no | low — **done** |
 | S5-10 | staff-prices SKU lookup from catalog copy (fixes crash without replica, `staff-prices.ts:136`) | #18 | no | low — **done** |
 | S5-11 | josh snapshots: `branch`, `order.snapshot` + `payments[]` / `shipments[]` / `sending_date` / refunds, `company` business + erp code, `jagota_sync`; backfill groups | #7, #8, #3, #24 | **yes** (additive) | medium |
 | S5-12 | josh snapshots: `push_campaign`, `marketing_workflow` (+ enrollment counts) | #12, #13, #9 results | yes | medium |
@@ -279,9 +279,33 @@ one at the order's last snapshot; `paid` is as of the last order snapshot (a pay
 and `this_month`: `differs` empty (or explained), `topProducts.firstDiffRank` null or > 20 → `SALES_SOURCE=copies`.
 Rollback: `replica`.
 
-### Task S5-6 … S5-9
+### Task S5-6, S5-7
 
 Same pattern as S5-3; each one PR-sized commit. Details are in the inventory row; write each task's steps when picked.
+
+### Task S5-8: order-targetgroup — BLOCKED, reclassified (checked 2026-10-07)
+
+The inventory guessed "rebuild over `josh_orders`". josh's view (Webjosh migration
+`1791530000000-CreateCustomerOrderTargetgroupSummaryView`) reads none of the order tables:
+- `order_targetgroup_import` — raw import of `order-targetgroup.xlsx` (ERP invoice lines; "staging data … not a live
+  order source"), no writer service in josh after the import;
+- `product_inventory.order_taking_flag = 'Y'` — not in `catalog.snapshot` (S5-4 list adds it);
+- `sku_order_period` (`status = 'O'`, ISO weekday of `deliver_date`) — filled by josh's `sku-order-period-probe` cron
+  from the Jagota delivery calendar.
+
+Options (owner, plan §4 q5): (a) josh `sku_order_period.snapshot` group + a one-off copy of the import (backfill group)
++ `order_taking_flag` in catalog → view over commerce copies; (b) commerce imports the xlsx itself and probes the ERP
+calendar (it owns the ERP gateway) — ownership move, not a copy; (c) D: the analysis was one-off, keep it in josh-admin.
+Until decided the page stays on the replica. No new snapshot group invented here.
+
+### Task S5-9: health without the replica — DONE (this branch)
+
+- [x] `SystemHealthReport`: replica configured → unchanged. Not configured → josh part from
+      `jagota_order_sync_history` (failed count, top 5 errors — same filters as the replica SQL), `copiedUpTo` =
+      `max(imported_at)`, and a note that failed payments / workflow runs / push are josh's own health (josh-admin).
+      Fits the page's existing `counts` + `notAvailable` render; MCP `system_health` follows.
+- [x] `system-health.spec.ts` (2).
+- The copy is only as fresh as `jagotaSyncImport` (replica) — real freshness needs the `jagota_sync` snapshot (S5-11).
 
 ### Task S5-10: staff-prices SKU lookup on the catalog copy — DONE (this branch)
 
@@ -312,6 +336,8 @@ backfill group; commerce migration (real-column copy table + tombstones), `josh-
 2. **Traffic** (`analytics_events`, funnel, search history) — worth a daily-aggregate snapshot, or drop from commerce?
 3. **Back-office views** (#11) — confirm they stay josh-admin (stage 6 decides staff admin).
 4. **One global `REPORTS_SOURCE`** vs per-reader switches.
+5. **Order target group** (S5-8): copy josh's inputs, move the import + ERP calendar probe to commerce, or keep it in
+   josh-admin? Default if unanswered: josh-admin (D).
 
 ## 5. Done when
 

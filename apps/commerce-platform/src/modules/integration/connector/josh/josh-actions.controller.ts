@@ -1,7 +1,9 @@
-import { Body, Controller, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { DataSource } from 'typeorm';
 import { winbackOwnedByCommerce } from '../../winback/shared/winback.config';
 import { ownsSalesReps, SalesRepsService } from '../../customers/sales-reps.service';
+import { ownsPrices, ProductPricesService } from '../../../commerce/product-prices/product-prices.service';
 import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
@@ -100,8 +102,21 @@ export class JoshActionsController {
    */
   @Post('products/:id/update') @HttpCode(HttpStatus.OK)
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
-    const fields = b?.fields && typeof b.fields === 'object' && !Array.isArray(b.fields) ? b.fields : {};
-    const result = await this.josh.run('products', 'update', { id, fields }, this.as(req), 'admin');
+    const { selling_unit_price: price, ...fields } = b?.fields && typeof b.fields === 'object' && !Array.isArray(b.fields) ? b.fields : {};
+    // Stage 4a: the base price is commerce's once it owns prices — it is saved here and reaches josh as
+    // product.price.snapshot; the rest of the form still goes to josh's ProductService.update.
+    if (price !== undefined && price !== '' && ownsPrices()) {
+      const [row] = await this.modules.get(DataSource, { strict: false }).query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]);
+      if (!row?.sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
+      const saved = await this.modules.get(ProductPricesService, { strict: false })
+        .edit(row.sku, { sellingUnitPrice: price === null ? null : Number(price) }, req.staff.userId);
+      if (!Object.keys(fields).length) return { price: saved };
+      const result = await this.josh.run('products', 'update', { id, fields }, this.as(req), 'admin');
+      await this.catalog.syncId(id).catch(() => undefined);
+      return { price: saved, product: result };
+    }
+    const all = price === undefined ? fields : { ...fields, selling_unit_price: price };
+    const result = await this.josh.run('products', 'update', { id, fields: all }, this.as(req), 'admin');
     await this.catalog.syncId(id).catch(() => undefined); // the cron catches up if the replica lags
     return result;
   }

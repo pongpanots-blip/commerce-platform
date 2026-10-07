@@ -352,6 +352,23 @@ export const marketingResearchApi = {
     enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/runs/${id}/summarize`, { requestId: crypto.randomUUID() })),
 };
 
+// ---- Product prices (stage 4a: base price / ERP box price / MOQ and the MER queue, owned by commerce) ----
+export interface PriceRow { sku: string; selling_unit_price: string | null; ordering_price: string | null; moq: number | null; source: string; updated_by: string | null; updated_at: string }
+export interface PricePending {
+  sku: string; selling_unit_price: string | null; ordering_price: string | null; moq: number | null; changed_at: string | null; received_at: string;
+  current_selling_unit_price: string | null; current_ordering_price: string | null; current_moq: number | null;
+}
+const q = (search: string) => (search ? `?search=${encodeURIComponent(search)}` : '');
+export const productPricesApi = {
+  ownership: () => api.get<{ prices?: boolean }>('/ownership'),
+  list: (search: string) => api.get<PriceRow[]>(`/product-prices${q(search)}`),
+  pending: (search: string) => api.get<PricePending[]>(`/product-prices/pending${q(search)}`),
+  approve: (skus: string[]) => api.post<{ approved: number }>('/product-prices/pending/approve', { skus }),
+  reject: (skus: string[]) => api.post<{ rejected: number }>('/product-prices/pending/reject', { skus }),
+  edit: (sku: string, body: { sellingUnitPrice?: number; orderingPrice?: number; moq?: number }) =>
+    api.patch<unknown>(`/product-prices/${encodeURIComponent(sku)}`, body),
+};
+
 // ---- Stock moves (stage 3: commerce-owned warehouses, through the ledger) ----
 export interface StockWarehouse { id: string; code: string; name: string; stockSource: 'erp' | 'commerce'; sellable: boolean }
 export interface StockAdjustResult { status: string; previousQuantity: number; quantity: number; reserved: number }

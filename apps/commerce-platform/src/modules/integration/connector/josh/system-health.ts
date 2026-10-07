@@ -15,7 +15,9 @@ const JAGOTA_COPY_FAILED_SQL = `SELECT count(*)::int AS n, max(imported_at) AS c
   WHERE sync_status = 'failed' AND created_at >= $1 AND created_at < $2`;
 const JAGOTA_COPY_ERRORS_SQL = `SELECT left(error_message, 200) AS error, count(*)::int AS n, max(created_at) AS last_at FROM jagota_order_sync_history
   WHERE sync_status = 'failed' AND created_at >= $1 AND created_at < $2 GROUP BY 1 ORDER BY 2 DESC LIMIT 5`;
-const JAGOTA_COPY_FRESHNESS_SQL = `SELECT max(imported_at) AS copied_up_to FROM jagota_order_sync_history`;
+/** Rows with source_version > 0 came from jagota_sync.snapshot events (S5-11; imported_at = when applied); 0 = replica import. */
+const JAGOTA_COPY_FRESHNESS_SQL = `SELECT max(imported_at) AS copied_up_to, max(imported_at) FILTER (WHERE source_version > 0) AS last_event_at,
+  max(imported_at) FILTER (WHERE source_version = 0) AS last_import_at FROM jagota_order_sync_history`;
 
 /**
  * Why a page is not served without josh's replica (stage 5, S5-14) — shown instead of the bare "not configured":
@@ -64,9 +66,10 @@ export class SystemHealthReport {
   }
 
   /**
-   * Without the replica (stage 5, S5-9): the ERP-send part from `jagota_order_sync_history` — only as fresh as its last
-   * import (`jagotaSyncImport` reads the replica; events for it are S5-11). Payments, workflow runs and push campaigns
-   * are josh's own health: josh-admin shows them.
+   * Without the replica (stage 5, S5-9): the ERP-send part from `jagota_order_sync_history`, kept current by josh's
+   * jagota_sync.snapshot events (S5-11) — or, before those flow, only as fresh as the last replica import. A quiet event
+   * stream means no new ERP sends, not lag; lag shows as josh's commerce_outbox backlog. Payments, workflow runs and
+   * push campaigns are josh's own health: josh-admin shows them.
    */
   private async joshFromCopies(range: Range) {
     const [[failed], errors, [fresh]] = await Promise.all([
@@ -74,13 +77,20 @@ export class SystemHealthReport {
       this.db.query(JAGOTA_COPY_ERRORS_SQL, [range.from, range.to]),
       this.db.query(JAGOTA_COPY_FRESHNESS_SQL),
     ]);
-    const upTo = fresh?.copied_up_to ? new Date(fresh.copied_up_to).toISOString() : null;
+    const iso = (v: unknown) => (v ? new Date(v as string).toISOString() : null);
+    const upTo = iso(fresh?.copied_up_to), lastEventAt = iso(fresh?.last_event_at), lastImportAt = iso(fresh?.last_import_at);
+    const how = lastEventAt
+      ? `fed by josh events, last ERP send received ${lastEventAt} (no newer row = no newer send; a delay shows as josh's commerce_outbox backlog)`
+      : `not fed by josh events yet — imported from the replica up to ${lastImportAt ?? 'never'} (backfill jagota_sync)`;
     return {
       source: 'commerce copy (jagota_order_sync_history)',
       copiedUpTo: upTo,
+      fedBy: lastEventAt ? 'events' : lastImportAt ? 'import' : 'none',
+      lastEventAt,
+      lastImportAt,
       counts: { jagota_order_sync_failed: failed?.n ?? 0 },
       jagotaOrderSyncErrors: errors,
-      notAvailable: `ERP sends from commerce's copy, imported up to ${upTo ?? 'never'}. Failed payments, marketing workflow runs and push campaigns are josh's own health — see josh-admin (JOSH_DATABASE_URL is not set here).`,
+      notAvailable: `ERP sends from commerce's copy, ${how}. Failed payments, marketing workflow runs and push campaigns are josh's own health — see josh-admin (JOSH_DATABASE_URL is not set here).`,
     };
   }
 }

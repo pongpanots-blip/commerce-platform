@@ -11,5 +11,8 @@ export class CustomerMetrics {
   @Column({ name: 'last_order_at', type: 'timestamptz', nullable: true }) lastOrderAt: Date | null;
   @Column({ name: 'order_count_90d', type: 'int', default: 0 }) orderCount90d: number;
   @Column({ name: 'spend_90d', type: 'numeric', precision: 14, scale: 2, default: 0 }) spend90d: string;
+  /** Set when the values changed. */
   @Column({ name: 'computed_at', type: 'timestamptz', default: () => 'now()' }) computedAt: Date;
+  /** When josh last accepted this row (mode on); a row with computed_at after it is sent again. */
+  @Column({ name: 'pushed_at', type: 'timestamptz', nullable: true }) pushedAt: Date | null;
 }

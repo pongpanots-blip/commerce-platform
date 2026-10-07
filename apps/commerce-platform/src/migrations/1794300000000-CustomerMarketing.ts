@@ -14,7 +14,7 @@ export class CustomerMarketing1794300000000 implements MigrationInterface {
     await q.query(`CREATE TABLE customer_metrics (user_id uuid PRIMARY KEY, lifetime_order_count int NOT NULL DEFAULT 0,
       lifetime_spend numeric(14,2) NOT NULL DEFAULT 0, avg_order_value numeric(14,2) NOT NULL DEFAULT 0,
       first_order_at timestamptz, last_order_at timestamptz, order_count_90d int NOT NULL DEFAULT 0,
-      spend_90d numeric(14,2) NOT NULL DEFAULT 0, computed_at timestamptz NOT NULL DEFAULT now())`);
+      spend_90d numeric(14,2) NOT NULL DEFAULT 0, computed_at timestamptz NOT NULL DEFAULT now(), pushed_at timestamptz)`);
     await q.query(`CREATE TABLE segments (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), slug varchar(80) NOT NULL UNIQUE,
       name varchar(155) NOT NULL, description text, rule_type varchar(40) NOT NULL, rule_config jsonb NOT NULL DEFAULT '{}',
       definition jsonb, priority int NOT NULL DEFAULT 0, is_active boolean NOT NULL DEFAULT true, frozen_at timestamptz,

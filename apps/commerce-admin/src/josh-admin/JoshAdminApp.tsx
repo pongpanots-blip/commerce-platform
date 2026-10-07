@@ -17,6 +17,10 @@ const MarketingNotifyTemplates = lazy(() => import('./app/page/marketing/Marketi
 const MarketingOfferCheckPage = lazy(() => import('./app/page/marketing/MarketingOfferCheckPage'));
 const MarketingQueueDashboard = lazy(() => import('./app/page/marketing/MarketingQueueDashboard'));
 const MarketingSettingsPage = lazy(() => import('./app/page/marketing/MarketingSettingsPage'));
+// Competitor prices + scraping: josh's pages verbatim, talking to commerce's own API (commerce-client).
+const CompetitorPricesPage = lazy(() => import('./app/page/marketing/CompetitorPricesPage'));
+const ScrapingSourcesPage = lazy(() => import('./app/page/marketing/ScrapingSourcesPage'));
+const ScrapedCatalogPage = lazy(() => import('./app/page/marketing/ScrapedCatalogPage'));
 const MembershipTierConfig = lazy(() => import('./app/page/membership-tier/MembershipTierConfig'));
 const Order = lazy(() => import('./app/page/Order'));
 const OrderDetail = lazy(() => import('./app/page/OrderDetail'));
@@ -104,6 +108,9 @@ export function JoshAdminApp() {
             <Route path="marketing/journey-funnel" element={<MarketingJourneyFunnel />} />
             <Route path="marketing/notify-templates" element={<MarketingNotifyTemplates />} />
             <Route path="marketing/settings" element={<MarketingSettingsPage />} />
+            <Route path="marketing/competitor-prices" element={<CompetitorPricesPage />} />
+            <Route path="marketing/scraping-sources" element={<ScrapingSourcesPage />} />
+            <Route path="marketing/scraped-catalog" element={<ScrapedCatalogPage />} />
             <Route path="marketing/welcome-lead-email" element={<WelcomeLeadEmailPage />} />
             <Route path="marketing/offers-check" element={<MarketingOfferCheckPage />} />
             <Route path="smart-links" element={<SmartLinksPage />} />

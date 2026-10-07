@@ -25,9 +25,6 @@ import { Reservations } from './pages/Reservations';
 import { ErpStock } from './pages/ErpStock';
 import { ErpIngest } from './pages/ErpIngest';
 import { MarketingResearch } from './pages/MarketingResearch';
-import { ScrapingSources } from './pages/ScrapingSources';
-import { ScrapedCatalog } from './pages/ScrapedCatalog';
-import { CompetitorPrices } from './pages/CompetitorPrices';
 import { InboundLog } from './pages/InboundLog';
 import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
 import { WebhookPlatforms } from './pages/WebhookPlatforms';
@@ -114,9 +111,9 @@ const NAV: NavGroup[] = [
       { to: '/j/cs/notification-log', label: 'Notification log', end: false },
       { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
       { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', end: false },
-      { to: '/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
-      { to: '/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
-      { to: '/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
+      { to: '/j/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
+      { to: '/j/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
+      { to: '/j/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
     ],
   },
   {
@@ -355,9 +352,10 @@ export function App() {
             <Route path="/livechat" element={<Livechat />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
-            <Route path="/marketing/scraping-sources" element={<ScrapingSources />} />
-            <Route path="/marketing/scraped-catalog" element={<ScrapedCatalog />} />
-            <Route path="/marketing/competitor-prices" element={<CompetitorPrices />} />
+            {/* Competitor prices + scraping are josh's pages (under /j) on commerce's API; old links still work. */}
+            <Route path="/marketing/scraping-sources" element={<Navigate to="/j/marketing/scraping-sources" replace />} />
+            <Route path="/marketing/scraped-catalog" element={<Navigate to="/j/marketing/scraped-catalog" replace />} />
+            <Route path="/marketing/competitor-prices" element={<Navigate to="/j/marketing/competitor-prices" replace />} />
             <Route path="/ai/connectors" element={<AiConnectors />} />
             <Route path="/erp/josh-logs" element={<JoshErpLogs />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />

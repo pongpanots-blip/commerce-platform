@@ -190,6 +190,19 @@ export function MarketingResearch() {
                               ) : null}
                               {r.report?.limitations?.map((l, i) => <div key={i} className="text-xs text-on-surface-variant mb-1">ข้อจำกัด: {l}</div>)}
                               {!!r.report?.evidence?.length && <div className="my-2"><ButtonLink to={`/marketing/growth/plans/new?${new URLSearchParams({ template: 'market', topicId: t.id, runId: r.id, title: t.title, goal: r.report.summary ?? '' })}`} icon="edit_note">ร่างแผน Growth จากหลักฐานนี้</ButtonLink></div>}
+                              {r.report?.analysis ? (
+                                <div className="text-xs mb-2 rounded bg-surface-container p-2">
+                                  <div className="font-semibold mb-1">สรุปด้วย AI · {{ queued: 'รอคิว', running: 'กำลังสรุป', completed: 'เสร็จแล้ว', not_configured: 'ยังไม่ได้ตั้งค่า AI', unavailable: 'AI ใช้งานไม่ได้ตอนนี้', insufficient_data: 'หลักฐานไม่พอ' }[r.report.analysis.status]}</div>
+                                  {r.report.analysis.summary && <p className="text-on-surface mb-1">{r.report.analysis.summary}</p>}
+                                  {r.report.analysis.findings.map((f, i) => <div key={i} className="text-on-surface">• {f.text}</div>)}
+                                  {r.report.analysis.reason && r.report.analysis.status !== 'completed' && <div className="text-on-surface-variant">{r.report.analysis.reason}</div>}
+                                </div>
+                              ) : ['completed', 'partial'].includes(r.status) && !!r.report?.evidence?.length && (
+                                <Button variant="ghost" size="sm" disabled={busy === `ai-${r.id}`} onClick={() => act(`ai-${r.id}`, async () => {
+                                  const run = await marketingResearchApi.summarize(r.id);
+                                  setRuns((all) => ({ ...all, [t.id]: (all[t.id] ?? []).map((x) => (x.id === run.id ? run : x)) }));
+                                }, 'ส่งให้ AI สรุปแล้ว — กดเปิดรอบนี้อีกครั้งเพื่อดูผล')}>สรุปด้วย AI</Button>
+                              )}
                               {r.report && !r.keptAt && <Button variant="ghost" size="sm" disabled={busy === `keep-${r.id}`} onClick={() => act(`keep-${r.id}`, () => marketingResearchApi.keepRun(r.id), 'เก็บรายงานไว้แล้ว')}>เก็บรายงานนี้</Button>}
                             </div>
                           ))}

@@ -1,4 +1,5 @@
-import { apiClient } from '../api-client/api-client';
+// Competitor prices and scraping live in commerce now: same routes and envelope, called directly.
+import { commerceClient as apiClient } from '../api-client/commerce-client';
 
 export type CompetitorCatalogProduct = {
   id: string; sku: string; name: string; brand: string | null; country: string | null;

@@ -64,7 +64,7 @@ export function ProductPrices() {
             <TBody>
               {pending.data.map((r: PricePending) => (
                 <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>
-                  <TD><Checkbox checked={picked.has(r.sku)} onChange={() => toggle(r.sku)} /></TD>
+                  <TD><Checkbox checked={picked.has(r.sku)} onChange={() => toggle(r.sku)} onClick={(e) => e.stopPropagation()} /></TD>
                   <TD kind="mono">{r.sku}</TD>
                   <TD kind="money">{r.selling_unit_price == null ? '—' : `${money(r.current_selling_unit_price)} → ${money(r.selling_unit_price)}`}</TD>
                   <TD kind="money">{r.ordering_price == null ? '—' : `${money(r.current_ordering_price)} → ${money(r.ordering_price)}`}</TD>

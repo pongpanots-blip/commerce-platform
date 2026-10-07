@@ -30,6 +30,10 @@ export class StockMovesController {
   @Post('adjustments')
   adjust(@Body() dto: AdjustStockDto, @Req() req: StaffRequest) { return this.moves.adjust(dto, req.staff.userId); }
 
+  /** Cutover / repair: send every SKU's sellable stock to the platforms again. */
+  @Post('sellable-snapshots/resend')
+  resend() { return this.moves.resendSellable(); }
+
   @Post('transfers')
   transfer(@Body() dto: TransferStockDto, @Req() req: StaffRequest) { return this.moves.transfer(dto, req.staff.userId); }
 }

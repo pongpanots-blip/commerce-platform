@@ -122,4 +122,11 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
       delete process.env.STOCK_ORDER_WAREHOUSE_CODE;
     }
   });
+
+  it('resend publishes one sellable snapshot per product with stock rows', async () => {
+    await db.query(`DELETE FROM outbox_messages WHERE aggregate_id = $1`, [P]);
+    const { sent } = await moves.resendSellable();
+    expect(sent).toBeGreaterThan(0);
+    expect((await db.query(`SELECT count(*)::int AS n FROM outbox_messages WHERE type = 'inventory.sellable.snapshot' AND aggregate_id = $1`, [P]))[0].n).toBe(1);
+  });
 });

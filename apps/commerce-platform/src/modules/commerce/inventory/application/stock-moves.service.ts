@@ -47,6 +47,17 @@ export class StockMovesService {
     });
   }
 
+  /** Cutover / repair: inventory.sellable.snapshot for every product that has stock rows, 500 per transaction. */
+  async resendSellable(): Promise<{ sent: number }> {
+    const ids: string[] = (await this.db.query(
+      `SELECT DISTINCT l.product_id AS id FROM inventory_levels l JOIN products p ON p.id = l.product_id AND p.deleted_at IS NULL
+        WHERE l.deleted_at IS NULL ORDER BY 1`)).map((r: { id: string }) => r.id);
+    for (let i = 0; i < ids.length; i += 500) {
+      await this.db.transaction(async (m) => { for (const id of ids.slice(i, i + 500)) await this.ledger.publishSellable(m, id); });
+    }
+    return { sent: ids.length };
+  }
+
   private async product(m: EntityManager, sku: string): Promise<{ id: string; sku: string }> {
     const [product] = await m.query(`SELECT id, sku FROM products WHERE sku = $1 AND deleted_at IS NULL LIMIT 1`, [sku]);
     if (!product) throw new NotFoundException(`ไม่พบสินค้า SKU ${sku}`);

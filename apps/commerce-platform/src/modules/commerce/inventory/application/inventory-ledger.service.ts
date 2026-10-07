@@ -102,7 +102,7 @@ export class InventoryLedgerService {
    * version = now, i.e. when commerce's number changed — monotonic per SKU, so a platform never drops a newer sum as
    * "same version" (ERP CHANGED_AT of different warehouses can arrive out of order).
    */
-  private async publishSellable(manager: EntityManager, productId: string) {
+  async publishSellable(manager: EntityManager, productId: string) {
     const [row]: Array<{ sku: string; qty: number }> = await manager.query(
       `SELECT p.sku, COALESCE(SUM(GREATEST(l.quantity - l.reserved, 0)) FILTER (WHERE w.sellable), 0)::int AS qty
          FROM products p

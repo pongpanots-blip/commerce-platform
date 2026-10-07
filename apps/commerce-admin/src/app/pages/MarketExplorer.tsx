@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Empty, ErrorText, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Stack2, Table, TBody, TD, TH, THead, TR, fmt, Icon } from '@cp/ui';
 import { marketApi, RestaurantRow } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { hasRestaurantCoordinates, RestaurantMap } from './RestaurantMap';
 import './MarketExplorer.css';
 
 type Filters = {
@@ -100,6 +101,7 @@ export function MarketExplorer() {
         </form>
 
         <ErrorText error={error} />
+        {!loading && !error && !!data?.items.length && <RestaurantMap restaurants={data.items} page={page} total={total} onSelect={setSelected} />}
         <section className="market-results" aria-label="ผลการค้นหาร้าน" aria-busy={loading}>
           <div className="market-results-head"><div><h2>รายชื่อร้านอาหาร <span>{!loading && !error && data ? fmt.num(total) : '…'}</span></h2><p>เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด</p></div>
             {active.length > 0 && <Button onClick={() => apply({})} disabled={loading} icon="filter_alt_off">ล้างตัวกรอง ({active.length})</Button>}
@@ -145,7 +147,7 @@ function RestaurantDialog({ restaurant, onClose }: { restaurant: RestaurantRow; 
   const { data, loading, error, reload } = useAsync(() => marketApi.restaurant(restaurant.id), []);
   useEffect(() => { dialog.current?.showModal(); }, []);
   const r = data ?? restaurant;
-  const hasCoordinates = Number.isFinite(r.lat) && Number.isFinite(r.lng) && Math.abs(r.lat) <= 90 && Math.abs(r.lng) <= 180 && (r.lat !== 0 || r.lng !== 0);
+  const hasCoordinates = hasRestaurantCoordinates(r);
   return <dialog ref={dialog} className="market-dialog" aria-labelledby="restaurant-title" onClose={onClose}>
     <div className="market-dialog-head"><span className="market-eyebrow">รายละเอียดร้านอาหาร</span><button autoFocus onClick={() => dialog.current?.close()} aria-label="ปิดรายละเอียด"><Icon name="close" size={22} /></button></div>
     <h2 id="restaurant-title">{r.name || 'ยังไม่มีชื่อร้าน'}</h2><p className="market-location">{r.district || 'ยังไม่ระบุเขต'} · {categoryLabel(r.category)}</p>

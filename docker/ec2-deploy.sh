@@ -34,6 +34,25 @@ for svc in "${SERVICES[@]}"; do
 done
 
 COMPOSE=(docker compose -f docker-compose.prod.yml)
+
+# Optional sidecar for Jagota gateway (josh via-commerce). Survives deploy-ecr.yml's
+# .env rewrite (which only knows its listed keys). Create once on the box:
+#   printf "%s\n" "JAGOTA_GATEWAY_ENABLED=true" \
+#     "JAGOTA_NODEAPI_BASE_URL=https://nodeapi-staging.jagota.com" \
+#     "JAGOTA_NODEAPI_USERNAME=..." "JAGOTA_NODEAPI_PASSWORD=..." \
+#     > .env.jagota-gateway && chmod 600 .env.jagota-gateway
+# Then re-run this deploy (or compose up -d platform).
+if [[ -f .env.jagota-gateway ]]; then
+  echo "merging .env.jagota-gateway into .env"
+  touch .env
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+    key="${line%%=*}"
+    [[ "$key" == JAGOTA_* ]] || continue
+    sed -i "/^${key}=/d" .env
+    printf '%s\n' "$line" >> .env
+  done < .env.jagota-gateway
+fi
 "${COMPOSE[@]}" pull "${SERVICES[@]}"
 # Schema first: the app never runs migrations itself (migrationsRun is off). A failed migration
 # stops the deploy before the new platform container replaces the running one.

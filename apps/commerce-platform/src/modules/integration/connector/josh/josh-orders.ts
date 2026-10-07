@@ -21,16 +21,21 @@ const latestSync = (table: string) => `LEFT JOIN LATERAL (
 type Source = 'replica' | 'copies';
 /**
  * ORDERS_SOURCE: replica (default) · copies (stage 5, S5-7): `josh_orders` (`paid` from josh's builder), `josh_companies`,
- * commerce's `jagota_order_sync_history` (fresh as its last import until the jagota_sync snapshot, S5-11), lines from
- * `josh_order_lines` + catalog names. Not copied yet (S5-11) and answered as null: branch, company ERP code,
- * sending date, payment rows (method / paid_at), shipments, the orderer's phone.
+ * commerce's `jagota_order_sync_history` (jagota_sync.snapshot events + the old import), lines from `josh_order_lines` +
+ * catalog names; since S5-11 also `josh_branches`, `josh_order_payments` / `_shipments`, `sending_date`, the company's ERP
+ * code and the orderer's phone (customer copy, masked). Copied payments include batch payments (josh's replica detail
+ * lists only the order's own). Not copied, answered as null: a line's order_taking_flag.
  */
 export const ordersSource = (): Source => (process.env.ORDERS_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica');
 const T = {
   replica: { orders: 'orders', company: 'company', sync: 'jagota_order_sync', paid: paidOrderSql('o') },
   copies: { orders: 'josh_orders', company: 'josh_companies', sync: 'jagota_order_sync_history', paid: 'o.paid' },
 } as const;
-const NOT_COPIED = ['branch_name', 'erp_customer_code', 'erp_branch_code', 'sending_date', 'payments', 'shipments', 'orderedBy.phone'];
+const NOT_COPIED = ['items.order_taking_flag'];
+/** Latest copied payment per order — the copy's LATEST_PAYMENT. */
+const LATEST_PAYMENT_COPY = `LEFT JOIN LATERAL (
+    SELECT t.status, t.payment_method, t.paid_at FROM josh_order_payments t WHERE t.orders_id = o.orders_id ORDER BY t.created_at DESC LIMIT 1
+  ) pt ON TRUE`;
 const LATEST_PAYMENT = `LEFT JOIN LATERAL (
     SELECT t.status::text AS status, t.payment_method, t.paid_at FROM payment_transactions t WHERE t.order_id = o.orders_id ORDER BY t.created_at DESC LIMIT 1
   ) pt ON TRUE`;
@@ -108,12 +113,9 @@ export class JoshOrders {
     const { where, params } = orderWhere(f, t.paid);
     const n = params.length;
     const base = copies
-      ? `FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id ${latestSync(t.sync)} ${where}`
+      ? `FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_branches b ON b.id = o.branch_id ${latestSync(t.sync)} ${LATEST_PAYMENT_COPY} ${where}`
       : `FROM orders o LEFT JOIN company c ON c.id = o.company_id LEFT JOIN branch b ON b.id = o.branch_id ${latestSync(t.sync)} ${LATEST_PAYMENT} ${where}`;
-    // copies: no payment rows yet — the copy knows whether a real payment succeeded (`paid`), not its method or time
-    const payment = copies
-      ? `NULL::text AS branch_name, CASE WHEN o.paid THEN 'success' ELSE 'not paid' END AS payment_status, NULL::text AS payment_method, NULL::timestamptz AS paid_at`
-      : `b.name AS branch_name, pt.status AS payment_status, pt.payment_method, pt.paid_at`;
+    const payment = `b.name AS branch_name, pt.status AS payment_status, pt.payment_method, pt.paid_at`;
     const [items, [{ total }]] = await Promise.all([
       this.q(`SELECT o.orders_id, o.order_number, o.status::text AS status, o.create_date, o.delivery_date::text AS delivery_date, o.total_price::float AS total_price,
           o.customer_code, o.po_number, c.name AS company_name, ${payment},
@@ -164,29 +166,34 @@ export class JoshOrders {
     const byId = UUID.test(idOrNumber);
     const [order] = await this.db.query(
       `SELECT o.orders_id, o.order_number, o.status, o.fulfillment_type, o.payment_type, o.create_date, o.delivery_date::text AS delivery_date,
-          NULL::text AS sending_date, o.customer_code, o.po_number, o.remark,
+          o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
           o.total_price::float AS total_price, o.subtotal_ex_vat::float AS subtotal_ex_vat, o.vat_amount::float AS vat_amount,
           o.discount_inc_vat::float AS discount_inc_vat, o.delivery_fee::float AS delivery_fee,
           CASE WHEN o.paid THEN 'success' ELSE 'not paid' END AS payment_status,
-          c.id AS company_id, c.name AS company_name, NULL::text AS erp_customer_code, NULL::text AS branch_name, NULL::text AS erp_branch_code,
-          u.first_name, u.last_name, u.email
+          c.id AS company_id, c.name AS company_name, c.erp_customer_code, b.name AS branch_name, b.erp_branch_code,
+          u.first_name, u.last_name, u.email, jc.data->>'mobile_phone' AS mobile_phone
         FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_users u ON u.id = o.user_id
+        LEFT JOIN josh_branches b ON b.id = o.branch_id LEFT JOIN josh_customers jc ON jc.id = o.user_id AND jc.deleted_at IS NULL
        WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} LIMIT 1`, [idOrNumber.trim().slice(0, 64)]);
     if (!order) throw new NotFoundException(`order ${idOrNumber} not found in commerce's copy of josh orders`);
     const id = order.orders_id;
-    const [items, jagota] = await Promise.all([
+    const [items, jagota, shipments, payments] = await Promise.all([
       this.db.query(`SELECT l.sku, COALESCE((SELECT t->>'product_name' FROM jsonb_array_elements(cp.translations) t WHERE t->>'language_code' = 'th' LIMIT 1), l.sku) AS name,
           l.product_quantity::float AS qty, l.product_price::float AS unit_price, l.line_revenue::float AS line_revenue, l.price_source, NULL::text AS order_taking_flag
         FROM josh_order_lines l LEFT JOIN josh_catalog_products cp ON cp.id = l.product_inventory_id
        WHERE l.orders_id = $1 ORDER BY l.sku`, [id]),
       this.db.query(`SELECT sync_status, transaction_type, doc_book, doc_no, error_message, payment_method, payment_success, created_at
         FROM jagota_order_sync_history WHERE order_id = $1 ORDER BY created_at`, [id]),
+      this.db.query(`SELECT shipment_number, status, fulfillment_type, delivery_date::text AS delivery_date, shipped_at, delivered_at, cancelled_at,
+          total_inc_vat::float AS total_inc_vat, erp_sync_status, three_pl_status FROM josh_order_shipments WHERE orders_id = $1 ORDER BY created_at, id`, [id]),
+      this.db.query(`SELECT status, payment_method, amount::float AS amount, allocated_amount::float AS allocated_amount, gateway_provider, paid_at, created_at
+        FROM josh_order_payments WHERE orders_id = $1 ORDER BY created_at, id`, [id]),
     ]);
-    const { first_name, last_name, email, ...rest } = order;
+    const { first_name, last_name, email, mobile_phone, ...rest } = order;
     return {
       ...rest,
-      orderedBy: { name: maskPersonName(first_name, last_name), email: maskEmail(email), phone: null },
-      items, shipments: null, jagotaSync: jagota, payments: null, source: 'copies', notCopied: NOT_COPIED,
+      orderedBy: { name: maskPersonName(first_name, last_name), email: maskEmail(email), phone: maskPhone(mobile_phone) },
+      items, shipments, jagotaSync: jagota, payments, source: 'copies', notCopied: NOT_COPIED,
     };
   }
 }

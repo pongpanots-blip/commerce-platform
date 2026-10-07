@@ -24,7 +24,9 @@ describe('ORDERS_SOURCE=copies (stage 5, S5-7)', () => {
     const db = { query: jest.fn(async (sql: string): Promise<Record<string, unknown>[]> =>
       /count\(\*\)::int AS total FROM|AS total, /.test(sql) ? [{ total: 1 }]
         : /FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_users/.test(sql)
-          ? [{ orders_id: 'o1', first_name: 'สมชาย', last_name: 'ใจดี', email: 'somchai@example.com' }] : []) };
+          ? [{ orders_id: 'o1', first_name: 'สมชาย', last_name: 'ใจดี', email: 'somchai@example.com', mobile_phone: '0898765432', branch_name: 'สาขา 1' }]
+          : /FROM josh_order_shipments/.test(sql) ? [{ shipment_number: 'SH1', status: 'delivered' }]
+            : /FROM josh_order_payments WHERE/.test(sql) ? [{ status: 'success', payment_method: 'qr', amount: 500 }] : []) };
     return { orders: new JoshOrders(replica as never, db as never), replica, db };
   };
 
@@ -40,9 +42,19 @@ describe('ORDERS_SOURCE=copies (stage 5, S5-7)', () => {
     }
     expect(db.query.mock.calls[0][0]).toContain('NOT o.paid'); // payment=missing on the copy's paid flag
     expect(db.query.mock.calls[0][0]).toContain('FROM jagota_order_sync_history s');
-    expect(list).toMatchObject({ source: 'copies', notCopied: expect.arrayContaining(['branch_name', 'payments']) });
-    expect(d).toMatchObject({ shipments: null, payments: null, orderedBy: { phone: null } });
-    expect((d as { orderedBy: { email: string } }).orderedBy.email).not.toBe('somchai@example.com'); // masked
+    expect(list).toMatchObject({ source: 'copies', notCopied: ['items.order_taking_flag'] });
+    const listSql = db.query.mock.calls.find(([sql]) => /ORDER BY o.create_date DESC/.test(sql))![0];
+    expect(listSql).toContain('LEFT JOIN josh_branches b ON b.id = o.branch_id');
+    expect(listSql).toContain('FROM josh_order_payments t WHERE t.orders_id = o.orders_id');
+    // S5-11 copies: branch, ERP codes, sending date, shipments, payments, the orderer's phone (masked)
+    expect(d).toMatchObject({ branch_name: 'สาขา 1', shipments: [{ shipment_number: 'SH1' }], payments: [{ payment_method: 'qr', amount: 500 }] });
+    const detailSql = db.query.mock.calls.find(([sql]) => /LEFT JOIN josh_users/.test(sql))![0];
+    expect(detailSql).toContain('o.sending_date::text AS sending_date');
+    expect(detailSql).toContain('c.erp_customer_code, b.name AS branch_name, b.erp_branch_code');
+    const by = (d as { orderedBy: { email: string; phone: string } }).orderedBy;
+    expect(by.email).not.toBe('somchai@example.com'); // masked
+    expect(by.phone).toBeTruthy();
+    expect(by.phone).not.toBe('0898765432');
   });
 
   it('defaults to the replica', () => {

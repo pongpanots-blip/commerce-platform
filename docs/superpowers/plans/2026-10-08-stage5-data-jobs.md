@@ -81,11 +81,11 @@ copy · D = drop/defer (other stage or no report value).
 | 11 | `connector/josh/josh-backoffice.ts` | `GET /reports/backoffice[/:view]`; MCP `josh_backoffice` | 16 views: KYC, credit, CN/CB, invoices, shipments, payments, coupons, campaigns, user_segments, supplier, internal docs, admin access requests | segments view → `segments`; rest none | almost all — josh operational back-office | D (stays josh-admin's job; stage 6 staff admin decides) except `segments` view → R |
 | 12 | `connector/josh/josh-marketing-workflows.ts` (+controller) | `GET /reports/marketing-workflows[/:id]`; MCP | `marketing_workflow*` (4 tables) | none | all | C (`marketing_workflow.snapshot`) — or ownership move with stage 2 marketing; writes already go through `JoshActions` |
 | 13 | `connector/josh/josh-push-campaigns.ts` | `GET /reports/push-campaigns*`; MCP `push_campaigns` | `push_campaigns` (+ Mongo deliveries) | none | `push_campaigns` | C (`push_campaign.snapshot`, small table) |
-| 14 | `connector/josh/josh-products.ts` | `GET /reports/products*`; MCP `josh_products` | `product_inventory`, `product_media`, `product_translation`, `product_category` | `josh_catalog_products` + owned `product_prices/contents/masters/images/categories/brands`, `inventory_levels` | none (catalog copy already fed by `catalog.snapshot`) | R |
+| 14 | `connector/josh/josh-products.ts` | `GET /reports/products*`; MCP `josh_products` | `product_inventory`, `product_media`, `product_translation`, `product_category` | `josh_catalog_products` + owned `product_prices/contents/masters/images/categories/brands`, `inventory_levels` | category id/path, original price, sup_code, qty, low-stock, MOQ, order-taking, ERP-pending, image list (see S5-4) | **R\*** — needs `catalog.snapshot` extension (S5-11) |
 | 15 | `connector/josh/josh-prices.ts` | `GET /reports/prices/*`; MCP `josh_prices` | `branch`, `shop`, `company`, `private_price`, `branch_contract_price`, `product_branch_specials`, `promotion_*`, `erp_quotations` | `staff_prices`, `product_prices`, `josh_companies`, `josh_catalog_products` | branch, shop, branch specials, quantity rules, mechanics (G9 promotions), `erp_quotations` | R* (customer/contract/base prices) after G9; quotations C or D |
 | 16 | `connector/josh/josh-promotions.ts` (+controller) | `GET /reports/promotions*`; MCP `josh_promotions` | `promotion_*`, `campaigns`, `product_translation` | none until G9 promotions | all | **D → stage 4 G9** (promotions ownership) |
 | 17 | `pricing/price-shadow.ts` | cron `priceShadow`, `POST /reports/price-shadow/run|recheck` | `order_items`, `orders`, `product_inventory` + pricing resolver tables | order lines from copies; resolver inputs need G9 | resolver inputs | D — cutover tool for stage 4a; retire after prices switch |
-| 18 | `pricing/staff-prices.ts` | cron `staffPricesImport`, `POST /staff-prices/import`, SKU lookups in create/patch | `private_price`, `branch_contract_price`, `product_inventory` | SKU lookup → `josh_catalog_products`; import is a cutover tool | – | R for SKU lookup (bug: `:136` throws without replica); import = D (stage 7) |
+| 18 | `pricing/staff-prices.ts` | cron `staffPricesImport`, `POST /staff-prices/import`, SKU lookups in create/patch | `private_price`, `branch_contract_price`, `product_inventory` | SKU lookup → `josh_catalog_products`; import is a cutover tool | – | **R — done (S5-10)** for SKU lookup; import = D (stage 7) |
 | 19 | `connector/josh/josh-catalog-sync.service.ts` | cron `joshCatalogSync` (on by default, every 15 min), `syncId`/`syncSku` | `product_inventory`, `product_translation` | `catalog.snapshot` events already feed the same table | – | D: turn the cron off once `catalog` backfill + events are trusted; callers use events |
 | 20 | `mcp/mcp.tools.ts` | MCP tools for #2–#16 | via the readers | follows the readers | – | follows |
 | 21 | `system-health.ts` | `/reports/health` | via #6 | – | – | follows #6 |
@@ -142,13 +142,13 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | **S5-1** | bestsellers offload on copies (`BESTSELLERS_SOURCE`) | #1 | no | low — **done** |
 | S5-2 | `/reports/winback` page + MCP → commerce's winback services (`WINBACK_REPORTS_SOURCE`) | #22 | no | low — **done** |
 | S5-3 | restaurants report on copies (also stops reading josh's stale `winback_account`) | #2 | no | low — **done** |
-| S5-4 | products report on catalog copy + owned tables | #14 | no | low |
+| S5-4 | products report on catalog copy + owned tables | #14 | **yes** — `catalog.snapshot` fields (S5-11) | low — blocked |
 | S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — money numbers; parity endpoint first |
 | S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium |
 | S5-7 | orders + customers reports — list / summary on copies, missing columns "—" | #7, #8 | no | medium |
 | S5-8 | order-targetgroup view rebuilt in commerce | #5 | no | low |
 | S5-9 | health: ERP part from `jagota_order_sync_history`; josh-only checks labelled | #6, #21 | no | low |
-| S5-10 | staff-prices SKU lookup from catalog copy (fixes crash without replica, `staff-prices.ts:136`) | #18 | no | low |
+| S5-10 | staff-prices SKU lookup from catalog copy (fixes crash without replica, `staff-prices.ts:136`) | #18 | no | low — **done** |
 | S5-11 | josh snapshots: `branch`, `order.snapshot` + `payments[]` / `shipments[]` / `sending_date` / refunds, `company` business + erp code, `jagota_sync`; backfill groups | #7, #8, #3, #24 | **yes** (additive) | medium |
 | S5-12 | josh snapshots: `push_campaign`, `marketing_workflow` (+ enrollment counts) | #12, #13, #9 results | yes | medium |
 | S5-13 | traffic — daily aggregate snapshot, or drop | #4 | decision | – |
@@ -228,11 +228,33 @@ intended end state anyway.
 **Cutover:** `restaurant_place` backfill done (stage 2c runbook) → `GET /reports/restaurants/parity`: `total`,
 `enriched` equal (± enrichment in flight) → `RESTAURANTS_SOURCE=copies`. Rollback: `replica`.
 
-### Task S5-4: products report on the catalog copy
+### Task S5-4: products report on the catalog copy — BLOCKED on a `catalog.snapshot` extension (checked 2026-10-07)
 
-- [ ] `josh-products.ts` → `josh_catalog_products` (+ `product_contents`, `product_categories`, `product_images`,
-      `product_prices`, `inventory_levels` when the matching `COMMERCE_OWNS_*` is on — commerce is then the truth).
-- [ ] Same switch shape; MCP `josh_products`.
+Row 14 is **R\***, not R. josh's `catalog.snapshot` (Webjosh `commerce-events/commerce-snapshot.builder.ts` `CATALOG`)
+was cut for competitor matching; `josh-products.ts` needs more:
+
+| report needs (josh column) | commerce today |
+|---|---|
+| sku, status, names / descriptions, brand, units, VAT, selling / ordering price, category **names**, first image | `josh_catalog_products` ✓ |
+| `category_id`, `category_path` (filter `categoryId`, `GET /reports/products/categories`) | ✗ — copy has names only; `product_categories` (4c) has the tree but no product → category link |
+| `original_price`, `sup_code` | ✗ nowhere |
+| `product_inventory_quantity` (issues `out_of_stock` / `low_stock`) | ✗ in the copy; commerce stock ledger only once `COMMERCE_OWNS_STOCK` |
+| `low_stock_threshold`, ingredients … `reorder_quantity` (detail) | `product_contents.fields` — only filled for SKUs commerce owns (4b) |
+| `moq` | `product_prices` (4a, when owned) |
+| `order_taking_flag` | `product_masters.fields` (4d, when owned) |
+| `erp_pending_source / _at / _payload` (issue `pending_approval`, `pendingChanges`) | `product_price_pending` / `product_master_pending` (only when owned) |
+| all images (`media[]`, `image_count`, issue `no_image`) | `product_images.images` (4e, when owned); copy has the first only |
+
+- [ ] **josh (S5-11 batch, additive):** add to `CATALOG`: `p.category_id`, `c.category_path`, `p.original_price`,
+      `p.sup_code`, `p.product_inventory_quantity`, `p.low_stock_threshold`, `p.moq`, `p.order_taking_flag`,
+      `p.erp_pending_source`, `p.erp_pending_at`, image count. Contract note in `docs/event-contract.md`; commerce
+      migration adds the columns to `josh_catalog_products` (nullable). Careful: `catalogFingerprint` must keep
+      hashing only the old fields (competitor matching compares fingerprints byte for byte). `erp_pending_payload`
+      and the full media list stay replica-only until the owned tables cover them.
+- [ ] **commerce:** `PRODUCTS_SOURCE=replica|copies`; copies = `josh_catalog_products` overlaid by the owned tables
+      where the matching `COMMERCE_OWNS_*` is on (commerce is the truth there); MCP `josh_products` follows.
+- Until then the page stays on the replica. Not built now: a copies mode without these columns would show
+  wrong issue tiles (every product "out of stock" / "no category").
 
 ### Task S5-5: sales report on copies
 
@@ -242,9 +264,17 @@ intended end state anyway.
 - [ ] `/reports/sales/parity?period=…` returns both answers side by side (shadow without doubling page latency).
 - [ ] Growth `workspace()` gets sales from the same reader.
 
-### Task S5-6 … S5-10
+### Task S5-6 … S5-9
 
 Same pattern as S5-3; each one PR-sized commit. Details are in the inventory row; write each task's steps when picked.
+
+### Task S5-10: staff-prices SKU lookup on the catalog copy — DONE (this branch)
+
+- [x] `StaffPrices.create`: SKU → product id and id → SKU from `josh_catalog_products` (same ids as josh's
+      `product_inventory`; removed products excluded for SKU → id). The replica is asked only when it is configured
+      **and** the copy has no row, so nothing that works today breaks before the catalog backfill. No switch: a lookup.
+- [x] Spec: copy hit without replica; copy miss → 400 without replica, replica fallback when configured (12 pass).
+- `POST /staff-prices/import` and the `staffPricesImport` cron stay on the replica (cutover tool, D → stage 7).
 
 ### Task S5-11 / S5-12: new josh snapshot groups
 

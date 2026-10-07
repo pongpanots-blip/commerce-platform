@@ -5,6 +5,7 @@ import { In, IsNull, Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
 import { JoshActionActor, JoshActions } from '../josh-actions';
 import { JoshReplica } from '../josh-replica';
+import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { StaffPrice, StaffPriceKind } from './staff-price.entity';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -56,6 +57,7 @@ export class StaffPrices {
     @InjectRepository(StaffPrice) private readonly prices: Repository<StaffPrice>,
     private readonly replica: JoshReplica,
     private readonly josh: JoshActions,
+    @InjectRepository(JoshCatalogProduct) private readonly catalog: Repository<JoshCatalogProduct>,
   ) {}
 
   get available() { return this.replica.configured; }
@@ -133,19 +135,19 @@ export class StaffPrices {
   async create(kind: StaffPriceKind, input: StaffPriceInput, actor: JoshActionActor) {
     if (!['customer', 'contract'].includes(kind)) throw new BadRequestException('kind must be customer or contract');
     if (!input.productInventoryId && input.sku?.trim()) {
-      const [p] = await this.replica.query<{ id: string }>(`SELECT product_inventory_id AS id FROM product_inventory WHERE product_inventory_sku = $1`, [input.sku.trim().slice(0, 100)]);
-      if (!p) throw new BadRequestException(`ไม่พบ SKU ${input.sku} ใน josh`);
-      input = { ...input, productInventoryId: p.id };
+      const id = await this.productId(input.sku.trim().slice(0, 100));
+      if (!id) throw new BadRequestException(`ไม่พบ SKU ${input.sku} ใน josh`);
+      input = { ...input, productInventoryId: id };
     }
     this.validate(kind, input, true);
     if (kind === 'customer') {
       const existing = await this.prices.findOneBy({ kind, companyId: input.companyId!, productInventoryId: input.productInventoryId!, deletedAt: IsNull() });
       if (existing) return this.update(existing.id, input, actor);
     }
-    const [sku] = await this.replica.query<{ sku: string }>(`SELECT product_inventory_sku AS sku FROM product_inventory WHERE product_inventory_id = $1`, [input.productInventoryId]).catch(() => []);
+    const sku = await this.productSku(input.productInventoryId!).catch(() => null);
     const row = await this.prices.save(this.prices.create({
       kind, companyId: kind === 'customer' ? input.companyId! : null, branchId: kind === 'contract' ? input.branchId! : null,
-      productInventoryId: input.productInventoryId!, sku: sku?.sku ?? null, price: String(input.price), contractRef: input.contractRef ?? null,
+      productInventoryId: input.productInventoryId!, sku: sku ?? null, price: String(input.price), contractRef: input.contractRef ?? null,
       startDate: input.startDate ?? new Date().toISOString().slice(0, 10), endDate: input.endDate ?? null,
       joshId: null, status: 'pending', syncError: null, updatedBy: actor.email, deletedAt: null,
     }));
@@ -186,6 +188,26 @@ export class StaffPrices {
     const row = await this.get(id);
     if (row.status === 'synced') return row;
     return this.push(row, actor);
+  }
+
+  /**
+   * SKU ↔ josh product id from commerce's catalog copy (catalog.snapshot — same ids as josh's product_inventory), so
+   * creating a price works without JOSH_DATABASE_URL (stage 5, S5-10). The replica is asked only when it is configured
+   * and the copy has no live row (catalog backfill not done yet).
+   */
+  private async productId(sku: string): Promise<string | null> {
+    const row = await this.catalog.findOne({ where: { sku, removedAt: IsNull() }, select: { id: true } });
+    if (row || !this.replica.configured) return row?.id ?? null;
+    const [p] = await this.replica.query<{ id: string }>(`SELECT product_inventory_id AS id FROM product_inventory WHERE product_inventory_sku = $1`, [sku]);
+    return p?.id ?? null;
+  }
+
+  private async productSku(id: string): Promise<string | null> {
+    if (!UUID.test(id)) return null;
+    const row = await this.catalog.findOne({ where: { id }, select: { sku: true } });
+    if (row || !this.replica.configured) return row?.sku ?? null;
+    const [p] = await this.replica.query<{ sku: string }>(`SELECT product_inventory_sku AS sku FROM product_inventory WHERE product_inventory_id = $1`, [id]);
+    return p?.sku ?? null;
   }
 
   private async get(id: string) {

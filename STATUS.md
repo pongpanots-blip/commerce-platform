@@ -27,16 +27,23 @@ Updated 2026-10-07. Not pushed.
   - New `GET /reports/restaurants/parity` shows both sides' counts. `linked_to_winback` is expected to differ,
     because josh's `winback_account` has been stale since 2b.
   - Specs: 7 + MCP restaurant spec passing; `tsc` clean. No scratch-DB spec (documented in the plan).
+- **S5-4, products report: blocked, documented and not built.** josh's `catalog.snapshot` has no category id/path,
+  original price, sup_code, quantity, low-stock, MOQ, order-taking flag, ERP-pending, or image list. A copies mode
+  without them would show wrong issue tiles. The list of fields to add moves to the S5-11 josh batch (plan, Task S5-4).
+- **S5-10, staff-prices create by SKU:** works without the replica. The SKU/id lookup reads `josh_catalog_products`
+  and falls back to the replica only when it is configured and the copy has no row. Spec: 12 passing.
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
   First check: `BESTSELLERS_SOURCE=shadow` on staging or prod after the order backfill.
 - Full commerce suite not run (single spec only).
-- No josh changes yet. The first one is needed at S5-11.
+- No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
 
 ## Next (safe, commerce-only, in order)
-1. S5-4 products report → `josh_catalog_products` + owned `product_*` tables.
-2. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first).
+1. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first; refunds "n/a").
+2. S5-8 order-targetgroup view rebuilt over copies (view definition from Webjosh).
+3. S5-9 health: ERP part from `jagota_order_sync_history`.
+4. S5-6 / S5-7 growth, orders / customers list+summary.
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?

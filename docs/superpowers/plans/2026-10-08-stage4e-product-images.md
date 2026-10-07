@@ -1,0 +1,54 @@
+# Stage 4e — product images owned by commerce — Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** commerce is the writer of each product's image gallery (which images, in what order): staff upload / remove /
+reorder on the product page, bulk upload by file name, and ERP `PUT /erp/products/image`. josh keeps the gallery copy
+(`product_media`) fed by `product.images.snapshot`, and keeps making the list thumbnails.
+
+**Architecture:** commerce stores `product_images (sku PK, images jsonb = ordered URLs)`. Files go to the same S3 bucket
+and key shapes josh uses (env `S3_MEDIA_BUCKET` / `AWS_*` / `MEDIA_BASE_URL`, like winback's photo upload): product page
+`uploads/products/<name>`, bulk `{sku}/{sku}_{ts}-{rand}{ext}`. Every change publishes the whole gallery in the same
+transaction. josh replaces the SKU's image rows in one transaction (newest version only), then — best effort, after
+commit — makes the `*_thumb.webp` of any new josh-bucket image that has none (sharp stays in josh), and clears caches.
+
+**Tech Stack:** NestJS 10, TypeORM, Postgres, S3, Redis (josh caches), React (commerce-admin), Jest.
+
+**Spec:** `docs/superpowers/specs/2026-10-06-josh-to-commerce-ownership-move-design.md` §4.2 row 4 (last group: images).
+
+## Global Constraints
+
+- New switch both sides: `COMMERCE_OWNS_PRODUCT_IMAGES`. Off = josh edits images as before.
+- Staff galleries keep josh's limit (3 images on the product page); the ERP may send more (josh never capped it).
+- Not in 4e: josh's bulk-upload history / restore / prune of replaced images (stays in josh for images uploaded there;
+  commerce's bulk upload has no undo log — a replaced image just leaves the gallery), videos (none in the data).
+- Light tests (`--runInBand`, `--maxWorkers=2`, scratch DBs).
+- Branches (stacked on 4d): commerce `feat/stage4e-images`, josh `feat/commerce-owns-images`.
+
+---
+
+### Task 1: josh — stop writing galleries, apply the snapshot
+- [ ] `isCommerceOwningProductImages()`; owned → `PATCH /product/:id` with images / `removed_media_ids` → 403,
+  `POST /product/images/bulk-upload` and `…/logs/:id/restore` → 403, ERP `handleProductImage` skips (the call is
+  forwarded to commerce as `erp.fallback.received`).
+- [ ] `CommerceImagesService.apply({ sku, images, version })`: 409 unless owned; transaction: lock SKU (422 unknown),
+  `applyIfNewer('product.images', sku)`, delete image rows, insert in order; after commit thumbs (best effort) +
+  `refreshProductCaches` + facet / catalog caches. Handler `product.images.snapshot`. Specs; commit.
+
+### Task 2: commerce — table, storage, service, API
+- [ ] Migration `1795100000000-ProductImages`.
+- [ ] `ProductImageStorage` (S3 put, josh key shapes, 5 MB, jpg / png / gif / webp).
+- [ ] `ProductImagesService`: `get`, `upload(sku, files)` (append, ≤3), `set(sku, urls)` (remove / reorder: only URLs
+  already in the gallery, ≤3), `bulk(files, mode)` (josh's `sku_<n>` rule, append / replace), `fromErp(m, body)`
+  (replace, relay + fallback replay); publish `ProductImagesSnapshot`. Ownership `productImages`.
+- [ ] Routes: `GET /api/product-images/:sku`, `POST …/:sku/upload`, `PUT …/:sku`, `POST /api/product-images/bulk-upload`.
+- [ ] Specs; commit.
+
+### Task 3: commerce-admin, import, parity
+- [ ] `ProductImages` on the product page: commerce routes when owned (upload, remove, reorder).
+- [ ] `import-from-josh -- images`, `npm run image-parity`. Commit.
+
+### Task 4: docs, verification, as built
+- [ ] Contract, env, runbook `docs/runbooks/stage4e-images-cutover.md`.
+- [ ] Scratch: import + parity; set / ERP replace → snapshot → josh apply → parity.
+- [ ] Full suites; as built; drop scratch DBs; commit.

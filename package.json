@@ -44,6 +44,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
     "express-rate-limit": "^8.7.0",
     "jsdom": "~22.1.0",
     "jszip": "^3.10.2",

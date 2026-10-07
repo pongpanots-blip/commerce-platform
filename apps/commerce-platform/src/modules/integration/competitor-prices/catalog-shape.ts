@@ -17,6 +17,6 @@ export function toInventoryShape(p: JoshCatalogProduct) {
     selling_unit_price: p.sellingUnitPrice, ordering_price: p.orderingPrice, order_taking_unit: p.orderTakingUnit,
     translations: p.translations ?? [],
     productCategory: { category_name_th: p.categoryNameTh, category_name_en: p.categoryNameEn },
-    image_url: p.imageUrl, updated_at: p.joshUpdatedAt,
+    image_url: p.imageUrl, updated_at: p.joshUpdatedAt, synced_at: p.syncedAt, removed_at: p.removedAt,
   };
 }

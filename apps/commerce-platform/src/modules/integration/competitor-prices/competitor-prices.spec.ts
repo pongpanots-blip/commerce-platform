@@ -1,6 +1,11 @@
 import { createHash } from 'node:crypto';
 import { JoshCatalogProduct } from '../connector/josh/josh-catalog-product.entity';
-import { catalogFingerprint, catalogPricePerKg, comparableName, competitorSource, nameSimilarity, skuWeightMatch } from './competitor-prices.service';
+import { toInventoryShape } from './catalog-shape';
+import { catalogFingerprint as fingerprintOf, catalogPricePerKg as pricePerKgOf, comparableName, competitorSource, nameSimilarity, skuWeightMatch } from './competitor-prices.service';
+
+// The service takes josh's field names; these tests feed it the catalog copy through the same adapter it uses.
+const catalogFingerprint = (p: JoshCatalogProduct) => fingerprintOf(toInventoryShape(p));
+const catalogPricePerKg = (p: JoshCatalogProduct, kg: number) => pricePerKgOf(toInventoryShape(p), kg);
 
 const product = {
   id: 'p-1', sku: 'TEST-MEAT', brandCode: 'B01', brandName: 'Brand', countryCodeSource: 'TH', storageTemperature: 'Chilled',

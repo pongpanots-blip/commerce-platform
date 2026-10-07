@@ -1,7 +1,9 @@
 # Status — Stage 5: data jobs read commerce copies (branch `feat/stage5-data-jobs`)
 
-Updated 2026-10-07. Not pushed. Commerce-only items, S5-11 and S5-12 (josh snapshot groups + commerce copies) are done;
-the readers that use the S5-11 copies are next.
+Updated 2026-10-07. Not pushed. **Stage 5 coding is done**: every reader has a copies mode or explains itself, S5-11 and
+S5-12 (josh snapshot groups + commerce copies) are done, and the readers use the S5-11 / S5-12 copies. What remains is
+ops (real-DB migration check, deploy + backfill, flip switches, staging click-through) and owner decisions — see
+"Final summary" at the end.
 
 ## Done
 - **Inventory + plan:** `docs/superpowers/plans/2026-10-08-stage5-data-jobs.md`.
@@ -28,15 +30,19 @@ the readers that use the S5-11 copies are next.
   - New `GET /reports/restaurants/parity` shows both sides' counts. `linked_to_winback` is expected to differ,
     because josh's `winback_account` has been stale since 2b.
   - Specs: 7 + MCP restaurant spec passing; `tsc` clean. No scratch-DB spec (documented in the plan).
-- **S5-4, products report: blocked, documented and not built.** josh's `catalog.snapshot` has no category id/path,
-  original price, sup_code, quantity, low-stock, MOQ, order-taking flag, ERP-pending, or image list. A copies mode
-  without them would show wrong issue tiles. The list of fields to add moves to the S5-11 josh batch (plan, Task S5-4).
+- **S5-4, products report (after S5-11):** new switch `PRODUCTS_SOURCE`, `replica` (default) · `copies`.
+  - Copies read `josh_catalog_products` with the S5-11 fields (removed products left out). Where commerce owns a part,
+    its table wins: `product_prices`, the approval queues `product_price_pending` / `product_master_pending` (josh never
+    sees those), `product_images`, `product_contents`, `product_categories`. MCP `josh_products` follows.
+  - `summary.missing_report_fields` = copied rows not yet re-sent with the S5-11 fields; switch only at 0.
+  - Detail lists `notCopied`: josh's `erp_pending_payload`, its full media list and content fields when commerce does
+    not own them. Spec +4.
 - **S5-10, staff-prices create by SKU:** works without the replica. The SKU/id lookup reads `josh_catalog_products`
   and falls back to the replica only when it is configured and the copy has no row. Spec: 12 passing.
 - **S5-5, sales report:** `JoshInsights.sales()` has a new switch `SALES_SOURCE`.
   - `replica` (default, unchanged) · `copies` (`josh_orders.paid`, `josh_order_lines`, catalog copy names, commerce
     `customer_metrics`; works without the replica). Covers `/reports/sales`, MCP `shop_sales`, and growth's sales numbers.
-  - Refunds show n/a in copies mode until `order_refunds` is copied (S5-11).
+  - Refunds come from `josh_order_refunds` (S5-11; `status = 'refunded'`, `created_at` range). Parity compares them.
   - New `GET /reports/sales/parity` returns both answers side by side, with the totals that differ and the
     top-products ranking diff.
   - Specs: josh-insights (2 files) and the growth specs, 27 passing; `tsc` clean.
@@ -45,17 +51,20 @@ the readers that use the S5-11 copies are next.
   none of these. Options are in plan Task S5-8 / §4 q5 for the owner. No snapshot group was invented.
 - **S5-9, health:** without the replica, the josh panel now shows ERP-send failures from `jagota_order_sync_history`,
   including how fresh that copy is, and points to josh-admin for josh-only checks. With the replica, nothing changes.
-  Spec: 2 passing.
+  Since S5-11 it says `fedBy: events | import | none` with `lastEventAt` / `lastImportAt` (a quiet event stream = no new
+  sends; lag shows as josh's outbox backlog). Spec: 3 passing.
 - **S5-6, growth:** new switch `GROWTH_SOURCE`, `replica` (default) · `copies`.
   - Workspace: sales come from the order copies, reorder-due from commerce's `winback_account`.
   - Timeline: `josh_companies` + `josh_orders` + commerce `winback_*`.
-  - Carts, devices and marketing workflows have no copy, so the page says "ยังไม่มีสำเนาใน commerce" and
-    availability is partial. Workflow results still need the replica (S5-12).
+  - Carts and devices have no copy, so the page says "ยังไม่มีสำเนาใน commerce" and availability is partial.
+    Since S5-12: workflow failures and `results` come from `josh_marketing_workflows`; per-company enrollments in the
+    timeline stay "not copied".
   - Readiness chip shows "สำเนาใน commerce". Specs: 38 passing; `tsc` clean for both apps.
 - **S5-7, orders report:** new switch `ORDERS_SOURCE`, `replica` (default) · `copies`.
-  - Copies read `josh_orders` (`paid`), `josh_companies`, `jagota_order_sync_history` and `josh_order_lines`.
-  - Not copied yet, so null and listed in `notCopied`: branch, payment rows, shipments, ERP codes.
-  - Spec: 8 passing.
+  - Copies read `josh_orders` (`paid`), `josh_companies`, `jagota_order_sync_history` and `josh_order_lines`; since
+    S5-11 also `josh_branches`, `josh_order_payments` (incl. batch payments — the replica detail lists only direct
+    ones), `josh_order_shipments`, `sending_date`, the company ERP code and the orderer's phone (masked).
+  - `notCopied` is now only a line's `order_taking_flag`. Spec: 8 passing.
 - **S5-14, josh-only pages explain themselves:** `joshOnly(why)` in `system-health.ts` replaces the bare replica
   503 at every remaining replica gate. Each page now says, in Thai, whether it is in josh-admin, a cutover tool, or not
   copied yet. Pages already show the backend message, so no frontend change was needed. Spec: 3 passing.
@@ -87,17 +96,14 @@ the readers that use the S5-11 copies are next.
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
   First check: `BESTSELLERS_SOURCE=shadow` on staging or prod after the order backfill.
-- Full commerce suite not run (single spec only).
-- S5-11 migrations (josh + commerce) not run against a real DB; the josh trigger db-spec cases are opt-in
-  (`JOSH_SCOPE_TEST_DATABASE_URL`) and were not run here. The readers do not use the new copies yet.
+- Integration + MCP suites run (121 suites / 1074 passing, 4 opt-in suites skipped); the full commerce suite was not.
+- S5-11 / S5-12 migrations (josh + commerce) not run against a real DB; the josh trigger db-spec cases are opt-in
+  (`JOSH_SCOPE_TEST_DATABASE_URL`) and were not run here.
 
-## Next (safe, commerce-only, in order)
-1. ~~S5-12~~ done.
-2. Readers on the S5-11 copies (commerce-only): S5-4 `PRODUCTS_SOURCE=copies`; S5-7 orders list/detail fill branch,
-   ERP codes, payments, shipments, `sending_date` (shrink `notCopied`); S5-5 refunds from `josh_order_refunds`
-   (`status = 'refunded'`, `created_at` range); S5-9 freshness wording (events, not imports).
-3. Real-DB check of the S5-11 / S5-12 migrations (josh trigger db-spec + commerce migration on a scratch DB).
-4. S5-16 staging click-through with `JOSH_DATABASE_URL` unset (needs an environment).
+## Next (ops / owner only)
+1. Real-DB check of the S5-11 / S5-12 migrations (josh trigger db-spec + commerce migrations on a scratch DB).
+2. Deploy commerce, then josh; backfill per the runbook; flip switches 1–9 one by one with their parity checks.
+3. S5-16 staging click-through with `JOSH_DATABASE_URL` unset (needs an environment).
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?
@@ -123,3 +129,35 @@ Compare `/reports/winback/overview` before/after, then set `WINBACK_REPORTS_SOUR
 3. Watch the `bestsellers shadow (copies vs replica)` log for about a week. `firstDiffRank` should be null or ≥ 50
    (josh shows at most 50).
 4. Set `BESTSELLERS_SOURCE=copies`. Rollback: set it back to `replica`.
+
+## Final summary (2026-10-07)
+
+**Done (code, not pushed):** S5-1 … S5-7, S5-9, S5-10, S5-11, S5-12, S5-14 and the runbook. Every report reader has a
+`*_SOURCE=replica|copies` switch (replica default; copies work with `JOSH_DATABASE_URL` unset): bestsellers, winback
+reports, restaurants, sales, growth, orders, products, push campaigns, marketing workflows. Health and staff-price SKU
+lookup use the copies on their own. Every remaining replica-only page says why (`joshOnly`).
+- josh branch `feat/commerce-copies-for-reports`: 7 snapshot-group commits (S5-11 ×5, S5-12 ×2) + STATUS.
+- commerce branch `feat/stage5-data-jobs`: copies, events cases, readers, docs.
+
+**Remaining (none of it is coding that can be done without an environment or an owner answer):**
+- ops: real-DB migration check; deploy (commerce first), backfill (`branch`, `company`, `catalog`, `jagota_sync`,
+  `order`, `push_campaign`, `marketing_workflow`); flip switches 1–9 (runbook); turn off replica crons (S5-15);
+  staging click-through without the replica (S5-16), one week on prod without it (plan §5).
+- owner (plan §4): customers report KYC / credit (q1), traffic (q2), back-office (q3), one global switch (q4),
+  order target group (q5); no snapshot group for `cart_snapshot` / `user_devices` (growth idle carts) or per-company
+  workflow enrollments (growth timeline) — documented, not invented.
+- stage 7 (unchanged): delete `JoshReplica`, the env var, readonly-user scripts, parity / import CLIs.
+
+**Verify:**
+```bash
+# commerce
+npx jest -c apps/commerce-platform/jest.config.cts apps/commerce-platform/src/modules/integration apps/commerce-platform/src/mcp --runInBand
+npx tsc --noEmit -p apps/commerce-platform/tsconfig.app.json
+# josh (in /workspace/webjosh-s5)
+npx nx test backend -- apps/backend/src/app/commerce-events --runInBand
+npx tsc --noEmit -p apps/backend/tsconfig.app.json
+```
+
+**Hand-off to stage 6:** yes, from the code side. Stage 5's code is complete and additive (all switches default to
+`replica`), so stage 6 can start on top of it. Stage 5 itself is only *closed* after the ops items above (plan §5:
+prod a week without `JOSH_DATABASE_URL`); those don't block stage 6 coding.

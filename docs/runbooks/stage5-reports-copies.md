@@ -25,8 +25,8 @@
    ครบทุกแถวที่ import มา · `max(imported_at)` ขยับตามการส่ง ERP ใหม่
 5. หลังข้อ 4: ปิด `CRON_JAGOTA_SYNC_IMPORT_ENABLED` ได้ (event แทนการ import แล้ว)
 
-ตัวอ่าน (products copies mode, รายละเอียด order: payments / shipments / branch, คืนเงินใน sales) ยังไม่ได้ต่อกับ
-ตารางใหม่ — ดู STATUS "Next"
+ตัวอ่านที่ใช้ตารางใหม่: รายงานสินค้า (`PRODUCTS_SOURCE`, ข้อ 9), รายละเอียดออเดอร์ (`ORDERS_SOURCE` — สาขา / การจ่าย /
+shipment / ERP code / วันส่ง), คืนเงินในรายงานยอดขาย (`SALES_SOURCE`), หน้า health (`fedBy: events` หลัง backfill `jagota_sync`)
 
 ## ข้อมูล marketing จาก josh (S5-12) — ทำครั้งเดียว ก่อนข้อ 7–8 ด้านล่าง
 
@@ -48,9 +48,10 @@
 | 3 | `BESTSELLERS_SOURCE=shadow` → `copies` | log `bestsellers shadow (copies vs replica)` ~1 สัปดาห์ | `firstDiffRank` เป็น null หรือ ≥ 50 |
 | 4 | `SALES_SOURCE=copies` | `GET /api/reports/sales/parity?period=last_month` และ `?period=this_month` | `differs` ว่าง (หรืออธิบายได้), `topProducts.firstDiffRank` null หรือ > 20 |
 | 5 | `GROWTH_SOURCE=copies` | หลังข้อ 4 และ S5-12 ข้อ 4 · เปิด `/marketing/growth` และผลของ workflow หนึ่งตัว | ยอดขายตรงกับ `/reports/sales`; รายได้ที่ให้เครดิตของ workflow เท่ากับก่อนสลับ; ตะกร้าขึ้น "ยังไม่มีสำเนาใน commerce" (ถูกต้อง) |
-| 6 | `ORDERS_SOURCE=copies` | เทียบ `/api/reports/orders/summary` ก่อน/หลัง (ช่วงเดือนที่แล้ว) | `total`, `paid_value`, `settled_without_payment` เท่ากัน; `sync_*` ใกล้กัน (สำเนา ERP-send สดเท่าการ import ล่าสุด) |
+| 6 | `ORDERS_SOURCE=copies` | หลัง S5-11 ข้อ 4 · เทียบ `/api/reports/orders/summary` ก่อน/หลัง (ช่วงเดือนที่แล้ว) และรายละเอียดออเดอร์ที่มี shipment / จ่ายแบบ batch สักใบ | `total`, `paid_value`, `settled_without_payment` เท่ากัน; `sync_*` เท่ากัน (health `fedBy: events`); รายละเอียดมีสาขา / payments / shipments (สำเนารวมการจ่ายแบบ batch ด้วย ส่วน replica ไม่รวม) |
 | 7 | `PUSH_CAMPAIGNS_SOURCE=copies` | หลัง S5-12 ข้อ 4 · เทียบ `/api/reports/push-campaigns/overview` ก่อน/หลัง | `campaigns`, `scheduled`, `totalSent` เท่ากัน (ผลส่งรายคนยังมาจาก Mongo ของ josh) |
 | 8 | `MARKETING_WORKFLOWS_SOURCE=copies` | หลัง S5-12 ข้อ 4 · เทียบ `/api/reports/marketing-workflows?days=30` ก่อน/หลัง | `enrolled` / `failed` / `failed_runs` ต่อ workflow เท่ากันหรือมากกว่าเล็กน้อย (สำเนานับเป็นวันเวลาไทย อาจเกินช่วง rolling ได้ไม่ถึงหนึ่งวัน) |
+| 9 | `PRODUCTS_SOURCE=copies` | หลัง S5-11 ข้อ 4 · `GET /api/reports/products/summary` ในโหมด copies ต้องได้ `missing_report_fields = 0` · เทียบ tile กับโหมด replica | `total`, `no_category`, `no_price`, `pending_approval` เท่ากัน; `out_of_stock` / `low_stock` ใกล้กัน (สำเนาส่ง qty เฉพาะเมื่อสถานะสต็อกเปลี่ยน); `no_image` เท่ากัน |
 
 ไม่ต้องตั้งอะไร: staff price ตาม SKU (อ่านสำเนาแค็ตตาล็อกก่อนเอง) และหน้า health (ใช้สำเนา ERP-send เองเมื่อไม่มี replica)
 
@@ -58,7 +59,7 @@
 
 - ยังไม่มี snapshot group (ไม่ได้สร้างเอง — ต้องให้เจ้าของ / แผนตัดสิน): ตะกร้าค้าง (`cart_snapshot` / `user_devices`) ใน Growth,
   enrollment ราย company ใน timeline ของ Growth
-- ตัวอ่านยังไม่ต่อกับสำเนา S5-11: ดู STATUS "Next" (รายงานสินค้า, รายละเอียดออเดอร์, คืนเงิน) · ลูกค้า (KYC / เครดิต — รอเจ้าของตัดสิน)
+- รายงานลูกค้า (KYC / เครดิต — รอเจ้าของตัดสิน plan §4 q1)
 - รอเจ้าของตัดสิน: traffic, order target group
 - อยู่ที่ josh-admin: back-office (KYC, เครดิต, CN/CB …), โปรโมชันและราคาตามสาขา (จนถึง G9)
   — หน้า Segments ใช้ `/j/segments` (commerce เป็นเจ้าของตั้งแต่ 2a) ไม่ต้องใช้ `/josh/segments`
@@ -67,7 +68,7 @@
 
 ## ถอด replica (S5-16)
 
-ทำเมื่อข้อ 1–8 ผ่านครบ และ S5-11 / S5-12 เสร็จ: staging ก่อน — ลบ `JOSH_DATABASE_URL` แล้วเปิดทุกหน้าใน
+ทำเมื่อข้อ 1–9 ผ่านครบ และ S5-11 / S5-12 เสร็จ: staging ก่อน — ลบ `JOSH_DATABASE_URL` แล้วเปิดทุกหน้าใน
 commerce-admin + เรียก MCP tool ทุกตัว บันทึกผลใน plan ("As built") · ปิด cron ที่ดึงจาก replica (S5-15) หลังเชื่อ event + backfill แล้ว:
 `CRON_JOSH_ORDER_COPY_ENABLED=false`, `CRON_JOSH_CATALOG_SYNC_ENABLED=false`, `CRON_JAGOTA_SYNC_IMPORT_ENABLED=false`,
 `CRON_STAFF_PRICES_IMPORT_ENABLED=false` (`CRON_JAGOTA_SYNC_IMPORT` ปิดได้หลัง `jagota_sync` snapshot ใน S5-11 เท่านั้น)

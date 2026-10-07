@@ -61,3 +61,24 @@ controllers) and §4.2 row 4 (category / brand group).
 - [ ] Contract, env, runbook `docs/runbooks/stage4c-categories-cutover.md`.
 - [ ] Scratch DBs: import + parity; reorder / rename in commerce → josh applies the tree → parity.
 - [ ] Full suites; as built; drop scratch DBs; commit.
+
+## As built (2026-10-08)
+
+- **Scope as planned.** New switch `COMMERCE_OWNS_CATEGORIES` on both sides; `GET /api/ownership` → `categories`.
+- **commerce:** `product_categories` / `product_brands` with josh's columns and unique indexes; `ProductCategoriesService`
+  ports josh's create / update / reorder level 1 / reorder children / delete (title case, same-level name and cat_code
+  clash, the same recursive rebuild SQL, codes parked before a reorder) and brand name edits. Category writes take an
+  advisory lock and publish the whole tree (fixed aggregate id) in the same transaction; brand edits publish that brand.
+  Routes and answers match josh's, so the hosted josh category / brand pages only switch client
+  (`product-category.api.ts`, `brand.api.ts` → commerce when `ownership().categories`). Reads stay on josh.
+- **josh:** the five category write routes and the brand edit answer 403 under the switch; `CommerceCategoriesService`
+  applies the tree in one transaction (delete absent → park `category_code` / `cat_code` → upsert via
+  `jsonb_populate_recordset`), refuses an empty tree, then clears the category caches; brands upsert by id.
+
+**Verification:** josh — `commerce-categories.service.spec`, erp-events specs. commerce — opt-in
+`product-categories.service.db.spec.ts` (create / title case / cat_code / same-level clash, rename rebuilds the branch's
+paths, children reorder swaps codes, level-1 reorder needs the whole row, brand snapshot). Scratch copies: import 236
+categories + 181 brands, `category-parity` 0; then real edits in commerce (reverse 9 siblings, rename, new category,
+Thai name, brand name) → the tree snapshot applied on josh's copy without a unique-index clash, an older tree refused →
+`category-parity` 0 on 237 / 181. commerce full suite (`--maxWorkers=2`): 1295 passed (28 opt-in skipped).
+josh full suite (`--maxWorkers=2`): 6739 passed; only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.

@@ -35,8 +35,10 @@ const ORDERS = ['00000000-0000-4000-8000-0000000000a1', '00000000-0000-4000-8000
   afterAll(async () => { await clean(); await db?.destroy(); });
 
   it('aggregates active orders per customer, skips customers with no orders and deleted customers', async () => {
+    // Scoped to this spec's customers: other DB specs may share the scratch database.
+    const mine = (ids: string[]) => ids.filter((id) => [A, B, GONE].includes(id));
     const { changed } = await svc.recompute();
-    expect(changed).toEqual([A]);
+    expect(mine(changed)).toEqual([A]);
     const [a] = await db.query(`SELECT lifetime_order_count, lifetime_spend, avg_order_value, order_count_90d, spend_90d,
       first_order_at < now() - interval '100 days' AS first_is_old FROM customer_metrics WHERE user_id = $1`, [A]);
     expect(a).toEqual({ lifetime_order_count: 2, lifetime_spend: '150.00', avg_order_value: '75.00', order_count_90d: 1, spend_90d: '50.00', first_is_old: true });
@@ -44,7 +46,7 @@ const ORDERS = ['00000000-0000-4000-8000-0000000000a1', '00000000-0000-4000-8000
   });
 
   it('a second run changes nothing', async () => {
-    expect((await svc.recompute()).changed).toEqual([]);
+    expect((await svc.recompute()).changed.filter((id) => [A, B, GONE].includes(id))).toEqual([]);
   });
 
   it('push: shadow sends every row as a dry run; on sends unpushed rows then done, and marks them pushed', async () => {
@@ -65,6 +67,7 @@ const ORDERS = ['00000000-0000-4000-8000-0000000000a1', '00000000-0000-4000-8000
 
     post.mockClear();
     await svc.push('on'); // nothing changed since: only the final done
-    expect(post.mock.calls.map(([b]) => (b as { rows: unknown[] }).rows.length)).toEqual([0]);
+    const resent = post.mock.calls.flatMap(([b]) => (b as { rows: { user_id: string }[] }).rows).map((r) => r.user_id);
+    expect(resent).not.toContain(A);
   });
 });

@@ -29,11 +29,7 @@ Already moved earlier: `order_taking_flag` / season / `sup_code` / units (4d), M
 
 ## Remaining
 
-1. **josh repo (not touched here): Task 1 in the plan.**
-   - Flag.
-   - Guards: ERP order-period push and poll cron; form, relay and sheet import for the five keys; Jagota sync putting back `unit_ratio`.
-   - `CommerceOrderingService.applyOrderPeriods` / `applyLogistics` and the two handlers.
-   - **Do not turn the commerce flag on before josh has these.**
+1. **josh pair ready** on `/workspace/webjosh-g5` · `feat/commerce-owns-ordering-logistics` — flag `COMMERCE_OWNS_ORDERING`, guards, `CommerceOrderingService.applyOrderPeriods` / `applyLogistics`, and the two snapshot handlers. Keep both flags **off** until cutover (runbook).
 2. **Pre-existing josh gap.** commerce relays `erp.order_periods.pushed`, but josh's receiver has no handler for it. Decide in the josh PR: add a handler, or keep the event off the subscription.
 3. Run the opt-in DB spec and an end-to-end check on scratch DBs (no Postgres was available in this session):
    - `ORDERING_TEST_DATABASE_URL=… npx jest -c apps/commerce-platform/jest.config.cts --runInBand ordering.service.db`

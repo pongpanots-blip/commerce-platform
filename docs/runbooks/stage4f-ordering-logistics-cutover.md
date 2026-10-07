@@ -12,8 +12,8 @@
 
 ## ⚠️ ต้องมีก่อน
 
-- **josh `feat/commerce-owns-ordering` (ยังไม่ได้ทำ)** — flag `COMMERCE_OWNS_ORDERING`, handler `supplier.order_periods.snapshot` /
-  `product.logistics.snapshot`, กันการเขียนของ josh เอง (ดู Task 1 ในแผน) · **ห้ามเปิด flag ฝั่ง commerce ก่อน josh พร้อม**
+- **josh `feat/commerce-owns-ordering-logistics` (pair-ready)** — flag `COMMERCE_OWNS_ORDERING`, handler `supplier.order_periods.snapshot` /
+  `product.logistics.snapshot`, กันการเขียนของ josh เอง · **ห้ามเปิด flag ฝั่ง commerce จนกว่า josh branch นี้ deploy แล้ว**
   (ถ้า subscription มี event ใหม่แต่ josh ยังไม่รู้จัก → dead-letter)
 - ขั้น 4d สลับแล้ว (ฟอร์มสินค้าแยก key ตามลำดับ ราคา → เนื้อหา → ERP master → โลจิสติกส์)
 

@@ -20,7 +20,7 @@
 ## ต้องมีก่อน
 
 - ขั้น 2c ใช้งานแล้ว (trigger `staff` ของ josh + backfill `staff` → `josh_staff` ใน commerce)
-- **josh ต้องมีฝั่งรับ `staff.access` + flag `COMMERCE_OWNS_STAFF`** — ยังไม่ได้ทำ (ดู "josh follow-ups" ในแผน) ·
+- **josh `feat/stage6-staff-admin` (pair-ready)** — ฝั่งรับ `staff.access` + flag `COMMERCE_OWNS_STAFF` พร้อมบน webjosh-s6 ·
   ห้ามทำขั้น "วันสลับ" จนกว่า josh branch นั้นจะ deploy แล้ว (ไม่งั้น event ตก dead-letter — ไม่มีอะไรพัง แต่ josh ไม่เปลี่ยน)
 
 ## ส่วนที่ 1 — role MER / CS (ไม่มี flag)
@@ -45,7 +45,7 @@ Rollback: เปลี่ยนคนนั้นกลับเป็น `admin
 
 3. ทุกวัน: ข้อ 1 ต้องตรง · ไม่มีใครแก้ role ใน josh DB ตรงๆ โดยไม่บอก (josh ไม่มีหน้าแก้ role — แก้ได้ทาง DB/อนุมัติเท่านั้น)
 
-### วันสลับ (หลัง josh follow-up deploy แล้ว)
+### วันสลับ (หลัง josh `feat/stage6-staff-admin` deploy แล้ว)
 
 4. commerce-admin → Webhooks → subscription ของ josh: **เพิ่ม** `staff.access`
 5. josh: `COMMERCE_OWNS_STAFF=true` แล้ว restart — อนุมัติ/ปฏิเสธคำขอในหน้า josh เอง → 403 (ผ่าน commerce ยังได้)

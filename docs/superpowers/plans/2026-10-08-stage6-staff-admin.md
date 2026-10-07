@@ -16,10 +16,10 @@ josh-only CMS pages) get their **role / active / sign-out** written by commerce,
 - josh staff: commerce already holds a copy (`josh_staff`, from `staff.snapshot`, stage 2c). New commerce table
   `josh_staff_access (id PK, email, role, is_active, min_token_version, updated_at, updated_by)` — the commerce-written state
   of a josh internal account. Each change publishes `staff.access` (snapshot, whole state) in the same transaction.
-  josh (follow-up, not in this repo) applies it to `users.role` / `users.is_active` and raises `token_version` to at least
+  josh (`feat/stage6-staff-admin`, pair-ready on webjosh-s6) applies it to `users.role` / `users.is_active` and raises `token_version` to at least
   `minTokenVersion` (sign out everywhere); its own trigger then echoes `staff.snapshot` back into `josh_staff` (no loop: commerce
   never republishes on `staff.snapshot`).
-- Switch: commerce `COMMERCE_OWNS_STAFF` (default off → writes answer 409); josh `COMMERCE_OWNS_STAFF` (follow-up).
+- Switch: commerce `COMMERCE_OWNS_STAFF` (default off → writes answer 409); josh `COMMERCE_OWNS_STAFF` (pair-ready on webjosh-s6).
   `GET /api/ownership` → `staff`.
 
 **Tech Stack:** NestJS 10, TypeORM (raw SQL like the 2b/2c code), Postgres, outbox → webhook delivery, React
@@ -32,8 +32,8 @@ Prior staff work: stage 2c (`josh_staff` copy, winback sign-in check), stage 2b 
 ## Global Constraints
 
 - Additive and default off (spec rule 4). Off = today's behaviour exactly.
-- **This repo only.** josh changes are listed under "josh follow-ups" for the josh repo; nothing here needs them to
-  be safe (with the flag off nothing is sent; with it on and josh not ready, josh answers 4xx on an unknown type and
+- **This repo only for commerce coding.** Josh side is pair-ready on `webjosh-s6` / `feat/stage6-staff-admin`; nothing here needs
+  josh deployed to be safe (with the flag off nothing is sent; with it on and josh not ready, josh answers 4xx on an unknown type and
   the delivery dead-letters — the runbook turns the subscription on only after the josh side is deployed).
 - Never touch the commerce service account in josh (`commerce-platform@system.josh.internal`) — disabling it cuts
   commerce off josh.
@@ -113,15 +113,15 @@ Prior staff work: stage 2c (`josh_staff` copy, winback sign-in check), stage 2b 
   `docs/runbooks/stage6-staff-cutover.md`, `STATUS.md`.
 - [x] Typecheck both apps; touched specs `--runInBand`. Commit.
 
-## josh follow-ups (josh repo — not done here)
+## josh pair (done on webjosh-s6 · `feat/stage6-staff-admin`)
 
-1. `isCommerceOwningStaff()` (`COMMERCE_OWNS_STAFF`, default off) in `app/erp/commerce-ownership.flag.ts`.
-2. Receiver handler `staff.access` → `CommerceStaffService.apply({ id, role, isActive, minTokenVersion, version })`:
+1. ✅ `isCommerceOwningStaff()` (`COMMERCE_OWNS_STAFF`, default off) in `app/erp/commerce-ownership.flag.ts`.
+2. ✅ Receiver handler `staff.access` → `CommerceStaffService.apply({ id, role, isActive, minTokenVersion, version })`:
    409 unless owned; transaction: `applyIfNewer('staff.access', id, version)`; 422 if the user is unknown or a
    customer role; refuse the service account; `UPDATE users SET role, is_active, token_version = GREATEST(token_version, minTokenVersion)`; clear the internal-role cache.
-3. With the flag on: `admin-access` approve/reject → `CommerceOwned` (relay passes, josh's own UI 403), so the only
+3. ✅ With the flag on: `admin-access` approve/reject → `CommerceOwned` (relay passes, josh's own UI 403), so the only
    writer of role-at-approval is commerce. `register` stays open (Q2).
-4. Docs: `docs/commerce-erp-receiver.md` handler row.
+4. ✅ Docs + STATUS on the josh branch.
 
 ## Open questions (owner)
 
@@ -150,5 +150,5 @@ Prior staff work: stage 2c (`josh_staff` copy, winback sign-in check), stage 2b 
 **Verification:** touched specs `--runInBand` — auth, mcp, connector/josh, customers, segments, winback, product-*,
 architecture: 97 suites / 898 tests passed (23 opt-in skipped). Opt-in `josh-staff-access.service.db.spec.ts` on a migrated
 scratch DB (`commerce_s6_test`, migration `1795400000000` applied): 2 passed; the guard's owned SQL checked on the same DB.
-Typecheck commerce-platform + commerce-admin clean. Full suite not run (other agents share the machine). josh side not
-built (follow-ups above).
+Typecheck commerce-platform + commerce-admin clean. Full suite not run (other agents share the machine). josh side is
+pair-ready on webjosh-s6 (section above).

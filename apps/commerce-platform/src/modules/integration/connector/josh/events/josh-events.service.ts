@@ -1,3 +1,4 @@
+import { ProductPromotionRulesService } from '../../../../commerce/product-promotion-rules/product-promotion-rules.service';
 import { BadRequestException, Injectable, Optional } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
@@ -36,11 +37,16 @@ export class JoshEventsService {
     @InjectDataSource() private readonly db: DataSource,
     /** Stage 3: orders deduct the commerce-owned warehouse (STOCK_ORDER_WAREHOUSE_CODE). */
     @Optional() private readonly orderStock?: OrderStockService,
+    @Optional() private readonly promotions?: ProductPromotionRulesService,
   ) {}
 
   async apply(e: JoshEnvelope): Promise<ApplyResult> {
     if (!e?.aggregateId || !/^\d+$/.test(String(e.version ?? ''))) throw new BadRequestException('aggregateId and numeric version required');
     switch (e.type) {
+      case 'promotion-rules.snapshot':
+      case 'promotion-lock.snapshot':
+        if (!this.promotions) throw new BadRequestException('promotion service unavailable');
+        return this.promotions.inbound(e);
       case 'order.snapshot':
         return this.guarded('josh_orders', 'orders_id', e, (m) => this.saveOrder(m, e));
       case 'customer.snapshot':

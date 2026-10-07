@@ -53,3 +53,17 @@ it('order periods: latest-wins per SUP_CODE set (same key regardless of order), 
   expect(event).toMatchObject({ type: 'erp.order_periods.pushed', aggregateId: orderPeriodSnapshotKey(body), metadata: { snapshot: true },
     payload: { ingestRecordId: 'rec-1', erp: body } });
 });
+
+it('stage 4f: an order-period push also updates commerce\'s supplier rounds in the same transaction', async () => {
+  const integration = { id: 'int-1' };
+  const repo = { create: (x: Record<string, unknown>) => x, save: async (x: Record<string, unknown>) => ({ ...x, id: 'rec-1' }) };
+  const manager = { getRepository: () => repo };
+  const db = { transaction: async (fn: (m: unknown) => unknown) => fn(manager) };
+  const ordering = { fromErp: jest.fn(async () => ({ upserted: 1, suppliers: 1 })) };
+  const svc = new ErpRelayService(db as never, { resolve: async () => integration } as never, { publish: jest.fn() } as never, undefined, undefined, ordering as never);
+  const body = [{ SUP_CODE: 'S1', ORDER_PERIOD: '2610', DATE_FROM: '2026-10-01', DATE_TO: '2026-10-07' }];
+  await svc.relay(ERP_RELAY_EVENTS.orderPeriods, 'PUT /erp/order-periods', body, orderPeriodSnapshotKey(body));
+  expect(ordering.fromErp).toHaveBeenCalledWith(manager, body);
+  await svc.relay(ERP_RELAY_EVENTS.customer, 'POST /erp/customers', { CUSTOMER_CODE: 'C1' });
+  expect(ordering.fromErp).toHaveBeenCalledTimes(1);
+});

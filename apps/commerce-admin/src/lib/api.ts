@@ -360,7 +360,7 @@ export interface PricePending {
 }
 const q = (search: string) => (search ? `?search=${encodeURIComponent(search)}` : '');
 export const productPricesApi = {
-  ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean; productImages?: boolean }>('/ownership'),
+  ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean; productImages?: boolean; ordering?: boolean }>('/ownership'),
   list: (search: string) => api.get<PriceRow[]>(`/product-prices${q(search)}`),
   pending: (search: string) => api.get<PricePending[]>(`/product-prices/pending${q(search)}`),
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-prices/pending/approve', { skus }),
@@ -381,6 +381,14 @@ export const productMastersApi = {
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-masters/pending/approve', { skus }),
   reject: (skus: string[]) => api.post<{ rejected: number }>('/product-masters/pending/reject', { skus }),
   get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-masters/${encodeURIComponent(sku)}`),
+};
+
+// ---- Ordering / logistics (stage 4f: ERP supplier order rounds and SKU logistics fields, owned by commerce) ----
+export interface OrderPeriodRow { sup_code: string; erp_order_period: string; date_from: string; date_to: string; close_at: string | null; status: string; synced_at: string }
+export const orderingApi = {
+  periods: (supCode: string) => api.get<OrderPeriodRow[]>(`/order-periods${supCode ? `?supCode=${encodeURIComponent(supCode)}` : ''}`),
+  republish: (supCode: string) => api.post<{ supCode: string; periods: unknown[] }>(`/order-periods/${encodeURIComponent(supCode)}/republish`, {}),
+  logistics: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-logistics/${encodeURIComponent(sku)}`),
 };
 
 // ---- Product galleries (stage 4e: owned by commerce; files in josh's media bucket) ----
@@ -601,6 +609,8 @@ export interface JoshProductDetail extends JoshProductRow {
   vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null;
   ingredients: string | null; allergens: string | null; expiration_info: string | null; usage_direction: string | null; best_paired_food: string | null;
   maximum_shelf_life: string | null; is_organic: string | null; product_short_code: string | null; buying_price: number | null; reorder_quantity: number | null;
+  unit_ratio: string | null; sub_packing_unit: string | null; product_unit: string | null; expected_restock_at: string | null;
+  delivery_dates: { day: string }[] | null;
   media: { id: string; source: string; media_type: string; sort_order: number }[];
   pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
 }

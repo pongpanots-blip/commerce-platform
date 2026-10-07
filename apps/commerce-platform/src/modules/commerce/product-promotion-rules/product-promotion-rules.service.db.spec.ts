@@ -1,0 +1,83 @@
+import 'reflect-metadata';
+import { EventEmitterBus } from '../../../shared-kernel/infrastructure/event-emitter.bus';
+import { OutboxMessage } from '../../../shared-kernel/infrastructure/outbox.entity';
+import { DataSource } from 'typeorm';
+import { ProductPromotionRules1795300000000 } from '../../../migrations/1795300000000-ProductPromotionRules';
+import { PromotionRuleAssignmentResets1795310000000 } from '../../../migrations/1795310000000-PromotionRuleAssignmentResets';
+import { ProductPromotionRulesService } from './product-promotion-rules.service';
+const url = process.env.PROMOTIONS_TEST_DATABASE_URL;
+(url ? describe : describe.skip)('promotion rules transactions (scratch database)', () => {
+  let db: DataSource;
+  let svc: ProductPromotionRulesService;
+  let failOutbox = false;
+  const inbound = (type: string, version: string, data: Record<string, unknown>) => svc.inbound({ type, version, aggregateId: 'id', data: { sku: 'SKU', ...data } });
+  const row = async () => (await db.query('SELECT * FROM product_promotion_rules WHERE sku=$1', ['SKU']))[0];
+  beforeAll(async () => {
+    db = await new DataSource({ type: 'postgres', url, entities: [OutboxMessage], synchronize: true }).initialize();
+    await new ProductPromotionRules1795300000000().up(db.createQueryRunner());
+    await new PromotionRuleAssignmentResets1795310000000().up(db.createQueryRunner());
+    await db.query('CREATE TABLE josh_catalog_products (sku text, removed_at timestamptz)');
+    await db.query("INSERT INTO josh_catalog_products VALUES ('SKU',NULL)");
+    const bus = new EventEmitterBus(db.getRepository(OutboxMessage));
+    svc = new ProductPromotionRulesService(db, { publish: async (e, m) => { if (failOutbox) throw new Error('outbox failed'); await bus.publish(e, m); } });
+  });
+  afterAll(async () => { await db.query('DROP TABLE outbox_messages, josh_catalog_products'); await new PromotionRuleAssignmentResets1795310000000().down(db.createQueryRunner()); await new ProductPromotionRules1795300000000().down(db.createQueryRunner()); await db.destroy(); delete process.env.COMMERCE_OWNS_PROMOTIONS; });
+  it('bootstraps signed snapshots and rejects stale concurrent first deliveries', async () => {
+    delete process.env.COMMERCE_OWNS_PROMOTIONS;
+    await Promise.all([inbound('promotion-rules.snapshot', '2', { rules: [{ min_qty: 1, promotion_price: 5 }] }), inbound('promotion-rules.snapshot', '1', { rules: [] })]);
+    expect((await row()).rules).toEqual([{ min_qty: 1, promotion_price: 5 }]);
+    expect(await inbound('promotion-rules.snapshot', '2', { rules: [] })).toBe('stale');
+    await inbound('promotion-lock.snapshot', '3', { lock: null });
+  });
+  it('blocks edits when off or lock is missing; owned edits replace, clear and publish atomically', async () => {
+    await expect(svc.edit('SKU', [], 'staff')).rejects.toThrow('COMMERCE_OWNS_PROMOTIONS');
+    process.env.COMMERCE_OWNS_PROMOTIONS = 'true';
+    await expect(svc.edit('UNKNOWN', [], 'staff')).rejects.toThrow('not backfilled');
+    await svc.edit('SKU', [{ min_qty: 2, promotion_price: 4 }], 'staff');
+    expect((await row()).rules).toEqual([{ min_qty: 2, promotion_price: 4 }]);
+    await inbound('promotion-rules.snapshot', '4', { rules: [{ min_qty: 1, promotion_price: 999 }] });
+    expect((await row()).rules[0].promotion_price).toBe(4);
+    failOutbox = true;
+    await expect(svc.edit('SKU', [], 'staff')).rejects.toThrow('outbox failed');
+    expect((await row()).rules).toHaveLength(1);
+    failOutbox = false;
+    const snapshots = await Promise.all([svc.edit('SKU', [], 'staff'), svc.edit('SKU', [{ min_qty: 1, promotion_price: 0 }], 'staff')]);
+    const latest = snapshots.sort((a,b) => Number(BigInt(a.version)-BigInt(b.version))).at(-1)!;
+    expect((await row()).rules).toEqual(latest.rules);
+    expect((await row()).version).toBe(latest.version);
+    expect((await db.query('SELECT count(*)::int AS n FROM outbox_messages'))[0].n).toBe(3);
+  });
+  it('assignment clears undated rules; lock removal never resurrects them', async () => {
+    await inbound('promotion-lock.snapshot', '5', { lock: { mechanic_id: 'm', mechanic_name: 'Deal' } });
+    await expect(svc.edit('SKU', [], 'staff')).rejects.toThrow('Deal');
+    expect((await row()).rules).toEqual([]);
+    expect(await inbound('promotion-lock.snapshot', '3', { lock: null })).toBe('stale');
+    await inbound('promotion-lock.snapshot', '6', { lock: null });
+    expect((await row()).rules).toEqual([]);
+  });
+  it('an unlocked snapshot with a newer assignment reset clears rules even if the assigned snapshot was never delivered', async () => {
+    const before = await svc.edit('SKU', [{ min_qty: 1, promotion_price: 42 }], 'staff');
+    expect(before.rules_reset_version).toBe('0');
+    failOutbox = true;
+    await expect(inbound('promotion-lock.snapshot', '9', { lock: null, rules_reset_version: '7' })).rejects.toThrow('outbox failed');
+    expect((await row()).rules).toHaveLength(1);
+    expect((await row()).rules_reset_version).toBe('0');
+    failOutbox = false;
+    await inbound('promotion-lock.snapshot', '9', { lock: null, rules_reset_version: '7' });
+    expect((await row()).rules).toEqual([]);
+    expect((await row()).rules_reset_version).toBe('7');
+    expect(await inbound('promotion-lock.snapshot', '8', { lock: { mechanic_id: 'm', mechanic_name: 'Gone' }, rules_reset_version: '7' })).toBe('stale');
+    const after = await svc.edit('SKU', [{ min_qty: 1, promotion_price: 43 }], 'staff');
+    expect(after.rules_reset_version).toBe('7');
+    await inbound('promotion-lock.snapshot', '10', { lock: null, rules_reset_version: '7' });
+    expect((await row()).rules).toEqual(after.rules);
+  });
+  it('a shadow rule snapshot older than an assignment reset cannot re-bootstrap discarded tiers while off', async () => {
+    delete process.env.COMMERCE_OWNS_PROMOTIONS;
+    await inbound('promotion-lock.snapshot', '12', { lock: null, rules_reset_version: '11' });
+    await inbound('promotion-rules.snapshot', '10', { rules: [{ min_qty: 1, promotion_price: 99 }] });
+    expect((await row()).rules).toEqual([]);
+    await inbound('promotion-rules.snapshot', '13', { rules: [{ min_qty: 1, promotion_price: 40 }] });
+    expect((await row()).rules).toEqual([{ min_qty: 1, promotion_price: 40 }]);
+  });
+});

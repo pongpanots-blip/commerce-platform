@@ -33,8 +33,8 @@ export const JOSH_ONLY = {
   orderTargetgroup: 'Order target group อ่านไฟล์นำเข้าและปฏิทินส่งของของ josh ซึ่ง commerce ยังไม่มีสำเนา — ดูที่ josh-admin',
   products: 'รายงานสินค้ายังต้องใช้ข้อมูลของ josh ที่ยังไม่ได้ส่งมา (หมวดหมู่, stock, MOQ, รออนุมัติ) — ดูที่ josh-admin ระหว่างนี้',
   customers: 'รายงานลูกค้าเป็นข้อมูล KYC / เครดิต / สาขา ซึ่งยังอยู่ที่ josh — ดูที่ josh-admin',
-  pushCampaigns: 'Push campaign ยังไม่มีสำเนาใน commerce — ดูที่ josh-admin ระหว่างนี้',
-  marketingWorkflows: 'Marketing workflow ยังไม่มีสำเนาใน commerce — ดูที่ josh-admin ระหว่างนี้',
+  pushCampaigns: 'Push campaign อ่านจากสำเนาใน commerce ได้เมื่อตั้ง PUSH_CAMPAIGNS_SOURCE=copies (หลัง backfill push_campaign) — ระหว่างนี้ดูที่ josh-admin',
+  marketingWorkflows: 'Marketing workflow อ่านจากสำเนาใน commerce ได้เมื่อตั้ง MARKETING_WORKFLOWS_SOURCE=copies (หลัง backfill marketing_workflow) — ระหว่างนี้ดูที่ josh-admin',
 } as const;
 export const joshOnly = (why: keyof typeof JOSH_ONLY) => new ServiceUnavailableException(`${JOSH_ONLY[why]} (JOSH_DATABASE_URL ไม่ได้ตั้งบนเซิร์ฟเวอร์นี้)`);
 

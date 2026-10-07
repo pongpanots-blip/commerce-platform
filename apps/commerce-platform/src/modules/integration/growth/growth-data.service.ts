@@ -18,13 +18,23 @@ const FRESHNESS_COPIES = 'คำนวณจากสำเนาข้อมู
 
 /**
  * GROWTH_SOURCE: replica (default) · copies (stage 5, S5-6): sales through SALES_SOURCE-style copies, reorder-due and contact
- * history from commerce's own winback tables (josh's are stale since 2b), company and orders from the copies. Carts,
- * devices and marketing workflows have no copy yet (S5-12) — reported as such; `results` still needs the replica.
+ * history from commerce's own winback tables (josh's are stale since 2b), company and orders from the copies. Marketing
+ * workflows (workspace failures, `results`) from `josh_marketing_workflows` (S5-12). Carts and devices have no copy (no
+ * snapshot group — owner / plan gap), nor do per-company workflow enrollments (timeline) — reported as such.
  */
 export const growthSource = (): 'replica' | 'copies' => (process.env.GROWTH_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica');
 /** A source commerce has no copy of: the workspace says so instead of "check the connection". */
 class NotCopied extends Error {}
 const notCopied = (what: string) => Promise.reject(new NotCopied(`${what} ยังไม่มีสำเนาใน commerce`));
+/**
+ * Growth results' attributed revenue from the copies: josh's marketing_workflow.snapshot already applied the same-user and
+ * conversion-window tests (`conversions`); status, paid and the date range are applied here on `josh_orders`, as the
+ * replica query does.
+ */
+const ATTRIBUTED_REVENUE_COPIES = `SELECT COALESCE(sum(o.total_price), 0)::float AS revenue FROM josh_orders o
+  WHERE o.create_date < $4 AND o.status = ANY($2) AND o.paid AND o.orders_id IN (
+    SELECT (c->>'order_id')::uuid FROM josh_marketing_workflows w, jsonb_array_elements(w.conversions) c
+    WHERE w.id = $1 AND (c->>'converted_at')::timestamptz <= $4 AND (c->>'started_at')::timestamptz >= $3 AND (c->>'started_at')::timestamptz < $4)`;
 const REORDER_DUE_SQL = `SELECT count(*)::int AS n, max(update_date) AS updated_at FROM winback_account
         WHERE median_reorder_interval_days > 0 AND delay_ratio >= 1`;
 
@@ -76,7 +86,7 @@ export class GrowthDataService {
       this.insights.sales(range, 1, 'copies'),
       notCopied('ตะกร้า (cart_snapshot)'),
       this.db.query(REORDER_DUE_SQL),
-      notCopied('marketing workflow'),
+      this.workflows.list(30, 'copies'),
     ] : [
       this.insights.sales(range, 1),
       this.replica.query(`SELECT count(DISTINCT COALESCE(cs.user_id, ud.user_id))::int AS n
@@ -143,20 +153,22 @@ export class GrowthDataService {
   }
 
   async results(workflowId: string, actor: Actor): Promise<GrowthResults> {
-    this.staff(actor); this.id(workflowId); this.connected();
+    this.staff(actor); this.id(workflowId); this.connected(true);
+    const copies = this.copies;
     const range = bangkokRange('last_30_days');
     const [workflow, analyticsRaw, conversionRaw] = await Promise.all([
-      this.workflows.detail(workflowId),
+      this.workflows.detail(workflowId, copies ? 'copies' : undefined),
       joshAdminCall(this.josh, actor, { method: 'GET', path: `/marketing-workflows/${workflowId}/analytics`, query: { from: range.current.from.toISOString(), to: range.current.to.toISOString() } }, 'growth'),
       joshAdminCall(this.josh, actor, { method: 'GET', path: `/marketing-workflows/${workflowId}/conversion-stats` }, 'growth'),
     ]);
     const analytics = workflowPayload(analyticsRaw, workflowId), conversions = workflowPayload(conversionRaw, workflowId);
     const funnel = object(analytics.funnel);
-    const limitations = [FRESHNESS, `funnel เป็น event counts ใน ${range.current.label}; conversion groups เป็น enrollment สะสมทั้งหมด จึงไม่ใช่ช่วงเวลาเดียวกัน`, 'Conversion endpoint นับสถานะออเดอร์ ยังไม่ตรวจ payment success, บริษัทที่แบ่งกลุ่มซ้ำ หรือการพ้น conversion window; อย่าตีความเป็นยอดเพิ่มจากแคมเปญ', 'รายได้ที่ให้เครดิตนับออเดอร์ไม่ซ้ำของ enrollment ใน 30 วันนี้ รวม VAT หลังส่วนลด ก่อนหักคืนเงิน; ออเดอร์เดียวอาจถูกให้เครดิตกับหลาย workflow และ conversion window ใช้ค่าปัจจุบัน ไม่มี snapshot ต่อ enrollment'];
+    const limitations = [copies ? FRESHNESS_COPIES : FRESHNESS, `funnel เป็น event counts ใน ${range.current.label}; conversion groups เป็น enrollment สะสมทั้งหมด จึงไม่ใช่ช่วงเวลาเดียวกัน`, 'Conversion endpoint นับสถานะออเดอร์ ยังไม่ตรวจ payment success, บริษัทที่แบ่งกลุ่มซ้ำ หรือการพ้น conversion window; อย่าตีความเป็นยอดเพิ่มจากแคมเปญ', 'รายได้ที่ให้เครดิตนับออเดอร์ไม่ซ้ำของ enrollment ใน 30 วันนี้ รวม VAT หลังส่วนลด ก่อนหักคืนเงิน; ออเดอร์เดียวอาจถูกให้เครดิตกับหลาย workflow และ conversion window ใช้ค่าปัจจุบัน ไม่มี snapshot ต่อ enrollment'];
     let attributedRevenueThb: number | null = null;
     try {
       // Deduplicate orders before summing: repeated enrollments may credit the same order.
-      const [revenue] = await this.replica.query(`SELECT COALESCE(sum(o.total_price), 0)::float AS revenue FROM orders o
+      const [revenue] = copies ? await this.db.query(ATTRIBUTED_REVENUE_COPIES, [workflowId, JOSH_SETTLED_STATUSES, range.current.from, range.current.to])
+        : await this.replica.query(`SELECT COALESCE(sum(o.total_price), 0)::float AS revenue FROM orders o
         WHERE o.create_date < $4 AND o.status::text = ANY($2) AND ${paidOrderSql('o')} AND EXISTS (
           SELECT 1 FROM marketing_workflow_enrollments e JOIN marketing_workflows w ON w.id = e.workflow_id
           WHERE e.workflow_id = $1 AND NOT e.is_holdout AND e.converted_order_id = o.orders_id

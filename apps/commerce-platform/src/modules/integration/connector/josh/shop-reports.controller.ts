@@ -45,6 +45,10 @@ export class ShopReportsController {
     if (!this.orders.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set ORDERS_SOURCE=copies to read commerce's order copies.`);
   }
 
+  private pushReady() {
+    if (!this.push.available) throw joshOnly('pushCampaigns');
+  }
+
   private restaurantsReady() {
     if (!this.restaurants.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set RESTAURANTS_SOURCE=copies to read commerce's copy.`);
   }
@@ -144,19 +148,19 @@ export class ShopReportsController {
   /** josh push campaigns, read-only (josh `GET /api/admin/push-campaigns*`). Creating and sending stay in josh. */
   @Get('push-campaigns/overview')
   @StaffRoles('marketing')
-  pushOverview() { this.replica('pushCampaigns'); return this.push.overview(); }
+  pushOverview() { this.pushReady(); return this.push.overview(); }
 
   @Get('push-campaigns')
   @StaffRoles('marketing')
-  pushList() { this.replica('pushCampaigns'); return this.push.list(); }
+  pushList() { this.pushReady(); return this.push.list(); }
 
   @Get('push-campaigns/:id')
   @StaffRoles('marketing')
-  pushOne(@Param('id', ParseUUIDPipe) id: string) { this.replica('pushCampaigns'); return this.push.findOne(id); }
+  pushOne(@Param('id', ParseUUIDPipe) id: string) { this.pushReady(); return this.push.findOne(id); }
 
   @Get('push-campaigns/:id/delivery')
   @StaffRoles('marketing')
-  pushDelivery(@Param('id', ParseUUIDPipe) id: string) { this.replica('pushCampaigns'); return this.push.delivery(id); }
+  pushDelivery(@Param('id', ParseUUIDPipe) id: string) { this.pushReady(); return this.push.delivery(id); }
 
   /** josh catalog, read-only (headless step 3 groundwork). Editing / approving stays in josh admin. */
   @Get('products/summary')

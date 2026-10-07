@@ -14,7 +14,8 @@ function build(configured = true) {
   const josh = { run: jest.fn(async (_target: string, _action: string, args: { path: string }) => ({ status: 200, data: { statusCode: 200, data: args.path.endsWith('analytics') ? analytics : conversion } })) };
   const research = { detail: jest.fn(), runDetail: jest.fn() };
   const db = { query: jest.fn(async (sql: string, _params?: unknown[]): Promise<Record<string, unknown>[]> =>
-    /josh_companies/.test(sql) ? [{ id: OTHER, name: 'ร้านสำเนา' }]
+    /w\.conversions/.test(sql) ? [{ revenue: 300 }]
+      : /josh_companies/.test(sql) ? [{ id: OTHER, name: 'ร้านสำเนา' }]
       : /josh_orders/.test(sql) ? [{ id: ID, at: '2026-10-01T03:00:00Z', status: 'delivered', total_price: 500, paid: true }]
         : /winback_activity/.test(sql) ? [] : [{ n: 3, updated_at: '2026-10-01' }]) };
   return { replica, insights, workflows, josh, research, db,
@@ -26,14 +27,16 @@ describe('GROWTH_SOURCE=copies (stage 5, S5-6)', () => {
   beforeEach(() => { process.env.GROWTH_SOURCE = 'copies'; });
   afterEach(() => { if (env === undefined) delete process.env.GROWTH_SOURCE; else process.env.GROWTH_SOURCE = env; });
 
-  it('workspace without the replica: sales from the copies, reorder-due from commerce winback, carts / workflows "not copied"', async () => {
+  it('workspace without the replica: sales from the copies, reorder-due from commerce winback, workflows from their copy, carts "not copied"', async () => {
     const { service, replica, insights, workflows, db } = build(false);
+    workflows.list.mockResolvedValue([{ failed_runs: 1 }, { failed_runs: 0 }]);
     insights.sales.mockResolvedValue({ totals: { revenue_inc_vat: 900, orders: 3, refunds: { n: null, amount: null } }, vsPreviousPeriod: { revenue_change_percent: 5 }, counted: 'paid' });
     expect(service.available).toBe(true);
     const w = await service.workspace();
     expect(insights.sales).toHaveBeenCalledWith(expect.anything(), 1, 'copies');
     expect(replica.query).not.toHaveBeenCalled();
-    expect(workflows.list).not.toHaveBeenCalled();
+    expect(workflows.list).toHaveBeenCalledWith(30, 'copies');
+    expect(w.metrics.find((m) => m.key === 'workflow_failures')?.value).toBe(1);
     expect(db.query.mock.calls[0][0]).toContain('FROM winback_account');
     expect(w.availability).toBe('partial');
     expect(w.metrics.find((m) => m.key === 'revenue')?.value).toBe(900);
@@ -53,9 +56,17 @@ describe('GROWTH_SOURCE=copies (stage 5, S5-6)', () => {
     expect(db.query.mock.calls.find(([sql]) => /josh_orders/.test(sql))?.[0]).toContain('o.paid');
   });
 
-  it('results still need the replica (marketing workflows are not copied)', async () => {
-    const { service } = build(false);
-    await expect(service.results(ID, actor)).rejects.toThrow('Josh read replica');
+  it('results without the replica: workflow from its copy (S5-12), credited revenue from josh_orders + the conversions copy', async () => {
+    const { service, replica, workflows, db } = build(false);
+    const result = await service.results(ID, actor);
+    expect(replica.query).not.toHaveBeenCalled();
+    expect(workflows.detail).toHaveBeenCalledWith(ID, 'copies');
+    expect(result.attributedRevenueThb).toBe(300);
+    const [sql, params] = db.query.mock.calls.find(([q]) => /w\.conversions/.test(q))!;
+    expect(sql).toContain('FROM josh_orders o');
+    expect(sql).toContain('o.paid');
+    expect(params?.[0]).toBe(ID);
+    expect(result.operations).toEqual([{ label: 'failed', count: 2 }]);
   });
 });
 

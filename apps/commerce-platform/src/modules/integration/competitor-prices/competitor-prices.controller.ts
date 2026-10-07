@@ -2,13 +2,14 @@ import { Body, Controller, Delete, Get, Header, HttpCode, HttpException, Param, 
 import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import type { StaffRequest } from '../../../shared-kernel/presentation/auth.decorators';
 import { CompetitorPricesService } from './competitor-prices.service';
-import { CaptureCompetitorPriceDto, CompetitorOverviewQueryDto, ConfirmCompetitorPriceDto, MatchCatalogItemDto, SaveCompetitorPriceDto, VerifyCompetitorPriceDto } from './competitor-price.dto';
+import { CompetitorReviewService } from './competitor-review.service';
+import { CaptureCompetitorPriceDto, CompetitorOverviewQueryDto, ConfirmCompetitorPriceDto, MatchCatalogItemDto, ReviewCellDto, ReviewFinishDto, ReviewGridQueryDto, ReviewSearchQueryDto, SaveCompetitorPriceDto, VerifyCompetitorPriceDto } from './competitor-price.dto';
 
 /** Same routes and `{ status, data, message }` envelope as josh's /api/competitor-prices. */
 @Controller('competitor-prices')
 @StaffRoles('marketing')
 export class CompetitorPricesController {
-  constructor(private readonly service: CompetitorPricesService) {}
+  constructor(private readonly service: CompetitorPricesService, private readonly review: CompetitorReviewService) {}
   private async result<T>(action: () => Promise<T>) {
     try { return { status: 200, data: await action(), message: '' }; }
     catch (error) {
@@ -18,6 +19,20 @@ export class CompetitorPricesController {
   }
 
   @Get() list() { return this.result(() => this.service.list()); }
+  @Get('review') reviewGrid(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: ReviewGridQueryDto) {
+    return this.result(() => this.review.grid(query));
+  }
+  @Get('review/search') reviewSearch(@Query(new ValidationPipe({ whitelist: true })) query: ReviewSearchQueryDto) {
+    return this.result(() => this.review.search(query.site, query.q, query.sku));
+  }
+  @Post('review/cell') @HttpCode(200)
+  reviewCell(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ReviewCellDto, @Req() request: StaffRequest) {
+    return this.result(() => this.review.setCell(request.staff.email, dto));
+  }
+  @Post('review/finish') @HttpCode(200)
+  reviewFinish(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ReviewFinishDto, @Req() request: StaffRequest) {
+    return this.result(() => this.review.finish(request.staff.email, dto));
+  }
   @Get('overview') overview(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: CompetitorOverviewQueryDto) {
     return this.result(() => this.service.overview(query));
   }

@@ -6,12 +6,13 @@ import { JoshModule } from '../connector/josh/josh.module';
 import { CompetitorMatchRejection, CompetitorMatchReview, CompetitorPrice } from './competitor-price.entity';
 import { CompetitorPricesController } from './competitor-prices.controller';
 import { CompetitorPricesService } from './competitor-prices.service';
+import { CompetitorReviewService } from './competitor-review.service';
 
 /** Competitor price comparison (MER) + the josh catalog copy it compares against. Moved from josh. */
 @Module({
   imports: [TypeOrmModule.forFeature([CompetitorPrice, CompetitorMatchRejection, CompetitorMatchReview, JoshCatalogProduct]), ScrapingModule, JoshModule],
   controllers: [CompetitorPricesController],
-  providers: [CompetitorPricesService],
+  providers: [CompetitorPricesService, CompetitorReviewService],
   exports: [CompetitorPricesService],
 })
 export class CompetitorPricesModule {}

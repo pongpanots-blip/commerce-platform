@@ -47,8 +47,16 @@ export class ShopReportsController {
   @Get('sales')
   sales(@Query() q: PeriodQuery) {
     const r = range(q);
-    this.replica();
+    if (!this.insights.salesAvailable) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set SALES_SOURCE=copies to read commerce's order copies.`);
     return this.insights.sales(r, 20);
+  }
+
+  /** Replica and order copies for the same period side by side (totals that differ, top-products ranking) — check before SALES_SOURCE=copies. */
+  @Get('sales/parity')
+  salesParity(@Query() q: PeriodQuery) {
+    const r = range(q);
+    this.replica();
+    return this.insights.salesParity(r, 20);
   }
 
   @Get('traffic')

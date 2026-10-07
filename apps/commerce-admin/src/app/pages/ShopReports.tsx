@@ -102,7 +102,7 @@ export function SalesReport() {
             <StatTile
               label="คืนเงิน"
               value={fmt.baht(t.refunds.amount)}
-              foot={<span className="text-xs text-on-surface-variant">{fmt.num(t.refunds.n)} รายการ</span>}
+              foot={<span className="text-xs text-on-surface-variant">{t.refunds.n == null ? 'ยังไม่มีข้อมูลคืนเงินใน commerce' : `${fmt.num(t.refunds.n)} รายการ`}</span>}
             />
           </StatGrid>
 

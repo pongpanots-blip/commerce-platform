@@ -32,6 +32,13 @@ Updated 2026-10-07. Not pushed.
   without them would show wrong issue tiles. The list of fields to add moves to the S5-11 josh batch (plan, Task S5-4).
 - **S5-10, staff-prices create by SKU:** works without the replica. The SKU/id lookup reads `josh_catalog_products`
   and falls back to the replica only when it is configured and the copy has no row. Spec: 12 passing.
+- **S5-5, sales report:** `JoshInsights.sales()` has a new switch `SALES_SOURCE`.
+  - `replica` (default, unchanged) · `copies` (`josh_orders.paid`, `josh_order_lines`, catalog copy names, commerce
+    `customer_metrics`; works without the replica). Covers `/reports/sales`, MCP `shop_sales`, and growth's sales numbers.
+  - Refunds show n/a in copies mode until `order_refunds` is copied (S5-11).
+  - New `GET /reports/sales/parity` returns both answers side by side, with the totals that differ and the
+    top-products ranking diff.
+  - Specs: josh-insights (2 files) and the growth specs, 27 passing; `tsc` clean.
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
@@ -40,14 +47,18 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
 
 ## Next (safe, commerce-only, in order)
-1. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first; refunds "n/a").
-2. S5-8 order-targetgroup view rebuilt over copies (view definition from Webjosh).
-3. S5-9 health: ERP part from `jagota_order_sync_history`.
-4. S5-6 / S5-7 growth, orders / customers list+summary.
+1. S5-8 order-targetgroup view rebuilt over copies (view definition from Webjosh).
+2. S5-9 health: ERP part from `jagota_order_sync_history`.
+3. S5-6 / S5-7 growth, orders / customers list+summary.
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?
 Back-office views stay in josh-admin? One global `REPORTS_SOURCE`, or one switch per reader?
+
+## Cutover for S5-5 (ops)
+Prerequisite: the order backfill is done. Check `GET /reports/sales/parity?period=last_month` and `?period=this_month`:
+`differs` should be empty (or explained), and `topProducts.firstDiffRank` should be null or > 20. Then set
+`SALES_SOURCE=copies`. Rollback: `replica`.
 
 ## Cutover for S5-3 (ops)
 Prerequisite: the `restaurant_place` backfill is done (stage 2c runbook). Check `GET /reports/restaurants/parity`:

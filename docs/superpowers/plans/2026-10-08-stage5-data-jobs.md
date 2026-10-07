@@ -70,7 +70,7 @@ copy · D = drop/defer (other stage or no report value).
 |---|---|---|---|---|---|---|
 | 1 | `connector/josh/bestsellers-offload.job.ts` | cron `joshBestsellers` → POST josh `/internal/bestsellers` | `order_items`, `orders`, `product_inventory` | `josh_order_lines.sku` + `josh_orders.status` | none | **R — done in this branch (S5-1)** |
 | 2 | `connector/josh/restaurant-places.ts` | `GET /reports/restaurants[/export|/:id]`; MCP `restaurant_places` | `restaurant_place`, `winback_account` | `josh_restaurant_places` (2c, every column) + commerce-owned `winback_account` | none — note it reads josh's **stale** `winback_account` today | **R — done (S5-3)**: `RESTAURANTS_SOURCE` |
-| 3 | `connector/josh/josh-insights.ts` `sales()` | `GET /reports/sales`; MCP `shop_sales`; growth `workspace()` | `orders`, `order_items`, `product_inventory`, `product_translation`, `payment_transactions(+_orders)`, `customer_metrics`, `order_refunds` | `josh_orders` (`paid` is computed by josh's builder with the same `paidOrderSql`, and `payment_transactions` has an outbox trigger → order re-sent on payment change), `josh_order_lines`, `josh_catalog_products.translations`, commerce `customer_metrics` | `order_refunds` (refund total) | R* (refunds = C or show "n/a") |
+| 3 | `connector/josh/josh-insights.ts` `sales()` | `GET /reports/sales`; MCP `shop_sales`; growth `workspace()` | `orders`, `order_items`, `product_inventory`, `product_translation`, `payment_transactions(+_orders)`, `customer_metrics`, `order_refunds` | `josh_orders` (`paid` is computed by josh's builder with the same `paidOrderSql`, and `payment_transactions` has an outbox trigger → order re-sent on payment change), `josh_order_lines`, `josh_catalog_products.translations`, commerce `customer_metrics` | `order_refunds` (refund total) | **R\* — done (S5-5)**: `SALES_SOURCE`; refunds n/a until S5-11 |
 | 4 | `josh-insights.ts` `traffic()` | `GET /reports/traffic`; MCP `shop_traffic` | `analytics_events`, `analytics_funnel_daily`, `user_search_history` | none | all — high-volume event tables | C (daily aggregates only: `analytics.daily.snapshot`) or D |
 | 5 | `josh-insights.ts` `orderTargetgroup()` | `GET /reports/order-targetgroup` | view `customer_order_targetgroup_summary` | rebuild as a commerce view over `josh_orders` + `segment_customers` | view definition must be copied from josh | R* |
 | 6 | `josh-insights.ts` `failures()` | `GET /reports/health` (system-health), MCP `system_health` | `payment_transactions`, `jagota_order_sync`, `marketing_workflow_scheduled_runs`, `push_campaigns` | `jagota_order_sync_history` (commerce) for the ERP part | payments, workflow runs, push | R* for ERP part, D for the rest (josh's own health) |
@@ -143,7 +143,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | S5-2 | `/reports/winback` page + MCP → commerce's winback services (`WINBACK_REPORTS_SOURCE`) | #22 | no | low — **done** |
 | S5-3 | restaurants report on copies (also stops reading josh's stale `winback_account`) | #2 | no | low — **done** |
 | S5-4 | products report on catalog copy + owned tables | #14 | **yes** — `catalog.snapshot` fields (S5-11) | low — blocked |
-| S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — money numbers; parity endpoint first |
+| S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — **done** (parity endpoint) |
 | S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium |
 | S5-7 | orders + customers reports — list / summary on copies, missing columns "—" | #7, #8 | no | medium |
 | S5-8 | order-targetgroup view rebuilt in commerce | #5 | no | low |
@@ -256,13 +256,28 @@ was cut for competitor matching; `josh-products.ts` needs more:
 - Until then the page stays on the replica. Not built now: a copies mode without these columns would show
   wrong issue tiles (every product "out of stock" / "no category").
 
-### Task S5-5: sales report on copies
+### Task S5-5: sales report on copies — DONE (this branch)
 
-- [ ] Port `SALES_SQL`, daily series, top products, new customers to `josh_orders` (`paid` column replaces
-      `paidOrderSql`), `josh_order_lines`, `josh_catalog_products.translations`, commerce `customer_metrics.first_order_at`.
-- [ ] Refunds: `null` + note "refunds not copied yet" until S5-11.
-- [ ] `/reports/sales/parity?period=…` returns both answers side by side (shadow without doubling page latency).
-- [ ] Growth `workspace()` gets sales from the same reader.
+- [x] `SALES_SOURCE=replica|copies` inside `JoshInsights.sales()`. Copies: totals / daily series derived from the replica
+      SQL (`FROM josh_orders`, `o.paid` replaces `paidOrderSql`), top products over `josh_order_lines` +
+      `josh_catalog_products.translations` (th name), new customers from commerce `customer_metrics.first_order_at`
+      (the same query — commerce owns that table since 2a). Answer carries `source`.
+- [x] Refunds: `{ n: null, amount: null, note }` in copies mode until `order_refunds` is copied (S5-11); the admin tile
+      says "ยังไม่มีข้อมูลคืนเงินใน commerce", growth already treats a non-number as unknown.
+- [x] `GET /reports/sales/parity?period=…` (needs the replica): both answers, `differs` (totals fields that differ),
+      `topProducts` = S5-1's `rankingDiff`. No request-path shadow.
+- [x] Growth `workspace()` calls `insights.sales()` so it follows the switch — but it still returns early without the
+      replica (its other three sources); that is S5-6.
+- [x] `salesAvailable` gates `/reports/sales` and MCP `shop_sales`; traffic / target group keep `available`.
+- [x] Specs: `josh-insights.paid.spec` (+2: copies without replica — no josh table names, `o.paid` everywhere;
+      parity), growth / MCP growth specs still pass.
+
+Known, accepted differences (visible in parity): lines of products josh deleted count in copies; a line's SKU is the
+one at the order's last snapshot; `paid` is as of the last order snapshot (a payment change re-sends the order).
+
+**Cutover:** order backfill done (`prod-data-from-josh.md` rows 0–1) → `GET /reports/sales/parity?period=last_month`
+and `this_month`: `differs` empty (or explained), `topProducts.firstDiffRank` null or > 20 → `SALES_SOURCE=copies`.
+Rollback: `replica`.
 
 ### Task S5-6 … S5-9
 

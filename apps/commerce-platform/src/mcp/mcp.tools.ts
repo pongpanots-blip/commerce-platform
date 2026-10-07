@@ -918,7 +918,7 @@ export class McpTools {
       inputSchema: PERIOD_INPUT,
       annotations: READ_ONLY,
     }, async ({ period, fromDate, toDate }) => {
-      if (!this.insights.available) return json(NO_REPLICA);
+      if (!this.insights.salesAvailable) return json(NO_REPLICA);
       return json(await this.insights.sales(bangkokRange(period, Date.now(), fromDate, toDate)));
     });
 

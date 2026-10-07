@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { JoshReplica } from './josh-replica';
+import { rankingDiff } from './bestsellers-offload.job';
 
 /** josh's SETTLED_ORDER_STATUSES (money taken) — the same set its purchases dashboard counts. */
 export const JOSH_SETTLED_STATUSES = ['paid', 'preparing', 'shipped', 'delivered'];
@@ -95,6 +98,31 @@ const TOP_PRODUCTS_SQL = `
    WHERE o.create_date >= $1 AND o.create_date < $2 AND ${SOLD}
    GROUP BY 1, 2 ORDER BY revenue_inc_vat DESC LIMIT $4`;
 
+/**
+ * The same three queries over commerce's order copies (order.snapshot events): `josh_orders.paid` is computed by josh's
+ * snapshot builder with the paidOrderSql test above, and a payment change re-sends the order. Product names come from
+ * the catalog copy. Known differences (shown by /reports/sales/parity): lines of products josh deleted still count here
+ * (the replica inner-joins product_inventory); a line's SKU is the one at the order's last snapshot.
+ */
+const SOLD_COPIES = `o.status = ANY($3) AND o.paid`;
+const SALES_TOTALS_COPIES_SQL = SALES_TOTALS_SQL.replace(/FROM orders o/, 'FROM josh_orders o')
+  .split(`NOT ${paidOrderSql('o')}`).join('NOT o.paid').split(SOLD).join(SOLD_COPIES);
+const SALES_DAILY_COPIES_SQL = SALES_DAILY_SQL.replace(/FROM orders o/, 'FROM josh_orders o').split(SOLD).join(SOLD_COPIES);
+const TOP_PRODUCTS_COPIES_SQL = `
+  SELECT l.sku, COALESCE((SELECT t->>'product_name' FROM jsonb_array_elements(cp.translations) t WHERE t->>'language_code' = 'th' LIMIT 1), l.sku) AS name,
+         sum(l.product_quantity)::float AS qty, sum(COALESCE(l.line_revenue, l.product_price * l.product_quantity))::float AS revenue_inc_vat
+    FROM josh_orders o
+    JOIN josh_order_lines l ON l.orders_id = o.orders_id
+    LEFT JOIN josh_catalog_products cp ON cp.id = l.product_inventory_id
+   WHERE o.create_date >= $1 AND o.create_date < $2 AND ${SOLD_COPIES} AND l.sku IS NOT NULL
+   GROUP BY 1, 2 ORDER BY revenue_inc_vat DESC LIMIT $4`;
+/** order_refunds has no copy yet (S5-11): the copies answer says so instead of a 0 that looks real. */
+const REFUNDS_NOT_COPIED = { n: null, amount: null, note: 'refunds are not copied to commerce yet' };
+
+type SalesSource = 'replica' | 'copies';
+/** SALES_SOURCE: replica (default) · copies (josh_orders / josh_order_lines / commerce customer_metrics; no replica). */
+export const salesSource = (): SalesSource => (process.env.SALES_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica');
+
 const NEW_CUSTOMERS_SQL = `SELECT count(*)::int AS n FROM customer_metrics WHERE first_order_at >= $1 AND first_order_at < $2`;
 const REFUNDS_SQL = `SELECT count(*)::int AS n, COALESCE(sum(amount), 0)::float AS amount FROM order_refunds
                       WHERE status::text = 'refunded' AND created_at >= $1 AND created_at < $2`;
@@ -157,20 +185,26 @@ const change = (now: number, before: number) => (before ? round(((now - before) 
  */
 @Injectable()
 export class JoshInsights {
-  constructor(private readonly replica: JoshReplica) {}
+  constructor(private readonly replica: JoshReplica, @InjectDataSource() private readonly db: DataSource) {}
 
   get available() { return this.replica.configured; }
+  /** Sales has its own switch (SALES_SOURCE); traffic / target group / failures still need the replica. */
+  get salesAvailable() { return salesSource() === 'copies' || this.replica.configured; }
 
-  async sales(r: { current: Range; previous: Range }, top = 10) {
-    const q = (sql: string, range: Range, ...extra: unknown[]) => this.replica.query(sql, [range.from, range.to, ...extra]);
+  async sales(r: { current: Range; previous: Range }, top = 10, source: SalesSource = salesSource()) {
+    const copies = source === 'copies';
+    const q = (sql: string, range: Range, ...extra: unknown[]) =>
+      (copies ? this.db.query(sql, [range.from, range.to, ...extra]) : this.replica.query(sql, [range.from, range.to, ...extra]));
     const days = (r.current.to.getTime() - r.current.from.getTime()) / DAY;
+    const totals = copies ? SALES_TOTALS_COPIES_SQL : SALES_TOTALS_SQL;
     const [[now], [before], series, products, [newCustomers], [refunds]] = await Promise.all([
-      q(SALES_TOTALS_SQL, r.current, JOSH_SETTLED_STATUSES),
-      q(SALES_TOTALS_SQL, r.previous, JOSH_SETTLED_STATUSES),
-      q(SALES_DAILY_SQL, r.current, JOSH_SETTLED_STATUSES, days > 62 ? 'YYYY-MM' : 'YYYY-MM-DD'),
-      q(TOP_PRODUCTS_SQL, r.current, JOSH_SETTLED_STATUSES, top),
+      q(totals, r.current, JOSH_SETTLED_STATUSES),
+      q(totals, r.previous, JOSH_SETTLED_STATUSES),
+      q(copies ? SALES_DAILY_COPIES_SQL : SALES_DAILY_SQL, r.current, JOSH_SETTLED_STATUSES, days > 62 ? 'YYYY-MM' : 'YYYY-MM-DD'),
+      q(copies ? TOP_PRODUCTS_COPIES_SQL : TOP_PRODUCTS_SQL, r.current, JOSH_SETTLED_STATUSES, top),
+      // customer_metrics is commerce's own (stage 2a; josh's is pushed from it), so the copies read it here
       q(NEW_CUSTOMERS_SQL, r.current),
-      q(REFUNDS_SQL, r.current),
+      copies ? Promise.resolve([REFUNDS_NOT_COPIED]) : q(REFUNDS_SQL, r.current),
     ]);
     const revenue = Number(now.revenue_inc_vat);
     const orders = Number(now.orders);
@@ -182,7 +216,18 @@ export class JoshInsights {
         revenue_change_percent: change(revenue, Number(before.revenue_inc_vat)), orders_change_percent: change(orders, Number(before.orders)) },
       [days > 62 ? 'byMonth' : 'byDay']: series,
       topProducts: products,
+      source,
     };
+  }
+
+  /** Both answers for one period side by side, and where the totals differ — check before SALES_SOURCE=copies. Needs the replica. */
+  async salesParity(r: { current: Range; previous: Range }, top = 20) {
+    const [replica, copies] = await Promise.all([this.sales(r, top, 'replica'), this.sales(r, top, 'copies')]);
+    const a = replica.totals as Record<string, unknown>, b = copies.totals as Record<string, unknown>;
+    const differs = Object.keys(a).filter((k) => k !== 'refunds' && typeof a[k] === 'number' && Number(a[k]) !== Number(b[k]))
+      .map((k) => ({ field: k, replica: a[k], copies: b[k] }));
+    const skus = (x: { topProducts: Array<{ sku: string }> }) => x.topProducts.map((p) => p.sku);
+    return { period: replica.period, differs, topProducts: rankingDiff(skus(replica), skus(copies)), replica, copies };
   }
 
   async traffic(r: { current: Range; previous: Range }, top = 10) {

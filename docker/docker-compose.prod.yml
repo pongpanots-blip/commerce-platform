@@ -11,6 +11,10 @@ services:
     restart: unless-stopped
     ports:
       - '3100:3100'
+    # Resolve joshapp.io to josh private IP so JOSH_API_URL=https://joshapp.io/api
+    # stays TLS-valid but never hits Cloudflare (same VPC).
+    extra_hosts:
+      - 'joshapp.io:172.31.40.34'
     environment:
       NODE_ENV: production
       PORT: 3100

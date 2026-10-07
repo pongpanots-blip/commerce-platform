@@ -612,4 +612,4 @@ One server at a time; stop each before starting the next.
     a new one, deletes it (temporary spec, not committed).
   - Not exercised end to end: outbox → BullMQ → josh HTTP delivery (unchanged since 2a), notify / welcome email delivery
     (unit-tested), the mirror (tested when it was written, per `docs/headless-split-plan.md`).
-- Full suites: commerce 1272 passed (14 opt-in skipped).
+- Full suites (`--maxWorkers=2`): commerce 1272 passed (14 opt-in skipped); josh 6706 passed, only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.

@@ -13,6 +13,13 @@ Scope: product-level quantity promotion rules (including empty-array clear), adm
 - [x] Document contract, environment and cutover/rollback with matching Josh guards/consumers and cutover prerequisites.
 - [x] Run checks, write STATUS.md and commit implementation/verification. Do not push.
 
-## Matching Josh implementation (next, before cutover)
+## Matching Josh implementation (complete; flags remain off)
 
-Josh must implement signed backfill/shadow snapshots, per-SKU lock updates, newest-only snapshot application and cache invalidation. Audit `POST promotion-rules`, product create/update (including signed actions), `tier_prices`, mechanic edits and bulk imports under `COMMERCE_OWNS_PROMOTIONS`. ERP endpoints remain available. Flags remain off until consumers and parity verification are ready.
+- [x] Strict guards on product create/update and direct rule services, including signed actions and both aliases.
+- [x] Signed `product.promotion-rules.snapshot` consumer with bigint version ledger, assignment protection, atomic replacement/clear and post-commit cache refresh.
+- [x] Durable rule/lock producers, both backfill groups and serialized snapshot versions; assignment removal/moves, new/empty products and mechanic renames covered.
+- [x] Retained per-SKU assignment reset markers prevent delayed pending edits or coalesced assign/remove deliveries restoring old tiers, including shadow bootstrap while off.
+- [x] Prevent legacy bootstrap sources restoring clears; verify assignment/consumer races and transactional outbox rollback on scratch PostgreSQL.
+- [x] Keep mechanic relay and ERP endpoints; product sheet importer does not write promotion rules. Campaign/audience/checkout/sold-unit ownership unchanged.
+
+Validation and local commits for both branches are recorded in `STATUS.md`. Deployment, drained outboxes, backfill/parity and cutover smoke checks remain operational prerequisites.

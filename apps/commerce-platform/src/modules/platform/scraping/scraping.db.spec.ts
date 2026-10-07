@@ -100,8 +100,14 @@ dbDescribe('scraping against a database (ported from josh)', () => {
   it('a dropped paged run keeps its place, retries on its own (also after a restart), and waits for a person after 3 drops', async () => {
     const page = listing('drop');
     let dropAt = 5;
+    const catchUpSeen: unknown[] = [];
     jest.spyOn(reader, 'paginate').mockImplementation(async (_url, _config, _origin, options) => {
-      for (let index = options.skip; index < 30; index++) {
+      for (let index = 0; index < 30; index++) {
+        if (index < options.skip) { // clicking back to where it stopped (josh #454)
+          if (options.onSkip && !await options.onSkip(index)) return { pages: index + 1, totalPages: 30, end: 'stopped' as const };
+          if (index === 19) catchUpSeen.push((await db.query(`SELECT progress->'catchUp' AS c, lease_until > $2 AS renewed FROM scraping_sources WHERE id = $1`, [created.id, new Date(Date.now() + 300000)]))[0]);
+          continue;
+        }
         if (index >= dropAt) throw new Error('net::ERR_CONNECTION_RESET');
         if (!await options.onPage(page(index), 'https://drop.example.com/c', index)) return { pages: index + 1, totalPages: 30, end: 'stopped' as const };
       }
@@ -153,7 +159,7 @@ dbDescribe('scraping against a database (ported from josh)', () => {
 
     // Dropped by a run before retries existed: listing already gone from pending at page 12 of 30. Still continues.
     await db.query(`UPDATE scraping_sources SET status = 'limited', lease_until = NULL, last_error = 'อ่านหน้ารายการไม่สำเร็จ ลองสำรวจเว็บใหม่',
-      config = config || '{"expectedPages":30}', progress = jsonb_set(jsonb_set(progress, '{pending}', '[]'), '{visited}', (progress->'visited') - 29 - 28 - 27 - 26 - 25 - 24 - 23 - 22 - 21 - 20 - 19 - 18 - 17 - 16 - 15 - 14 - 13 - 12)
+      config = config || '{"expectedPages":30}', progress = jsonb_set(jsonb_set(progress, '{pending}', '[]'), '{visited}', (progress->'visited') - 29 - 28 - 27 - 26 - 25 - 24 - 23)
       WHERE id = $1`, [created.id]);
     const old = (await scraping.listSources()).find(s => s.id === created.id)!;
     expect(old.activity).toBe('gave_up');
@@ -162,7 +168,10 @@ dbDescribe('scraping against a database (ported from josh)', () => {
     after = await scraping.source(created.id);
     expect(after.status).toBe('completed');
     expect(after.progress.visited).toHaveLength(30);
-    expect(after.progress.visited[12]).toBe('https://drop.example.com/c#page=13');
+    expect(after.progress.visited[23]).toBe('https://drop.example.com/c#page=24'); // continued, not from page 1
+    // On the way back to page 23 the lease was renewed and the page reached recorded; cleared once reading again.
+    expect(catchUpSeen).toEqual([{ c: 20, renewed: true }]);
+    expect(after.progress.catchUp).toBeUndefined();
   }, 30000);
 
   it('reads a whole paged listing in one session, pauses outside the night window, refreshes matched pairs, obeys the master switch', async () => {

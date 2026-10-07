@@ -21,6 +21,8 @@ export type ScrapingProgress = {
   retries?: number;
   /** A person asked to collect now (first look / "เก็บต่อเลยตอนนี้"): keeps going outside the night window, even after a restart. */
   now?: 'first_look' | 'all';
+  /** Resuming re-clicks "next" from page 1: the page it has reached so far, until it is back where it stopped. */
+  catchUp?: number;
 };
 
 @Entity('scraping_sources')

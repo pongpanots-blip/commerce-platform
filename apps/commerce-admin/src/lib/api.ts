@@ -602,6 +602,10 @@ export interface RestaurantList {
   items: RestaurantRow[]; page: number; limit: number;
   summary: { totalCount: number; topCategories: { name: string; count: number }[]; topDistricts: { name: string; count: number }[] };
 }
+export interface RestaurantDetail extends RestaurantRow {
+  source: string | null; openingHours: unknown; popularTimes: unknown; enrichedAt: string | null;
+  serviceOptions: { dineIn: boolean | null; takeaway: boolean | null; delivery: boolean | null };
+}
 export interface TargetgroupRow {
   cust_code: string; total_skus_ordered: number; ot_skus_ordered: number; ot_skus_with_active_period: number;
   max_shipments_per_week: number; delivery_weekdays: number[] | null;
@@ -610,6 +614,7 @@ const query = (p: Record<string, string | number | boolean | undefined>) =>
   new URLSearchParams(Object.entries(p).filter(([, v]) => v !== undefined && v !== '' && v !== false).map(([k, v]) => [k, String(v)])).toString();
 export const marketApi = {
   restaurants: (f: Record<string, string | number | boolean | undefined>) => api.get<RestaurantList>(`/reports/restaurants?${query(f)}`),
+  restaurant: (id: string) => api.get<RestaurantDetail>(`/reports/restaurants/${encodeURIComponent(id)}`),
   restaurantsCsv: (f: Record<string, string | number | boolean | undefined>) => downloadFile(`/reports/restaurants/export?${query(f)}`, 'restaurant-places.csv'),
   targetgroup: (f: { minShipmentsPerWeek?: number; custCode?: string; limit: number; offset: number }) =>
     api.get<{ total: number; items: TargetgroupRow[] }>(`/reports/order-targetgroup?${query(f)}`),

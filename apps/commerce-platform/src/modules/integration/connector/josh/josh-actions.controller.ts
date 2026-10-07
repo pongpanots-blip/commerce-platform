@@ -8,6 +8,8 @@ import { ownsProductContent, ProductContentsService } from '../../../commerce/pr
 import { splitContent } from '../../../commerce/product-contents/content-fields';
 import { ownsProductMaster, ProductMastersService } from '../../../commerce/product-masters/product-masters.service';
 import { splitMaster } from '../../../commerce/product-masters/master-fields';
+import { OrderingService, ownsOrdering } from '../../../commerce/ordering/ordering.service';
+import { splitLogistics } from '../../../commerce/ordering/logistics-fields';
 import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
@@ -103,8 +105,9 @@ export class JoshActionsController {
   /**
    * Edit one product's master data (COMMERCE_OWNS_CATALOG): josh's ProductService.update writes it,
    * josh rejects fields it does not allow from commerce. Commerce's catalog copy is refreshed right away.
-   * Stage 4a / 4b / 4d: the base price, the content keys and the ERP master keys are commerce's once it owns them —
-   * saved here and sent to josh as product.price / content / master.snapshot; the rest of the form still goes to josh.
+   * Stage 4a / 4b / 4d / 4f: the base price, the content keys, the ERP master keys and the logistics keys are commerce's once
+   * it owns them — saved here and sent to josh as product.price / content / master / logistics.snapshot; the rest of the
+   * form still goes to josh.
    */
   @Post('products/:id/update') @HttpCode(HttpStatus.OK)
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
@@ -113,10 +116,12 @@ export class JoshActionsController {
     // Validated before anything is written (400 on a bad value).
     const { content, rest: afterContent } = ownsProductContent() ? splitContent(others) : { content: {}, rest: others };
     // Stage 4d: status, category, brand name, units, pack … once commerce owns the ERP product master.
-    const { master, categoryId, rest } = ownsProductMaster() ? splitMaster(afterContent) : { master: {}, categoryId: undefined, rest: afterContent };
+    const { master, categoryId, rest: afterMaster } = ownsProductMaster() ? splitMaster(afterContent) : { master: {}, categoryId: undefined, rest: afterContent };
+    // Stage 4f: unit ratio, sub-packing / product unit, expected restock, delivery weekdays.
+    const { logistics, rest } = ownsOrdering() ? splitLogistics(afterMaster) : { logistics: {}, rest: afterMaster };
     const masterBody = categoryId === undefined ? master : { ...master, category_id: categoryId };
     const relay = ownPrice || price === undefined ? rest : { ...rest, selling_unit_price: price };
-    if (!ownPrice && !Object.keys(content).length && !Object.keys(masterBody).length) return this.relayUpdate(id, relay, req);
+    if (!ownPrice && !Object.keys(content).length && !Object.keys(masterBody).length && !Object.keys(logistics).length) return this.relayUpdate(id, relay, req);
 
     const sku = await this.skuOf(id);
     const result: Record<string, unknown> = {};
@@ -126,6 +131,7 @@ export class JoshActionsController {
     }
     if (Object.keys(content).length) result.content = await this.modules.get(ProductContentsService, { strict: false }).edit(sku, content, req.staff.userId);
     if (Object.keys(masterBody).length) result.master = await this.modules.get(ProductMastersService, { strict: false }).edit(sku, masterBody, req.staff.userId);
+    if (Object.keys(logistics).length) result.logistics = await this.modules.get(OrderingService, { strict: false }).editLogistics(sku, logistics, req.staff.userId);
     if (Object.keys(relay).length) result.product = await this.relayUpdate(id, relay, req);
     return result;
   }

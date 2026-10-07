@@ -45,6 +45,24 @@ describe('JoshActionsController — back-office actions', () => {
     expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: {} }, expect.anything(), 'admin');
   });
 
+  it('stage 4a: once commerce owns prices the base price is saved in commerce, the rest still goes to josh', async () => {
+    const prices = { edit: jest.fn(async () => ({ sku: 'SKU-1', sellingUnitPrice: 12 })) };
+    const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : prices) } as never);
+    await ctl.updateProduct(ID, { fields: { selling_unit_price: 10, product_name_th: 'ซอส' } }, req);
+    expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { selling_unit_price: 10, product_name_th: 'ซอส' } }, expect.anything(), 'admin');
+    process.env.COMMERCE_OWNS_PRICES = 'true';
+    try {
+      await expect(ctl.updateProduct(ID, { fields: { selling_unit_price: '12', product_name_th: 'ซอส' } }, req))
+        .resolves.toMatchObject({ price: { sellingUnitPrice: 12 } });
+      expect(prices.edit).toHaveBeenCalledWith('SKU-1', { sellingUnitPrice: 12 }, 'staff-1');
+      expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { product_name_th: 'ซอส' } }, expect.anything(), 'admin');
+      josh.run.mockClear();
+      await ctl.updateProduct(ID, { fields: { selling_unit_price: 13 } }, req);
+      expect(josh.run).not.toHaveBeenCalled();
+    } finally { delete process.env.COMMERCE_OWNS_PRICES; }
+  });
+
   it('product create goes to josh and refreshes the copy of the new product; cuisine tags go as a list', async () => {
     josh.run.mockResolvedValueOnce({ product_inventory_id: ID } as never);
     await c.createProduct({ product: { product_inventory_sku: 'SKU-1' } }, req);

@@ -20,6 +20,7 @@ import { SettingsModule } from '../core/settings/settings.module';
 import { InventoryModule } from '../commerce/inventory/inventory.module';
 import { ErpFeedController } from './connector/erp/presentation/erp-feed.controller';
 import { ErpFeedService } from './connector/erp/ingest/erp-feed.service';
+import { ProductPricesModule } from '../commerce/product-prices/product-prices.module';
 import { ErpFallbackReplayJob } from './connector/erp/ingest/erp-fallback-replay.job';
 import { ErpRelayController } from './connector/erp/presentation/erp-relay.controller';
 import { AccountingRelayController } from './connector/erp/presentation/accounting-relay.controller';
@@ -38,7 +39,7 @@ import { ErpRelayService } from './connector/erp/ingest/erp-relay.service';
  * integrations.
  */
 @Module({
-  imports: [TypeOrmModule.forFeature([Integration, ErpStubStock, ErpStubReservation, ErpIngestRecord, LivechatLog]), MappingModule, SettingsModule, InventoryModule, ApiKeyModule],
+  imports: [TypeOrmModule.forFeature([Integration, ErpStubStock, ErpStubReservation, ErpIngestRecord, LivechatLog]), MappingModule, SettingsModule, InventoryModule, ApiKeyModule, ProductPricesModule],
   controllers: [IntegrationController, ErpStubStockController, ErpFeedController, ErpRelayController, AccountingRelayController, CsCrmRelayController, LivechatLogController, ErpSimulatorController],
   providers: [ConnectorRegistry, ExampleConnector, ErpStubConnector, ErpHttpClient, ErpConnector, ErpEventProcessor, ErpOrderPushSubscriber, IntegrationService, ErpIngestService, ErpFeedService, ErpFallbackReplayJob, ErpRelayService, StorefrontApiKeyGuard],
   exports: [ConnectorRegistry, IntegrationService, TypeOrmModule, ErpHttpClient, ErpIngestService],

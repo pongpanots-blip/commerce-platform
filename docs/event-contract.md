@@ -53,6 +53,7 @@ Body:
 |---|---|---|
 | `inventory.qty.changed` | `PUT /erp/products/qty` **หรือ** การปรับสต็อกในคลังที่ commerce เป็นเจ้าของ | `source` (`erp` / `commerce`), `quantity` (int ≥ 0), `previousQuantity`, `warehouseCode`, `reason`, `ingestRecordId` (erp) หรือ `movementId` (commerce) |
 | `inventory.sellable.snapshot` | ทุก movement ที่ applied ในคลังที่ `sellable = true` (ERP feed, ปรับในคลังเรา, order ตัด/คืน) (ขั้น 3) | `sku`, `sellableQty` = Σ max(0, quantity − reserved) ทุกคลังที่ขายได้, `version` (ISO, เวลาที่ยอดของ commerce เปลี่ยน — เพิ่มขึ้นเสมอต่อ SKU), `erp` `{ PRODUCT_CODE, QUANTITY, CHANGED_AT }` — snapshot เก็บตัว version ใหม่สุด · หลังสลับขั้น 3 ใช้ตัวนี้แทน `inventory.qty.changed` |
+| `product.price.snapshot` | MER อนุมัติราคาจาก ERP หรือพนักงานแก้ราคาใน commerce (ขั้น 4a, `COMMERCE_OWNS_PRICES=true`) | `sku`, `sellingUnitPrice` (ราคาขายต่อหน่วยขาย), `orderingPrice` (ราคาต่อหน่วยสั่งของ ERP), `moq` (null = ไม่เปลี่ยน), `version` (ISO) — snapshot ตัวใหม่สุดชนะ · `original_price` ไม่ส่ง (josh คำนวณเอง) |
 | `product.price.changed` | `PUT /erp/products/price` | `orderingPrice`, `sellingUnitPrice` (string 2 ตำแหน่ง หรือ null = ไม่เปลี่ยน) |
 | `product.moq.changed` | `PUT /erp/products/moq` | `moq` |
 | `segment.upserted` | สร้าง / แก้ segment ใน commerce-admin (ขั้น 2a, `COMMERCE_OWNS_SEGMENTS=true`) | `id`, `slug`, `name`, `description`, `rule_type`, `rule_config`, `definition`, `priority`, `is_active`, `frozen_at` (ISO หรือ null), `member_count` — id เดียวกับ segment เดิมของ platform |
@@ -104,6 +105,7 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `product.price.changed` | `handlePriceChange([data.erp])` — ราคาเข้า staging รอ MER ตามเดิม |
 | `product.moq.changed` | `handleMoqChange([data.erp])` |
 | `segment.upserted` / `segment.members` / `segment.deleted` | `CommerceSegmentsService` เขียน `user_segments` / `segment_membership_snapshots` (คูปอง แบนเนอร์ push workflow อ่านตารางเดิม) — ใช้ payload ใน `data` ตรงๆ ไม่ใช่ `data.erp` |
+| `product.price.snapshot` | `CommercePricesService` → `applyErpPendingPayloadToInventory` (ชุดเดียวกับตอน MER approve — `original_price` ถูกปรับตามกติกา josh) ผ่านตัวกัน version `'price'` แล้วล้าง cache ราคา / แค็ตตาล็อก / PDP · ต้องเปิด `COMMERCE_OWNS_PRICES` (ไม่งั้น 409) · SKU ไม่รู้จัก → 422 |
 | `inventory.sellable.snapshot` | `handleQtyChange([{ PRODUCT_CODE: sku, QUANTITY: sellableQty, CHANGED_AT: version }])` — ตัวกัน version `'stock'` เดียวกับทางตรงของ ERP · ต้องเปิด `COMMERCE_OWNS_STOCK` (ไม่งั้น 409) · เมื่อเปิดแล้ว `inventory.qty.changed` (ต่อคลัง) ตอบ 200 แต่ไม่เขียน |
 | `company.sales_rep` | `CommerceSalesRepsService` ตั้ง `company.assigned_sales_user_id` (ผ่าน `commerce_applied_versions` ตาม `assignedAt`; ต้องเปิด `COMMERCE_OWNS_CUSTOMERS` ไม่งั้นตอบ 409) |
 | `winback.notify` / `winback.welcome_email` / `winback.row` | `CommerceWinbackEventsService` — ส่งแจ้งเตือน / อีเมลด้วยระบบของ josh และเขียนสำเนาตาราง winback (ต้องเปิด `WINBACK_OWNED_BY_COMMERCE`) |

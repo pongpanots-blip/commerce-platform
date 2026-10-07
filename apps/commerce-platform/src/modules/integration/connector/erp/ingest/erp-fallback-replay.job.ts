@@ -10,8 +10,8 @@ const BATCH = 100;
 /**
  * ERP calls josh received directly while commerce was down (spec §3.3, josh_erp_fallback_calls from
  * erp.fallback.received) go through the normal ERP feed once: qty lands in the ledger with its own CHANGED_AT, so it
- * is applied, or recorded stale when commerce already has something newer. Other paths are only marked (price / MOQ
- * are josh's until stage 4). Opt-in: CRON_ERP_FALLBACK_REPLAY_ENABLED.
+ * is applied, or recorded stale when commerce already has something newer; price / MOQ go to the MER queue (stage 4a).
+ * Other paths are only marked. Opt-in: CRON_ERP_FALLBACK_REPLAY_ENABLED.
  */
 @Injectable()
 export class ErpFallbackReplayJob {
@@ -33,11 +33,14 @@ export class ErpFallbackReplayJob {
     let replayed = 0;
     let skipped = 0;
     for (const row of rows) {
-      let note = 'not stock';
-      if (/\/products\/qty$/.test(row.path)) {
+      // qty → ledger (stage 3); price / moq → the ERP feed, which stages them in commerce's MER queue once it owns
+      // prices (stage 4a). Anything else is josh's and only marked.
+      const kind = /\/products\/(qty|price|moq)$/.exec(row.path)?.[1] as 'qty' | 'price' | 'moq' | undefined;
+      let note = 'not replayed (josh-owned)';
+      if (kind) {
         const items = Array.isArray(row.body) ? row.body : row.body ? [row.body] : [];
-        await this.feed.receive('qty', items);
-        note = `qty: ${items.length} item(s)`;
+        await this.feed.receive(kind, items);
+        note = `${kind}: ${items.length} item(s)`;
         replayed++;
       } else {
         skipped++;

@@ -57,6 +57,8 @@ Body:
 | `segment.upserted` | สร้าง / แก้ segment ใน commerce-admin (ขั้น 2a, `COMMERCE_OWNS_SEGMENTS=true`) | `id`, `slug`, `name`, `description`, `rule_type`, `rule_config`, `definition`, `priority`, `is_active`, `frozen_at` (ISO หรือ null), `member_count` — id เดียวกับ segment เดิมของ platform |
 | `segment.members` | ตามหลัง `segment.upserted` ของ segment ที่ freeze แล้ว | `segmentId`, `frozenAt`, `part`, `parts`, `userIds` (≤ 5000 ต่อ part) — part ของ freeze เดียวกันใช้ได้ทุกลำดับ ส่งซ้ำได้ ตัว `frozenAt` ใหม่แทนชุดเก่า |
 | `segment.deleted` | ลบ segment | `id` |
+| `company.sales_rep` | มอบหมาย / ล้าง sales ของบริษัท (ขั้น 2b, `COMMERCE_OWNS_SALES_REPS=true`) | `companyId`, `salesUserId` (uuid หรือ null), `assignedAt` (ISO) — snapshot ตัวล่าสุดตาม `assignedAt` ชนะ |
+| `winback.row` / `winback.notify` / `winback.welcome_email` | winback ที่ commerce เป็นเจ้าของ (`WINBACK_OWNER=commerce`) | `winback.row`: `table`, `id`, `row` (null = ลบ) · `winback.notify`: `userId`, `type` (`winback_*`), `category`, `data`, `dedupeKey` · `winback.welcome_email`: `toEmail`, `locale` |
 
 segment.* ไม่ใช่ snapshot (ส่งทุกตัว) · ใน transaction เดียวกัน `segment.upserted` ถูกส่งก่อน `segment.members` เสมอ
 
@@ -101,6 +103,8 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `product.price.changed` | `handlePriceChange([data.erp])` — ราคาเข้า staging รอ MER ตามเดิม |
 | `product.moq.changed` | `handleMoqChange([data.erp])` |
 | `segment.upserted` / `segment.members` / `segment.deleted` | `CommerceSegmentsService` เขียน `user_segments` / `segment_membership_snapshots` (คูปอง แบนเนอร์ push workflow อ่านตารางเดิม) — ใช้ payload ใน `data` ตรงๆ ไม่ใช่ `data.erp` |
+| `company.sales_rep` | `CommerceSalesRepsService` ตั้ง `company.assigned_sales_user_id` (ผ่าน `commerce_applied_versions` ตาม `assignedAt`; ต้องเปิด `COMMERCE_OWNS_CUSTOMERS` ไม่งั้นตอบ 409) |
+| `winback.notify` / `winback.welcome_email` / `winback.row` | `CommerceWinbackEventsService` — ส่งแจ้งเตือน / อีเมลด้วยระบบของ josh และเขียนสำเนาตาราง winback (ต้องเปิด `WINBACK_OWNED_BY_COMMERCE`) |
 
 `failed` ที่ handler คืน (SKU ไม่มีใน shop) → ตอบ `422` · error อื่น → `5xx`
 

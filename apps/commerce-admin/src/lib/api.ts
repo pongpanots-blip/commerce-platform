@@ -274,8 +274,8 @@ export const ordersApi = {
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
 };
 
-// commerce-admin staff accounts (admin / marketing) — commerce's own logins, not josh's.
-export type StaffRole = 'admin' | 'marketing';
+// commerce-admin staff accounts (admin / marketing / MER / CS) — commerce's own logins, not josh's.
+export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs';
 export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: 'active' | 'disabled'; createdAt: string }
 export const staffApi = {
   list: () => api.get<StaffAccount[]>('/admin/staff'),

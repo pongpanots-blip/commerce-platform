@@ -6,7 +6,12 @@ import {
 import { session, staffApi, StaffAccount, StaffRole } from '../../lib/api';
 import { useAsync } from '../hooks';
 
-const ROLE_LABEL: Record<StaffRole, string> = { admin: 'admin — ทุกเมนู', marketing: 'marketing — รายงานและการตลาด' };
+const ROLE_LABEL: Record<StaffRole, string> = {
+  admin: 'admin — ทุกเมนู',
+  marketing: 'marketing — รายงานและการตลาด',
+  merchandising: 'MER — สินค้า ราคา หมวด แบรนด์ supplier',
+  cs: 'CS — order shipment งาน CS credit note',
+};
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /**

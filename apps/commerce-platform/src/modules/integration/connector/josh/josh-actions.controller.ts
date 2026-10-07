@@ -90,12 +90,12 @@ export class JoshActionsController {
   }
 
   /** Approve / reject staged ERP product and price changes (josh applies them; ids only, max 200). */
-  @Post('products/approve') @HttpCode(HttpStatus.OK)
+  @Post('products/approve') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   approveProducts(@Body() b: { ids?: string[] }, @Req() req: StaffRequest) {
     return this.josh.run('products', 'approve', { ids: Array.isArray(b?.ids) ? b.ids.slice(0, 200) : [] }, this.as(req), 'admin');
   }
 
-  @Post('products/reject') @HttpCode(HttpStatus.OK)
+  @Post('products/reject') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   rejectProducts(@Body() b: { ids?: string[] }, @Req() req: StaffRequest) {
     return this.josh.run('products', 'reject', { ids: Array.isArray(b?.ids) ? b.ids.slice(0, 200) : [] }, this.as(req), 'admin');
   }
@@ -106,7 +106,7 @@ export class JoshActionsController {
    * Stage 4a / 4b / 4d: the base price, the content keys and the ERP master keys are commerce's once it owns them —
    * saved here and sent to josh as product.price / content / master.snapshot; the rest of the form still goes to josh.
    */
-  @Post('products/:id/update') @HttpCode(HttpStatus.OK)
+  @Post('products/:id/update') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
     const { selling_unit_price: price, ...others } = plain(b?.fields);
     const ownPrice = price !== undefined && price !== '' && ownsPrices();
@@ -154,7 +154,7 @@ export class JoshActionsController {
    * fields. Images are added afterwards as an image-only edit, which josh keeps open. Stage 4b: once commerce owns
    * content, the content sent is recorded here too (the first version of the new SKU's content).
    */
-  @Post('products') @HttpCode(HttpStatus.OK)
+  @Post('products') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   async createProduct(@Body() b: { product?: Record<string, unknown> }, @Req() req: StaffRequest) {
     const product = plain(b?.product);
     const { content } = ownsProductContent() ? splitContent(product) : { content: {} };
@@ -168,23 +168,23 @@ export class JoshActionsController {
   }
 
   /** Replace a product's cuisine tags (COMMERCE_OWNS_CATALOG): josh's CuisineService.setProductCuisines. */
-  @Post('products/:id/cuisines') @HttpCode(HttpStatus.OK)
+  @Post('products/:id/cuisines') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   setProductCuisines(@Param('id', ParseUUIDPipe) id: string, @Body() b: { cuisineIds?: unknown }, @Req() req: StaffRequest) {
     return this.josh.run('products', 'set_cuisines', { id, cuisine_ids: Array.isArray(b?.cuisineIds) ? b.cuisineIds : [] }, this.as(req), 'admin');
   }
 
   /** Suppliers (josh SupplierService validates with its DTO; supplier_name is required on update too). */
-  @Post('suppliers') @HttpCode(HttpStatus.OK)
+  @Post('suppliers') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   createSupplier(@Body() b: { supplier?: Record<string, unknown> }, @Req() req: StaffRequest) {
     return this.josh.run('suppliers', 'create', { supplier: plain(b?.supplier) }, this.as(req), 'admin');
   }
 
-  @Post('suppliers/:id/update') @HttpCode(HttpStatus.OK)
+  @Post('suppliers/:id/update') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   updateSupplier(@Param('id', ParseUUIDPipe) id: string, @Body() b: { supplier?: Record<string, unknown> }, @Req() req: StaffRequest) {
     return this.josh.run('suppliers', 'update', { id, supplier: plain(b?.supplier) }, this.as(req), 'admin');
   }
 
-  @Post('suppliers/:id/remove') @HttpCode(HttpStatus.OK)
+  @Post('suppliers/:id/remove') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
   removeSupplier(@Param('id', ParseUUIDPipe) id: string, @Req() req: StaffRequest) {
     return this.josh.run('suppliers', 'remove', { id }, this.as(req), 'admin');
   }

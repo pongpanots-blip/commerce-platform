@@ -1,28 +1,38 @@
 import { BadRequestException, Body, Controller, ForbiddenException, HttpCode, HttpStatus, Post, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
+import { StaffRequest, StaffRole, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions, UploadFile } from './josh-actions';
 
-/** josh admin routes commerce-admin calls through josh's admin-call relay — same list as josh RELAY_ROUTES, plus who may call here. */
-const AREAS: { path: RegExp; marketing: boolean }[] = [
-  { path: /^\/(product\/|admin\/promotion-product-sets)/, marketing: true },
-  { path: /^\/promotion-pages/, marketing: true },
-  { path: /^\/coupon(\/|$)/, marketing: true },
-  { path: /^\/(campaigns|user-segments)(\/|$)/, marketing: true },
-  { path: /^\/(marketing-workflows|marketing-notify-templates|marketing-trigger-presets|marketing-settings)(\/|$)/, marketing: true },
-  { path: /^\/admin\/bot\//, marketing: true },
-  { path: /^\/(banner|popup-definitions)$/, marketing: true },
-  { path: /^\/(product-category|brands|cuisine)(\/|$)/, marketing: true },
-  { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink|upload\/image)(\/|$)/, marketing: true },
-  { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, marketing: false },
-  { path: /^\/(orders|shipments|payment\/kbank\/testing)(\/|$)/, marketing: false },
-  { path: /^\/(cs-admin\/|admin\/cart-move-allowed-categories$)/, marketing: false },
-  { path: /^\/(credit-notes|credit-backs)(\/|$)/, marketing: false },
-  { path: /^\/(supplier|promotion-mechanics)(\/|$)/, marketing: true },
-  { path: /^\/product$/, marketing: true },
-  { path: /^\/admin\/(push-campaigns|notifications|product-notify-funnel|audit-logs)(\/|$)/, marketing: true },
-  { path: /^\/(company|admin-access|admin\/kyc|erp\/testing|payment\/jagota\/testing)(\/|$)/, marketing: false },
+const M: StaffRole[] = ['marketing'];
+const MER: StaffRole[] = ['marketing', 'merchandising'];
+const CS: StaffRole[] = ['cs'];
+const ADMIN: StaffRole[] = [];
+/**
+ * josh admin routes commerce-admin calls through josh's admin-call relay — same list as josh RELAY_ROUTES, plus who
+ * may call here besides admin. Stage 6: MER (`merchandising`) gets the product / category / brand / supplier areas,
+ * CS the order / shipment / CS-desk / credit areas; customer PII, KYC, staff access and payment testing stay admin.
+ */
+const AREAS: { path: RegExp; roles: StaffRole[] }[] = [
+  { path: /^\/(product\/|admin\/promotion-product-sets)/, roles: MER },
+  { path: /^\/promotion-pages/, roles: M },
+  { path: /^\/coupon(\/|$)/, roles: M },
+  { path: /^\/(campaigns|user-segments)(\/|$)/, roles: M },
+  { path: /^\/(marketing-workflows|marketing-notify-templates|marketing-trigger-presets|marketing-settings)(\/|$)/, roles: M },
+  { path: /^\/admin\/bot\//, roles: M },
+  { path: /^\/(banner|popup-definitions)$/, roles: M },
+  { path: /^\/(product-category|brands|cuisine)(\/|$)/, roles: MER },
+  { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink)(\/|$)/, roles: M },
+  { path: /^\/upload\/image(\/|$)/, roles: MER },
+  { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, roles: ADMIN },
+  { path: /^\/(orders|shipments)(\/|$)/, roles: CS },
+  { path: /^\/payment\/kbank\/testing(\/|$)/, roles: ADMIN },
+  { path: /^\/(cs-admin\/|admin\/cart-move-allowed-categories$)/, roles: CS },
+  { path: /^\/(credit-notes|credit-backs)(\/|$)/, roles: CS },
+  { path: /^\/(supplier|promotion-mechanics)(\/|$)/, roles: MER },
+  { path: /^\/product$/, roles: MER },
+  { path: /^\/admin\/(push-campaigns|notifications|product-notify-funnel|audit-logs)(\/|$)/, roles: M },
+  { path: /^\/(company|admin-access|admin\/kyc|erp\/testing|payment\/jagota\/testing)(\/|$)/, roles: ADMIN },
 ];
 const METHODS = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];
 /** josh takes JSON bodies up to 5 MB; base64 adds a third — keep all files of one call under 3.5 MB. */
@@ -42,10 +52,10 @@ export interface AdminCallBody {
  * One door for commerce-admin pages that drive josh admin features (coupons, product sets, promotion
  * pages, campaigns, segments, bot, workflow editor, CS orders / samples, account merge). josh checks
  * its own allowlist, runs its own route as the same staff member and answers `{ status, data }`;
- * a josh 4xx comes back as the same error here. Admin; marketing for the marketing areas.
+ * a josh 4xx comes back as the same error here. Admin; marketing / MER / CS for their areas (AREAS).
  */
 @Controller('josh/admin-call')
-@StaffRoles('marketing')
+@StaffRoles('marketing', 'merchandising', 'cs')
 export class JoshAdminCallController {
   constructor(private readonly josh: JoshActions) {}
 
@@ -73,7 +83,7 @@ export async function joshAdminCall(josh: JoshActions, actor: { userId: string; 
   if (!METHODS.includes(method) || !path.startsWith('/') || path.includes('..') || path.length > 300) throw new BadRequestException('method and a josh path (/coupon, …) required');
   const area = AREAS.find((a) => a.path.test(path));
   if (!area) throw new ForbiddenException(`${path} is not a josh admin route commerce drives`);
-  if (!area.marketing && actor.role !== 'admin') throw new ForbiddenException('admin only');
+  if (actor.role !== 'admin' && !area.roles.includes(actor.role as StaffRole)) throw new ForbiddenException('admin only');
   const files = (b.files ?? []).slice(0, 10);
   for (const f of files) if (!f?.field || !f.filename || typeof f.base64 !== 'string') throw new BadRequestException('files: { field, filename, base64 }');
   if (files.reduce((n, f) => n + f.base64.length * 0.75, 0) > MAX_RELAY_FILES_BYTES) throw new BadRequestException('files: 3.5 MB per save at most');

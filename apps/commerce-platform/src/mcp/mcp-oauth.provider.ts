@@ -11,7 +11,7 @@ import type { OAuthClientInformationFull, OAuthTokenRevocationRequest, OAuthToke
 import { InvalidGrantError, InvalidScopeError, InvalidTokenError } from '@modelcontextprotocol/sdk/server/auth/errors.js';
 import { PortalAuthService } from '../modules/core/auth/application/portal-auth.service';
 import { User } from '../modules/core/user/infrastructure/user.entity';
-import { STAFF_ROLES, StaffRole } from '../shared-kernel/presentation/auth.decorators';
+import { StaffRole } from '../shared-kernel/presentation/auth.decorators';
 import { McpGrantKind, McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { loginPage } from './mcp-login.page';
 
@@ -24,6 +24,8 @@ const TTL = { request: 10 * 60, code: 5 * 60, access: 60 * 60, refresh: 30 * 24 
 const secret = () => randomBytes(32).toString('base64url');
 export const hashOf = (value: string) => createHash('sha256').update(value).digest('hex');
 
+/** The tools are cut for admin (everything) and marketing (the rest); MER / CS accounts (stage 6) get no AI access yet. */
+const MCP_ROLES: readonly StaffRole[] = ['admin', 'marketing'];
 export type McpStaff = { userId: string; email: string; role: StaffRole };
 
 /**
@@ -76,7 +78,7 @@ export class McpOAuthProvider implements OAuthServerProvider {
   private async staff(userId: string | null): Promise<McpStaff | null> {
     const user = userId ? await this.users.findOneBy({ id: userId }) : null;
     // a password someone else set must be changed in commerce-admin before an AI can use the account
-    return user && user.status === 'active' && !user.mustChangePassword && STAFF_ROLES.includes(user.role as StaffRole)
+    return user && user.status === 'active' && !user.mustChangePassword && MCP_ROLES.includes(user.role as StaffRole)
       ? { userId: user.id, email: user.email, role: user.role as StaffRole } : null;
   }
 

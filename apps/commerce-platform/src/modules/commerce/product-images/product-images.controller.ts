@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ArrayMaxSize, IsArray, IsUrl } from 'class-validator';
-import { StaffRequest } from '../../../shared-kernel/presentation/auth.decorators';
+import { StaffRequest, StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { ImageFile, MAX_GALLERY, ProductImagesService } from './product-images.service';
 
 class GalleryDto {
@@ -11,8 +11,9 @@ class GalleryDto {
 // Memory storage (no dest): files arrive as buffers. Size / type are checked per file in the service.
 const files = (max: number) => FilesInterceptor('images', max, { limits: { fileSize: 6 * 1024 * 1024 } });
 
-/** Product galleries owned by commerce (stage 4e) — admin (the guard's default). */
+/** Product galleries owned by commerce (stage 4e) — admin and MER (stage 6). */
 @Controller('product-images')
+@StaffRoles('merchandising')
 export class ProductImagesController {
   constructor(private readonly images: ProductImagesService) {}
 

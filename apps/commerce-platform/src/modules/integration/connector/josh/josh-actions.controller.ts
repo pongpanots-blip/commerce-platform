@@ -130,10 +130,17 @@ export class JoshActionsController {
     return result;
   }
 
+  /** The product's SKU from the catalog copy; a product not copied yet (just created, copy lags) is pulled from josh once. */
   private async skuOf(id: string): Promise<string> {
-    const [row] = await this.modules.get(DataSource, { strict: false }).query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]);
-    if (!row?.sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
-    return row.sku;
+    const db = this.modules.get(DataSource, { strict: false });
+    const find = async () => (await db.query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]))[0]?.sku as string | undefined;
+    let sku = await find();
+    if (!sku) {
+      await this.catalog.syncId(id).catch(() => undefined);
+      sku = await find();
+    }
+    if (!sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
+    return sku;
   }
 
   /**

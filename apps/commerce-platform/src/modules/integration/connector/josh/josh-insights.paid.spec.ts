@@ -27,7 +27,8 @@ describe('SALES_SOURCE=copies (stage 5, S5-5)', () => {
     awaiting_payment: 0, cancelled: 0, refunded: 0, settled_without_payment: 0, settled_without_payment_value: 0 };
   const fake = (rows: Record<string, unknown>) => ({
     configured: false,
-    query: jest.fn(async (sql: string) => (/AS orders,/.test(sql) && /count\(\*\) FILTER/.test(sql) ? [rows] : /customer_metrics/.test(sql) ? [{ n: 1 }] : /GROUP BY 1, 2/.test(sql) ? [{ sku: 'A' }, { sku: 'B' }] : [])),
+    query: jest.fn(async (sql: string) => (/AS orders,/.test(sql) && /count\(\*\) FILTER/.test(sql) ? [rows] : /customer_metrics/.test(sql) ? [{ n: 1 }]
+      : /order_refunds/.test(sql) ? [{ n: 1, amount: 50 }] : /GROUP BY 1, 2/.test(sql) ? [{ sku: 'A' }, { sku: 'B' }] : [])),
   });
 
   it('defaults to the replica; copies answer from commerce tables only, without the replica', async () => {
@@ -41,10 +42,12 @@ describe('SALES_SOURCE=copies (stage 5, S5-5)', () => {
     expect(replica.query).not.toHaveBeenCalled();
     expect(out.source).toBe('copies');
     expect(out.totals.orders).toBe(2);
-    expect(out.totals.refunds).toMatchObject({ n: null, amount: null });
+    expect(out.totals.refunds).toEqual({ n: 1, amount: 50 }); // S5-11 refunds copy
     for (const [sql] of db.query.mock.calls) {
-      expect(sql).not.toMatch(/payment_transaction|\bFROM orders\b|order_items|product_inventory\b|order_refunds/);
+      expect(sql).not.toMatch(/payment_transaction|\bFROM orders\b|order_items|product_inventory\b|\border_refunds/);
     }
+    const refundSql = db.query.mock.calls.map(([sql]) => sql).find((sql) => /josh_order_refunds/.test(sql));
+    expect(refundSql).toContain("status::text = 'refunded' AND created_at >= $1 AND created_at < $2");
     const sold = db.query.mock.calls.map(([sql]) => sql).filter((sql) => /josh_orders o/.test(sql));
     expect(sold).toHaveLength(4); // totals ×2, daily, top products
     for (const sql of sold) expect(sql).toContain('o.status = ANY($3) AND o.paid');

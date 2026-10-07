@@ -116,8 +116,6 @@ const TOP_PRODUCTS_COPIES_SQL = `
     LEFT JOIN josh_catalog_products cp ON cp.id = l.product_inventory_id
    WHERE o.create_date >= $1 AND o.create_date < $2 AND ${SOLD_COPIES} AND l.sku IS NOT NULL
    GROUP BY 1, 2 ORDER BY revenue_inc_vat DESC LIMIT $4`;
-/** order_refunds has no copy yet (S5-11): the copies answer says so instead of a 0 that looks real. */
-const REFUNDS_NOT_COPIED = { n: null, amount: null, note: 'refunds are not copied to commerce yet' };
 
 type SalesSource = 'replica' | 'copies';
 /** SALES_SOURCE: replica (default) · copies (josh_orders / josh_order_lines / commerce customer_metrics; no replica). */
@@ -126,6 +124,8 @@ export const salesSource = (): SalesSource => (process.env.SALES_SOURCE?.trim().
 const NEW_CUSTOMERS_SQL = `SELECT count(*)::int AS n FROM customer_metrics WHERE first_order_at >= $1 AND first_order_at < $2`;
 const REFUNDS_SQL = `SELECT count(*)::int AS n, COALESCE(sum(amount), 0)::float AS amount FROM order_refunds
                       WHERE status::text = 'refunded' AND created_at >= $1 AND created_at < $2`;
+/** Same refunds from order.snapshot's `refunds[]` (S5-11) — complete once every order was re-sent (backfill `order`). */
+const REFUNDS_COPIES_SQL = REFUNDS_SQL.replace('FROM order_refunds', 'FROM josh_order_refunds');
 
 const TRAFFIC_TOTALS_SQL = `
   SELECT count(DISTINCT session_id)::int AS sessions, count(DISTINCT individual_id)::int AS visitors,
@@ -204,7 +204,7 @@ export class JoshInsights {
       q(copies ? TOP_PRODUCTS_COPIES_SQL : TOP_PRODUCTS_SQL, r.current, JOSH_SETTLED_STATUSES, top),
       // customer_metrics is commerce's own (stage 2a; josh's is pushed from it), so the copies read it here
       q(NEW_CUSTOMERS_SQL, r.current),
-      copies ? Promise.resolve([REFUNDS_NOT_COPIED]) : q(REFUNDS_SQL, r.current),
+      q(copies ? REFUNDS_COPIES_SQL : REFUNDS_SQL, r.current),
     ]);
     const revenue = Number(now.revenue_inc_vat);
     const orders = Number(now.orders);
@@ -226,6 +226,8 @@ export class JoshInsights {
     const a = replica.totals as Record<string, unknown>, b = copies.totals as Record<string, unknown>;
     const differs = Object.keys(a).filter((k) => k !== 'refunds' && typeof a[k] === 'number' && Number(a[k]) !== Number(b[k]))
       .map((k) => ({ field: k, replica: a[k], copies: b[k] }));
+    const ra = (a.refunds ?? {}) as Record<string, unknown>, rb = (b.refunds ?? {}) as Record<string, unknown>;
+    for (const k of ['n', 'amount']) if (Number(ra[k] ?? 0) !== Number(rb[k] ?? 0)) differs.push({ field: `refunds.${k}`, replica: ra[k], copies: rb[k] });
     const skus = (x: { topProducts: Array<{ sku: string }> }) => x.topProducts.map((p) => p.sku);
     return { period: replica.period, differs, topProducts: rankingDiff(skus(replica), skus(copies)), replica, copies };
   }

@@ -275,3 +275,33 @@ const REFERENCE_TABLES = { company: 'josh_companies', cuisine: 'josh_cuisines', 
 - [ ] josh: migration + builder on `josh_2c_test` (Task 1/2 checks).
 - [ ] commerce: migrations on `commerce_2c_test`; apply real envelopes built by josh (company / cuisine / place / staff, customer with extras) through `JoshEventsService`; then a smoke spec (temporary) that boots TypeORM with the entity glob on `commerce_2c_test` and runs one `find({ take: 1 })` per copy entity plus `listSalesUsers`, the guard query, the pool count query, and the sync aggregation — proves the column mapping.
 - [ ] Full suites `--maxWorkers=2`; As built; drop scratch DBs; commit.
+
+## As built (2026-10-07)
+
+- **Sign-in check:** `AdminWriteGuard` reads `token_version, is_active, (user_type = 'internal' AND role = <token role>)` from
+  `josh_staff`. josh checks the token's role against `app_roles`; the copy only knows the user's current role, so a token
+  whose role is no longer the user's is refused (re-login) — stricter, never looser. A customer (in `josh_users`, not in
+  `josh_staff`) still gets josh's 403. New `admin-write.guard.spec.ts` covers ok / bumped token_version / suspended /
+  non-internal / customer / unknown.
+- **2b fix carried here:** in 2b the rep check had to go (no staff in the customer copy); it is back against
+  `josh_users.internal`. `staff.deleted` unassigns the rep from companies.
+- **Receiver:** reference events go through one generic path (`jsonb_populate_record` over the columns both sides have);
+  `GREATEST(row version, tombstone version)` decides stale. No opt-in DB spec — verified with real envelopes instead
+  (below).
+- **Backfill:** commerce's `/api/reports/order-copy/backfill` also had a group allowlist; it now accepts the four new groups.
+- **Pool fix (side effect):** the "place not yet a lead" check now runs on commerce's own `winback_account`; on the replica
+  it checked josh's copy, which only follows commerce through the mirror.
+- **Still on the replica:** `WinbackMirror` (by design), and outside winback `connector/josh/restaurant-places.ts`
+  (restaurant report / MCP), `connector/josh/winback/*` (josh-side winback reports) and other connectors.
+
+**Verification (scratch copies, no servers):**
+- josh: migration on a copy of the dev DB; triggers enqueue `company` (only when name / register number change), `cuisine`,
+  `restaurant_place`, `staff` (token_version bump) and nothing extra for a customer update; the builder produced 161 real
+  envelopes (1 company, 80 cuisines, 50 places, 17 staff, 13 customers with the new fields).
+- commerce: migrations up / down / up; all 161 envelopes applied; replay → stale; delete then a later-built older snapshot
+  → stale (tombstone); `josh_users` = 13 customers + 16 internal staff. Smoke run of the real services on the copies
+  (seeded with 15 winback accounts, 1639 orders, 90 ERP lines): every copy entity loads, `listSalesUsers`, `findPool`
+  (both tabs), `getAccount`, `getCounts`, `getDashboard`, `getTeamStats`, cuisine hierarchy (67) and `syncFromJosh`
+  (15 accounts updated from ERP history) all ran. Paged ERP import: 12,345 synthetic rows twice → same count and sum as
+  the source.
+- Full suites (`--maxWorkers=2`): commerce 1280 passed (14 opt-in skipped); josh 6709 passed, only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.

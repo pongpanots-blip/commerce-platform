@@ -613,3 +613,7 @@ One server at a time; stop each before starting the next.
   - Not exercised end to end: outbox → BullMQ → josh HTTP delivery (unchanged since 2a), notify / welcome email delivery
     (unit-tested), the mirror (tested when it was written, per `docs/headless-split-plan.md`).
 - Full suites (`--maxWorkers=2`): commerce 1272 passed (14 opt-in skipped); josh 6706 passed, only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.
+- **Fix after review (stage 2c exploration):** josh's `users` trigger enqueues customers only, so `josh_customers` holds no
+  staff. The rep check against it would have refused every assignment (the DB spec seeded the rep itself and hid this).
+  The rep is no longer checked in commerce (josh clears an unknown id when applying), and the rep clean-up on
+  `customer.deleted` is gone (staff never arrive as `customer.deleted`). Stage 2c brings a staff copy and checks the rep there.

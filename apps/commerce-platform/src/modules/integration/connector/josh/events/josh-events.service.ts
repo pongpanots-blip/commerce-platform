@@ -34,10 +34,8 @@ export class JoshEventsService {
           await m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: {}, sourceVersion: e.version, deletedAt: new Date() });
           await m.query('DELETE FROM customer_metrics WHERE user_id = $1', [e.aggregateId]);
           await m.query('DELETE FROM segment_members WHERE user_id = $1', [e.aggregateId]);
-          // A deleted rep leaves their companies unassigned here; a deleted customer's winback account loses its user
-          // link. josh's company column has no FK and josh never cleared it on delete either, so no event is sent for it;
-          // the winback change reaches josh through the mirror once commerce owns winback.
-          await m.query('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1', [e.aggregateId]);
+          // The deleted customer's winback account loses its user link; it reaches josh through the mirror once
+          // commerce owns winback.
           await m.query('UPDATE winback_account SET josh_user_id = NULL WHERE josh_user_id = $1', [e.aggregateId]);
         });
       case 'catalog.snapshot':

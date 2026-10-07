@@ -20,7 +20,7 @@ const CO = '00000000-0000-4000-8000-0000000002b1', REP = '00000000-0000-4000-800
   const clean = async () => {
     await db.query(`DELETE FROM outbox_messages WHERE type = 'company.sales_rep' AND aggregate_id = $1`, [CO]);
     await db.query(`DELETE FROM company_sales_reps WHERE id = $1`, [CO]);
-    await db.query(`DELETE FROM josh_customers WHERE id = ANY($1::uuid[])`, [[REP, USER]]);
+    await db.query(`DELETE FROM josh_customers WHERE id = $1`, [USER]);
   };
 
   beforeAll(async () => {
@@ -32,8 +32,7 @@ const CO = '00000000-0000-4000-8000-0000000002b1', REP = '00000000-0000-4000-800
     db = mod.get(DataSource);
     svc = mod.get(SalesRepsService);
     await clean();
-    await db.query(`INSERT INTO josh_customers (id, data) VALUES ($1, $2), ($3, $4)`,
-      [REP, { id: REP, role: 'sales' }, USER, { id: USER, role: 'customer', company_id: CO }]);
+    await db.query(`INSERT INTO josh_customers (id, data) VALUES ($1, $2)`, [USER, { id: USER, role: 'customer', company_id: CO }]);
   });
   afterAll(async () => { await clean(); await db?.destroy(); delete process.env.COMMERCE_OWNS_SALES_REPS; });
 

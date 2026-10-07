@@ -60,7 +60,7 @@ winback ยังอ่านข้อมูล josh และตรวจ login
 
 ## PDPA
 
-ลูกค้าถูกลบใน josh → `customer.deleted` → commerce ล้าง sales ของบริษัทที่คนนั้นเป็นเจ้าของ และตัด `josh_user_id` ของ
+ลูกค้าถูกลบใน josh → `customer.deleted` → commerce ตัด `josh_user_id` ของ
 winback account ที่ผูกกับคนนั้น · หลังสลับ การตัดลิงก์ winback ไปถึง josh ทาง mirror (`winback.row`)
 
 ## ข้อจำกัด

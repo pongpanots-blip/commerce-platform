@@ -157,3 +157,5 @@ josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `ord
 
 Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"}` → josh
 `POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)
+
+Stage 4 G9 adds `product.promotion-rules.snapshot` (`{sku,rules,version}`; decimal bigint version, full replacement, empty clears). Signed Josh inbound groups `promotion-rules.snapshot` and `promotion-lock.snapshot` use the normal numeric envelope version. See [G9 cutover](runbooks/stage4g-promotions-cutover.md). Mechanic/campaign/audience configuration stays in Josh.

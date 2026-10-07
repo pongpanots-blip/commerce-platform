@@ -1,6 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { winbackOwnedByCommerce } from '../../winback/shared/winback.config';
+import { ownsSalesReps, SalesRepsService } from '../../customers/sales-reps.service';
 import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
@@ -163,6 +164,7 @@ export class JoshActionsController {
 
   @Post('customers/companies/:id/sales-rep') @HttpCode(HttpStatus.OK)
   assignSales(@Param('id', ParseUUIDPipe) id: string, @Body() b: { salesUserId?: string | null }, @Req() req: StaffRequest) {
+    if (ownsSalesReps()) return this.modules.get(SalesRepsService, { strict: false }).assign(id, b?.salesUserId ?? null);
     return this.josh.run('customers', 'assign_sales', { companyId: id, salesUserId: b?.salesUserId ?? null }, this.as(req), 'admin');
   }
 

@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ownsSalesReps } from '../customers/sales-reps.service';
 import { ownsSegments } from './segments.service';
 
 /**
@@ -7,5 +8,5 @@ import { ownsSegments } from './segments.service';
  */
 @Controller('ownership')
 export class OwnershipController {
-  @Get() get() { return { segments: ownsSegments() }; }
+  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps() }; }
 }

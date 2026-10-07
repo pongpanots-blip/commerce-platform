@@ -1,12 +1,14 @@
 import { OwnershipController } from './ownership.controller';
 
 describe('GET /api/ownership', () => {
-  const OLD = process.env.COMMERCE_OWNS_SEGMENTS;
-  afterEach(() => { process.env.COMMERCE_OWNS_SEGMENTS = OLD; });
+  const OLD = { segments: process.env.COMMERCE_OWNS_SEGMENTS, salesReps: process.env.COMMERCE_OWNS_SALES_REPS };
+  afterEach(() => { process.env.COMMERCE_OWNS_SEGMENTS = OLD.segments; process.env.COMMERCE_OWNS_SALES_REPS = OLD.salesReps; });
   it('tells commerce-admin which josh features commerce owns now (only the literal "true")', () => {
     process.env.COMMERCE_OWNS_SEGMENTS = 'TRUE';
-    expect(new OwnershipController().get()).toEqual({ segments: false });
+    process.env.COMMERCE_OWNS_SALES_REPS = 'false';
+    expect(new OwnershipController().get()).toEqual({ segments: false, salesReps: false });
     process.env.COMMERCE_OWNS_SEGMENTS = 'true';
-    expect(new OwnershipController().get()).toEqual({ segments: true });
+    process.env.COMMERCE_OWNS_SALES_REPS = 'true';
+    expect(new OwnershipController().get()).toEqual({ segments: true, salesReps: true });
   });
 });

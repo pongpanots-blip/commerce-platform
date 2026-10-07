@@ -14,10 +14,10 @@ josh-only CMS pages) get their **role / active / sign-out** written by commerce,
 - Roles: `StaffRole` gains `merchandising` and `cs` (josh's own codes). The guard stays default-deny (admin + roles
   listed with `@StaffRoles`), so a new role reaches nothing until a route lists it.
 - josh staff: commerce already holds a copy (`josh_staff`, from `staff.snapshot`, stage 2c). New commerce table
-  `josh_staff_access (id PK, role, is_active, sessions_revoked_at, version, updated_by)` — the commerce-written state
+  `josh_staff_access (id PK, email, role, is_active, min_token_version, updated_at, updated_by)` — the commerce-written state
   of a josh internal account. Each change publishes `staff.access` (snapshot, whole state) in the same transaction.
-  josh (follow-up, not in this repo) applies it to `users.role` / `users.is_active` and bumps `token_version` when
-  `sessionsRevokedAt` is newer; its own trigger then echoes `staff.snapshot` back into `josh_staff` (no loop: commerce
+  josh (follow-up, not in this repo) applies it to `users.role` / `users.is_active` and raises `token_version` to at least
+  `minTokenVersion` (sign out everywhere); its own trigger then echoes `staff.snapshot` back into `josh_staff` (no loop: commerce
   never republishes on `staff.snapshot`).
 - Switch: commerce `COMMERCE_OWNS_STAFF` (default off → writes answer 409); josh `COMMERCE_OWNS_STAFF` (follow-up).
   `GET /api/ownership` → `staff`.
@@ -68,58 +68,57 @@ Prior staff work: stage 2c (`josh_staff` copy, winback sign-in check), stage 2b 
 
 ### Task 1: MER and CS roles in commerce
 
-- [ ] `StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs'`; `STAFF_ROLES` follows. Guard unchanged
+- [x] `StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs'`; `STAFF_ROLES` follows. Guard unchanged
   (default admin-only; `@StaffRoles` adds).
-- [ ] `@StaffRoles('merchandising')` on the stage-4 product controllers commerce owns: `product-prices`,
+- [x] `@StaffRoles('merchandising')` on the stage-4 product controllers commerce owns: `product-prices`,
   `product-contents`, `product-category` + `brands`, `product-masters`, `product-images`.
-- [ ] admin-call `AREAS`: `marketing: boolean` → `roles: StaffRole[]`. Keep every existing marketing/admin answer
+- [x] admin-call `AREAS`: `marketing: boolean` → `roles: StaffRole[]`. Keep every existing marketing/admin answer
   identical; add `merchandising` to the product / category / brand / cuisine / supplier / upload areas and `cs` to
   orders / shipments / cs-admin / credit notes / backs. PII (`/users`, `pii/reveal`, `company/`, `branch/`), KYC,
   admin-access, payment testing stay admin only. Controller-level `@StaffRoles('marketing', 'merchandising', 'cs')`.
-- [ ] Spec: existing admin-call spec still passes; new cases — `cs` can call `/orders`, not `/product/1`;
+- [x] Spec: existing admin-call spec still passes; new cases — `cs` can call `/orders`, not `/product/1`;
   `merchandising` can call `/product/1`, not `/orders`; `marketing` unchanged on both.
-- [ ] Commit `feat(auth): merchandising and cs staff roles; MER on commerce's product pages, CS on josh orders (stage 6)`
+- [x] Commit `feat(auth): merchandising and cs staff roles; MER on commerce's product pages, CS on josh orders (stage 6)`
 
 ### Task 2: josh staff access written by commerce
 
-- [ ] Migration `1795400000000-JoshStaffAccess`: `josh_staff_access (id uuid PK, role varchar(50) NOT NULL,
-  is_active boolean NOT NULL, sessions_revoked_at timestamptz NULL, updated_at timestamptz NOT NULL DEFAULT now(),
-  updated_by varchar(255) NULL)`.
-- [ ] `StaffAccessSnapshot` event: type `staff.access`, aggregate = josh user id, `{ snapshot: true }`, data
-  `{ id, email, role, isActive, sessionsRevokedAt, version }` — `version` = `updated_at` ISO (josh `applyIfNewer`).
-- [ ] `JoshStaffAccessService`:
+- [x] Migration `1795400000000-JoshStaffAccess`: `josh_staff_access (id uuid PK, role varchar(50) NOT NULL,
+  email varchar(255), is_active boolean NOT NULL, min_token_version int NOT NULL DEFAULT 0,
+  updated_at timestamptz NOT NULL DEFAULT now(), updated_by varchar(255))`.
+- [x] `StaffAccessSnapshot` event: type `staff.access`, aggregate = josh user id, `{ snapshot: true }`, data
+  `{ id, email, role, isActive, minTokenVersion, version }` — `version` = `updated_at` ISO (josh `applyIfNewer`).
+- [x] `JoshStaffAccessService`:
   - `list()` — `josh_staff` (internal only) left join `josh_staff_access`: `{ id, email, name, role, isActive,
     lastAppLoginAt, pending }` where `pending` = commerce row newer than what josh echoed back.
   - `set(id, { role?, isActive?, revokeSessions? }, actor)` — 409 unless `COMMERCE_OWNS_STAFF=true`; 404 unless the
     id is an internal josh staff member; 400 on the service account, on a role not in josh's internal list
     (`JOSH_INTERNAL_ROLES` = josh `ASSIGNABLE_ADMIN_ROLES`), or on `platform_admin` (open question Q3); upsert row
     (start from the `josh_staff` copy), audit `josh_staff.update`, publish in the same transaction.
-- [ ] `JoshStaffAccessController` `GET /api/admin/josh-staff`, `PATCH /api/admin/josh-staff/:id` (admin only).
-- [ ] `GET /api/ownership` → `staff: ownsStaff()`.
-- [ ] `staff.deleted` from josh also deletes the `josh_staff_access` row.
-- [ ] Specs: unit (flag off → 409, service account refused, unknown role refused) + opt-in `.db.spec` (upsert,
+- [x] `JoshStaffAccessController` `GET /api/admin/josh-staff`, `PATCH /api/admin/josh-staff/:id` (admin only).
+- [x] `GET /api/ownership` → `staff: ownsStaff()`.
+- [x] `staff.deleted` from josh also deletes the `josh_staff_access` row.
+- [x] Specs: unit (flag off → 409, service account refused, unknown role refused) + opt-in `.db.spec` (upsert,
   event in outbox, pending flag). Commit.
 
 ### Task 3: commerce-admin
 
-- [ ] `StaffAccounts` role select lists the four roles (label MER / CS).
-- [ ] New page `ตั้งค่า › บัญชี josh (staff)` `/settings/josh-staff`: list from `GET /admin/josh-staff`; when
+- [x] `StaffAccounts` role select lists the four roles (label MER / CS).
+- [x] New page `ตั้งค่า › บัญชี josh (staff)` `/settings/josh-staff`: list from `GET /admin/josh-staff`; when
   `ownership.staff` → role select, active toggle, "ออกจากระบบทุกเครื่อง"; otherwise read-only with a note.
-- [ ] `JoshBackofficeActions` `ADMIN_ROLES` → shared constant. Commit.
+- [x] `JoshBackofficeActions` `ADMIN_ROLES` → shared constant. Commit.
 
 ### Task 4: docs, verification
 
-- [ ] `event-contract.md` (commerce → josh `staff.access`), `.env.example` (`COMMERCE_OWNS_STAFF`), runbook
+- [x] `event-contract.md` (commerce → josh `staff.access`), `.env.example` (`COMMERCE_OWNS_STAFF`), runbook
   `docs/runbooks/stage6-staff-cutover.md`, `STATUS.md`.
-- [ ] Typecheck both apps; touched specs `--runInBand`. Commit.
+- [x] Typecheck both apps; touched specs `--runInBand`. Commit.
 
 ## josh follow-ups (josh repo — not done here)
 
 1. `isCommerceOwningStaff()` (`COMMERCE_OWNS_STAFF`, default off) in `app/erp/commerce-ownership.flag.ts`.
-2. Receiver handler `staff.access` → `CommerceStaffService.apply({ id, role, isActive, sessionsRevokedAt, version })`:
+2. Receiver handler `staff.access` → `CommerceStaffService.apply({ id, role, isActive, minTokenVersion, version })`:
    409 unless owned; transaction: `applyIfNewer('staff.access', id, version)`; 422 if the user is unknown or a
-   customer role; refuse the service account; `UPDATE users SET role, is_active` and `token_version = token_version + 1`
-   when `sessionsRevokedAt` is newer than the last applied one; clear the internal-role cache.
+   customer role; refuse the service account; `UPDATE users SET role, is_active, token_version = GREATEST(token_version, minTokenVersion)`; clear the internal-role cache.
 3. With the flag on: `admin-access` approve/reject → `CommerceOwned` (relay passes, josh's own UI 403), so the only
    writer of role-at-approval is commerce. `register` stays open (Q2).
 4. Docs: `docs/commerce-erp-receiver.md` handler row.
@@ -133,3 +132,23 @@ Prior staff work: stage 2c (`josh_staff` copy, winback sign-in check), stage 2b 
   shown separately; offboarding means disabling both.
 - **Q5** Sales app (winback) sign-in still uses josh JWTs — move it to commerce accounts (needs `sale`/`sales`/
   `manager` roles in commerce) as a later stage?
+
+## As built (2026-10-07)
+
+- **Scope as planned**, plus two things found on the way:
+  - `GET /api/ownership` was admin-only (no `@StaffRoles`), so a non-admin's hosted josh page fell back to josh's write
+    route — already wrong for marketing, fatal for MER. Now open to every staff role (booleans only).
+  - MER needs the josh catalog reads (`/reports/products*`, used by the product page) — added; order / customer reports
+    stay admin.
+  - The sales app sign-in that commerce runs (`winback/shared/admin-write.guard.ts`) also reads `josh_staff_access`
+    when `COMMERCE_OWNS_STAFF` is on, so a disable / sign-out / role change from commerce bites at once (stricter only).
+  - MCP sign-in stays `admin` / `marketing` (its tool set gives every non-admin the marketing tools).
+- Sign-out travels as `minTokenVersion` (josh raises `token_version` to at least that) instead of a timestamp — idempotent,
+  no extra state in josh.
+- Role → area mapping for MER / CS is from page names (Q1).
+
+**Verification:** touched specs `--runInBand` — auth, mcp, connector/josh, customers, segments, winback, product-*,
+architecture: 97 suites / 898 tests passed (23 opt-in skipped). Opt-in `josh-staff-access.service.db.spec.ts` on a migrated
+scratch DB (`commerce_s6_test`, migration `1795400000000` applied): 2 passed; the guard's owned SQL checked on the same DB.
+Typecheck commerce-platform + commerce-admin clean. Full suite not run (other agents share the machine). josh side not
+built (follow-ups above).

@@ -3,6 +3,7 @@ import { ownsSalesReps } from '../customers/sales-reps.service';
 import { ownsSegments } from './segments.service';
 import { ownsPrices } from '../../commerce/product-prices/product-prices.service';
 import { ownsProductContent } from '../../commerce/product-contents/product-contents.service';
+import { ownsCategories } from '../../commerce/product-categories/product-categories.service';
 
 /**
  * Which josh features commerce owns right now (any signed-in staff). commerce-admin's hosted josh pages read it
@@ -10,5 +11,5 @@ import { ownsProductContent } from '../../commerce/product-contents/product-cont
  */
 @Controller('ownership')
 export class OwnershipController {
-  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent() }; }
+  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent(), categories: ownsCategories() }; }
 }

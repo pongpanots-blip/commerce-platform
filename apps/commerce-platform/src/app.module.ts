@@ -59,6 +59,7 @@ import { CustomersModule } from './modules/integration/customers/customers.modul
 import { SegmentsModule } from './modules/integration/segments/segments.module';
 import { ProductPricesModule } from './modules/commerce/product-prices/product-prices.module';
 import { ProductContentsModule } from './modules/commerce/product-contents/product-contents.module';
+import { ProductCategoriesModule } from './modules/commerce/product-categories/product-categories.module';
 import { McpModule } from './mcp/mcp.module';
 
 @Module({
@@ -122,6 +123,7 @@ import { McpModule } from './mcp/mcp.module';
     CustomersModule,
     ProductPricesModule,
     ProductContentsModule,
+    ProductCategoriesModule,
     SegmentsModule,
     McpModule,
   ],

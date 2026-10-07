@@ -6,7 +6,7 @@ import { JoshEnvelope, JoshEventsService } from './josh-events.service';
 import { verifyJoshSignature } from './josh-events.signature';
 
 /** josh backfill groups (josh CommerceBackfillController). Stage 2c added the reference rows winback reads. */
-const BACKFILL_GROUPS = ['order', 'customer', 'catalog', 'company', 'cuisine', 'restaurant_place', 'staff', 'branch', 'jagota_sync'];
+const BACKFILL_GROUPS = ['order', 'customer', 'catalog', 'company', 'cuisine', 'restaurant_place', 'staff', 'branch', 'jagota_sync', 'push_campaign', 'marketing_workflow'];
 
 /** josh → commerce events (spec 2026-10-06 §2.2). HMAC over the raw body; replays are harmless (version guard). */
 @Public()

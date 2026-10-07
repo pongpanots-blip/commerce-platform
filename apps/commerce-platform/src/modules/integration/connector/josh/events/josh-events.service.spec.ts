@@ -224,6 +224,28 @@ describe('JoshEventsService', () => {
       expect(await ref({ row: '30' }).svc.apply({ type: 'jagota_sync.snapshot', aggregateId: CO, version: '21', occurredAt: 'x', data: { id: CO } })).toBe('stale');
     });
 
+    it('push_campaign.snapshot (stage 5, S5-12) goes to josh_push_campaigns like the other reference rows', async () => {
+      const { svc, calls } = ref();
+      expect(await svc.apply({ type: 'push_campaign.snapshot', aggregateId: CO, version: '40', occurredAt: 'x', data: { id: CO, name: 'Promo' } })).toBe('applied');
+      expect(calls.find(([sql]) => sql.startsWith('INSERT INTO josh_push_campaigns'))?.[0]).toContain('jsonb_populate_record(NULL::josh_push_campaigns, $1::jsonb)');
+    });
+
+    it('marketing_workflow.snapshot (stage 5, S5-12) upserts the workflow and its counts; delete leaves a tombstone', async () => {
+      const { svc, calls } = ref();
+      const data = { workflow: { id: CO, name: 'Winback', status: 'active', trigger_type: 'scheduled', updated_at: 't' },
+        enrollmentsByStatus: [{ status: 'completed', n: 3 }], conversions: [{ order_id: 'o1' }] };
+      expect(await svc.apply({ type: 'marketing_workflow.snapshot', aggregateId: CO, version: '41', occurredAt: 'x', data })).toBe('applied');
+      const insert = calls.find(([sql]) => sql.startsWith('INSERT INTO josh_marketing_workflows'));
+      expect(insert?.[1]).toEqual([CO, 'Winback', 'active', 'scheduled', 't', JSON.stringify(data.workflow), '[{"status":"completed","n":3}]',
+        '[]', '[]', '[]', '[]', '[{"order_id":"o1"}]', '41']);
+      expect(await ref({ tomb: '50' }).svc.apply({ type: 'marketing_workflow.snapshot', aggregateId: CO, version: '45', occurredAt: 'x', data })).toBe('stale');
+      await expect(ref().svc.apply({ type: 'marketing_workflow.snapshot', aggregateId: CO, version: '46', occurredAt: 'x', data: { workflow: { id: 'other' } } }))
+        .rejects.toBeInstanceOf(BadRequestException);
+      const del = ref();
+      expect(await del.svc.apply({ type: 'marketing_workflow.deleted', aggregateId: CO, version: '47', occurredAt: 'x', data: { id: CO } })).toBe('applied');
+      expect(del.calls.map(([sql]) => sql)).toContain('DELETE FROM josh_marketing_workflows WHERE id = $1');
+    });
+
     it('rejects a snapshot whose data.id is not the aggregate', async () => {
       await expect(ref().svc.apply({ ...company('5'), data: { id: 'other' } })).rejects.toBeInstanceOf(BadRequestException);
     });

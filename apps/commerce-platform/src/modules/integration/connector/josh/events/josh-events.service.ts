@@ -11,10 +11,14 @@ import { OrderStockService } from '../../../../commerce/inventory/application/or
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
 export type ApplyResult = 'applied' | 'stale';
 
-/** josh group → commerce copy table (stage 2c; columns named as in josh). Stage 5 (S5-11): branch, jagota_sync. */
+/**
+ * josh group → commerce copy table (stage 2c; columns named as in josh). Stage 5: branch, jagota_sync (S5-11),
+ * push_campaign, marketing_workflow (S5-12; its snapshot has its own shape — saveWorkflow — deletes are generic).
+ */
 const REFERENCE_TABLES = {
   company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff',
-  branch: 'josh_branches', jagota_sync: 'jagota_order_sync_history',
+  branch: 'josh_branches', jagota_sync: 'jagota_order_sync_history', push_campaign: 'josh_push_campaigns',
+  marketing_workflow: 'josh_marketing_workflows',
 } as const;
 /** order.snapshot children (stage 5, S5-11) → copy table, replaced per order like the lines. */
 const ORDER_CHILDREN = { payments: 'josh_order_payments', shipments: 'josh_order_shipments', refunds: 'josh_order_refunds' } as const;
@@ -61,6 +65,8 @@ export class JoshEventsService {
           m.query(`UPDATE josh_catalog_products SET removed_at = now(), source_version = $2 WHERE id = $1`, [e.aggregateId, e.version]));
       case 'erp.fallback.received':
         return this.saveFallback(e);
+      case 'marketing_workflow.snapshot':
+        return this.reference('josh_marketing_workflows', e, (m) => this.saveWorkflow(m, e));
       default:
         return this.applyReference(e);
     }
@@ -121,6 +127,25 @@ export class JoshEventsService {
       `INSERT INTO ${table} (${list}, source_version) SELECT ${list}, $2 FROM jsonb_populate_record(NULL::${table}, $1::jsonb)
        ON CONFLICT (id) DO UPDATE SET ${set}`,
       [JSON.stringify(e.data), e.version]);
+  }
+
+  /** Stage 5 (S5-12): the workflow row and its counts as josh built them; list columns pulled out of the row. */
+  private async saveWorkflow(m: EntityManager, e: JoshEnvelope) {
+    const d = e.data ?? {};
+    const w = d.workflow ?? {};
+    if (w.id !== e.aggregateId) throw new BadRequestException(`${e.type} data.workflow.id must equal the aggregate id`);
+    const json = (v: unknown) => JSON.stringify(Array.isArray(v) ? v : []);
+    await m.query(
+      `INSERT INTO josh_marketing_workflows (id, name, status, trigger_type, updated_at, workflow, enrollments_by_status, enrollments_by_day,
+         runs_by_day, recent_runs, recent_failures, conversions, copied_at, source_version)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8::jsonb, $9::jsonb, $10::jsonb, $11::jsonb, $12::jsonb, now(), $13)
+       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, status = EXCLUDED.status, trigger_type = EXCLUDED.trigger_type,
+         updated_at = EXCLUDED.updated_at, workflow = EXCLUDED.workflow, enrollments_by_status = EXCLUDED.enrollments_by_status,
+         enrollments_by_day = EXCLUDED.enrollments_by_day, runs_by_day = EXCLUDED.runs_by_day, recent_runs = EXCLUDED.recent_runs,
+         recent_failures = EXCLUDED.recent_failures, conversions = EXCLUDED.conversions, copied_at = now(), source_version = EXCLUDED.source_version`,
+      [e.aggregateId, w.name ?? null, w.status ?? null, w.trigger_type ?? null, w.updated_at ?? null, JSON.stringify(w),
+        json(d.enrollmentsByStatus), json(d.enrollmentsByDay), json(d.runsByDay), json(d.recentRuns), json(d.recentFailures),
+        json(d.conversions), e.version]);
   }
 
   private guarded(table: 'josh_orders' | 'josh_customers' | 'josh_catalog_products', pk: string, e: JoshEnvelope, write: (m: EntityManager) => Promise<unknown>): Promise<ApplyResult> {

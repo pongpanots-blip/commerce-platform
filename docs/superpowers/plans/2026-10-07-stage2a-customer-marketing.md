@@ -547,3 +547,31 @@ Use the same setup as stage 1:
 | (new) customer metrics owned by commerce | 4, 5 |
 
 **2b (separate plan, next):** winback CRM (leads, contacts, activities, diary, pool, scorecards, sales assignment) on commerce data. It replaces `modules/integration/winback/*`'s replica reads.
+
+## As built (2026-10-07)
+
+Differences from the tasks above, and what the end-to-end run showed.
+
+- **Writes only.** commerce-admin sends segment create / edit / delete to commerce when `GET /api/ownership` says
+  `segments: true`; lists and detail still read josh's copy (same ids, same rows).
+- **Outbox order.** Events published in one transaction got the same `created_at` and could relay in any order.
+  `EventEmitterBus` now sets `created_at = clock_timestamp()` per row, so `segment.upserted` always goes before its
+  `segment.members`.
+- **Members in any order.** Each `segment.members` part carries `frozenAt`; josh deletes rows from an older freeze
+  and inserts this part's rows idempotently, so parts and retries can arrive in any order.
+- **Counts: all vs customers.** josh's own freeze puts every matching user in a segment (staff and internal users
+  included); commerce's copy holds customers only. josh's `POST internal/commerce/segments/counts` returns
+  `{ all, customers }` and `segment-parity` compares `customers`, reporting the gap as `nonCustomersInJosh`.
+  After the switch, frozen segments contain customers only (open decision for the owner).
+- **PDPA.** `customer.deleted` also removes the user's `customer_metrics` and `segment_members` rows; `member_count`
+  stays as frozen (josh does the same through its FK cascade).
+- **COMMERCE_OWNS_CUSTOMERS narrowed.** Customer / branch / credit-application / company edits in CS-admin stay
+  allowed; only segment writes, freezing and sales assignment are blocked.
+
+**End to end** (scratch DBs copied from local dev, commerce on :3199):
+customer + order backfill 1652 sent / 0 failed; all customers carry `tier_slug`; metrics equal a fresh josh run
+(josh's stored 90-day value was stale); import 8 segments / 12 members; frozen parity bankkondeaw 1/1,
+company 11/11; a segment created in commerce (12 members) reached josh in order and josh resolved the same 12
+ids; PDPA delete cleared both sides with `member_count` unchanged.
+Full suites: commerce 1266 passed; josh all passed except the known `pii-leak.spec`
+(`confirm-payment-guard` timed out under load and passes alone, 8/8).

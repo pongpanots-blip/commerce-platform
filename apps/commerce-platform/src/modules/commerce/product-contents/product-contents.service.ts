@@ -32,7 +32,8 @@ export class ProductContentsService {
     if (Object.keys(rest).length) throw new BadRequestException(`ไม่ใช่เนื้อหาสินค้า: ${Object.keys(rest).join(', ')}`);
     if (!Object.keys(content).length) throw new BadRequestException('ไม่มีเนื้อหาให้แก้');
     return this.db.transaction(async (m) => {
-      const [known] = await m.query(`SELECT 1 FROM product_contents WHERE product_inventory_sku = $1
+      // A product josh just created may not be in the catalog copy yet.
+      const [known] = source === 'create' ? [true] : await m.query(`SELECT 1 FROM product_contents WHERE product_inventory_sku = $1
         UNION ALL SELECT 1 FROM josh_catalog_products WHERE sku = $1 LIMIT 1`, [sku]);
       if (!known) throw new NotFoundException(`ไม่พบสินค้า SKU ${sku}`);
       const [row]: Array<{ fields: Record<string, unknown> }> = await m.query(

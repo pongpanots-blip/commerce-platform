@@ -130,7 +130,8 @@ qty ที่มี `CHANGED_AT` ผ่านตัวกันข้อมู�
 josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `order_items` / `payment_transactions` /
 `payment_transaction_orders` / `users` (ลูกค้า → `customer`, คนอื่น → `staff`) / `company` / `cuisine` / `restaurant_place` / แค็ตตาล็อก: `product_inventory` เฉพาะคอลัมน์ที่ไม่ใช่ stock,
 `product_translation`, `product_media`, ชื่อและ path ใน `product_category`; ขั้น 5 เพิ่ม `shipments` / `order_refunds` → `order`,
-`branch`, `jagota_order_sync`) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
+`branch`, `jagota_order_sync`; S5-12: `push_campaigns`, `marketing_workflows` + enrollments (เฉพาะช่องที่นับ) / scheduled runs /
+action log ที่ failed → `marketing_workflow`) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
 (ค่าเริ่มต้นปิด: trigger ยังบันทึก แต่ไม่ส่ง)
 
 - `POST {COMMERCE_PLATFORM_BASE_URL}/internal/josh-events` · header `x-event-type`, `x-delivery-id`
@@ -151,17 +152,22 @@ josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `ord
 | `company.snapshot` | `{ id, name, register_number }` (ขั้น 2c) + `business_type, erp_customer_code, document_language, created_at` (ขั้น 5) → `josh_companies` · ไม่มีวงเงิน / เครดิต (รอเจ้าของตอบ plan §4 q1) |
 | `branch.snapshot` | `{ id, name, company_id, shop_id, type, erp_branch_code, erp_branch_seq, erp_branch_no, erp_sync_status, is_default_delivery, subdistrict_code, created_at }` (ขั้น 5) → `josh_branches` · ไม่มีที่อยู่ / ผู้รับ / เบอร์ / พิกัด / เลขภาษี |
 | `jagota_sync.snapshot` | หนึ่งแถวของ `jagota_order_sync` (การส่ง order ไป ERP หนึ่งครั้ง) + `order_number` (ขั้น 5) — คอลัมน์เดียวกับ `jagota_order_sync_history` → upsert ตาราง import เดิม, ตั้ง `imported_at = now()` (ความสดของสำเนา) · `request_json` เป็น payload ระดับ order แบบเดียวกับที่ import เดิมเก็บ |
+| `push_campaign.snapshot` | ทั้งแถวของ `push_campaigns` (ขั้น 5, S5-12): `{ id, name, notification_type, title, body, title_en, body_en, image_url, deep_link, deep_link_web, audience, ab_enabled, ab_variant_b, status, scheduled_at, sent_at, stats, created_by, last_error, created_at, updated_at }` → `josh_push_campaigns` · `stats` เปลี่ยนระหว่างส่ง → ส่งใหม่ (drainer รวมเป็นหนึ่ง snapshot ต่อแคมเปญต่อรอบ) · `audience` เป็นตามที่ josh เก็บ (อาจมี `userIds` / `companyIds` ที่เลือกเอง — id เท่านั้น ไม่มีชื่อ / เบอร์) · ผลส่งรายคนยังอยู่ใน Mongo ของ josh (`JOSH_MONGO_URL`) |
+| `marketing_workflow.snapshot` | หนึ่ง workflow กับตัวนับ (ขั้น 5, S5-12): `{ workflow, enrollmentsByStatus, enrollmentsByDay, runsByDay, recentRuns, recentFailures, conversions }` · `workflow` = ทั้งแถว `marketing_workflows` ยกเว้น `previous_version` · `enrollmentsByStatus[]` = `{ status, n }` (ทั้งหมด) · `enrollmentsByDay[]` = `{ day, enrolled, running, failed, converted, holdout }` ตามวันที่ `started_at` เวลาไทย 366 วันล่าสุด · `runsByDay[]` = `{ day, runs, failed_runs, last_run_at }` ตาม `fired_at` · `recentRuns[]` (20) = `{ fired_at, source, status, skip_reason, audience_count, enrolled_count, error_message }` · `recentFailures[]` (20) = action log ที่ failed `{ created_at, step_id, action_kind, status, detail }` · `conversions[]` = `{ order_id, started_at, converted_at }` ของ enrollment ที่ไม่ใช่ holdout, user เดียวกับ order, order อยู่ใน conversion window ปัจจุบัน, `started_at` 366 วันล่าสุด — commerce กรองสถานะ / จ่ายแล้ว / ช่วงวันที่เองจาก `josh_orders` → `josh_marketing_workflows` · **ไม่มี enrollment รายคนและไม่มี user id** · ส่งใหม่เมื่อ workflow, enrollment (สถานะ / เริ่ม / holdout / conversion), scheduled run หรือ action log ที่ failed เปลี่ยน — การเดิน step (`current_step_id` / `resume_at`) ไม่ส่ง |
 | `cuisine.snapshot` | `{ id, parent_id, cuisine_name, cuisine_name_th, level, is_active }` (ขั้น 2c) → `josh_cuisines` |
 | `restaurant_place.snapshot` | ทั้งแถวของ `restaurant_place` (ขั้น 2c) → `josh_restaurant_places` (เก็บเฉพาะคอลัมน์ที่มี) |
 | `staff.snapshot` | user ที่ไม่ใช่ลูกค้า: `{ id, email, first_name, last_name, role, user_type, is_active, token_version, company_id, created_at, last_app_login_at }` (ขั้น 2c) → `josh_staff` — ใช้ตรวจ token ของแอปฝ่ายขาย · `token_version` อยู่ที่นี่เท่านั้น ไม่อยู่ใน `customer.snapshot` |
-| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล |
+| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` / `push_campaign.deleted` / `marketing_workflow.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล |
 
 `version` ของ `*.deleted` มาจาก `commerce_snapshot_seq` เดียวกับ snapshot (ไม่ใช่ id แถว outbox) จึงชนะ snapshot ก่อนหน้าได้
 
-Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"|"branch"|"jagota_sync"}` → josh
+Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"|"branch"|"jagota_sync"|"push_campaign"|"marketing_workflow"}` → josh
 `POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)
 
 ขั้น 5 (S5-11) — ลำดับ rollout: deploy commerce (migration `JoshReportCopies`) **ก่อน** josh (migrations
 `CommerceOutbox{CatalogReportFields,Branch,CompanyBusiness,OrderExtras,JagotaSync}`) — commerce ที่ยังไม่รู้จัก
 `branch.snapshot` / `jagota_sync.snapshot` ตอบ 400 และ josh จะ retry ค้างไว้ · จากนั้น backfill `catalog`, `company`,
 `branch`, `order`, `jagota_sync` ทีละกลุ่ม
+
+ขั้น 5 (S5-12) — เหมือนกัน: deploy commerce (migration `JoshMarketingCopies`) **ก่อน** josh (migrations
+`CommerceOutbox{PushCampaign,MarketingWorkflow}`) · จากนั้น backfill `push_campaign`, `marketing_workflow`

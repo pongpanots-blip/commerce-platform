@@ -76,11 +76,11 @@ copy · D = drop/defer (other stage or no report value).
 | 6 | `josh-insights.ts` `failures()` | `GET /reports/health` (system-health), MCP `system_health` | `payment_transactions`, `jagota_order_sync`, `marketing_workflow_scheduled_runs`, `push_campaigns` | `jagota_order_sync_history` (commerce) for the ERP part | payments, workflow runs, push | **R\* — done (S5-9)** for ERP part (fresh as its last import until S5-11); D for the rest |
 | 7 | `connector/josh/josh-orders.ts` | `GET /reports/orders[/summary|/:id]`; MCP `josh_orders` | `orders`, `company`, `branch`, `users`, `jagota_order_sync`, `payment_transactions`, `order_items`, `product_inventory`, `product_translation`, `shipments` | `josh_orders`, `josh_order_lines`, `josh_companies`, `josh_users`/`josh_customers.data->>'mobile_phone'`, `jagota_order_sync_history`, `josh_catalog_products` | `branch` (name, erp code), `company.erp_customer_code`, payment detail (method/paid_at/amount), `shipments`, `orders.sending_date`, `order_taking_flag` | R* list/summary now (degrade missing columns); C for detail (`order.snapshot` gains `payments[]`, `shipments[]`, `sending_date`; new `branch.snapshot`) |
 | 8 | `connector/josh/josh-customers.ts` | `GET /reports/customers[/summary|/:id]`; MCP `josh_customers` | `company`, `branch`, `users`, `orders`, `kyc_document`, `credit_term_applications` (+ paid) | `josh_customers`, `josh_companies`, `josh_orders`, `customer_metrics` | company business/credit fields, `branch`, KYC, credit applications | R* basic; C for company/branch; **KYC/credit = open question** |
-| 9 | `growth/growth-data.service.ts` | `GET /growth/workspace|results/:id|timeline/:companyId`; MCP `growth_*`; `growth.service.evidence()` | `insights.sales`, `cart_snapshot`, `user_devices`, `winback_account`, `winback_activity`, `company`, `orders`, `users`, `marketing_workflow_enrollments`, `marketing_workflows` | sales via #3, commerce `winback_*` (owned since 2b — josh's copy is stale), `josh_companies`, `josh_orders`, `josh_users` | `cart_snapshot`, `user_devices`, marketing workflow tables | **R\* — done (S5-6)**: `GROWTH_SOURCE` (carts/workflows "not copied"); results needs #12 |
+| 9 | `growth/growth-data.service.ts` | `GET /growth/workspace|results/:id|timeline/:companyId`; MCP `growth_*`; `growth.service.evidence()` | `insights.sales`, `cart_snapshot`, `user_devices`, `winback_account`, `winback_activity`, `company`, `orders`, `users`, `marketing_workflow_enrollments`, `marketing_workflows` | sales via #3, commerce `winback_*` (owned since 2b — josh's copy is stale), `josh_companies`, `josh_orders`, `josh_users` | `cart_snapshot`, `user_devices`, marketing workflow tables | **R\* — done (S5-6, S5-12)**: `GROWTH_SOURCE` (results + workflow failures on the #12 copy; carts / per-company enrollments "not copied") |
 | 10 | `growth/growth.service.ts` | `/growth/readiness`, plans | only `replica.configured` | readiness → "copies" status | – | **R — done (S5-6)**: `dataSource`; josh **writes** via API stay |
 | 11 | `connector/josh/josh-backoffice.ts` | `GET /reports/backoffice[/:view]`; MCP `josh_backoffice` | 16 views: KYC, credit, CN/CB, invoices, shipments, payments, coupons, campaigns, user_segments, supplier, internal docs, admin access requests | segments view → `segments`; rest none | almost all — josh operational back-office | D (stays josh-admin's job; stage 6 staff admin decides). `segments` view: already served by `/j/segments` on commerce's own segments (2a) — the backoffice copy is redundant, drop in stage 7 |
-| 12 | `connector/josh/josh-marketing-workflows.ts` (+controller) | `GET /reports/marketing-workflows[/:id]`; MCP | `marketing_workflow*` (4 tables) | none | all | C (`marketing_workflow.snapshot`) — or ownership move with stage 2 marketing; writes already go through `JoshActions` |
-| 13 | `connector/josh/josh-push-campaigns.ts` | `GET /reports/push-campaigns*`; MCP `push_campaigns` | `push_campaigns` (+ Mongo deliveries) | none | `push_campaigns` | C (`push_campaign.snapshot`, small table) |
+| 12 | `connector/josh/josh-marketing-workflows.ts` (+controller) | `GET /reports/marketing-workflows[/:id]`; MCP | `marketing_workflow*` (4 tables) | none | all | **C — done (S5-12)**: `MARKETING_WORKFLOWS_SOURCE`; writes still go through `JoshActions` |
+| 13 | `connector/josh/josh-push-campaigns.ts` | `GET /reports/push-campaigns*`; MCP `push_campaigns` | `push_campaigns` (+ Mongo deliveries) | none | `push_campaigns` | **C — done (S5-12)**: `PUSH_CAMPAIGNS_SOURCE` (deliveries stay in josh Mongo) |
 | 14 | `connector/josh/josh-products.ts` | `GET /reports/products*`; MCP `josh_products` | `product_inventory`, `product_media`, `product_translation`, `product_category` | `josh_catalog_products` + owned `product_prices/contents/masters/images/categories/brands`, `inventory_levels` | category id/path, original price, sup_code, qty, low-stock, MOQ, order-taking, ERP-pending, image list (see S5-4) | **R\*** — needs `catalog.snapshot` extension (S5-11) |
 | 15 | `connector/josh/josh-prices.ts` | `GET /reports/prices/*`; MCP `josh_prices` | `branch`, `shop`, `company`, `private_price`, `branch_contract_price`, `product_branch_specials`, `promotion_*`, `erp_quotations` | `staff_prices`, `product_prices`, `josh_companies`, `josh_catalog_products` | branch, shop, branch specials, quantity rules, mechanics (G9 promotions), `erp_quotations` | R* (customer/contract/base prices) after G9; quotations C or D |
 | 16 | `connector/josh/josh-promotions.ts` (+controller) | `GET /reports/promotions*`; MCP `josh_promotions` | `promotion_*`, `campaigns`, `product_translation` | none until G9 promotions | all | **D → stage 4 G9** (promotions ownership) |
@@ -150,7 +150,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | S5-9 | health: ERP part from `jagota_order_sync_history`; josh-only checks labelled | #6, #21 | no | low — **done** |
 | S5-10 | staff-prices SKU lookup from catalog copy (fixes crash without replica, `staff-prices.ts:136`) | #18 | no | low — **done** |
 | S5-11 | josh snapshots: `branch`, `order.snapshot` + `payments[]` / `shipments[]` / `sending_date` / refunds, `company` business + erp code, `jagota_sync`; backfill groups | #7, #8, #3, #24 | **yes** (additive) | medium |
-| S5-12 | josh snapshots: `push_campaign`, `marketing_workflow` (+ enrollment counts) | #12, #13, #9 results | yes | medium |
+| S5-12 | josh snapshots: `push_campaign`, `marketing_workflow` (+ enrollment counts) | #12, #13, #9 results | yes | medium — **done** |
 | S5-13 | traffic — daily aggregate snapshot, or drop | #4 | decision | – |
 | S5-14 | pages that stay josh-only (backoffice, promotions until G9, price-shadow, jagota-shadow run, imports): say "managed in josh-admin" / "cutover tool" instead of the 503 text | #11, #16, #17, #25 | no | low — **done** (`joshOnly`) |
 | S5-15 | copiers off: `joshOrderCopy`, `joshCatalogSync`, `jagotaSyncImport` crons once events + backfill are trusted | #19, #23, #24 | – | low (env only) |
@@ -378,6 +378,26 @@ backfill group; commerce migration (real-column copy table + tombstones), `josh-
 - [ ] Readers not yet switched to the new copies (follow-ups): S5-4 `PRODUCTS_SOURCE`, S5-7 orders detail
       (payments / shipments / branch / ERP codes / sending_date from copies), S5-5 refunds from `josh_order_refunds`,
       customers report basic copies mode (still q1).
+
+#### S5-12 — DONE (josh `feat/commerce-copies-for-reports`, commerce this branch; 2026-10-07, not pushed)
+
+- [x] `push_campaign.snapshot` (josh `1792410000000-CommerceOutboxPushCampaign`): the `push_campaigns` row (same columns as
+      the report's `CAMPAIGN_COLUMNS`); trigger on insert / update / delete via `commerce_outbox_reference`. Stats updates
+      during a send collapse per campaign in the drainer.
+- [x] `marketing_workflow.snapshot` (josh `1792420000000-CommerceOutboxMarketingWorkflow`): aggregate = the workflow.
+      Data: the workflow row (minus `previous_version`), enrollments by status, enrollments / runs by Bangkok day (366 days),
+      20 recent runs, 20 recent failed action logs, and the credited conversion order ids (non-holdout, same user, inside
+      the current conversion window). No enrollments, no user ids. Triggers: workflow row; enrollments (only the counted
+      columns — step moves don't fire); scheduled runs; failed action logs (through their enrollment).
+- [x] josh: builder groups, drainer types, backfill groups; specs builder (+3), drainer (+2), backfill (+2); opt-in real-DB
+      cases (+2, not run).
+- [x] commerce `1795300000000-JoshMarketingCopies`: `josh_push_campaigns` (reference copy, tombstones),
+      `josh_marketing_workflows` (list columns + jsonb). `JoshEventsService` cases; backfill groups. Spec +2.
+- [x] Readers: `PUSH_CAMPAIGNS_SOURCE`, `MARKETING_WORKFLOWS_SOURCE` (replica default · copies), MCP follows;
+      `GROWTH_SOURCE=copies` now covers workspace workflow failures and `results` (credited revenue from `josh_orders` +
+      the conversions copy). Specs: push 2, workflows +3, growth updated (61 passing across the touched suites).
+- Not invented (owner / plan gap, documented): `cart_snapshot` / `user_devices` (growth idle carts), per-company workflow
+  enrollments (growth timeline), failed payments / workflow runs / push for system health (josh-admin).
 
 ### Ops runbook
 

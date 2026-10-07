@@ -1,7 +1,7 @@
 # Status — Stage 5: data jobs read commerce copies (branch `feat/stage5-data-jobs`)
 
-Updated 2026-10-07. Not pushed. Commerce-only items and S5-11 (josh snapshot groups + commerce copies) are done; S5-12 and the
-readers that use the S5-11 copies are next.
+Updated 2026-10-07. Not pushed. Commerce-only items, S5-11 and S5-12 (josh snapshot groups + commerce copies) are done;
+the readers that use the S5-11 copies are next.
 
 ## Done
 - **Inventory + plan:** `docs/superpowers/plans/2026-10-08-stage5-data-jobs.md`.
@@ -72,6 +72,15 @@ readers that use the S5-11 copies are next.
     cases; backfill groups `branch`, `jagota_sync`. Older-shape snapshots never null the new data.
     Specs: josh connector 45 suites / 482+ passing; `tsc` clean.
   - Deploy order: commerce first, then josh migrations + backend, then backfill (runbook "ข้อมูลเพิ่มจาก josh (S5-11)").
+- **S5-12, push campaigns + marketing workflows (josh branch 2 commits; commerce 2 + docs):**
+  - josh: new `push_campaign.snapshot` (the row) and `marketing_workflow.snapshot` (workflow row + counts by status / by
+    Bangkok day, recent runs / failures, credited conversion order ids — no enrollments, no user ids). Migrations
+    `1792410000000`, `1792420000000`. commerce-events specs 37 passing.
+  - commerce: migration `1795300000000-JoshMarketingCopies` (`josh_push_campaigns`, `josh_marketing_workflows`), events
+    cases, backfill groups. New switches `PUSH_CAMPAIGNS_SOURCE`, `MARKETING_WORKFLOWS_SOURCE` (replica default · copies);
+    `GROWTH_SOURCE=copies` now also covers workflow failures and `results`. Specs: events 31, touched suites 61; `tsc` clean.
+  - Not invented: `cart_snapshot` / `user_devices` (growth idle carts) and per-company workflow enrollments (growth
+    timeline) have no snapshot group — owner / plan gap.
 - **Customers report: deferred.** It is mostly KYC, credit and branch data. It waits on open question 1 and the
   S5-11 company/branch snapshots.
 
@@ -83,11 +92,11 @@ readers that use the S5-11 copies are next.
   (`JOSH_SCOPE_TEST_DATABASE_URL`) and were not run here. The readers do not use the new copies yet.
 
 ## Next (safe, commerce-only, in order)
-1. S5-12 josh snapshots: `push_campaign`, `marketing_workflow`.
+1. ~~S5-12~~ done.
 2. Readers on the S5-11 copies (commerce-only): S5-4 `PRODUCTS_SOURCE=copies`; S5-7 orders list/detail fill branch,
    ERP codes, payments, shipments, `sending_date` (shrink `notCopied`); S5-5 refunds from `josh_order_refunds`
    (`status = 'refunded'`, `created_at` range); S5-9 freshness wording (events, not imports).
-3. Real-DB check of the S5-11 migrations (josh trigger db-spec + commerce migration on a scratch DB).
+3. Real-DB check of the S5-11 / S5-12 migrations (josh trigger db-spec + commerce migration on a scratch DB).
 4. S5-16 staging click-through with `JOSH_DATABASE_URL` unset (needs an environment).
 
 ## Open questions for the owner (plan §4)

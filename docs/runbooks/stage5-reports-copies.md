@@ -28,6 +28,17 @@
 ตัวอ่าน (products copies mode, รายละเอียด order: payments / shipments / branch, คืนเงินใน sales) ยังไม่ได้ต่อกับ
 ตารางใหม่ — ดู STATUS "Next"
 
+## ข้อมูล marketing จาก josh (S5-12) — ทำครั้งเดียว ก่อนข้อ 7–8 ด้านล่าง
+
+1. deploy commerce ก่อน (migration `JoshMarketingCopies1795300000000`)
+2. รัน `Database Migration` ของ josh แล้ว deploy backend (`1792410000000-CommerceOutboxPushCampaign`,
+   `1792420000000-CommerceOutboxMarketingWorkflow`)
+3. backfill `push_campaign` → `marketing_workflow` (ตารางเล็ก)
+4. ตรวจ: `count(*)` ของ `josh_push_campaigns` / `josh_marketing_workflows` เท่ากับ `push_campaigns` / `marketing_workflows` ของ josh ·
+   `copied_at` ของ workflow ที่ active ขยับเมื่อมี enrollment ใหม่
+5. หมายเหตุ: workflow ที่มีคนเข้าเป็นคลื่นใหญ่ จะสร้างแถว outbox หนึ่งแถวต่อ enrollment แต่ drainer รวมเป็น snapshot เดียวต่อ workflow ต่อรอบ (200 แถว)
+   — ถ้า `commerce_outbox` ค้างนานหลังคลื่นใหญ่ ดูที่นี่ก่อน
+
 ## ลำดับ (ทีละตัว ตรวจแล้วค่อยไปตัวถัดไป)
 
 | # | env | ตรวจก่อนสลับ | ผ่านเมื่อ |
@@ -36,15 +47,18 @@
 | 2 | `RESTAURANTS_SOURCE=copies` | `GET /api/reports/restaurants/parity` | `total`, `enriched` เท่ากัน; `linked_to_winback` ต่างได้ (ของ josh ค้างตั้งแต่ 2b) |
 | 3 | `BESTSELLERS_SOURCE=shadow` → `copies` | log `bestsellers shadow (copies vs replica)` ~1 สัปดาห์ | `firstDiffRank` เป็น null หรือ ≥ 50 |
 | 4 | `SALES_SOURCE=copies` | `GET /api/reports/sales/parity?period=last_month` และ `?period=this_month` | `differs` ว่าง (หรืออธิบายได้), `topProducts.firstDiffRank` null หรือ > 20 |
-| 5 | `GROWTH_SOURCE=copies` | หลังข้อ 4 · เปิด `/marketing/growth` | ยอดขายตรงกับ `/reports/sales`; ตะกร้า / workflow ขึ้น "ยังไม่มีสำเนาใน commerce" (ถูกต้อง) |
+| 5 | `GROWTH_SOURCE=copies` | หลังข้อ 4 และ S5-12 ข้อ 4 · เปิด `/marketing/growth` และผลของ workflow หนึ่งตัว | ยอดขายตรงกับ `/reports/sales`; รายได้ที่ให้เครดิตของ workflow เท่ากับก่อนสลับ; ตะกร้าขึ้น "ยังไม่มีสำเนาใน commerce" (ถูกต้อง) |
 | 6 | `ORDERS_SOURCE=copies` | เทียบ `/api/reports/orders/summary` ก่อน/หลัง (ช่วงเดือนที่แล้ว) | `total`, `paid_value`, `settled_without_payment` เท่ากัน; `sync_*` ใกล้กัน (สำเนา ERP-send สดเท่าการ import ล่าสุด) |
+| 7 | `PUSH_CAMPAIGNS_SOURCE=copies` | หลัง S5-12 ข้อ 4 · เทียบ `/api/reports/push-campaigns/overview` ก่อน/หลัง | `campaigns`, `scheduled`, `totalSent` เท่ากัน (ผลส่งรายคนยังมาจาก Mongo ของ josh) |
+| 8 | `MARKETING_WORKFLOWS_SOURCE=copies` | หลัง S5-12 ข้อ 4 · เทียบ `/api/reports/marketing-workflows?days=30` ก่อน/หลัง | `enrolled` / `failed` / `failed_runs` ต่อ workflow เท่ากันหรือมากกว่าเล็กน้อย (สำเนานับเป็นวันเวลาไทย อาจเกินช่วง rolling ได้ไม่ถึงหนึ่งวัน) |
 
 ไม่ต้องตั้งอะไร: staff price ตาม SKU (อ่านสำเนาแค็ตตาล็อกก่อนเอง) และหน้า health (ใช้สำเนา ERP-send เองเมื่อไม่มี replica)
 
 ## ยังต้องใช้ replica (ถอด `JOSH_DATABASE_URL` แล้วหน้าเหล่านี้จะบอกเหตุผลแทน 503 เปล่า)
 
-- รอ josh ส่งข้อมูลเพิ่ม (S5-11 / S5-12): รายงานสินค้า, ลูกค้า (KYC / เครดิต — รอเจ้าของตัดสิน), push campaign, marketing workflow
-  + ผล workflow ใน Growth, การจ่ายเงิน / shipment / สาขา ในรายละเอียดออเดอร์, คืนเงินในรายงานยอดขาย
+- ยังไม่มี snapshot group (ไม่ได้สร้างเอง — ต้องให้เจ้าของ / แผนตัดสิน): ตะกร้าค้าง (`cart_snapshot` / `user_devices`) ใน Growth,
+  enrollment ราย company ใน timeline ของ Growth
+- ตัวอ่านยังไม่ต่อกับสำเนา S5-11: ดู STATUS "Next" (รายงานสินค้า, รายละเอียดออเดอร์, คืนเงิน) · ลูกค้า (KYC / เครดิต — รอเจ้าของตัดสิน)
 - รอเจ้าของตัดสิน: traffic, order target group
 - อยู่ที่ josh-admin: back-office (KYC, เครดิต, CN/CB …), โปรโมชันและราคาตามสาขา (จนถึง G9)
   — หน้า Segments ใช้ `/j/segments` (commerce เป็นเจ้าของตั้งแต่ 2a) ไม่ต้องใช้ `/josh/segments`
@@ -53,7 +67,7 @@
 
 ## ถอด replica (S5-16)
 
-ทำเมื่อข้อ 1–6 ผ่านครบ และ S5-11 / S5-12 เสร็จ: staging ก่อน — ลบ `JOSH_DATABASE_URL` แล้วเปิดทุกหน้าใน
+ทำเมื่อข้อ 1–8 ผ่านครบ และ S5-11 / S5-12 เสร็จ: staging ก่อน — ลบ `JOSH_DATABASE_URL` แล้วเปิดทุกหน้าใน
 commerce-admin + เรียก MCP tool ทุกตัว บันทึกผลใน plan ("As built") · ปิด cron ที่ดึงจาก replica (S5-15) หลังเชื่อ event + backfill แล้ว:
 `CRON_JOSH_ORDER_COPY_ENABLED=false`, `CRON_JOSH_CATALOG_SYNC_ENABLED=false`, `CRON_JAGOTA_SYNC_IMPORT_ENABLED=false`,
 `CRON_STAFF_PRICES_IMPORT_ENABLED=false` (`CRON_JAGOTA_SYNC_IMPORT` ปิดได้หลัง `jagota_sync` snapshot ใน S5-11 เท่านั้น)

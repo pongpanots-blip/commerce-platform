@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ownsSalesReps } from '../customers/sales-reps.service';
+import { ownsStaff } from '../customers/josh-staff-access.service';
 import { ownsSegments } from './segments.service';
 import { ownsPrices } from '../../commerce/product-prices/product-prices.service';
 import { ownsProductContent } from '../../commerce/product-contents/product-contents.service';
@@ -13,5 +14,5 @@ import { ownsProductImages } from '../../commerce/product-images/product-images.
  */
 @Controller('ownership')
 export class OwnershipController {
-  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent(), categories: ownsCategories(), productMaster: ownsProductMaster(), productImages: ownsProductImages() }; }
+  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent(), categories: ownsCategories(), productMaster: ownsProductMaster(), productImages: ownsProductImages(), staff: ownsStaff() }; }
 }

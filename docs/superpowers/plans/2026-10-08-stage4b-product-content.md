@@ -72,3 +72,26 @@ identity / content / units).
 - [ ] Scratch DBs: import + parity; edit → snapshot in outbox; josh apply on a scratch copy (names in th / en,
   ingredients, cost), older version refused.
 - [ ] Full suites `--maxWorkers=2`; as built; drop scratch DBs; commit.
+
+## As built (2026-10-08)
+
+- **Scope as planned.** Content = fields only staff write; josh applies it under its existing `COMMERCE_OWNS_CATALOG`
+  (no new josh flag). Commerce's switch is `COMMERCE_OWNS_PRODUCT_CONTENT`; `GET /api/ownership` → `productContent`.
+- **Storage:** one jsonb per SKU (`product_contents.fields`), validated per key in `content-fields.ts` (names required
+  ≤255, text ≤20k, short strings by josh's column length, cost 2 decimals, counts int). `JOSH_CONTENT_SQL` builds the
+  same object from josh for import and parity. Snapshot aggregate = uuid from md5(`content:<sku>`).
+- **Product form:** content keys are validated before anything is written (400 → nothing saved anywhere), then saved in
+  commerce; price (4a) and the rest of the form follow as before. New fields in the form (ingredients, allergens, expiry,
+  usage, pairing, shelf life, organic, short code, cost, reorder); when owned the form shows commerce's row over josh's copy.
+- **Found in the browser check:** the form's SKU lookup used only the catalog copy; a product not copied yet (just
+  created, or the copy lags) failed with 404 — now it is pulled from josh once before giving up (also fixes 4a's price path).
+- **Create through commerce:** content sent with a new product is recorded in commerce (source `create`). The josh
+  `create` action lives on josh's unmerged `feat/commerce-owns-catalog`.
+
+**Verification:** josh — `commerce-content.service.spec` (apply, stale, 409, 400, 422), erp-events / product-category
+specs; a real snapshot made by commerce applied on a copy of the dev DB: th name inserted, en name / description
+updated, ingredients / cost / alert level written, older version refused. commerce — content-fields spec, opt-in
+`product-contents.service.db.spec.ts`, relay controller spec; import 5,888 SKUs from the local josh DB and
+`content-parity` → 5,888 same (and it flags an edited / deleted row); after josh applied the snapshot, parity still
+matched. Scratch API + admin: the form shows the new fields, a save goes to commerce (outbox has the snapshot), an
+empty name is a 400. Scratch DBs dropped.

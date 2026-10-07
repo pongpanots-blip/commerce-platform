@@ -1,4 +1,11 @@
 import { apiClient } from '../api-client/api-client';
+import { commerceClient, ownership } from '../api-client/commerce-client';
+
+/**
+ * Category writes go to whoever owns the tree (stage 4c): commerce once COMMERCE_OWNS_CATEGORIES=true (same routes and
+ * answers as josh), josh before. Reads stay on josh's copy, which commerce keeps current (category.tree.snapshot).
+ */
+const writeClient = async () => ((await ownership()).categories ? commerceClient : apiClient);
 
 export const getProductCategories = async (
   /** Admin — include categories with no active products. */
@@ -64,17 +71,17 @@ export const getProductCategoryById = async (
 };
 
 export const createProductCategory = async (data: any): Promise<any> => {
-  const response = await apiClient.post('/product-category', data);
+  const response = await (await writeClient()).post('/product-category', data);
   return response;
 };
 
 export const updateProductCategory = async (id: string, data: any): Promise<any> => {
-  const response = await apiClient.patch(`/product-category/${id}`, data);
+  const response = await (await writeClient()).patch(`/product-category/${id}`, data);
   return response;
 };
 
 export const deleteProductCategory = async (id: string): Promise<any> => {
-  const response = await apiClient.delete(`/product-category/${id}`);
+  const response = await (await writeClient()).delete(`/product-category/${id}`);
   return response;
 };
 
@@ -86,7 +93,7 @@ export const reorderProductCategoryChildren = async (
   parentId: string,
   orderedIds: string[],
 ): Promise<any> => {
-  const response = await apiClient.put(`/product-category/${parentId}/children-order`, {
+  const response = await (await writeClient()).put(`/product-category/${parentId}/children-order`, {
     orderedIds,
   });
   return response;
@@ -98,7 +105,7 @@ export const reorderProductCategoryChildren = async (
  * ของ shop แสดงทั้งชั้นต่อกันเป็นแถวเดียว ดู docs/categories-api.md
  */
 export const reorderLevel1ProductCategories = async (orderedIds: string[]): Promise<any> => {
-  const response = await apiClient.put('/product-category/level1-order', { orderedIds });
+  const response = await (await writeClient()).put('/product-category/level1-order', { orderedIds });
   return response;
 };
 

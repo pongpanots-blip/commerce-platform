@@ -21,6 +21,10 @@ const PENDING_FIELDS: Record<string, string> = {
   BRAND_NAME: 'brand_name', ORDER_TAKING: 'order_taking_flag', STATUS: 'product_status',
 };
 
+/** The rest of the content the product form edits (stage 4b). */
+const DETAIL_COLUMNS = `p.ingredients, p.allergens, p.expiration_info, p.usage_direction, p.best_paired_food, p.maximum_shelf_life, p.is_organic,
+  p.product_short_code, p.buying_price::float AS buying_price, p.reorder_quantity`;
+
 const COLUMNS = `p.product_inventory_id, p.product_inventory_sku, p.product_status, th.product_name AS name_th, en.product_name AS name_en,
   p.category_id, c.category_name_th, c.category_path, p.brand_code, p.brand_name,
   p.selling_unit_price::float AS selling_unit_price, p.ordering_price::float AS ordering_price, p.original_price::float AS original_price,
@@ -91,7 +95,8 @@ export class JoshProducts {
   async detail(idOrSku: string) {
     const bySku = !/^[0-9a-f-]{36}$/i.test(idOrSku);
     const [row] = await this.replica.query<Record<string, unknown>>(
-      `SELECT ${COLUMNS}, p.vat_type, p.erp_pending_payload, p.created_at, th.product_description AS description_th, en.product_description AS description_en FROM product_inventory p ${JOINS}
+      `SELECT ${COLUMNS}, p.vat_type, p.erp_pending_payload, p.created_at, th.product_description AS description_th, en.product_description AS description_en,
+        ${DETAIL_COLUMNS} FROM product_inventory p ${JOINS}
         WHERE ${bySku ? 'p.product_inventory_sku = $1' : 'p.product_inventory_id = $1'} LIMIT 1`, [idOrSku.trim().slice(0, 100)]);
     if (!row) throw new NotFoundException(`product ${idOrSku} not found in josh`);
     const media = await this.replica.query(

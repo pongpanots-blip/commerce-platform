@@ -21,6 +21,7 @@ import { Customers } from './pages/Customers';
 import { Products } from './pages/Products';
 import { StockMoves } from './pages/StockMoves';
 import { ProductPrices } from './pages/ProductPrices';
+import { ProductMasterQueue } from './pages/ProductMasterQueue';
 import { Orders } from './pages/Orders';
 import { Reservations } from './pages/Reservations';
 import { ErpStock } from './pages/ErpStock';
@@ -211,6 +212,7 @@ const NAV: NavGroup[] = [
       { to: '/products', label: 'Products', end: false },
       { to: '/stock-moves', label: 'Stock moves', end: false },
       { to: '/product-prices', label: 'ราคาสินค้า', end: false },
+      { to: '/product-master-queue', label: 'คิวข้อมูลสินค้าจาก ERP', end: false },
       { to: '/orders', label: 'Orders', end: false },
       { to: '/reservations', label: 'Reservations', end: false },
     ],
@@ -376,6 +378,7 @@ export function App() {
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/stock-moves" element={<StockMoves />} />
             <Route path="/product-prices" element={<ProductPrices />} />
+            <Route path="/product-master-queue" element={<ProductMasterQueue />} />
             <Route path="/inventory" element={<Navigate to="/stock-moves" replace />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/orders/:id" element={<OrderDetail />} />

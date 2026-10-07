@@ -360,13 +360,38 @@ export interface PricePending {
 }
 const q = (search: string) => (search ? `?search=${encodeURIComponent(search)}` : '');
 export const productPricesApi = {
-  ownership: () => api.get<{ prices?: boolean }>('/ownership'),
+  ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean; productImages?: boolean }>('/ownership'),
   list: (search: string) => api.get<PriceRow[]>(`/product-prices${q(search)}`),
   pending: (search: string) => api.get<PricePending[]>(`/product-prices/pending${q(search)}`),
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-prices/pending/approve', { skus }),
   reject: (skus: string[]) => api.post<{ rejected: number }>('/product-prices/pending/reject', { skus }),
   edit: (sku: string, body: { sellingUnitPrice?: number; orderingPrice?: number; moq?: number }) =>
     api.patch<unknown>(`/product-prices/${encodeURIComponent(sku)}`, body),
+};
+
+// ---- Product content (stage 4b: names / descriptions, ingredients, cost … owned by commerce; edited in the product form) ----
+export const productContentsApi = {
+  get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown>; updated_at: string }>(`/product-contents/${encodeURIComponent(sku)}`),
+};
+
+// ---- ERP product master (stage 4d: units / pack / status / category … and their MER queue, owned by commerce) ----
+export interface MasterPending { sku: string; patch: Record<string, unknown>; current: Record<string, unknown>; changed_at: string | null; received_at: string }
+export const productMastersApi = {
+  pending: (search: string) => api.get<MasterPending[]>(`/product-masters/pending${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  approve: (skus: string[]) => api.post<{ approved: number }>('/product-masters/pending/approve', { skus }),
+  reject: (skus: string[]) => api.post<{ rejected: number }>('/product-masters/pending/reject', { skus }),
+  get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-masters/${encodeURIComponent(sku)}`),
+};
+
+// ---- Product galleries (stage 4e: owned by commerce; files in josh's media bucket) ----
+export const productImagesApi = {
+  get: (sku: string) => api.get<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}`),
+  upload: (sku: string, files: File[]) => {
+    const form = new FormData();
+    for (const f of files) form.append('images', f);
+    return request<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}/upload`, { method: 'POST', body: form });
+  },
+  set: (sku: string, images: string[]) => api.put<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}`, { images }),
 };
 
 // ---- Stock moves (stage 3: commerce-owned warehouses, through the ledger) ----
@@ -573,7 +598,10 @@ export interface JoshProductRow {
   erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
 }
 export interface JoshProductDetail extends JoshProductRow {
-  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null; media: { id: string; source: string; media_type: string; sort_order: number }[];
+  vat_type: string | null; created_at: string; description_th: string | null; description_en: string | null;
+  ingredients: string | null; allergens: string | null; expiration_info: string | null; usage_direction: string | null; best_paired_food: string | null;
+  maximum_shelf_life: string | null; is_organic: string | null; product_short_code: string | null; buying_price: number | null; reorder_quantity: number | null;
+  media: { id: string; source: string; media_type: string; sort_order: number }[];
   pendingChanges: { field: string; column: string | null; current: unknown; pending: unknown; changed: boolean | null }[];
 }
 export type ProductIssueKey = 'pending_approval' | 'no_image' | 'no_category' | 'no_price' | 'out_of_stock' | 'low_stock';

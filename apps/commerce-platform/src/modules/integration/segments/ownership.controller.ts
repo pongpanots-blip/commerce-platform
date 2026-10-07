@@ -2,6 +2,10 @@ import { Controller, Get } from '@nestjs/common';
 import { ownsSalesReps } from '../customers/sales-reps.service';
 import { ownsSegments } from './segments.service';
 import { ownsPrices } from '../../commerce/product-prices/product-prices.service';
+import { ownsProductContent } from '../../commerce/product-contents/product-contents.service';
+import { ownsCategories } from '../../commerce/product-categories/product-categories.service';
+import { ownsProductMaster } from '../../commerce/product-masters/product-masters.service';
+import { ownsProductImages } from '../../commerce/product-images/product-images.service';
 
 /**
  * Which josh features commerce owns right now (any signed-in staff). commerce-admin's hosted josh pages read it
@@ -9,5 +13,5 @@ import { ownsPrices } from '../../commerce/product-prices/product-prices.service
  */
 @Controller('ownership')
 export class OwnershipController {
-  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices() }; }
+  @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent(), categories: ownsCategories(), productMaster: ownsProductMaster(), productImages: ownsProductImages() }; }
 }

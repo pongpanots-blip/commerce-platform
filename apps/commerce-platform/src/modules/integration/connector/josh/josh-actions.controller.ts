@@ -4,6 +4,10 @@ import { DataSource } from 'typeorm';
 import { winbackOwnedByCommerce } from '../../winback/shared/winback.config';
 import { ownsSalesReps, SalesRepsService } from '../../customers/sales-reps.service';
 import { ownsPrices, ProductPricesService } from '../../../commerce/product-prices/product-prices.service';
+import { ownsProductContent, ProductContentsService } from '../../../commerce/product-contents/product-contents.service';
+import { splitContent } from '../../../commerce/product-contents/content-fields';
+import { ownsProductMaster, ProductMastersService } from '../../../commerce/product-masters/product-masters.service';
+import { splitMaster } from '../../../commerce/product-masters/master-fields';
 import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
@@ -99,37 +103,67 @@ export class JoshActionsController {
   /**
    * Edit one product's master data (COMMERCE_OWNS_CATALOG): josh's ProductService.update writes it,
    * josh rejects fields it does not allow from commerce. Commerce's catalog copy is refreshed right away.
+   * Stage 4a / 4b / 4d: the base price, the content keys and the ERP master keys are commerce's once it owns them —
+   * saved here and sent to josh as product.price / content / master.snapshot; the rest of the form still goes to josh.
    */
   @Post('products/:id/update') @HttpCode(HttpStatus.OK)
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
-    const { selling_unit_price: price, ...fields } = b?.fields && typeof b.fields === 'object' && !Array.isArray(b.fields) ? b.fields : {};
-    // Stage 4a: the base price is commerce's once it owns prices — it is saved here and reaches josh as
-    // product.price.snapshot; the rest of the form still goes to josh's ProductService.update.
-    if (price !== undefined && price !== '' && ownsPrices()) {
-      const [row] = await this.modules.get(DataSource, { strict: false }).query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]);
-      if (!row?.sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
-      const saved = await this.modules.get(ProductPricesService, { strict: false })
-        .edit(row.sku, { sellingUnitPrice: price === null ? null : Number(price) }, req.staff.userId);
-      if (!Object.keys(fields).length) return { price: saved };
-      const result = await this.josh.run('products', 'update', { id, fields }, this.as(req), 'admin');
-      await this.catalog.syncId(id).catch(() => undefined);
-      return { price: saved, product: result };
+    const { selling_unit_price: price, ...others } = plain(b?.fields);
+    const ownPrice = price !== undefined && price !== '' && ownsPrices();
+    // Validated before anything is written (400 on a bad value).
+    const { content, rest: afterContent } = ownsProductContent() ? splitContent(others) : { content: {}, rest: others };
+    // Stage 4d: status, category, brand name, units, pack … once commerce owns the ERP product master.
+    const { master, categoryId, rest } = ownsProductMaster() ? splitMaster(afterContent) : { master: {}, categoryId: undefined, rest: afterContent };
+    const masterBody = categoryId === undefined ? master : { ...master, category_id: categoryId };
+    const relay = ownPrice || price === undefined ? rest : { ...rest, selling_unit_price: price };
+    if (!ownPrice && !Object.keys(content).length && !Object.keys(masterBody).length) return this.relayUpdate(id, relay, req);
+
+    const sku = await this.skuOf(id);
+    const result: Record<string, unknown> = {};
+    if (ownPrice) {
+      result.price = await this.modules.get(ProductPricesService, { strict: false })
+        .edit(sku, { sellingUnitPrice: price === null ? null : Number(price) }, req.staff.userId);
     }
-    const all = price === undefined ? fields : { ...fields, selling_unit_price: price };
-    const result = await this.josh.run('products', 'update', { id, fields: all }, this.as(req), 'admin');
+    if (Object.keys(content).length) result.content = await this.modules.get(ProductContentsService, { strict: false }).edit(sku, content, req.staff.userId);
+    if (Object.keys(masterBody).length) result.master = await this.modules.get(ProductMastersService, { strict: false }).edit(sku, masterBody, req.staff.userId);
+    if (Object.keys(relay).length) result.product = await this.relayUpdate(id, relay, req);
+    return result;
+  }
+
+  private async relayUpdate(id: string, fields: Record<string, unknown>, req: StaffRequest) {
+    const result = await this.josh.run('products', 'update', { id, fields }, this.as(req), 'admin');
     await this.catalog.syncId(id).catch(() => undefined); // the cron catches up if the replica lags
     return result;
   }
 
+  /** The product's SKU from the catalog copy; a product not copied yet (just created, copy lags) is pulled from josh once. */
+  private async skuOf(id: string): Promise<string> {
+    const db = this.modules.get(DataSource, { strict: false });
+    const find = async () => (await db.query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]))[0]?.sku as string | undefined;
+    let sku = await find();
+    if (!sku) {
+      await this.catalog.syncId(id).catch(() => undefined);
+      sku = await find();
+    }
+    if (!sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
+    return sku;
+  }
+
   /**
    * Create a product (COMMERCE_OWNS_CATALOG): josh's ProductService.create with the create form's
-   * fields. Images are added afterwards as an image-only edit, which josh keeps open.
+   * fields. Images are added afterwards as an image-only edit, which josh keeps open. Stage 4b: once commerce owns
+   * content, the content sent is recorded here too (the first version of the new SKU's content).
    */
   @Post('products') @HttpCode(HttpStatus.OK)
   async createProduct(@Body() b: { product?: Record<string, unknown> }, @Req() req: StaffRequest) {
-    const product = b?.product && typeof b.product === 'object' && !Array.isArray(b.product) ? b.product : {};
+    const product = plain(b?.product);
+    const { content } = ownsProductContent() ? splitContent(product) : { content: {} };
     const result = await this.josh.run<{ product_inventory_id?: string }>('products', 'create', { product }, this.as(req), 'admin');
     if (result?.product_inventory_id) await this.catalog.syncId(result.product_inventory_id).catch(() => undefined);
+    const sku = typeof product.product_inventory_sku === 'string' ? product.product_inventory_sku.trim() : '';
+    if (sku && Object.keys(content).length) {
+      await this.modules.get(ProductContentsService, { strict: false }).edit(sku, content, req.staff.userId, 'create');
+    }
     return result;
   }
 

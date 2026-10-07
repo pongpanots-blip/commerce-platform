@@ -1,5 +1,7 @@
 import { Product } from '@josh/shared-models';
 import { apiClient, viaCommerceAction } from '../api-client/api-client';
+import { ownership } from '../api-client/commerce-client';
+import { request } from '../../../../../lib/api';
 import type {
   FilterGroup,
   ListingAvailability,
@@ -279,6 +281,10 @@ export const getProductFacets = async (params: {
  * sequentially — see docs/superpowers/plans/2026-08-17-sku-image-dropzone.html.
  */
 export const bulkUploadProductImages = async (data: FormData): Promise<any> => {
+  // Stage 4e: commerce owns galleries (COMMERCE_OWNS_PRODUCT_IMAGES) — same files / mode / answer, no undo log there.
+  if ((await ownership()).productImages) {
+    return { data: await request<any>('/product-images/bulk-upload', { method: 'POST', body: data }), status: 200 };
+  }
   const response = await apiClient.post<any>(`/product/images/bulk-upload`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });

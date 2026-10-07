@@ -58,6 +58,10 @@ import { CompetitorPricesModule } from './modules/integration/competitor-prices/
 import { CustomersModule } from './modules/integration/customers/customers.module';
 import { SegmentsModule } from './modules/integration/segments/segments.module';
 import { ProductPricesModule } from './modules/commerce/product-prices/product-prices.module';
+import { ProductContentsModule } from './modules/commerce/product-contents/product-contents.module';
+import { ProductCategoriesModule } from './modules/commerce/product-categories/product-categories.module';
+import { ProductMastersModule } from './modules/commerce/product-masters/product-masters.module';
+import { ProductImagesModule } from './modules/commerce/product-images/product-images.module';
 import { McpModule } from './mcp/mcp.module';
 
 @Module({
@@ -120,6 +124,10 @@ import { McpModule } from './mcp/mcp.module';
     CompetitorPricesModule,
     CustomersModule,
     ProductPricesModule,
+    ProductContentsModule,
+    ProductCategoriesModule,
+    ProductMastersModule,
+    ProductImagesModule,
     SegmentsModule,
     McpModule,
   ],

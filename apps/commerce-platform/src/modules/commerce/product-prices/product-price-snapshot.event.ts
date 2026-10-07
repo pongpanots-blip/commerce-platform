@@ -10,9 +10,9 @@ export interface ProductPriceSnapshotPayload {
   version: string;
 }
 
-/** A stable uuid per SKU for the outbox aggregate (prices are keyed by SKU, the outbox by uuid). */
-export function skuAggregateId(sku: string): string {
-  const h = createHash('md5').update(`price:${sku}`).digest('hex');
+/** A stable uuid per SKU (and kind) for the outbox aggregate (prices / content are keyed by SKU, the outbox by uuid). */
+export function skuAggregateId(sku: string, kind: 'price' | 'content' | 'master' | 'images' = 'price'): string {
+  const h = createHash('md5').update(`${kind}:${sku}`).digest('hex');
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
 }
 

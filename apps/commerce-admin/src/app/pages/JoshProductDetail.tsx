@@ -5,7 +5,7 @@ import {
   Page, PageHeader, Panel, PanelHead, Select, Span, Textarea,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType } from '../../lib/api';
+import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, productContentsApi, productImagesApi, productMastersApi, productPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const STATUS: Record<string, string> = { active: 'เปิดขาย', draft: 'draft (ยังไม่เปิด)', inactive: 'ปิด' };
@@ -23,12 +23,27 @@ const EDIT_FIELDS: { key: string; label: string; get: (p: JoshProductDetailType)
   { key: 'selling_unit_price', label: 'ราคาขาย (รวม VAT)', get: (p) => p.selling_unit_price, kind: 'number' },
   { key: 'original_price', label: 'ราคาตั้ง', get: (p) => p.original_price, kind: 'number' },
   { key: 'low_stock_threshold', label: 'เตือนใกล้หมดที่', get: (p) => p.low_stock_threshold, kind: 'number' },
+  { key: 'reorder_quantity', label: 'จำนวนสั่งเติม', get: (p) => p.reorder_quantity, kind: 'number' },
+  { key: 'buying_price', label: 'ต้นทุน', get: (p) => p.buying_price, kind: 'number' },
+  { key: 'product_short_code', label: 'รหัสย่อ', get: (p) => p.product_short_code },
+  { key: 'maximum_shelf_life', label: 'อายุสินค้าสูงสุด', get: (p) => p.maximum_shelf_life },
+  { key: 'is_organic', label: 'ออร์แกนิก', get: (p) => p.is_organic },
+  { key: 'ingredients', label: 'ส่วนผสม', get: (p) => p.ingredients, kind: 'long' },
+  { key: 'allergens', label: 'สารก่อภูมิแพ้', get: (p) => p.allergens, kind: 'long' },
+  { key: 'expiration_info', label: 'ข้อมูลวันหมดอายุ', get: (p) => p.expiration_info, kind: 'long' },
+  { key: 'usage_direction', label: 'วิธีใช้', get: (p) => p.usage_direction, kind: 'long' },
+  { key: 'best_paired_food', label: 'เข้ากับอาหาร', get: (p) => p.best_paired_food, kind: 'long' },
 ];
 
-function ProductEditor({ p, categories, onSaved, onClose }: { p: JoshProductDetailType; categories: { id: string; category_name_th: string | null; category_path: string | null }[]; onSaved: (msg: string) => void; onClose: () => void }) {
+/**
+ * `content`: commerce's own copy of the content keys once it owns product content (stage 4b) — shown over josh's copy,
+ * which follows a moment later.
+ */
+function ProductEditor({ p, content, categories, onSaved, onClose }: { p: JoshProductDetailType; content: Record<string, unknown> | null; categories: { id: string; category_name_th: string | null; category_path: string | null }[]; onSaved: (msg: string) => void; onClose: () => void }) {
+  const valueOf = (f: (typeof EDIT_FIELDS)[number]) => (content && f.key in content ? content[f.key] : f.get(p));
   const initial = (): Record<string, string> => ({
-    ...Object.fromEntries(EDIT_FIELDS.map((f) => [f.key, f.get(p) == null ? '' : String(f.get(p))])),
-    product_status: p.product_status ?? '', category_id: p.category_id ?? '',
+    ...Object.fromEntries(EDIT_FIELDS.map((f) => [f.key, valueOf(f) == null ? '' : String(valueOf(f))])),
+    product_status: String((content && 'product_status' in content ? content.product_status : p.product_status) ?? ''), category_id: p.category_id ?? '',
   });
   const [v, setV] = useState(initial);
   const [busy, setBusy] = useState(false);
@@ -46,7 +61,7 @@ function ProductEditor({ p, categories, onSaved, onClose }: { p: JoshProductDeta
         fields[k] = n;
       } else fields[k] = k === 'category_id' && v[k] === '' ? null : v[k];
     }
-    if (!window.confirm(`บันทึก ${changed.length} ช่องของ ${p.product_inventory_sku} ไปที่ josh?\n\n${changed.join(', ')}\n\n(josh บันทึกในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit · หน้าร้านเห็นทันที)`)) return;
+    if (!window.confirm(`บันทึก ${changed.length} ช่องของ ${p.product_inventory_sku}?\n\n${changed.join(', ')}\n\n(josh บันทึกในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit · หน้าร้านเห็นทันที)`)) return;
     setBusy(true); setErr('');
     try { await joshActionsApi.updateProduct(p.product_inventory_id, fields); onClose(); onSaved(`บันทึก ${p.product_inventory_sku} แล้ว (${changed.join(', ')})`); }
     catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
@@ -63,7 +78,9 @@ function ProductEditor({ p, categories, onSaved, onClose }: { p: JoshProductDeta
       onSubmit={save}
       onCancel={onClose}
       submitLabel={`บันทึก${changed.length ? ` (${changed.length})` : ''}`}
-      description="ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน"
+      description={content
+        ? 'ชื่อ รายละเอียด ส่วนผสม ต้นทุน ฯลฯ เก็บที่ commerce แล้วส่งให้ josh (ช่องว่าง = ล้างค่า ยกเว้นชื่อ) · ช่องอื่นยังบันทึกที่ josh (ช่องว่างไม่ลบค่าเดิม) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน'
+        : 'ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน'}
     >
       <Field label="สถานะ">
         <Select value={v.product_status} onChange={(e) => setV({ ...v, product_status: e.target.value })}>
@@ -106,6 +123,16 @@ export function JoshProductDetail() {
   const detail = useAsync(() => joshProductApi.detail(id), [id]);
   const categories = useAsync(() => joshProductApi.categories(), []);
   const p = detail.data;
+  // Stage 4b / 4d: commerce's content and ERP master rows (none yet → josh's values stand). Category stays josh's id.
+  const content = useAsync(async () => {
+    const owned = p ? await productPricesApi.ownership() : null;
+    if (!p || !owned || (!owned.productContent && !owned.productMaster)) return null;
+    const [c, m] = await Promise.all([
+      owned.productContent ? productContentsApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
+      owned.productMaster ? productMastersApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
+    ]);
+    return { ...c, ...m };
+  }, [p?.product_inventory_sku, p?.updated_at]);
 
   const backTo = `${location.state?.from ?? '/reports/products'}${location.state?.search ?? ''}`;
 
@@ -148,7 +175,7 @@ export function JoshProductDetail() {
             </div>
           </Panel>
 
-          {editing && <ProductEditor key={p.updated_at} p={p} categories={categories.data ?? []} onClose={() => setEditing(false)} onSaved={(m) => { setMsg(m); detail.reload(); }} />}
+          {editing && !content.loading && <ProductEditor key={p.updated_at} p={p} content={content.data ?? null} categories={categories.data ?? []} onClose={() => setEditing(false)} onSaved={(m) => { setMsg(m); detail.reload(); content.reload(); }} />}
 
           {p.pendingChanges && p.pendingChanges.length > 0 && (
             <Panel>
@@ -187,11 +214,17 @@ export function JoshProductDetail() {
 }
 
 /**
- * Product images (COMMERCE_OWNS_CATALOG): josh's own PATCH /product/:id with only images — files to add
- * and `removed_media_ids`. josh keeps at most 3 images, stores them in its media storage, makes thumbnails.
+ * Product images. Before stage 4e (COMMERCE_OWNS_CATALOG): josh's own PATCH /product/:id with only images — files to add
+ * and `removed_media_ids`; josh keeps at most 3, stores them, makes thumbnails. Once commerce owns galleries
+ * (COMMERCE_OWNS_PRODUCT_IMAGES): commerce's gallery (same bucket), sent to josh as product.images.snapshot.
  */
 function ProductImages({ p, onSaved }: { p: JoshProductDetailType; onSaved: (msg: string) => void }) {
-  const images = p.media.filter((m) => m.media_type === 'image');
+  const gallery = useAsync(async () => {
+    if (!(await productPricesApi.ownership()).productImages) return null;
+    return productImagesApi.get(p.product_inventory_sku).then((r) => r.images, () => p.media.filter((m) => m.media_type === 'image').map((m) => m.source));
+  }, [p.product_inventory_sku, p.updated_at]);
+  const owned = gallery.data != null;
+  const images = owned ? gallery.data!.map((url) => ({ id: url, source: url, media_type: 'image', sort_order: 0 })) : p.media.filter((m) => m.media_type === 'image');
   const [removed, setRemoved] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
@@ -204,10 +237,17 @@ function ProductImages({ p, onSaved }: { p: JoshProductDetailType; onSaved: (msg
     setBusy(true);
     setErr('');
     try {
-      const fields = { removed_media_ids: JSON.stringify(removed) };
-      await (files.length
-        ? joshAdmin.upload('PATCH', `/product/${p.product_inventory_id}`, fields, files.map((file) => ({ field: 'images', file })))
-        : joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, fields));
+      if (owned) {
+        // Remove first so the 3-image limit counts what stays.
+        if (removed.length) await productImagesApi.set(p.product_inventory_sku, images.filter((m) => !removed.includes(m.id)).map((m) => m.source));
+        if (files.length) await productImagesApi.upload(p.product_inventory_sku, files);
+        gallery.reload();
+      } else {
+        const fields = { removed_media_ids: JSON.stringify(removed) };
+        await (files.length
+          ? joshAdmin.upload('PATCH', `/product/${p.product_inventory_id}`, fields, files.map((file) => ({ field: 'images', file })))
+          : joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, fields));
+      }
       setRemoved([]);
       setFiles([]);
       onSaved(`บันทึกรูปของ ${p.product_inventory_sku} แล้ว`);

@@ -35,6 +35,15 @@ describe('EventEmitterBus', () => {
     expect(repo.query).toHaveBeenCalledWith("SELECT pg_notify('outbox_pending', '')");
   });
 
+  it('stamps each row with its real insert time, so events of one transaction keep their publish order', async () => {
+    const repo = repoMock();
+    repo.save.mockImplementation((async (x: object) => ({ ...x, id: 'row-1' })) as never);
+    await new EventEmitterBus(repo).publish(new DemoEvent('agg-1', { id: 'agg-1' }));
+    // created_at defaults to now() = the transaction start, identical for every event of one transaction;
+    // the relay orders by created_at, so without this two events of one transaction could swap.
+    expect(repo.query).toHaveBeenCalledWith('UPDATE outbox_messages SET created_at = clock_timestamp() WHERE id = $1', ['row-1']);
+  });
+
   it('uses the transaction manager repo when a manager is passed', async () => {
     const repo = repoMock();
     const txRepo = repoMock();

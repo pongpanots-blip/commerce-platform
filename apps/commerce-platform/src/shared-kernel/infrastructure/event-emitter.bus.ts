@@ -27,7 +27,7 @@ export class EventEmitterBus implements IEventBus {
       ? manager.getRepository(OutboxMessage)
       : this.outboxRepo;
 
-    await repo.save(
+    const saved = await repo.save(
       repo.create({
         type: event.type,
         aggregateId: event.aggregateId,
@@ -38,6 +38,10 @@ export class EventEmitterBus implements IEventBus {
         publishedAt: null,
       }),
     );
+    // created_at defaults to now() — the transaction's start, the same for every event the transaction publishes.
+    // The relay orders by created_at, so stamp the real insert time: events keep the order they were published in
+    // (e.g. segment.upserted before its segment.members).
+    await repo.query('UPDATE outbox_messages SET created_at = clock_timestamp() WHERE id = $1', [saved.id]);
     await repo.query(`SELECT pg_notify('${OUTBOX_CHANNEL}', '')`);
   }
 }

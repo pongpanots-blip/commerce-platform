@@ -56,6 +56,7 @@ import { GrowthModule } from './modules/integration/growth/growth.module';
 import { WinbackModule } from './modules/integration/winback/winback.module';
 import { CompetitorPricesModule } from './modules/integration/competitor-prices/competitor-prices.module';
 import { CustomersModule } from './modules/integration/customers/customers.module';
+import { SegmentsModule } from './modules/integration/segments/segments.module';
 import { McpModule } from './mcp/mcp.module';
 
 @Module({
@@ -117,6 +118,7 @@ import { McpModule } from './mcp/mcp.module';
     WinbackModule,
     CompetitorPricesModule,
     CustomersModule,
+    SegmentsModule,
     McpModule,
   ],
   controllers: [AppController],

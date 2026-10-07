@@ -34,6 +34,9 @@ export class JoshEventsService {
           await m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: {}, sourceVersion: e.version, deletedAt: new Date() });
           await m.query('DELETE FROM customer_metrics WHERE user_id = $1', [e.aggregateId]);
           await m.query('DELETE FROM segment_members WHERE user_id = $1', [e.aggregateId]);
+          // The deleted customer's winback account loses its user link; it reaches josh through the mirror once
+          // commerce owns winback.
+          await m.query('UPDATE winback_account SET josh_user_id = NULL WHERE josh_user_id = $1', [e.aggregateId]);
         });
       case 'catalog.snapshot':
         return this.guarded('josh_catalog_products', 'id', e, (m) => this.saveCatalog(m, e));

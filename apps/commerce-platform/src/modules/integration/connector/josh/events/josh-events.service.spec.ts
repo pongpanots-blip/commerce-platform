@@ -59,6 +59,13 @@ describe('JoshEventsService', () => {
     expect(calls.find(([sql]) => sql.startsWith('DELETE FROM segment_members'))?.[1]).toEqual(['u1']);
   });
 
+  it('customer.deleted unlinks the customer\'s winback account (PDPA, stage 2b)', async () => {
+    const { svc, calls } = makeService(null);
+    await svc.apply({ type: 'customer.deleted', aggregateId: 'u1', version: '9', occurredAt: 'x', data: { id: 'u1' } });
+    const sqls = calls.map(([sql]) => sql);
+    expect(sqls).toContain('UPDATE winback_account SET josh_user_id = NULL WHERE josh_user_id = $1');
+  });
+
   it('an older customer.deleted (stale) removes nothing', async () => {
     const { svc, calls } = makeService('10');
     expect(await svc.apply({ type: 'customer.deleted', aggregateId: 'u1', version: '9', occurredAt: 'x', data: { id: 'u1' } })).toBe('stale');

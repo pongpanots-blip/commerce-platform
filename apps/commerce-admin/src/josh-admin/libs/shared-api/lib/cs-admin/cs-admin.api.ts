@@ -1,4 +1,5 @@
 import { apiClient } from '../api-client/api-client';
+import { commerceClient, ownership } from '../api-client/commerce-client';
 
 export const updateCsUser = async (
   userId: string,
@@ -40,10 +41,11 @@ export const mergeCsAccounts = async (body: {
   duplicate_user_id: string;
 }) => apiClient.post('/cs-admin/accounts/merge', body);
 
+/** Sales-rep assignment goes to whoever owns it (stage 2b): commerce once COMMERCE_OWNS_SALES_REPS=true, josh before. */
 export const assignCsSalesRep = async (body: {
   company_id: string;
   sales_user_id?: string | null;
-}) => apiClient.patch('/cs-admin/sales-assignment', body);
+}) => ((await ownership()).salesReps ? commerceClient : apiClient).patch('/cs-admin/sales-assignment', body);
 
 export const getCreditApplications = async (status?: string) => {
   const q = status ? `?status=${encodeURIComponent(status)}` : '';

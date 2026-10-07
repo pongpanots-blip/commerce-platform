@@ -674,3 +674,46 @@ it('finish pairs ticked proposals, skips duplicates, marks reviewed', async () =
 | s1-5 shadow 1 week | replaced by the one-time parity check (Task 10 Step 2.4) — see Deviations |
 | s1-6 switch | Task 10 runbook steps 4–7 |
 | (not in the spec, added) research social / AI summary parity | 8 |
+
+---
+
+## As built (2026-10-07)
+
+Differences from the tasks above, found while implementing:
+
+- **Task 1:** josh's `product_category` primary-key column is `id` (`category_id_uuid` is only the entity property).
+  The trigger and builder use `id`.
+- **Task 1 — stage-0 bug fixed here:** `customer.deleted` took its version from the outbox row id. That is a
+  different sequence from `commerce_snapshot_seq`, so commerce's guard dropped the delete as stale against
+  earlier `customer.snapshot` versions (PDPA). Both `customer.deleted` and `catalog.deleted` now take
+  `nextval('commerce_snapshot_seq')`.
+- **Task 3 Step 5:** not needed. `CompetitorPricesService.product()` already called `syncSku` only when a
+  replica is configured.
+- **Task 4:** `pack-order-price.helper.ts` already existed in commerce (`connector/josh/jagota/`), byte-identical
+  to josh, so it is reused rather than copied.
+- **Task 5:** the service was regenerated from the josh file by a scripted transform (field names kept via
+  `InventoryShape`), then josh's unit specs (`our-offer`, `sku-suggestions`, `competitor-overview` with xlsx and
+  formula-injection checks) were ported.
+- **Task 6:** josh's review-grid integration test was ported as an opt-in DB spec (`competitor-review.db.spec.ts`).
+- **Task 8:** applied as the josh diff `1e0e435a7..origin/main` onto commerce's layout. The josh HTTP-spec hunks
+  were skipped because commerce never had that spec. There is no `REDIS_CLIENT` in commerce, so the AI/social
+  daily caps are per process.
+- **Task 9:**
+  - Commerce-admin now hosts josh's web-admin competitor/scraping pages verbatim under `/j/marketing/*`.
+  - Their shared-api module calls commerce directly through `commerce-client.ts` (`/competitor-scraping` →
+    `/scraping`).
+  - The older native pages, their API blocks and `e2e/competitor-price-matrix.mjs` were removed; the old URLs
+    redirect.
+  - The research page gained only the AI-summary action.
+- **Task 10:**
+  - Parity check is `npm run competitor-parity`.
+  - The runbook is `docs/runbooks/stage1-competitor-cutover.md`.
+  - Local E2E results:
+    - the catalog backfill sent 5,889 products in 15 s;
+    - a rename reached commerce in 27 ms;
+    - a qty-only write created no event;
+    - a delete set `removed_at`;
+    - the import copied all groups;
+    - parity was 1/1 before and after an event update;
+    - a corrupted pack size was caught;
+    - josh's UI on commerce rendered the review grid, the overview and a valid xlsx export.

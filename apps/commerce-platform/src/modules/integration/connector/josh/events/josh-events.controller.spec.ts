@@ -1,4 +1,4 @@
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 import { JoshBackfillController, JoshEventsController } from './josh-events.controller';
 
@@ -26,7 +26,13 @@ describe('JoshEventsController', () => {
 });
 
 describe('JoshBackfillController', () => {
-  it('only accepts order or customer', () => {
+  it('only accepts order, customer or catalog', () => {
     expect(() => new JoshBackfillController().backfill({ group: 'stock' })).toThrow(BadRequestException);
+    // catalog passes the group check and only then needs the josh API config.
+    const prev = { url: process.env.JOSH_API_URL, secret: process.env.JOSH_EVENTS_SECRET };
+    delete process.env.JOSH_API_URL; delete process.env.JOSH_EVENTS_SECRET;
+    try {
+      expect(() => new JoshBackfillController().backfill({ group: 'catalog' })).toThrow(ServiceUnavailableException);
+    } finally { Object.assign(process.env, prev.url ? { JOSH_API_URL: prev.url } : {}, prev.secret ? { JOSH_EVENTS_SECRET: prev.secret } : {}); }
   });
 });

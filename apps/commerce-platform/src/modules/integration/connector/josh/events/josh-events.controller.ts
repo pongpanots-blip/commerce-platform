@@ -20,13 +20,13 @@ export class JoshEventsController {
   }
 }
 
-/** Staff (guard default): ask josh to resend every order or customer through its outbox (spec §2.5). */
+/** Staff (guard default): ask josh to resend every order, customer or catalog product through its outbox (spec §2.5). */
 @Controller('reports/order-copy')
 export class JoshBackfillController {
   @Post('backfill')
   @HttpCode(HttpStatus.OK)
   backfill(@Body() body: { group?: string }) {
-    if (body?.group !== 'order' && body?.group !== 'customer') throw new BadRequestException('group: order | customer');
+    if (!['order', 'customer', 'catalog'].includes(body?.group ?? '')) throw new BadRequestException('group: order | customer | catalog');
     if (!joshApiConfigured()) throw new ServiceUnavailableException('JOSH_API_URL / JOSH_EVENTS_SECRET not set');
     return postToJosh<{ enqueued: number }>('/internal/commerce/backfill', { group: body.group });
   }

@@ -104,7 +104,8 @@ qty ที่มี `CHANGED_AT` ผ่านตัวกันข้อมู�
 ## 6. ทาง josh → commerce
 
 josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `order_items` / `payment_transactions` /
-`payment_transaction_orders` / `users` ที่เป็นลูกค้า) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
+`payment_transaction_orders` / `users` ที่เป็นลูกค้า / แค็ตตาล็อก: `product_inventory` เฉพาะคอลัมน์ที่ไม่ใช่ stock,
+`product_translation`, `product_media`, ชื่อใน `product_category`) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
 (ค่าเริ่มต้นปิด: trigger ยังบันทึก แต่ไม่ส่ง)
 
 - `POST {COMMERCE_PLATFORM_BASE_URL}/internal/josh-events` · header `x-event-type`, `x-delivery-id`
@@ -119,7 +120,11 @@ josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `ord
 | `order.snapshot` | `{ order, items }` — คอลัมน์เดียวกับ `josh_orders` / `josh_order_lines` |
 | `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`) + `branch_ids` |
 | `customer.deleted` | `{ id }` — commerce ล้างข้อมูล เก็บ tombstone กัน snapshot เก่ามาสร้างกลับ |
+| `catalog.snapshot` | `{ id, sku, status, brand_code, brand_name, country_code_source, storage_temperature, packaging_type, pack_size, units_per_box, weight_per_unit, selling_unit, vat_type, selling_unit_price, ordering_price, order_taking_unit, category_name_th, category_name_en, image_url, updated_at, translations }` — ค่าดิบตามที่ josh เก็บ → `josh_catalog_products` (ใช้จับคู่ราคาคู่แข่ง) |
+| `catalog.deleted` | `{ id }` — commerce ตั้ง `removed_at` (ไม่ลบแถว คู่ราคาคู่แข่งยังอยู่) |
 | `erp.fallback.received` | `{ method, path, body, receivedAt }` — ERP ยิงตรงเข้า josh `/api/erp/*` |
 
-Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"}` → josh
+`version` ของ `*.deleted` มาจาก `commerce_snapshot_seq` เดียวกับ snapshot (ไม่ใช่ id แถว outbox) จึงชนะ snapshot ก่อนหน้าได้
+
+Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"}` → josh
 `POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)

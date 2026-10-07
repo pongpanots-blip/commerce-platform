@@ -1,6 +1,7 @@
 # Status — Stage 5: data jobs read commerce copies (branch `feat/stage5-data-jobs`)
 
-Updated 2026-10-07. Not pushed. Commerce-only items are done; the rest need josh changes (S5-11/12) or owner decisions.
+Updated 2026-10-07. Not pushed. Commerce-only items and S5-11 (josh snapshot groups + commerce copies) are done; S5-12 and the
+readers that use the S5-11 copies are next.
 
 ## Done
 - **Inventory + plan:** `docs/superpowers/plans/2026-10-08-stage5-data-jobs.md`.
@@ -60,6 +61,17 @@ Updated 2026-10-07. Not pushed. Commerce-only items are done; the rest need josh
   copied yet. Pages already show the backend message, so no frontend change was needed. Spec: 3 passing.
 - **Runbook:** `docs/runbooks/stage5-reports-copies.md` lists every switch, its parity check, the order to flip them,
   what still needs the replica and why, and which crons to turn off (S5-15).
+- **S5-11, josh snapshot groups for the report copies (josh branch `feat/commerce-copies-for-reports`, 5 commits; commerce 1 + docs):**
+  - josh: `catalog.snapshot` + products report fields (fingerprint unchanged; qty sends on stock-state changes only),
+    new `branch.snapshot` (no personal data), `company.snapshot` + `business_type` / `erp_customer_code` /
+    `document_language` (no credit — q1), `order.snapshot` + `sending_date` / `payments[]` / `shipments[]` / `refunds[]`,
+    new `jagota_sync.snapshot`. Migrations `1792360000000`…`1792400000000`, builder, drainer, backfill groups.
+    Specs: commerce-events 30 passing (+10 opt-in real-DB cases, not run).
+  - commerce: migration `1795200000000-JoshReportCopies` (nullable columns + `josh_branches`, `josh_order_payments`,
+    `josh_order_shipments`, `josh_order_refunds`, `jagota_order_sync_history.source_version`); `JoshEventsService`
+    cases; backfill groups `branch`, `jagota_sync`. Older-shape snapshots never null the new data.
+    Specs: josh connector 45 suites / 482+ passing; `tsc` clean.
+  - Deploy order: commerce first, then josh migrations + backend, then backfill (runbook "ข้อมูลเพิ่มจาก josh (S5-11)").
 - **Customers report: deferred.** It is mostly KYC, credit and branch data. It waits on open question 1 and the
   S5-11 company/branch snapshots.
 
@@ -67,13 +79,16 @@ Updated 2026-10-07. Not pushed. Commerce-only items are done; the rest need josh
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
   First check: `BESTSELLERS_SOURCE=shadow` on staging or prod after the order backfill.
 - Full commerce suite not run (single spec only).
-- No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
+- S5-11 migrations (josh + commerce) not run against a real DB; the josh trigger db-spec cases are opt-in
+  (`JOSH_SCOPE_TEST_DATABASE_URL`) and were not run here. The readers do not use the new copies yet.
 
 ## Next (safe, commerce-only, in order)
-1. S5-11 (josh, needs the josh branch `feat/commerce-copies-for-reports`): the `catalog.snapshot` fields from S5-4,
-   `branch.snapshot`, payments / shipments / refunds / `sending_date` on `order.snapshot`, `jagota_sync`.
-2. S5-12 josh snapshots: `push_campaign`, `marketing_workflow`.
-3. S5-16 staging click-through with `JOSH_DATABASE_URL` unset (needs an environment).
+1. S5-12 josh snapshots: `push_campaign`, `marketing_workflow`.
+2. Readers on the S5-11 copies (commerce-only): S5-4 `PRODUCTS_SOURCE=copies`; S5-7 orders list/detail fill branch,
+   ERP codes, payments, shipments, `sending_date` (shrink `notCopied`); S5-5 refunds from `josh_order_refunds`
+   (`status = 'refunded'`, `created_at` range); S5-9 freshness wording (events, not imports).
+3. Real-DB check of the S5-11 migrations (josh trigger db-spec + commerce migration on a scratch DB).
+4. S5-16 staging click-through with `JOSH_DATABASE_URL` unset (needs an environment).
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?

@@ -12,6 +12,22 @@
 - backfill เสร็จแล้ว: order (`prod-data-from-josh.md` แถว 0–1), customer / staff / company / restaurant_place (`stage2c-winback-copies.md` ข้อ 3)
 - ตอนเทียบ (parity) ต้องยังมี `JOSH_DATABASE_URL` อยู่ — ถอดออกหลังสลับครบเท่านั้น
 
+## ข้อมูลเพิ่มจาก josh (S5-11) — ทำครั้งเดียว ก่อนสลับรายงานที่ต้องใช้
+
+ข้อนี้มี migration ทั้งสองฝั่ง (ข้อความด้านบน "ไม่มี migration" ใช้กับ switch ในตารางถัดไป)
+
+1. deploy commerce ก่อน (migration `JoshReportCopies1795200000000`) — ถ้า josh ไปก่อน event ชนิดใหม่จะได้ 400 และค้าง retry
+2. รัน `Database Migration` ของ josh แล้ว deploy backend (migrations `17923[6-9]0000000-CommerceOutbox*`, `1792400000000-CommerceOutboxJagotaSync`)
+3. backfill ทีละกลุ่ม (`POST /api/reports/order-copy/backfill`): `branch` → `company` → `catalog` → `jagota_sync` → `order`
+   (order ใหญ่สุด รอ `commerce_outbox` ของ josh ลดจนเกือบ 0 ก่อนกลุ่มถัดไป)
+4. ตรวจ: `josh_catalog_products` ที่ `removed_at IS NULL AND category_id IS NULL` ≈ จำนวนสินค้าที่ไม่มีหมวดใน josh ·
+   `josh_branches` เท่ากับ `branch` ของ josh · `josh_orders.sending_date` มีค่า · `jagota_order_sync_history.source_version > 0`
+   ครบทุกแถวที่ import มา · `max(imported_at)` ขยับตามการส่ง ERP ใหม่
+5. หลังข้อ 4: ปิด `CRON_JAGOTA_SYNC_IMPORT_ENABLED` ได้ (event แทนการ import แล้ว)
+
+ตัวอ่าน (products copies mode, รายละเอียด order: payments / shipments / branch, คืนเงินใน sales) ยังไม่ได้ต่อกับ
+ตารางใหม่ — ดู STATUS "Next"
+
 ## ลำดับ (ทีละตัว ตรวจแล้วค่อยไปตัวถัดไป)
 
 | # | env | ตรวจก่อนสลับ | ผ่านเมื่อ |

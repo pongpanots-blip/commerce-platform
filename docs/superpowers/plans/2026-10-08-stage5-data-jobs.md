@@ -245,7 +245,7 @@ was cut for competitor matching; `josh-products.ts` needs more:
 | `erp_pending_source / _at / _payload` (issue `pending_approval`, `pendingChanges`) | `product_price_pending` / `product_master_pending` (only when owned) |
 | all images (`media[]`, `image_count`, issue `no_image`) | `product_images.images` (4e, when owned); copy has the first only |
 
-- [ ] **josh (S5-11 batch, additive):** add to `CATALOG`: `p.category_id`, `c.category_path`, `p.original_price`,
+- [x] **josh (S5-11 batch, additive) — done 2026-10-07, see S5-11 below:** add to `CATALOG`: `p.category_id`, `c.category_path`, `p.original_price`,
       `p.sup_code`, `p.product_inventory_quantity`, `p.low_stock_threshold`, `p.moq`, `p.order_taking_flag`,
       `p.erp_pending_source`, `p.erp_pending_at`, image count. Contract note in `docs/event-contract.md`; commerce
       migration adds the columns to `josh_catalog_products` (nullable). Careful: `catalogFingerprint` must keep
@@ -351,6 +351,33 @@ Until decided the page stays on the replica. No new snapshot group invented here
 Stage 2c pattern: josh migration (trigger → `commerce_outbox`), `commerce-snapshot.builder.ts` group, drainer type,
 backfill group; commerce migration (real-column copy table + tombstones), `josh-events.service.ts` case, PDPA wipe,
 `docs/event-contract.md`, runbook. One group per commit.
+
+#### S5-11 — DONE (josh `feat/commerce-copies-for-reports`, commerce this branch; 2026-10-07, not pushed)
+
+- [x] `catalog.snapshot` + report fields (josh `1792360000000-CommerceOutboxCatalogReportFields`): `category_id`,
+      `category_path`, `original_price`, `sup_code`, `product_inventory_quantity`, `low_stock_threshold`, `moq`,
+      `order_taking_flag`, `erp_pending_source`, `erp_pending_at`, `image_count`. Fingerprint fields unchanged. Quantity
+      fires only when the stock state changes (out / low / ok — the report's tiles), so the ERP qty path stays free;
+      the exact number is as of the last snapshot. `product_category.category_path` re-sends its products.
+- [x] `branch.snapshot` (new; `1792370000000-CommerceOutboxBranch`) — name, company/shop, type, ERP codes,
+      subdistrict; no address / recipient / phone / coordinates / tax id → no PDPA wipe needed.
+- [x] `company.snapshot` + `business_type`, `erp_customer_code`, `document_language`, `created_at`
+      (`1792380000000-CommerceOutboxCompanyBusiness`). Credit columns NOT sent (q1).
+- [x] `order.snapshot` + `order.sending_date`, `payments[]` (direct + batch via `payment_transaction_orders`),
+      `shipments[]`, `refunds[]` (`1792390000000-CommerceOutboxOrderExtras`: triggers on `shipments` — sent columns
+      only, courier location pings excluded — and `order_refunds`). No gateway response / courier / POD / refund reason.
+- [x] `jagota_sync.snapshot` (new; `1792400000000-CommerceOutboxJagotaSync`) — one `jagota_order_sync` row + order number.
+- [x] josh: builder groups, drainer `SNAPSHOT_TYPES`, backfill groups; specs: builder (+6), drainer (+2), backfill (+2);
+      opt-in real-DB trigger cases (not run — no scratch DB here).
+- [x] commerce `1795200000000-JoshReportCopies`: nullable columns on `josh_catalog_products`, `josh_companies`,
+      `josh_orders.sending_date`; new `josh_branches`, `josh_order_payments`, `josh_order_shipments`,
+      `josh_order_refunds`; `jagota_order_sync_history.source_version`. `JoshEventsService`: branch / jagota_sync as
+      reference groups (tombstones on delete; jagota stamps `imported_at`), order children replaced per order, catalog
+      report fields — all skipped when an older-shape snapshot lacks them. Backfill groups `branch`, `jagota_sync`.
+      Spec +6. `docs/event-contract.md`, runbook updated.
+- [ ] Readers not yet switched to the new copies (follow-ups): S5-4 `PRODUCTS_SOURCE`, S5-7 orders detail
+      (payments / shipments / branch / ERP codes / sending_date from copies), S5-5 refunds from `josh_order_refunds`,
+      customers report basic copies mode (still q1).
 
 ### Ops runbook
 

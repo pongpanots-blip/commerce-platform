@@ -129,7 +129,8 @@ qty ที่มี `CHANGED_AT` ผ่านตัวกันข้อมู�
 
 josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `order_items` / `payment_transactions` /
 `payment_transaction_orders` / `users` (ลูกค้า → `customer`, คนอื่น → `staff`) / `company` / `cuisine` / `restaurant_place` / แค็ตตาล็อก: `product_inventory` เฉพาะคอลัมน์ที่ไม่ใช่ stock,
-`product_translation`, `product_media`, ชื่อใน `product_category`) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
+`product_translation`, `product_media`, ชื่อและ path ใน `product_category`; ขั้น 5 เพิ่ม `shipments` / `order_refunds` → `order`,
+`branch`, `jagota_order_sync`) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
 (ค่าเริ่มต้นปิด: trigger ยังบันทึก แต่ไม่ส่ง)
 
 - `POST {COMMERCE_PLATFORM_BASE_URL}/internal/josh-events` · header `x-event-type`, `x-delivery-id`
@@ -141,19 +142,26 @@ josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `ord
 
 | type | data |
 |---|---|
-| `order.snapshot` | `{ order, items }` — คอลัมน์เดียวกับ `josh_orders` / `josh_order_lines` |
+| `order.snapshot` | `{ order, items, payments, shipments, refunds }` — `order` / `items` คอลัมน์เดียวกับ `josh_orders` / `josh_order_lines` (ขั้น 5: `order.sending_date`) · ขั้น 5 (S5-11): `payments[]` = `{ id, status, payment_method, amount, allocated_amount, gateway_provider, is_test, paid_at, created_at }` (รวมการจ่ายแบบ batch ผ่าน `payment_transaction_orders`; `allocated_amount` = ส่วนของ order นี้, null = จ่ายตรง) → `josh_order_payments` · `shipments[]` = `{ id, shipment_number, status, fulfillment_type, delivery_date, shipped_at, delivered_at, cancelled_at, total_inc_vat, erp_sync_status, three_pl_status, created_at }` → `josh_order_shipments` · `refunds[]` = `{ id, amount, status, resolution_type, source, approved_at, rejected_at, processed_at, created_at, updated_at }` → `josh_order_refunds`. ทั้งสามแทนที่ทั้งชุดต่อ order; snapshot แบบเก่าที่ไม่มี key เหล่านี้ไม่แตะของเดิม · ไม่มีข้อมูลส่วนบุคคล (ไม่มี gateway response, คนขับ / POD / พิกัด, เหตุผลคืนเงิน / โน้ต) |
 | `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`; ขั้น 2c เพิ่ม `legacy_custcode`, `onboarding_completed`) + `branch_ids` + `tier_slug`, `cuisine_name`, `cuisine_parent_id` (ค่าเดียวกับ base query ของ segment ใน josh; ส่งใหม่เมื่อ tier หรือ cuisine ของร้านเปลี่ยน) |
 | `customer.deleted` | `{ id }` — commerce ล้างข้อมูล เก็บ tombstone กัน snapshot เก่ามาสร้างกลับ |
-| `catalog.snapshot` | `{ id, sku, status, brand_code, brand_name, country_code_source, storage_temperature, packaging_type, pack_size, units_per_box, weight_per_unit, selling_unit, vat_type, selling_unit_price, ordering_price, order_taking_unit, category_name_th, category_name_en, image_url, updated_at, translations }` — ค่าดิบตามที่ josh เก็บ → `josh_catalog_products` (ใช้จับคู่ราคาคู่แข่ง) |
+| `catalog.snapshot` | `{ id, sku, status, brand_code, brand_name, country_code_source, storage_temperature, packaging_type, pack_size, units_per_box, weight_per_unit, selling_unit, vat_type, selling_unit_price, ordering_price, order_taking_unit, category_name_th, category_name_en, image_url, updated_at, translations }` — ค่าดิบตามที่ josh เก็บ → `josh_catalog_products` (ใช้จับคู่ราคาคู่แข่ง) · ขั้น 5 (S5-11) เพิ่มช่องของรายงานสินค้า: `category_id, category_path, original_price, sup_code, product_inventory_quantity, low_stock_threshold, moq, order_taking_flag, erp_pending_source, erp_pending_at, image_count` — **ไม่อยู่ใน `catalogFingerprint`** · `product_inventory_quantity` ส่งเมื่อสถานะสต็อกเปลี่ยน (หมด / ใกล้หมด / ปกติ) เท่านั้น ไม่ใช่ทุกครั้งที่ qty เปลี่ยน — ตัวเลขจึงเป็นค่า ณ snapshot ล่าสุด · `erp_pending_payload` และรายการรูปทั้งหมดไม่ส่ง · snapshot แบบเก่าที่ไม่มี `category_id` ไม่แตะช่องเหล่านี้ |
 | `catalog.deleted` | `{ id }` — commerce ตั้ง `removed_at` (ไม่ลบแถว คู่ราคาคู่แข่งยังอยู่) |
 | `erp.fallback.received` | `{ method, path, body, receivedAt }` — ERP ยิงตรงเข้า josh `/api/erp/*` |
-| `company.snapshot` | `{ id, name, register_number }` (ขั้น 2c) → `josh_companies` |
+| `company.snapshot` | `{ id, name, register_number }` (ขั้น 2c) + `business_type, erp_customer_code, document_language, created_at` (ขั้น 5) → `josh_companies` · ไม่มีวงเงิน / เครดิต (รอเจ้าของตอบ plan §4 q1) |
+| `branch.snapshot` | `{ id, name, company_id, shop_id, type, erp_branch_code, erp_branch_seq, erp_branch_no, erp_sync_status, is_default_delivery, subdistrict_code, created_at }` (ขั้น 5) → `josh_branches` · ไม่มีที่อยู่ / ผู้รับ / เบอร์ / พิกัด / เลขภาษี |
+| `jagota_sync.snapshot` | หนึ่งแถวของ `jagota_order_sync` (การส่ง order ไป ERP หนึ่งครั้ง) + `order_number` (ขั้น 5) — คอลัมน์เดียวกับ `jagota_order_sync_history` → upsert ตาราง import เดิม, ตั้ง `imported_at = now()` (ความสดของสำเนา) · `request_json` เป็น payload ระดับ order แบบเดียวกับที่ import เดิมเก็บ |
 | `cuisine.snapshot` | `{ id, parent_id, cuisine_name, cuisine_name_th, level, is_active }` (ขั้น 2c) → `josh_cuisines` |
 | `restaurant_place.snapshot` | ทั้งแถวของ `restaurant_place` (ขั้น 2c) → `josh_restaurant_places` (เก็บเฉพาะคอลัมน์ที่มี) |
 | `staff.snapshot` | user ที่ไม่ใช่ลูกค้า: `{ id, email, first_name, last_name, role, user_type, is_active, token_version, company_id, created_at, last_app_login_at }` (ขั้น 2c) → `josh_staff` — ใช้ตรวจ token ของแอปฝ่ายขาย · `token_version` อยู่ที่นี่เท่านั้น ไม่อยู่ใน `customer.snapshot` |
-| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล |
+| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล |
 
 `version` ของ `*.deleted` มาจาก `commerce_snapshot_seq` เดียวกับ snapshot (ไม่ใช่ id แถว outbox) จึงชนะ snapshot ก่อนหน้าได้
 
-Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"}` → josh
+Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"|"branch"|"jagota_sync"}` → josh
 `POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)
+
+ขั้น 5 (S5-11) — ลำดับ rollout: deploy commerce (migration `JoshReportCopies`) **ก่อน** josh (migrations
+`CommerceOutbox{CatalogReportFields,Branch,CompanyBusiness,OrderExtras,JagotaSync}`) — commerce ที่ยังไม่รู้จัก
+`branch.snapshot` / `jagota_sync.snapshot` ตอบ 400 และ josh จะ retry ค้างไว้ · จากนั้น backfill `catalog`, `company`,
+`branch`, `order`, `jagota_sync` ทีละกลุ่ม

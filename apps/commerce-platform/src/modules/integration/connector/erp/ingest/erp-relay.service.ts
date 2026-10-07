@@ -7,6 +7,7 @@ import { IntegrationService } from '../../../integration/application/integration
 import { ERP_RELAY_ENTITY_TYPE, ErpIngestRecord } from '../erp-ingest-record.entity';
 import { ProductMastersService } from '../../../../commerce/product-masters/product-masters.service';
 import { ProductImagesService } from '../../../../commerce/product-images/product-images.service';
+import { OrderingService } from '../../../../commerce/ordering/ordering.service';
 
 /** ERP call → event type. The `erp.*` family: the ERP request verbatim, for platforms that run ERP business logic (josh). */
 export const ERP_RELAY_EVENTS = {
@@ -89,6 +90,8 @@ export class ErpRelayService {
     @Optional() private readonly masters?: ProductMastersService,
     /** Stage 4e: ERP image calls replace the gallery commerce owns. */
     @Optional() private readonly images?: ProductImagesService,
+    /** Stage 4f: ERP order-period pushes update the supplier rounds commerce owns. */
+    @Optional() private readonly ordering?: OrderingService,
   ) {}
 
   async relay(type: ErpRelayEventType, route: string, body: unknown, snapshotKey: string | null = null): Promise<void> {
@@ -111,6 +114,7 @@ export class ErpRelayService {
       await this.eventBus.publish(new ErpRelayed(type, snapshotKey ?? record.id, payload, !!snapshotKey), manager);
       if (type === ERP_RELAY_EVENTS.productUpsert || type === ERP_RELAY_EVENTS.productBulk) await this.masters?.stageFromErp(manager, body, new Date());
       if (type === ERP_RELAY_EVENTS.productImage) await this.images?.fromErp(manager, body);
+      if (type === ERP_RELAY_EVENTS.orderPeriods) await this.ordering?.fromErp(manager, body);
     });
   }
 }

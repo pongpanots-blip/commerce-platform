@@ -83,6 +83,10 @@ export type ProductPromotionLock = {
 export const getProductPromotionLock = async (
   id: string,
 ): Promise<ProductPromotionLock> => {
+  if ((await ownership()).promotions) {
+    const product = await getProductById(id, { lang: 'th' });
+    return product.data?.promotion_rules_locked_by ?? null;
+  }
   const response = await apiClient.get<{
     data?: { promotion_rules_locked_by?: ProductPromotionLock };
   }>(`/product/${id}/promotion-lock`);
@@ -101,6 +105,14 @@ export const getProductById = async (
   const response = await apiClient.get<any>(
     `/product/${id}${qs ? `?${qs}` : ''}`,
   );
+  if ((await ownership()).promotions) {
+    const product = response.data;
+    if (product?.product_inventory_sku) {
+      const local = await request<{ promotion_rules: unknown[]; promotion_rules_locked_by: ProductPromotionLock }>(`/product-promotion-rules/${encodeURIComponent(product.product_inventory_sku)}`);
+      product.promotion_rules_locked_by = local.promotion_rules_locked_by;
+      if (!local.promotion_rules_locked_by) Object.assign(product, { promotion_rules: local.promotion_rules, tier_prices: local.promotion_rules });
+    }
+  }
   return response;
 };
 

@@ -44,7 +44,7 @@ async function call<T>(method: Method, url: string, body?: unknown, config?: Con
   }
 }
 
-type Ownership = { segments: boolean; salesReps: boolean; categories?: boolean; productImages?: boolean };
+type Ownership = { segments: boolean; salesReps: boolean; categories?: boolean; productImages?: boolean; promotions?: boolean };
 let owned: Promise<Ownership> | null = null;
 /** Which josh features commerce owns right now (GET /api/ownership), fetched once per page load; josh if unknown. */
 export const ownership = () => (owned ??= request<Ownership>('/ownership').catch((): Ownership => ({ segments: false, salesReps: false })));

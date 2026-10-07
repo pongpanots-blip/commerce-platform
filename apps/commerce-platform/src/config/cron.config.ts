@@ -9,6 +9,7 @@ export interface CronConfig {
   joshCatalogSync: CronJobConfig;
   competitorPricesRefresh: CronJobConfig;
   joshCustomerMetrics: CronJobConfig;
+  erpFallbackReplay: CronJobConfig;
   joshBestsellers: CronJobConfig;
   jagotaShadow: CronJobConfig;
   priceShadow: CronJobConfig;
@@ -45,6 +46,11 @@ export function loadCronConfig(env: NodeJS.ProcessEnv = process.env): Readonly<C
       expression: env.CRON_JOSH_CUSTOMER_METRICS ?? '30 2 * * *',
       enabled: env.CRON_JOSH_CUSTOMER_METRICS_ENABLED?.trim().toLowerCase() === 'true',
       timeZone: 'Asia/Bangkok',
+    },
+    // Stage 3: ERP calls josh took while commerce was down (erp.fallback.received) go into the ledger. Opt-in.
+    erpFallbackReplay: {
+      expression: env.CRON_ERP_FALLBACK_REPLAY ?? '0 * * * * *',
+      enabled: env.CRON_ERP_FALLBACK_REPLAY_ENABLED?.trim().toLowerCase() === 'true',
     },
     // Task 9 offload. Opt-in; josh keeps each push for 1h, so a 10-minute cadence leaves room for misses.
     joshBestsellers: {

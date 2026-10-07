@@ -3,10 +3,10 @@ import { InventoryLedgerService } from './inventory-ledger.service';
 import { InventoryLevel } from '../infrastructure/inventory-level.entity';
 import { Warehouse } from '../../warehouse/infrastructure/warehouse.entity';
 
-function makeManager(opts: { level?: Partial<InventoryLevel> | null; newerApplied?: number } = {}) {
+function makeManager(opts: { level?: Partial<InventoryLevel> | null; newerApplied?: number; sellable?: number } = {}) {
   const levels = {
-    findOne: jest.fn().mockResolvedValue(opts.level ?? null),
-    create: jest.fn((x) => x),
+    // lockedLevel upserts the row, so the locked read always finds one (a fresh row starts at 0 / 0).
+    findOneOrFail: jest.fn().mockResolvedValue({ quantity: '0', reserved: '0', ...(opts.level ?? {}) }),
     save: jest.fn(async (x) => x),
   };
   const movements = {
@@ -14,10 +14,12 @@ function makeManager(opts: { level?: Partial<InventoryLevel> | null; newerApplie
     create: jest.fn((x) => x),
     save: jest.fn(async (x) => x),
   };
+  const query = jest.fn(async (sql: string) => (sql.includes('FROM products p') ? [{ sku: 'SKU-1', qty: opts.sellable ?? 48 }] : []));
   const manager = {
+    query,
     getRepository: jest.fn((e) => (e === InventoryLevel ? levels : movements)),
   } as unknown as EntityManager;
-  return { manager, levels, movements };
+  return { manager, levels, movements, query };
 }
 
 const erpWarehouse = { id: 'w-1', stockSource: 'erp' } as Warehouse;
@@ -34,15 +36,30 @@ describe('InventoryLedgerService', () => {
   it('writes a movement and moves the snapshot', async () => {
     const { manager, levels, movements } = makeManager({ level: { quantity: '50' } });
     const res = await svc.recordExternalQuantity(manager, base);
-    expect(res).toEqual({ status: 'applied', previousQuantity: 50 });
+    expect(res).toMatchObject({ status: 'applied', previousQuantity: 50 });
     expect(movements.save).toHaveBeenCalledWith(expect.objectContaining({ status: 'applied', quantityAfter: '48', reason: 'SALE' }));
     expect(levels.save).toHaveBeenCalledWith(expect.objectContaining({ quantity: '48' }));
   });
 
-  it('creates the snapshot on first sight and clamps negatives / fractions', async () => {
-    const { manager, levels } = makeManager();
+  it('creates the level row on first sight (upsert, then a locked read) and clamps negatives / fractions', async () => {
+    const { manager, levels, query } = makeManager();
     await svc.recordExternalQuantity(manager, { ...base, quantity: -3.7 });
-    expect(levels.create).toHaveBeenCalledWith({ productId: 'p-1', warehouseId: 'w-1', quantity: '0' });
+    expect(query.mock.calls[0][0]).toContain('ON CONFLICT (product_id, warehouse_id) WHERE deleted_at IS NULL DO NOTHING');
+    expect(levels.findOneOrFail).toHaveBeenCalledWith({ where: { productId: 'p-1', warehouseId: 'w-1' }, lock: { mode: 'pessimistic_write' } });
+    expect(levels.save).toHaveBeenCalledWith(expect.objectContaining({ quantity: '0' }));
+  });
+
+  it('publishes inventory.sellable.snapshot (sum of sellable warehouses) on an applied movement only', async () => {
+    const applied = makeManager({ level: { quantity: '50' }, sellable: 70 });
+    await svc.recordExternalQuantity(applied.manager, { ...base, warehouse: { ...erpWarehouse, sellable: true } as Warehouse });
+    expect(bus.publish).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'inventory.sellable.snapshot', aggregateId: 'p-1', metadata: { snapshot: true },
+      payload: expect.objectContaining({ sku: 'SKU-1', sellableQty: 70, erp: expect.objectContaining({ PRODUCT_CODE: 'SKU-1', QUANTITY: 70 }) }),
+    }), applied.manager);
+    bus.publish.mockClear();
+    await svc.recordExternalQuantity(makeManager({ newerApplied: 1 }).manager, base);
+    await svc.recordExternalQuantity(makeManager().manager, { ...base, warehouse: { id: 'w-9', stockSource: 'erp', sellable: false } as Warehouse });
+    expect(bus.publish).not.toHaveBeenCalled();
   });
 
   it('keeps an out-of-order (older) change as stale without touching the snapshot', async () => {

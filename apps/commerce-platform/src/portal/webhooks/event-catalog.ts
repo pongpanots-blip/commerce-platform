@@ -25,6 +25,11 @@ export const EVENT_CATALOG: CatalogEvent[] = [
     description: 'สต๊อกเปลี่ยน (จาก ERP หรือในแพลตฟอร์ม)',
     example: { id: 'uuid', quantity: 10, reserved: 2 },
   },
+  {
+    type: 'inventory.sellable.snapshot',
+    description: 'stock ที่ขายได้ต่อ SKU (รวมทุกคลังที่ขายได้) หลังมีการเคลื่อนไหว — เก็บตัวที่ version ใหม่สุด',
+    example: { sku: '1001876', sellableQty: 48, version: '2026-10-07T03:00:00.000Z', erp: { PRODUCT_CODE: '1001876', QUANTITY: 48, CHANGED_AT: '2026-10-07T03:00:00.000Z' } },
+  },
   { type: 'price.updated', description: 'ราคาเปลี่ยน', example: { id: 'uuid' } },
   {
     type: 'erp.sale-order.created',

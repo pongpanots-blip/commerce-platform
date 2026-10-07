@@ -2,7 +2,7 @@ import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from '../../../../shared-kernel/domain/base.entity';
 
 @Entity('inventory_levels')
-@Index(['productId', 'warehouseId'])
+@Index('UQ_inventory_levels_product_warehouse', ['productId', 'warehouseId'], { unique: true, where: 'deleted_at IS NULL' })
 export class InventoryLevel extends BaseEntity {
   @Column({ type: 'uuid', name: 'product_id' })
   productId: string;

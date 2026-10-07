@@ -52,3 +52,25 @@ commit — makes the `*_thumb.webp` of any new josh-bucket image that has none (
 - [ ] Contract, env, runbook `docs/runbooks/stage4e-images-cutover.md`.
 - [ ] Scratch: import + parity; set / ERP replace → snapshot → josh apply → parity.
 - [ ] Full suites; as built; drop scratch DBs; commit.
+
+## As built (2026-10-08)
+
+- **Scope as planned.** New switch `COMMERCE_OWNS_PRODUCT_IMAGES` both sides; `GET /api/ownership` → `productImages`.
+- **commerce:** `product_images` (ordered URLs). `putMediaObject` (shared-kernel) puts files in josh's bucket with josh's
+  env names — winback's photo upload now uses it too. `ProductImagesService`: product-page upload (≤3, 5 MB, jpg / png /
+  gif / webp, key `uploads/products/images-<ts>-<rand>.<ext>`), set (remove / reorder known images only), bulk by file
+  name (josh's `SKU_<n>` rule, append / replace, `{ appended, failed }`, key `{sku}/{sku}_<ts>-<rand>.<ext>`), ERP image
+  call (full replace, from the relay and the fallback replay). A SKU without a gallery starts from the catalog copy's image.
+  Every change publishes the whole gallery. The product page and josh-admin's bulk upload switch to commerce when owned.
+- **josh:** image edits on `PATCH /product/:id`, bulk upload / restore → 403; the ERP image call is skipped;
+  `CommerceImagesService` replaces the SKU's image rows in order, then `ensureProductImageThumb` for josh-bucket images
+  (best effort) and the caches.
+- **Prod data:** `docs/runbooks/prod-data-from-josh.md` lists every import / backfill from **josh prod** (read-only) per
+  stage, with its parity check (asked for during this stage).
+
+**Verification:** josh — `commerce-images.service.spec` (order, thumbs only for josh-bucket images, stale, 409 / 422,
+edit guard), erp / product specs. commerce — opt-in `product-images.service.db.spec.ts` (S3 mocked: upload cap / size,
+set, bulk replace + failures, ERP replace, switch off), winback specs after the upload refactor. Scratch copies: import
+5,888 galleries, `image-parity` 0; upload + reorder in commerce → josh applied the same order (thumbs requested for 2) →
+parity 0. commerce full suite (`--maxWorkers=2`): 1300 passed (33 opt-in skipped).
+josh full suite (`--maxWorkers=2`): 6749 passed; only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.

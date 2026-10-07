@@ -63,6 +63,38 @@ describe('JoshActionsController — back-office actions', () => {
     } finally { delete process.env.COMMERCE_OWNS_PRICES; }
   });
 
+  it('stage 4b: once commerce owns content those keys are validated and saved in commerce, the rest still goes to josh', async () => {
+    const contents = { edit: jest.fn(async () => ({ sku: 'SKU-1', fields: {} })) };
+    const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    process.env.COMMERCE_OWNS_PRODUCT_CONTENT = 'true';
+    try {
+      await ctl.updateProduct(ID, { fields: { product_name_th: ' ซอส ', ingredients: '', selling_unit: 'kg' } }, req);
+      expect(contents.edit).toHaveBeenCalledWith('SKU-1', { product_name_th: 'ซอส', ingredients: null }, 'staff-1');
+      expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { selling_unit: 'kg' } }, expect.anything(), 'admin');
+      josh.run.mockClear(); contents.edit.mockClear();
+      await expect(ctl.updateProduct(ID, { fields: { product_name_en: '', selling_unit: 'kg' } }, req)).rejects.toThrow('product_name_en');
+      expect(josh.run).not.toHaveBeenCalled();
+      expect(contents.edit).not.toHaveBeenCalled();
+      josh.run.mockResolvedValueOnce({ product_inventory_id: ID } as never);
+      await ctl.createProduct({ product: { product_inventory_sku: 'SKU-2', product_name_th: 'ใหม่', selling_unit: 'kg' } }, req);
+      expect(josh.run).toHaveBeenLastCalledWith('products', 'create', { product: { product_inventory_sku: 'SKU-2', product_name_th: 'ใหม่', selling_unit: 'kg' } }, expect.anything(), 'admin');
+      expect(contents.edit).toHaveBeenCalledWith('SKU-2', { product_name_th: 'ใหม่' }, 'staff-1', 'create');
+    } finally { delete process.env.COMMERCE_OWNS_PRODUCT_CONTENT; }
+  });
+
+  it('a product not in the catalog copy yet is pulled from josh once before its content / price is saved', async () => {
+    const contents = { edit: jest.fn(async () => ({})) };
+    const db = { query: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([{ sku: 'SKU-9' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    process.env.COMMERCE_OWNS_PRODUCT_CONTENT = 'true';
+    try {
+      await ctl.updateProduct(ID, { fields: { allergens: 'นม' } }, req);
+      expect(catalog.syncId).toHaveBeenCalledWith(ID);
+      expect(contents.edit).toHaveBeenCalledWith('SKU-9', { allergens: 'นม' }, 'staff-1');
+    } finally { delete process.env.COMMERCE_OWNS_PRODUCT_CONTENT; }
+  });
+
   it('product create goes to josh and refreshes the copy of the new product; cuisine tags go as a list', async () => {
     josh.run.mockResolvedValueOnce({ product_inventory_id: ID } as never);
     await c.createProduct({ product: { product_inventory_sku: 'SKU-1' } }, req);

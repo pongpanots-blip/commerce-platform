@@ -58,6 +58,7 @@ import { CompetitorPricesModule } from './modules/integration/competitor-prices/
 import { CustomersModule } from './modules/integration/customers/customers.module';
 import { SegmentsModule } from './modules/integration/segments/segments.module';
 import { ProductPricesModule } from './modules/commerce/product-prices/product-prices.module';
+import { ProductContentsModule } from './modules/commerce/product-contents/product-contents.module';
 import { McpModule } from './mcp/mcp.module';
 
 @Module({
@@ -120,6 +121,7 @@ import { McpModule } from './mcp/mcp.module';
     CompetitorPricesModule,
     CustomersModule,
     ProductPricesModule,
+    ProductContentsModule,
     SegmentsModule,
     McpModule,
   ],

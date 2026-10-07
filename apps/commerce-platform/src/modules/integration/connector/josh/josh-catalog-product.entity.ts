@@ -5,8 +5,9 @@ export type JoshProductTranslation = {
 };
 
 /**
- * Read-only copy of josh's catalog (product_inventory + product_translation),
- * pulled by JoshCatalogSyncService. Same id as josh's product_inventory_id.
+ * Read-only copy of josh's catalog (product_inventory + product_translation + category names + first image),
+ * fed by josh catalog.snapshot events (JoshEventsService, version-guarded by source_version); the replica pull
+ * (JoshCatalogSyncService) only runs where JOSH_DATABASE_URL is set. Same id as josh's product_inventory_id.
  * Column values are kept exactly as josh stores them (numeric as string), so
  * fingerprints computed here match the ones josh computed before the move.
  * josh stays the writer; nothing here is pushed back.
@@ -29,9 +30,18 @@ export class JoshCatalogProduct {
   @Column({ name: 'vat_type', type: 'varchar', length: 50, nullable: true }) vatType: string | null;
   /** The live selling price (after MER approval in josh), VAT included. */
   @Column({ name: 'selling_unit_price', type: 'numeric', precision: 12, scale: 2, nullable: true }) sellingUnitPrice: string | null;
+  /** Price of one order unit (box / pack) for pack-priced SKUs. */
+  @Column({ name: 'ordering_price', type: 'numeric', precision: 12, scale: 2, nullable: true }) orderingPrice: string | null;
+  @Column({ name: 'order_taking_unit', type: 'varchar', length: 50, nullable: true }) orderTakingUnit: string | null;
+  @Column({ name: 'category_name_th', type: 'varchar', length: 100, nullable: true }) categoryNameTh: string | null;
+  @Column({ name: 'category_name_en', type: 'varchar', length: 100, nullable: true }) categoryNameEn: string | null;
+  /** josh's first product image (product_media, media_type image, lowest sort_order). */
+  @Column({ name: 'image_url', type: 'varchar', length: 2000, nullable: true }) imageUrl: string | null;
   @Column({ type: 'jsonb', default: () => "'[]'::jsonb" }) translations: JoshProductTranslation[];
   @Column({ name: 'josh_updated_at', type: 'timestamptz' }) joshUpdatedAt: Date;
   /** Set when the product disappears from josh. Rows are never deleted (comparisons keep their history). */
   @Column({ name: 'removed_at', type: 'timestamptz', nullable: true }) removedAt: Date | null;
   @Column({ name: 'synced_at', type: 'timestamptz', default: () => 'now()' }) syncedAt: Date;
+  /** josh commerce_snapshot_seq of the last applied catalog event (bigint as string); 0 = replica pull / import. */
+  @Column({ name: 'source_version', type: 'bigint', default: 0 }) sourceVersion: string;
 }

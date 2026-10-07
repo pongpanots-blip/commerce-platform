@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { JoshOrderCopy, JoshOrderLineCopy } from '../orders/josh-order-copy.entity';
 import { Row, toHead, toLine } from '../orders/josh-order-copy';
+import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { JoshCustomerCopy } from './josh-customer-copy.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,6 +30,12 @@ export class JoshEventsService {
       case 'customer.deleted':
         return this.guarded('josh_customers', 'id', e, (m) =>
           m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: {}, sourceVersion: e.version, deletedAt: new Date() }));
+      case 'catalog.snapshot':
+        return this.guarded('josh_catalog_products', 'id', e, (m) => this.saveCatalog(m, e));
+      case 'catalog.deleted':
+        // Rows stay: competitor pairs keep their history; removed products drop out of matching.
+        return this.guarded('josh_catalog_products', 'id', e, (m) =>
+          m.query(`UPDATE josh_catalog_products SET removed_at = now(), source_version = $2 WHERE id = $1`, [e.aggregateId, e.version]));
       case 'erp.fallback.received':
         return this.saveFallback(e);
       default:
@@ -36,7 +43,7 @@ export class JoshEventsService {
     }
   }
 
-  private guarded(table: 'josh_orders' | 'josh_customers', pk: string, e: JoshEnvelope, write: (m: EntityManager) => Promise<unknown>): Promise<ApplyResult> {
+  private guarded(table: 'josh_orders' | 'josh_customers' | 'josh_catalog_products', pk: string, e: JoshEnvelope, write: (m: EntityManager) => Promise<unknown>): Promise<ApplyResult> {
     return this.db.transaction(async (m) => {
       await m.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [`${table}:${e.aggregateId}`]);
       const [row] = await m.query(`SELECT source_version FROM ${table} WHERE ${pk} = $1`, [e.aggregateId]);
@@ -54,6 +61,22 @@ export class JoshEventsService {
     // Lines are replaced per order: josh can remove or split lines after checkout (claims, shipments).
     await m.getRepository(JoshOrderLineCopy).delete({ ordersId: e.aggregateId });
     if (items.length) await m.getRepository(JoshOrderLineCopy).insert(items.map(toLine));
+  }
+
+  /** Raw values exactly as josh stores them (numeric as string): catalogFingerprint must match josh's. */
+  private async saveCatalog(m: EntityManager, e: JoshEnvelope) {
+    const d = e.data ?? {};
+    if (d.id !== e.aggregateId) throw new BadRequestException('catalog.snapshot data.id must equal the aggregate id');
+    await m.getRepository(JoshCatalogProduct).upsert([{
+      id: d.id, sku: d.sku, status: d.status ?? null, brandCode: d.brand_code ?? null, brandName: d.brand_name ?? null,
+      countryCodeSource: d.country_code_source ?? null, storageTemperature: d.storage_temperature ?? null,
+      packagingType: d.packaging_type ?? null, packSize: d.pack_size ?? null, unitsPerBox: d.units_per_box ?? null,
+      weightPerUnit: d.weight_per_unit ?? null, sellingUnit: d.selling_unit ?? null, vatType: d.vat_type ?? null,
+      sellingUnitPrice: d.selling_unit_price ?? null, orderingPrice: d.ordering_price ?? null, orderTakingUnit: d.order_taking_unit ?? null,
+      categoryNameTh: d.category_name_th ?? null, categoryNameEn: d.category_name_en ?? null, imageUrl: d.image_url ?? null,
+      translations: d.translations ?? [], joshUpdatedAt: new Date(d.updated_at), removedAt: null, syncedAt: new Date(),
+      sourceVersion: e.version,
+    }], ['id']);
   }
 
   private async saveFallback(e: JoshEnvelope): Promise<ApplyResult> {

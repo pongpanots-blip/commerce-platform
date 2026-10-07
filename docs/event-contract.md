@@ -114,7 +114,7 @@ qty ที่มี `CHANGED_AT` ผ่านตัวกันข้อมู�
 ## 6. ทาง josh → commerce
 
 josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `order_items` / `payment_transactions` /
-`payment_transaction_orders` / `users` ที่เป็นลูกค้า / แค็ตตาล็อก: `product_inventory` เฉพาะคอลัมน์ที่ไม่ใช่ stock,
+`payment_transaction_orders` / `users` (ลูกค้า → `customer`, คนอื่น → `staff`) / `company` / `cuisine` / `restaurant_place` / แค็ตตาล็อก: `product_inventory` เฉพาะคอลัมน์ที่ไม่ใช่ stock,
 `product_translation`, `product_media`, ชื่อใน `product_category`) — เปิดด้วย `JOSH_EVENTS_TO_COMMERCE_ENABLED=true` ฝั่ง josh
 (ค่าเริ่มต้นปิด: trigger ยังบันทึก แต่ไม่ส่ง)
 
@@ -128,13 +128,18 @@ josh ส่ง event จาก `commerce_outbox` (trigger บน `orders` / `ord
 | type | data |
 |---|---|
 | `order.snapshot` | `{ order, items }` — คอลัมน์เดียวกับ `josh_orders` / `josh_order_lines` |
-| `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`) + `branch_ids` + `tier_slug`, `cuisine_name`, `cuisine_parent_id` (ค่าเดียวกับ base query ของ segment ใน josh; ส่งใหม่เมื่อ tier หรือ cuisine ของร้านเปลี่ยน) |
+| `customer.snapshot` | คอลัมน์ลูกค้าที่ไม่อ่อนไหว (ไม่มีรหัสผ่าน / `token_version`; ขั้น 2c เพิ่ม `legacy_custcode`, `onboarding_completed`) + `branch_ids` + `tier_slug`, `cuisine_name`, `cuisine_parent_id` (ค่าเดียวกับ base query ของ segment ใน josh; ส่งใหม่เมื่อ tier หรือ cuisine ของร้านเปลี่ยน) |
 | `customer.deleted` | `{ id }` — commerce ล้างข้อมูล เก็บ tombstone กัน snapshot เก่ามาสร้างกลับ |
 | `catalog.snapshot` | `{ id, sku, status, brand_code, brand_name, country_code_source, storage_temperature, packaging_type, pack_size, units_per_box, weight_per_unit, selling_unit, vat_type, selling_unit_price, ordering_price, order_taking_unit, category_name_th, category_name_en, image_url, updated_at, translations }` — ค่าดิบตามที่ josh เก็บ → `josh_catalog_products` (ใช้จับคู่ราคาคู่แข่ง) |
 | `catalog.deleted` | `{ id }` — commerce ตั้ง `removed_at` (ไม่ลบแถว คู่ราคาคู่แข่งยังอยู่) |
 | `erp.fallback.received` | `{ method, path, body, receivedAt }` — ERP ยิงตรงเข้า josh `/api/erp/*` |
+| `company.snapshot` | `{ id, name, register_number }` (ขั้น 2c) → `josh_companies` |
+| `cuisine.snapshot` | `{ id, parent_id, cuisine_name, cuisine_name_th, level, is_active }` (ขั้น 2c) → `josh_cuisines` |
+| `restaurant_place.snapshot` | ทั้งแถวของ `restaurant_place` (ขั้น 2c) → `josh_restaurant_places` (เก็บเฉพาะคอลัมน์ที่มี) |
+| `staff.snapshot` | user ที่ไม่ใช่ลูกค้า: `{ id, email, first_name, last_name, role, user_type, is_active, token_version, company_id, created_at, last_app_login_at }` (ขั้น 2c) → `josh_staff` — ใช้ตรวจ token ของแอปฝ่ายขาย · `token_version` อยู่ที่นี่เท่านั้น ไม่อยู่ใน `customer.snapshot` |
+| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล |
 
 `version` ของ `*.deleted` มาจาก `commerce_snapshot_seq` เดียวกับ snapshot (ไม่ใช่ id แถว outbox) จึงชนะ snapshot ก่อนหน้าได้
 
-Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"}` → josh
+Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"}` → josh
 `POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)

@@ -39,6 +39,11 @@ services:
       # MCP server for AI clients; Cloudflare → nginx → app = 2 proxy hops for rate-limit client IPs.
       MCP_PUBLIC_URL: ${MCP_PUBLIC_URL:-https://commerce.joshapp.io}
       TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-2}
+      # Josh → commerce → Jagota (JAGOTA_VIA_COMMERCE_BRANCHES on josh). Off unless ENABLED=true + NODEAPI_*.
+      JAGOTA_GATEWAY_ENABLED: ${JAGOTA_GATEWAY_ENABLED:-false}
+      JAGOTA_NODEAPI_BASE_URL: ${JAGOTA_NODEAPI_BASE_URL:-}
+      JAGOTA_NODEAPI_USERNAME: ${JAGOTA_NODEAPI_USERNAME:-}
+      JAGOTA_NODEAPI_PASSWORD: ${JAGOTA_NODEAPI_PASSWORD:-}
 
     depends_on:
       - redis

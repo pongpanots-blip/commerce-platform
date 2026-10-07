@@ -25,7 +25,7 @@ import { Warehouse } from '../modules/commerce/warehouse/infrastructure/warehous
 import { InventoryLevel } from '../modules/commerce/inventory/infrastructure/inventory-level.entity';
 import { bangkokRange, JoshInsights, PERIODS } from '../modules/integration/connector/josh/josh-insights';
 import { SystemHealthReport } from '../modules/integration/connector/josh/system-health';
-import { RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
+import { parseRestaurantFilters, RestaurantPlaces } from '../modules/integration/connector/josh/restaurant-places';
 import { JoshErpLogs } from '../modules/integration/connector/josh/josh-erp-logs';
 import { JoshPushCampaigns } from '../modules/integration/connector/josh/josh-push-campaigns';
 import { JoshProducts, PRODUCT_ISSUES } from '../modules/integration/connector/josh/josh-products';
@@ -272,24 +272,34 @@ export class McpTools {
 
     server.registerTool('restaurant_places', {
       title: 'Restaurants (Market Explorer)',
-      description: 'Restaurant master data in Thailand for prospecting: name, district, category, Google rating/reviews, price range, dine-in/takeaway/delivery, how busy today, and whether sales already has it as a winback account. Filter, get counts + top categories/districts + one page of places.',
+      description: 'Restaurant master data in Thailand for prospecting: filter to get counts, top categories/districts and one page of places. Pass an id from the list for full detail, opening hours, service options, popular times, source and enrichment date. Ratings/reviews are public place data; estimatedTables is a rough review-volume heuristic, not verified seating capacity. Busy windows use today in Bangkok; unknown busy data does not match. Read-only, same data as commerce-admin › Market Explorer.',
       inputSchema: {
+        id: z.string().uuid().optional().describe('restaurant place id from the list → full detail; other filters are ignored'),
         search: z.string().max(100).optional().describe('part of the Thai or English name'),
         district: z.string().max(100).optional().describe('exact district name as stored, e.g. วัฒนา'),
         category: z.string().max(100).optional().describe('part of the category, e.g. Japanese, ญี่ปุ่น, cafe'),
         minRating: z.number().min(0).max(5).optional(),
-        minReviewCount: z.number().int().min(0).optional(),
+        maxRating: z.number().min(0).max(5).optional(),
+        minReviewCount: z.number().int().min(0).max(1e9).optional(),
+        maxReviewCount: z.number().int().min(0).max(1e9).optional(),
         priceRange: z.string().max(20).optional(),
-        delivery: z.boolean().optional(),
+        isEnriched: z.boolean().optional().describe('true = enriched places; false = places awaiting enrichment'),
+        dineIn: z.boolean().optional().describe('true = requires dine-in service'),
+        takeaway: z.boolean().optional().describe('true = requires takeaway service'),
+        delivery: z.boolean().optional().describe('true = requires delivery service'),
         busyWindow: z.string().regex(/^\d{1,2}-\d{1,2}$/).optional().describe('"17-20" = busy (>60%) at some hour 17:00-20:00 today'),
         excludeHasTmpLead: z.boolean().optional().describe('true = only places sales has not linked to an account yet'),
         page: z.number().int().min(1).default(1),
         limit: z.number().int().min(1).max(50).default(20),
       },
       annotations: READ_ONLY,
-    }, async ({ page, limit, ...filters }) => {
+    }, async ({ id, page, limit, ...filters }) => {
       if (!this.restaurants.available) return json(NO_REPLICA);
-      return json(await this.restaurants.list(filters, page, limit));
+      if (id) {
+        const place = await this.restaurants.detail(id);
+        return place ? json(place) : { ...json({ error: 'restaurant_not_found', id }), isError: true };
+      }
+      return json(await this.restaurants.list(parseRestaurantFilters(filters), page, limit));
     });
 
     server.registerTool('push_campaigns', {

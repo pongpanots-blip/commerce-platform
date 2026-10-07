@@ -38,7 +38,7 @@
 | `shop_traffic` | marketing, admin | session/event funnel และคำค้น รวมคำค้นที่ไม่พบสินค้า เพื่อหาขั้นตอนที่ควรปรับและความต้องการที่ควรตรวจต่อ |
 | `marketing_list` / `segment_preview` | marketing, admin | อ่าน coupon/segment/campaign/product set/promotion page ที่มี และลองนับกลุ่มก่อนบันทึก segment |
 | `marketing_workflows` / `josh_promotions` / `push_campaigns` | marketing, admin | อ่าน workflow โปรโมชัน และผลส่งแคมเปญเดิม เพื่อปรับจากสิ่งที่มีและตรวจข้อผิดพลาดก่อนสร้างเพิ่ม |
-| `restaurant_places` | marketing, admin | กรองข้อมูลร้านอาหารสำหรับสำรวจตลาดและ prospecting พร้อมจำนวนแยกประเภท/พื้นที่ |
+| `restaurant_places` | marketing, admin | กรองชื่อ เขต ประเภท ช่วงคะแนน/จำนวนรีวิว ราคา บริการ สถานะ enrichment และช่วงเวลาที่คนเยอะวันนี้ (เวลาไทย) พร้อมจำนวนแยกประเภท/พื้นที่; ส่ง `id` จากรายการเพื่ออ่านรายละเอียด เวลาเปิด บริการ แหล่งข้อมูล และวันที่ enrichment; จำนวนโต๊ะเป็นค่าประมาณจากรีวิว |
 | `growth_workspace` | marketing, admin | โอกาสจากยอดที่รับชำระจริง ตะกร้าค้าง รอบซื้อ และ workflow ที่ล้มเหลว พร้อมหลักฐาน ช่วงเวลา และข้อจำกัดของการเปิดส่ง |
 | `growth_plans` | marketing, admin | อ่านแผนเต็มพร้อมข้อความ หลักฐาน งาน ประวัติ สถานะ เวอร์ชัน และ `canManage`; ไม่ส่ง id จะได้รายการแบบแบ่งหน้า (`page`, `limit`, `search`, `status`, `month`) |
 | `growth_results` | marketing, admin | อ่าน funnel รายได้ที่ให้เครดิต holdout และงานที่ fail ของ `workflowId`; ใช้ตรวจผลและออกแบบการทดลองต่อ ไม่สรุปเป็นกำไรหรือยอดเพิ่มจากแคมเปญ |

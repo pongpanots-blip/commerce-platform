@@ -8,6 +8,7 @@
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- erp-sales-history   (stage 2c; static ERP export)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- prices   (stage 4a; prices + MER queue, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- contents   (stage 4b; product content, before the switch)
+ *   JOSH_DATABASE_URL=… npm run import-from-josh -- categories   (stage 4c; category tree + brands, replaced, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- all
  *
  * - Reads josh with SELECTs only (use a read-only user / the replica).
@@ -32,8 +33,9 @@ import { JoshCatalogSyncService } from '../modules/integration/connector/josh/jo
 import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-catalog-product.entity';
 import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 import { JOSH_CONTENT_SQL } from '../modules/commerce/product-contents/content-fields';
+import { CATEGORY_COLUMNS } from '../modules/commerce/product-categories/category-rules';
 
-type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history' | 'prices' | 'contents';
+type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history' | 'prices' | 'contents' | 'categories';
 /**
  * userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key, comma-separated
  * for a composite one (default id) · target: commerce table when it differs · customerColumn: keep only rows whose
@@ -65,6 +67,8 @@ const PLANS: Record<Scope, Plan[]> = {
   prices: [{ table: 'product_inventory', target: 'product_prices', key: 'product_inventory_sku', pageBy: 'product_inventory_sku' }],
   // Stage 4b: built by JOSH_CONTENT_SQL (inventory columns + th / en translation) in importContents.
   contents: [],
+  // Stage 4c: replaced whole in importCategories (codes are unique, so a row-by-row upsert can collide).
+  categories: [],
 };
 
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`;
@@ -168,6 +172,22 @@ async function importContents(josh: DataSource, commerce: DataSource) {
   console.log(`product_inventory (+ translations) → product_contents: ${total} SKUs`);
 }
 
+/** Stage 4c: josh's category tree and brands → product_categories / product_brands, replaced in one transaction. */
+async function importCategories(josh: DataSource, commerce: DataSource) {
+  const cols = CATEGORY_COLUMNS.join(', ');
+  const tree = await josh.query(`SELECT ${cols} FROM product_category`);
+  const brands = await josh.query(`SELECT id, brand_code, brand_name_th, brand_name_en FROM brand`);
+  if (!tree.length) throw new Error('josh returned no categories — check JOSH_DATABASE_URL');
+  await commerce.transaction(async (m) => {
+    await m.query(`DELETE FROM product_categories`);
+    await m.query(`INSERT INTO product_categories (${cols}) SELECT ${cols} FROM jsonb_populate_recordset(NULL::product_categories, $1::jsonb)`, [JSON.stringify(tree)]);
+    await m.query(`DELETE FROM product_brands`);
+    await m.query(`INSERT INTO product_brands (id, brand_code, brand_name_th, brand_name_en)
+      SELECT id, brand_code, brand_name_th, brand_name_en FROM jsonb_populate_recordset(NULL::product_brands, $1::jsonb)`, [JSON.stringify(brands)]);
+  });
+  console.log(`product_category → product_categories: ${tree.length} · brand → product_brands: ${brands.length}`);
+}
+
 const PAGE = 5000;
 
 /** Big tables: pages of PAGE rows by plan.pageBy, one multi-row upsert each, so memory stays flat. */
@@ -195,15 +215,15 @@ async function copyPaged(josh: DataSource, commerce: DataSource, plan: Plan, int
 async function main() {
   const scope = process.argv[2] as Scope | 'all' | undefined;
   const url = process.env.JOSH_DATABASE_URL;
-  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'all'].includes(scope)) {
-    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|all>');
+  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'all'].includes(scope)) {
+    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|all>');
     process.exit(1);
   }
   const josh = await new DataSource({ type: 'postgres', url, entities: [] }).initialize();
   const commerce = await AppDataSource.initialize();
   try {
     const users = await userMaps(josh, commerce);
-    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents'] as const) : [scope];
+    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
         const replica = new JoshReplica();
@@ -213,6 +233,7 @@ async function main() {
       for (const plan of PLANS[s]) await copy(josh, commerce, plan, users);
       if (s === 'prices') await importPendingPrices(josh, commerce);
       if (s === 'contents') await importContents(josh, commerce);
+      if (s === 'categories') await importCategories(josh, commerce);
     }
   } finally {
     await josh.destroy();

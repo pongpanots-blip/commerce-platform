@@ -594,3 +594,22 @@ One server at a time; stop each before starting the next.
 | shadow then switch | 6 (runbook), 7 |
 
 **2c (next):** winback reads commerce copies instead of josh's replica (company / restaurant_place / erp_sales_history / cuisine copies; staff sign-in through commerce instead of josh tokens).
+
+## As built (2026-10-07)
+
+- **Task 1:** `88633db2` sat on top of unmerged KYC / livechat relay commits. The cherry-pick (josh `5a9b3eed`) keeps only the
+  winback parts: the three `winback.*` handlers use the receiver's `input: 'data'` (2a), and the `cs.kyc.decided` /
+  `cs.livechat.outbound` handlers, their services and `JAGOTA_CUSTOMERS_VIA_COMMERCE` were left out.
+- **Task 2:** `CommerceSalesRepsService.apply` is `async` so a 409 reaches the receiver as a rejected promise.
+- **Task 3:** `josh-actions.controller` resolves `SalesRepsService` through `ModuleRef` (same lazy pattern as the winback
+  buttons) instead of importing `CustomersModule`.
+- **Task 7 (lighter than written):** no dev servers. Real-DB checks on scratch copies instead:
+  - commerce `commerce_2b_test`: migrations up / down / up; `import-from-josh -- sales-reps` → 4428 companies, 3 reps =
+    josh; opt-in `sales-reps.service.db.spec.ts` (assign + clear → two `company.sales_rep` rows in the outbox, unknown
+    company 404); the PDPA statements run against the real tables.
+  - josh `josh_2b_test` (all migrations incl. 2a): `CommerceSalesRepsService` on the real DB — newer `assignedAt` applies,
+    older dropped, unknown rep clears; `CommerceWinbackEventsService.applyRow` updates an existing `winback_account`, inserts
+    a new one, deletes it (temporary spec, not committed).
+  - Not exercised end to end: outbox → BullMQ → josh HTTP delivery (unchanged since 2a), notify / welcome email delivery
+    (unit-tested), the mirror (tested when it was written, per `docs/headless-split-plan.md`).
+- Full suites: commerce 1272 passed (14 opt-in skipped).

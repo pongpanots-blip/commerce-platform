@@ -9,7 +9,7 @@ const STAGE: Record<string, string> = {
 const camel = (k: string) => k.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
 const days = (iso: string) => Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
 
-/** josh winback (sales win-back CRM), manager view — read from josh's replica by josh's own report code. Reps keep using the sales app on josh. */
+/** winback (sales win-back CRM), manager view. Backend WINBACK_REPORTS_SOURCE: josh's replica (default) or commerce's winback tables — same answers. */
 export function Winback() {
   const overview = useAsync(() => winbackApi.overview(), []);
   const team = useAsync(() => winbackApi.teamStats(), []);
@@ -26,7 +26,7 @@ export function Winback() {
     <Page>
       <PageHeader
         title="Win-back (ฝ่ายขาย)"
-        subtitle="ลูกค้าที่หยุดสั่ง / เสี่ยงหาย และผลงานทีมขาย เดือนนี้ · มุมหัวหน้า · อ่านจาก replica ของ josh ด้วยโค้ดรายงานของ josh เอง (ตัวเลขตรงกับแอปเซลล์)"
+        subtitle="ลูกค้าที่หยุดสั่ง / เสี่ยงหาย และผลงานทีมขาย เดือนนี้ · มุมหัวหน้า · ตัวเลขชุดเดียวกับแอปเซลล์"
         actions={<Button icon="refresh" onClick={() => { overview.reload(); team.reload(); dash.reload(); score.reload(); signals.reload(); }}>Refresh</Button>}
       />
 

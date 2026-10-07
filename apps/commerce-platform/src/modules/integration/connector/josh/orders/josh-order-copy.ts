@@ -25,6 +25,8 @@ export const toHead = (r: Row): Partial<JoshOrderCopy> => ({
   vatAmount: r.vat_amount as string, deliveryFee: r.delivery_fee as string, discountAmount: r.discount_amount as string, discountIncVat: r.discount_inc_vat as string,
   productDiscountExVat: r.product_discount_ex_vat as string, grossExVat: r.gross_ex_vat as string, deliveryDate: r.delivery_date as string, poNumber: r.po_number as string,
   documentNo: r.document_no as string, remark: r.remark as string, createDate: r.create_date as Date, endDate: r.end_date as Date, copiedAt: new Date(),
+  // Only order.snapshot carries it; a replica row without the key must not null what an event stored.
+  ...('sending_date' in r ? { sendingDate: r.sending_date as Date | null } : {}),
 });
 export const toLine = (r: Row): Partial<JoshOrderLineCopy> => ({
   id: r.id as string, ordersId: r.order_id as string, productInventoryId: r.product_inventory_id as string, sku: r.sku as string, productPrice: r.product_price as string,

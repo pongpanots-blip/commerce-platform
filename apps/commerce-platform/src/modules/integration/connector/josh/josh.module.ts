@@ -42,7 +42,6 @@ import { StorefrontApiKeyGuard } from '../../../../storefront/storefront-api-key
 import { ApiKeyModule } from '../../../core/api-key/api-key.module';
 import { JoshActionsController } from './josh-actions.controller';
 import { JoshWinback } from './winback/josh-winback';
-import { JoshWinbackController } from './winback/josh-winback.controller';
 import { ShopReportsController } from './shop-reports.controller';
 import { JoshBackoffice } from './josh-backoffice';
 import { JoshApiLogs } from './josh-api-logs';

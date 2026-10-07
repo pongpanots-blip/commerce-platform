@@ -1,9 +1,9 @@
 import { FormEvent, useState } from 'react';
 import { Button, Field, FormPanel, Input, Select, Textarea } from '@cp/ui';
-import { joshActionsApi } from '../../lib/api';
+import { JOSH_STAFF_ROLES, joshActionsApi } from '../../lib/api';
 
-/** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts). */
-const ADMIN_ROLES = ['cs', 'marketing', 'merchandising', 'sale', 'sales', 'manager', 'admin', 'dev', 'platform_admin'];
+/** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts) — approving a request may still give platform_admin (josh's rule). */
+const ADMIN_ROLES = [...JOSH_STAFF_ROLES, 'platform_admin'];
 const CREDIT_OPEN = ['PENDING', 'REVIEW', 'REQUEST_DOC'];
 type Row = Record<string, unknown>;
 

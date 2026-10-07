@@ -43,7 +43,8 @@ import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connect
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
 import { PriceShadow } from '../modules/integration/connector/josh/pricing/price-shadow';
 import { StaffPrices } from '../modules/integration/connector/josh/pricing/staff-prices';
-import { JoshWinback, wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
+import { wrapWinbackResponse } from '../modules/integration/connector/josh/winback/josh-winback';
+import { WinbackReports } from '../modules/integration/winback/winback-reports';
 import { GrowthService } from '../modules/integration/growth/growth.service';
 import { GrowthDataService } from '../modules/integration/growth/growth-data.service';
 import { assertReviewable, planListSchema, planSchema, taskSchema } from '../modules/integration/growth/growth.validation';
@@ -107,7 +108,7 @@ export class McpTools {
     private readonly health: SystemHealthReport,
     private readonly restaurants: RestaurantPlaces,
     private readonly erpLogs: JoshErpLogs,
-    private readonly winback: JoshWinback,
+    private readonly winback: WinbackReports,
     private readonly push: JoshPushCampaigns,
     private readonly products: JoshProducts,
     private readonly joshOrders: JoshOrders,
@@ -917,7 +918,7 @@ export class McpTools {
       inputSchema: PERIOD_INPUT,
       annotations: READ_ONLY,
     }, async ({ period, fromDate, toDate }) => {
-      if (!this.insights.available) return json(NO_REPLICA);
+      if (!this.insights.salesAvailable) return json(NO_REPLICA);
       return json(await this.insights.sales(bangkokRange(period, Date.now(), fromDate, toDate)));
     });
 

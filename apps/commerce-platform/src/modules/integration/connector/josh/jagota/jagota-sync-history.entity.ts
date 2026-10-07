@@ -26,5 +26,8 @@ export class JagotaSyncHistory {
   @Column({ name: 'order_taking_doc_seq', type: 'varchar', length: 100, nullable: true }) orderTakingDocSeq: string | null;
   @Column({ name: 'error_message', type: 'text', nullable: true }) errorMessage: string | null;
   @Column({ name: 'created_at', type: 'timestamptz' }) createdAt: Date;
+  /** Last import, or last jagota_sync.snapshot applied (stage 5) — the copy's freshness. */
   @Column({ name: 'imported_at', type: 'timestamptz', default: () => 'now()' }) importedAt: Date;
+  /** josh commerce_snapshot_seq of the last applied jagota_sync.snapshot; 0 = replica import only. */
+  @Column({ name: 'source_version', type: 'bigint', default: 0 }) sourceVersion: string;
 }

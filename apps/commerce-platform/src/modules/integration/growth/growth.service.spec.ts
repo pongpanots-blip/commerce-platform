@@ -40,7 +40,7 @@ describe('Growth approval and draft export', () => {
     facts = jest.fn(async () => ({ evidence: [{ id: 'fact:1', source: 'sales', title: 'ยอดขาย', url: null, excerpt: '10 orders', collectedAt: new Date().toISOString() }] }));
     service = new GrowthService({ manager, transaction: async (fn: (m: unknown) => unknown) => fn(manager) } as never,
       { workspace: facts } as never,
-      { configured: false } as never, josh as never, { configured: false } as never);
+      { configured: false } as never, josh as never);
   });
   async function approve(plan = input) {
     await service.create(id, plan, actor);

@@ -49,6 +49,7 @@ everything staff (S6), `competitor-parity` / `segment-parity` (no replica).
 
 ## How to verify
 
+**Verify:**
 ```bash
 cd /workspace/commerce-s7   # node_modules is a symlink to commerce-g5's (as commerce-s5/s6 do)
 npx jest -c apps/commerce-platform/jest.config.cts --runInBand apps/commerce-platform/src/replica-readers.spec.ts
@@ -62,3 +63,6 @@ Not run: the full suite or `tsc` (no runtime code changed; the spec is compiled 
 merges and the ops gates is done: the inventory/plan, the guard, the runbook. The remaining stage-7 tasks (S7-3 … S7-8)
 are deletions. Each one is unblocked by a merge or an ops/owner fact listed above, not by more coding now. Next step:
 merge S4f/S4g/S5/S6, then S7-3. After that, delete one class at a time as ops confirms each gate.
+
+## Update (merge day)
+G5, G9, S5, and S6 are now on `master`. Hard deletes still wait on ops gates in the runbook; this branch itself is mergeable.

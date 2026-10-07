@@ -1,22 +1,23 @@
 import { BadRequestException, Controller, Get, Query, ServiceUnavailableException, ValidationPipe } from '@nestjs/common';
-import { JoshWinback, wrapWinbackResponse } from './josh-winback';
-import { PoolQueryDto } from './pool-query.dto';
-import { ScorecardQueryDto } from './scorecard-query.dto';
-import { LeadSignalsQueryDto } from './lead-signals-query.dto';
+import { WinbackReports } from './winback-reports';
+import { wrapWinbackResponse } from './winback-response.interceptor';
+import { PoolQueryDto } from './dto/pool-query.dto';
+import { ScorecardQueryDto } from './dto/scorecard-query.dto';
+import { LeadSignalsQueryDto } from './dto/lead-signals-query.dto';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
 
 /**
- * josh winback manager reports, read from josh's replica (admin only — the guard default).
- * Paths and answers mirror josh `GET /api/winback/*` (same `{data, meta}` camelCase envelope),
- * so a response from here can be diffed against josh's. `scope` is always team here.
+ * winback manager reports for commerce-admin (admin only — the guard default; the sales app uses `/winback/*`
+ * with josh's token). Paths and answers mirror josh `GET /api/winback/*` (same `{data, meta}` camelCase envelope).
+ * `scope` is always team here. Source: WINBACK_REPORTS_SOURCE (winback-reports.ts).
  */
 @Controller('reports/winback')
-export class JoshWinbackController {
-  constructor(private readonly winback: JoshWinback) {}
+export class WinbackReportsController {
+  constructor(private readonly winback: WinbackReports) {}
 
   private async answer(fn: () => Promise<unknown>) {
-    if (!this.winback.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.winback.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL) — set WINBACK_REPORTS_SOURCE=copies to read commerce\'s winback tables.');
     return wrapWinbackResponse(await fn());
   }
 

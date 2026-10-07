@@ -12,8 +12,17 @@ import { OrderStockService } from '../../../../commerce/inventory/application/or
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
 export type ApplyResult = 'applied' | 'stale';
 
-/** josh group → commerce copy table (stage 2c; columns named as in josh). */
-const REFERENCE_TABLES = { company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff' } as const;
+/**
+ * josh group → commerce copy table (stage 2c; columns named as in josh). Stage 5: branch, jagota_sync (S5-11),
+ * push_campaign, marketing_workflow (S5-12; its snapshot has its own shape — saveWorkflow — deletes are generic).
+ */
+const REFERENCE_TABLES = {
+  company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff',
+  branch: 'josh_branches', jagota_sync: 'jagota_order_sync_history', push_campaign: 'josh_push_campaigns',
+  marketing_workflow: 'josh_marketing_workflows',
+} as const;
+/** order.snapshot children (stage 5, S5-11) → copy table, replaced per order like the lines. */
+const ORDER_CHILDREN = { payments: 'josh_order_payments', shipments: 'josh_order_shipments', refunds: 'josh_order_refunds' } as const;
 
 /**
  * Applies josh → commerce events (spec 2026-10-06 §2.2–2.3). A snapshot wins only when its version
@@ -62,6 +71,8 @@ export class JoshEventsService {
           m.query(`UPDATE josh_catalog_products SET removed_at = now(), source_version = $2 WHERE id = $1`, [e.aggregateId, e.version]));
       case 'erp.fallback.received':
         return this.saveFallback(e);
+      case 'marketing_workflow.snapshot':
+        return this.reference('josh_marketing_workflows', e, (m) => this.saveWorkflow(m, e));
       default:
         return this.applyReference(e);
     }
@@ -71,7 +82,13 @@ export class JoshEventsService {
   private applyReference(e: JoshEnvelope): Promise<ApplyResult> {
     const [group, kind] = e.type.split('.');
     const table = REFERENCE_TABLES[group as keyof typeof REFERENCE_TABLES];
-    if (table && kind === 'snapshot') return this.reference(table, e, (m) => this.saveReference(m, table, e));
+    if (table && kind === 'snapshot') {
+      return this.reference(table, e, async (m) => {
+        await this.saveReference(m, table, e);
+        // The ERP send history's freshness (system health "copied up to") is its last write, import or event.
+        if (group === 'jagota_sync') await m.query(`UPDATE jagota_order_sync_history SET imported_at = now() WHERE id = $1`, [e.aggregateId]);
+      });
+    }
     if (table && kind === 'deleted') {
       return this.reference(table, e, async (m) => {
         await m.query(`DELETE FROM ${table} WHERE id = $1`, [e.aggregateId]);
@@ -80,6 +97,8 @@ export class JoshEventsService {
         // A deleted staff member is nobody's sales rep any more.
         if (group === 'staff') {
           await m.query('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1', [e.aggregateId]);
+          // stage 6: nothing left for commerce to decide about an account josh deleted
+          await m.query('DELETE FROM josh_staff_access WHERE id = $1', [e.aggregateId]);
         }
       });
     }
@@ -118,6 +137,25 @@ export class JoshEventsService {
       [JSON.stringify(e.data), e.version]);
   }
 
+  /** Stage 5 (S5-12): the workflow row and its counts as josh built them; list columns pulled out of the row. */
+  private async saveWorkflow(m: EntityManager, e: JoshEnvelope) {
+    const d = e.data ?? {};
+    const w = d.workflow ?? {};
+    if (w.id !== e.aggregateId) throw new BadRequestException(`${e.type} data.workflow.id must equal the aggregate id`);
+    const json = (v: unknown) => JSON.stringify(Array.isArray(v) ? v : []);
+    await m.query(
+      `INSERT INTO josh_marketing_workflows (id, name, status, trigger_type, updated_at, workflow, enrollments_by_status, enrollments_by_day,
+         runs_by_day, recent_runs, recent_failures, conversions, copied_at, source_version)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8::jsonb, $9::jsonb, $10::jsonb, $11::jsonb, $12::jsonb, now(), $13)
+       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, status = EXCLUDED.status, trigger_type = EXCLUDED.trigger_type,
+         updated_at = EXCLUDED.updated_at, workflow = EXCLUDED.workflow, enrollments_by_status = EXCLUDED.enrollments_by_status,
+         enrollments_by_day = EXCLUDED.enrollments_by_day, runs_by_day = EXCLUDED.runs_by_day, recent_runs = EXCLUDED.recent_runs,
+         recent_failures = EXCLUDED.recent_failures, conversions = EXCLUDED.conversions, copied_at = now(), source_version = EXCLUDED.source_version`,
+      [e.aggregateId, w.name ?? null, w.status ?? null, w.trigger_type ?? null, w.updated_at ?? null, JSON.stringify(w),
+        json(d.enrollmentsByStatus), json(d.enrollmentsByDay), json(d.runsByDay), json(d.recentRuns), json(d.recentFailures),
+        json(d.conversions), e.version]);
+  }
+
   private guarded(table: 'josh_orders' | 'josh_customers' | 'josh_catalog_products', pk: string, e: JoshEnvelope, write: (m: EntityManager) => Promise<unknown>): Promise<ApplyResult> {
     return this.db.transaction(async (m) => {
       await m.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [`${table}:${e.aggregateId}`]);
@@ -136,6 +174,15 @@ export class JoshEventsService {
     // Lines are replaced per order: josh can remove or split lines after checkout (claims, shipments).
     await m.getRepository(JoshOrderLineCopy).delete({ ordersId: e.aggregateId });
     if (items.length) await m.getRepository(JoshOrderLineCopy).insert(items.map(toLine));
+    for (const [key, table] of Object.entries(ORDER_CHILDREN)) {
+      const rows = e.data?.[key];
+      if (!Array.isArray(rows)) continue; // a snapshot from a josh before stage 5: keep what the copy has
+      await m.query(`DELETE FROM ${table} WHERE orders_id = $1`, [e.aggregateId]);
+      if (rows.length) {
+        await m.query(`INSERT INTO ${table} SELECT * FROM jsonb_populate_recordset(NULL::${table}, $1::jsonb)`,
+          [JSON.stringify(rows.map((r: Row) => ({ ...r, orders_id: e.aggregateId })))]);
+      }
+    }
     await this.orderStock?.apply(m, { orders_id: e.aggregateId, status: (head.status as string | null) ?? null },
       items.map((i) => ({ id: String(i.id), sku: (i.sku as string | null) ?? null, product_quantity: i.product_quantity as number })));
   }
@@ -153,6 +200,14 @@ export class JoshEventsService {
       categoryNameTh: d.category_name_th ?? null, categoryNameEn: d.category_name_en ?? null, imageUrl: d.image_url ?? null,
       translations: d.translations ?? [], joshUpdatedAt: new Date(d.updated_at), removedAt: null, syncedAt: new Date(),
       sourceVersion: e.version,
+      // Stage 5 (S5-11) report fields: only when josh sent them, so an older snapshot leaves them as they are.
+      ...('category_id' in d ? {
+        categoryId: d.category_id ?? null, categoryPath: d.category_path ?? null, originalPrice: d.original_price ?? null,
+        supCode: d.sup_code ?? null, productInventoryQuantity: d.product_inventory_quantity ?? null,
+        lowStockThreshold: d.low_stock_threshold ?? null, moq: d.moq ?? null, orderTakingFlag: d.order_taking_flag ?? null,
+        erpPendingSource: d.erp_pending_source ?? null, erpPendingAt: d.erp_pending_at ? new Date(d.erp_pending_at) : null,
+        imageCount: d.image_count ?? null,
+      } : {}),
     }], ['id']);
   }
 

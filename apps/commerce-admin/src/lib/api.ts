@@ -274,8 +274,8 @@ export const ordersApi = {
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
 };
 
-// commerce-admin staff accounts (admin / marketing) — commerce's own logins, not josh's.
-export type StaffRole = 'admin' | 'marketing';
+// commerce-admin staff accounts (admin / marketing / MER / CS) — commerce's own logins, not josh's.
+export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs';
 export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: 'active' | 'disabled'; createdAt: string }
 export const staffApi = {
   list: () => api.get<StaffAccount[]>('/admin/staff'),
@@ -284,6 +284,19 @@ export const staffApi = {
   resetPassword: (id: string) => api.post<{ temporaryPassword: string }>(`/admin/staff/${id}/reset-password`, {}),
   me: () => api.get<{ userId: string; email: string; role: StaffRole; mustChangePassword?: boolean }>('/admin/auth/me'),
   changeOwnPassword: (currentPassword: string, newPassword: string) => api.post<{ changed: boolean }>('/admin/auth/password', { currentPassword, newPassword }),
+};
+
+// josh staff accounts (sales app, CS chat, josh-only pages) — written by commerce once it owns staff (stage 6).
+/** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts); platform_admin is given in josh only. */
+export const JOSH_STAFF_ROLES = ['cs', 'marketing', 'merchandising', 'sale', 'sales', 'manager', 'admin', 'dev'] as const;
+export interface JoshStaffAccount {
+  id: string; email: string | null; name: string; role: string; isActive: boolean; lastAppLoginAt: string | null;
+  pending: boolean; updatedBy: string | null; updatedAt: string | null;
+}
+export const joshStaffApi = {
+  ownership: () => api.get<{ staff?: boolean }>('/ownership'),
+  list: () => api.get<JoshStaffAccount[]>('/admin/josh-staff'),
+  set: (id: string, change: { role?: string; isActive?: boolean; revokeSessions?: boolean }) => api.patch<JoshStaffAccount>(`/admin/josh-staff/${id}`, change),
 };
 
 export const customersApi = {
@@ -504,7 +517,7 @@ export interface PeriodParams { period: ReportPeriod; fromDate?: string; toDate?
 type Row = Record<string, string | number | null>;
 export interface SalesReport {
   period: string;
-  totals: Record<string, number> & { refunds: { n: number; amount: number } };
+  totals: Record<string, number> & { refunds: { n: number | null; amount: number | null; note?: string } };
   vsPreviousPeriod: { period: string; revenue_inc_vat: number; orders: number; revenue_change_percent: number | null; orders_change_percent: number | null };
   byDay?: { bucket: string; orders: number; revenue_inc_vat: number }[];
   byMonth?: { bucket: string; orders: number; revenue_inc_vat: number }[];

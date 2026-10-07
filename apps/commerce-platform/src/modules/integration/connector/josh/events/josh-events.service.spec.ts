@@ -81,6 +81,28 @@ describe('JoshEventsService', () => {
     expect(insert?.[1]?.[0]).toBe('77');
   });
 
+  it('order.snapshot replaces payments, shipments and refunds per order (stage 5, S5-11)', async () => {
+    const { svc, calls, repo } = makeService('5');
+    const e = order('6');
+    const data = { ...e.data, order: { ...e.data.order, sending_date: '2026-10-08T00:00:00Z' },
+      payments: [{ id: 't1', order_id: ORDER, status: 'success', amount: '10.00' }], shipments: [], refunds: [{ id: 'r1', amount: '5.00', status: 'refunded' }] };
+    expect(await svc.apply({ ...e, data })).toBe('applied');
+    expect(repo.upsert).toHaveBeenCalledWith([expect.objectContaining({ sendingDate: '2026-10-08T00:00:00Z' })], ['ordersId']);
+    const sqls = calls.map(([sql]) => sql);
+    for (const t of ['josh_order_payments', 'josh_order_shipments', 'josh_order_refunds']) expect(sqls).toContain(`DELETE FROM ${t} WHERE orders_id = $1`);
+    const inserts = calls.filter(([sql]) => sql.startsWith('INSERT INTO josh_order_'));
+    expect(inserts.map(([sql]) => sql.split(' ')[2])).toEqual(['josh_order_payments', 'josh_order_refunds']); // no rows → no insert
+    expect(inserts[0][0]).toContain('jsonb_populate_recordset(NULL::josh_order_payments, $1::jsonb)');
+    expect(JSON.parse(inserts[1][1]?.[0] as string)).toEqual([{ id: 'r1', amount: '5.00', status: 'refunded', orders_id: ORDER }]);
+  });
+
+  it('an order.snapshot from a josh before stage 5 leaves payments / shipments / refunds / sending_date alone', async () => {
+    const { svc, calls, repo } = makeService('5');
+    await svc.apply(order('6'));
+    expect(calls.map(([sql]) => sql).filter((sql) => /josh_order_(payments|shipments|refunds)/.test(sql))).toEqual([]);
+    expect(repo.upsert.mock.calls[0][0][0]).not.toHaveProperty('sendingDate');
+  });
+
   const PRODUCT = '33333333-3333-3333-3333-333333333333';
   const catalog = (version: string, sku = 'S1') => ({
     type: 'catalog.snapshot', aggregateId: PRODUCT, version, occurredAt: 'x',
@@ -98,6 +120,25 @@ describe('JoshEventsService', () => {
       categoryNameTh: 'ผัก', categoryNameEn: 'Vegetables', imageUrl: 'https://img/1.jpg', removedAt: null, sourceVersion: '5',
       joshUpdatedAt: new Date('2026-10-07T01:00:00Z'), translations: [{ language_code: 'th', product_name: 'ผักกาด' }],
     })], ['id']);
+  });
+
+  it('catalog.snapshot stores the products report fields when josh sends them (stage 5, S5-11)', async () => {
+    const { svc, repo } = makeService('4');
+    const e = catalog('5');
+    await svc.apply({ ...e, data: { ...e.data, category_id: 'c1', category_path: 'อาหาร > ผัก', original_price: '150.00', sup_code: 'SUP1',
+      product_inventory_quantity: 0, low_stock_threshold: 10, moq: 2, order_taking_flag: 'N', erp_pending_source: 'price',
+      erp_pending_at: '2026-10-07T02:00:00Z', image_count: 3 } });
+    expect(repo.upsert).toHaveBeenCalledWith([expect.objectContaining({
+      categoryId: 'c1', categoryPath: 'อาหาร > ผัก', originalPrice: '150.00', supCode: 'SUP1', productInventoryQuantity: 0, lowStockThreshold: 10,
+      moq: 2, orderTakingFlag: 'N', erpPendingSource: 'price', erpPendingAt: new Date('2026-10-07T02:00:00Z'), imageCount: 3,
+    })], ['id']);
+  });
+
+  it('an older-shape catalog.snapshot (no report fields) does not null them', async () => {
+    const { svc, repo } = makeService('4');
+    await svc.apply(catalog('5'));
+    expect(repo.upsert.mock.calls[0][0][0]).not.toHaveProperty('categoryPath');
+    expect(repo.upsert.mock.calls[0][0][0]).not.toHaveProperty('productInventoryQuantity');
   });
 
   it('drops an older catalog.snapshot', async () => {
@@ -159,13 +200,51 @@ describe('JoshEventsService', () => {
       expect(await ref({ tomb: '9' }).svc.apply(company('8'))).toBe('stale');
     });
 
-    it('staff.deleted removes the row, leaves a tombstone and unassigns the rep', async () => {
+    it('staff.deleted removes the row, leaves a tombstone, unassigns the rep and drops commerce\'s access row (stage 6)', async () => {
       const { svc, calls } = ref();
       expect(await svc.apply({ type: 'staff.deleted', aggregateId: CO, version: '12', occurredAt: 'x', data: { id: CO } })).toBe('applied');
       const sqls = calls.map(([sql]) => sql.replace(/\s+/g, ' ').trim());
       expect(sqls).toContain('DELETE FROM josh_staff WHERE id = $1');
       expect(sqls.some((q) => q.startsWith('INSERT INTO josh_reference_tombstones'))).toBe(true);
       expect(sqls).toContain('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1');
+      expect(sqls).toContain('DELETE FROM josh_staff_access WHERE id = $1');
+    });
+
+    it('branch.snapshot (stage 5) goes to josh_branches like the other reference rows', async () => {
+      const { svc, calls } = ref();
+      expect(await svc.apply({ type: 'branch.snapshot', aggregateId: CO, version: '20', occurredAt: 'x', data: { id: CO, name: 'สาขา 1' } })).toBe('applied');
+      expect(calls.find(([sql]) => sql.startsWith('INSERT INTO josh_branches'))?.[0]).toContain('jsonb_populate_record(NULL::josh_branches, $1::jsonb)');
+    });
+
+    it('jagota_sync.snapshot (stage 5) upserts the ERP send history and stamps imported_at', async () => {
+      const { svc, calls } = ref();
+      expect(await svc.apply({ type: 'jagota_sync.snapshot', aggregateId: CO, version: '21', occurredAt: 'x', data: { id: CO, sync_status: 'failed' } })).toBe('applied');
+      const sqls = calls.map(([sql]) => sql);
+      expect(sqls.some((q) => q.startsWith('INSERT INTO jagota_order_sync_history'))).toBe(true);
+      expect(sqls).toContain('UPDATE jagota_order_sync_history SET imported_at = now() WHERE id = $1');
+      expect(await ref({ row: '30' }).svc.apply({ type: 'jagota_sync.snapshot', aggregateId: CO, version: '21', occurredAt: 'x', data: { id: CO } })).toBe('stale');
+    });
+
+    it('push_campaign.snapshot (stage 5, S5-12) goes to josh_push_campaigns like the other reference rows', async () => {
+      const { svc, calls } = ref();
+      expect(await svc.apply({ type: 'push_campaign.snapshot', aggregateId: CO, version: '40', occurredAt: 'x', data: { id: CO, name: 'Promo' } })).toBe('applied');
+      expect(calls.find(([sql]) => sql.startsWith('INSERT INTO josh_push_campaigns'))?.[0]).toContain('jsonb_populate_record(NULL::josh_push_campaigns, $1::jsonb)');
+    });
+
+    it('marketing_workflow.snapshot (stage 5, S5-12) upserts the workflow and its counts; delete leaves a tombstone', async () => {
+      const { svc, calls } = ref();
+      const data = { workflow: { id: CO, name: 'Winback', status: 'active', trigger_type: 'scheduled', updated_at: 't' },
+        enrollmentsByStatus: [{ status: 'completed', n: 3 }], conversions: [{ order_id: 'o1' }] };
+      expect(await svc.apply({ type: 'marketing_workflow.snapshot', aggregateId: CO, version: '41', occurredAt: 'x', data })).toBe('applied');
+      const insert = calls.find(([sql]) => sql.startsWith('INSERT INTO josh_marketing_workflows'));
+      expect(insert?.[1]).toEqual([CO, 'Winback', 'active', 'scheduled', 't', JSON.stringify(data.workflow), '[{"status":"completed","n":3}]',
+        '[]', '[]', '[]', '[]', '[{"order_id":"o1"}]', '41']);
+      expect(await ref({ tomb: '50' }).svc.apply({ type: 'marketing_workflow.snapshot', aggregateId: CO, version: '45', occurredAt: 'x', data })).toBe('stale');
+      await expect(ref().svc.apply({ type: 'marketing_workflow.snapshot', aggregateId: CO, version: '46', occurredAt: 'x', data: { workflow: { id: 'other' } } }))
+        .rejects.toBeInstanceOf(BadRequestException);
+      const del = ref();
+      expect(await del.svc.apply({ type: 'marketing_workflow.deleted', aggregateId: CO, version: '47', occurredAt: 'x', data: { id: CO } })).toBe('applied');
+      expect(del.calls.map(([sql]) => sql)).toContain('DELETE FROM josh_marketing_workflows WHERE id = $1');
     });
 
     it('rejects a snapshot whose data.id is not the aggregate', async () => {

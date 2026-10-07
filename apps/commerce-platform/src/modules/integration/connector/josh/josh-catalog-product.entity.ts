@@ -39,6 +39,19 @@ export class JoshCatalogProduct {
   @Column({ name: 'image_url', type: 'varchar', length: 2000, nullable: true }) imageUrl: string | null;
   @Column({ type: 'jsonb', default: () => "'[]'::jsonb" }) translations: JoshProductTranslation[];
   @Column({ name: 'josh_updated_at', type: 'timestamptz' }) joshUpdatedAt: Date;
+  // Stage 5 (S5-11): the products report's fields. Null until a catalog.snapshot from a josh with them arrives (the
+  // replica pull never writes them); not part of catalogFingerprint. Quantity is exact at stock-state changes only.
+  @Column({ name: 'category_id', type: 'uuid', nullable: true }) categoryId: string | null;
+  @Column({ name: 'category_path', type: 'varchar', length: 255, nullable: true }) categoryPath: string | null;
+  @Column({ name: 'original_price', type: 'numeric', precision: 12, scale: 2, nullable: true }) originalPrice: string | null;
+  @Column({ name: 'sup_code', type: 'varchar', length: 50, nullable: true }) supCode: string | null;
+  @Column({ name: 'product_inventory_quantity', type: 'int', nullable: true }) productInventoryQuantity: number | null;
+  @Column({ name: 'low_stock_threshold', type: 'int', nullable: true }) lowStockThreshold: number | null;
+  @Column({ type: 'int', nullable: true }) moq: number | null;
+  @Column({ name: 'order_taking_flag', type: 'varchar', length: 10, nullable: true }) orderTakingFlag: string | null;
+  @Column({ name: 'erp_pending_source', type: 'varchar', length: 32, nullable: true }) erpPendingSource: string | null;
+  @Column({ name: 'erp_pending_at', type: 'timestamptz', nullable: true }) erpPendingAt: Date | null;
+  @Column({ name: 'image_count', type: 'int', nullable: true }) imageCount: number | null;
   /** Set when the product disappears from josh. Rows are never deleted (comparisons keep their history). */
   @Column({ name: 'removed_at', type: 'timestamptz', nullable: true }) removedAt: Date | null;
   @Column({ name: 'synced_at', type: 'timestamptz', default: () => 'now()' }) syncedAt: Date;

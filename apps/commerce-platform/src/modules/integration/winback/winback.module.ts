@@ -36,6 +36,8 @@ import { WinbackIntakeController } from './winback-intake.controller';
 import { IntakeService } from './intake.service';
 import { WinbackNotifyService } from './winback-notify.service';
 import { WinbackNotifyCron } from './winback-notify.cron';
+import { WinbackReports } from './winback-reports';
+import { WinbackReportsController } from './winback-reports.controller';
 
 // The app signs in at josh and sends josh's access token: commerce's staff guard steps aside and
 // AdminWriteGuard (josh's checks, on the staff copy) decides. Writes only when commerce owns winback.
@@ -54,7 +56,7 @@ for (const c of [WinbackController, WinbackIntakeController]) { Public()(c); Use
     ApiKeyModule,
     TypeOrmModule.forFeature([WinbackAccount, WinbackActivity, WinbackContact, WinbackSalesTarget, WinbackStageHistory, WinbackMeetingAck, ...JOSH_COPY_TABLES]),
   ],
-  controllers: [WinbackController, WinbackIntakeController, WinbackLoginController],
+  controllers: [WinbackController, WinbackIntakeController, WinbackLoginController, WinbackReportsController],
   providers: [
     AdminWriteGuard,
     StorefrontApiKeyGuard,
@@ -79,7 +81,8 @@ for (const c of [WinbackController, WinbackIntakeController]) { Public()(c); Use
     IntakeService,
     WinbackNotifyService,
     WinbackNotifyCron,
+    WinbackReports,
   ],
-  exports: [WinbackService, LeadService, ReportService, WinbackMirror, WinbackStaffActions],
+  exports: [WinbackService, LeadService, ReportService, WinbackMirror, WinbackStaffActions, WinbackReports],
 })
 export class WinbackModule {}

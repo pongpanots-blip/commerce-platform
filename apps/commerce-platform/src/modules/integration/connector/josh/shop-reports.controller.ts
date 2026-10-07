@@ -45,6 +45,10 @@ export class ShopReportsController {
     if (!this.orders.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set ORDERS_SOURCE=copies to read commerce's order copies.`);
   }
 
+  private productsReady() {
+    if (!this.products.available) throw joshOnly('products');
+  }
+
   private pushReady() {
     if (!this.push.available) throw joshOnly('pushCampaigns');
   }
@@ -165,22 +169,22 @@ export class ShopReportsController {
   /** josh catalog, read-only (headless step 3 groundwork). Editing / approving stays in josh admin. */
   @Get('products/summary')
   @StaffRoles('marketing')
-  productSummary() { this.replica('products'); return this.products.summary(); }
+  productSummary() { this.productsReady(); return this.products.summary(); }
 
   @Get('products/categories')
   @StaffRoles('marketing')
-  productCategories() { this.replica('products'); return this.products.categories(); }
+  productCategories() { this.productsReady(); return this.products.categories(); }
 
   @Get('products')
   @StaffRoles('marketing')
   productList(@Query() q: ProductFilters & { page?: string; limit?: string }) {
-    this.replica('products');
+    this.productsReady();
     return this.products.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
 
   @Get('products/:idOrSku')
   @StaffRoles('marketing')
-  productDetail(@Param('idOrSku') idOrSku: string) { this.replica('products'); return this.products.detail(idOrSku); }
+  productDetail(@Param('idOrSku') idOrSku: string) { this.productsReady(); return this.products.detail(idOrSku); }
 
   // josh orders / customers / prices, read-only — admin only (the guard default).
   @Get('orders/summary') orderSummary(@Query() q: OrderFilters) { this.ordersReady(); return this.orders.summary(q); }

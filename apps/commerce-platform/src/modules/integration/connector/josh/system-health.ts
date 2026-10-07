@@ -31,7 +31,7 @@ export const JOSH_ONLY = {
   staffPricesImport: 'การนำเข้าราคาจาก josh เป็นเครื่องมือช่วงย้ายระบบ — ราคาที่ commerce ตั้งยังสร้าง / แก้ได้ตามปกติ',
   traffic: 'สถิติการเข้าชมยังไม่มีสำเนาใน commerce (รอตัดสินใจ: สรุปรายวัน หรือเลิกใช้) — ดูที่ josh-admin',
   orderTargetgroup: 'Order target group อ่านไฟล์นำเข้าและปฏิทินส่งของของ josh ซึ่ง commerce ยังไม่มีสำเนา — ดูที่ josh-admin',
-  products: 'รายงานสินค้ายังต้องใช้ข้อมูลของ josh ที่ยังไม่ได้ส่งมา (หมวดหมู่, stock, MOQ, รออนุมัติ) — ดูที่ josh-admin ระหว่างนี้',
+  products: 'รายงานสินค้าอ่านจากสำเนาใน commerce ได้เมื่อตั้ง PRODUCTS_SOURCE=copies (หลัง backfill catalog จน missing_report_fields = 0) — ระหว่างนี้ดูที่ josh-admin',
   customers: 'รายงานลูกค้าเป็นข้อมูล KYC / เครดิต / สาขา ซึ่งยังอยู่ที่ josh — ดูที่ josh-admin',
   pushCampaigns: 'Push campaign อ่านจากสำเนาใน commerce ได้เมื่อตั้ง PUSH_CAMPAIGNS_SOURCE=copies (หลัง backfill push_campaign) — ระหว่างนี้ดูที่ josh-admin',
   marketingWorkflows: 'Marketing workflow อ่านจากสำเนาใน commerce ได้เมื่อตั้ง MARKETING_WORKFLOWS_SOURCE=copies (หลัง backfill marketing_workflow) — ระหว่างนี้ดูที่ josh-admin',

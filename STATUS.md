@@ -45,6 +45,12 @@ Updated 2026-10-07. Not pushed.
 - **S5-9, health:** without the replica, the josh panel now shows ERP-send failures from `jagota_order_sync_history`,
   including how fresh that copy is, and points to josh-admin for josh-only checks. With the replica, nothing changes.
   Spec: 2 passing.
+- **S5-6, growth:** new switch `GROWTH_SOURCE`, `replica` (default) · `copies`.
+  - Workspace: sales come from the order copies, reorder-due from commerce's `winback_account`.
+  - Timeline: `josh_companies` + `josh_orders` + commerce `winback_*`.
+  - Carts, devices and marketing workflows have no copy, so the page says "ยังไม่มีสำเนาใน commerce" and
+    availability is partial. Workflow results still need the replica (S5-12).
+  - Readiness chip shows "สำเนาใน commerce". Specs: 38 passing; `tsc` clean for both apps.
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
@@ -53,9 +59,8 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
 
 ## Next (safe, commerce-only, in order)
-1. S5-6 growth workspace / timeline on copies + commerce `winback_*`.
-2. S5-7 orders / customers list + summary on copies (missing columns "—").
-3. S5-14 josh-only pages say so instead of the 503 text.
+1. S5-7 orders / customers list + summary on copies (missing columns "—").
+2. S5-14 josh-only pages say so instead of the 503 text.
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?

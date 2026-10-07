@@ -76,8 +76,8 @@ copy · D = drop/defer (other stage or no report value).
 | 6 | `josh-insights.ts` `failures()` | `GET /reports/health` (system-health), MCP `system_health` | `payment_transactions`, `jagota_order_sync`, `marketing_workflow_scheduled_runs`, `push_campaigns` | `jagota_order_sync_history` (commerce) for the ERP part | payments, workflow runs, push | **R\* — done (S5-9)** for ERP part (fresh as its last import until S5-11); D for the rest |
 | 7 | `connector/josh/josh-orders.ts` | `GET /reports/orders[/summary|/:id]`; MCP `josh_orders` | `orders`, `company`, `branch`, `users`, `jagota_order_sync`, `payment_transactions`, `order_items`, `product_inventory`, `product_translation`, `shipments` | `josh_orders`, `josh_order_lines`, `josh_companies`, `josh_users`/`josh_customers.data->>'mobile_phone'`, `jagota_order_sync_history`, `josh_catalog_products` | `branch` (name, erp code), `company.erp_customer_code`, payment detail (method/paid_at/amount), `shipments`, `orders.sending_date`, `order_taking_flag` | R* list/summary now (degrade missing columns); C for detail (`order.snapshot` gains `payments[]`, `shipments[]`, `sending_date`; new `branch.snapshot`) |
 | 8 | `connector/josh/josh-customers.ts` | `GET /reports/customers[/summary|/:id]`; MCP `josh_customers` | `company`, `branch`, `users`, `orders`, `kyc_document`, `credit_term_applications` (+ paid) | `josh_customers`, `josh_companies`, `josh_orders`, `customer_metrics` | company business/credit fields, `branch`, KYC, credit applications | R* basic; C for company/branch; **KYC/credit = open question** |
-| 9 | `growth/growth-data.service.ts` | `GET /growth/workspace|results/:id|timeline/:companyId`; MCP `growth_*`; `growth.service.evidence()` | `insights.sales`, `cart_snapshot`, `user_devices`, `winback_account`, `winback_activity`, `company`, `orders`, `users`, `marketing_workflow_enrollments`, `marketing_workflows` | sales via #3, commerce `winback_*` (owned since 2b — josh's copy is stale), `josh_companies`, `josh_orders`, `josh_users` | `cart_snapshot`, `user_devices`, marketing workflow tables | R* (workspace/timeline); results needs workflows (#12) |
-| 10 | `growth/growth.service.ts` | `/growth/readiness`, plans | only `replica.configured` | readiness → "copies" status | – | R (readiness flag only); josh **writes** via API stay |
+| 9 | `growth/growth-data.service.ts` | `GET /growth/workspace|results/:id|timeline/:companyId`; MCP `growth_*`; `growth.service.evidence()` | `insights.sales`, `cart_snapshot`, `user_devices`, `winback_account`, `winback_activity`, `company`, `orders`, `users`, `marketing_workflow_enrollments`, `marketing_workflows` | sales via #3, commerce `winback_*` (owned since 2b — josh's copy is stale), `josh_companies`, `josh_orders`, `josh_users` | `cart_snapshot`, `user_devices`, marketing workflow tables | **R\* — done (S5-6)**: `GROWTH_SOURCE` (carts/workflows "not copied"); results needs #12 |
+| 10 | `growth/growth.service.ts` | `/growth/readiness`, plans | only `replica.configured` | readiness → "copies" status | – | **R — done (S5-6)**: `dataSource`; josh **writes** via API stay |
 | 11 | `connector/josh/josh-backoffice.ts` | `GET /reports/backoffice[/:view]`; MCP `josh_backoffice` | 16 views: KYC, credit, CN/CB, invoices, shipments, payments, coupons, campaigns, user_segments, supplier, internal docs, admin access requests | segments view → `segments`; rest none | almost all — josh operational back-office | D (stays josh-admin's job; stage 6 staff admin decides) except `segments` view → R |
 | 12 | `connector/josh/josh-marketing-workflows.ts` (+controller) | `GET /reports/marketing-workflows[/:id]`; MCP | `marketing_workflow*` (4 tables) | none | all | C (`marketing_workflow.snapshot`) — or ownership move with stage 2 marketing; writes already go through `JoshActions` |
 | 13 | `connector/josh/josh-push-campaigns.ts` | `GET /reports/push-campaigns*`; MCP `push_campaigns` | `push_campaigns` (+ Mongo deliveries) | none | `push_campaigns` | C (`push_campaign.snapshot`, small table) |
@@ -144,7 +144,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | S5-3 | restaurants report on copies (also stops reading josh's stale `winback_account`) | #2 | no | low — **done** |
 | S5-4 | products report on catalog copy + owned tables | #14 | **yes** — `catalog.snapshot` fields (S5-11) | low — blocked |
 | S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — **done** (parity endpoint) |
-| S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium |
+| S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium — **done** |
 | S5-7 | orders + customers reports — list / summary on copies, missing columns "—" | #7, #8 | no | medium |
 | S5-8 | order-targetgroup — **not** an orders view (see task); needs copies or an owner decision | #5 | yes / decision | – blocked |
 | S5-9 | health: ERP part from `jagota_order_sync_history`; josh-only checks labelled | #6, #21 | no | low — **done** |
@@ -279,9 +279,24 @@ one at the order's last snapshot; `paid` is as of the last order snapshot (a pay
 and `this_month`: `differs` empty (or explained), `topProducts.firstDiffRank` null or > 20 → `SALES_SOURCE=copies`.
 Rollback: `replica`.
 
-### Task S5-6, S5-7
+### Task S5-6: growth on copies — DONE (this branch)
 
-Same pattern as S5-3; each one PR-sized commit. Details are in the inventory row; write each task's steps when picked.
+- [x] `GROWTH_SOURCE=replica|copies` (`growth-data.service.ts`). Copies, no replica:
+  - workspace: sales = `insights.sales(range, 1, 'copies')` (S5-5); reorder-due = same SQL on commerce's
+    `winback_account` (josh's is stale since 2b); carts (`cart_snapshot` / `user_devices`) and workflow failures →
+    limitation "ยังไม่มีสำเนาใน commerce" (availability `partial`, not "check the connection"); evidence source /
+    freshness text say "สำเนาข้อมูล josh ใน commerce".
+  - timeline: company from `josh_companies`, orders from `josh_orders` (`paid`), contacts from commerce `winback_*`;
+    workflow enrollments → "not copied".
+  - results: still `connected()` on the replica — needs `marketing_workflow*` (row 12, S5-12).
+- [x] `/growth/readiness`: `replica` = shop data reachable (copies or replica), new optional `dataSource`; the chip says
+      "สำเนาใน commerce". `GrowthService` no longer injects `JoshReplica`.
+- [x] Specs: growth-data (+3), growth.service, MCP growth: 38 pass.
+- Gaps kept for S5-12 / owner: `cart_snapshot`, `user_devices` (no snapshot group; not invented here), marketing workflows.
+
+### Task S5-7
+
+Same pattern as S5-3; write the steps when picked.
 
 ### Task S5-8: order-targetgroup — BLOCKED, reclassified (checked 2026-10-07)
 

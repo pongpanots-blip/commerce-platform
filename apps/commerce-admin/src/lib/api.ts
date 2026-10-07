@@ -286,6 +286,19 @@ export const staffApi = {
   changeOwnPassword: (currentPassword: string, newPassword: string) => api.post<{ changed: boolean }>('/admin/auth/password', { currentPassword, newPassword }),
 };
 
+// josh staff accounts (sales app, CS chat, josh-only pages) — written by commerce once it owns staff (stage 6).
+/** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts); platform_admin is given in josh only. */
+export const JOSH_STAFF_ROLES = ['cs', 'marketing', 'merchandising', 'sale', 'sales', 'manager', 'admin', 'dev'] as const;
+export interface JoshStaffAccount {
+  id: string; email: string | null; name: string; role: string; isActive: boolean; lastAppLoginAt: string | null;
+  pending: boolean; updatedBy: string | null; updatedAt: string | null;
+}
+export const joshStaffApi = {
+  ownership: () => api.get<{ staff?: boolean }>('/ownership'),
+  list: () => api.get<JoshStaffAccount[]>('/admin/josh-staff'),
+  set: (id: string, change: { role?: string; isActive?: boolean; revokeSessions?: boolean }) => api.patch<JoshStaffAccount>(`/admin/josh-staff/${id}`, change),
+};
+
 export const customersApi = {
   get: (id: string) => api.get<Customer>(`/customers/${id}`),
   update: (id: string, data: Partial<Customer>) => api.patch<Customer>(`/customers/${id}`, data),

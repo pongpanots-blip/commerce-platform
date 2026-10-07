@@ -113,8 +113,7 @@ export function StaffAccounts() {
                     <TD>{a.name ?? '—'}</TD>
                     <TD>
                       <Select aria-label={`สิทธิ์ของ ${a.email}`} value={a.role} disabled={self || !!busy} onChange={(e) => setRole(a, e.target.value as StaffRole)}>
-                        <option value="admin">admin</option>
-                        <option value="marketing">marketing</option>
+                        {(Object.keys(ROLE_LABEL) as StaffRole[]).map((r) => <option key={r} value={r}>{r === 'merchandising' ? 'MER' : r === 'cs' ? 'CS' : r}</option>)}
                       </Select>
                     </TD>
                     <TD><StatusChip status={a.status} /></TD>

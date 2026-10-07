@@ -40,6 +40,10 @@ export class ShopReportsController {
     if (!this.insights.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
   }
 
+  private ordersReady() {
+    if (!this.orders.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set ORDERS_SOURCE=copies to read commerce's order copies.`);
+  }
+
   private restaurantsReady() {
     if (!this.restaurants.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set RESTAURANTS_SOURCE=copies to read commerce's copy.`);
   }
@@ -174,11 +178,11 @@ export class ShopReportsController {
   productDetail(@Param('idOrSku') idOrSku: string) { this.replica(); return this.products.detail(idOrSku); }
 
   // josh orders / customers / prices, read-only — admin only (the guard default).
-  @Get('orders/summary') orderSummary(@Query() q: OrderFilters) { this.replica(); return this.orders.summary(q); }
+  @Get('orders/summary') orderSummary(@Query() q: OrderFilters) { this.ordersReady(); return this.orders.summary(q); }
   @Get('orders') orderList(@Query() q: OrderFilters & { page?: string; limit?: string }) {
-    this.replica(); return this.orders.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+    this.ordersReady(); return this.orders.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
-  @Get('orders/:idOrNumber') orderDetail(@Param('idOrNumber') id: string) { this.replica(); return this.orders.detail(id); }
+  @Get('orders/:idOrNumber') orderDetail(@Param('idOrNumber') id: string) { this.ordersReady(); return this.orders.detail(id); }
 
   @Get('customers/summary') customerSummary() { this.replica(); return this.customers.summary(); }
   @Get('customers') customerList(@Query() q: CompanyFilters & { page?: string; limit?: string }) {

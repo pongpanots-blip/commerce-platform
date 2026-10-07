@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { orderWhere, SYNC_STATES } from './josh-orders';
+import { JoshOrders, orderWhere, SYNC_STATES } from './josh-orders';
 import { companyWhere, JoshCustomers } from './josh-customers';
 import { isActiveDateRange, resolvePromotionPrice, winningPrice, PriceLayers } from './josh-prices';
 
@@ -12,6 +12,42 @@ describe('josh orders (read-only)', () => {
     expect(() => orderWhere({ sync: 'x' })).toThrow(BadRequestException);
     expect(() => orderWhere({ companyId: '1 OR 1=1' })).toThrow(BadRequestException);
     expect(() => orderWhere({ to: 'soon' })).toThrow(BadRequestException);
+  });
+});
+
+describe('ORDERS_SOURCE=copies (stage 5, S5-7)', () => {
+  const env = process.env.ORDERS_SOURCE;
+  beforeEach(() => { process.env.ORDERS_SOURCE = 'copies'; });
+  afterEach(() => { if (env === undefined) delete process.env.ORDERS_SOURCE; else process.env.ORDERS_SOURCE = env; });
+  const make = () => {
+    const replica = { configured: false, query: jest.fn() };
+    const db = { query: jest.fn(async (sql: string): Promise<Record<string, unknown>[]> =>
+      /count\(\*\)::int AS total FROM|AS total, /.test(sql) ? [{ total: 1 }]
+        : /FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_users/.test(sql)
+          ? [{ orders_id: 'o1', first_name: 'สมชาย', last_name: 'ใจดี', email: 'somchai@example.com' }] : []) };
+    return { orders: new JoshOrders(replica as never, db as never), replica, db };
+  };
+
+  it('list / summary / detail work without the replica, on commerce tables only', async () => {
+    const { orders, replica, db } = make();
+    expect(orders.available).toBe(true);
+    await orders.summary({ payment: 'missing', sync: 'failed' });
+    const list = await orders.list({ search: 'x' });
+    const d = await orders.detail('o1-number');
+    expect(replica.query).not.toHaveBeenCalled();
+    for (const [sql] of db.query.mock.calls) {
+      expect(sql).not.toMatch(/payment_transactions|\bFROM orders\b|\bcompany c\b|\bbranch\b b|jagota_order_sync s|order_items|\busers u\b/);
+    }
+    expect(db.query.mock.calls[0][0]).toContain('NOT o.paid'); // payment=missing on the copy's paid flag
+    expect(db.query.mock.calls[0][0]).toContain('FROM jagota_order_sync_history s');
+    expect(list).toMatchObject({ source: 'copies', notCopied: expect.arrayContaining(['branch_name', 'payments']) });
+    expect(d).toMatchObject({ shipments: null, payments: null, orderedBy: { phone: null } });
+    expect((d as { orderedBy: { email: string } }).orderedBy.email).not.toBe('somchai@example.com'); // masked
+  });
+
+  it('defaults to the replica', () => {
+    delete process.env.ORDERS_SOURCE;
+    expect(make().orders.available).toBe(false);
   });
 });
 

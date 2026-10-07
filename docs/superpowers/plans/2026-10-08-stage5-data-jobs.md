@@ -145,7 +145,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | S5-4 | products report on catalog copy + owned tables | #14 | **yes** — `catalog.snapshot` fields (S5-11) | low — blocked |
 | S5-5 | sales report on copies (refunds → "n/a" until copied) | #3 | no (refunds later) | medium — **done** (parity endpoint) |
 | S5-6 | growth workspace / timeline on copies + commerce `winback_*`; readiness says "copies" | #9, #10 | no | medium — **done** |
-| S5-7 | orders + customers reports — list / summary on copies, missing columns "—" | #7, #8 | no | medium |
+| S5-7 | orders + customers reports — list / summary on copies, missing columns "—" | #7, #8 | no | medium — **orders done**; customers deferred (q1 + S5-11) |
 | S5-8 | order-targetgroup — **not** an orders view (see task); needs copies or an owner decision | #5 | yes / decision | – blocked |
 | S5-9 | health: ERP part from `jagota_order_sync_history`; josh-only checks labelled | #6, #21 | no | low — **done** |
 | S5-10 | staff-prices SKU lookup from catalog copy (fixes crash without replica, `staff-prices.ts:136`) | #18 | no | low — **done** |
@@ -294,9 +294,25 @@ Rollback: `replica`.
 - [x] Specs: growth-data (+3), growth.service, MCP growth: 38 pass.
 - Gaps kept for S5-12 / owner: `cart_snapshot`, `user_devices` (no snapshot group; not invented here), marketing workflows.
 
-### Task S5-7
+### Task S5-7: orders on copies — DONE; customers — DEFERRED (checked 2026-10-07)
 
-Same pattern as S5-3; write the steps when picked.
+Orders (`josh-orders.ts`):
+- [x] `ORDERS_SOURCE=replica|copies`. Copies: `josh_orders` (`o.paid` replaces `paidOrderSql`, also in the
+      `payment=missing` filter — `orderWhere(f, paid)`), `josh_companies`, latest ERP send from
+      `jagota_order_sync_history`. Summary tiles and sync filters are complete on copies.
+- [x] List: `payment_status` = `success` / `not paid` from `paid` (no payment rows copied); `branch_name`,
+      `payment_method`, `paid_at` null; answer carries `source` + `notCopied`.
+- [x] Detail: head + lines (`josh_order_lines` + catalog th name) + ERP sends; orderer from `josh_users` (masked,
+      phone null); `shipments` / `payments` null (the page already shows "—"); `sending_date`, ERP codes null.
+- [x] Controller `ordersReady()`; MCP `josh_orders` already gated on `joshOrders.available`.
+- [x] Spec (+2): copies without replica — no josh table names in any SQL; default replica.
+- Remaining for full parity (S5-11): `branch.snapshot`, `order.snapshot` + `payments[]` / `shipments[]` /
+  `sending_date`, company `erp_customer_code`, `jagota_sync` snapshot (freshness of the ERP-send column).
+
+Customers (`josh-customers.ts`) — not built: every issue tile and most columns are KYC (`kyc_document`), credit
+(`company.credit_*`, `credit_term_applications`), `business_type`, `erp_customer_code`, `branch`. Commerce has none
+(`josh_companies` = id, name, register_number). A copies mode would show "no KYC / no ERP code" for every company.
+Needs open question §4 q1 (KYC / credit in commerce?) and the company / branch fields of S5-11 first.
 
 ### Task S5-8: order-targetgroup — BLOCKED, reclassified (checked 2026-10-07)
 

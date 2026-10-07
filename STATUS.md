@@ -51,6 +51,12 @@ Updated 2026-10-07. Not pushed.
   - Carts, devices and marketing workflows have no copy, so the page says "ยังไม่มีสำเนาใน commerce" and
     availability is partial. Workflow results still need the replica (S5-12).
   - Readiness chip shows "สำเนาใน commerce". Specs: 38 passing; `tsc` clean for both apps.
+- **S5-7, orders report:** new switch `ORDERS_SOURCE`, `replica` (default) · `copies`.
+  - Copies read `josh_orders` (`paid`), `josh_companies`, `jagota_order_sync_history` and `josh_order_lines`.
+  - Not copied yet, so null and listed in `notCopied`: branch, payment rows, shipments, ERP codes.
+  - Spec: 8 passing.
+- **Customers report: deferred.** It is mostly KYC, credit and branch data. It waits on open question 1 and the
+  S5-11 company/branch snapshots.
 
 ## Not done / not verified
 - The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
@@ -59,8 +65,7 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
 
 ## Next (safe, commerce-only, in order)
-1. S5-7 orders / customers list + summary on copies (missing columns "—").
-2. S5-14 josh-only pages say so instead of the 503 text.
+1. S5-14 josh-only pages say so instead of the 503 text.
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?

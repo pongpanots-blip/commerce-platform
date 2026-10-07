@@ -9,6 +9,7 @@ import { Warehouse } from '../../warehouse/infrastructure/warehouse.entity';
 import { InventoryLevel } from '../infrastructure/inventory-level.entity';
 import { InventoryMovement } from '../infrastructure/inventory-movement.entity';
 import { InventoryLedgerService } from './inventory-ledger.service';
+import { StockMovesService } from './stock-moves.service';
 
 /*
  * Stage 3: ledger writes under a row lock on an upserted level row. Opt-in, migrated scratch DB:
@@ -20,6 +21,7 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
 (url ? describe : describe.skip)('InventoryLedgerService against a database', () => {
   let db: DataSource;
   let ledger: InventoryLedgerService;
+  let moves: StockMovesService;
   const clean = async () => {
     await db.query(`DELETE FROM outbox_messages WHERE aggregate_id = $1`, [P]);
     await db.query(`DELETE FROM inventory_movements WHERE product_id = $1`, [P]);
@@ -31,10 +33,11 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
   beforeAll(async () => {
     const mod = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot({ type: 'postgres', url, entities: [InventoryLevel, InventoryMovement, Warehouse, OutboxMessage] }), TypeOrmModule.forFeature([OutboxMessage])],
-      providers: [InventoryLedgerService, EventEmitterBus, { provide: EVENT_BUS, useExisting: EventEmitterBus }],
+      providers: [InventoryLedgerService, StockMovesService, EventEmitterBus, { provide: EVENT_BUS, useExisting: EventEmitterBus }],
     }).compile();
     db = mod.get(DataSource);
     ledger = mod.get(InventoryLedgerService);
+    moves = mod.get(StockMovesService);
     await clean();
     await db.query(`INSERT INTO products (id, sku, name) VALUES ($1, 'T3-SKU', 'stage 3 test')`, [P]);
     await db.query(`INSERT INTO warehouses (id, code, name, stock_source, sellable) VALUES ($1, 'T3-OWN', 'own', 'commerce', true), ($2, 'T3-DMG', 'damaged', 'commerce', false)`, [W, W2]);
@@ -59,5 +62,22 @@ const P = '00000000-0000-4000-8000-0000000003a1', W = '00000000-0000-4000-8000-0
     const snaps = await db.query(`SELECT payload FROM outbox_messages WHERE type = 'inventory.sellable.snapshot' AND aggregate_id = $1 ORDER BY created_at`, [P]);
     expect(snaps.length).toBe(7);
     expect(snaps[snaps.length - 1].payload).toMatchObject({ sku: 'T3-SKU', sellableQty: 17, erp: { PRODUCT_CODE: 'T3-SKU', QUANTITY: 17 } });
+  });
+
+  it('a transfer moves stock between two own warehouses atomically; too much refuses and changes nothing', async () => {
+    const level = async (w: string) => (await db.query(`SELECT quantity::int AS q FROM inventory_levels WHERE product_id = $1 AND warehouse_id = $2`, [P, w]))[0]?.q;
+    await moves.transfer({ sku: 'T3-SKU', fromWarehouseCode: 'T3-OWN', toWarehouseCode: 'T3-DMG', quantity: 5 }, 'staff-1');
+    expect([await level(W), await level(W2)]).toEqual([12, 105]);
+    await expect(moves.transfer({ sku: 'T3-SKU', fromWarehouseCode: 'T3-OWN', toWarehouseCode: 'T3-DMG', quantity: 50 }, 'staff-1')).rejects.toThrow('ไม่ติดลบ');
+    expect([await level(W), await level(W2)]).toEqual([12, 105]);
+    const refs = await db.query(`SELECT DISTINCT ref FROM inventory_movements WHERE product_id = $1 AND reason LIKE 'ADJUST:TRANSFER%'`, [P]);
+    expect(refs).toHaveLength(1);
+  });
+
+  it('count sets the number; unknown SKU / warehouse are 404', async () => {
+    await moves.adjust({ sku: 'T3-SKU', warehouseCode: 'T3-OWN', mode: 'set', quantity: 9, reason: 'COUNT' }, 'staff-1');
+    expect((await db.query(`SELECT quantity::int AS q FROM inventory_levels WHERE product_id = $1 AND warehouse_id = $2`, [P, W]))[0].q).toBe(9);
+    await expect(moves.adjust({ sku: 'NOPE', warehouseCode: 'T3-OWN', mode: 'add', quantity: 1, reason: 'RECEIVE' }, 's')).rejects.toThrow('ไม่พบสินค้า');
+    await expect(moves.adjust({ sku: 'T3-SKU', warehouseCode: 'NOPE', mode: 'add', quantity: 1, reason: 'RECEIVE' }, 's')).rejects.toThrow('ไม่พบคลัง');
   });
 });

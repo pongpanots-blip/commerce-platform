@@ -352,6 +352,17 @@ export const marketingResearchApi = {
     enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/runs/${id}/summarize`, { requestId: crypto.randomUUID() })),
 };
 
+// ---- Stock moves (stage 3: commerce-owned warehouses, through the ledger) ----
+export interface StockWarehouse { id: string; code: string; name: string; stockSource: 'erp' | 'commerce'; sellable: boolean }
+export interface StockAdjustResult { status: string; previousQuantity: number; quantity: number; reserved: number }
+export const stockApi = {
+  warehouses: () => api.get<StockWarehouse[]>('/stock/warehouses'),
+  adjust: (body: { sku: string; warehouseCode: string; mode: 'set' | 'add'; quantity: number; reason: string; note?: string }) =>
+    api.post<StockAdjustResult>('/stock/adjustments', body),
+  transfer: (body: { sku: string; fromWarehouseCode: string; toWarehouseCode: string; quantity: number; note?: string }) =>
+    api.post<{ from: StockAdjustResult & { warehouse: string }; to: StockAdjustResult & { warehouse: string } }>('/stock/transfers', body),
+};
+
 // ---- Inventory per warehouse (read model) ----
 export interface WarehouseStockSummary { code: string; name: string; stockSource: 'erp' | 'commerce'; skus: number; onHand: number; reserved: number }
 export interface WarehouseStockRow {

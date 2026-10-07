@@ -7,11 +7,13 @@ import { InventoryController } from './presentation/inventory.controller';
 import { InventoryOverviewController } from './presentation/inventory-overview.controller';
 import { InventoryMovement } from './infrastructure/inventory-movement.entity';
 import { InventoryLedgerService } from './application/inventory-ledger.service';
+import { StockMovesService } from './application/stock-moves.service';
+import { StockMovesController } from './presentation/stock-moves.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([InventoryLevel, InventoryMovement])],
-  controllers: [InventoryController, InventoryOverviewController],
-  providers: [InventoryRepository, InventoryService, InventoryLedgerService],
+  controllers: [InventoryController, InventoryOverviewController, StockMovesController],
+  providers: [InventoryRepository, InventoryService, InventoryLedgerService, StockMovesService],
   exports: [InventoryService, InventoryLedgerService],
 })
 export class InventoryModule {}

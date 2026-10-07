@@ -19,7 +19,7 @@ import { Subscriptions } from './pages/Subscriptions';
 import { SyncJobs } from './pages/SyncJobs';
 import { Customers } from './pages/Customers';
 import { Products } from './pages/Products';
-import { Inventory } from './pages/Inventory';
+import { StockMoves } from './pages/StockMoves';
 import { Orders } from './pages/Orders';
 import { Reservations } from './pages/Reservations';
 import { ErpStock } from './pages/ErpStock';
@@ -208,7 +208,7 @@ const NAV: NavGroup[] = [
     links: [
       { to: '/customers', label: 'Customers', end: false },
       { to: '/products', label: 'Products', end: false },
-      { to: '/inventory', label: 'Inventory', end: false },
+      { to: '/stock-moves', label: 'Stock moves', end: false },
       { to: '/orders', label: 'Orders', end: false },
       { to: '/reservations', label: 'Reservations', end: false },
     ],
@@ -372,7 +372,8 @@ export function App() {
             <Route path="/customers/:id" element={<CustomerDetail />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/stock-moves" element={<StockMoves />} />
+            <Route path="/inventory" element={<Navigate to="/stock-moves" replace />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/reservations" element={<Reservations />} />

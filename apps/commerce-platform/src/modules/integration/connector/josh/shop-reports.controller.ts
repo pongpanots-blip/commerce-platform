@@ -133,24 +133,24 @@ export class ShopReportsController {
   @StaffRoles('marketing')
   pushDelivery(@Param('id', ParseUUIDPipe) id: string) { this.replica(); return this.push.delivery(id); }
 
-  /** josh catalog, read-only (headless step 3 groundwork). Editing / approving stays in josh admin. */
+  /** josh catalog, read-only (headless step 3 groundwork) — marketing and MER (stage 6). */
   @Get('products/summary')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', 'merchandising')
   productSummary() { this.replica(); return this.products.summary(); }
 
   @Get('products/categories')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', 'merchandising')
   productCategories() { this.replica(); return this.products.categories(); }
 
   @Get('products')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', 'merchandising')
   productList(@Query() q: ProductFilters & { page?: string; limit?: string }) {
     this.replica();
     return this.products.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
 
   @Get('products/:idOrSku')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', 'merchandising')
   productDetail(@Param('idOrSku') idOrSku: string) { this.replica(); return this.products.detail(idOrSku); }
 
   // josh orders / customers / prices, read-only — admin only (the guard default).

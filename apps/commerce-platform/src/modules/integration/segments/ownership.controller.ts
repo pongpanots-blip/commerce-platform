@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { ownsSalesReps } from '../customers/sales-reps.service';
 import { ownsStaff } from '../customers/josh-staff-access.service';
 import { ownsSegments } from './segments.service';
@@ -11,8 +12,10 @@ import { ownsProductImages } from '../../commerce/product-images/product-images.
 /**
  * Which josh features commerce owns right now (any signed-in staff). commerce-admin's hosted josh pages read it
  * to send writes to commerce or to josh — so switching ownership is an env change, not a UI deploy.
+ * Open to every staff role (stage 6): without it a marketing / MER / CS page falls back to josh's routes, which josh refuses once owned.
  */
 @Controller('ownership')
+@StaffRoles('marketing', 'merchandising', 'cs')
 export class OwnershipController {
   @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent(), categories: ownsCategories(), productMaster: ownsProductMaster(), productImages: ownsProductImages(), staff: ownsStaff() }; }
 }

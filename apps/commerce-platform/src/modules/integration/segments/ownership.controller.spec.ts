@@ -1,3 +1,5 @@
+import { Reflector } from '@nestjs/core';
+import { STAFF_ROLES_KEY } from '../../../shared-kernel/presentation/auth.decorators';
 import { OwnershipController } from './ownership.controller';
 
 describe('GET /api/ownership', () => {
@@ -10,5 +12,8 @@ describe('GET /api/ownership', () => {
     process.env.COMMERCE_OWNS_SEGMENTS = 'true';
     process.env.COMMERCE_OWNS_SALES_REPS = 'true';
     expect(new OwnershipController().get()).toEqual({ segments: true, salesReps: true, prices: false, productContent: false, categories: false, productMaster: false, productImages: false, staff: false });
+  });
+  it('every staff role may read it (the pages of marketing / MER / CS pick their write route from it)', () => {
+    expect(new Reflector().get(STAFF_ROLES_KEY, OwnershipController)).toEqual(['marketing', 'merchandising', 'cs']);
   });
 });

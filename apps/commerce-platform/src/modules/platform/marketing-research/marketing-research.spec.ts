@@ -28,6 +28,7 @@ describe('Research validation and security boundaries', () => {
   });
 
   it('never marks a source ready without an enabled worker and a strong separate credential', () => {
+    process.env.RESEARCH_SOCIAL_ENABLED = 'false';
     process.env.RESEARCH_FREE_WORKER_ENABLED = 'false';
     process.env.RESEARCH_ENABLED_SOURCES = 'google';
     process.env.RESEARCH_WORKER_ENABLED = 'true';

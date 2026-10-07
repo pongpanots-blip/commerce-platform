@@ -1,8 +1,14 @@
+import {
+  socialSourceStatus,
+  type SocialSource,
+} from './application/research-social.config';
+
 export const RESEARCH_KINDS = [
   'sales',
   'competitor',
   'procurement',
   'trend',
+  'content',
 ] as const;
 export const RESEARCH_SOURCES = [
   'facebook',
@@ -33,6 +39,7 @@ export type ResearchScope = {
   sources: ResearchSource[];
 };
 export type ResearchReport = {
+  analysis?: ResearchAnalysis;
   summary: string;
   evidence: Array<{
     id: string;
@@ -54,6 +61,29 @@ export type ResearchReport = {
   }>;
 };
 
+export type ResearchAnalysis = {
+  status:
+    | 'queued'
+    | 'running'
+    | 'completed'
+    | 'not_configured'
+    | 'unavailable'
+    | 'insufficient_data';
+  provider: 'gemini';
+  model?: string;
+  keyAlias?: string;
+  generatedAt?: string;
+  sampleSize: number;
+  summary: string;
+  findings: Array<{ text: string; evidenceIds: string[] }>;
+  suggestions: Array<{ text: string; evidenceIds: string[] }>;
+  reason: string;
+  requestId?: string;
+  requestedAt?: string;
+  leaseExpiresAt?: string;
+  attempts?: number;
+};
+
 export const FREE_RESEARCH_SOURCES: ResearchSource[] = ['tat', 'osm'];
 export const freeResearchEnabled = () =>
   !['false', '0'].includes(process.env.RESEARCH_FREE_WORKER_ENABLED ?? 'true');
@@ -69,15 +99,30 @@ export function researchSourceStatus() {
       .map((source) => source.trim()),
   );
   return RESEARCH_SOURCES.map((id) => {
+    const social =
+      id !== 'tat' && id !== 'osm'
+        ? socialSourceStatus(id as SocialSource)
+        : null;
     const ready =
       (freeResearchEnabled() && FREE_RESEARCH_SOURCES.includes(id)) ||
+      Boolean(social?.ready) ||
       (workerConfigured && enabled.has(id));
     return {
       id,
       ready,
+      provider: social?.ready
+        ? social.provider
+        : workerConfigured && enabled.has(id)
+          ? 'external-worker'
+          : (social?.provider ?? 'open-data'),
+      costMode: social?.costMode ?? 'free',
+      setupUrl: social?.setupUrl,
+      scope:
+        social?.scope ?? 'ข้อมูลรายชื่อธุรกิจสาธารณะ ไม่ยืนยันความต้องการซื้อ',
       reason: ready
         ? ''
-        : 'ยังไม่ได้เชื่อมแหล่งข้อมูลนี้ เลือก ททท. หรือ OpenStreetMap เพื่อเริ่มค้นจากฐานรายชื่อฟรี',
+        : (social?.reason ??
+          'ผู้ดูแลปิด worker ข้อมูลฟรีอยู่ ให้เปิด RESEARCH_FREE_WORKER_ENABLED แล้วรันใหม่'),
     };
   });
 }

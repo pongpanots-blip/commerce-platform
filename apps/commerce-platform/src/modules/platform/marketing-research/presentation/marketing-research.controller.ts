@@ -130,6 +130,15 @@ export class MarketingResearchController {
     const actor: ResearchActor = { sub: req.staff.userId, role: req.staff.role };
     return reply(() => this.service.keep(id, actor));
   }
+
+  @Post('runs/:id/summarize')
+  @HttpCode(200)
+  summarize(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ResearchRunRequestDto,
+  ) {
+    return reply(() => this.service.requestSummary(id, dto.requestId));
+  }
 }
 
 @Public()

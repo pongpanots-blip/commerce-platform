@@ -11,6 +11,9 @@ import { MarketingResearchService } from './application/marketing-research.servi
 import { ResearchAccessGuard, ResearchWorkerGuard } from './presentation/research.guards';
 import { ResearchCatalogService } from './application/research-catalog.service';
 import { ResearchFreeWorker } from './application/research-free.worker';
+import { ResearchAiSummaryService } from './application/research-ai-summary.service';
+import { ResearchAiWorker } from './application/research-ai.worker';
+import { ResearchSocialService } from './application/research-social.service';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { ResearchFreeWorker } from './application/research-free.worker';
     MarketingResearchCron,
     ResearchCatalogService,
     ResearchFreeWorker,
+    ResearchAiSummaryService,
+    ResearchAiWorker,
+    ResearchSocialService,
     ResearchAccessGuard,
     ResearchWorkerGuard,
   ],

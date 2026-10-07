@@ -48,7 +48,7 @@ class ResearchTopicFieldsDto {
   @ArrayUnique()
   @IsIn(RESEARCH_SOURCES, { each: true })
   sources: ResearchSource[] = ['tat', 'osm'];
-  @IsBoolean() followHourly = true;
+  @IsBoolean() followHourly = false;
 }
 
 export class CreateResearchTopicDto extends ResearchTopicFieldsDto {
@@ -97,7 +97,34 @@ export class CoverageDto {
   @IsOptional() @IsDateString() to?: string;
   @IsOptional() @IsString() @MaxLength(1000) reason?: string;
 }
+export class ResearchAiContentDto {
+  @IsString() @MaxLength(3000) summary: string;
+  @IsArray()
+  @ArrayMaxSize(8)
+  @ValidateNested({ each: true })
+  @Type(() => FindingDto)
+  findings: FindingDto[];
+  @IsArray()
+  @ArrayMaxSize(8)
+  @ValidateNested({ each: true })
+  @Type(() => FindingDto)
+  suggestions: FindingDto[];
+}
+export class ResearchAnalysisDto extends ResearchAiContentDto {
+  @IsIn(['completed', 'not_configured', 'unavailable', 'insufficient_data'])
+  status: 'completed' | 'not_configured' | 'unavailable' | 'insufficient_data';
+  @IsIn(['gemini']) provider: 'gemini';
+  @IsOptional() @IsString() @MaxLength(100) model?: string;
+  @IsOptional() @IsString() @MaxLength(30) keyAlias?: string;
+  @IsOptional() @IsDateString() generatedAt?: string;
+  @IsInt() @Min(0) @Max(50) sampleSize: number;
+  @IsString() @MaxLength(1000) reason: string;
+}
 export class CompleteResearchRunDto {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ResearchAnalysisDto)
+  analysis?: ResearchAnalysisDto;
   @IsUUID('4') leaseToken: string;
   @IsString() @IsNotEmpty() @MaxLength(4000) summary: string;
   @IsArray()

@@ -149,3 +149,18 @@ it('caps concurrent Chromium sessions at SCRAPING_MAX_BROWSERS and runs waiters 
   expect((reader as any).browsers).toBe(0); // a failed session still frees its slot
   delete process.env.SCRAPING_MAX_BROWSERS;
 });
+
+it('clicks "next" again when the site missed it well before its last page, but not at the real end (josh #455)', async () => {
+  const { advanceOrRetry } = await import('./public-web.reader');
+  const waits: number[] = [];
+  const wait = async (ms: number) => { waits.push(ms); };
+  const steps = (...moved: boolean[]) => { const queue = [...moved]; return async () => ({ moved: queue.shift() ?? false, totalPages: 4000 }); };
+  expect((await advanceOrRetry(steps(false, true), 10, null, wait)).moved).toBe(true); // missed once at page 11 → recovered
+  expect(waits).toEqual([5000]);
+  waits.length = 0;
+  expect((await advanceOrRetry(steps(false, false, false), 10, 4000, wait)).moved).toBe(false); // still stuck → a drop (retried later)
+  expect(waits).toEqual([5000, 10000]);
+  waits.length = 0;
+  expect((await advanceOrRetry(steps(false), 3999, 4000, wait)).moved).toBe(false); // the real last page: no waiting
+  expect(waits).toEqual([]);
+});

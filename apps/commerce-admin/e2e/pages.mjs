@@ -25,15 +25,16 @@ const ADMIN_ROUTES = [
   '/reports/winback', '/josh/kyc', '/josh/credit_terms', '/josh/admin_access', '/josh/shipments', '/josh/payments',
   '/josh/credit_notes', '/josh/credit_backs', '/josh/invoices', '/josh/coupons', '/josh/campaigns', '/josh/segments',
   '/josh/suppliers', '/josh/internal_docs', '/josh-api-logs', '/marketing/research', '/marketing/restaurants',
-  '/marketing/workflows', '/cs', '/livechat', '/marketing/competitor-prices',
-  '/marketing/scraping-sources', '/marketing/scraped-catalog', '/ai/connectors', '/erp/inbound-log', '/erp/josh-logs',
+  '/marketing/workflows', '/cs', '/livechat', '/ai/connectors', '/erp/inbound-log', '/erp/josh-logs',
   '/erp/webhook-dead-letter', '/erp/webhook-platforms', '/erp/inventory-warehouse', '/erp/simulator',
   '/erp/jagota-shadow', '/integrations', '/webhooks', '/subscriptions', '/sync-jobs', '/erp-stock', '/erp-ingest',
   '/customers', '/products', '/inventory', '/orders', '/reservations',
 ];
 const PORTAL_ROUTES = ['/', '/keys', '/webhooks', '/docs'];
 // josh web-admin pages copied as-is (josh's own look, josh API via admin-call): only "renders without a JS error".
-const JOSH_ROUTES = ['/marketing/workflows/new', '/j/allproducts', '/j/order', '/j/coupons', '/j/segments', '/j/marketing/push-campaigns', '/j/cs/delivery-schedule', '/j/cs/cart-move-categories', '/j/promotions-mechanic'];
+const JOSH_ROUTES = ['/marketing/workflows/new', '/j/allproducts', '/j/order', '/j/coupons', '/j/segments', '/j/marketing/push-campaigns', '/j/cs/delivery-schedule', '/j/cs/cart-move-categories', '/j/promotions-mechanic',
+  // josh's competitor / scraping pages on commerce's own API (commerce-client), not admin-call.
+  '/j/marketing/competitor-prices', '/j/marketing/scraping-sources', '/j/marketing/scraped-catalog'];
 // Detail pages: open the list, follow the first row's link, check the page it lands on.
 const DETAILS = [
   ['/reports/orders', '/reports/orders/'],

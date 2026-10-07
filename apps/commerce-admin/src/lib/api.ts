@@ -323,6 +323,12 @@ export interface ResearchRun {
     summary?: string; findings?: { text: string; evidenceIds: string[] }[];
     evidence?: { id: string; source: string; url: string; excerpt: string; collectedAt: string }[];
     suggestions?: string[]; limitations?: string[];
+    /** On-demand Gemini summary of the evidence (POST runs/:id/summarize); worked off by the research cron. */
+    analysis?: {
+      status: 'queued' | 'running' | 'completed' | 'not_configured' | 'unavailable' | 'insufficient_data';
+      summary: string; reason: string; sampleSize: number; generatedAt?: string;
+      findings: { text: string; evidenceIds: string[] }[]; suggestions: { text: string; evidenceIds: string[] }[];
+    };
   } | null;
   keptAt: string | null; createdAt: string; finishedAt: string | null;
 }
@@ -342,123 +348,8 @@ export const marketingResearchApi = {
   requestRun: (topicId: string) =>
     enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/topics/${topicId}/runs`, { requestId: crypto.randomUUID() })),
   keepRun: (id: string) => enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/runs/${id}/keep`, {})),
-};
-
-// Same shapes as josh libs/shared-api competitor-prices.api.ts (af81a227), so the two compare 1:1.
-export type ScrapingField = { key: string; label: string; selector: string; attribute?: string };
-export type ScrapingConfig = {
-  startUrls: string[]; pathPrefixes: string[]; mode: 'html' | 'browser'; itemSelector: string;
-  fields: ScrapingField[]; currency: string; vatIncluded: boolean; priceContext: string;
-  selectedFields?: string[];
-  /** Detect repeated product cards from links instead of CSS field selectors. */
-  autoCards?: boolean;
-  /** 'browser' = follow next link / next button / load more / scroll in one session. */
-  pagination?: 'none' | 'browser';
-  /** Run only at night (server window, default 00:00–06:00 Bangkok); long runs pause and resume next night. */
-  nightOnly?: boolean;
-  /** Pages the site reported at discovery, for 'X of ~Y' progress. */
-  expectedPages?: number;
-  collectionAllowed: boolean; intervalHours: number; maxPages: number; delayMs: number;
-};
-export type ScrapingSourceInput = { name: string; origin: string; config: ScrapingConfig; enabled: boolean; revision?: number };
-/** Our own member account on a site. Password is write-only; prices read while logged in are member prices. */
-export type ScrapingLogin = { url: string; username: string; password?: string };
-export interface ScrapingSource extends ScrapingSourceInput {
-  id: string; revision: number; configVersion: string;
-  login: { url: string; username: string; hasPassword: boolean } | null;
-  status: 'idle' | 'running' | 'paused' | 'completed' | 'limited'; lastError: string | null; lastRunAt: string | null;
-  /** reading · waiting_for_night · queued (starts within seconds) · retrying (dropped, retrying itself) · gave_up (dropped 3×, use runNow) */
-  activity: 'reading' | 'waiting_for_night' | 'queued' | 'retrying' | 'gave_up' | null;
-  progress: { pages: number; pending: number; successful: number; failed: number; items: number };
-}
-export type ScrapingPreview = { url: string; observedAt: string; found: number; links: number; sitemap: boolean; message: string;
-  items: { url: string; name: string; sku: string; fields: Record<string, string>; price: number | null; currency: string }[];
-};
-/** Result of reading two listing pages in a browser: `works` = page 2 had new items, so runs page through by themselves. */
-export type ScrapingPaging = { pages: { page: number; found: number; fresh: number }[]; totalPages: number | null; works: boolean };
-export type ScrapingDiscovery = { ready: boolean; proposal: ScrapingSourceInput | null; preview: ScrapingPreview | null; paging?: ScrapingPaging | null;
-  fields: { key: string; label: string; examples: string[]; required: boolean; recommended: boolean }[];
-  scannedPages: { url: string; title: string; mode: 'html' | 'browser'; found: number; error: string | null }[]; warnings: string[];
-};
-/** Master switch for all background collection (trial period). Off = no scheduled starts; running sessions stop after their current page. */
-export type ScrapingAutomation = { enabled: boolean; updatedAt: string | null; updatedBy: string | null };
-export interface ScrapedItem {
-  id: string; sourceId: string; url: string; pageUrl: string; name: string; sku: string;
-  fields: Record<string, string>; priceIncVat: number | null; weightKg: number | null; currency: string;
-  observedAt: string; configCurrent: boolean; source?: { id: string; name: string };
-}
-
-export const scrapingApi = {
-  automation: () => enveloped(api.get<Envelope<ScrapingAutomation>>('/scraping/automation')),
-  setAutomation: (enabled: boolean) => enveloped(api.put<Envelope<ScrapingAutomation>>('/scraping/automation', { enabled })),
-  sources: () => enveloped(api.get<Envelope<ScrapingSource[]>>('/scraping/sources')),
-  discover: (website: string, collectionAllowed: boolean, login?: ScrapingLogin) =>
-    enveloped(api.post<Envelope<ScrapingDiscovery>>('/scraping/discover', { website, collectionAllowed, ...(login ? { login } : {}) })),
-  /** Omit `password` to keep the stored one. Resets the run: a login changes which prices are read. */
-  saveLogin: (sourceId: string, login: ScrapingLogin) => enveloped(api.put<Envelope<ScrapingSource>>(`/scraping/sources/${sourceId}/login`, login)),
-  clearLogin: (sourceId: string) => enveloped(api.del<Envelope<ScrapingSource>>(`/scraping/sources/${sourceId}/login`)),
-  save: (input: ScrapingSourceInput, id?: string) =>
-    enveloped(id ? api.put<Envelope<ScrapingSource>>(`/scraping/sources/${id}`, input) : api.post<Envelope<ScrapingSource>>('/scraping/sources', input)),
-  preview: (input: ScrapingSourceInput & { sampleUrl: string }) => enveloped(api.post<Envelope<ScrapingPreview>>('/scraping/preview', input)),
-  /** `firstLook`: paged sites read their first 20 pages now in the background (night-only sites continue at night). */
-  start: (source: ScrapingSource, restart: boolean, firstLook = false) =>
-    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/start`, { revision: source.revision, restart, ...(firstLook ? { firstLook } : {}) })),
-  /** Old link-crawl source → whole-listing paging; answers at once, a first look runs in the background. */
-  enablePaging: (source: ScrapingSource) =>
-    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/paging`, { revision: source.revision, restart: true })),
-  /** A night-only site waiting for tonight (or one that gave up) continues now in the background. */
-  runNow: (source: ScrapingSource) =>
-    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/run-now`, { revision: source.revision, restart: false })),
-  stop: (source: ScrapingSource) =>
-    enveloped(api.post<Envelope<ScrapingSource>>(`/scraping/sources/${source.id}/stop`, { revision: source.revision, restart: false })),
-  items: (sourceId: string, search: string, page: number) => {
-    const qs = new URLSearchParams({ page: String(page) });
-    if (sourceId) qs.set('sourceId', sourceId);
-    if (search) qs.set('search', search);
-    return enveloped(api.get<Envelope<{ items: ScrapedItem[]; total: number; page: number; pageSize: number }>>(`/scraping/items?${qs}`));
-  },
-};
-
-// ---- Competitor price comparison (MER, moved from josh) — same envelope ----
-export interface CompetitorCatalogProduct {
-  id: string; sku: string; name: string; brand: string | null; country: string | null; storage: string | null;
-  packSize: string | null; sellingUnit: string | null; sellingUnitPriceIncVat: number; updatedAt: string; syncedAt: string; removed: boolean;
-}
-export interface CompetitorPriceInput {
-  catalogItemId?: string; revision?: number;
-  sku: string; ourWeightKg: number; sourceUrl: string; competitorName: string; competitorSku: string;
-  competitorWeightKg: number; sourceContext: string; vatIncluded: boolean; collectionAllowed: boolean; autoRefresh: boolean;
-}
-export type CompetitorPriceComparison = Omit<CompetitorPriceInput, 'sku'> & {
-  id: string; revision: number; ourProductVersion: string; ourProduct: CompetitorCatalogProduct;
-  sourceName: string; ourPricePerKgIncVat: number | null; ourPackPriceIncVat: number | null;
-  competitorPackPriceIncVat: number | null; competitorPricePerKgIncVat: number | null;
-  differencePerKgIncVat: number | null; differenceForOurWeightIncVat: number | null; differencePercent: number | null;
-  comparisonReady: boolean; comparisonReason: string | null; verified: boolean;
-  matchNote: string; verifiedAt: string | null; verifiedBy: string | null;
-  canRefresh: boolean; refreshReason: string | null; observedAt: string | null;
-  captureMethod: 'manual' | 'automatic' | null; lastError: string | null;
-};
-/** `per_kg`: our SKU sells by the kilo. `same`: pack weights within 5%. A person still confirms every pair. */
-export type CompetitorSkuSuggestion = CompetitorCatalogProduct & {
-  similarityPercent: number; weightMatch: 'same' | 'different' | 'unknown' | 'per_kg'; ourWeightKg: number | null;
-};
-export type ScrapedCatalogItem = ScrapedItem & { source: { id: string; name: string; config: ScrapingConfig } };
-
-export const competitorPricesApi = {
-  list: () => enveloped(api.get<Envelope<CompetitorPriceComparison[]>>('/competitor-prices')),
-  catalog: (sku: string) => enveloped(api.get<Envelope<CompetitorCatalogProduct>>(`/competitor-prices/catalog/${encodeURIComponent(sku)}`)),
-  suggestions: (catalogItemId: string) => enveloped(api.get<Envelope<{ catalogItem: { id: string; name: string; weightKg: number | null }; suggestions: CompetitorSkuSuggestion[] }>>(`/competitor-prices/suggestions/${catalogItemId}`)),
-  catalogItem: (id: string) => enveloped(api.get<Envelope<ScrapedCatalogItem>>(`/competitor-prices/catalog-items/${id}`)),
-  save: (input: CompetitorPriceInput, id?: string) => enveloped(id
-    ? api.put<Envelope<CompetitorPriceComparison>>(`/competitor-prices/${id}`, input)
-    : api.post<Envelope<CompetitorPriceComparison>>('/competitor-prices', input)),
-  verify: (row: CompetitorPriceComparison, matchNote: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(
-    `/competitor-prices/${row.id}/verify`, { matchNote, revision: row.revision, ourProductVersion: row.ourProductVersion })),
-  capture: (row: CompetitorPriceComparison, priceIncVat: number, observedAt: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(
-    `/competitor-prices/${row.id}/price`, { priceIncVat, observedAt, revision: row.revision })),
-  refresh: (id: string) => enveloped(api.post<Envelope<CompetitorPriceComparison>>(`/competitor-prices/${id}/refresh`, {})),
-  remove: (id: string) => enveloped(api.del<Envelope<{ id: string }>>(`/competitor-prices/${id}`)),
+  summarize: (id: string) =>
+    enveloped(api.post<Envelope<ResearchRun>>(`/marketing-research/runs/${id}/summarize`, { requestId: crypto.randomUUID() })),
 };
 
 // ---- Inventory per warehouse (read model) ----

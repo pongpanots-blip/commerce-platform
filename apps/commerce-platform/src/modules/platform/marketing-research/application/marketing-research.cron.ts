@@ -3,6 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { cronConfig } from '../../../../config/cron.config';
 import { MarketingResearchService } from './marketing-research.service';
 import { ResearchFreeWorker } from './research-free.worker';
+import { ResearchAiWorker } from './research-ai.worker';
 
 @Injectable()
 export class MarketingResearchCron {
@@ -10,6 +11,7 @@ export class MarketingResearchCron {
   constructor(
     private readonly service: MarketingResearchService,
     private readonly worker: ResearchFreeWorker,
+    private readonly aiWorker: ResearchAiWorker,
   ) {}
 
   @Cron(cronConfig.marketingResearch.expression, {
@@ -17,6 +19,15 @@ export class MarketingResearchCron {
     disabled: !cronConfig.marketingResearch.enabled,
   })
   async tick() {
+    try {
+      await this.service.expireYouTubeEvidence();
+    } catch {
+      this.logger.error(
+        'Research retention cleanup failed; inspect database connectivity',
+      );
+      return;
+    }
+    await this.aiWorker.tick();
     try {
       await this.service.queueDue();
       await this.worker.tick();

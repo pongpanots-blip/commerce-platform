@@ -246,6 +246,21 @@ export function cardFields(document: Document, pageUrl: string): Record<string, 
   return grid.length >= 3 ? grid : [];
 }
 /** Moves a listing to its next page. `moved` is true only when the page's links actually changed. */
+/**
+ * A click the site missed or a slow page is not the end of a listing: while well short of the site's own page count,
+ * wait (5 s, then 10 s) and click again in the same session — a new session would have to click back from page 1.
+ */
+export async function advanceOrRetry(step: () => Promise<{ moved: boolean; totalPages: number | null }>, index: number, knownTotal: number | null,
+  wait: (ms: number) => Promise<void>) {
+  let result = await step();
+  const total = knownTotal ?? result.totalPages;
+  for (let attempt = 1; !result.moved && attempt <= 2 && !!total && index + 1 < total * 0.95; attempt++) {
+    await wait(5000 * attempt);
+    result = await step();
+  }
+  return result;
+}
+
 async function advance(page: Page): Promise<{ moved: boolean; totalPages: number | null }> {
   const signature = () => page.evaluate(() => Array.from(document.querySelectorAll('a[href]')).map(a => (a as HTMLAnchorElement).href).join('\n'));
   const before = await signature();
@@ -382,7 +397,9 @@ export class PublicWebReader {
    * ponytail: resume re-clicks `skip` pages from page 1 (O(n²) clicks over a long run); add URL/API paging if runs get long.
    */
   async paginate(input: string, config: ScrapingConfig, origin: string,
-    options: { skip: number; maxPages: number; delayMs: number; login?: SiteLogin; onPage: (html: string, url: string, index: number) => Promise<boolean> }) {
+    options: { skip: number; maxPages: number; delayMs: number; login?: SiteLogin; onPage: (html: string, url: string, index: number) => Promise<boolean>;
+      /** Called for each page passed while clicking back to `skip`; false stops the session. */
+      onSkip?: (index: number) => Promise<boolean> }) {
     return this.session(input, config, origin, options.login, async (page, grant) => {
       let totalPages: number | null = null;
       for (let index = 0; index < options.maxPages; index++) {
@@ -392,10 +409,10 @@ export class PublicWebReader {
           // ponytail: re-parses the whole page each step (O(n²)); fine for a few hundred products per listing.
           if (Buffer.byteLength(html) > 20000000) throw new BadRequestException('หน้ารายการโตเกิน 20 MB ลดจำนวนหน้าสูงสุดของเว็บนี้');
           if (!await options.onPage(html, page.url(), index)) return { pages: index + 1, totalPages, end: 'stopped' as const };
-        }
+        } else if (options.onSkip && !await options.onSkip(index)) return { pages: index + 1, totalPages, end: 'stopped' as const };
         if (index + 1 >= options.maxPages) return { pages: index + 1, totalPages, end: 'limit' as const };
         grant();
-        const step = await advance(page);
+        const step = await advanceOrRetry(() => advance(page), index, totalPages, ms => page.waitForTimeout(ms));
         totalPages ??= step.totalPages;
         if (!step.moved) return { pages: index + 1, totalPages, end: 'no-next' as const };
         if (index >= options.skip) await page.waitForTimeout(options.delayMs);

@@ -39,8 +39,10 @@ export type CatalogItem = {
   name: string;
   detail: string;
   url: string;
+  publishedAt?: string;
 };
 export type CatalogResult = {
+  via?: string;
   source: ResearchSource;
   observedAt: string;
   url: string;

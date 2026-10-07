@@ -19,6 +19,7 @@ import {
 import {
   researchSourceStatus,
   type ResearchActor,
+  type ResearchAnalysis,
   type ResearchReport,
   type ResearchScope,
   type ResearchSource,
@@ -245,10 +246,184 @@ export class MarketingResearchService {
     });
     return { items, totalCount, page: query.page, limit: query.limit };
   }
+  /** YouTube API metadata must be refreshed or removed within 30 days, including kept reports. */
+  async expireYouTubeEvidence(now = new Date(), id?: string) {
+    const cutoff = new Date(now.getTime() - 29 * 86400000).toISOString();
+    return this.db.transaction(async (manager) => {
+      const query = manager
+        .createQueryBuilder(Run, 'run')
+        .where('run.report IS NOT NULL')
+        .andWhere(
+          `EXISTS (SELECT 1 FROM jsonb_array_elements(run.report->'evidence') evidence WHERE evidence->>'source' = 'youtube' AND evidence->>'collectedAt' <= :cutoff)`,
+          { cutoff },
+        )
+        .setLock('pessimistic_write')
+        .setOnLocked('skip_locked')
+        .take(100);
+      if (id) query.andWhere('run.id = :id', { id });
+      const runs = await query.getMany();
+      for (const run of runs) {
+        const report = run.report!;
+        const ids = new Set(
+          report.evidence
+            .filter((e) => e.source === 'youtube')
+            .map((e) => e.id),
+        );
+        const evidence = report.evidence.filter((e) => !ids.has(e.id));
+        const findings = report.findings.filter((f) =>
+          f.evidenceIds.every((e) => !ids.has(e)),
+        );
+        const reason =
+          'ข้อมูล YouTube เกินระยะเก็บ ต้องค้นใหม่เพื่อรับข้อมูลปัจจุบัน';
+        // AI text may contain expired metadata even when its citations point elsewhere.
+        const { analysis: _expiredAnalysis, ...rest } = report;
+        run.report = evidence.length
+          ? {
+              ...rest,
+              evidence,
+              findings,
+              suggestions: [],
+              summary: `เหลือหลักฐาน ${evidence.length} รายการหลังล้างข้อมูล YouTube ที่หมดอายุ`,
+              coverage: report.coverage.map((c) =>
+                c.source === 'youtube'
+                  ? { source: c.source, status: 'unavailable', reason }
+                  : c,
+              ),
+              limitations: [
+                ...report.limitations.filter((s) => !s.includes('YouTube')),
+                reason,
+              ],
+            }
+          : null;
+        run.status = evidence.length ? 'partial' : 'failed';
+        run.message = reason;
+        run.findingsCount = evidence.length ? findings.length : 0;
+        await manager.save(run);
+      }
+      return runs.length;
+    });
+  }
   async runDetail(id: string) {
+    await this.expireYouTubeEvidence(new Date(), id);
     const run = await this.db.manager.findOneBy(Run, { id });
     if (!run) throw new NotFoundException('ไม่พบงาน Research');
     return run;
+  }
+  async requestSummary(id: string, requestId: string) {
+    await this.expireYouTubeEvidence(new Date(), id);
+    return this.db.transaction(async (manager) => {
+      const run = await manager.findOne(Run, {
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!run) throw new NotFoundException('ไม่พบรอบ Research');
+      if (
+        !run.report ||
+        !['completed', 'partial'].includes(run.status) ||
+        !run.report.evidence.length
+      )
+        throw new BadRequestException(
+          'ต้องมีข้อมูลและหลักฐานจากรอบที่ค้นเสร็จก่อนสรุปด้วย AI',
+        );
+      const current = run.report.analysis;
+      if (
+        current &&
+        (current.requestId === requestId ||
+          ['queued', 'running', 'completed'].includes(current.status))
+      )
+        return run;
+      run.report.analysis = {
+        status: 'queued',
+        provider: 'gemini',
+        requestId,
+        requestedAt: new Date().toISOString(),
+        sampleSize: Math.min(50, run.report.evidence.length),
+        summary: '',
+        findings: [],
+        suggestions: [],
+        reason: '',
+        attempts: 0,
+      };
+      await manager.save(run);
+      return run;
+    });
+  }
+  async claimSummary(now = new Date()) {
+    await this.expireYouTubeEvidence(now);
+    return this.db.transaction(async (manager) => {
+      const run = await manager
+        .getRepository(Run)
+        .createQueryBuilder('run')
+        .where("run.status IN ('completed', 'partial')")
+        .andWhere(
+          "(run.report #>> '{analysis,status}' = 'queued' OR (run.report #>> '{analysis,status}' = 'running' AND (run.report #>> '{analysis,leaseExpiresAt}')::timestamptz <= :now))",
+          { now },
+        )
+        .orderBy("run.report #>> '{analysis,requestedAt}'", 'ASC')
+        .take(1)
+        .setLock('pessimistic_write')
+        .setOnLocked('skip_locked')
+        .getOne();
+      if (!run?.report?.analysis?.requestId) return null;
+      const analysis = run.report.analysis;
+      const attempts = analysis.attempts ?? 0;
+      if (attempts >= 3) {
+        run.report.analysis = {
+          ...analysis,
+          status: 'unavailable',
+          reason: 'งานสรุปหมดเวลาหลายครั้ง กรุณากดสรุปใหม่ ข้อมูลต้นทางยังอยู่',
+          leaseExpiresAt: undefined,
+        };
+        await manager.save(run);
+        return null;
+      }
+      run.report.analysis = {
+        ...analysis,
+        status: 'running',
+        attempts: attempts + 1,
+        leaseExpiresAt: new Date(now.getTime() + 2 * 60_000).toISOString(),
+      };
+      await manager.save(run);
+      return run;
+    });
+  }
+  async finishSummary(
+    id: string,
+    requestId: string,
+    attempt: number,
+    analysis: ResearchAnalysis,
+  ) {
+    return this.db.transaction(async (manager) => {
+      const run = await manager.findOne(Run, {
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      const current = run?.report?.analysis;
+      if (
+        !run?.report ||
+        current?.status !== 'running' ||
+        current.requestId !== requestId ||
+        current.attempts !== attempt ||
+        !Number.isFinite(Date.parse(current.leaseExpiresAt ?? '')) ||
+        Date.parse(current.leaseExpiresAt ?? '') <= Date.now()
+      )
+        throw new ConflictException(
+          'สิทธิ์สรุป AI หมดอายุหรืองานถูกแทนที่แล้ว',
+        );
+      const report = {
+        ...run.report,
+        analysis: {
+          ...analysis,
+          requestId,
+          requestedAt: current.requestedAt,
+          attempts: attempt,
+        },
+      };
+      this.validateReport(run, report);
+      run.report = report;
+      await manager.save(run);
+      return run;
+    });
   }
   async keep(id: string, actor: ResearchActor) {
     await this.db.manager
@@ -509,6 +684,32 @@ export class MarketingResearchService {
       throw new BadRequestException(
         'ข้อค้นพบทุกข้อจำเป็นต้องอ้างอิงหลักฐานที่มีอยู่จริง',
       );
+    }
+    const analysis = report.analysis;
+    if (analysis) {
+      const cited = [...analysis.findings, ...analysis.suggestions];
+      if (
+        analysis.sampleSize > report.evidence.length ||
+        cited.some(
+          (item) =>
+            !item.evidenceIds.length ||
+            item.evidenceIds.some((id) => !ids.has(id)),
+        ) ||
+        (analysis.status === 'completed' &&
+          (!analysis.summary.trim() ||
+            !analysis.findings.length ||
+            !analysis.suggestions.length ||
+            !analysis.sampleSize ||
+            !analysis.model ||
+            !Number.isFinite(Date.parse(analysis.generatedAt ?? '')))) ||
+        (analysis.status !== 'completed' &&
+          (analysis.summary !== '' ||
+            cited.length !== 0 ||
+            !analysis.reason.trim()))
+      )
+        throw new BadRequestException(
+          'AI summary ต้องระบุสถานะและอ้างอิงหลักฐานที่มีอยู่จริง',
+        );
     }
     if (partial && !report.limitations.some((item) => item.trim()))
       throw new BadRequestException('รายงานที่ข้อมูลไม่ครบต้องระบุข้อจำกัด');

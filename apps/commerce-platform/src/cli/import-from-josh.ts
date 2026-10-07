@@ -13,7 +13,8 @@
  *   the commerce staff account with the same email; unmatched ids are kept
  *   and counted (those rows stay manageable by commerce admins only).
  * - competitor: first pulls josh's catalog into josh_catalog_products (same as
- *   the scheduled JoshCatalogSyncService), then copies competitor_prices;
+ *   the scheduled JoshCatalogSyncService), then copies competitor_prices and the
+ *   review grid's answers (competitor_match_rejections / _reviews);
  *   verified_by (a josh user id) becomes that josh user's email.
  * Commerce side: uses the normal COMMERCE_DB_* / COMMERCE_DATABASE_URL env.
  */
@@ -25,8 +26,8 @@ import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-c
 import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 
 type Scope = 'research' | 'scraping' | 'competitor';
-/** userColumns → commerce staff id (by email) · emailColumns → the josh user's email. */
-type Plan = { table: string; userColumns?: string[]; emailColumns?: string[] };
+/** userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key (default id). */
+type Plan = { table: string; userColumns?: string[]; emailColumns?: string[]; key?: string };
 const PLANS: Record<Scope, Plan[]> = {
   research: [
     { table: 'marketing_research_topics', userColumns: ['createdBy'] },
@@ -34,7 +35,11 @@ const PLANS: Record<Scope, Plan[]> = {
   ],
   // Parents before children (scraped_items.source_id → scraping_sources.id).
   scraping: [{ table: 'scraping_sources' }, { table: 'scraped_items' }],
-  competitor: [{ table: 'competitor_prices', emailColumns: ['verified_by'] }],
+  competitor: [
+    { table: 'competitor_prices', emailColumns: ['verified_by'] },
+    { table: 'competitor_match_rejections', emailColumns: ['created_by'] },
+    { table: 'competitor_match_reviews', emailColumns: ['reviewed_by'], key: 'product_id' },
+  ],
 };
 
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`;
@@ -64,13 +69,14 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
   const source = new Set(await columnsOf(josh, plan.table));
   if (!target.length) throw new Error(`commerce has no table ${plan.table} — run migrations first`);
   if (!source.size) throw new Error(`josh has no table ${plan.table}`);
+  const key = plan.key ?? 'id';
   const cols = target.filter((c) => source.has(c));
   const missing = target.filter((c) => !source.has(c));
 
   const rows: Record<string, unknown>[] = await josh.query(`SELECT ${cols.map(q).join(', ')} FROM ${q(plan.table)}`);
   let unmatchedUsers = 0;
   const sql = `INSERT INTO ${q(plan.table)} (${cols.map(q).join(', ')}) VALUES (${cols.map((_, i) => `$${i + 1}`).join(', ')})
-    ON CONFLICT ("id") DO UPDATE SET ${cols.filter((c) => c !== 'id').map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}`;
+    ON CONFLICT (${q(key)}) DO UPDATE SET ${cols.filter((c) => c !== key).map((c) => `${q(c)} = EXCLUDED.${q(c)}`).join(', ')}`;
 
   await commerce.transaction(async (m) => {
     for (const row of rows) {

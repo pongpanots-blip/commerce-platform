@@ -15,6 +15,7 @@
     "migration:show": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:show -d apps/commerce-platform/src/data-source.ts",
     "import-from-josh": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/import-from-josh.ts",
     "create-staff": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/create-staff.ts",
+    "competitor-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/competitor-parity.ts",
     "migration:generate": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:generate -d apps/commerce-platform/src/data-source.ts",
     "seed:mock": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node scripts/seed-mock.ts"
   },
@@ -44,6 +45,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
     "express-rate-limit": "^8.7.0",
     "jsdom": "~22.1.0",
     "jszip": "^3.10.2",

@@ -91,14 +91,14 @@ export class ScrapingService {
     const activity = unfinishedListing(source) ? 'gave_up' as const
       : source.status !== 'running' ? null
       : source.progress.retries ? 'retrying' as const
-      : source.leaseUntil && source.leaseUntil.getTime() > Date.now() ? 'reading' as const
+      : source.leaseUntil && source.leaseUntil.getTime() > Date.now() ? (source.progress.catchUp ? 'catching_up' as const : 'reading' as const)
       : source.config.nightOnly && !inNightWindow() && !source.progress.now ? 'waiting_for_night' as const : 'queued' as const;
     return { ...rest, configVersion: scrapingVersion(source.config), activity,
       // Prices read while logged in are member prices; the password itself never leaves the server.
       login: loginUsername && loginUrl ? { url: loginUrl, username: loginUsername, hasPassword: !!loginPasswordEnc } : null,
       progress: {
       pages: progress.visited.length, pending: progress.pending.length, successful: progress.successful,
-      failed: progress.failed, items: progress.items,
+      failed: progress.failed, items: progress.items, catchUp: progress.catchUp ?? null,
     } };
   }
   /**
@@ -290,7 +290,7 @@ export class ScrapingService {
     await this.sources.createQueryBuilder().update()
       .set({ status: 'running', lastError: null, progress: () => 'progress || CAST(:patch AS jsonb)' })
       .where('id = :id AND revision = :revision', { id, revision }).setParameter('patch', JSON.stringify(patch)).execute();
-    void this.batch(id, { ignoreNight: true }).catch(() => undefined); // already reading → the lease makes this a no-op
+    this.launch(id, { ignoreNight: true }); // already reading → no-op
     return this.view({ ...source, status: 'running', lastError: null, progress: { ...source.progress, ...patch }, leaseUntil: new Date(Date.now() + 5000) }); // shows as reading at once
   }
 
@@ -324,7 +324,7 @@ export class ScrapingService {
       if (dto.firstLook && source.config.pagination === 'browser') source.progress.now = 'first_look'; else delete source.progress.now;
       return this.view(await repository.save(source));
     });
-    if (dto.firstLook && started.config.pagination === 'browser') void this.batch(id, { firstLookPages: FIRST_LOOK_PAGES, ignoreNight: true }).catch(() => undefined);
+    if (dto.firstLook && started.config.pagination === 'browser') this.launch(id, { firstLookPages: FIRST_LOOK_PAGES, ignoreNight: true });
     return started;
   }
   async stop(id: string, revision: number) {
@@ -395,10 +395,16 @@ export class ScrapingService {
         // ponytail: in-process session cap + DB lease; move scraping to its own worker container if the API box feels it.
         const now = source.progress.now;
         if ((source.config.nightOnly && !inNightWindow() && !now) || this.sessions.has(source.id) || this.sessions.size >= scrapingSettings().maxBrowserSessions) continue;
-        this.sessions.add(source.id);
-        void this.batch(source.id, now ? { ignoreNight: true, firstLookPages: now === 'first_look' ? FIRST_LOOK_PAGES : undefined } : {}).catch(() => undefined).finally(() => this.sessions.delete(source.id));
+        this.launch(source.id, now ? { ignoreNight: true, firstLookPages: now === 'first_look' ? FIRST_LOOK_PAGES : undefined } : {});
       }
     } finally { this.ticking = false; }
+  }
+
+  /** One paged browser session per source in this process, whoever starts it (tick, run-now, first look). */
+  private launch(id: string, options: PagedRunOptions) {
+    if (this.sessions.has(id)) return;
+    this.sessions.add(id);
+    void this.batch(id, options).catch(() => undefined).finally(() => this.sessions.delete(id));
   }
 
   async batch(id: string, options: PagedRunOptions = {}) {
@@ -519,6 +525,19 @@ export class ScrapingService {
         skip: done, maxPages: source.config.maxPages - source.progress.visited.length + done,
         // One browser session clicks "next": each page already waits for the site's own request, so 1 s on top is enough.
         delayMs: Math.min(source.config.delayMs, PAGED_DELAY_MS), login: this.siteLogin(source),
+        // Clicking back to where it stopped saves no page, so it keeps the lease alive (without that, after 10 min
+        // another run claimed the source and started clicking from page 1 again — "stuck") and shows how far it got.
+        onSkip: async index => {
+          if ((index + 1) % 20) return true;
+          const until = new Date(Date.now() + pagedLeaseMs);
+          const renewed = await this.sources.createQueryBuilder().update()
+            .set({ leaseUntil: until, progress: () => `jsonb_set(progress, '{catchUp}', to_jsonb(CAST(:reached AS int)))` })
+            .where('id = :id AND status = :status AND revision = :revision AND lease_until = :lease', { id, status: 'running', revision: source.revision, lease: lease.until })
+            .setParameter('reached', index + 1).execute();
+          if (!renewed.affected) { interrupted = true; return false; }
+          lease.until = until;
+          return true;
+        },
         onPage: (html, url, index) => this.sources.manager.transaction(async manager => {
           const repository = manager.getRepository(ScrapingSource);
           const current = await repository.findOne({ where: { id }, lock: { mode: 'pessimistic_write' } });
@@ -528,6 +547,7 @@ export class ScrapingService {
           current.progress.items += await this.saveItems(manager, source, fresh);
           current.progress.visited.push(`${tag}${index + 1}`);
           current.progress.successful += 1;
+          delete current.progress.catchUp;
           // Back on track after a drop: a give-up never drops the listing, so its failure is now recovered too.
           if (current.progress.retries) { current.progress.retries = 0; current.progress.failed = 0; current.lastError = null; }
           current.leaseUntil = new Date(Date.now() + pagedLeaseMs);
@@ -578,6 +598,7 @@ export class ScrapingService {
       current.status = dropped && retries >= MAX_RETRIES ? 'limited'
         : !progress.pending.length ? (progress.failed || current.lastError ? 'limited' : 'completed') : progress.visited.length >= source.config.maxPages ? 'limited' : 'running';
       if (current.status !== 'running') delete progress.now;
+      delete progress.catchUp;
       // Free the lease now (or after the retry backoff) instead of waiting out the 10-minute paged lease.
       current.leaseUntil = dropped && current.status === 'running' ? new Date(Date.now() + 30000 * progress.retries!) : null;
       await repository.save(current);

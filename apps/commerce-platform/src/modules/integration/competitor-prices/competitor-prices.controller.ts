@@ -1,14 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, ParseUUIDPipe, Post, Put, Req, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, HttpException, Param, ParseUUIDPipe, Post, Put, Query, Req, StreamableFile, ValidationPipe } from '@nestjs/common';
 import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import type { StaffRequest } from '../../../shared-kernel/presentation/auth.decorators';
 import { CompetitorPricesService } from './competitor-prices.service';
-import { CaptureCompetitorPriceDto, SaveCompetitorPriceDto, VerifyCompetitorPriceDto } from './competitor-price.dto';
+import { CompetitorReviewService } from './competitor-review.service';
+import { CaptureCompetitorPriceDto, CompetitorOverviewQueryDto, ConfirmCompetitorPriceDto, MatchCatalogItemDto, ReviewCellDto, ReviewFinishDto, ReviewGridQueryDto, ReviewSearchQueryDto, SaveCompetitorPriceDto, VerifyCompetitorPriceDto } from './competitor-price.dto';
 
 /** Same routes and `{ status, data, message }` envelope as josh's /api/competitor-prices. */
 @Controller('competitor-prices')
 @StaffRoles('marketing')
 export class CompetitorPricesController {
-  constructor(private readonly service: CompetitorPricesService) {}
+  constructor(private readonly service: CompetitorPricesService, private readonly review: CompetitorReviewService) {}
   private async result<T>(action: () => Promise<T>) {
     try { return { status: 200, data: await action(), message: '' }; }
     catch (error) {
@@ -18,6 +19,31 @@ export class CompetitorPricesController {
   }
 
   @Get() list() { return this.result(() => this.service.list()); }
+  @Get('review') reviewGrid(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: ReviewGridQueryDto) {
+    return this.result(() => this.review.grid(query));
+  }
+  @Get('review/search') reviewSearch(@Query(new ValidationPipe({ whitelist: true })) query: ReviewSearchQueryDto) {
+    return this.result(() => this.review.search(query.site, query.q, query.sku));
+  }
+  @Post('review/cell') @HttpCode(200)
+  reviewCell(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ReviewCellDto, @Req() request: StaffRequest) {
+    return this.result(() => this.review.setCell(request.staff.email, dto));
+  }
+  @Post('review/finish') @HttpCode(200)
+  reviewFinish(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ReviewFinishDto, @Req() request: StaffRequest) {
+    return this.result(() => this.review.finish(request.staff.email, dto));
+  }
+  @Get('overview') overview(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: CompetitorOverviewQueryDto) {
+    return this.result(() => this.service.overview(query));
+  }
+  @Get('overview/export') @Header('Cache-Control', 'private, no-store')
+  async export(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: CompetitorOverviewQueryDto) {
+    const file = await this.service.overviewXlsx(query);
+    return new StreamableFile(file, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      disposition: `attachment; filename="competitor-prices-${new Date().toISOString().slice(0, 10)}.xlsx"` });
+  }
+  @Get('match-queue') matchQueue(@Query('after') after = '') { return this.result(() => this.service.matchQueue(String(after).slice(0, 100))); }
+  @Get('sku/:sku/candidates') candidates(@Param('sku') sku: string) { return this.result(() => this.service.siteCandidates(sku)); }
   @Get('catalog/:sku') catalog(@Param('sku') sku: string) { return this.result(() => this.service.catalog(sku)); }
   @Get('suggestions/:catalogItemId')
   suggestions(@Param('catalogItemId', ParseUUIDPipe) catalogItemId: string) { return this.result(() => this.service.suggestions(catalogItemId)); }
@@ -28,6 +54,15 @@ export class CompetitorPricesController {
   }
   @Put(':id') update(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true, transform: true })) dto: SaveCompetitorPriceDto) {
     return this.result(() => this.service.save(dto, id));
+  }
+  @Post('match') @HttpCode(200)
+  match(@Body(new ValidationPipe({ whitelist: true })) dto: MatchCatalogItemDto, @Req() request: StaffRequest) {
+    return this.result(() => this.service.match(dto.catalogItemId, dto.sku, request.staff.email));
+  }
+  @Post(':id/confirm') @HttpCode(200)
+  confirm(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true })) dto: ConfirmCompetitorPriceDto,
+    @Req() request: StaffRequest) {
+    return this.result(() => this.service.confirm(id, request.staff.email, dto.revision, dto.ourProductVersion));
   }
   @Post(':id/verify') @HttpCode(200)
   verify(@Param('id', ParseUUIDPipe) id: string, @Body(new ValidationPipe({ whitelist: true })) dto: VerifyCompetitorPriceDto,

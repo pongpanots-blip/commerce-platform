@@ -7,6 +7,7 @@ import {
 } from './research-catalog.service';
 import { MarketingResearchService } from './marketing-research.service';
 import { ResearchFreeWorker } from './research-free.worker';
+import { ResearchSocialService } from './research-social.service';
 import {
   freeResearchEnabled,
   researchSourceStatus,
@@ -183,22 +184,20 @@ describe('Free Research worker lifecycle', () => {
       fail: jest.fn(),
     };
     const catalogs = {
-      collect: jest
-        .fn()
-        .mockResolvedValue({
-          source: 'tat',
-          observedAt: '2026-10-03T11:00:00Z',
-          groups: [{ label: 'ร้านอาหาร', count: 1 }],
-          items: [
-            {
-              id: 'a',
-              name: 'ร้าน ก',
-              detail: 'ร้าน ก · สีลม',
-              url: `${datasetUrl}#a`,
-            },
-          ],
-          limitations: ['dataset snapshot only'],
-        }),
+      collect: jest.fn().mockResolvedValue({
+        source: 'tat',
+        observedAt: '2026-10-03T11:00:00Z',
+        groups: [{ label: 'ร้านอาหาร', count: 1 }],
+        items: [
+          {
+            id: 'a',
+            name: 'ร้าน ก',
+            detail: 'ร้าน ก · สีลม',
+            url: `${datasetUrl}#a`,
+          },
+        ],
+        limitations: ['dataset snapshot only'],
+      }),
     };
     const worker = new ResearchFreeWorker(
       service as unknown as MarketingResearchService,
@@ -230,7 +229,7 @@ describe('Free Research worker lifecycle', () => {
       { source: 'facebook', status: 'unavailable', reason: expect.any(String) },
     ]);
     expect(report.findings[0].evidenceIds).toEqual([report.evidence[0].id]);
-    expect(report.limitations.join(' ')).toContain('ยังไม่วิเคราะห์คำถามอิสระ');
+    expect(report.limitations.join(' ')).toContain('ไม่ยืนยันความต้องการซื้อ');
     expect(service.fail).not.toHaveBeenCalled();
   });
   it('fails without inventing a report when no provider returns usable data', async () => {
@@ -279,6 +278,64 @@ describe('Free Research worker lifecycle', () => {
       researchSourceStatus()
         .filter((source) => source.ready)
         .map((source) => source.id),
-    ).toEqual(['tat', 'osm']);
+    ).toEqual(['facebook', 'instagram', 'google', 'tiktok', 'tat', 'osm']);
+  });
+  it('collects a Google-only content run even when the business-directory worker is disabled', async () => {
+    process.env.RESEARCH_FREE_WORKER_ENABLED = 'false';
+    const { service, catalogs, run } = setup();
+    run.availableSources = ['google'];
+    Object.assign(run, {
+      scope: { ...scope, kind: 'content', sources: ['google'] },
+    });
+    const publishedAt = new Date().toISOString();
+    const social = {
+      collect: jest
+        .fn()
+        .mockResolvedValue({
+          source: 'google',
+          observedAt: publishedAt,
+          groups: [{ label: 'ชื่อข่าว', count: 1 }],
+          items: [
+            {
+              id: 'news1',
+              name: 'หัวข้อข่าว',
+              detail: 'หัวข้อข่าว · สำนักข่าว',
+              url: 'https://news.google.com/rss/articles/abc',
+              publishedAt,
+            },
+          ],
+          limitations: ['ชื่อข่าวเท่านั้น'],
+        }),
+    };
+    const worker = new ResearchFreeWorker(
+      service as unknown as MarketingResearchService,
+      catalogs as unknown as ResearchCatalogService,
+      social as unknown as ResearchSocialService,
+    );
+    await worker.tick();
+    expect(service.claim).toHaveBeenCalledWith(expect.any(Date), [
+      'facebook',
+      'instagram',
+      'google',
+      'tiktok',
+    ]);
+    expect(social.collect).toHaveBeenCalledWith(
+      'google',
+      expect.objectContaining({ kind: 'content' }),
+      run.id,
+    );
+    expect(service.finish.mock.calls[0][1].evidence[0]).toMatchObject({
+      source: 'google',
+      publishedAt,
+    });
+    expect(service.finish.mock.calls[0][1].coverage).toEqual([
+      {
+        source: 'google',
+        status: 'searched',
+        from: publishedAt,
+        to: publishedAt,
+      },
+    ]);
+    expect(catalogs.collect).not.toHaveBeenCalled();
   });
 });

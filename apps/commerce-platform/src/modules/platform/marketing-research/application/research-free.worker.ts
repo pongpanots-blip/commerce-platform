@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { MarketingResearchService } from './marketing-research.service';
 import {
   CatalogUnavailable,
@@ -7,8 +7,11 @@ import {
 import {
   FREE_RESEARCH_SOURCES,
   freeResearchEnabled,
+  researchSourceStatus,
   type ResearchReport,
 } from '../research.types';
+import { ResearchSocialService } from './research-social.service';
+import { SOCIAL_LABELS, type SocialSource } from './research-social.config';
 
 /** In-process consumer uses the existing DB lease. External worker HTTP remains separately guarded. */
 @Injectable()
@@ -18,50 +21,82 @@ export class ResearchFreeWorker {
   constructor(
     private readonly service: MarketingResearchService,
     private readonly catalogs: ResearchCatalogService,
+    @Optional() private readonly social?: ResearchSocialService,
   ) {}
 
   async tick() {
-    if (this.running || !freeResearchEnabled()) return;
+    if (this.running) return;
+    const supported = researchSourceStatus()
+      .filter(
+        (source) =>
+          source.ready &&
+          (FREE_RESEARCH_SOURCES.includes(source.id)
+            ? freeResearchEnabled()
+            : Boolean(this.social) && source.provider !== 'external-worker'),
+      )
+      .map((source) => source.id);
+    if (!supported.length) return;
     this.running = true;
     try {
       // Bound each sweep; topic backlogs remain in the durable queue for the next minute.
       for (let count = 0; count < 2; count++) {
-        const run = await this.service.claim(new Date(), FREE_RESEARCH_SOURCES);
+        const run = await this.service.claim(new Date(), supported);
         if (!run?.leaseToken) return;
-        const report: ResearchReport = {
+        const report: Omit<ResearchReport, 'analysis'> = {
           summary: '',
           evidence: [],
           findings: [],
           suggestions: [
-            'ตรวจชื่อ ที่ตั้งและช่องทางติดต่อกับธุรกิจก่อนส่งต่อฝ่ายขาย',
+            'ตรวจหลักฐานและวันเผยแพร่ก่อนกดสรุปด้วย AI หรือส่งต่อทีมทำคอนเทนต์/ฝ่ายขาย',
           ],
           limitations: [
-            'ค้นตามพื้นที่และกลุ่มลูกค้าที่เลือก ยังไม่วิเคราะห์คำถามอิสระด้วย AI และไม่ยืนยันความต้องการซื้อ ราคา สต็อก หรือประกาศจัดซื้อ',
-            'ฐานรายชื่อไม่ครอบคลุมเหตุการณ์ย้อนหลังตามจำนวนวันที่ขอ จำนวนจากต่างแหล่งอาจมีธุรกิจซ้ำกัน',
+            'ค้นตามโจทย์และแหล่งที่เปิดใช้งาน ผลตัวอย่างไม่ยืนยันความต้องการซื้อ ราคา สต็อก หรือประกาศจัดซื้อ',
+            'ข้อมูลเปิดเป็นฐานรายชื่อ ส่วน social/ข่าวเป็นตัวอย่างคอนเทนต์ ไม่รับรองว่าครอบคลุมเหตุการณ์ย้อนหลังทั้งหมด',
             'ข้อมูลแต่ละกลุ่มมีความครบต่างกัน จึงยังสรุปแนวโน้มหรือให้คะแนนถ่วงน้ำหนักเท่ากันทุกกลุ่มไม่ได้',
           ],
           coverage: [],
         };
         const summaries: string[] = [];
+        const perSource = Math.max(
+          1,
+          Math.floor(
+            50 /
+              Math.max(
+                1,
+                run.scope.sources.filter((source) => supported.includes(source))
+                  .length,
+              ),
+          ),
+        );
         for (const source of run.scope.sources) {
           if (
-            (source !== 'tat' && source !== 'osm') ||
+            !supported.includes(source) ||
             !run.availableSources.includes(source)
           ) {
             report.coverage.push({
               source,
               status: 'unavailable',
-              reason: 'แหล่งนี้ยังไม่เชื่อมในระบบค้นข้อมูลฟรี',
+              reason:
+                researchSourceStatus().find((item) => item.id === source)
+                  ?.reason || 'ตัวเชื่อมแหล่งนี้ไม่พร้อมใน worker ปัจจุบัน',
             });
             continue;
           }
           try {
-            const result = await this.catalogs.collect(source, run.scope);
+            const result =
+              source === 'tat' || source === 'osm'
+                ? await this.catalogs.collect(source, run.scope)
+                : await this.social!.collect(
+                    source as SocialSource,
+                    run.scope,
+                    run.id,
+                  );
             report.coverage.push({
               source,
               status: 'searched',
               from: result.observedAt,
               to: result.observedAt,
+              ...(result.via ? { reason: result.via } : {}),
             });
             report.limitations.push(...result.limitations);
             const totals = result.groups
@@ -70,11 +105,9 @@ export class ResearchFreeWorker {
                   `${group.label} ${group.count} ${source === 'osm' ? 'elements' : 'รายการ'}`,
               )
               .join(', ');
-            summaries.push(
-              `${source === 'tat' ? 'ททท.' : 'OpenStreetMap'}: ${totals}`,
-            );
+            summaries.push(`${SOCIAL_LABELS[source]}: ${totals}`);
             // Each listed business cites the actual dataset record or OSM element; no model invents rows.
-            for (const item of result.items) {
+            for (const item of result.items.slice(0, perSource)) {
               if (report.findings.length >= 50) break;
               const id = `${source}:${item.id}`.slice(0, 80);
               report.evidence.push({
@@ -83,9 +116,10 @@ export class ResearchFreeWorker {
                 url: item.url,
                 excerpt: item.detail,
                 collectedAt: result.observedAt,
+                ...(item.publishedAt ? { publishedAt: item.publishedAt } : {}),
               });
               report.findings.push({
-                text: `${source === 'tat' ? 'ททท.' : 'OSM'} · ${item.detail}`,
+                text: `${SOCIAL_LABELS[source]} · ${item.detail}`,
                 evidenceIds: [id],
               });
             }
@@ -109,7 +143,7 @@ export class ResearchFreeWorker {
                 .slice(0, 1800),
             );
           } else {
-            report.summary = `ผลค้นฐานรายชื่อฟรีใน${run.scope.area}: ${summaries.join(' · ')} แสดง ${report.findings.length} รายการพร้อมหลักฐาน รายงานนี้เป็นข้อมูลตั้งต้นให้ทีมตรวจสอบ ไม่ยืนยันว่าธุรกิจกำลังหาซัพพลายเออร์`;
+            report.summary = `ผลค้นข้อมูลใน${run.scope.area}: ${summaries.join(' · ')} แสดง ${report.findings.length} รายการพร้อมหลักฐาน รายงานนี้เป็นข้อมูลตั้งต้นให้ทีมตรวจสอบและกดสรุปด้วย AI ไม่ยืนยันความต้องการซื้อหรือความนิยมของทั้งตลาด`;
             await this.service.finish(run.id, {
               ...report,
               leaseToken: run.leaseToken,

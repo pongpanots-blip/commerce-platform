@@ -4,6 +4,7 @@
  *   JOSH_DATABASE_URL=postgres://readonly@josh-db/webjosh_db npm run import-from-josh -- research
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- scraping
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- competitor   (needs scraping first)
+ *   JOSH_DATABASE_URL=… npm run import-from-josh -- sales-reps   (stage 2b; re-run on switch day)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- all
  *
  * - Reads josh with SELECTs only (use a read-only user / the replica).
@@ -18,6 +19,7 @@
  * - segments (stage 2a): user_segments → segments (same ids) and their frozen members
  *   segment_membership_snapshots → segment_members, customers only (staff are matched in josh);
  *   verified_by (a josh user id) becomes that josh user's email.
+ * - sales-reps (stage 2b): every josh company's rep → company_sales_reps (same ids; id, assigned_sales_user_id, updated_at).
  * Commerce side: uses the normal COMMERCE_DB_* / COMMERCE_DATABASE_URL env.
  */
 import 'reflect-metadata';
@@ -27,7 +29,7 @@ import { JoshCatalogSyncService } from '../modules/integration/connector/josh/jo
 import { JoshCatalogProduct } from '../modules/integration/connector/josh/josh-catalog-product.entity';
 import { JoshReplica } from '../modules/integration/connector/josh/josh-replica';
 
-type Scope = 'research' | 'scraping' | 'competitor' | 'segments';
+type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps';
 /**
  * userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key, comma-separated
  * for a composite one (default id) · target: commerce table when it differs · customerColumn: keep only rows whose
@@ -50,6 +52,7 @@ const PLANS: Record<Scope, Plan[]> = {
     { table: 'user_segments', target: 'segments' },
     { table: 'segment_membership_snapshots', target: 'segment_members', key: 'segment_id,user_id', customerColumn: 'user_id' },
   ],
+  'sales-reps': [{ table: 'company', target: 'company_sales_reps' }],
 };
 
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`;
@@ -120,15 +123,15 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
 async function main() {
   const scope = process.argv[2] as Scope | 'all' | undefined;
   const url = process.env.JOSH_DATABASE_URL;
-  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'all'].includes(scope)) {
-    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|all>');
+  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'all'].includes(scope)) {
+    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|all>');
     process.exit(1);
   }
   const josh = await new DataSource({ type: 'postgres', url, entities: [] }).initialize();
   const commerce = await AppDataSource.initialize();
   try {
     const users = await userMaps(josh, commerce);
-    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments'] as const) : [scope];
+    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
         const replica = new JoshReplica();

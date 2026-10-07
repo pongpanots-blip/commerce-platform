@@ -360,7 +360,7 @@ export interface PricePending {
 }
 const q = (search: string) => (search ? `?search=${encodeURIComponent(search)}` : '');
 export const productPricesApi = {
-  ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean }>('/ownership'),
+  ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean; productImages?: boolean }>('/ownership'),
   list: (search: string) => api.get<PriceRow[]>(`/product-prices${q(search)}`),
   pending: (search: string) => api.get<PricePending[]>(`/product-prices/pending${q(search)}`),
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-prices/pending/approve', { skus }),
@@ -381,6 +381,17 @@ export const productMastersApi = {
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-masters/pending/approve', { skus }),
   reject: (skus: string[]) => api.post<{ rejected: number }>('/product-masters/pending/reject', { skus }),
   get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-masters/${encodeURIComponent(sku)}`),
+};
+
+// ---- Product galleries (stage 4e: owned by commerce; files in josh's media bucket) ----
+export const productImagesApi = {
+  get: (sku: string) => api.get<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}`),
+  upload: (sku: string, files: File[]) => {
+    const form = new FormData();
+    for (const f of files) form.append('images', f);
+    return request<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}/upload`, { method: 'POST', body: form });
+  },
+  set: (sku: string, images: string[]) => api.put<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}`, { images }),
 };
 
 // ---- Stock moves (stage 3: commerce-owned warehouses, through the ledger) ----

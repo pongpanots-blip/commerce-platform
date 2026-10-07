@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
 import { ErpFeedService } from './erp-feed.service';
 import { ProductMastersService } from '../../../../commerce/product-masters/product-masters.service';
+import { ProductImagesService } from '../../../../commerce/product-images/product-images.service';
 
 const BATCH = 100;
 
@@ -24,6 +25,8 @@ export class ErpFallbackReplayJob {
     private readonly feed: ErpFeedService,
     /** Stage 4d: product upserts josh took directly go to commerce's MER queue. */
     @Optional() private readonly masters?: ProductMastersService,
+    /** Stage 4e: image calls josh took directly replace commerce's gallery. */
+    @Optional() private readonly images?: ProductImagesService,
   ) {}
 
   @Cron(cronConfig.erpFallbackReplay.expression, { disabled: !cronConfig.erpFallbackReplay.enabled })
@@ -47,6 +50,10 @@ export class ErpFallbackReplayJob {
         const items = Array.isArray(row.body) ? row.body : row.body ? [row.body] : [];
         await this.feed.receive(kind, items);
         note = `${kind}: ${items.length} item(s)`;
+        replayed++;
+      } else if (/\/products\/image$/.test(row.path) && this.images) {
+        const applied = await this.db.transaction((m) => this.images!.fromErp(m, row.body));
+        note = `product image: ${applied} applied`;
         replayed++;
       } else if (/\/products(\/bulk)?$/.test(row.path) && this.masters) {
         const staged = await this.db.transaction((m) => this.masters!.stageFromErp(m, row.body, new Date()));

@@ -61,6 +61,7 @@ import { ProductPricesModule } from './modules/commerce/product-prices/product-p
 import { ProductContentsModule } from './modules/commerce/product-contents/product-contents.module';
 import { ProductCategoriesModule } from './modules/commerce/product-categories/product-categories.module';
 import { ProductMastersModule } from './modules/commerce/product-masters/product-masters.module';
+import { ProductImagesModule } from './modules/commerce/product-images/product-images.module';
 import { McpModule } from './mcp/mcp.module';
 
 @Module({
@@ -126,6 +127,7 @@ import { McpModule } from './mcp/mcp.module';
     ProductContentsModule,
     ProductCategoriesModule,
     ProductMastersModule,
+    ProductImagesModule,
     SegmentsModule,
     McpModule,
   ],

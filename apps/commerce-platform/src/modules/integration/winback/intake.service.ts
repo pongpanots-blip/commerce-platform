@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JoshReplica } from '../../integration/connector/josh/josh-replica';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackContact } from './entities/winback-contact.entity';
 import { BrevoEmailService } from './shared/brevo-email.service';
@@ -60,8 +59,8 @@ export class IntakeService {
     private readonly accounts: Repository<WinbackAccount>,
     @InjectRepository(WinbackContact)
     private readonly contacts: Repository<WinbackContact>,
-    // commerce: cuisine is a josh table — read on josh's replica (JoshReplica.query takes the same (sql, params)).
-    private readonly dataSource: JoshReplica,
+    // commerce: cuisine is a josh table — read on commerce's copy (josh_cuisines).
+    @InjectDataSource() private readonly dataSource: DataSource,
     private readonly brevoEmail: BrevoEmailService,
   ) {}
 
@@ -149,7 +148,7 @@ export class IntakeService {
     }
 
     const rows = (await this.dataSource.query(
-      'SELECT id, parent_id, cuisine_name FROM cuisine WHERE id = $1 AND is_active = TRUE LIMIT 1',
+      'SELECT id, parent_id, cuisine_name FROM josh_cuisines WHERE id = $1 AND is_active = TRUE LIMIT 1',
       [dto.cuisine_id],
     )) as CuisineRow[];
     const row = rows[0];
@@ -158,7 +157,7 @@ export class IntakeService {
     let parentName: string | null = null;
     if (row.parent_id) {
       const parents = (await this.dataSource.query(
-        'SELECT id, parent_id, cuisine_name FROM cuisine WHERE id = $1 LIMIT 1',
+        'SELECT id, parent_id, cuisine_name FROM josh_cuisines WHERE id = $1 LIMIT 1',
         [row.parent_id],
       )) as CuisineRow[];
       parentName = parents[0]?.cuisine_name ?? null;

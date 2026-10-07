@@ -1,10 +1,10 @@
 import { Repository } from 'typeorm';
-import { JoshOrder as Order } from './josh-replica-tables';
+import { JoshOrder as Order } from './josh-copies.entity';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackActivity } from './entities/winback-activity.entity';
 import { WinbackSalesTarget } from './entities/winback-sales-target.entity';
 import { WinbackStageHistory } from './entities/winback-stage-history.entity';
-import { JoshUser as User } from './josh-replica-tables';
+import { JoshUser as User } from './josh-copies.entity';
 import { AnalyticsService } from './analytics.service';
 import { ReportService } from './report.service';
 import { WinbackService } from './winback.service';

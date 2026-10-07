@@ -10,8 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackContact } from './entities/winback-contact.entity';
-import { JoshUser as User } from './josh-replica-tables';
-import { JoshRestaurantPlace as RestaurantPlace } from './josh-replica-tables';
+import { JoshUser as User } from './josh-copies.entity';
+import { JoshRestaurantPlace as RestaurantPlace } from './josh-copies.entity';
 import { MatchingService } from './matching.service';
 import { normalizeCustomerCode } from './winback.helpers';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -118,10 +118,10 @@ export class LeadService {
     const qb = this.users
       .createQueryBuilder('u')
       .select(['u.id', 'u.email', 'u.first_name', 'u.last_name', 'u.role'])
-      // app_roles is the source of truth for "internal"; the role list alone
-      // once let a customer-side role through (see winback-roles.ts).
-      .innerJoin('app_roles', 'r', "r.code = u.role AND r.user_type = 'internal'")
-      .where('u.role IN (:...roles)', { roles: [...WINBACK_ASSIGNABLE_ROLES] })
+      // app_roles is the source of truth for "internal" (josh_users.internal = its user_type); the role
+      // list alone once let a customer-side role through (see winback-roles.ts).
+      .where('u.internal = true')
+      .andWhere('u.role IN (:...roles)', { roles: [...WINBACK_ASSIGNABLE_ROLES] })
       .andWhere('u.is_active = true')
       .orderBy('u.first_name', 'ASC')
       .addOrderBy('u.email', 'ASC')

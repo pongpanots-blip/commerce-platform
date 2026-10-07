@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { JoshReplica } from '../../../integration/connector/josh/josh-replica';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 export type CuisineHierarchyItem = {
   id: string;
@@ -11,13 +12,13 @@ export type CuisineHierarchyItem = {
 
 const RESTAURANT_CUISINE_CATALOG_SQL = `
   SELECT c.id, c.parent_id, c.cuisine_name, c.cuisine_name_th, c.level
-  FROM cuisine c
+  FROM josh_cuisines c
   WHERE c.is_active = TRUE
     AND c.level IN (1, 2)
     AND (
       c.parent_id = (
         SELECT root.id
-        FROM cuisine root
+        FROM josh_cuisines root
         WHERE root.level = 0
           AND root.cuisine_name = 'Restaurant'
           AND root.is_active = TRUE
@@ -25,12 +26,12 @@ const RESTAURANT_CUISINE_CATALOG_SQL = `
       )
       OR c.parent_id IN (
         SELECT parent.id
-        FROM cuisine parent
+        FROM josh_cuisines parent
         WHERE parent.level = 1
           AND parent.is_active = TRUE
           AND parent.parent_id = (
             SELECT root.id
-            FROM cuisine root
+            FROM josh_cuisines root
             WHERE root.level = 0
               AND root.cuisine_name = 'Restaurant'
               AND root.is_active = TRUE
@@ -45,14 +46,14 @@ const CACHE_MS = 10 * 60_000;
 
 /**
  * josh CuisineService.findCuisineHierarchy for the intake form's cuisine dropdown: the same queries
- * (josh `cuisine.service.ts` queryCatalogFromDb, copied) on josh's replica — cuisine stays a josh
- * storefront table. Cached 10 minutes in memory (josh caches in Redis).
+ * (josh `cuisine.service.ts` queryCatalogFromDb, copied) on commerce's copy of josh's cuisine table
+ * (josh_cuisines, cuisine.snapshot events) — cuisine stays a josh storefront table. Cached 10 minutes in memory (josh caches in Redis).
  */
 @Injectable()
 export class CuisineService {
   private readonly cache = new Map<string, { at: number; rows: CuisineHierarchyItem[] }>();
 
-  constructor(private readonly replica: JoshReplica) {}
+  constructor(@InjectDataSource() private readonly db: DataSource) {}
 
   async findCuisineHierarchy(filters?: { parent_id?: string; level?: number }): Promise<CuisineHierarchyItem[]> {
     const key = `${filters?.parent_id ?? ''}:${filters?.level ?? ''}`;
@@ -68,9 +69,9 @@ export class CuisineService {
     level?: number;
   }): Promise<CuisineHierarchyItem[]> {
     if (filters?.parent_id) {
-      return (await this.replica.query(
+      return (await this.db.query(
         `SELECT c.id, c.parent_id, c.cuisine_name, c.cuisine_name_th, c.level
-         FROM cuisine c
+         FROM josh_cuisines c
          WHERE c.is_active = TRUE
            AND c.level = 2
            AND c.parent_id = $1
@@ -80,14 +81,14 @@ export class CuisineService {
     }
 
     if (filters?.level === 1) {
-      return (await this.replica.query(
+      return (await this.db.query(
         `SELECT c.id, c.parent_id, c.cuisine_name, c.cuisine_name_th, c.level
-         FROM cuisine c
+         FROM josh_cuisines c
          WHERE c.is_active = TRUE
            AND c.level = 1
            AND c.parent_id = (
              SELECT root.id
-             FROM cuisine root
+             FROM josh_cuisines root
              WHERE root.level = 0
                AND root.cuisine_name = 'Restaurant'
                AND root.is_active = TRUE
@@ -98,19 +99,19 @@ export class CuisineService {
     }
 
     if (filters?.level === 2) {
-      return (await this.replica.query(
+      return (await this.db.query(
         `SELECT c.id, c.parent_id, c.cuisine_name, c.cuisine_name_th, c.level
-         FROM cuisine c
+         FROM josh_cuisines c
          WHERE c.is_active = TRUE
            AND c.level = 2
            AND c.parent_id IN (
              SELECT parent.id
-             FROM cuisine parent
+             FROM josh_cuisines parent
              WHERE parent.level = 1
                AND parent.is_active = TRUE
                AND parent.parent_id = (
                  SELECT root.id
-                 FROM cuisine root
+                 FROM josh_cuisines root
                  WHERE root.level = 0
                    AND root.cuisine_name = 'Restaurant'
                    AND root.is_active = TRUE
@@ -121,7 +122,7 @@ export class CuisineService {
       )) as CuisineHierarchyItem[];
     }
 
-    return (await this.replica.query(
+    return (await this.db.query(
       RESTAURANT_CUISINE_CATALOG_SQL,
     )) as CuisineHierarchyItem[];
   }

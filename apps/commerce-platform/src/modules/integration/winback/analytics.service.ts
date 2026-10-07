@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, IsNull, LessThanOrEqual, Not, Repository } from 'typeorm';
-import { JoshOrder as Order } from './josh-replica-tables';
-import { JoshUser as User } from './josh-replica-tables';
+import { JoshOrder as Order } from './josh-copies.entity';
+import { JoshUser as User } from './josh-copies.entity';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackActivity } from './entities/winback-activity.entity';
 import { WinbackSalesTarget } from './entities/winback-sales-target.entity';

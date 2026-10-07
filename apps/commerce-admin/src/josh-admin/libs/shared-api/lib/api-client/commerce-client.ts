@@ -44,9 +44,10 @@ async function call<T>(method: Method, url: string, body?: unknown, config?: Con
   }
 }
 
-let owned: Promise<{ segments: boolean }> | null = null;
+type Ownership = { segments: boolean; salesReps: boolean };
+let owned: Promise<Ownership> | null = null;
 /** Which josh features commerce owns right now (GET /api/ownership), fetched once per page load; josh if unknown. */
-export const ownership = () => (owned ??= request<{ segments: boolean }>('/ownership').catch(() => ({ segments: false })));
+export const ownership = () => (owned ??= request<Ownership>('/ownership').catch(() => ({ segments: false, salesReps: false })));
 
 export const commerceClient = {
   get: <T = any, R = AxiosResponse<T>>(url: string, config?: Config): Promise<R> => call<T>('GET', url, undefined, config) as Promise<R>,

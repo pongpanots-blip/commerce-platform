@@ -19,4 +19,8 @@ export class Warehouse extends BaseEntity {
    */
   @Column({ type: 'varchar', length: 16, name: 'stock_source', default: 'erp' })
   stockSource: 'erp' | 'commerce';
+
+  /** Counts toward the stock platforms sell (inventory.sellable.snapshot). Off for e.g. a damaged-goods or transit store. */
+  @Column({ type: 'boolean', default: true })
+  sellable: boolean;
 }

@@ -5,13 +5,18 @@ import {
   Page, PageHeader, Panel, PanelHead, Select, Span, Textarea,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, productContentsApi, productImagesApi, productMastersApi, productPricesApi } from '../../lib/api';
+import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, orderingApi, productContentsApi, productImagesApi, productMastersApi, productPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const STATUS: Record<string, string> = { active: 'เปิดขาย', draft: 'draft (ยังไม่เปิด)', inactive: 'ปิด' };
 const show = (v: unknown) => (v == null || v === '' ? '—' : typeof v === 'object' ? JSON.stringify(v) : String(v));
 
-const EDIT_FIELDS: { key: string; label: string; get: (p: JoshProductDetailType) => unknown; kind?: 'number' | 'text' | 'long' }[] = [
+/** Stage 4f: josh's weekday rows → "MONDAY,FRIDAY" (empty = every day); restock date → YYYY-MM-DD. */
+const days = (v: unknown) => (Array.isArray(v) ? v.map((d) => (typeof d === 'object' && d ? (d as { day?: string }).day : d)).join(',') : v);
+const day = (v: unknown) => (typeof v === 'string' ? v.slice(0, 10) : v);
+
+/** `ordering`: only editable once commerce owns ordering (josh's own form has no such field). */
+const EDIT_FIELDS: { key: string; label: string; get: (p: JoshProductDetailType) => unknown; kind?: 'number' | 'text' | 'long'; norm?: (v: unknown) => unknown; ordering?: boolean }[] = [
   { key: 'product_name_th', label: 'ชื่อ (ไทย)', get: (p) => p.name_th },
   { key: 'product_name_en', label: 'ชื่อ (อังกฤษ)', get: (p) => p.name_en },
   { key: 'product_description_th', label: 'รายละเอียด (ไทย)', get: (p) => p.description_th, kind: 'long' },
@@ -33,16 +38,25 @@ const EDIT_FIELDS: { key: string; label: string; get: (p: JoshProductDetailType)
   { key: 'expiration_info', label: 'ข้อมูลวันหมดอายุ', get: (p) => p.expiration_info, kind: 'long' },
   { key: 'usage_direction', label: 'วิธีใช้', get: (p) => p.usage_direction, kind: 'long' },
   { key: 'best_paired_food', label: 'เข้ากับอาหาร', get: (p) => p.best_paired_food, kind: 'long' },
+  { key: 'unit_ratio', label: 'อัตราส่วนหน่วย', get: (p) => p.unit_ratio },
+  { key: 'sub_packing_unit', label: 'หน่วยแพ็กย่อย', get: (p) => p.sub_packing_unit },
+  { key: 'product_unit', label: 'หน่วยสินค้า', get: (p) => p.product_unit },
+  { key: 'expected_restock_at', label: 'คาดว่าของเข้า (YYYY-MM-DD)', get: (p) => p.expected_restock_at, norm: day },
+  { key: 'delivery_dates', label: 'วันที่ส่งได้ (MONDAY,FRIDAY … ว่าง = ทุกวัน)', get: (p) => p.delivery_dates, norm: days, ordering: true },
 ];
 
 /**
  * `content`: commerce's own copy of the content keys once it owns product content (stage 4b) — shown over josh's copy,
  * which follows a moment later.
  */
-function ProductEditor({ p, content, categories, onSaved, onClose }: { p: JoshProductDetailType; content: Record<string, unknown> | null; categories: { id: string; category_name_th: string | null; category_path: string | null }[]; onSaved: (msg: string) => void; onClose: () => void }) {
-  const valueOf = (f: (typeof EDIT_FIELDS)[number]) => (content && f.key in content ? content[f.key] : f.get(p));
+function ProductEditor({ p, content, ordering, categories, onSaved, onClose }: { p: JoshProductDetailType; content: Record<string, unknown> | null; ordering: boolean; categories: { id: string; category_name_th: string | null; category_path: string | null }[]; onSaved: (msg: string) => void; onClose: () => void }) {
+  const shown = EDIT_FIELDS.filter((f) => !f.ordering || ordering);
+  const valueOf = (f: (typeof EDIT_FIELDS)[number]) => {
+    const v = content && f.key in content ? content[f.key] : f.get(p);
+    return f.norm ? f.norm(v) : v;
+  };
   const initial = (): Record<string, string> => ({
-    ...Object.fromEntries(EDIT_FIELDS.map((f) => [f.key, valueOf(f) == null ? '' : String(valueOf(f))])),
+    ...Object.fromEntries(shown.map((f) => [f.key, valueOf(f) == null ? '' : String(valueOf(f))])),
     product_status: String((content && 'product_status' in content ? content.product_status : p.product_status) ?? ''), category_id: p.category_id ?? '',
   });
   const [v, setV] = useState(initial);
@@ -94,7 +108,7 @@ function ProductEditor({ p, content, categories, onSaved, onClose }: { p: JoshPr
           {categories.map((c) => <option key={c.id} value={c.id}>{c.category_path ?? c.category_name_th}</option>)}
         </Select>
       </Field>
-      {EDIT_FIELDS.map((f) => (
+      {shown.map((f) => (
         <div key={f.key}>
           {f.kind === 'long' ? (
             <Span>
@@ -123,15 +137,16 @@ export function JoshProductDetail() {
   const detail = useAsync(() => joshProductApi.detail(id), [id]);
   const categories = useAsync(() => joshProductApi.categories(), []);
   const p = detail.data;
-  // Stage 4b / 4d: commerce's content and ERP master rows (none yet → josh's values stand). Category stays josh's id.
+  // Stage 4b / 4d / 4f: commerce's content, ERP master and logistics rows (none yet → josh's values stand). Category stays josh's id.
   const content = useAsync(async () => {
     const owned = p ? await productPricesApi.ownership() : null;
-    if (!p || !owned || (!owned.productContent && !owned.productMaster)) return null;
-    const [c, m] = await Promise.all([
+    if (!p || !owned || (!owned.productContent && !owned.productMaster && !owned.ordering)) return { fields: null, ordering: false };
+    const [c, m, l] = await Promise.all([
       owned.productContent ? productContentsApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
       owned.productMaster ? productMastersApi.get(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
+      owned.ordering ? orderingApi.logistics(p.product_inventory_sku).then((r) => r.fields, () => ({})) : {},
     ]);
-    return { ...c, ...m };
+    return { fields: { ...c, ...m, ...l }, ordering: !!owned.ordering };
   }, [p?.product_inventory_sku, p?.updated_at]);
 
   const backTo = `${location.state?.from ?? '/reports/products'}${location.state?.search ?? ''}`;
@@ -175,7 +190,7 @@ export function JoshProductDetail() {
             </div>
           </Panel>
 
-          {editing && !content.loading && <ProductEditor key={p.updated_at} p={p} content={content.data ?? null} categories={categories.data ?? []} onClose={() => setEditing(false)} onSaved={(m) => { setMsg(m); detail.reload(); content.reload(); }} />}
+          {editing && !content.loading && <ProductEditor key={p.updated_at} p={p} content={content.data?.fields ?? null} ordering={!!content.data?.ordering} categories={categories.data ?? []} onClose={() => setEditing(false)} onSaved={(m) => { setMsg(m); detail.reload(); content.reload(); }} />}
 
           {p.pendingChanges && p.pendingChanges.length > 0 && (
             <Panel>

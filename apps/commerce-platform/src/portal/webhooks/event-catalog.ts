@@ -30,6 +30,7 @@ export const EVENT_CATALOG: CatalogEvent[] = [
     description: 'stock ที่ขายได้ต่อ SKU (รวมทุกคลังที่ขายได้) หลังมีการเคลื่อนไหว — เก็บตัวที่ version ใหม่สุด',
     example: { sku: '1001876', sellableQty: 48, version: '2026-10-07T03:00:00.000Z', erp: { PRODUCT_CODE: '1001876', QUANTITY: 48, CHANGED_AT: '2026-10-07T03:00:00.000Z' } },
   },
+  { type: 'product.promotion-rules.snapshot', description: 'Product quantity promotion rules (whole replacement; empty clears)', example: { sku: '1001876', rules: [], version: '1' } },
   { type: 'price.updated', description: 'ราคาเปลี่ยน', example: { id: 'uuid' } },
   {
     type: 'erp.sale-order.created',

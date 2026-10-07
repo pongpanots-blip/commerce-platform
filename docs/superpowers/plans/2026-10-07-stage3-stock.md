@@ -94,3 +94,27 @@
 - [ ] `docs/event-contract.md` (§3 `inventory.sellable.snapshot`, §5 josh handler), `.env.example` (`STOCK_ORDER_WAREHOUSE_CODE`, `CRON_ERP_FALLBACK_REPLAY_ENABLED`), runbook `docs/runbooks/stage3-stock-cutover.md`.
 - [ ] Scratch DBs: migration up/down/up (with seeded duplicate levels); ledger + snapshot + order deduction on real tables; josh handler + cache refresh against a scratch josh DB with Redis off (refresh no-op).
 - [ ] Full suites `--maxWorkers=2`; As built; drop scratch DBs; commit both repos.
+
+## As built (2026-10-07)
+
+- **Snapshot version = now**, not the latest movement's `occurred_at` as the spec says: ERP `CHANGED_AT`s of different
+  warehouses arrive out of order, and an equal-or-older version for a new sum would be dropped by josh as stale. "now" is
+  monotonic per SKU. Trade-off: a snapshot built after commerce recovers but before the fallback replay can briefly
+  overwrite a newer ERP-direct value on josh; the replay (≤1 min) sends the corrected sum.
+- **Snapshots only for sellable warehouses' movements** (a move in a non-sellable store does not change the sum).
+- **josh, `inventory.qty.changed` once owned:** acknowledged and skipped (per-warehouse values would overwrite the sum).
+- **josh cache refresh:** `handleQtyChange` now refreshes the PDP / PLP caches for every source (ERP direct too) — fixes
+  the existing "old stock for up to 24h" gap, not only for commerce.
+- **Routes:** stock moves live under `/api/stock/*` (not `/inventory/*`, whose `:id` route would swallow them); added
+  `POST /api/stock/sellable-snapshots/resend` for cutover.
+- **Admin:** the raw Inventory page is gone (its form would now 405); `/inventory` redirects to Stock moves. Not checked in
+  a browser (no dev servers, RAM) — typecheck only.
+- **Order deduction:** `adjustOwnStock` got `clampAtZero` (orders only; also ignores reservations).
+- **Not done:** lines removed from a held order (not a cancellation) keep their deduction; josh real-DB run of the new
+  handler (wiring only; unit-covered).
+
+**Verification:** scratch copy of the dev DB — migration up / down / up; opt-in `inventory-ledger.service.db.spec.ts`
+(concurrent first-ever receipts 2 + 5×3 → 17 on one row; sellable sum excludes the non-sellable store; transfer atomic and
+refused when too big; count / 404s; orders: pending → nothing, paid ×3 → one deduction, cancelled ×2 → one give-back,
+unknown SKU skipped, clamp at 0 and give back only what was taken; resend → one snapshot per product).
+Full suites (`--maxWorkers=2`): commerce 1282 passed (21 opt-in skipped).

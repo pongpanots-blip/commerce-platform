@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { createHash } from 'node:crypto';
+import { DataSource } from 'typeorm';
 import type { GrowthEvidence, GrowthMetric, GrowthResults, GrowthTimeline, GrowthWorkspace } from '@cp/growth';
 import { JoshActions } from '../connector/josh/josh-actions';
 import { joshAdminCall } from '../connector/josh/josh-admin-call.controller';
@@ -13,6 +14,29 @@ type Actor = { userId: string; email: string; role: string };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const COSTS = ['ต้นทุนสินค้า (COGS)', 'ค่าธรรมเนียมรับเงิน', 'ค่าขนส่งที่ร้านรับภาระ', 'ต้นทุนแคมเปญจริง', 'คืนเงินและเครดิตที่เชื่อมกับออเดอร์'];
 const FRESHNESS = 'คำนวณจาก Josh read replica ณ เวลาที่ระบุ; ยังไม่ได้วัด replication lag';
+const FRESHNESS_COPIES = 'คำนวณจากสำเนาข้อมูล josh ใน commerce (event) ณ เวลาที่ระบุ; สำเนาอาจช้ากว่า josh เล็กน้อย';
+
+/**
+ * GROWTH_SOURCE: replica (default) · copies (stage 5, S5-6): sales through SALES_SOURCE-style copies, reorder-due and contact
+ * history from commerce's own winback tables (josh's are stale since 2b), company and orders from the copies. Marketing
+ * workflows (workspace failures, `results`) from `josh_marketing_workflows` (S5-12). Carts and devices have no copy (no
+ * snapshot group — owner / plan gap), nor do per-company workflow enrollments (timeline) — reported as such.
+ */
+export const growthSource = (): 'replica' | 'copies' => (process.env.GROWTH_SOURCE?.trim().toLowerCase() === 'copies' ? 'copies' : 'replica');
+/** A source commerce has no copy of: the workspace says so instead of "check the connection". */
+class NotCopied extends Error {}
+const notCopied = (what: string) => Promise.reject(new NotCopied(`${what} ยังไม่มีสำเนาใน commerce`));
+/**
+ * Growth results' attributed revenue from the copies: josh's marketing_workflow.snapshot already applied the same-user and
+ * conversion-window tests (`conversions`); status, paid and the date range are applied here on `josh_orders`, as the
+ * replica query does.
+ */
+const ATTRIBUTED_REVENUE_COPIES = `SELECT COALESCE(sum(o.total_price), 0)::float AS revenue FROM josh_orders o
+  WHERE o.create_date < $4 AND o.status = ANY($2) AND o.paid AND o.orders_id IN (
+    SELECT (c->>'order_id')::uuid FROM josh_marketing_workflows w, jsonb_array_elements(w.conversions) c
+    WHERE w.id = $1 AND (c->>'converted_at')::timestamptz <= $4 AND (c->>'started_at')::timestamptz >= $3 AND (c->>'started_at')::timestamptz < $4)`;
+const REORDER_DUE_SQL = `SELECT count(*)::int AS n, max(update_date) AS updated_at FROM winback_account
+        WHERE median_reorder_interval_days > 0 AND delay_ratio >= 1`;
 
 @Injectable()
 export class GrowthDataService {
@@ -22,7 +46,12 @@ export class GrowthDataService {
     private readonly workflows: JoshMarketingWorkflows,
     private readonly josh: JoshActions,
     private readonly research: MarketingResearchService,
+    private readonly db: DataSource,
   ) {}
+
+  private get copies() { return growthSource() === 'copies'; }
+  /** Shop data reachable: copies mode, or the replica is set. */
+  get available() { return this.copies || this.replica.configured; }
 
   private id(id: string) {
     if (!UUID.test(id)) throw new BadRequestException('id must be a UUID');
@@ -30,13 +59,15 @@ export class GrowthDataService {
   private staff(actor: Actor) {
     if (!['admin', 'marketing'].includes(actor.role)) throw new ForbiddenException('admin or marketing only');
   }
-  private connected() {
+  private connected(copiesOk = false) {
+    if (copiesOk && this.copies) return;
     if (!this.replica.configured) throw new ServiceUnavailableException('ยังไม่ได้เชื่อม Josh read replica');
   }
 
   async workspace(): Promise<GrowthWorkspace> {
     const now = new Date(), range = bangkokRange('last_30_days', Math.floor(now.getTime() / 3_600_000) * 3_600_000);
-    const limitations = [FRESHNESS, `ยอดขายและตะกร้าใช้ช่วงถึง ${range.current.to.toISOString()} (สิ้นชั่วโมงที่ครบแล้ว)`, 'กำไรและเวลางานที่ลดลงยังไม่มีต้นทุนจริงหรือเวลาฐานให้ตรวจสอบ'];
+    const copies = this.copies;
+    const limitations = [copies ? FRESHNESS_COPIES : FRESHNESS, `ยอดขายและตะกร้าใช้ช่วงถึง ${range.current.to.toISOString()} (สิ้นชั่วโมงที่ครบแล้ว)`, 'กำไรและเวลางานที่ลดลงยังไม่มีต้นทุนจริงหรือเวลาฐานให้ตรวจสอบ'];
     const metrics: GrowthMetric[] = [
       { key: 'revenue', label: 'ยอดขายที่รับชำระจริง', value: null, unit: 'THB', note: '30 วันตามเวลาไทย รวม VAT หลังส่วนลด ก่อนหักคืนเงิน' },
       { key: 'orders', label: 'ออเดอร์ที่รับชำระจริง', value: null, unit: 'count', note: 'สถานะ paid/preparing/shipped/delivered และมี payment success ที่ไม่ใช่ test' },
@@ -47,28 +78,32 @@ export class GrowthDataService {
       { key: 'contribution', label: 'Contribution หลังต้นทุน', value: null, unit: 'THB', note: 'ยังไม่มีต้นทุนที่ยืนยันครบ จึงยังคำนวณไม่ได้' },
     ];
     const result: GrowthWorkspace = { generatedAt: now.toISOString(), period: { from: range.current.from.toISOString(), to: range.current.to.toISOString() }, availability: 'unavailable', metrics, opportunities: [], evidence: [], limitations };
-    if (!this.replica.configured) {
+    if (!this.available) {
       limitations.push('ยังไม่ได้เชื่อม Josh read replica; ไม่มีข้อมูลตัวอย่างแทนข้อมูลจริง');
       return result;
     }
-    const sources = await Promise.allSettled([
+    const sources = await Promise.allSettled(copies ? [
+      this.insights.sales(range, 1, 'copies'),
+      notCopied('ตะกร้า (cart_snapshot)'),
+      this.db.query(REORDER_DUE_SQL),
+      this.workflows.list(30, 'copies'),
+    ] : [
       this.insights.sales(range, 1),
       this.replica.query(`SELECT count(DISTINCT COALESCE(cs.user_id, ud.user_id))::int AS n
         FROM cart_snapshot cs LEFT JOIN user_devices ud ON ud.individual_id = cs.cart_id
         WHERE COALESCE(cs.user_id, ud.user_id) IS NOT NULL AND cs.updated_at >= $1 AND cs.updated_at <= $2
           AND jsonb_typeof(cs.payload) = 'object' AND cs.payload <> '{}'::jsonb`, [range.current.from, new Date(range.current.to.getTime() - 3_600_000)]),
-      this.replica.query(`SELECT count(*)::int AS n, max(update_date) AS updated_at FROM winback_account
-        WHERE median_reorder_interval_days > 0 AND delay_ratio >= 1`),
+      this.replica.query(REORDER_DUE_SQL),
       this.workflows.list(30),
     ]);
     const labels = ['ยอดขาย', 'ตะกร้าค้าง', 'รอบซื้อ', 'workflow'];
     const evidence = (key: string, title: string, excerpt: string) => {
       const id = `${key}:${createHash('sha256').update(JSON.stringify([result.period, title, excerpt])).digest('hex').slice(0, 16)}`;
-      result.evidence.push({ id, source: 'Josh read replica', title, url: null, collectedAt: now.toISOString(), excerpt: `${excerpt}; ${FRESHNESS}` });
+      result.evidence.push({ id, source: copies ? 'สำเนาข้อมูล josh ใน commerce' : 'Josh read replica', title, url: null, collectedAt: now.toISOString(), excerpt: `${excerpt}; ${copies ? FRESHNESS_COPIES : FRESHNESS}` });
       return id;
     };
     for (const [i, source] of sources.entries()) {
-      if (source.status === 'rejected') limitations.push(`ข้อมูล${labels[i]}ไม่พร้อม; กรุณาตรวจการเชื่อมต่อหรือ schema`);
+      if (source.status === 'rejected') limitations.push(source.reason instanceof NotCopied ? `ข้อมูล${labels[i]}: ${source.reason.message}` : `ข้อมูล${labels[i]}ไม่พร้อม; กรุณาตรวจการเชื่อมต่อหรือ schema`);
     }
     const [sales, carts, reorder, workflows] = sources;
     if (sales.status === 'fulfilled') {
@@ -118,20 +153,22 @@ export class GrowthDataService {
   }
 
   async results(workflowId: string, actor: Actor): Promise<GrowthResults> {
-    this.staff(actor); this.id(workflowId); this.connected();
+    this.staff(actor); this.id(workflowId); this.connected(true);
+    const copies = this.copies;
     const range = bangkokRange('last_30_days');
     const [workflow, analyticsRaw, conversionRaw] = await Promise.all([
-      this.workflows.detail(workflowId),
+      this.workflows.detail(workflowId, copies ? 'copies' : undefined),
       joshAdminCall(this.josh, actor, { method: 'GET', path: `/marketing-workflows/${workflowId}/analytics`, query: { from: range.current.from.toISOString(), to: range.current.to.toISOString() } }, 'growth'),
       joshAdminCall(this.josh, actor, { method: 'GET', path: `/marketing-workflows/${workflowId}/conversion-stats` }, 'growth'),
     ]);
     const analytics = workflowPayload(analyticsRaw, workflowId), conversions = workflowPayload(conversionRaw, workflowId);
     const funnel = object(analytics.funnel);
-    const limitations = [FRESHNESS, `funnel เป็น event counts ใน ${range.current.label}; conversion groups เป็น enrollment สะสมทั้งหมด จึงไม่ใช่ช่วงเวลาเดียวกัน`, 'Conversion endpoint นับสถานะออเดอร์ ยังไม่ตรวจ payment success, บริษัทที่แบ่งกลุ่มซ้ำ หรือการพ้น conversion window; อย่าตีความเป็นยอดเพิ่มจากแคมเปญ', 'รายได้ที่ให้เครดิตนับออเดอร์ไม่ซ้ำของ enrollment ใน 30 วันนี้ รวม VAT หลังส่วนลด ก่อนหักคืนเงิน; ออเดอร์เดียวอาจถูกให้เครดิตกับหลาย workflow และ conversion window ใช้ค่าปัจจุบัน ไม่มี snapshot ต่อ enrollment'];
+    const limitations = [copies ? FRESHNESS_COPIES : FRESHNESS, `funnel เป็น event counts ใน ${range.current.label}; conversion groups เป็น enrollment สะสมทั้งหมด จึงไม่ใช่ช่วงเวลาเดียวกัน`, 'Conversion endpoint นับสถานะออเดอร์ ยังไม่ตรวจ payment success, บริษัทที่แบ่งกลุ่มซ้ำ หรือการพ้น conversion window; อย่าตีความเป็นยอดเพิ่มจากแคมเปญ', 'รายได้ที่ให้เครดิตนับออเดอร์ไม่ซ้ำของ enrollment ใน 30 วันนี้ รวม VAT หลังส่วนลด ก่อนหักคืนเงิน; ออเดอร์เดียวอาจถูกให้เครดิตกับหลาย workflow และ conversion window ใช้ค่าปัจจุบัน ไม่มี snapshot ต่อ enrollment'];
     let attributedRevenueThb: number | null = null;
     try {
       // Deduplicate orders before summing: repeated enrollments may credit the same order.
-      const [revenue] = await this.replica.query(`SELECT COALESCE(sum(o.total_price), 0)::float AS revenue FROM orders o
+      const [revenue] = copies ? await this.db.query(ATTRIBUTED_REVENUE_COPIES, [workflowId, JOSH_SETTLED_STATUSES, range.current.from, range.current.to])
+        : await this.replica.query(`SELECT COALESCE(sum(o.total_price), 0)::float AS revenue FROM orders o
         WHERE o.create_date < $4 AND o.status::text = ANY($2) AND ${paidOrderSql('o')} AND EXISTS (
           SELECT 1 FROM marketing_workflow_enrollments e JOIN marketing_workflows w ON w.id = e.workflow_id
           WHERE e.workflow_id = $1 AND NOT e.is_holdout AND e.converted_order_id = o.orders_id
@@ -154,11 +191,12 @@ export class GrowthDataService {
 
   async timeline(companyId: string, actor: Actor): Promise<GrowthTimeline> {
     if (actor.role !== 'admin') throw new ForbiddenException('admin only');
-    this.id(companyId); this.connected();
+    this.id(companyId); this.connected(true);
+    if (this.copies) return this.timelineFromCopies(companyId);
     const [company] = await this.replica.query(`SELECT id, name FROM company WHERE id = $1`, [companyId]);
     if (!company) throw new NotFoundException('ไม่พบบริษัทใน Josh');
     const from = new Date(Date.now() - 90 * 86_400_000);
-    const events: GrowthTimeline['events'] = [], limitations = [FRESHNESS, 'แสดง 100 เหตุการณ์ล่าสุดใน 90 วัน; การติดต่อเป็น metadata ไม่รวมชื่อบุคคลหรือบันทึกข้อความ', 'เหตุการณ์ workflow ผูกบริษัทจาก membership ปัจจุบัน ไม่มี snapshot บริษัท ณ วันเข้า workflow'];
+    const limitations = [FRESHNESS, 'แสดง 100 เหตุการณ์ล่าสุดใน 90 วัน; การติดต่อเป็น metadata ไม่รวมชื่อบุคคลหรือบันทึกข้อความ', 'เหตุการณ์ workflow ผูกบริษัทจาก membership ปัจจุบัน ไม่มี snapshot บริษัท ณ วันเข้า workflow'];
     const sources = await Promise.allSettled([
       this.replica.query(`SELECT o.orders_id AS id, o.create_date AS at, o.status::text AS status, o.total_price::float AS total_price,
         (o.status::text = ANY($3) AND ${paidOrderSql('o')}) AS paid FROM orders o
@@ -170,9 +208,32 @@ export class GrowthDataService {
         FROM marketing_workflow_enrollments e JOIN users u ON u.id = e.user_id
         WHERE u.company_id = $1 AND e.started_at >= $2 ORDER BY e.started_at DESC LIMIT 100`, [companyId, from]),
     ]);
+    return this.timelineOf(companyId, String(company.name), sources, limitations);
+  }
+
+  /** Timeline from commerce's copies: josh_companies, josh_orders (`paid` from josh's builder), commerce winback_*. */
+  private async timelineFromCopies(companyId: string): Promise<GrowthTimeline> {
+    const [company] = await this.db.query(`SELECT id, name FROM josh_companies WHERE id = $1`, [companyId]);
+    if (!company) throw new NotFoundException('ไม่พบบริษัทใน Josh');
+    const from = new Date(Date.now() - 90 * 86_400_000);
+    const limitations = [FRESHNESS_COPIES, 'แสดง 100 เหตุการณ์ล่าสุดใน 90 วัน; การติดต่อเป็น metadata ไม่รวมชื่อบุคคลหรือบันทึกข้อความ'];
+    const sources = await Promise.allSettled([
+      this.db.query(`SELECT o.orders_id AS id, o.create_date AS at, o.status, o.total_price::float AS total_price,
+        (o.status = ANY($3) AND o.paid) AS paid FROM josh_orders o
+        WHERE o.company_id = $1 AND o.create_date >= $2 ORDER BY o.create_date DESC LIMIT 100`, [companyId, from, JOSH_SETTLED_STATUSES]),
+      this.db.query(`SELECT a.id, a.activity_at AS at, a.type, a.outcome, a.status FROM winback_activity a
+        JOIN winback_account w ON w.id = a.account_id WHERE w.josh_company_id = $1 AND a.activity_at >= $2
+        ORDER BY a.activity_at DESC LIMIT 100`, [companyId, from]),
+      notCopied('marketing workflow enrollment'),
+    ]);
+    return this.timelineOf(companyId, String(company.name), sources, limitations);
+  }
+
+  private timelineOf(companyId: string, name: string, sources: PromiseSettledResult<Record<string, unknown>[]>[], limitations: string[]): GrowthTimeline {
+    const events: GrowthTimeline['events'] = [];
     const kinds = ['order', 'contact', 'workflow'];
     for (const [index, source] of sources.entries()) {
-      if (source.status === 'rejected') { limitations.push(`ข้อมูล ${kinds[index]} ไม่พร้อม`); continue; }
+      if (source.status === 'rejected') { limitations.push(source.reason instanceof NotCopied ? `ข้อมูล ${kinds[index]}: ${source.reason.message}` : `ข้อมูล ${kinds[index]} ไม่พร้อม`); continue; }
       for (const row of source.value) {
         const at = new Date(row.at as string | Date);
         if (Number.isNaN(at.getTime())) continue;
@@ -182,6 +243,6 @@ export class GrowthDataService {
         events.push({ id: `${kinds[index]}:${String(row.id)}`, at: at.toISOString(), kind: kinds[index], title, href: null });
       }
     }
-    return { companyId, name: String(company.name), generatedAt: new Date().toISOString(), events: events.sort((a, b) => b.at.localeCompare(a.at) || a.id.localeCompare(b.id)).slice(0, 100), limitations };
+    return { companyId, name, generatedAt: new Date().toISOString(), events: events.sort((a, b) => b.at.localeCompare(a.at) || a.id.localeCompare(b.id)).slice(0, 100), limitations };
   }
 }

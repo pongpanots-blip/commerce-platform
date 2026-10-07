@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { StaffRequest } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StaffPriceKind } from './staff-price.entity';
 import { StaffPriceInput, StaffPrices } from './staff-prices';
+import { joshOnly } from '../system-health';
 
 /**
  * Customer and branch contract prices owned by commerce (admin only, the guard default — josh's own
@@ -24,7 +25,7 @@ export class StaffPricesController {
   /** Pull josh's current prices in (rows josh created itself: ERP quotations, CS price requests). */
   @Post('import') @HttpCode(HttpStatus.OK)
   import() {
-    if (!this.prices.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.prices.available) throw joshOnly('staffPricesImport');
     return this.prices.importFromJosh();
   }
 

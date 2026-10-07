@@ -37,6 +37,7 @@ What was still missing:
 
 ## How to verify
 
+**Verify:**
 ```bash
 cd /workspace/commerce-s6   # node_modules is a symlink to commerce-g5's (as commerce-s5 does)
 P=apps/commerce-platform/src

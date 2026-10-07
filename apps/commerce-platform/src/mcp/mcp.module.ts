@@ -9,6 +9,7 @@ import { WebhookSubscriptionModule } from '../modules/integration/webhook-subscr
 import { IntegrationModule } from '../modules/integration/integration.module';
 import { InventoryModule } from '../modules/commerce/inventory/inventory.module';
 import { JoshModule } from '../modules/integration/connector/josh/josh.module';
+import { WinbackModule } from '../modules/integration/winback/winback.module';
 import { McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { McpOAuthProvider } from './mcp-oauth.provider';
 import { McpTools } from './mcp.tools';
@@ -21,7 +22,7 @@ import { MarketAnalystController } from './market-analyst.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([McpOAuthClient, McpOAuthGrant, User]),
-    AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule, WebhookSubscriptionModule, IntegrationModule, InventoryModule, JoshModule, GrowthModule,
+    AuthModule, CompetitorPricesModule, ScrapingModule, MarketingResearchModule, WebhookSubscriptionModule, IntegrationModule, InventoryModule, JoshModule, WinbackModule, GrowthModule,
   ],
   controllers: [McpConnectionsController, MarketAnalystController],
   providers: [McpOAuthProvider, McpTools, MarketAnalystService],

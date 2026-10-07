@@ -2,7 +2,7 @@ import { BadRequestException, Controller, Get, Param, Query, ServiceUnavailableE
 import { ApiLogQueryDto } from './api-log/dto/api-log-query.dto';
 import { JoshApiLogs } from './josh-api-logs';
 import { JoshBackoffice } from './josh-backoffice';
-import { NO_REPLICA } from './system-health';
+import { joshOnly } from './system-health';
 
 const page = (v?: string) => {
   const n = v ? Number(v) : 1;
@@ -23,7 +23,7 @@ export class JoshBackofficeController {
 
   @Get('backoffice/:view')
   list(@Param('view') view: string, @Query('search') search?: string, @Query('status') status?: string, @Query('page') p?: string) {
-    if (!this.backoffice.available) throw new ServiceUnavailableException(NO_REPLICA.reason);
+    if (!this.backoffice.available) throw joshOnly('backoffice');
     return this.backoffice.list(view, { search, status }, page(p));
   }
 

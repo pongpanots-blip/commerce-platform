@@ -26,7 +26,7 @@ export function Readiness() {
       <LoadState state={state} />
       {!state.loading && !state.error && state.data && <>
         <div className="flex flex-wrap gap-2">
-          <Chip tone={state.data.replica ? 'ok' : 'warn'}>ข้อมูลร้าน · {state.data.replica ? 'เชื่อมแล้ว' : 'ยังไม่เชื่อม'}</Chip>
+          <Chip tone={state.data.replica ? 'ok' : 'warn'}>ข้อมูลร้าน · {state.data.replica ? (state.data.dataSource === 'copies' ? 'สำเนาใน commerce' : 'เชื่อมแล้ว') : 'ยังไม่เชื่อม'}</Chip>
           <Chip tone={state.data.ai ? 'ok' : 'muted'}>AI · {state.data.ai ? 'พร้อมร่าง' : 'ยังไม่เชื่อม'}</Chip>
           <Chip tone={state.data.workflow ? 'ok' : 'muted'}>Workflow · {state.data.workflow ? 'พร้อมสร้างร่าง' : 'ยังไม่เชื่อม'}</Chip>
         </div>

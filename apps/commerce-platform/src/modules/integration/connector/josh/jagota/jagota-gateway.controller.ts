@@ -1,9 +1,10 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, ServiceUnavailableException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../../../storefront/storefront-api-key.guard';
 import type { ErpCreateOrderRequest } from './erp-order-request';
 import { JagotaGateway } from './jagota-gateway';
 import { JagotaSyncHistoryImport } from './jagota-sync-history';
+import { joshOnly } from '../system-health';
 
 /** josh → commerce → Jagota `add-order-create` and `create-customer` (josh's storefront API key, like its other commerce calls). */
 @Public()
@@ -61,7 +62,7 @@ export class JagotaSyncHistoryController {
   /** Import now instead of waiting for the cron. Reads josh, writes only commerce's copy. */
   @Post('run') @HttpCode(HttpStatus.OK)
   run() {
-    if (!this.history.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.history.available) throw joshOnly('copier');
     return this.history.importNew();
   }
 }

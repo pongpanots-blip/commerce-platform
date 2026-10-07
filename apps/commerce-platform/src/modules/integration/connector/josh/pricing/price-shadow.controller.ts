@@ -1,5 +1,6 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
 import { PriceShadow } from './price-shadow';
+import { joshOnly } from '../system-health';
 
 /** Shadow mode for "commerce owns prices" (admin only, the guard default). Reads josh, writes only commerce's own check rows. */
 @Controller('reports/price-shadow')
@@ -7,7 +8,7 @@ export class PriceShadowController {
   constructor(private readonly shadow: PriceShadow) {}
 
   private replica() {
-    if (!this.shadow.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.shadow.available) throw joshOnly('priceShadow');
   }
 
   @Get('summary') summary(@Query('days') days?: string) {

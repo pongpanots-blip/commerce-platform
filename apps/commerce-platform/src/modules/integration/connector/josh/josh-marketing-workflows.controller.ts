@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, Req, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, Req } from '@nestjs/common';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
 import { JoshMarketingWorkflows } from './josh-marketing-workflows';
+import { joshOnly } from './system-health';
 
 const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
 
@@ -12,7 +13,7 @@ export class JoshMarketingWorkflowsController {
   constructor(private readonly workflows: JoshMarketingWorkflows, private readonly josh: JoshActions) {}
 
   private replica() {
-    if (!this.workflows.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.workflows.available) throw joshOnly('marketingWorkflows');
   }
   private as(req: StaffRequest) { return { userId: req.staff.userId, email: req.staff.email }; }
 

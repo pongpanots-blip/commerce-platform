@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DeliveryMonitor } from '../../webhook-subscription/application/delivery-monitor';
 import { JoshInsights, Range } from './josh-insights';
@@ -16,6 +16,27 @@ const JAGOTA_COPY_FAILED_SQL = `SELECT count(*)::int AS n, max(imported_at) AS c
 const JAGOTA_COPY_ERRORS_SQL = `SELECT left(error_message, 200) AS error, count(*)::int AS n, max(created_at) AS last_at FROM jagota_order_sync_history
   WHERE sync_status = 'failed' AND created_at >= $1 AND created_at < $2 GROUP BY 1 ORDER BY 2 DESC LIMIT 5`;
 const JAGOTA_COPY_FRESHNESS_SQL = `SELECT max(imported_at) AS copied_up_to FROM jagota_order_sync_history`;
+
+/**
+ * Why a page is not served without josh's replica (stage 5, S5-14) — shown instead of the bare "not configured":
+ * josh-admin keeps it, it is a cutover tool, or commerce has no copy yet. Thai: the people reading it are staff.
+ */
+export const JOSH_ONLY = {
+  backoffice: 'ข้อมูลหลังบ้านของ josh (KYC, เครดิต, CN/CB, ใบแจ้งหนี้, การจัดส่ง, การชำระเงิน, คูปอง…) ดูและจัดการที่ josh-admin — commerce ไม่เก็บสำเนา',
+  promotions: 'โปรโมชันยังเป็นของ josh จนกว่า commerce จะรับเป็นเจ้าของ (G9) — ดูและแก้ที่ josh-admin',
+  prices: 'ราคาตามสาขา / สัญญา / โปรโมชันยังอ่านจาก josh จนกว่าจะย้ายโปรโมชัน (G9) — ดูที่ josh-admin; ราคาลูกค้าที่ commerce ตั้งอยู่ที่หน้า ราคาพนักงาน',
+  priceShadow: 'Price shadow เป็นเครื่องมือตรวจช่วงสลับราคา ต้องเทียบกับ josh โดยตรง จึงรันได้เฉพาะเซิร์ฟเวอร์ที่ต่อ replica ของ josh — ผลที่ตรวจไว้แล้วยังดูได้',
+  jagotaShadow: 'Jagota shadow เป็นเครื่องมือตรวจช่วงสลับ ERP gateway ต้องอ่าน josh โดยตรง — ผลที่ตรวจไว้แล้วยังดูได้',
+  copier: 'การดึงสำเนาจาก replica ของ josh เป็นเครื่องมือช่วงย้ายระบบ — ข้อมูลใหม่มาทาง event ของ josh แทน (ประวัติที่ดึงไว้แล้วยังดูได้)',
+  staffPricesImport: 'การนำเข้าราคาจาก josh เป็นเครื่องมือช่วงย้ายระบบ — ราคาที่ commerce ตั้งยังสร้าง / แก้ได้ตามปกติ',
+  traffic: 'สถิติการเข้าชมยังไม่มีสำเนาใน commerce (รอตัดสินใจ: สรุปรายวัน หรือเลิกใช้) — ดูที่ josh-admin',
+  orderTargetgroup: 'Order target group อ่านไฟล์นำเข้าและปฏิทินส่งของของ josh ซึ่ง commerce ยังไม่มีสำเนา — ดูที่ josh-admin',
+  products: 'รายงานสินค้ายังต้องใช้ข้อมูลของ josh ที่ยังไม่ได้ส่งมา (หมวดหมู่, stock, MOQ, รออนุมัติ) — ดูที่ josh-admin ระหว่างนี้',
+  customers: 'รายงานลูกค้าเป็นข้อมูล KYC / เครดิต / สาขา ซึ่งยังอยู่ที่ josh — ดูที่ josh-admin',
+  pushCampaigns: 'Push campaign ยังไม่มีสำเนาใน commerce — ดูที่ josh-admin ระหว่างนี้',
+  marketingWorkflows: 'Marketing workflow ยังไม่มีสำเนาใน commerce — ดูที่ josh-admin ระหว่างนี้',
+} as const;
+export const joshOnly = (why: keyof typeof JOSH_ONLY) => new ServiceUnavailableException(`${JOSH_ONLY[why]} (JOSH_DATABASE_URL ไม่ได้ตั้งบนเซิร์ฟเวอร์นี้)`);
 
 export const NO_REPLICA = { available: false, reason: 'Shop data is read from josh\'s read replica, which is not configured on this server (JOSH_DATABASE_URL).' };
 

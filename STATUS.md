@@ -55,6 +55,9 @@ Updated 2026-10-07. Not pushed.
   - Copies read `josh_orders` (`paid`), `josh_companies`, `jagota_order_sync_history` and `josh_order_lines`.
   - Not copied yet, so null and listed in `notCopied`: branch, payment rows, shipments, ERP codes.
   - Spec: 8 passing.
+- **S5-14, josh-only pages explain themselves:** `joshOnly(why)` in `system-health.ts` replaces the bare replica
+  503 at every remaining replica gate. Each page now says, in Thai, whether it is in josh-admin, a cutover tool, or not
+  copied yet. Pages already show the backend message, so no frontend change was needed. Spec: 3 passing.
 - **Customers report: deferred.** It is mostly KYC, credit and branch data. It waits on open question 1 and the
   S5-11 company/branch snapshots.
 
@@ -65,7 +68,10 @@ Updated 2026-10-07. Not pushed.
 - No josh changes yet. The first one is needed at S5-11; S5-4 (products) waits for it too.
 
 ## Next (safe, commerce-only, in order)
-1. S5-14 josh-only pages say so instead of the 503 text.
+1. S5-11 (josh, needs the josh branch `feat/commerce-copies-for-reports`): the `catalog.snapshot` fields from S5-4,
+   `branch.snapshot`, payments / shipments / refunds / `sending_date` on `order.snapshot`, `jagota_sync`.
+2. S5-12 josh snapshots: `push_campaign`, `marketing_workflow`.
+3. S5-16 staging click-through with `JOSH_DATABASE_URL` unset (needs an environment).
 
 ## Open questions for the owner (plan §4)
 KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?

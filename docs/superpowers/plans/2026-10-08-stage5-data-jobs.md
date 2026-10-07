@@ -152,7 +152,7 @@ Order = value ÷ risk. "Safe" = commerce-only, default unchanged, copy already c
 | S5-11 | josh snapshots: `branch`, `order.snapshot` + `payments[]` / `shipments[]` / `sending_date` / refunds, `company` business + erp code, `jagota_sync`; backfill groups | #7, #8, #3, #24 | **yes** (additive) | medium |
 | S5-12 | josh snapshots: `push_campaign`, `marketing_workflow` (+ enrollment counts) | #12, #13, #9 results | yes | medium |
 | S5-13 | traffic — daily aggregate snapshot, or drop | #4 | decision | – |
-| S5-14 | pages that stay josh-only (backoffice, promotions until G9, price-shadow, jagota-shadow run, imports): say "managed in josh-admin" / "cutover tool" instead of the 503 text | #11, #16, #17, #25 | no | low |
+| S5-14 | pages that stay josh-only (backoffice, promotions until G9, price-shadow, jagota-shadow run, imports): say "managed in josh-admin" / "cutover tool" instead of the 503 text | #11, #16, #17, #25 | no | low — **done** (`joshOnly`) |
 | S5-15 | copiers off: `joshOrderCopy`, `joshCatalogSync`, `jagotaSyncImport` crons once events + backfill are trusted | #19, #23, #24 | – | low (env only) |
 | S5-16 | staging with `JOSH_DATABASE_URL` unset → every commerce page + MCP tool answers | all | – | – |
 
@@ -354,8 +354,13 @@ backfill group; commerce migration (real-column copy table + tombstones), `josh-
 
 ### Task S5-14 / S5-16: no more "not configured"
 
-- [ ] commerce-admin: a page whose reader is in `copies` mode never shows the replica banner; a page that stays josh-only
-      says so (link to josh-admin) instead of an error.
+- [x] commerce-admin: a page whose reader is in `copies` mode never shows the replica banner (S5-2, 3, 5, 6, 7, 9
+      readers decide `available` themselves). A page that stays josh-only says so: `system-health.ts` `JOSH_ONLY` +
+      `joshOnly(why)` (Thai, ends with "JOSH_DATABASE_URL ไม่ได้ตั้งบนเซิร์ฟเวอร์นี้") at every remaining replica gate:
+      backoffice, promotions, prices (G9), price-shadow / jagota-shadow run (cutover tools; stored results still
+      shown), jagota-sync / order-copy run (copiers), staff-prices import, traffic, order target group, products,
+      customers, push campaigns, marketing workflows. Pages already render the backend message, so no frontend change.
+      Not a link: the josh-admin URL differs per environment; the text names it. MCP tools still answer `NO_REPLICA`.
 - [ ] Staging with `JOSH_DATABASE_URL` unset: click through every report page and MCP tool; record in As built.
 
 ---

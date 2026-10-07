@@ -2,6 +2,7 @@ import { Controller, Get, HttpCode, HttpStatus, Logger, Param, ParseUUIDPipe, Po
 import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../../../storefront/storefront-api-key.guard';
 import { JoshOrderCopyService } from './josh-order-copy';
+import { joshOnly } from '../system-health';
 
 /** josh, right after a checkout (ORDERS_COPY_TO_COMMERCE): "copy this order now". Answers at once; josh never waits on the copy. */
 @Public()
@@ -29,7 +30,7 @@ export class JoshOrderCopyReportController {
 
   @Post('run') @HttpCode(HttpStatus.OK)
   run() {
-    if (!this.copies.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL).');
+    if (!this.copies.available) throw joshOnly('copier');
     return this.copies.copyNew();
   }
 }

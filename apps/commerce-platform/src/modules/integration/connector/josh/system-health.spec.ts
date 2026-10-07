@@ -1,4 +1,5 @@
-import { SystemHealthReport } from './system-health';
+import { ServiceUnavailableException } from '@nestjs/common';
+import { JOSH_ONLY, joshOnly, SystemHealthReport } from './system-health';
 
 const range = { label: 'x', from: new Date('2026-10-01'), to: new Date('2026-10-02') };
 
@@ -29,5 +30,15 @@ describe('SystemHealthReport — josh part', () => {
     expect(josh.jagotaOrderSyncErrors).toEqual([{ error: 'timeout', n: 2, last_at: '2026-10-01T05:00:00Z' }]);
     expect(String(josh.notAvailable)).toContain('josh-admin');
     for (const [sql] of db.query.mock.calls.filter(([sql]) => sql.includes('jagota'))) expect(sql).toContain('jagota_order_sync_history');
+  });
+});
+
+describe('joshOnly (S5-14)', () => {
+  it('a josh-only page says why (josh-admin / not copied / cutover tool) instead of the bare replica error', () => {
+    const e = joshOnly('backoffice');
+    expect(e).toBeInstanceOf(ServiceUnavailableException);
+    expect(e.message).toContain('josh-admin');
+    expect(e.message).toContain('JOSH_DATABASE_URL');
+    for (const why of Object.values(JOSH_ONLY)) expect(why).not.toMatch(/read replica is not connected/);
   });
 });

@@ -5,7 +5,7 @@ import {
   Page, PageHeader, Panel, PanelHead, Select, Span, Textarea,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, productContentsApi, productMastersApi, productPricesApi } from '../../lib/api';
+import { joshActionsApi, joshAdmin, joshProductApi, JoshProductDetail as JoshProductDetailType, productContentsApi, productImagesApi, productMastersApi, productPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const STATUS: Record<string, string> = { active: 'เปิดขาย', draft: 'draft (ยังไม่เปิด)', inactive: 'ปิด' };
@@ -214,11 +214,17 @@ export function JoshProductDetail() {
 }
 
 /**
- * Product images (COMMERCE_OWNS_CATALOG): josh's own PATCH /product/:id with only images — files to add
- * and `removed_media_ids`. josh keeps at most 3 images, stores them in its media storage, makes thumbnails.
+ * Product images. Before stage 4e (COMMERCE_OWNS_CATALOG): josh's own PATCH /product/:id with only images — files to add
+ * and `removed_media_ids`; josh keeps at most 3, stores them, makes thumbnails. Once commerce owns galleries
+ * (COMMERCE_OWNS_PRODUCT_IMAGES): commerce's gallery (same bucket), sent to josh as product.images.snapshot.
  */
 function ProductImages({ p, onSaved }: { p: JoshProductDetailType; onSaved: (msg: string) => void }) {
-  const images = p.media.filter((m) => m.media_type === 'image');
+  const gallery = useAsync(async () => {
+    if (!(await productPricesApi.ownership()).productImages) return null;
+    return productImagesApi.get(p.product_inventory_sku).then((r) => r.images, () => p.media.filter((m) => m.media_type === 'image').map((m) => m.source));
+  }, [p.product_inventory_sku, p.updated_at]);
+  const owned = gallery.data != null;
+  const images = owned ? gallery.data!.map((url) => ({ id: url, source: url, media_type: 'image', sort_order: 0 })) : p.media.filter((m) => m.media_type === 'image');
   const [removed, setRemoved] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
@@ -231,10 +237,17 @@ function ProductImages({ p, onSaved }: { p: JoshProductDetailType; onSaved: (msg
     setBusy(true);
     setErr('');
     try {
-      const fields = { removed_media_ids: JSON.stringify(removed) };
-      await (files.length
-        ? joshAdmin.upload('PATCH', `/product/${p.product_inventory_id}`, fields, files.map((file) => ({ field: 'images', file })))
-        : joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, fields));
+      if (owned) {
+        // Remove first so the 3-image limit counts what stays.
+        if (removed.length) await productImagesApi.set(p.product_inventory_sku, images.filter((m) => !removed.includes(m.id)).map((m) => m.source));
+        if (files.length) await productImagesApi.upload(p.product_inventory_sku, files);
+        gallery.reload();
+      } else {
+        const fields = { removed_media_ids: JSON.stringify(removed) };
+        await (files.length
+          ? joshAdmin.upload('PATCH', `/product/${p.product_inventory_id}`, fields, files.map((file) => ({ field: 'images', file })))
+          : joshAdmin.call('PATCH', `/product/${p.product_inventory_id}`, fields));
+      }
       setRemoved([]);
       setFiles([]);
       onSaved(`บันทึกรูปของ ${p.product_inventory_sku} แล้ว`);

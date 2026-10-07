@@ -1,0 +1,38 @@
+# Status — Stage 5: data jobs read commerce copies (branch `feat/stage5-data-jobs`)
+
+Updated 2026-10-07. Not pushed.
+
+## Done
+- **Inventory + plan:** `docs/superpowers/plans/2026-10-08-stage5-data-jobs.md`.
+  - 26 replica readers, each classified: re-point to an existing copy (no josh change), needs a new josh
+    snapshot group, or retire / explain (copiers, cutover checkers, pages that belong to another stage).
+  - Every commerce-admin page that shows the replica 503 is mapped to its slice.
+  - The import / parity CLIs keep `JOSH_DATABASE_URL` on purpose (manual cutover tools; removed in stage 7).
+- **S5-1, bestsellers offload on copies:** `bestsellers-offload.job.ts`.
+  - New switch `BESTSELLERS_SOURCE`: `replica` (default, unchanged) · `shadow` (pushes the replica's list and logs a
+    ranking diff against the copies) · `copies` (`josh_orders` / `josh_order_lines`; works without the replica).
+  - Spec has 6 tests, all passing (`--runInBand`). `tsc --noEmit` on commerce-platform is clean.
+- `.env.example`: added `BESTSELLERS_SOURCE`, and updated the out-of-date list of what still reads `JOSH_DATABASE_URL`.
+
+## Not done / not verified
+- The copy SQL has not been run against a real DB yet; only unit tests with a mocked `query`.
+  First check: `BESTSELLERS_SOURCE=shadow` on staging or prod after the order backfill.
+- Full commerce suite not run (single spec only).
+- No josh changes yet. The first one is needed at S5-11.
+
+## Next (safe, commerce-only, in order)
+1. S5-2 `/reports/winback` page and MCP → commerce's existing `/winback/*` (whole page 503s today).
+2. S5-3 restaurants report → `josh_restaurant_places` + commerce `winback_account`.
+3. S5-4 products report → `josh_catalog_products` + owned `product_*` tables.
+4. S5-5 sales report → `josh_orders` / `josh_order_lines` (parity endpoint first).
+
+## Open questions for the owner (plan §4)
+KYC / credit data in commerce or josh-admin only? Traffic analytics: copy daily aggregates, or drop?
+Back-office views stay in josh-admin? One global `REPORTS_SOURCE`, or one switch per reader?
+
+## Cutover for S5-1 (ops)
+1. Prerequisite: order backfill is done (`docs/runbooks/prod-data-from-josh.md`, rows 0–1).
+2. Set `CRON_JOSH_BESTSELLERS_ENABLED=true` and `BESTSELLERS_SOURCE=shadow`.
+3. Watch the `bestsellers shadow (copies vs replica)` log for about a week. `firstDiffRank` should be null or ≥ 50
+   (josh shows at most 50).
+4. Set `BESTSELLERS_SOURCE=copies`. Rollback: set it back to `replica`.

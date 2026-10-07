@@ -11,8 +11,13 @@ import { OrderStockService } from '../../../../commerce/inventory/application/or
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
 export type ApplyResult = 'applied' | 'stale';
 
-/** josh group → commerce copy table (stage 2c; columns named as in josh). */
-const REFERENCE_TABLES = { company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff' } as const;
+/** josh group → commerce copy table (stage 2c; columns named as in josh). Stage 5 (S5-11): branch, jagota_sync. */
+const REFERENCE_TABLES = {
+  company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff',
+  branch: 'josh_branches', jagota_sync: 'jagota_order_sync_history',
+} as const;
+/** order.snapshot children (stage 5, S5-11) → copy table, replaced per order like the lines. */
+const ORDER_CHILDREN = { payments: 'josh_order_payments', shipments: 'josh_order_shipments', refunds: 'josh_order_refunds' } as const;
 
 /**
  * Applies josh → commerce events (spec 2026-10-06 §2.2–2.3). A snapshot wins only when its version
@@ -65,7 +70,13 @@ export class JoshEventsService {
   private applyReference(e: JoshEnvelope): Promise<ApplyResult> {
     const [group, kind] = e.type.split('.');
     const table = REFERENCE_TABLES[group as keyof typeof REFERENCE_TABLES];
-    if (table && kind === 'snapshot') return this.reference(table, e, (m) => this.saveReference(m, table, e));
+    if (table && kind === 'snapshot') {
+      return this.reference(table, e, async (m) => {
+        await this.saveReference(m, table, e);
+        // The ERP send history's freshness (system health "copied up to") is its last write, import or event.
+        if (group === 'jagota_sync') await m.query(`UPDATE jagota_order_sync_history SET imported_at = now() WHERE id = $1`, [e.aggregateId]);
+      });
+    }
     if (table && kind === 'deleted') {
       return this.reference(table, e, async (m) => {
         await m.query(`DELETE FROM ${table} WHERE id = $1`, [e.aggregateId]);
@@ -130,6 +141,15 @@ export class JoshEventsService {
     // Lines are replaced per order: josh can remove or split lines after checkout (claims, shipments).
     await m.getRepository(JoshOrderLineCopy).delete({ ordersId: e.aggregateId });
     if (items.length) await m.getRepository(JoshOrderLineCopy).insert(items.map(toLine));
+    for (const [key, table] of Object.entries(ORDER_CHILDREN)) {
+      const rows = e.data?.[key];
+      if (!Array.isArray(rows)) continue; // a snapshot from a josh before stage 5: keep what the copy has
+      await m.query(`DELETE FROM ${table} WHERE orders_id = $1`, [e.aggregateId]);
+      if (rows.length) {
+        await m.query(`INSERT INTO ${table} SELECT * FROM jsonb_populate_recordset(NULL::${table}, $1::jsonb)`,
+          [JSON.stringify(rows.map((r: Row) => ({ ...r, orders_id: e.aggregateId })))]);
+      }
+    }
     await this.orderStock?.apply(m, { orders_id: e.aggregateId, status: (head.status as string | null) ?? null },
       items.map((i) => ({ id: String(i.id), sku: (i.sku as string | null) ?? null, product_quantity: i.product_quantity as number })));
   }
@@ -147,6 +167,14 @@ export class JoshEventsService {
       categoryNameTh: d.category_name_th ?? null, categoryNameEn: d.category_name_en ?? null, imageUrl: d.image_url ?? null,
       translations: d.translations ?? [], joshUpdatedAt: new Date(d.updated_at), removedAt: null, syncedAt: new Date(),
       sourceVersion: e.version,
+      // Stage 5 (S5-11) report fields: only when josh sent them, so an older snapshot leaves them as they are.
+      ...('category_id' in d ? {
+        categoryId: d.category_id ?? null, categoryPath: d.category_path ?? null, originalPrice: d.original_price ?? null,
+        supCode: d.sup_code ?? null, productInventoryQuantity: d.product_inventory_quantity ?? null,
+        lowStockThreshold: d.low_stock_threshold ?? null, moq: d.moq ?? null, orderTakingFlag: d.order_taking_flag ?? null,
+        erpPendingSource: d.erp_pending_source ?? null, erpPendingAt: d.erp_pending_at ? new Date(d.erp_pending_at) : null,
+        imageCount: d.image_count ?? null,
+      } : {}),
     }], ['id']);
   }
 

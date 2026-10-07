@@ -117,7 +117,7 @@ checker at runtime · C = cutover CLI · W = ops wiring · K = keep (not stage 7
 - [x] This plan
 
 ### S7-1 — Guard: no new replica readers (safe now, this branch) — DONE
-- [x] `apps/commerce-platform/src/stage7-replica-readers.spec.ts`: every non-spec file that imports `JoshReplica` or reads
+- [x] `apps/commerce-platform/src/replica-readers.spec.ts`: every non-spec file that imports `JoshReplica` or reads
       `JOSH_DATABASE_URL` must be in an allowlist that carries its class (A/B/C/W) and its gate. A new file fails the
       test. Removed files pass, because the check is a subset check. The S5/G5 files that will arrive are listed in advance,
       so the merges don't break it.

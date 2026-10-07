@@ -61,3 +61,28 @@
 - [ ] Contract (`product.price.snapshot`, josh handler), env, runbook `docs/runbooks/stage4a-prices-cutover.md`.
 - [ ] Scratch DBs: import + parity; stage → approve → snapshot; josh apply on a scratch copy.
 - [ ] Full suites `--maxWorkers=2`; as built; drop scratch DBs; commit.
+
+## As built (2026-10-08)
+
+- **Scope as planned**, with `original_price` and `buying_price` left in josh: josh re-derives `original_price` from the
+  price it receives (`applyErpPendingPayloadToInventory`), so commerce does not copy josh's normalisation rule.
+- **josh direct ERP price / MOQ (flag on):** acknowledged and skipped (not staged) — the call is already forwarded as
+  `erp.fallback.received` and commerce's replay job stages it in commerce's queue. Draft products still take ERP prices live.
+- **CS price-request approve:** 403 when owned (josh's controller passes the whole status update; only APPROVED is refused).
+- **Bug fix (any flag):** `QuotationSpecialPriceService` now bumps the resolved-price cache after writing / revoking.
+- **commerce events:** `product.price.snapshot` aggregate = uuid from md5(`price:<sku>`) (the outbox is keyed by uuid,
+  prices by SKU); version = now. The ERP feed keeps publishing `product.price.changed` / `product.moq.changed` (josh's
+  subscription drops them at the switch).
+- **Admin:** the product form (relayed to josh) splits `selling_unit_price` out to commerce when owned; new page
+  "ราคาสินค้า" (queue + edit). Verified in a browser against a scratch DB: queue shows current → new, approve applies only
+  the changed fields (125 / MOQ 2, source erp) and writes `product.price.snapshot` to the outbox; fixed a double-toggle on
+  the row checkbox found there.
+- **MCP outage during the work (unrelated to 4a):** ngrok pointed at :3100 with nothing listening; a master build was
+  started from `.claude/worktrees/mcp-server` (preview `commerce-mcp-3100`, `MCP_PUBLIC_URL` set) and the dev DB migrated
+  to master.
+
+**Verification:** josh — erp / product / cs-admin / jagota-order specs (771) pass; a real snapshot on a copy of the dev
+DB: 396 → 397, `original_price` re-normalised to 397, MOQ 7, an older version refused. commerce — opt-in
+`product-prices.service.db.spec.ts` (stage merge, approve only changed fields + snapshot, reject, edit, 404, 409);
+import 5,889 SKUs from the local josh DB and `price-parity` → 5,889 same, 0 different, 0 missing.
+Full suites (`--maxWorkers=2`): commerce 1283 passed (24 opt-in skipped); josh 6731 passed, only the known `pii-leak.spec` fails (pre-existing). Scratch DBs dropped.

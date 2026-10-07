@@ -8,6 +8,7 @@ import { EVENT_BUS } from '../../../shared-kernel/interfaces/event-bus.interface
 import { SegmentDefinitionCompiler } from './segment-definition.compiler';
 import { Segment, SegmentMember } from './segment.entity';
 import { SegmentsService } from './segments.service';
+import { CustomerMetricsService } from '../customers/customer-metrics.service';
 
 /*
  * Stage 2a: commerce freezes segments from its copies and tells josh through the outbox. Opt-in, migrated scratch DB:
@@ -16,6 +17,7 @@ import { SegmentsService } from './segments.service';
  */
 const url = process.env.CUSTOMERS_TEST_DATABASE_URL;
 const C1 = '00000000-0000-4000-8000-0000000005c1', C2 = '00000000-0000-4000-8000-0000000005c2', C3 = '00000000-0000-4000-8000-0000000005c3';
+const O1 = '00000000-0000-4000-8000-0000000005d1', O2 = '00000000-0000-4000-8000-0000000005d2';
 
 (url ? describe : describe.skip)('SegmentsService against a database', () => {
   let db: DataSource;
@@ -27,6 +29,7 @@ const C1 = '00000000-0000-4000-8000-0000000005c1', C2 = '00000000-0000-4000-8000
     const ids = (await db.query(`SELECT id FROM segments WHERE slug = ANY($1)`, [slugs])).map((r: { id: string }) => r.id);
     await db.query(`DELETE FROM outbox_messages WHERE type LIKE 'segment.%' AND aggregate_id = ANY($1::uuid[])`, [ids]);
     await db.query(`DELETE FROM segments WHERE slug = ANY($1)`, [slugs]);
+    await db.query(`DELETE FROM josh_orders WHERE orders_id = ANY($1::uuid[])`, [[O1, O2]]);
     await db.query(`DELETE FROM customer_metrics WHERE user_id = ANY($1::uuid[])`, [[C1, C2, C3]]);
     await db.query(`DELETE FROM josh_customers WHERE id = ANY($1::uuid[])`, [[C1, C2, C3]]);
   };
@@ -46,7 +49,9 @@ const C1 = '00000000-0000-4000-8000-0000000005c1', C2 = '00000000-0000-4000-8000
     await customer(C1, 'HORECA', 'gold');
     await customer(C2, 'HORECA', 'silver');
     await customer(C3, 'RETAIL', 'silver');
-    await db.query(`INSERT INTO customer_metrics (user_id, lifetime_spend, lifetime_order_count) VALUES ($1, 5000, 3), ($2, 200, 1)`, [C1, C2]);
+    // Metrics the real way (orders → recompute), so a recompute run by another DB spec in parallel agrees with them.
+    await db.query(`INSERT INTO josh_orders (orders_id, status, user_id, total_price, create_date) VALUES ($1, 'delivered', $2, 5000, now()), ($3, 'paid', $4, 200, now())`, [O1, C1, O2, C2]);
+    await new CustomerMetricsService(db).recompute();
   });
   afterAll(async () => { await clean(); await db?.destroy(); delete process.env.COMMERCE_OWNS_SEGMENTS; });
 

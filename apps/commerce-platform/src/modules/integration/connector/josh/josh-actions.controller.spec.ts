@@ -96,6 +96,21 @@ describe('JoshActionsController — back-office actions', () => {
     } finally { delete process.env.COMMERCE_OWNS_PRODUCT_MASTER; }
   });
 
+  it('stage 4f: once commerce owns ordering, the logistics keys go to commerce (validated first), the rest to josh', async () => {
+    const ordering = { editLogistics: jest.fn(async () => ({})) };
+    const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : ordering) } as never);
+    process.env.COMMERCE_OWNS_ORDERING = 'true';
+    try {
+      await ctl.updateProduct(ID, { fields: { unit_ratio: '12', delivery_dates: 'monday', low_stock_threshold: 5 } }, req);
+      expect(ordering.editLogistics).toHaveBeenCalledWith('SKU-1', { unit_ratio: '12', delivery_dates: [{ day: 'MONDAY' }] }, 'staff-1');
+      expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { low_stock_threshold: 5 } }, expect.anything(), 'admin');
+      const calls = josh.run.mock.calls.length;
+      await expect(ctl.updateProduct(ID, { fields: { expected_restock_at: 'soon', low_stock_threshold: 6 } }, req)).rejects.toThrow('expected_restock_at');
+      expect(josh.run.mock.calls.length).toBe(calls); // nothing written anywhere on a bad value
+    } finally { delete process.env.COMMERCE_OWNS_ORDERING; }
+  });
+
   it('a product not in the catalog copy yet is pulled from josh once before its content / price is saved', async () => {
     const contents = { edit: jest.fn(async () => ({})) };
     const db = { query: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([{ sku: 'SKU-9' }]) };

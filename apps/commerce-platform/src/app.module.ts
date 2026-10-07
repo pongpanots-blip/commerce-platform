@@ -63,6 +63,7 @@ import { ProductCategoriesModule } from './modules/commerce/product-categories/p
 import { ProductMastersModule } from './modules/commerce/product-masters/product-masters.module';
 import { ProductPromotionRulesModule } from './modules/commerce/product-promotion-rules/product-promotion-rules.module';
 import { ProductImagesModule } from './modules/commerce/product-images/product-images.module';
+import { OrderingModule } from './modules/commerce/ordering/ordering.module';
 import { McpModule } from './mcp/mcp.module';
 
 @Module({
@@ -130,6 +131,7 @@ import { McpModule } from './mcp/mcp.module';
     ProductMastersModule,
     ProductImagesModule,
     ProductPromotionRulesModule,
+    OrderingModule,
     SegmentsModule,
     McpModule,
   ],

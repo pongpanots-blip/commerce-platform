@@ -6,9 +6,9 @@ describe('GET /api/ownership', () => {
   it('tells commerce-admin which josh features commerce owns now (only the literal "true")', () => {
     process.env.COMMERCE_OWNS_SEGMENTS = 'TRUE';
     process.env.COMMERCE_OWNS_SALES_REPS = 'false';
-    expect(new OwnershipController().get()).toEqual({ segments: false, salesReps: false, prices: false, productContent: false, categories: false, productMaster: false, productImages: false, promotions: false });
+    expect(new OwnershipController().get()).toEqual({ segments: false, salesReps: false, prices: false, productContent: false, categories: false, productMaster: false, productImages: false, promotions: false, ordering: false });
     process.env.COMMERCE_OWNS_SEGMENTS = 'true';
     process.env.COMMERCE_OWNS_SALES_REPS = 'true';
-    expect(new OwnershipController().get()).toEqual({ segments: true, salesReps: true, prices: false, productContent: false, categories: false, productMaster: false, productImages: false, promotions: false });
+    expect(new OwnershipController().get()).toEqual({ segments: true, salesReps: true, prices: false, productContent: false, categories: false, productMaster: false, productImages: false, promotions: false, ordering: false });
   });
 });

@@ -11,6 +11,7 @@
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- categories   (stage 4c; category tree + brands, replaced, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- masters   (stage 4d; ERP product master of live SKUs + its MER queue, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- images   (stage 4e; product galleries, before the switch)
+ *   JOSH_DATABASE_URL=… npm run import-from-josh -- ordering   (stage 4f; supplier order rounds + SKU logistics fields, before the switch)
  *   JOSH_DATABASE_URL=… npm run import-from-josh -- all
  *
  * - Reads josh with SELECTs only (use a read-only user / the replica).
@@ -38,8 +39,10 @@ import { JOSH_CONTENT_SQL } from '../modules/commerce/product-contents/content-f
 import { CATEGORY_COLUMNS } from '../modules/commerce/product-categories/category-rules';
 import { JOSH_MASTER_SQL, MASTER_KEYS } from '../modules/commerce/product-masters/master-fields';
 import { JOSH_IMAGES_SQL } from '../modules/commerce/product-images/josh-images.sql';
+import { JOSH_ORDER_PERIODS_SQL } from '../modules/commerce/ordering/order-periods';
+import { JOSH_LOGISTICS_SQL, logisticsFromJosh } from '../modules/commerce/ordering/logistics-fields';
 
-type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history' | 'prices' | 'contents' | 'categories' | 'masters' | 'images';
+type Scope = 'research' | 'scraping' | 'competitor' | 'segments' | 'sales-reps' | 'erp-sales-history' | 'prices' | 'contents' | 'categories' | 'masters' | 'images' | 'ordering';
 /**
  * userColumns → commerce staff id (by email) · emailColumns → the josh user's email · key: upsert key, comma-separated
  * for a composite one (default id) · target: commerce table when it differs · customerColumn: keep only rows whose
@@ -77,6 +80,7 @@ const PLANS: Record<Scope, Plan[]> = {
   masters: [],
   // Stage 4e: galleries built by JOSH_IMAGES_SQL in importImages.
   images: [],
+  ordering: [],
 };
 
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`;
@@ -248,6 +252,40 @@ async function importImages(josh: DataSource, commerce: DataSource) {
   console.log(`product_media (images) → product_images: ${total} SKUs`);
 }
 
+/**
+ * Stage 4f: josh's supplier order rounds → supplier_order_periods (replaced: josh's table is the truth until the switch),
+ * and every product's logistics columns → product_logistics (paged by SKU, normalised like a staff edit).
+ */
+async function importOrdering(josh: DataSource, commerce: DataSource) {
+  const periods: Array<Record<string, unknown>> = await josh.query(JOSH_ORDER_PERIODS_SQL);
+  const rows = periods.map((r) => ({ ...r, close_at: r.close_at == null ? null : new Date(r.close_at as string).toISOString() }));
+  await commerce.transaction(async (m) => {
+    await m.query(`DELETE FROM supplier_order_periods`);
+    if (rows.length) {
+      await m.query(
+        `INSERT INTO supplier_order_periods (sup_code, erp_order_period, date_from, date_to, close_at, status, synced_at)
+         SELECT r.sup_code, r.erp_order_period, r.date_from::date, r.date_to::date, r.close_at::timestamptz, r.status, now()
+           FROM jsonb_to_recordset($1::jsonb) AS r(sup_code text, erp_order_period text, date_from text, date_to text, close_at text, status text)`,
+        [JSON.stringify(rows)]);
+    }
+  });
+  let last = '';
+  let total = 0;
+  for (;;) {
+    const page: Array<Record<string, unknown> & { sku: string }> = await josh.query(
+      `${JOSH_LOGISTICS_SQL} WHERE product_inventory_sku > $1 ORDER BY product_inventory_sku LIMIT 1000`, [last]);
+    if (!page.length) break;
+    await commerce.query(
+      `INSERT INTO product_logistics (product_inventory_sku, fields, source, updated_by, updated_at)
+       SELECT r.sku, r.fields, 'import', NULL, now() FROM jsonb_to_recordset($1::jsonb) AS r(sku varchar, fields jsonb)
+       ON CONFLICT (product_inventory_sku) DO UPDATE SET fields = EXCLUDED.fields, source = 'import', updated_by = NULL, updated_at = now()`,
+      [JSON.stringify(page.map((r) => ({ sku: r.sku, fields: logisticsFromJosh(r) })))]);
+    total += page.length;
+    last = page[page.length - 1].sku;
+  }
+  console.log(`supplier_order_period → supplier_order_periods: ${rows.length} rounds · product_inventory → product_logistics: ${total} SKUs`);
+}
+
 const PAGE = 5000;
 
 /** Big tables: pages of PAGE rows by plan.pageBy, one multi-row upsert each, so memory stays flat. */
@@ -275,15 +313,15 @@ async function copyPaged(josh: DataSource, commerce: DataSource, plan: Plan, int
 async function main() {
   const scope = process.argv[2] as Scope | 'all' | undefined;
   const url = process.env.JOSH_DATABASE_URL;
-  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'masters', 'images', 'all'].includes(scope)) {
-    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|masters|images|all>');
+  if (!url || !scope || !['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'masters', 'images', 'ordering', 'all'].includes(scope)) {
+    console.error('usage: JOSH_DATABASE_URL=… import-from-josh <research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|masters|images|ordering|all>');
     process.exit(1);
   }
   const josh = await new DataSource({ type: 'postgres', url, entities: [] }).initialize();
   const commerce = await AppDataSource.initialize();
   try {
     const users = await userMaps(josh, commerce);
-    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'masters', 'images'] as const) : [scope];
+    const scopes = scope === 'all' ? (['research', 'scraping', 'competitor', 'segments', 'sales-reps', 'erp-sales-history', 'prices', 'contents', 'categories', 'masters', 'images', 'ordering'] as const) : [scope];
     for (const s of scopes) {
       if (s === 'competitor') {
         const replica = new JoshReplica();
@@ -296,6 +334,7 @@ async function main() {
       if (s === 'categories') await importCategories(josh, commerce);
       if (s === 'masters') await importMasters(josh, commerce);
       if (s === 'images') await importImages(josh, commerce);
+      if (s === 'ordering') await importOrdering(josh, commerce);
     }
   } finally {
     await josh.destroy();

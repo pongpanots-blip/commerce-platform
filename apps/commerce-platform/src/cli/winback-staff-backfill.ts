@@ -17,8 +17,32 @@ export function assertBackfillOwnership(): void {
   }
 }
 
-/** DataSource/runner is supplied by the caller; importing this module never connects to a DB. */
-export async function runStaffBackfill(db: DataSource, apply = false) {
+/** The reviewed plan an --apply must match exactly: new links and the sum of rowsChanged (ambiguous must be 0). */
+export interface BackfillExpectation { links: number; rows: number }
+export class BackfillPlanMismatch extends Error {
+  constructor(readonly actual: { links: number; rows: number; ambiguous: number }, readonly expected: BackfillExpectation) {
+    super(`Planned links=${actual.links} rows=${actual.rows} ambiguous=${actual.ambiguous} do not match the reviewed links=${expected.links} rows=${expected.rows} ambiguous=0; rolled back`);
+  }
+}
+const EXPECT_ARG = /^--expect-(links|rows)=(\d+)$/;
+/** --expect-links=N and --expect-rows=M: both required with --apply, not allowed without it. */
+export function parseBackfillArgs(args: string[]): { apply: boolean; json: boolean; expect?: BackfillExpectation } {
+  const usage = 'Usage: winback-staff-backfill [--json] [--apply --expect-links=N --expect-rows=M]';
+  const expect: Partial<BackfillExpectation> = {};
+  for (const arg of args) {
+    const m = EXPECT_ARG.exec(arg);
+    if (m) { if (expect[m[1] as keyof BackfillExpectation] !== undefined) throw new Error(usage); expect[m[1] as keyof BackfillExpectation] = Number(m[2]); }
+    else if (!['--apply', '--json'].includes(arg)) throw new Error(usage);
+  }
+  const apply = args.includes('--apply');
+  const hasExpect = expect.links !== undefined || expect.rows !== undefined;
+  if (apply !== hasExpect || (apply && (expect.links === undefined || expect.rows === undefined))) throw new Error(usage);
+  return { apply, json: args.includes('--json'), expect: apply ? expect as BackfillExpectation : undefined };
+}
+
+/** DataSource/runner is supplied by the caller; importing this module never connects to a DB.
+ *  With `expect`, an apply refuses inside the locked transaction (before any write, never committed) unless the plan is exactly that. */
+export async function runStaffBackfill(db: DataSource, apply = false, expect?: BackfillExpectation) {
   if (apply) assertBackfillOwnership();
   const runner: QueryRunner = db.createQueryRunner();
   await runner.connect();
@@ -48,6 +72,11 @@ export async function runStaffBackfill(db: DataSource, apply = false) {
     }
     const rewrites = planStaffRewrites(snapshot, links);
     const rowsChanged = Object.fromEntries(Object.keys(STAFF_COLUMNS).map(table => [table, rewrites.filter(row => row.table === table).length]));
+    if (apply && expect) {
+      const actual = { links: newLinks.length, rows: Object.values(rowsChanged).reduce((sum, n) => sum + n, 0), ambiguous: classification.ambiguous.length };
+      // Still inside the locked transaction: throwing here reaches rollbackTransaction below, nothing is written or committed.
+      if (actual.links !== expect.links || actual.rows !== expect.rows || actual.ambiguous !== 0) throw new BackfillPlanMismatch(actual, expect);
+    }
     if (apply) {
       for (const link of newLinks) {
         await runner.query(`INSERT INTO winback_staff_links (josh_user_id, commerce_user_id)
@@ -77,19 +106,18 @@ export async function runStaffBackfill(db: DataSource, apply = false) {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.some(arg => !['--apply', '--json'].includes(arg))) throw new Error('Usage: winback-staff-backfill [--apply] [--json]');
+  const { apply, json, expect } = parseBackfillArgs(process.argv.slice(2));
   const { AppDataSource } = await import('../data-source');
-  const apply = args.includes('--apply');
   if (apply) assertBackfillOwnership(); // Before opening a connection.
   await AppDataSource.initialize();
   try {
-    const report = await runStaffBackfill(AppDataSource, apply);
-    console.log(JSON.stringify(report, null, args.includes('--json') ? undefined : 2));
+    const report = await runStaffBackfill(AppDataSource, apply, expect);
+    console.log(JSON.stringify(report, null, json ? undefined : 2));
   } finally { await AppDataSource.destroy(); }
 }
-if (require.main === module) main().catch(() => {
-  // Query errors can contain raw emails/connection credentials. Never print driver errors.
+if (require.main === module) main().catch((error) => {
+  // Query errors can contain raw emails/connection credentials. Never print driver errors; our own usage/plan errors carry counts only.
+  if (error instanceof BackfillPlanMismatch || /^Usage: /.test(String(error?.message))) console.error(error.message);
   console.error('Backfill refused or failed. --apply requires WINBACK_OWNER=commerce and COMMERCE_OWNS_SALES_REPS=true; inspect masked plans and resolve identity/record conflicts before retrying.');
   process.exitCode = 1;
 });

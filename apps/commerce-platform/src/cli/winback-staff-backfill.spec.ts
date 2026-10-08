@@ -1,5 +1,5 @@
 import { backfillCandidates, classifyStaff, maskEmail, planStaffAccounts, planStaffRewrites, STAFF_COLUMNS, StaffRow, StaffSnapshot } from './winback-staff-plan.helpers';
-import { assertBackfillOwnership, runStaffBackfill } from './winback-staff-backfill';
+import { assertBackfillOwnership, BackfillPlanMismatch, parseBackfillArgs, runStaffBackfill } from './winback-staff-backfill';
 import { runStaffAccountsPlan } from './winback-staff-accounts-plan';
 
 const J = '11111111-1111-4111-8111-111111111111', C = '22222222-2222-4222-8222-222222222222';
@@ -103,14 +103,14 @@ it.each([
   expect(db.createQueryRunner).not.toHaveBeenCalled();
 });
 
-function memoryDb() {
+function memoryDb(joshStaff: StaffRow[] = [rep()]) {
   const stored: StaffSnapshot = { winback_app_record: [{ id: 'a', kind: 'quote', sales_user_id: J, payload: { events: [{ actor_id: J }] } }] };
   const savedLinks: typeof links = [];
   const runner = {
     connect: jest.fn(), startTransaction: jest.fn(), commitTransaction: jest.fn(), rollbackTransaction: jest.fn(), release: jest.fn(), isTransactionActive: true,
     manager: { getRepository: jest.fn(() => ({})) },
     query: jest.fn(async (sql: string, params: unknown[] = []) => {
-      if (sql.startsWith('SELECT id, email') && sql.includes('FROM josh_staff')) return [rep()];
+      if (sql.startsWith('SELECT id, email') && sql.includes('FROM josh_staff')) return joshStaff;
       if (sql.startsWith('SELECT id, email') && sql.includes('FROM users')) return [rep(C, 'rep@example.test')];
       if (sql.includes('SELECT josh_user_id')) return savedLinks;
       if (sql.startsWith('SELECT id,')) {
@@ -151,6 +151,59 @@ it('apply links and rewrites in one transaction, and a second run writes zero ro
   expect(second.counts.links).toBe(0);
   expect(second.rewrites).toEqual([]);
   expect(runner.query.mock.calls.some(([sql]) => /^(INSERT|UPDATE)/.test(sql))).toBe(false);
+});
+
+describe('apply pinned to the reviewed plan (--expect-links / --expect-rows)', () => {
+  beforeEach(() => { process.env.WINBACK_OWNER = 'commerce'; process.env.COMMERCE_OWNS_SALES_REPS = 'true'; });
+  const writes = (runner: ReturnType<typeof memoryDb>['runner']) => runner.query.mock.calls.filter(([sql]) => /^(INSERT|UPDATE|DELETE)/.test(sql));
+
+  it.each([
+    [{ links: 2, rows: 37 }], [{ links: 1, rows: 37 }], [{ links: 2, rows: 1 }], [{ links: 0, rows: 0 }],
+  ])('a plan of 1 link / 1 row against %j throws inside the locked transaction: no write, rolled back, never committed', async (want) => {
+    const { db, runner, savedLinks, stored } = memoryDb();
+    const error = await runStaffBackfill(db as never, true, want).catch(e => e);
+    expect(error).toBeInstanceOf(BackfillPlanMismatch);
+    expect(error.message).toContain('links=1 rows=1 ambiguous=0');
+    expect(error.message).not.toContain('@');
+    const sqls = runner.query.mock.calls.map(([sql]) => sql as string);
+    expect(sqls[0]).toMatch(/^LOCK TABLE users, josh_staff, winback_staff_links/); // the check runs under the apply lock
+    expect(writes(runner)).toEqual([]);
+    expect(runner.rollbackTransaction).toHaveBeenCalledTimes(1);
+    expect(runner.commitTransaction).not.toHaveBeenCalled();
+    expect(runner.release).toHaveBeenCalledTimes(1);
+    expect(savedLinks).toEqual([]);
+    expect(stored.winback_app_record![0].sales_user_id).toBe(J);
+  });
+  it('an ambiguous identity refuses even when links/rows match', async () => {
+    const { db, runner } = memoryDb([rep(), rep('dup1', 'dup@example.test'), rep('dup2', ' DUP@example.test ')]);
+    await expect(runStaffBackfill(db as never, true, { links: 1, rows: 1 })).rejects.toThrow('ambiguous=1');
+    expect(writes(runner)).toEqual([]);
+    expect(runner.commitTransaction).not.toHaveBeenCalled();
+    expect(runner.rollbackTransaction).toHaveBeenCalledTimes(1);
+  });
+  it('an exact match writes and commits once', async () => {
+    const { db, runner, savedLinks } = memoryDb();
+    const report = await runStaffBackfill(db as never, true, { links: 1, rows: 1 });
+    expect(report.counts.links).toBe(1);
+    expect(savedLinks).toEqual(links);
+    expect(runner.commitTransaction).toHaveBeenCalledTimes(1);
+    expect(runner.rollbackTransaction).not.toHaveBeenCalled();
+  });
+  it('a dry run never writes', async () => {
+    const { db, runner } = memoryDb();
+    await runStaffBackfill(db as never, false);
+    expect(writes(runner)).toEqual([]);
+  });
+  it.each([
+    [[], { apply: false, json: false, expect: undefined }],
+    [['--json'], { apply: false, json: true, expect: undefined }],
+    [['--json', '--apply', '--expect-links=2', '--expect-rows=37'], { apply: true, json: true, expect: { links: 2, rows: 37 } }],
+  ])('parses %j', (args, parsed) => expect(parseBackfillArgs(args)).toEqual(parsed));
+  it.each([
+    [['--apply']], [['--apply', '--expect-links=2']], [['--apply', '--expect-rows=37']], [['--expect-links=2', '--expect-rows=37']],
+    [['--apply', '--expect-links=2', '--expect-rows=37', '--expect-rows=1']], [['--apply', '--expect-links=-1', '--expect-rows=37']],
+    [['--apply', '--expect-links=2', '--expect-rows=3.7']], [['--force']],
+  ])('rejects %j (an --apply must carry both expectations)', (args) => expect(() => parseBackfillArgs(args)).toThrow('Usage:'));
 });
 
 it('A3 proposes masked sales/manager accounts, reuses ids, reports taken ids and skips matched/ambiguous/disabled reps', () => {

@@ -119,15 +119,20 @@ jobs:
             const { AppDataSource } = require("./src/data-source");
             (async () => {
               const db = await AppDataSource.initialize();
+              const e = process.env;
+              console.log("env:", JSON.stringify(Object.fromEntries(["CRON_COMPETITOR_PRICES_REFRESH_ENABLED", "CRON_MARKETING_RESEARCH_ENABLED", "RESEARCH_FREE_WORKER_ENABLED", "SCRAPING_CRON_DISABLED", "JOSH_DATABASE_URL"].map((k) => [k, k === "JOSH_DATABASE_URL" ? Boolean(e[k]) : (e[k] ?? null)]))));
+              const c = require("./src/config/cron.config").loadCronConfig(e);
+              console.log("cron:", JSON.stringify({ competitorPricesRefresh: c.competitorPricesRefresh, marketingResearch: c.marketingResearch }));
               const q = async (label, sql) => { try { console.log(label, JSON.stringify(await db.query(sql))); } catch (e) { console.log(label, "ERR", e.message); } };
               await q("automation_setting:", "SELECT value, updated_at FROM settings WHERE scope = $$marketing$$ AND key = $$competitor_scraping$$");
               await q("scraping_sources:", "SELECT to_jsonb(s) - $$config$$ - $$progress$$ AS s FROM scraping_sources s");
               await q("scraped_items_recent:", "SELECT count(*)::int AS n FROM (SELECT to_jsonb(i) j FROM scraped_items i) t WHERE COALESCE(j->>$$updated_at$$, j->>$$updatedAt$$)::timestamptz > now() - interval $$90 minutes$$");
+              await q("competitor_prices:", "SELECT j->>$$id$$ AS id, COALESCE(j->>$$auto_refresh$$, j->>$$autoRefresh$$) AS auto_refresh, COALESCE(j->>$$collection_allowed$$, j->>$$collectionAllowed$$) AS collection_allowed, COALESCE(j->>$$vat_included$$, j->>$$vatIncluded$$) AS vat_included, (j->>$$verified_fingerprint$$) IS NOT NULL AS verified, left(COALESCE(j->>$$last_error$$, j->>$$lastError$$, $$$$), 120) AS last_error, COALESCE(j->>$$updated_at$$, j->>$$updatedAt$$) AS updated_at FROM (SELECT to_jsonb(p) j FROM competitor_prices p) t");
               await q("research_runs_by_status:", "SELECT j->>$$status$$ AS status, count(*)::int AS n, max(COALESCE(j->>$$updated_at$$, j->>$$updatedAt$$)) AS last_update FROM (SELECT to_jsonb(r) j FROM marketing_research_runs r) t GROUP BY 1");
               await db.destroy();
             })().catch((e) => { console.error(e.message); process.exit(1); });'
-          echo "platform log lines (last 90m) mentioning scrap/research:"
-          docker logs --since 90m ${{ steps.c.outputs.id }} 2>&1 | grep -iE "scrap|research" | grep -viE "password|secret|token|postgres://" | tail -25 | cut -c1-300 || true
+          echo "platform log lines (last 90m) mentioning scrap/research/competitor/cron/error:"
+          docker logs --since 90m ${{ steps.c.outputs.id }} 2>&1 | grep -iE "scrap|research|competitor|cron|error" | grep -viE "password|secret|token|postgres://" | tail -25 | cut -c1-300 || true
 
       - name: Remove env file
         if: always()

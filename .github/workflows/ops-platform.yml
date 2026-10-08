@@ -99,7 +99,7 @@ jobs:
           mv platform-flags.env.new platform-flags.env
           docker compose -f docker-compose.prod.yml up -d --no-deps platform
           for i in $(seq 1 60); do
-            if curl -fsS -o /dev/null http://127.0.0.1:3100/api/health; then echo "platform healthy after ${i}x2s"; break; fi
+            if curl -fsS -o /dev/null http://127.0.0.1:3100/health || curl -fsS -o /dev/null http://127.0.0.1:3100/api/health; then echo "platform healthy after ${i}x2s"; break; fi
             sleep 2; [ "$i" = 60 ] && { echo "::error::platform not healthy"; docker compose -f docker-compose.prod.yml logs --tail 50 platform | grep -viE 'password|secret|token'; exit 1; }
           done
 

@@ -9,6 +9,10 @@ services:
   platform:
     image: ${ECR_REGISTRY}/commerce-platform:${PLATFORM_TAG:-latest}
     restart: unless-stopped
+    # Cutover flags (COMMERCE_OWNS_*, CRON_*, *_SOURCE …): written from repo variable PLATFORM_FLAGS by deploy-ecr.yml /
+    # ops-platform.yml. Keys listed under `environment:` below win over this file.
+    env_file:
+      - ./platform-flags.env
     ports:
       - '3100:3100'
     # Resolve joshapp.io to josh private IP so JOSH_API_URL=https://joshapp.io/api

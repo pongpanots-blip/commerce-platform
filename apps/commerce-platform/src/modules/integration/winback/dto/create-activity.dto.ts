@@ -43,6 +43,8 @@ export class CheckoutDto {
   @IsArray() @ArrayMinSize(1) @IsIn(WINBACK_ACTIVITY_TYPES, { each: true }) types: string[];
   @IsOptional() @IsArray() @IsString({ each: true }) photo_urls?: string[];
   @IsOptional() @IsString() @MaxLength(2000) note?: string;
+  /** Stage to move the lead to with this checkout (recorded on the visit + stage history, like `/complete`). */
+  @IsOptional() @IsIn(WINBACK_STAGES) stage_after?: string;
 }
 
 export class CompleteActivityDto {

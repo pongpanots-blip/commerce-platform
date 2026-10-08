@@ -61,15 +61,16 @@ import { isWinbackManager } from './winback-roles';
 import { WinbackResponseInterceptor } from './winback-response.interceptor';
 import { UploadMultipleFields } from './shared/ile-upload.interceptor';
 import { UploadService } from './shared/upload.service';
+import { AppRecordsService } from './app-records.service';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
 
-interface RequestWithUser {
+export interface RequestWithUser {
   user?: { sub?: string; email?: string; role?: string };
   headers?: { authorization?: string };
 }
 
-interface JwtClaims {
+export interface JwtClaims {
   sub: string;
   email: string;
   role: string;
@@ -80,7 +81,7 @@ interface JwtClaims {
  * (prod) AdminWriteGuard has verified the token and set `req.user`, and this
  * never runs; identity must not come from an unverified header there.
  */
-function claimsFromBearer(req: RequestWithUser): JwtClaims {
+export function claimsFromBearer(req: RequestWithUser): JwtClaims {
   if (isSecurityStrictMode()) return { sub: '', email: '', role: '' };
   const token = readBearerToken(req?.headers?.authorization);
   if (!token) return { sub: '', email: '', role: '' };
@@ -118,6 +119,7 @@ export class WinbackController {
     private readonly contactsService: ContactService,
     private readonly meetingPrep: MeetingPrepService,
     private readonly uploads: UploadService,
+    private readonly appRecords: AppRecordsService,
   ) {}
 
   private salesId(req: RequestWithUser): string {
@@ -331,10 +333,19 @@ export class WinbackController {
     return this.winback.getAccount(id);
   }
 
-  /** สั่ง sync ข้อมูล winback จาก Josh ย้อนหลัง N วัน */
+  /** สั่ง sync ข้อมูล winback จาก Josh ย้อนหลัง N วัน — แต่ละรอบถูกบันทึกไว้ (`GET /sync/runs`), `runId` = รอบนี้ */
   @Post('sync')
-  runSync(@Body(pipe) dto: SyncDto) {
-    return this.sync.syncFromJosh(dto.days);
+  async runSync(@Req() req: RequestWithUser, @Body(pipe) dto: SyncDto) {
+    const c = this.claims(req);
+    const startedAt = new Date();
+    const result = await this.sync.syncFromJosh(dto.days);
+    const run = await this.appRecords.recordSyncRun(
+      { id: c.sub, isManager: isWinbackManager(c.role) },
+      dto.days,
+      result as unknown as Record<string, unknown>,
+      startedAt,
+    );
+    return { ...result, run_id: run.id };
   }
 
   /** พรีวิวไฟล์ CSV ที่อัปโหลดก่อน commit นำเข้า lead */

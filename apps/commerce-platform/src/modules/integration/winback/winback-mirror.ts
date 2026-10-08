@@ -6,8 +6,10 @@ import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bu
 import { JoshReplica } from '../../integration/connector/josh/josh-replica';
 import { winbackOwnedByCommerce } from './shared/winback.config';
 
-/** The six winback tables, parents first (deletes run in reverse). */
-export const WINBACK_TABLES = ['winback_account', 'winback_contact', 'winback_activity', 'winback_stage_history', 'winback_sales_target', 'winback_meeting_ack'] as const;
+/** The six winback tables, parents first (deletes run in reverse), then the app records (winback_app_record). */
+export const WINBACK_TABLES = ['winback_account', 'winback_contact', 'winback_activity', 'winback_stage_history', 'winback_sales_target', 'winback_meeting_ack', 'winback_app_record'] as const;
+/** Added after the switch was built: skipped (not an error) while either side has not migrated it yet. */
+export const WINBACK_OPTIONAL_TABLES: ReadonlySet<string> = new Set(['winback_app_record']);
 export type WinbackTable = (typeof WINBACK_TABLES)[number];
 
 const CHUNK = 500;
@@ -68,6 +70,7 @@ export class WinbackMirror {
     const out: { table: WinbackTable; changed: number; deleted: number }[] = [];
     for (const table of WINBACK_TABLES) {
       const columns = await this.sharedColumns(table);
+      if (!columns.length) continue;
       const [here, there] = await Promise.all([
         this.utc(this.db, (m) => this.hashes(m, table, columns)),
         this.replica.run((ds) => this.utc(ds, (m) => this.hashes(m, table, columns))),
@@ -126,6 +129,7 @@ export class WinbackMirror {
     const [mine, josh] = await Promise.all([this.db.query(sql, [table]), this.replica.query<{ column_name: string }>(sql, [table])]);
     const theirs = new Set(josh.map((r: { column_name: string }) => r.column_name));
     const cols = (mine as { column_name: string }[]).map((r) => r.column_name).filter((c) => theirs.has(c));
+    if (!cols.includes('id') && WINBACK_OPTIONAL_TABLES.has(table)) return [];
     if (!cols.includes('id')) throw new Error(`${table}: no shared id column (is the commerce migration run?)`);
     return cols;
   }

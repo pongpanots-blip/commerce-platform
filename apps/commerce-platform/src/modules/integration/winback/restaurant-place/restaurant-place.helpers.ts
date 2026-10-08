@@ -8,6 +8,7 @@ import {
 } from './dto/restaurant-place-list-response.dto';
 import { RestaurantPlaceDetailDto } from './dto/restaurant-place-detail-response.dto';
 import { RestaurantPlaceFiltersDto } from './dto/restaurant-place-filters.dto';
+import { provinceForDistrict } from '../winback-geography';
 
 /**
  * A place "matches a busy window" when at least one hour of today's
@@ -132,12 +133,15 @@ export function toListItem(
 ): RestaurantPlaceListItemDto {
   const today = opts?.today ?? dayKeyForDate(new Date());
   const link = opts?.winbackLink ?? null;
+  const province = provinceForDistrict(row.district);
   return {
     id: row.id,
     name: row.name_th ?? row.name_en ?? '',
     nameTh: row.name_th,
     nameEn: row.name_en,
     district: row.district,
+    provinceCode: province?.code ?? null,
+    provinceName: province?.name_th ?? null,
     category: row.raw_category,
     lat: toNumberOrNull(row.lat) ?? 0,
     lng: toNumberOrNull(row.lng) ?? 0,

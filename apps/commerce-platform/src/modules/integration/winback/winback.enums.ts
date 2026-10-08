@@ -121,3 +121,133 @@ export const WINBACK_BUSINESS_SIZES = Object.values(WinbackBusinessSize);
 export const WINBACK_CONTACT_TEAMS = Object.values(WinbackContactTeam);
 export const WINBACK_REJECT_REASONS = Object.values(WinbackRejectReason);
 export const WINBACK_MEETING_SIGNALS = Object.values(WinbackMeetingSignal);
+
+// --- App gap endpoints (saleactivity screens that had no API) ---
+
+/** What `winback_app_record.kind` holds. One generic table: app-owned records, no new business tables. */
+export enum WinbackAppRecordKind {
+  SIGNAL_ACTION = 'signal_action',
+  ACTIVITY_DRAFT = 'activity_draft',
+  COACHING_TASK = 'coaching_task',
+  TEAM = 'team',
+  WORK_PLAN = 'work_plan',
+  SAVED_PLACE = 'saved_place',
+  DISCOVERY_QUERY = 'discovery_query',
+  APPOINTMENT_PLAN = 'appointment_plan',
+  VISIT_COMPLETION = 'visit_completion',
+  VISIT_START_EVIDENCE = 'visit_start_evidence',
+  JOINT_VISIT = 'joint_visit',
+  SYNC_RUN = 'sync_run',
+  QUOTE = 'quote',
+  QUOTE_DISPATCH = 'quote_dispatch',
+  QUOTE_TERMS_CATALOG = 'quote_terms_catalog',
+  DAILY_REPORT = 'daily_report',
+}
+
+/** Revenue-signal kinds. Only `reactivate` / `prevent` are computed today (from the reorder baseline). */
+export enum WinbackSignalType {
+  REACTIVATE = 'reactivate',
+  PREVENT = 'prevent',
+  GROW = 'grow',
+  DISCOVER = 'discover',
+}
+
+export enum WinbackSignalStatus {
+  OPEN = 'open',
+  COMPLETED = 'completed',
+  DISMISSED = 'dismissed',
+}
+
+/** Opportunity list tabs. */
+export enum WinbackOpportunityTab {
+  RECOMMENDED = 'recommended',
+  NEAR_WAREHOUSE = 'near_warehouse',
+  NEEDS_ENRICH = 'needs_enrich',
+}
+
+export enum WinbackOpportunitySegment {
+  PREMIUM_CASUAL = 'premium_casual',
+  FINE_DINING = 'fine_dining',
+  HOTEL = 'hotel',
+  STEAKHOUSE = 'steakhouse',
+  FRENCH = 'french',
+  ITALIAN = 'italian',
+  JAPANESE_PREMIUM = 'japanese_premium',
+  BAKERY_CAFE = 'bakery_cafe',
+}
+
+/** Work plan: preparation steps and the next action (also used by visit completion / drafts). */
+export enum WinbackWorkPlanStep {
+  CONTACT = 'contact',
+  OBJECTIVE = 'objective',
+  MATERIALS = 'materials',
+  FOLLOW_UP = 'follow_up',
+}
+
+export enum WinbackNextAction {
+  PREPARE_VISIT = 'prepare_visit',
+  FOLLOW_UP = 'follow_up',
+  NEW_APPOINTMENT = 'new_appointment',
+  QUOTE_REVIEW = 'quote_review',
+  REVIEW_HISTORY = 'review_history',
+}
+
+export enum WinbackProductReaction {
+  INTERESTED = 'interested',
+  SAMPLED = 'sampled',
+  CONSIDERING = 'considering',
+  NOT_INTERESTED = 'not_interested',
+}
+
+export enum WinbackAppointmentPlace {
+  STOREFRONT = 'storefront',
+  JOSH_OFFICE = 'josh_office',
+  ONLINE = 'online',
+  OTHER = 'other',
+}
+
+export enum WinbackAppointmentPurpose {
+  PRODUCT_INTRO = 'product_intro',
+  QUOTE = 'quote',
+  CONTRACT = 'contract',
+  FOLLOW_UP = 'follow_up',
+  CLOSE = 'close',
+  OTHER = 'other',
+}
+
+/** `expired` is never stored: it is read off `valid_until`. */
+export enum WinbackQuoteStatus {
+  DRAFT = 'draft',
+  IN_REVIEW = 'in_review',
+  FOLLOW_UP = 'follow_up',
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+  EXPIRED = 'expired',
+}
+
+/** Record-only: a dispatch is the rep's statement that they sent the quote. Nothing is sent from here. */
+export enum WinbackQuoteDispatchChannel {
+  EMAIL = 'email',
+  LINE = 'line',
+}
+
+export enum WinbackDailyReportStatus {
+  DRAFT = 'draft',
+  SUBMITTED = 'submitted',
+  APPROVED = 'approved',
+  NEEDS_REVISION = 'needs_revision',
+}
+
+export const WINBACK_APP_RECORD_KINDS = Object.values(WinbackAppRecordKind);
+export const WINBACK_SIGNAL_TYPES = Object.values(WinbackSignalType);
+export const WINBACK_SIGNAL_STATUSES = Object.values(WinbackSignalStatus);
+export const WINBACK_OPPORTUNITY_TABS = Object.values(WinbackOpportunityTab);
+export const WINBACK_OPPORTUNITY_SEGMENTS = Object.values(WinbackOpportunitySegment);
+export const WINBACK_WORK_PLAN_STEPS = Object.values(WinbackWorkPlanStep);
+export const WINBACK_NEXT_ACTIONS = Object.values(WinbackNextAction);
+export const WINBACK_PRODUCT_REACTIONS = Object.values(WinbackProductReaction);
+export const WINBACK_APPOINTMENT_PLACES = Object.values(WinbackAppointmentPlace);
+export const WINBACK_APPOINTMENT_PURPOSES = Object.values(WinbackAppointmentPurpose);
+export const WINBACK_QUOTE_STATUSES = Object.values(WinbackQuoteStatus);
+export const WINBACK_QUOTE_DISPATCH_CHANNELS = Object.values(WinbackQuoteDispatchChannel);
+export const WINBACK_DAILY_REPORT_STATUSES = Object.values(WinbackDailyReportStatus);

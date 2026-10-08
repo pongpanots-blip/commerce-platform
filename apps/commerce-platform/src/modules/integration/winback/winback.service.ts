@@ -116,15 +116,19 @@ export class WinbackService {
     // Win-back sales are internal staff, not the data subject or their
     // company owner — always masked here; full values go through the
     // audited POST /api/pii/reveal endpoint.
-    const placeById = await this.loadRestaurantPlaceMap(
-      data.map((a) => a.restaurant_place_id).filter(Boolean) as string[],
-    );
+    const [placeById, photoById] = await Promise.all([
+      this.loadRestaurantPlaceMap(
+        data.map((a) => a.restaurant_place_id).filter(Boolean) as string[],
+      ),
+      this.loadLatestPhotoMap(data.map((a) => a.id)),
+    ]);
     const enriched = data.map((a) => ({
       ...maskWinbackAccountPii(a),
       tmp_progress:
         a.lifecycle !== 'lead' ? deriveTmpProgressFromAccount(a) : null,
       restaurant_place: this.restaurantPlaceDetail(a, placeById),
       place_candidate: false,
+      photo_url: photoById.get(a.id) ?? null,
     }));
     return { data: enriched, meta: { total, page, limit, totalPages } };
   }
@@ -197,6 +201,7 @@ export class WinbackService {
       stage: WinbackStage.PROSPECT,
       lifecycle: WinbackLifecycle.TMP,
       assigned_sales_user_id: null,
+      photo_url: null,
       inactive_days: 0,
       activity_count: 0,
       visit_count: 0,
@@ -392,6 +397,21 @@ export class WinbackService {
         reordered: orderCount >= 2 || account.stage === 'ordering_again',
       },
     };
+  }
+
+  /** Pool row avatar: the last photo of the account's most recent activity that has one. */
+  private async loadLatestPhotoMap(accountIds: string[]): Promise<Map<string, string>> {
+    if (!accountIds.length) return new Map();
+    const rows = await this.activities
+      .createQueryBuilder('act')
+      .select('DISTINCT ON (act.account_id) act.account_id', 'account_id')
+      .addSelect('act.photo_urls ->> (jsonb_array_length(act.photo_urls) - 1)', 'photo_url')
+      .where('act.account_id IN (:...ids)', { ids: accountIds })
+      .andWhere("jsonb_typeof(act.photo_urls) = 'array' AND jsonb_array_length(act.photo_urls) > 0")
+      .orderBy('act.account_id')
+      .addOrderBy('act.activity_at', 'DESC')
+      .getRawMany<{ account_id: string; photo_url: string | null }>();
+    return new Map(rows.filter((r) => r.photo_url).map((r) => [r.account_id, r.photo_url!]));
   }
 
   private async loadRestaurantPlaceMap(ids: string[]): Promise<Map<string, RestaurantPlace>> {

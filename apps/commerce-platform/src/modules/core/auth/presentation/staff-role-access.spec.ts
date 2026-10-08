@@ -23,6 +23,9 @@ import { CustomerController } from '../../../commerce/customer/presentation/cust
 import { StaffPricesController } from '../../../integration/connector/josh/pricing/staff-prices.controller';
 import { StaffAuthController } from './staff-auth.controller';
 import { StaffAuthGuard } from './staff-auth.guard';
+import { METHOD_METADATA } from '@nestjs/common/constants';
+import { RequestMethod } from '@nestjs/common';
+import { STAFF_ROLES_KEY } from '../../../../shared-kernel/presentation/auth.decorators';
 
 const jwt = new JwtService({ secret: 'test-secret' });
 let account: { id: string; email: string; role: string; status: string; mustChangePassword?: boolean };
@@ -231,5 +234,61 @@ describe('sale / manager access matrix (real global guard, method overrides incl
     const handler = () => undefined;
     await deny('sale', handler, JoshAdminCallController, 'GET');
     await deny('sale', handler, McpConnectionsController, 'GET');
+  });
+});
+
+describe('cs desk read access (permission change: CS desk order-on-behalf searches)', () => {
+  const CS_READS = ['customerList', 'customerDetail', 'productList'];
+  const proto = ShopReportsController.prototype as unknown as Record<string, (...args: never[]) => unknown>;
+  const handlers = Object.getOwnPropertyNames(ShopReportsController.prototype)
+    .filter(name => name !== 'constructor' && Reflect.getMetadata(METHOD_METADATA, proto[name]) !== undefined);
+
+  it('lists cs on exactly the three CS desk GETs of the shop reports', () => {
+    expect(handlers.filter(name => (Reflect.getMetadata(STAFF_ROLES_KEY, proto[name]) ?? []).includes('cs')).sort()).toEqual([...CS_READS].sort());
+    for (const name of CS_READS) expect(Reflect.getMetadata(METHOD_METADATA, proto[name])).toBe(RequestMethod.GET);
+  });
+
+  it.each(['cs', 'CS', ' cs '])('%s (normalised) passes the guard as cs on the three reads and nowhere else in reports', async role => {
+    expect(handlers.length).toBeGreaterThanOrEqual(29); // every GET in the controller, including routes added later
+    for (const name of handlers) {
+      const call = hit(role, proto[name], ShopReportsController, 'GET');
+      if (CS_READS.includes(name)) {
+        await expect(call).resolves.toBe(true);
+        expect(lastRequest.staff).toMatchObject({ role: 'cs' });
+      } else await expect(call).rejects.toBeInstanceOf(ForbiddenException);
+    }
+  });
+
+  it('named refusals: summaries, categories, product detail, orders, prices, sales, CSV export', async () => {
+    for (const name of ['customerSummary', 'productSummary', 'productCategories', 'productDetail', 'orderSummary', 'orderList', 'orderDetail',
+      'priceBranches', 'priceQuotations', 'branchPrices', 'sales', 'salesByRep', 'salesParity', 'restaurantCsv', 'erpLogList', 'erpLogDetail']) {
+      await deny('cs', proto[name], ShopReportsController, 'GET');
+    }
+  });
+
+  it('gains no write anywhere (sampled)', async () => {
+    await deny('cs', ProductController.prototype.create, ProductController, 'POST');
+    await deny('cs', ProductController.prototype.update, ProductController, 'PATCH');
+    await deny('cs', OrderController.prototype.create, OrderController, 'POST');
+    await deny('cs', OrderController.prototype.checkout, OrderController, 'POST');
+    await deny('cs', ProductCategoriesController.prototype.remove, ProductCategoriesController, 'DELETE');
+    await deny('cs', ProductImagesController.prototype.upload, ProductImagesController, 'POST');
+    await deny('cs', StaffPricesController.prototype.create, StaffPricesController, 'POST');
+    await deny('cs', StockMovesController.prototype.adjust, StockMovesController, 'POST');
+    await deny('cs', SalesRepsController.prototype.assign, SalesRepsController, 'PATCH');
+    await deny('cs', CompetitorPricesController.prototype.create, CompetitorPricesController, 'POST');
+    await deny('cs', GrowthController.prototype.create, GrowthController, 'POST');
+    await deny('cs', CustomerController.prototype.list, CustomerController, 'GET');
+  });
+
+  it('other roles on the three handlers are unchanged', async () => {
+    for (const name of ['customerList', 'customerDetail']) {
+      for (const role of ['admin', 'sale', 'sales_manager', 'sale_manager', 'business_analyst']) await expect(hit(role, proto[name], ShopReportsController, 'GET')).resolves.toBe(true);
+      for (const role of ['marketing', 'merchandising', 'graphic']) await deny(role, proto[name], ShopReportsController, 'GET');
+    }
+    for (const role of ['admin', 'marketing', 'merchandising']) await expect(hit(role, proto.productList, ShopReportsController, 'GET')).resolves.toBe(true);
+    for (const role of ['sale', 'sales_manager', 'sale_manager', 'business_analyst', 'graphic']) await deny(role, proto.productList, ShopReportsController, 'GET');
+    await expect(hit('sale_manager', proto.customerList, ShopReportsController, 'GET')).resolves.toBe(true);
+    expect(lastRequest.staff).toMatchObject({ role: 'sales_manager' });
   });
 });

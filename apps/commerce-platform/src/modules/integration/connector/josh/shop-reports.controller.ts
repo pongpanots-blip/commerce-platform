@@ -11,6 +11,7 @@ import { JoshProducts, ProductFilters } from './josh-products';
 import { JoshOrders, OrderFilters } from './josh-orders';
 import { CompanyFilters, JoshCustomers } from './josh-customers';
 import { JoshPrices } from './josh-prices';
+import { CS_CUSTOMER_LIMIT, CS_PRODUCT_LIMIT, csCustomerDetailView, csCustomerSearch, csCustomerSearchView, csProductSearch, csProductSearchView } from './cs-desk-search';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string; salesUserId?: string }
 
@@ -35,6 +36,7 @@ function range(q: PeriodQuery) {
  * answers the MCP tools give, from josh's read replica — josh is not called.
  * Sales, health, order target group, orders, customers and prices: admin, sales manager and business analyst.
  * Traffic, restaurants, push campaigns: marketing. Product reports: marketing and merchandising.
+ * CS: only the CS desk's customer / product search and customer detail — search (min 2 chars) on page 1 only, projected (cs-desk-search.ts).
  * ERP log payloads stay admin (unredacted customer codes and prices).
  */
 @Controller('reports')
@@ -198,8 +200,13 @@ export class ShopReportsController {
   productCategories() { this.productsReady(); return this.products.categories(); }
 
   @Get('products')
-  @StaffRoles('marketing', 'merchandising')
-  productList(@Query() q: ProductFilters & { page?: string; limit?: string }) {
+  @StaffRoles('marketing', 'merchandising', 'cs')
+  async productList(@Query() q: ProductFilters & { page?: string; limit?: string }, @Req() req: StaffRequest) {
+    if (req.staff.role === 'cs') {
+      const f = csProductSearch(q);
+      this.productsReady();
+      return csProductSearchView(await this.products.list(f, 1, int(q.limit, CS_PRODUCT_LIMIT, 1, CS_PRODUCT_LIMIT)));
+    }
     this.productsReady();
     return this.products.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
@@ -224,12 +231,18 @@ export class ShopReportsController {
   async customerSummary(@Query() q: { salesUserId?: string }, @Req() req: StaffRequest) {
     this.replica('customers'); return this.customers.summary({ repIds: await this.repIds(req, q.salesUserId) });
   }
-  @Get('customers') @StaffRoles(...SHOP, 'sale')
+  @Get('customers') @StaffRoles(...SHOP, 'sale', 'cs')
   async customerList(@Query() q: CompanyFilters & { page?: string; limit?: string; salesUserId?: string }, @Req() req: StaffRequest) {
+    if (req.staff.role === 'cs') {
+      const f = csCustomerSearch(q);
+      this.replica('customers');
+      return csCustomerSearchView(await this.customers.list(f, 1, int(q.limit, CS_CUSTOMER_LIMIT, 1, CS_CUSTOMER_LIMIT)));
+    }
     this.replica('customers'); return this.customers.list({ ...q, repIds: await this.repIds(req, q.salesUserId) }, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200), { unmask: req.staff.role === 'sale' });
   }
-  @Get('customers/:id') @StaffRoles(...SHOP, 'sale')
+  @Get('customers/:id') @StaffRoles(...SHOP, 'sale', 'cs')
   async customerDetail(@Param('id', ParseUUIDPipe) id: string, @Req() req: StaffRequest) {
+    if (req.staff.role === 'cs') { this.replica('customers'); return csCustomerDetailView(await this.customers.detail(id)); }
     this.replica('customers'); return this.customers.detail(id, await this.repIds(req), { unmask: req.staff.role === 'sale' });
   }
 

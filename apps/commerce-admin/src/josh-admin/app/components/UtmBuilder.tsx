@@ -1,6 +1,9 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useId } from 'react';
 import { CopyField } from './CopyField';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type UtmValues = {
   source: string;
   medium: string;
@@ -27,11 +30,11 @@ const field = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm';
 const labelCls = 'text-xs font-semibold text-gray-500';
 
 const FIELDS: { key: keyof UtmValues; label: string; placeholder: string }[] = [
-  { key: 'source', label: 'แหล่งที่มา (utm_source)', placeholder: 'facebook' },
-  { key: 'medium', label: 'ช่องทาง (utm_medium)', placeholder: 'cpc' },
-  { key: 'campaign', label: 'แคมเปญ (utm_campaign)', placeholder: 'summer-sale' },
-  { key: 'content', label: 'เนื้อหา (utm_content)', placeholder: 'banner-a' },
-  { key: 'term', label: 'คำค้นหา (utm_term)', placeholder: 'seafood' },
+  { key: 'source', get label(){return __uiText("แหล่งที่มา (utm_source)");}, placeholder: 'facebook' },
+  { key: 'medium', get label(){return __uiText("ช่องทาง (utm_medium)");}, placeholder: 'cpc' },
+  { key: 'campaign', get label(){return __uiText("แคมเปญ (utm_campaign)");}, placeholder: 'summer-sale' },
+  { key: 'content', get label(){return __uiText("เนื้อหา (utm_content)");}, placeholder: 'banner-a' },
+  { key: 'term', get label(){return __uiText("คำค้นหา (utm_term)");}, placeholder: 'seafood' },
 ];
 
 export function UtmBuilder({
@@ -41,6 +44,7 @@ export function UtmBuilder({
   baseUrl?: string ;
   onChange: (next: UtmValues) => void;
 }) {
+  __useUiLocale();
   const set = (k: keyof UtmValues, v: string) => onChange({ ...value, [k]: v });
   const preview = baseUrl ? `${baseUrl}${buildUtmQuery(value)}` : '';
   const idPrefix = useId();
@@ -56,7 +60,7 @@ export function UtmBuilder({
           </div>
         ))}
       </div>
-      {baseUrl && <CopyField label="ลิงก์พร้อม UTM" value={preview} />}
+      {baseUrl && <CopyField label={__uiText("ลิงก์พร้อม UTM")} value={preview} />}
     </div>
   );
 }

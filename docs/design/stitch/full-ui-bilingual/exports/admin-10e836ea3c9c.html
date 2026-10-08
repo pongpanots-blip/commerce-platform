@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>แก้ไขสินค้า - Commerce Hub</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-bright": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary": "#4f5f77",
+            "on-tertiary-fixed": "#002112",
+            "secondary-container": "#d0e1fd",
+            "primary-container": "#365cf5",
+            "tertiary-fixed-dim": "#59de9e",
+            "inverse-primary": "#b9c3ff",
+            "error": "#ba1a1a",
+            "surface-variant": "#d7e2ff",
+            "surface": "#f9f9ff",
+            "on-primary-fixed": "#001257",
+            "secondary-fixed": "#d3e3ff",
+            "on-tertiary-container": "#b4ffd2",
+            "surface-container-low": "#f1f3ff",
+            "surface-dim": "#cddaf9",
+            "outline": "#747687",
+            "outline-variant": "#c4c5d8",
+            "on-secondary-container": "#54647c",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-container-high": "#e0e8ff",
+            "on-background": "#0e1b32",
+            "on-surface": "#0e1b32",
+            "on-error": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "background": "#f9f9ff",
+            "primary-fixed": "#dde1ff",
+            "on-secondary": "#ffffff",
+            "primary": "#0a3fdc",
+            "error-container": "#ffdad6",
+            "on-surface-variant": "#444655",
+            "tertiary-fixed": "#77fbb8",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-error-container": "#93000a",
+            "tertiary-container": "#007c50",
+            "surface-container": "#e8eeff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005233",
+            "tertiary": "#00613d",
+            "on-secondary-fixed": "#0b1c31",
+            "inverse-surface": "#243048",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#ededff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-tint": "#214ce7"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-tablet": "1.25rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "space-xl": "1.5rem",
+            "margin-tablet": "1.5rem",
+            "space-md": "0.75rem",
+            "space-lg": "1rem",
+            "space-xxl": "2rem",
+            "margin-desktop": "2rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem",
+            "gutter-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "headline-lg-mobile": ["Noto Sans"],
+            "display": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"]
+          },
+          "fontSize": {
+            "headline-md": ["18px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+            "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+            "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 20px;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="h-full font-body-md text-on-surface antialiased bg-[#f6f8fc]">
+<!-- CRITICAL INVISIBLE TRANSLATION DICTIONARY SCRIPT -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "แบรนด์": {"th": "แบรนด์", "en": "Brand"},
+    "ลบ": {"th": "ลบ", "en": "Delete"},
+    "ซ่อน": {"th": "ซ่อน", "en": "Hide"},
+    "รายการ": {"th": "รายการ", "en": "Items"},
+    "แสดง": {"th": "แสดง", "en": "Show"},
+    "หน่วยขาย": {"th": "หน่วยขาย", "en": "Sales Unit"},
+    "แก้ไขสินค้า": {"th": "แก้ไขสินค้า", "en": "Edit Product"},
+    "กำลังโหลด...": {"th": "กำลังโหลด...", "en": "Loading..."},
+    "เลือกแล้ว": {"th": "เลือกแล้ว", "en": "Selected"},
+    "อัปโหลด": {"th": "อัปโหลด", "en": "Upload"},
+    "จำนวนสต็อก": {"th": "จำนวนสต็อก", "en": "Stock Quantity"},
+    "สถานะสินค้า": {"th": "สถานะสินค้า", "en": "Product Status"},
+    "รหัสสินค้า (SKU) *": {"th": "รหัสสินค้า (SKU) *", "en": "SKU Code *"},
+    "-- เลือกแบรนด์ --": {"th": "-- เลือกแบรนด์ --", "en": "-- Select Brand --"},
+    "หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)": {"th": "หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)", "en": "Or enter new brand code (if not in list)"},
+    "เช่น ACME": {"th": "เช่น ACME", "en": "e.g. ACME"},
+    "เช่น ชิ้น": {"th": "เช่น ชิ้น", "en": "e.g. Piece"},
+    "ราคาตามจำนวนซื้อ (Tier)": {"th": "ราคาตามจำนวนซื้อ (Tier)", "en": "Tier Pricing"},
+    "ชื่อสินค้า (ภาษาไทย) *": {"th": "ชื่อสินค้า (ภาษาไทย) *", "en": "Product Name (Thai) *"},
+    "ชื่อสินค้า (ภาษาอังกฤษ) *": {"th": "ชื่อสินค้า (ภาษาอังกฤษ) *", "en": "Product Name (English) *"},
+    "ยืนยันลบรูปเก่าออกจาก S3? การลบนี้ไม่สามารถย้อนกลับได้": {"th": "ยืนยันลบรูปเก่าออกจาก S3? การลบนี้ไม่สามารถย้อนกลับได้", "en": "Confirm deleting old photo from S3? This action cannot be undone."},
+    "ยืนยันสลับไปใช้รูปนี้แทนรูปปัจจุบัน?": {"th": "ยืนยันสลับไปใช้รูปนี้แทนรูปปัจจุบัน?", "en": "Confirm switching to this image instead of current active image?"},
+    "กรุณาเลือกไฟล์รูปภาพเท่านั้น": {"th": "กรุณาเลือกไฟล์รูปภาพเท่านั้น", "en": "Please select image files only."},
+    "กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา": {"th": "กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา", "en": "Please provide SKU and Product Name in both languages."},
+    "กรุณาระบุราคาขาย": {"th": "กรุณาระบุราคาขาย", "en": "Please specify selling price."},
+    "บันทึกสินค้าแล้ว แต่บันทึก cuisine ไม่สำเร็จ — ลองบันทึกอีกครั้ง": {"th": "บันทึกสินค้าแล้ว แต่บันทึก cuisine ไม่สำเร็จ — ลองบันทึกอีกครั้ง", "en": "Product saved, but failed to update cuisine categories — please try again."},
+    "อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้า Upload Video": {"th": "อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้า Upload Video", "en": "Update information and images (up to 3 images) — for videos use Upload Video screen"},
+    "มาจาก ERP — แก้ที่นี่ไม่ได้": {"th": "มาจาก ERP — แก้ที่นี่ไม่ได้", "en": "Synced from ERP — Read only"},
+    "1 = ใช้งาน, 0 = ปิด": {"th": "1 = ใช้งาน, 0 = ปิด", "en": "1 = Active, 0 = Disabled"},
+    "ชื่อแบรนด์": {"th": "ชื่อแบรนด์", "en": "Brand Name"},
+    "ผู้ผลิต/บรรจุ (Marketed By)": {"th": "ผู้ผลิต/บรรจุ (Marketed By)", "en": "Marketed By / Manufacturer"},
+    "ประเภทภาษีมูลค่าเพิ่ม (VAT Type)": {"th": "ประเภทภาษีมูลค่าเพิ่ม (VAT Type)", "en": "VAT Type"},
+    "0% หรือ 7%": {"th": "0% หรือ 7%", "en": "0% or 7%"},
+    "อุณหภูมิเก็บรักษา": {"th": "อุณหภูมิเก็บรักษา", "en": "Storage Temperature"},
+    "ราคาต่อหน่วยขาย (฿) *": {"th": "ราคาต่อหน่วยขาย (฿) *", "en": "Selling Unit Price (฿) *"},
+    "เรทต่อหน่วยขาย (ERP SELLING_UNIT_PRICE) ไม่ใช่ราคากล่องที่ลูกค้าจ่าย": {"th": "เรทต่อหน่วยขาย (ERP SELLING_UNIT_PRICE) ไม่ใช่ราคากล่องที่ลูกค้าจ่าย", "en": "Rate per selling unit (ERP SELLING_UNIT_PRICE), not crate price paid by customer"},
+    "ราคากล่อง / หน่วยสั่ง (฿)": {"th": "ราคากล่อง / หน่วยสั่ง (฿)", "en": "Crate / Order Unit Price (฿)"},
+    "ERP PRICE — ราคาที่ลูกค้าจ่ายจริง แก้ที่ ERP เท่านั้น": {"th": "ERP PRICE — ราคาที่ลูกค้าจ่ายจริง แก้ที่ ERP เท่านั้น", "en": "ERP PRICE — Actual checkout price paid by customer, editable in ERP only"},
+    "ยังไม่มีค่าจาก ERP และคำนวณจาก pack ไม่ได้": {"th": "ยังไม่มีค่าจาก ERP และคำนวณจาก pack ไม่ได้", "en": "No ERP value yet and cannot calculate from pack"},
+    "ขั้นต่ำ qty ต้องไม่ทับซ้อน — เป็นราคาโปรระดับสินค้า ไม่เปลี่ยนราคาขายฐาน (แก้ราคาฐานที่ช่อง “ราคาต่อหน่วยขาย”)": {"th": "ขั้นต่ำ qty ต้องไม่ทับซ้อน — เป็นราคาโปรระดับสินค้า ไม่เปลี่ยนราคาขายฐาน (แก้ราคาฐานที่ช่อง “ราคาต่อหน่วยขาย”)", "en": "Minimum qty must not overlap — promotional tier rate per product, does not alter base rate (modify base rate in 'Selling Unit Price')"},
+    "Cuisine (Shop by Cuisine)": {"th": "Cuisine (Shop by Cuisine)", "en": "Cuisine (Shop by Cuisine)"},
+    "เลือก taxonomy ที่ SKU นี้อยู่ — บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด (replace)": {"th": "เลือก taxonomy ที่ SKU นี้อยู่ — บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด (replace)", "en": "Select taxonomy for this SKU — saving will completely replace existing mapping"},
+    "ไม่พบรายการ cuisine": {"th": "ไม่พบรายการ cuisine", "en": "No cuisine items found"},
+    "ภาษาไทย": {"th": "ภาษาไทย", "en": "Thai"},
+    "รายละเอียดสินค้า (ภาษาไทย)": {"th": "รายละเอียดสินค้า (ภาษาไทย)", "en": "Product Description (Thai)"},
+    "ภาษาอังกฤษ": {"th": "ภาษาอังกฤษ", "en": "English"},
+    "รายละเอียดสินค้า (ภาษาอังกฤษ)": {"th": "รายละเอียดสินค้า (ภาษาอังกฤษ)", "en": "Product Description (English)"},
+    "รูปภาพ (": {"th": "รูปภาพ (", "en": "Images ("},
+    "existing": {"th": "existing", "en": "existing"},
+    "new": {"th": "new", "en": "new"},
+    "รูปก่อนหน้าที่สลับกลับได้ (": {"th": "รูปก่อนหน้าที่สลับกลับได้ (", "en": "Previous swappable images ("},
+    "replaced": {"th": "replaced", "en": "replaced"},
+    "กำลังสลับ...": {"th": "กำลังสลับ...", "en": "Swapping..."},
+    "สลับไปใช้รูปนี้": {"th": "สลับไปใช้รูปนี้", "en": "Switch to this image"},
+    "กำลังลบ...": {"th": "กำลังลบ...", "en": "Deleting..."},
+    "ลบออกจาก S3": {"th": "ลบออกจาก S3", "en": "Delete from S3"},
+    "ข้อความลิขสิทธิ์ (footerLegal)": {"th": "ข้อความลิขสิทธิ์ (footerLegal)", "en": "Copyright Notice (footerLegal)"},
+    "คูปองนี้เคยตั้ง \"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿": {"th": "คูปองนี้เคยตั้ง \"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿", "en": "This coupon had \"Condition Product Minimum ฿"},
+    "ชุดถัดไป →": {"th": "ชุดถัดไป →", "en": "Next Set →"},
+    "ต้องมี Title และ Message ก่อนส่ง": {"th": "ต้องมี Title และ Message ก่อนส่ง", "en": "Title and Message are required before dispatching"},
+    "บัตรประจำตัวประชาชน": {"th": "บัตรประจำตัวประชาชน", "en": "National ID Card"},
+    "ผลล่าสุด —": {"th": "ผลล่าสุด —", "en": "Latest Result —"},
+    "ไม่ต้องโชว์โค้ดใน popup": {"th": "ไม่ต้องโชว์โค้ดใน popup", "en": "Do not show code in popup"},
+    "ยังไม่มีรายชื่อ — เพิ่มรายชื่อด้านบน แล้วกดบันทึก": {"th": "ยังไม่มีรายชื่อ — เพิ่มรายชื่อด้านบน แล้วกดบันทึก", "en": "No contacts yet — add names above and save"},
+    "เลขที่สัญญา (ถ้ามี)": {"th": "เลขที่สัญญา (ถ้ามี)", "en": "Contract No. (Optional)"},
+    "สร้าง Workflow": {"th": "สร้าง Workflow", "en": "Create Workflow"},
+    "หัวข้อที่ {0}": {"th": "หัวข้อที่ {0}", "en": "Topic {0}"},
+    "เฉพาะหมวดหมู่": {"th": "เฉพาะหมวดหมู่", "en": "Category Only"},
+    "· ใช้ได้หลัง {0} วัน": {"th": "· ใช้ได้หลัง {0} วัน", "en": "· Usable after {0} days"},
+    "จำนวนครั้งที่ได้รับสูงสุดต่อคนต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป": {"th": "จำนวนครั้งที่ได้รับสูงสุดต่อคนต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป", "en": "Max redemption count per user must be an integer >= 1"},
+    "บันทึกไม่สำเร็จ": {"th": "บันทึกไม่สำเร็จ", "en": "Save Failed"},
+    "รูปที่ {0}": {"th": "รูปที่ {0}", "en": "Image {0}"},
+    "รูปภาพได้สูงสุด {0} รูป": {"th": "รูปภาพได้สูงสุด {0} รูป", "en": "Maximum {0} images permitted"},
+    "รูปใหม่ {0}": {"th": "รูปใหม่ {0}", "en": "New Image {0}"},
+    "รูปนี้ยังถูกใช้งานอยู่ ลบไม่ได้": {"th": "รูปนี้ยังถูกใช้งานอยู่ ลบไม่ได้", "en": "This image is active and cannot be deleted"},
+    "เกิดข้อผิดพลาดในการลบ": {"th": "เกิดข้อผิดพลาดในการลบ", "en": "An error occurred while deleting"},
+    "สลับรูปไม่สำเร็จ": {"th": "สลับรูปไม่สำเร็จ", "en": "Image swap failed"},
+    "เกิดข้อผิดพลาดในการสลับรูป": {"th": "เกิดข้อผิดพลาดในการสลับรูป", "en": "An error occurred while swapping image"}
+  }
+  </script>
+<!-- SideNavBar: Desktop Drawer (Fixed 256px) -->
+<aside class="w-64 h-screen fixed left-0 top-0 z-30 flex flex-col bg-surface-container-lowest border-r border-outline-variant shadow-sm select-none">
+<div class="w-64 h-full p-4 flex flex-col justify-between overflow-y-auto">
+<!-- Upper Section: Brand + CTA + Navigation tabs -->
+<div class="space-y-4">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white font-bold shadow-md shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[22px]">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-semibold text-on-surface leading-tight">Commerce Hub</span>
+<span class="text-label-sm font-label-sm text-secondary">Enterprise Operations</span>
+</div>
+</div>
+<!-- Quick CTA: เพิ่มสินค้าใหม่ -->
+<button class="w-full h-9 flex items-center justify-center gap-2 bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md rounded-lg border border-primary/20 transition-colors duration-150 shadow-xs">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>เพิ่มสินค้าใหม่</span>
+</button>
+<!-- 7 Main Category Tabs -->
+<nav class="space-y-1">
+<!-- 1: สินค้าและสต็อก (Active) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container-low text-primary font-semibold transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-primary text-[20px]" data-weight="fill">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary text-[20px]">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary text-[20px]">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary text-[20px]">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary text-[20px]">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary text-[20px]">integration_instructions</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary text-[20px]">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Lower Section: System info & Footer Tabs -->
+<div class="pt-4 border-t border-outline-variant/60 space-y-3">
+<!-- Dev Route Indicator Badge -->
+<div class="px-3 py-2 bg-[#f1f5f9] rounded-lg border border-outline-variant/50">
+<div class="flex items-center justify-between text-[10px] font-mono text-secondary mb-1">
+<span>ROUTE</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+</div>
+<div class="text-[11px] font-mono font-medium text-on-surface truncate">/j/product/edit/:id</div>
+<div class="text-[10px] text-secondary mt-0.5">DEV: admin-10e836ea3c9c</div>
+</div>
+<nav class="space-y-0.5">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span class="text-label-md font-label-md">ช่วยเหลือและคู่มือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container/40 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</nav>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Contextual Header: Fixed docked left-64 -->
+<header class="h-16 fixed top-0 right-0 left-64 z-20 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex items-center justify-between px-8">
+<!-- Left: Breadcrumbs & Badges -->
+<div class="flex items-center gap-3">
+<!-- Breadcrumb Hierarchy -->
+<nav class="flex items-center space-x-2 text-label-md font-label-md">
+<span class="text-secondary hover:text-on-surface cursor-pointer">สินค้าและสต็อก</span>
+<span class="text-outline-variant text-[12px]">/</span>
+<span class="text-secondary hover:text-on-surface cursor-pointer">รายการสินค้า</span>
+<span class="text-outline-variant text-[12px]">/</span>
+<span class="text-primary font-semibold">แก้ไขสินค้า</span>
+</nav>
+<!-- Context Badges -->
+<div class="hidden xl:flex items-center gap-2 ml-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-surface-container-high text-primary border border-primary/20">
+          admin-10e836ea3c9c
+        </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-amber-50 text-amber-700 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+</div>
+<!-- Right: Language Toggle, Quick Notifications, User Avatar -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher -->
+<button class="flex items-center gap-1.5 px-2.5 py-1 text-label-md font-label-md rounded-md border border-outline-variant hover:bg-surface-container text-secondary transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">translate</span>
+<span class="font-medium text-on-surface">ไทย</span>
+<span class="text-outline-variant">/</span>
+<span class="text-secondary hover:text-on-surface">English</span>
+</button>
+<!-- Notifications Bell -->
+<button class="relative p-2 rounded-full text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="แจ้งเตือน" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-white"></span>
+</button>
+<!-- User Profile Cluster -->
+<div class="flex items-center gap-3 pl-2 border-l border-outline-variant">
+<div class="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-primary/20">
+          CO
+        </div>
+<div class="hidden md:flex flex-col text-left">
+<span class="text-label-md font-semibold text-on-surface leading-tight">ทีมปฏิบัติการ Commerce Ops</span>
+<span class="text-[11px] text-secondary">Level 2 Store Admin</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas: Left padding 256px, Top padding 64px -->
+<main class="ml-64 pt-16 min-h-screen pb-32">
+<div class="max-w-[1240px] mx-auto px-6 py-6 space-y-6">
+<!-- Sticky Top Sub-Header & Action Deck -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/80 p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="space-y-1">
+<a class="inline-flex items-center gap-1 text-label-sm font-label-sm text-primary hover:underline group" href="#">
+<span class="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span>กลับสู่รายการสินค้า</span>
+</a>
+<div class="flex items-center gap-3 flex-wrap">
+<h1 class="text-headline-lg font-headline-lg text-on-surface font-bold tracking-tight">แก้ไขสินค้า</h1>
+<span class="inline-flex items-center px-3 py-1 rounded-md text-label-md font-mono font-semibold bg-surface-container text-primary border border-primary/20">
+              SKU-TH-8890
+            </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              1 = ใช้งาน
+            </span>
+</div>
+</div>
+<!-- Quick Top Actions -->
+<div class="flex items-center gap-3 self-end md:self-auto">
+<button class="h-[38px] px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container text-label-md font-label-md font-medium transition-colors shadow-xs" type="button">
+            ยกเลิก
+          </button>
+<button class="h-[38px] px-5 rounded-lg bg-primary-container hover:bg-[#2b4cd8] text-white font-medium text-label-md font-label-md shadow-sm transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>บันทึกการแก้ไข</span>
+</button>
+</div>
+</div>
+<!-- Section 1: ข้อมูลหลักและแบรนด์ (Global & Brand Info) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 bg-surface-container-low/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">1. ข้อมูลหลักและแบรนด์ (Global &amp; Brand Info)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">ข้อมูลอัตลักษณ์สินค้าและโครงสร้างภาษี</span>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- SKU Code -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              รหัสสินค้า (SKU) *
+            </label>
+<div class="relative">
+<input class="w-full h-[38px] bg-[#f1f5f9] border border-outline-variant/80 rounded-lg px-3 text-body-md font-mono text-secondary cursor-not-allowed" disabled="" readonly="" type="text" value="SKU-TH-8890"/>
+<span class="absolute right-3 top-2.5 text-[11px] font-medium text-secondary">
+                มาจาก ERP — แก้ที่นี่ไม่ได้
+              </span>
+</div>
+<p class="text-[11px] text-secondary mt-1">รหัสมาตรฐานสากลอ้างอิงตรงจาก ERP ระบบหลัก</p>
+</div>
+<!-- Product Status -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              สถานะสินค้า
+            </label>
+<select class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option selected="" value="1">1 = ใช้งาน (Active)</option>
+<option value="0">0 = ปิด (Inactive)</option>
+</select>
+<p class="text-[11px] text-secondary mt-1">1 = ใช้งาน, 0 = ปิด ในช่องทางการขายหน้าร้าน</p>
+</div>
+<!-- Brand Dropdown -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              แบรนด์ (Brand)
+            </label>
+<select class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option>-- เลือกแบรนด์ --</option>
+<option selected="" value="BR-99021">ตราดอกบัวหลวง (BR-99021)</option>
+<option value="BR-88301">สยามการเกษตร (BR-88301)</option>
+<option value="BR-12004">ไทยพรีเมียมฟาร์ม (BR-12004)</option>
+</select>
+<p class="text-[11px] text-secondary mt-1">ระบุแบรนด์อย่างเป็นทางการเพื่อการรวมกลุ่ม</p>
+</div>
+<!-- Custom Brand Code -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)
+            </label>
+<input class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md placeholder:text-outline/60 focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" placeholder="เช่น ACME" type="text"/>
+<p class="text-[11px] text-secondary mt-1">ใช้เมื่อสร้างคู่ค้าใหม่และยังไม่ได้รับการ map รหัส</p>
+</div>
+<!-- Marketed By -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              ผู้ผลิต/บรรจุ (Marketed By)
+            </label>
+<input class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" type="text" value="บริษัท สยามรีเทล คอร์ปอเรชั่น จำกัด"/>
+<p class="text-[11px] text-secondary mt-1">นิติบุคคลผู้จัดจำหน่ายและรับผิดชอบฉลากสินค้า</p>
+</div>
+<!-- VAT Type -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              ประเภทภาษีมูลค่าเพิ่ม (VAT Type)
+            </label>
+<select class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option selected="" value="7">7% (ภาษีมูลค่าเพิ่มมาตรฐาน)</option>
+<option value="0">0% หรือ 7% (ยกเว้นภาษี / 0%)</option>
+</select>
+<p class="text-[11px] text-secondary mt-1">พิกัดภาษีสำหรับคำนวณ e-Tax Invoice</p>
+</div>
+<!-- Storage Temperature -->
+<div class="md:col-span-2 lg:col-span-1">
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+              อุณหภูมิเก็บรักษา
+            </label>
+<select class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option selected="" value="ambient">อุณหภูมิห้อง (Ambient)</option>
+<option value="chilled">แช่เย็น (Chilled 2°C - 6°C)</option>
+<option value="frozen">แช่แข็ง (Frozen -18°C)</option>
+</select>
+<p class="text-[11px] text-secondary mt-1">ใช้กำหนดเงื่อนไขการจัดส่งและคลังสินค้า</p>
+</div>
+</div>
+</section>
+<!-- Section 2: ข้อมูลการขายและราคา (Pricing & Stock) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 bg-surface-container-low/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">payments</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">2. ข้อมูลการขายและราคา (Pricing &amp; Stock)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">โครงสร้างราคาต่อหน่วยและสต็อกคงคลัง</span>
+</div>
+<div class="p-6 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Selling Unit Price -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                ราคาต่อหน่วยขาย (฿) *
+              </label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-secondary text-sm">฿</span>
+<input class="w-full h-[38px] pl-8 pr-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-mono text-on-surface font-semibold focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" type="text" value="210.00"/>
+</div>
+<p class="text-[11px] text-secondary mt-1 leading-snug">
+                เรทต่อหน่วยขาย (ERP SELLING_UNIT_PRICE) ไม่ใช่ราคากล่องที่ลูกค้าจ่าย
+              </p>
+</div>
+<!-- Crate Price (ERP Readonly) -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1 flex items-center justify-between">
+<span>ราคากล่อง / หน่วยสั่ง (฿)</span>
+<span class="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">ERP LOCK</span>
+</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-secondary text-sm">฿</span>
+<input class="w-full h-[38px] pl-8 pr-3 bg-[#f1f5f9] border border-outline-variant/80 rounded-lg text-body-md font-mono text-secondary cursor-not-allowed" disabled="" readonly="" type="text" value="840.00"/>
+</div>
+<p class="text-[11px] text-secondary mt-1 leading-snug">
+                มาจาก ERP — แก้ที่นี่ไม่ได้ (ERP PRICE — ราคาที่ลูกค้าจ่ายจริง แก้ที่ ERP เท่านั้น)
+              </p>
+</div>
+<!-- Selling Unit -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                หน่วยขาย
+              </label>
+<input class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" placeholder="เช่น ชิ้น" type="text" value="ถุง (5 กก.)"/>
+<p class="text-[11px] text-secondary mt-1">เช่น ถุง, กล่อง, ชิ้น หรือ แพ็ก</p>
+</div>
+<!-- Stock Quantity -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                จำนวนสต็อก
+              </label>
+<div class="h-[38px] bg-[#f1f5f9] border border-outline-variant/80 rounded-lg px-3 flex items-center justify-between">
+<span class="font-mono font-bold text-on-surface">450 ถุง</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-secondary-container text-on-secondary-container font-medium">
+                  พร้อมจำหน่าย
+                </span>
+</div>
+<p class="text-[11px] text-secondary mt-1">
+                ยังไม่มีค่าจาก ERP และคำนวณจาก pack ไม่ได้
+              </p>
+</div>
+</div>
+<!-- Tier Pricing Section -->
+<div class="pt-4 border-t border-outline-variant/60">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+<div>
+<h3 class="text-label-lg font-label-lg font-semibold text-on-surface">ราคาตามจำนวนซื้อ (Tier)</h3>
+<p class="text-[12px] text-secondary mt-0.5">
+                  ขั้นต่ำ qty ต้องไม่ทับซ้อน — เป็นราคาโปรระดับสินค้า ไม่เปลี่ยนราคาขายฐาน (แก้ราคาฐานที่ช่อง “ราคาต่อหน่วยขาย”)
+                </p>
+</div>
+<button class="h-8 px-3 rounded-lg border border-primary/40 bg-surface-container-low text-primary text-label-sm font-semibold hover:bg-surface-container transition-colors inline-flex items-center gap-1.5 self-start sm:self-auto" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>เพิ่มขั้นราคา Tier</span>
+</button>
+</div>
+<div class="border border-outline-variant rounded-lg overflow-hidden bg-surface-container-lowest">
+<table class="w-full text-left border-collapse text-body-sm">
+<thead>
+<tr class="bg-[#edf2f9] text-secondary text-[12px] font-semibold border-b border-outline-variant">
+<th class="py-2.5 px-4 font-semibold uppercase tracking-wider">ช่วงจำนวนซื้อ (Quantity Range)</th>
+<th class="py-2.5 px-4 font-semibold uppercase tracking-wider text-right">ราคาต่อหน่วย (฿)</th>
+<th class="py-2.5 px-4 font-semibold uppercase tracking-wider text-right">ส่วนลดจากราคาปกติ</th>
+<th class="py-2.5 px-4 font-semibold uppercase tracking-wider text-center">สถานะ</th>
+<th class="py-2.5 px-4 font-semibold uppercase tracking-wider text-right">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60">
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">
+                      ซื้อ 5 - 9 ถุง
+                    </td>
+<td class="py-3 px-4 text-right font-mono font-semibold text-on-surface">
+                      ฿200.00
+                    </td>
+<td class="py-3 px-4 text-right font-mono text-emerald-600">
+                      -฿10.00 (4.76%)
+                    </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        ใช้งานอยู่
+                      </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-error hover:text-red-700 text-label-sm font-medium transition-colors" type="button">
+                        ลบ
+                      </button>
+</td>
+</tr>
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">
+                      ซื้อ 10 ถุงขึ้นไป
+                    </td>
+<td class="py-3 px-4 text-right font-mono font-semibold text-on-surface">
+                      ฿190.00
+                    </td>
+<td class="py-3 px-4 text-right font-mono text-emerald-600">
+                      -฿20.00 (9.52%)
+                    </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        ใช้งานอยู่
+                      </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-error hover:text-red-700 text-label-sm font-medium transition-colors" type="button">
+                        ลบ
+                      </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: การจัดหมวดหมู่และ Cuisine (Shop by Cuisine) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 bg-surface-container-low/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">restaurant_menu</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">3. การจัดหมวดหมู่และ Cuisine (Shop by Cuisine)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">Taxonomy &amp; Filtering Structure</span>
+</div>
+<div class="p-6 space-y-4">
+<div class="bg-surface-container-low/40 p-3 rounded-lg border border-outline-variant/50 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">info</span>
+<div class="text-body-sm text-secondary">
+<span class="font-medium text-on-surface">Cuisine (Shop by Cuisine):</span>
+              เลือก taxonomy ที่ SKU นี้อยู่ — บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด (replace)
+            </div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+<!-- Thai Cuisine (Checked) -->
+<label class="flex items-center gap-3 p-3 rounded-lg border border-primary-container bg-surface-container-low/60 cursor-pointer transition-colors shadow-2xs">
+<input checked="" class="w-[18px] h-[18px] text-primary-container rounded border-outline-variant focus:ring-primary-container" type="checkbox"/>
+<div class="flex flex-col">
+<span class="text-label-md font-semibold text-on-surface">อาหารไทย (Thai)</span>
+<span class="text-[11px] text-primary font-medium">เลือกแล้ว</span>
+</div>
+</label>
+<!-- Street Food (Checked) -->
+<label class="flex items-center gap-3 p-3 rounded-lg border border-primary-container bg-surface-container-low/60 cursor-pointer transition-colors shadow-2xs">
+<input checked="" class="w-[18px] h-[18px] text-primary-container rounded border-outline-variant focus:ring-primary-container" type="checkbox"/>
+<div class="flex flex-col">
+<span class="text-label-md font-semibold text-on-surface">สตรีทฟู้ด (Street Food)</span>
+<span class="text-[11px] text-primary font-medium">เลือกแล้ว</span>
+</div>
+</label>
+<!-- Chinese Cuisine (Unchecked) -->
+<label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-colors">
+<input class="w-[18px] h-[18px] text-primary-container rounded border-outline-variant focus:ring-primary-container" type="checkbox"/>
+<div class="flex flex-col">
+<span class="text-label-md font-medium text-secondary">อาหารจีน (Chinese)</span>
+<span class="text-[11px] text-outline">ไม่ได้เลือก</span>
+</div>
+</label>
+<!-- Dessert (Unchecked) -->
+<label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low cursor-pointer transition-colors">
+<input class="w-[18px] h-[18px] text-primary-container rounded border-outline-variant focus:ring-primary-container" type="checkbox"/>
+<div class="flex flex-col">
+<span class="text-label-md font-medium text-secondary">ขนมหวาน (Dessert)</span>
+<span class="text-[11px] text-outline">ไม่ได้เลือก</span>
+</div>
+</label>
+</div>
+<div class="flex items-center justify-between text-[12px] text-secondary pt-2">
+<span>2 หมวดหมู่ที่ถูกจับคู่กับสินค้านี้</span>
+<span class="italic text-outline">หากไม่พบรายการที่ต้องการ: ไม่พบรายการ cuisine ติดต่อผู้ดูแลระบบหมวดหมู่กลาง</span>
+</div>
+</div>
+</section>
+<!-- Section 4: ข้อมูลสองภาษา (Bilingual Content) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 bg-surface-container-low/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">translate</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">4. ข้อมูลสองภาษา (Bilingual Content)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">รองรับการแสดงผลทั้งภาษาไทยและสากล</span>
+</div>
+<div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- ภาษาไทย -->
+<div class="space-y-4 p-4 rounded-xl border border-outline-variant/70 bg-surface-bright">
+<div class="flex items-center gap-2 pb-2 border-b border-outline-variant/60">
+<span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">TH</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">ภาษาไทย</h3>
+</div>
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                ชื่อสินค้า (ภาษาไทย) *
+              </label>
+<input class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md font-medium focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" type="text" value="ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง"/>
+<p class="text-[11px] text-secondary mt-1">ชื่อทางการสำหรับใบกำกับภาษีและหน้าร้านไทย</p>
+</div>
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                รายละเอียดสินค้า (ภาษาไทย)
+              </label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-body-md leading-relaxed focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" rows="5">ข้าวหอมมะลิแท้ 100% คัดสรรจากแหล่งปลูกชั้นเลิศในทุ่งกุลาร้องไห้ ผ่านกระบวนการขัดสีด้วยเทคโนโลยีทันสมัย สะอาด เมล็ดเรียวยาว หุงขึ้นหม้อ นุ่ม หอม กลิ่นใบเตยธรรมชาติ เหมาะสำหรับร้านอาหารภัตตาคารและผู้บริโภคที่ต้องการคุณภาพระดับส่งออก</textarea>
+<p class="text-[11px] text-secondary mt-1">รายละเอียดส่วนประกอบ คุณค่าทางอาหาร และวิธีหุง</p>
+</div>
+</div>
+<!-- ภาษาอังกฤษ -->
+<div class="space-y-4 p-4 rounded-xl border border-outline-variant/70 bg-surface-bright">
+<div class="flex items-center gap-2 pb-2 border-b border-outline-variant/60">
+<span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">EN</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">ภาษาอังกฤษ</h3>
+</div>
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                ชื่อสินค้า (ภาษาอังกฤษ) *
+              </label>
+<input class="w-full h-[38px] bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-body-md font-medium focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" type="text" value="Jasmine Rice Premium Export Grade 5kg"/>
+<p class="text-[11px] text-secondary mt-1">International catalogue name and export labeling</p>
+</div>
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                รายละเอียดสินค้า (ภาษาอังกฤษ)
+              </label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-body-md leading-relaxed focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" rows="5">100% Authentic Thai Hom Mali Jasmine Rice sourced directly from certified farms in Thung Kula Ronghai. Professionally sorted and polished using state-of-the-art optical sorters. Distinctive natural pandan aroma with soft, tender texture when cooked. Ideal for premier dining and export markets.</textarea>
+<p class="text-[11px] text-secondary mt-1">Nutritional facts, cooking ratio and international specs</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: จัดการรูปภาพสินค้า (Product Images & Replacement Gallery) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 bg-surface-container-low/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">photo_library</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">5. จัดการรูปภาพสินค้า (Product Images &amp; Replacement Gallery)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">
+            อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้า Upload Video
+          </span>
+</div>
+<div class="p-6 space-y-8">
+<!-- Active Images Container -->
+<div>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<h3 class="text-label-lg font-label-lg font-semibold text-on-surface">
+                  รูปภาพ (existing 2/3)
+                </h3>
+<span class="text-label-sm font-label-sm text-secondary">
+                  · รูปภาพได้สูงสุด 3 รูป
+                </span>
+</div>
+<button class="h-8 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-semibold text-label-sm border border-primary/20 transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">cloud_upload</span>
+<span>อัปโหลด</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<!-- Slot 1: Active Front Image -->
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-3 shadow-2xs hover:border-primary-container/60 transition-all flex flex-col justify-between">
+<div>
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-slate-100 mb-3 border border-outline-variant/40 group">
+<img class="w-full h-full object-cover" data-alt="A commercial studio photograph of a premium 5-kilogram bag of Thai Jasmine Rice under bright high-key studio lighting with soft pristine reflections. The background is clean minimalist light white, showcasing crisp royal blue typography and elegant golden lotus insignia. The aesthetic is clean corporate commercial product photography with sharp focus on packaging texture and quality grains." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa98HQcd-5ptoQhUb1DhMmKvfbVIVhLO4Fho_VF6-xUTu-pZad07kqFuJYKvS04bjuAaN239FgzPyFhjodWIymwvb43ALFptE56xMVBH1L3Yr7l_JR4gga7hSzTA5GxKGstGt_dyIkY-Jf1EuQV7XKQgJoBlnsgf6htYYunP_c6ia2Tp607PtjCHK4nvYrPVTgMlVi7dJOlhdKEo8I6N1NmugWu3JQi4uFU6z_vEtjOrOELFf65TZV-4y1yw7_OyP7Q75m3OrGuWM"/>
+<span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[11px] font-semibold bg-primary-container text-white shadow-xs">
+                      รูปที่ 1 (รูปหลัก)
+                    </span>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-600 text-white shadow-xs">
+                      แสดง
+                    </span>
+</div>
+<div class="text-label-md font-semibold text-on-surface truncate">JasmineRice_Packaging_Front.jpg</div>
+<div class="text-[11px] text-secondary">1840 × 1840 px · 1.2 MB</div>
+</div>
+<div class="flex items-center justify-between pt-3 mt-3 border-t border-outline-variant/50">
+<button class="text-label-sm font-medium text-secondary hover:text-on-surface transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility_off</span>
+<span>ซ่อน</span>
+</button>
+<button class="text-label-sm font-medium text-error hover:text-red-700 transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+<span>ลบ</span>
+</button>
+</div>
+</div>
+<!-- Slot 2: Active Nutrition/Back Image -->
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-3 shadow-2xs hover:border-primary-container/60 transition-all flex flex-col justify-between">
+<div>
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-slate-100 mb-3 border border-outline-variant/40 group">
+<img class="w-full h-full object-cover" data-alt="A crisp studio detail shot of the back of a grain food packaging showing nutrition facts and barcode label under balanced soft diffused retail lighting. The background is pristine light gray with sharp legible corporate typography and certified organic agricultural seals. The composition conveys dependable food safety standards and modern enterprise packaging compliance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfd7VXu0FBRoUb6fgT4iwZAxRn4BioBqe-WUL-m8ftifq_oVTcwEcFMBEWaZr0_vf0DQ5nv4Z6Y-1Kgjp9HYswUmz4tDqML0I-m6Cx6OW_2HFk12bh5LSGQEhpa4wZQ7d9TFENFtaH1SYwOtMOhYIvLZogUijKeRAV-cPkyzzAb2OjdCOQAfyOJHz03rjAcqdkhKOp074Fk5fbO-ClSpywdqHyiFlZlNAgzIS0yAMDppMZaC8FGXBZTsCrzMie8atg3uIHF0P1xfM"/>
+<span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[11px] font-semibold bg-secondary text-white shadow-xs">
+                      รูปที่ 2
+                    </span>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-600 text-white shadow-xs">
+                      แสดง
+                    </span>
+</div>
+<div class="text-label-md font-semibold text-on-surface truncate">Nutrition_Facts_Back_SKU8890.jpg</div>
+<div class="text-[11px] text-secondary">1600 × 1600 px · 950 KB</div>
+</div>
+<div class="flex items-center justify-between pt-3 mt-3 border-t border-outline-variant/50">
+<button class="text-label-sm font-medium text-secondary hover:text-on-surface transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>แสดง</span>
+</button>
+<button class="text-label-sm font-medium text-error hover:text-red-700 transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+<span>ลบ</span>
+</button>
+</div>
+</div>
+<!-- Slot 3: Upload Empty Slot -->
+<div class="rounded-xl border-2 border-dashed border-outline-variant bg-[#f8fafc] p-6 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-white shadow-xs border border-outline-variant flex items-center justify-center text-primary group-hover:scale-105 transition-transform mb-3">
+<span class="material-symbols-outlined text-[24px]">add_photo_alternate</span>
+</div>
+<div class="text-label-md font-semibold text-on-surface mb-0.5">รูปใหม่ 3 (ว่าง)</div>
+<p class="text-[11px] text-secondary mb-3">ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์ (JPG, PNG, WebP สูงสุด 5MB)</p>
+<button class="h-8 px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-label-sm font-medium text-on-surface hover:bg-white shadow-2xs" type="button">
+                  อัปโหลด
+                </button>
+</div>
+</div>
+</div>
+<!-- Replaced Images Gallery (Swappable History) -->
+<div class="pt-6 border-t border-outline-variant/60">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h3 class="text-label-lg font-label-lg font-semibold text-on-surface">
+                  รูปก่อนหน้าที่สลับกลับได้ (replaced 2)
+                </h3>
+<p class="text-[12px] text-secondary">
+                  รูปภาพเวอร์ชันก่อนหน้าในระบบ S3 ที่ยังสามารถเรียกคืนมาใช้แทนรูปปัจจุบันได้
+                </p>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container px-2.5 py-1 rounded-md">
+                ประวัติสำรอง 2 รูป
+              </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Replaced Image 1 -->
+<div class="p-3 rounded-lg border border-outline-variant bg-surface-bright flex items-center gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 border border-outline-variant/60">
+<img class="w-full h-full object-cover" data-alt="A lifestyle product shot showing uncooked aromatic Jasmine rice in a rustic ceramic bowl beside an authentic green rice ear shoot on an immaculate bright kitchen tabletop. The lighting is sunny and warm yet crisp and commercial, adhering to an understated natural clean tone suitable for premium agricultural brand cataloging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7W5FSEPGzgJzhBQ0FEvDuuAaGljUsYZpDsuqzyl2l2TndecIFpufaCy-pGMpqogwcc31WrhgDAfCNzT0waas0M6kWGJWKAPDvd-iJOmYnl5ZkFIkYR6pxJVHLJIUdZFiDg_iCzu7TYXEep9GL4CyYsiqN2AdFg2nERzvPmddLRv9JsG63Z6lDUU7Y8ZSIO2x9uUuBDOzSvTZmhLKGu9cdQsWCDN75WzCiPAaIpy23ZJe3tgF4_oGvVALi59bfyKoxMbAbIDhrsMY"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="text-label-md font-semibold text-on-surface truncate">Archived_Promo_Shot_2023.jpg</div>
+<div class="text-[11px] text-secondary mb-2">แทนที่เมื่อ 14 ต.ค. 2023 · S3 Standard</div>
+<div class="flex items-center gap-2">
+<button class="h-7 px-2.5 rounded bg-surface-container-low hover:bg-surface-container text-primary font-medium text-[11px] border border-primary/30 transition-colors" type="button">
+                      สลับไปใช้รูปนี้
+                    </button>
+<button class="h-7 px-2.5 rounded bg-transparent hover:bg-red-50 text-error font-medium text-[11px] transition-colors" type="button">
+                      ลบออกจาก S3
+                    </button>
+</div>
+</div>
+</div>
+<!-- Replaced Image 2 -->
+<div class="p-3 rounded-lg border border-outline-variant bg-surface-bright flex items-center gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 border border-outline-variant/60">
+<img class="w-full h-full object-cover" data-alt="An isometric studio packaging shot of a royal blue jasmine rice bag with silver metallic tamper-evident seal on a seamless neutral light platform. Bright diffuse enterprise studio illumination creates gentle soft shadows with ultra-sharp product branding focus, conveying premium international export logistics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRx5jpvYIgTcyR7VuF2L9iwAzKSYw4_U5q78cYrWRjvNsuiR1N-mfs-HLUG003-_XbIIu12gIVNgtBq-L0-CDfWZeyly0C-RwpDuxAaGMEDqtOYo__abBPLqsyEFeM7uVaQuKDxHlbDuATkHcntv7ZSgwYvQblPZuKxgu3om3vLbvQwVbHAks1-U-ojL31dHqepzKJH4J47VkQIrl4-9H7Om5iol38iSuiNV9-HPi5T1xZ3NYHVvi6oy4SzhXkUI-bI26X5gldpug"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="text-label-md font-semibold text-on-surface truncate">Export_Box_Composite_v1.png</div>
+<div class="text-[11px] text-secondary mb-2">แทนที่เมื่อ 02 ส.ค. 2023 · S3 Standard</div>
+<div class="flex items-center gap-2">
+<button class="h-7 px-2.5 rounded bg-surface-container-low hover:bg-surface-container text-primary font-medium text-[11px] border border-primary/30 transition-colors" type="button">
+                      สลับไปใช้รูปนี้
+                    </button>
+<button class="h-7 px-2.5 rounded bg-transparent hover:bg-red-50 text-error font-medium text-[11px] transition-colors" type="button">
+                      ลบออกจาก S3
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Legal / Audit Metadata Footnote -->
+<div class="flex flex-col sm:flex-row items-center justify-between text-[12px] text-secondary px-2 pt-2 pb-6">
+<div>ข้อความลิขสิทธิ์ (footerLegal): © 2024 Commerce Hub Enterprise. All rights reserved.</div>
+<div class="font-mono text-[11px] text-outline mt-1 sm:mt-0">
+          Last Synced ERP: 2024-05-18 10:42:19 UTC+7 | Audit ID: #TXN-998120
+        </div>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Navigation / Action Bar -->
+<aside class="fixed bottom-0 right-0 left-64 h-16 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/80 px-8 z-20 flex items-center justify-between shadow-lg">
+<div class="flex items-center gap-3">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+<span class="text-body-sm text-secondary">
+        กำลังแก้ไข SKU: <strong class="text-on-surface font-mono">SKU-TH-8890</strong> (พร้อมส่งข้อมูล sync ไปยัง ERP)
+      </span>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-[38px] px-5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container text-label-md font-label-md font-medium transition-colors shadow-2xs" type="button">
+        ยกเลิก
+      </button>
+<button class="h-[38px] px-6 rounded-lg bg-primary-container hover:bg-[#2b4cd8] text-white font-medium text-label-md font-label-md shadow-sm transition-all flex items-center gap-2" id="saveProductBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>บันทึกการแก้ไข</span>
+</button>
+</div>
+</aside>
+<!-- Lightweight Micro-Interaction script for admin feedback -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const saveBtn = document.getElementById('saveProductBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+          const originalContent = saveBtn.innerHTML;
+          saveBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+            <span>กำลังบันทึก...</span>
+          `;
+          saveBtn.disabled = true;
+          setTimeout(() => {
+            saveBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[18px]">done</span>
+              <span>บันทึกสำเร็จ</span>
+            `;
+            saveBtn.classList.remove('bg-primary-container');
+            saveBtn.classList.add('bg-emerald-600');
+            setTimeout(() => {
+              saveBtn.innerHTML = originalContent;
+              saveBtn.classList.remove('bg-emerald-600');
+              saveBtn.classList.add('bg-primary-container');
+              saveBtn.disabled = false;
+            }, 1800);
+          }, 900);
+        });
+      }
+    });
+  </script>
+</body></html>

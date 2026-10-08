@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ThaiCommerce Admin - ภาพรวม (Dashboard)</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-container": "#e6eeff",
+            "on-primary-container": "#ededff",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#00522f",
+            "surface-tint": "#214ce7",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed": "#9ef5be",
+            "on-primary-fixed-variant": "#0034c0",
+            "primary-container": "#365cf5",
+            "tertiary-container": "#876800",
+            "primary-fixed": "#dde1ff",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#594400",
+            "secondary-container": "#9bf2bb",
+            "surface-container-highest": "#d3e3ff",
+            "on-tertiary-container": "#ffedc9",
+            "on-secondary-container": "#117145",
+            "inverse-primary": "#b9c3ff",
+            "on-primary-fixed": "#001257",
+            "on-surface-variant": "#444655",
+            "on-primary": "#ffffff",
+            "tertiary-fixed": "#ffdf93",
+            "secondary-fixed-dim": "#82d8a3",
+            "on-secondary": "#ffffff",
+            "on-background": "#0b1c31",
+            "surface-container-low": "#eff3ff",
+            "on-surface": "#0b1c31",
+            "inverse-surface": "#213147",
+            "error": "#ba1a1a",
+            "inverse-on-surface": "#ebf1ff",
+            "on-tertiary": "#ffffff",
+            "primary": "#0a3fdc",
+            "outline": "#747687",
+            "error-container": "#ffdad6",
+            "surface": "#f8f9ff",
+            "on-tertiary-fixed": "#241a00",
+            "surface-container-high": "#dde9ff",
+            "tertiary": "#695100",
+            "on-secondary-fixed": "#002110",
+            "on-error-container": "#93000a",
+            "outline-variant": "#c4c5d8",
+            "background": "#f8f9ff",
+            "secondary": "#076c41",
+            "surface-dim": "#cadbf7",
+            "surface-variant": "#d3e3ff",
+            "tertiary-fixed-dim": "#eec144"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin": "1.5rem",
+            "space-lg": "1.5rem",
+            "gutter-sm": "0.75rem",
+            "space-md": "1rem",
+            "gutter-lg": "1.5rem",
+            "margin-lg": "2rem",
+            "space-xs": "0.25rem",
+            "gutter": "1.25rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "margin-sm": "1rem"
+          },
+          "fontFamily": {
+            "label-caption": ["Inter", "Noto Sans", "sans-serif"],
+            "display-page-title": ["Noto Sans", "sans-serif"],
+            "body-medium": ["Inter", "Noto Sans", "sans-serif"],
+            "body-default": ["Inter", "Noto Sans", "sans-serif"],
+            "headline-section-compact": ["Noto Sans", "sans-serif"],
+            "headline-section": ["Noto Sans", "sans-serif"],
+            "micro-tag": ["Inter", "Noto Sans", "sans-serif"],
+            "title-card": ["Inter", "Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "label-caption": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "display-page-title": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "body-medium": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-section-compact": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "headline-section": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "micro-tag": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "title-card": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased min-h-screen flex selection:bg-surface-container selection:text-primary">
+<!-- SIDEBAR (Shared Component: SideNavBar) -->
+<aside class="flex flex-col w-64 h-screen fixed left-0 top-0 p-4 overflow-y-auto z-50 bg-surface-container-lowest border-r border-outline-variant select-none justify-between">
+<div class="flex flex-col gap-6">
+<!-- Header Brand -->
+<div class="flex items-center gap-3 px-2 pt-1 pb-2 border-b border-surface-container-low">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-section shadow-sm">
+<span class="material-symbols-outlined text-white" data-icon="storefront">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-title-card font-title-card text-on-surface font-bold tracking-tight">ThaiCommerce Admin</span>
+<span class="text-micro-tag font-micro-tag text-on-surface-variant leading-none" data-i18n="ศูนย์บริหารจัดการร้านค้า">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Overview Highlight / Dashboard Active Item -->
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-semibold transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-primary" data-icon="dashboard">dashboard</span>
+<span class="text-body-medium font-body-medium" data-i18n="ภาพรวมการทำงาน">ภาพรวมการทำงาน</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-primary-container"></span>
+</a>
+</div>
+<!-- Navigation Work Areas (7 Tabs) -->
+<div class="flex flex-col gap-1">
+<div class="px-3 pb-2 text-[11px] font-bold text-outline uppercase tracking-wider" data-i18n="เมนู">เมนู</div>
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="inventory_2">inventory_2</span>
+<span class="text-body-default font-body-default" data-i18n="สินค้าและสต็อก (Products &amp; Stock)">สินค้าและสต็อก (Products &amp; Stock)</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="receipt_long">receipt_long</span>
+<span class="text-body-default font-body-default" data-i18n="ออเดอร์และการเงิน (Orders &amp; Finance)">ออเดอร์และการเงิน (Orders &amp; Finance)</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="support_agent">support_agent</span>
+<span class="text-body-default font-body-default" data-i18n="ลูกค้าและบริการ (Customers &amp; Service)">ลูกค้าและบริการ (Customers &amp; Service)</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="campaign">campaign</span>
+<span class="text-body-default font-body-default" data-i18n="การตลาด (Marketing)">การตลาด (Marketing)</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="analytics">analytics</span>
+<span class="text-body-default font-body-default" data-i18n="รายงานและข้อมูล (Reports &amp; Analytics)">รายงานและข้อมูล (Reports &amp; Analytics)</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="hub">hub</span>
+<span class="text-body-default font-body-default" data-i18n="ระบบเชื่อมต่อ (Integrations)">ระบบเชื่อมต่อ (Integrations)</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="settings">settings</span>
+<span class="text-body-default font-body-default" data-i18n="ตั้งค่าและทีมงาน (Settings &amp; Team)">ตั้งค่าและทีมงาน (Settings &amp; Team)</span>
+</a>
+</div>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-4 border-t border-outline-variant flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 text-body-default font-body-default" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="terminal">terminal</span>
+<span data-i18n="Developer portal">Developer portal</span>
+</a>
+<div class="flex items-center justify-between px-3 py-2 text-micro-tag font-micro-tag text-outline">
+<span>v2.8.44-prod</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary"></span>TH-BKK</span>
+</div>
+</div>
+</aside>
+<!-- MAIN OPERATIONAL SHELL -->
+<div class="pl-64 flex-1 flex flex-col min-w-0">
+<!-- CONTEXTUAL TOP APP BAR (Shared Component: TopNavBar) -->
+<header class="flex justify-between items-center h-14 px-6 w-full sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant">
+<!-- Left side: Breadcrumb & Search -->
+<div class="flex items-center gap-6 flex-1 max-w-2xl">
+<div class="flex items-center gap-2 text-label-caption font-label-caption whitespace-nowrap">
+<span class="text-on-surface font-semibold" data-i18n="ภาพรวม / Dashboard">ภาพรวม / Dashboard</span>
+</div>
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[18px]" data-icon="search">search</span>
+<input class="w-full h-9 pl-9 pr-4 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-default font-body-default text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-fixed text-xs transition-all" data-i18n-placeholder="ค้นหาในหน้านี้... (Search this page)" placeholder="ค้นหาในหน้านี้... (Search this page)" type="text"/>
+</div>
+</div>
+<!-- Right side: Indicator, Language Switcher, Action, Avatar -->
+<div class="flex items-center gap-3">
+<!-- Sample Data Indicator Chip -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fdf8e8] border border-[#f0dc91] text-[#b08900] text-micro-tag font-micro-tag">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900] animate-pulse"></span>
+<span data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</div>
+<!-- Language Switcher -->
+<div class="flex items-center bg-surface border border-outline-variant p-0.5 rounded-lg text-micro-tag font-micro-tag shadow-sm">
+<button class="px-2.5 py-1 rounded-md bg-surface-container-lowest text-on-surface font-semibold shadow-xs transition-all" id="lang-th-btn" onclick="setLanguage('th')">ไทย</button>
+<button class="px-2.5 py-1 rounded-md text-outline hover:text-on-surface transition-all" id="lang-en-btn" onclick="setLanguage('en')">English</button>
+</div>
+<!-- Refresh Button -->
+<button class="flex items-center gap-1.5 px-3 h-9 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface text-label-caption font-label-caption rounded-lg transition-colors duration-150" id="refresh-btn" onclick="refreshData()">
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:rotate-180 transition-transform duration-300" data-icon="sync">sync</span>
+<span data-i18n="รีเฟรชข้อมูล">รีเฟรชข้อมูล</span>
+</button>
+<!-- Notification & Help Icons -->
+<button class="w-9 h-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-outline hover:text-on-surface flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="notifications">notifications</span>
+</button>
+<button class="w-9 h-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-outline hover:text-on-surface flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="help">help</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<!-- Staff Profile Avatar -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center font-bold text-xs">
+            สม
+          </div>
+</div>
+</div>
+</header>
+<!-- CONTENT CANVAS -->
+<main class="flex-1 p-6 max-w-[1240px] w-full mx-auto space-y-6">
+<!-- 1. Header Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<h1 class="text-display-page-title font-display-page-title text-on-surface" data-i18n="ภาพรวมการทำงาน">ภาพรวมการทำงาน</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-micro-tag font-micro-tag" data-i18n="All connected">All connected</span>
+</div>
+<p class="text-body-default font-body-default text-outline" data-i18n="เริ่มจากงานที่ต้องทำ แล้วติดตามรายการที่ต้องดูแลในวันนี้">เริ่มจากงานที่ต้องทำ แล้วติดตามรายการที่ต้องดูแลในวันนี้</p>
+</div>
+<div class="flex items-center gap-2 text-micro-tag font-micro-tag text-outline bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant self-start md:self-auto shadow-xs">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="check_circle">check_circle</span>
+<span data-i18n="อัปเดตล่าสุด">อัปเดตล่าสุด</span>: <span id="last-updated-time">วันนี้ 10:42 น.</span>
+</div>
+</section>
+<!-- 2. Work Category Navigator ("เลือกหมวดงาน") -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="text-title-card font-title-card text-on-surface" data-i18n="เลือกหมวดงาน">เลือกหมวดงาน</h2>
+<span class="text-label-caption font-label-caption text-outline" data-i18n="ทุกเครื่องมือ จัดตามงานที่คุณทำ">ทุกเครื่องมือ จัดตามงานที่คุณทำ</span>
+</div>
+<span class="text-micro-tag font-micro-tag text-outline">7 Work Areas</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="inventory_2">inventory_2</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="สินค้าและสต็อก (Products &amp; Stock)">สินค้าและสต็อก</div>
+<div class="text-[11px] text-outline leading-tight">จัดการแคตตาล็อก &amp; สต็อก</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-primary font-semibold">
+<span data-i18n="Products">Products</span>
+<span>342 SKU</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="ออเดอร์และการเงิน (Orders &amp; Finance)">ออเดอร์และการเงิน</div>
+<div class="text-[11px] text-outline leading-tight">คำสั่งซื้อ รายรับ บิล</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-primary font-semibold">
+<span>Orders</span>
+<span>28 วันนี้</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="support_agent">support_agent</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="ลูกค้าและบริการ (Customers &amp; Service)">ลูกค้าและบริการ</div>
+<div class="text-[11px] text-outline leading-tight">สมาชิก CRM และแชท</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-primary font-semibold">
+<span data-i18n="Customers">Customers</span>
+<span>1,280 บัญชี</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="การตลาด (Marketing)">การตลาด</div>
+<div class="text-[11px] text-outline leading-tight">คูปอง โปรโมชัน แคมเปญ</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-outline">
+<span>Active</span>
+<span class="text-secondary font-semibold">3 แคมเปญ</span>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="analytics">analytics</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="รายงานและข้อมูล (Reports &amp; Analytics)">รายงานและข้อมูล</div>
+<div class="text-[11px] text-outline leading-tight">วิเคราะห์การขาย รายงาน</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-outline">
+<span>ยอดขาย</span>
+<span class="font-semibold text-on-surface">฿124.5k</span>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="hub">hub</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="ระบบเชื่อมต่อ (Integrations)">ระบบเชื่อมต่อ</div>
+<div class="text-[11px] text-outline leading-tight">TikTok, Shopee, Lazada</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-secondary font-semibold">
+<span data-i18n="Integrations">Integrations</span>
+<span data-i18n="All connected">5 ช่องทาง</span>
+</div>
+</div>
+<!-- Card 7 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 hover:border-primary-container hover:shadow-sm transition-all duration-150 cursor-pointer group flex flex-col justify-between">
+<div class="space-y-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+</div>
+<div class="font-semibold text-xs text-on-surface line-clamp-1" data-i18n="ตั้งค่าและทีมงาน (Settings &amp; Team)">ตั้งค่าและทีมงาน</div>
+<div class="text-[11px] text-outline leading-tight" data-i18n="ทีมงานและสิทธิ์">ทีมงานและสิทธิ์</div>
+</div>
+<div class="mt-3 pt-2 border-t border-surface flex items-center justify-between text-[11px] text-outline">
+<span data-i18n="ผู้อนุมัติ">ผู้อนุมัติ</span>
+<span>4 คน</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Urgent Attention Section ("งานที่ต้องดูแล" / Tasks Needing Care) -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<h2 class="text-title-card font-title-card text-on-surface" data-i18n="งานที่ต้องดูแล">งานที่ต้องดูแล</h2>
+</div>
+<span class="text-micro-tag font-micro-tag text-secondary bg-[#eaf5ef] border border-[#a8dcc0] px-2.5 py-0.5 rounded-full font-medium" data-i18n="All channels normalized">All channels normalized</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Card 1: Webhooks pending -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-xs font-semibold text-on-surface block" data-i18n="Webhooks pending">Webhooks pending</span>
+<span class="text-micro-tag font-micro-tag text-outline" data-i18n="Queue is empty">Queue is empty</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0]">0 msg</span>
+</div>
+<div class="mt-4 pt-3 border-t border-[#e1e7f0] flex items-center justify-between">
+<span class="text-micro-tag font-micro-tag text-outline">No throttling</span>
+<button class="text-primary hover:underline text-xs font-semibold flex items-center gap-1" data-i18n="View">
+<span data-i18n="View">View</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Inbound webhooks failed -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-xs font-semibold text-on-surface block" data-i18n="Inbound webhooks failed">Inbound webhooks failed</span>
+<span class="text-micro-tag font-micro-tag text-outline" data-i18n="Needs replay or fix">Needs replay or fix</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-surface-container-low text-on-surface-variant border border-outline-variant" data-i18n="No failures">No failures</span>
+</div>
+<div class="mt-4 pt-3 border-t border-[#e1e7f0] flex items-center justify-between">
+<span class="text-micro-tag font-micro-tag text-outline">Dead letters: 0</span>
+<button class="text-outline hover:text-on-surface text-xs font-semibold flex items-center gap-1">
+<span>Inspect</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Outbox backlog -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-xs font-semibold text-on-surface block" data-i18n="Outbox backlog">Outbox backlog</span>
+<span class="text-micro-tag font-micro-tag text-outline" data-i18n="Events waiting to publish">Events waiting to publish</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0]">0 event</span>
+</div>
+<div class="mt-4 pt-3 border-t border-[#e1e7f0] flex items-center justify-between">
+<span class="text-micro-tag font-micro-tag text-secondary font-medium" data-i18n="All channels normalized">All channels normalized</span>
+<button class="text-primary hover:underline text-xs font-semibold flex items-center gap-1">
+<span>Details</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Operational Overview KPI Cards ("ข้อมูลการทำงาน") -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h2 class="text-title-card font-title-card text-on-surface" data-i18n="ข้อมูลการทำงาน">ข้อมูลการทำงาน</h2>
+<div class="flex items-center gap-1.5 text-micro-tag font-micro-tag text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>Real-time Pulse</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+<!-- KPI 1: Integrations -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+<span class="text-micro-tag font-micro-tag text-outline block mb-1" data-i18n="Integrations">Integrations</span>
+<div class="text-headline-section font-headline-section text-on-surface font-bold">5/5 Active</div>
+<div class="mt-2 flex items-center gap-1.5 text-micro-tag font-micro-tag text-[#157347]">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified">verified</span>
+<span data-i18n="All connected">All connected</span>
+</div>
+</div>
+<!-- KPI 2: Customers -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+<span class="text-micro-tag font-micro-tag text-outline block mb-1" data-i18n="Customers">Customers</span>
+<div class="text-headline-section font-headline-section text-on-surface font-bold">1,280 <span class="text-xs font-normal text-outline">บัญชี</span></div>
+<div class="mt-2 flex items-center gap-1.5 text-micro-tag font-micro-tag text-outline">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="trending_up">trending_up</span>
+<span>+18 บัญชีวันนี้</span>
+</div>
+</div>
+<!-- KPI 3: Products -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+<span class="text-micro-tag font-micro-tag text-outline block mb-1" data-i18n="Products">Products</span>
+<div class="text-headline-section font-headline-section text-on-surface font-bold">342 <span class="text-xs font-normal text-outline">SKU</span></div>
+<div class="mt-2 flex items-center gap-1.5 text-micro-tag font-micro-tag text-outline">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="inventory">inventory</span>
+<span>In stock ready</span>
+</div>
+</div>
+<!-- KPI 4: Sync jobs (24h) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+<span class="text-micro-tag font-micro-tag text-outline block mb-1" data-i18n="Sync jobs (24h)">Sync jobs (24h)</span>
+<div class="text-headline-section font-headline-section text-on-surface font-bold">142 <span class="text-xs font-normal text-outline">jobs</span></div>
+<div class="mt-2 flex items-center gap-1.5 text-micro-tag font-micro-tag text-[#157347]">
+<span class="material-symbols-outlined text-[14px]" data-icon="task_alt">task_alt</span>
+<span>0 failed in 24h</span>
+</div>
+</div>
+<!-- KPI 5: Inventory levels -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+<span class="text-micro-tag font-micro-tag text-outline block mb-1" data-i18n="Inventory levels">Inventory levels</span>
+<div class="text-headline-section font-headline-section text-on-surface font-bold">98.4%</div>
+<div class="mt-2 flex items-center gap-1.5 text-micro-tag font-micro-tag text-[#b08900]">
+<span class="material-symbols-outlined text-[14px]" data-icon="warning">warning</span>
+<span>4 items low stock</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Two Column Operational Tables / Feed Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Column: Recent sync jobs (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-low">
+<div class="flex items-center gap-2.5">
+<h3 class="text-title-card font-title-card text-on-surface" data-i18n="Recent sync jobs">Recent sync jobs</h3>
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0] flex items-center gap-1 font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="Live Feed">Live Feed</span>
+</span>
+</div>
+<button class="text-primary text-label-caption font-label-caption font-semibold hover:underline" data-i18n="View all jobs">View all jobs</button>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-outline-variant">
+<th class="py-2.5 px-3 text-[12px] font-semibold text-outline" data-i18n="Job">Job</th>
+<th class="py-2.5 px-3 text-[12px] font-semibold text-outline" data-i18n="Platform">Platform</th>
+<th class="py-2.5 px-3 text-[12px] font-semibold text-outline" data-i18n="Status">Status</th>
+<th class="py-2.5 px-3 text-[12px] font-semibold text-outline" data-i18n="Started">Started</th>
+<th class="py-2.5 px-3 text-[12px] font-semibold text-outline" data-i18n="Duration">Duration</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-default font-body-default text-xs">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Shopee Product Sync</div>
+<span class="text-[10px] text-outline" data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง · ID #SY-9081</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-outline-variant text-on-surface text-[11px]">
+<span class="w-2 h-2 rounded-full bg-[#f94d2f]"></span>Shopee
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0]">Success</span>
+</td>
+<td class="py-3 px-3 text-outline">10:41:20</td>
+<td class="py-3 px-3 text-outline">1.2s</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Lazada Inventory Sync</div>
+<span class="text-[10px] text-outline" data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง · ID #SY-9080</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-outline-variant text-on-surface text-[11px]">
+<span class="w-2 h-2 rounded-full bg-[#0f146b]"></span>Lazada
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0]">Success</span>
+</td>
+<td class="py-3 px-3 text-outline">10:39:05</td>
+<td class="py-3 px-3 text-outline">2.8s</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">TikTok Order Webhook</div>
+<span class="text-[10px] text-outline" data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง · ID #SY-9079</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-outline-variant text-on-surface text-[11px]">
+<span class="w-2 h-2 rounded-full bg-[#000000]"></span>TikTok
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0]">Success</span>
+</td>
+<td class="py-3 px-3 text-outline">10:35:12</td>
+<td class="py-3 px-3 text-outline">0.4s</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">POS Offline Sync</div>
+<span class="text-[10px] text-outline" data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง · ID #SY-9078</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-outline-variant text-on-surface text-[11px]">
+<span class="w-2 h-2 rounded-full bg-primary"></span>POS Local
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#eaf5ef] text-[#157347] border border-[#a8dcc0]">Success</span>
+</td>
+<td class="py-3 px-3 text-outline">10:20:00</td>
+<td class="py-3 px-3 text-outline">3.1s</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty state indicator fallback placeholder (hidden while data active) -->
+<div class="hidden text-center py-6 border border-dashed border-outline-variant rounded-lg" id="sync-jobs-empty">
+<span class="material-symbols-outlined text-outline text-3xl mb-1" data-icon="cloud_off">cloud_off</span>
+<p class="text-body-default font-body-default text-outline" data-i18n="No sync jobs yet">No sync jobs yet</p>
+</div>
+</div>
+<!-- Right Column: Recent webhook failures (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 space-y-4 flex flex-col justify-between">
+<div class="space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-low">
+<h3 class="text-title-card font-title-card text-on-surface" data-i18n="Recent webhook failures">Recent webhook failures</h3>
+<button class="text-primary text-label-caption font-label-caption font-semibold hover:underline" data-i18n="Open dead letter">Open dead letter</button>
+</div>
+<!-- Single Item with Action or State Display -->
+<div class="space-y-3">
+<!-- Replay Alert Item -->
+<div class="border border-outline-variant rounded-lg p-3.5 bg-surface flex items-start justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full text-micro-tag font-micro-tag bg-[#fbecee] text-[#c2333f] border border-[#f4b4ba]" data-i18n="Delivery failed">Delivery failed</span>
+<span class="text-micro-tag font-micro-tag text-outline">wh_sec_919</span>
+</div>
+<div class="text-xs text-on-surface font-medium">Lazada Stock Low Event</div>
+<div class="text-[11px] text-outline" data-i18n="Needs replay or fix">Needs replay or fix</div>
+</div>
+<button class="px-3 py-1.5 rounded-md bg-surface-container-lowest border border-outline-variant text-on-surface text-xs font-semibold hover:bg-surface-container-low transition-colors shadow-xs">
+                  Replay
+                </button>
+</div>
+<!-- Clean State Card -->
+<div class="p-3 rounded-lg bg-[#eaf5ef] border border-[#a8dcc0] flex items-center gap-2.5 text-[#157347]">
+<span class="material-symbols-outlined text-[18px]" data-icon="verified">verified</span>
+<span class="text-xs font-medium" data-i18n="No failed deliveries">No failed deliveries</span>
+</div>
+</div>
+</div>
+<!-- Bottom flow note -->
+<div class="pt-3 border-t border-surface-container-low flex items-center justify-between text-micro-tag font-micro-tag text-outline">
+<span data-i18n="-- End Flow --">-- End Flow --</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="security">security</span>
+<span>HMAC Protected</span>
+</span>
+</div>
+</div>
+</section>
+<!-- 6. Preset & Quick Action Operational Bar -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-3">
+<button class="h-9 px-4 bg-primary-container text-white text-label-caption font-label-caption font-semibold rounded-lg hover:bg-primary transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="bookmark_add">bookmark_add</span>
+<span data-i18n="+ บันทึก trigger นี้เป็น Preset">+ บันทึก trigger นี้เป็น Preset</span>
+</button>
+<button class="h-9 px-3 bg-surface border border-outline-variant hover:bg-surface-container-low text-on-surface text-label-caption font-label-caption rounded-lg transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="file_download">file_download</span>
+<span data-i18n="Import orders + items">Import orders + items</span>
+</button>
+<button class="h-9 px-3 bg-surface border border-outline-variant hover:bg-surface-container-low text-on-surface text-label-caption font-label-caption rounded-lg transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="notifications_active">notifications_active</span>
+<span data-i18n="Simulate success notify">Simulate success notify</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-micro-tag font-micro-tag text-outline">
+<span data-i18n="ร้านในฐานข้อมูล">ร้านในฐานข้อมูล</span>: <span class="font-semibold text-on-surface">Main Warehouse BKK-01</span>
+</div>
+<a class="h-9 px-3.5 bg-surface-container-low text-primary text-label-caption font-label-caption font-semibold rounded-lg hover:bg-surface-container transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="terminal">terminal</span>
+<span data-i18n="Developer portal">Developer portal</span>
+</a>
+</div>
+</section>
+</main>
+</div>
+<!-- BILINGUAL & EXPORT SCRIPT TRANSLATION DATA -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Integrations": {
+      "th": "ระบบเชื่อมต่อ",
+      "en": "Integrations"
+    },
+    "Customers": {
+      "th": "ลูกค้า",
+      "en": "Customers"
+    },
+    "Products": {
+      "th": "สินค้า",
+      "en": "Products"
+    },
+    "ภาพรวมการทำงาน": {
+      "th": "ภาพรวมการทำงาน",
+      "en": "Operations Overview"
+    },
+    "เริ่มจากงานที่ต้องทำ แล้วติดตามรายการที่ต้องดูแลในวันนี้": {
+      "th": "เริ่มจากงานที่ต้องทำ แล้วติดตามรายการที่ต้องดูแลในวันนี้",
+      "en": "Start from required tasks and track items needing care today"
+    },
+    "อัปเดตล่าสุด": {
+      "th": "อัปเดตล่าสุด",
+      "en": "Last updated"
+    },
+    "รีเฟรชข้อมูล": {
+      "th": "รีเฟรชข้อมูล",
+      "en": "Refresh data"
+    },
+    "เลือกหมวดงาน": {
+      "th": "เลือกหมวดงาน",
+      "en": "Select Work Area"
+    },
+    "ทุกเครื่องมือ จัดตามงานที่คุณทำ": {
+      "th": "ทุกเครื่องมือ จัดตามงานที่คุณทำ",
+      "en": "All tools organized by the tasks you perform"
+    },
+    "เมนู": {
+      "th": "เมนู",
+      "en": "Menu"
+    },
+    "งานที่ต้องดูแล": {
+      "th": "งานที่ต้องดูแล",
+      "en": "Tasks Needing Care"
+    },
+    "Webhooks pending": {
+      "th": "Webhooks รอดำเนินการ",
+      "en": "Webhooks pending"
+    },
+    "Queue is empty": {
+      "th": "คิวว่าง",
+      "en": "Queue is empty"
+    },
+    "View": {
+      "th": "ดู",
+      "en": "View"
+    },
+    "Inbound webhooks failed": {
+      "th": "Inbound webhooks ล้มเหลว",
+      "en": "Inbound webhooks failed"
+    },
+    "Needs replay or fix": {
+      "th": "ต้อง Replay หรือแก้ไข",
+      "en": "Needs replay or fix"
+    },
+    "No failures": {
+      "th": "ไม่มีข้อผิดพลาด",
+      "en": "No failures"
+    },
+    "Outbox backlog": {
+      "th": "Outbox ค้างส่ง",
+      "en": "Outbox backlog"
+    },
+    "Events waiting to publish": {
+      "th": "Events รอตีพิมพ์",
+      "en": "Events waiting to publish"
+    },
+    "All channels normalized": {
+      "th": "ทุกช่องทางทำงานปกติ",
+      "en": "All channels normalized"
+    },
+    "ข้อมูลการทำงาน": {
+      "th": "ข้อมูลการทำงาน",
+      "en": "Operations Overview"
+    },
+    "All connected": {
+      "th": "เชื่อมต่อครบทุกระบบ",
+      "en": "All connected"
+    },
+    "Sync jobs (24h)": {
+      "th": "งาน Sync (24 ชม.)",
+      "en": "Sync jobs (24h)"
+    },
+    "Inventory levels": {
+      "th": "ระดับสต็อกสินค้า",
+      "en": "Inventory levels"
+    },
+    "Recent sync jobs": {
+      "th": "งานซิงก์ข้อมูลล่าสุด",
+      "en": "Recent sync jobs"
+    },
+    "Live Feed": {
+      "th": "ฟีดสด",
+      "en": "Live Feed"
+    },
+    "View all jobs": {
+      "th": "ดูงานทั้งหมด",
+      "en": "View all jobs"
+    },
+    "Job": {
+      "th": "งาน",
+      "en": "Job"
+    },
+    "Platform": {
+      "th": "แพลตฟอร์ม",
+      "en": "Platform"
+    },
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Started": {
+      "th": "เวลาเริ่ม",
+      "en": "Started"
+    },
+    "Duration": {
+      "th": "ระยะเวลา",
+      "en": "Duration"
+    },
+    "No sync jobs yet": {
+      "th": "ยังไม่มีงานซิงก์",
+      "en": "No sync jobs yet"
+    },
+    "Recent webhook failures": {
+      "th": "Webhook ล้มเหลวล่าสุด",
+      "en": "Recent webhook failures"
+    },
+    "Open dead letter": {
+      "th": "เปิด Dead Letter",
+      "en": "Open dead letter"
+    },
+    "No failed deliveries": {
+      "th": "ไม่มีรายการจัดส่งล้มเหลว",
+      "en": "No failed deliveries"
+    },
+    "Delivery failed": {
+      "th": "จัดส่งล้มเหลว",
+      "en": "Delivery failed"
+    },
+    "-- End Flow --": {
+      "th": "-- สิ้นสุดโฟลว์ --",
+      "en": "-- End Flow --"
+    },
+    "+ บันทึก trigger นี้เป็น Preset": {
+      "th": "+ บันทึก trigger นี้เป็น Preset",
+      "en": "+ Save this trigger as Preset"
+    },
+    "Bottom Sheet": {
+      "th": "แผ่นด้านล่าง",
+      "en": "Bottom Sheet"
+    },
+    "Developer portal": {
+      "th": "พอร์ทัลนักพัฒนา",
+      "en": "Developer portal"
+    },
+    "Import orders + items": {
+      "th": "นำเข้าออเดอร์ + สินค้า",
+      "en": "Import orders + items"
+    },
+    "No": {
+      "th": "ไม่",
+      "en": "No"
+    },
+    "Promised": {
+      "th": "ตามกำหนดสัญญา",
+      "en": "Promised"
+    },
+    "Simulate success notify": {
+      "th": "จำลองแจ้งเตือนสำเร็จ",
+      "en": "Simulate success notify"
+    },
+    "กำลังเตรียม": {
+      "th": "กำลังเตรียม",
+      "en": "Preparing"
+    },
+    "ข้อความที่บอทจะส่ง…": {
+      "th": "ข้อความที่บอทจะส่ง…",
+      "en": "Message the bot will send…"
+    },
+    "ครั้งเฉลี่ยก่อนสั่งซื้อ ·": {
+      "th": "ครั้งเฉลี่ยก่อนสั่งซื้อ ·",
+      "en": "Avg visits before purchase ·"
+    },
+    "จาก getDeviceId() / URL ?individual_id=": {
+      "th": "จาก getDeviceId() / URL ?individual_id=",
+      "en": "From getDeviceId() / URL ?individual_id="
+    },
+    "ชื่อสินค้า": {
+      "th": "ชื่อสินค้า",
+      "en": "Product Name"
+    },
+    "ต้นทุนที่ยังขาด": {
+      "th": "ต้นทุนที่ยังขาด",
+      "en": "Missing cost base"
+    },
+    "ทีมงานและสิทธิ์": {
+      "th": "ทีมงานและสิทธิ์",
+      "en": "Team & Permissions"
+    },
+    "ปฏิเสธ pending ที่เลือก": {
+      "th": "ปฏิเสธ pending ที่เลือก",
+      "en": "Reject selected pending"
+    },
+    "ผู้อนุมัติ": {
+      "th": "ผู้อนุมัติ",
+      "en": "Approvers"
+    },
+    "ไม่ใช่ตัวนี้ — ค้นหาเอง": {
+      "th": "ไม่ใช่ตัวนี้ — ค้นหาเอง",
+      "en": "Not this one — Search manually"
+    },
+    "ย้อนกลับหรือเปลี่ยน campaign จากหน้า admin ไม่ได้": {
+      "th": "ย้อนกลับหรือเปลี่ยน campaign จากหน้า admin ไม่ได้",
+      "en": "Cannot rollback or change campaign from admin"
+    },
+    "รวมทั้งหมด": {
+      "th": "รวมทั้งหมด",
+      "en": "Grand Total"
+    },
+    "ร้านในฐานข้อมูล": {
+      "th": "ร้านในฐานข้อมูล",
+      "en": "Store in database"
+    },
+    "ล้าง Segment": {
+      "th": "ล้าง Segment",
+      "en": "Clear Segment"
+    },
+    "ว่างได้ — SHIPPING โดยไม่มีคนขับจะโชว์ ยังไม่มี": {
+      "th": "ว่างได้ — SHIPPING โดยไม่มีคนขับจะโชว์ ยังไม่มี",
+      "en": "Can be empty — SHIPPING without driver will show none"
+    },
+    "ส่วนลด (บาท)": {
+      "th": "ส่วนลด (บาท)",
+      "en": "Discount (THB)"
+    },
+    "หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)": {
+      "th": "หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)",
+      "en": "Or type new brand code (if not in list)"
+    },
+    "เอาออก": {
+      "th": "เอาออก",
+      "en": "Remove"
+    },
+    "ภาพรวม / Dashboard": {
+      "th": "ภาพรวม / Dashboard",
+      "en": "Overview / Dashboard"
+    },
+    "ข้อมูลตัวอย่าง": {
+      "th": "ข้อมูลตัวอย่าง",
+      "en": "Sample data"
+    },
+    "ศูนย์บริหารจัดการร้านค้า": {
+      "th": "ศูนย์บริหารจัดการร้านค้า",
+      "en": "Commerce Operations Hub"
+    },
+    "สินค้าและสต็อก (Products & Stock)": {
+      "th": "สินค้าและสต็อก (Products & Stock)",
+      "en": "Products & Stock"
+    },
+    "ออเดอร์และการเงิน (Orders & Finance)": {
+      "th": "ออเดอร์และการเงิน (Orders & Finance)",
+      "en": "Orders & Finance"
+    },
+    "ลูกค้าและบริการ (Customers & Service)": {
+      "th": "ลูกค้าและบริการ (Customers & Service)",
+      "en": "Customers & Service"
+    },
+    "การตลาด (Marketing)": {
+      "th": "การตลาด (Marketing)",
+      "en": "Marketing"
+    },
+    "รายงานและข้อมูล (Reports & Analytics)": {
+      "th": "รายงานและข้อมูล (Reports & Analytics)",
+      "en": "Reports & Analytics"
+    },
+    "ระบบเชื่อมต่อ (Integrations)": {
+      "th": "ระบบเชื่อมต่อ (Integrations)",
+      "en": "Integrations"
+    },
+    "ตั้งค่าและทีมงาน (Settings & Team)": {
+      "th": "ตั้งค่าและทีมงาน (Settings & Team)",
+      "en": "Settings & Team"
+    }
+  }
+  </script>
+<!-- Interactive Logic for Language Switcher & Refresh -->
+<script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update toggle buttons styling
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-surface-container-lowest text-on-surface font-semibold shadow-xs transition-all";
+        enBtn.className = "px-2.5 py-1 rounded-md text-outline hover:text-on-surface transition-all";
+        document.documentElement.lang = 'th';
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-surface-container-lowest text-on-surface font-semibold shadow-xs transition-all";
+        thBtn.className = "px-2.5 py-1 rounded-md text-outline hover:text-on-surface transition-all";
+        document.documentElement.lang = 'en';
+      }
+
+      // Translate all marked DOM text nodes
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+
+      // Translate placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[key] && translations[key][lang]) {
+          el.setAttribute('placeholder', translations[key][lang]);
+        }
+      });
+
+      // Update timestamp text display
+      const timeElem = document.getElementById('last-updated-time');
+      if (lang === 'en') {
+        timeElem.textContent = 'Today at 10:42 AM';
+      } else {
+        timeElem.textContent = 'วันนี้ 10:42 น.';
+      }
+    }
+
+    function refreshData() {
+      const btn = document.getElementById('refresh-btn');
+      const icon = btn.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeElem = document.getElementById('last-updated-time');
+
+        if (currentLang === 'en') {
+          timeElem.textContent = `Today at ${hours}:${minutes}`;
+        } else {
+          timeElem.textContent = `วันนี้ ${hours}:${minutes} น.`;
+        }
+      }, 600);
+    }
+  </script>
+</body></html>

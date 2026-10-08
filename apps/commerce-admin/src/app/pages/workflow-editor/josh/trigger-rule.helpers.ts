@@ -1,3 +1,6 @@
+import { uiText as __uiText } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { getUiLocale, uiText } from '@cp/ui';
 import type {
   MarketingTriggerConfig,
   MarketingTriggerType,
@@ -22,12 +25,12 @@ export function durationToMinutes(
 
 export function formatDurationLabel(hours?: number | null, minutes?: number | null): string {
   const total = durationToMinutes(hours, minutes, 0);
-  if (total <= 0) return '0 นาที';
+  if (total <= 0) return __uiText("0 นาที");
   const h = Math.floor(total / 60);
   const m = total % 60;
-  if (h > 0 && m > 0) return `${h} ชม. ${m} นาที`;
-  if (h > 0) return `${h} ชั่วโมง`;
-  return `${m} นาที`;
+  if (h > 0 && m > 0) return __uiText("{0} ชม. {1} นาที",{"0":h,"1":m});
+  if (h > 0) return __uiText("{0} ชั่วโมง",{"0":h});
+  return __uiText("{0} นาที",{"0":m});
 }
 
 /** Mirrors `defaultTriggerConfig` in `apps/backend/src/app/marketing-workflow/marketing-workflow.service.ts`. */
@@ -67,60 +70,59 @@ export const TRIGGER_TYPE_CARDS: Array<{
 }> = [
   {
     type: 'cart_idle',
-    title: 'ตะกร้าค้าง',
-    description: 'เมื่อตะกร้าไม่ถูกแตะเป็นเวลาที่กำหนด',
+    get title(){return uiText("ตะกร้าค้าง");},
+    get description(){return uiText("เมื่อตะกร้าไม่ถูกแตะเป็นเวลาที่กำหนด");},
   },
   {
     type: 'page_affinity',
-    title: 'เข้าชมหน้าค้าง',
-    description: 'เมื่อลูกค้าดูหน้าเดิมบ่อยพอในช่วงเวลา (ชม./นาที)',
+    get title(){return uiText("เข้าชมหน้าค้าง");},
+    get description(){return uiText("เมื่อลูกค้าดูหน้าเดิมบ่อยพอในช่วงเวลา (ชม./นาที)");},
   },
   {
     type: 'session_in_window',
-    title: 'ช่วงเวลา + Login',
-    description: 'คนที่ล็อกอินในช่วงเวลาที่ตั้งไว้ (และ/หรือใน segment)',
+    get title(){return uiText("ช่วงเวลา + Login");},
+    get description(){return uiText("คนที่ล็อกอินในช่วงเวลาที่ตั้งไว้ (และ/หรือใน segment)");},
   },
   {
     type: 'first_login',
-    title: 'Login ครั้งแรก',
-    description: 'เมื่อลูกค้าเข้าสู่ระบบครั้งแรกบนแอป/เว็บ',
+    get title(){return uiText("Login ครั้งแรก");},
+    get description(){return uiText("เมื่อลูกค้าเข้าสู่ระบบครั้งแรกบนแอป/เว็บ");},
   },
   {
     type: 'first_visit',
-    title: 'เข้าเว็บครั้งแรก',
-    description: 'เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup',
+    get title(){return uiText("เข้าเว็บครั้งแรก");},
+    get description(){return uiText("เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup");},
   },
   {
     type: 'custom',
-    title: 'กำหนดเอง (Custom)',
-    description:
-      'ตั้งชื่อเงื่อนไขเอง เช่น "ช่วงฝนตก" — กด Activate เมื่อเริ่มช่วง ทุกคนที่เข้าเว็บจะได้ popup/action, กด Pause เมื่อจบ',
+    get title(){return uiText("กำหนดเอง (Custom)");},
+    get description(){return uiText("ตั้งชื่อเงื่อนไขเอง เช่น \"ช่วงฝนตก\" — กด Activate เมื่อเริ่มช่วง ทุกคนที่เข้าเว็บจะได้ popup/action, กด Pause เมื่อจบ");},
   },
   {
     type: 'order_milestone',
-    title: 'ยอดสั่งซื้อถึงเป้า (Milestone)',
-    description:
-      'ต่อเงื่อนไขเอง เช่น "order เดียวเกิน 5,000 ครั้งแรก" หรือ "ยอดสะสมถึง 100,000 ครั้งแรก" — ทำงานคนละ 1 ครั้ง',
+    get title(){return uiText("ยอดสั่งซื้อถึงเป้า (Milestone)");},
+    get description(){return uiText("ต่อเงื่อนไขเอง เช่น \"order เดียวเกิน 5,000 ครั้งแรก\" หรือ \"ยอดสะสมถึง 100,000 ครั้งแรก\" — ทำงานคนละ 1 ครั้ง");},
   },
   {
     type: 'scheduled',
-    title: 'ตามเวลา (Scheduled)',
-    description:
-      'ยิงเองตามเวลา เช่น "ทุกวัน 18:00" หรือ "ทุกวันจันทร์ 19:00" — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)',
+    get title(){return uiText("ตามเวลา (Scheduled)");},
+    get description(){return uiText("ยิงเองตามเวลา เช่น \"ทุกวัน 18:00\" หรือ \"ทุกวันจันทร์ 19:00\" — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)");},
   },
 ];
 
 /** Short chips for the schedule strip (not the full `describeMarketingSchedule` sentence). */
 export function scheduleStripChips(schedule: MarketingWorkflowSchedule): string[] {
-  if (!schedule) return ['ตลอดเวลา'];
+  if (!schedule) return [uiText('ตลอดเวลา')];
   const chips: string[] = [];
   if (!schedule.daysOfWeek?.length || schedule.daysOfWeek.length === 7) {
-    chips.push('ทุกวัน');
+    chips.push(uiText('ทุกวัน'));
   } else {
-    const labels = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+    const labels = getUiLocale() === 'th' ? ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     chips.push([...schedule.daysOfWeek].sort().map((d) => labels[d] ?? String(d)).join(','));
   }
   chips.push(`${schedule.startTime ?? '00:00'}–${schedule.endTime ?? '24:00'}`);
   chips.push(schedule.timezone || 'Asia/Bangkok');
   return chips;
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

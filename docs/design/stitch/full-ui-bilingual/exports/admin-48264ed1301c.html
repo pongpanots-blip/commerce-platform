@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>คำขอเข้า admin - JoshBackoffice | Thai Commerce Operations</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Noto Sans Thai & Noto Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "tertiary-container": "#bc4600",
+            "on-surface": "#0e1b32",
+            "surface-variant": "#d7e2ff",
+            "tertiary": "#943500",
+            "surface-container-lowest": "#ffffff",
+            "secondary-container": "#d0e1fd",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-primary-container": "#ededff",
+            "error": "#ba1a1a",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary": "#ffffff",
+            "error-container": "#ffdad6",
+            "primary-container": "#365cf5",
+            "on-tertiary-fixed": "#360f00",
+            "on-error-container": "#93000a",
+            "primary-fixed": "#dde1ff",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed": "#001257",
+            "surface-bright": "#f9f9ff",
+            "secondary-fixed": "#d3e3ff",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#243048",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary": "#4f5f77",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-surface-variant": "#444655",
+            "tertiary-fixed": "#ffdbcd",
+            "on-secondary-fixed": "#0b1c31",
+            "surface-tint": "#214ce7",
+            "on-secondary-container": "#54647c",
+            "on-background": "#0e1b32",
+            "surface": "#f9f9ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-dim": "#cddaf9",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "primary": "#0a3fdc",
+            "background": "#f9f9ff",
+            "inverse-primary": "#b9c3ff",
+            "on-tertiary-container": "#ffebe4",
+            "surface-container-high": "#e0e8ff",
+            "outline-variant": "#c4c5d8",
+            "outline": "#747687",
+            "surface-container": "#e8eeff",
+            "on-primary-fixed-variant": "#0034c0"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          spacing: {
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "margin-desktop": "2rem",
+            "gutter": "1rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem"
+          },
+          fontFamily: {
+            "subheading": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "code-table": ["Noto Sans Thai", "Noto Sans", "monospace"],
+            "display": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-page": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-card": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-page-mobile": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-medium": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-caption": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          fontSize: {
+            "subheading": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+            "code-table": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "display": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+            "body-default": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+            "label-default": ["13px", { lineHeight: "18px", fontWeight: "500" }],
+            "headline-page": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+            "headline-card": ["18px", { lineHeight: "26px", fontWeight: "600" }],
+            "headline-page-mobile": ["22px", { lineHeight: "30px", fontWeight: "600" }],
+            "body-medium": ["14px", { lineHeight: "22px", fontWeight: "500" }],
+            "label-caption": ["12px", { lineHeight: "16px", fontWeight: "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #0e1b32;
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased flex flex-row min-h-screen">
+<!-- ========================================== -->
+<!-- SIDE NAVIGATION BAR (256px Fixed Anchor)   -->
+<!-- ========================================== -->
+<aside class="fixed top-0 left-0 h-full w-64 z-40 bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<!-- Brand & Platform Identity -->
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="storefront">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-card font-headline-card font-bold text-on-surface">Commerce Admin</span>
+<span class="text-label-caption font-label-caption text-secondary">ศูนย์จัดการระบบ</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-3 bg-primary-container text-on-primary rounded-xl font-label-default text-label-default hover:bg-primary transition-all duration-150 shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="add_circle">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- 7 Work Area Navigation Links -->
+<nav class="flex flex-col gap-1 mt-2">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="receipt_long">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ (ACTIVE for Customer & Service / Josh) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-body-medium border-l-[3px] border-primary transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl fill-icon" data-icon="support_agent" data-weight="fill">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="analytics">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="hub">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="flex flex-col gap-1 border-t border-outline-variant pt-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="help_center">help_center</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors text-error" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- MAIN STAGE WRAPPER (Offset by Sidebar)    -->
+<!-- ========================================== -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TOP NAVIGATION BAR -->
+<header class="sticky top-0 right-0 w-full z-30 h-16 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex justify-between items-center px-6">
+<!-- Search on Left / Page Context -->
+<div class="flex items-center gap-4 flex-1 max-w-md">
+<div class="relative w-full">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg" data-icon="search">search</span>
+</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-default font-body-default text-on-surface placeholder-secondary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none transition-all" id="top-search-field" placeholder="ค้นหาในหน้านี้..." type="text"/>
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-caption font-label-caption bg-surface-container text-secondary border border-outline-variant whitespace-nowrap">
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<!-- Right Utility Cluster -->
+<div class="flex items-center gap-4">
+<!-- Bilingual Segmented Switcher -->
+<div class="inline-flex items-center bg-surface-container-low p-1 rounded-xl border border-outline-variant" role="group">
+<button class="px-2.5 py-1 text-label-caption font-label-caption font-medium rounded-lg bg-surface-container-lowest text-primary shadow-sm border border-outline-variant/30 transition-all" id="lang-btn-th" type="button">TH</button>
+<button class="px-2.5 py-1 text-label-caption font-label-caption font-medium rounded-lg text-secondary hover:text-on-surface transition-all" id="lang-btn-en" type="button">EN</button>
+</div>
+<!-- Notification Bell -->
+<button class="relative p-2 rounded-xl text-secondary hover:bg-surface-container-low transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<!-- Help Outline -->
+<button class="p-2 rounded-xl text-secondary hover:bg-surface-container-low transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined text-xl" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant"></div>
+<!-- User Profile Avatar & Role -->
+<div class="flex items-center gap-3 pl-1">
+<div class="text-right">
+<div class="text-body-medium font-body-medium text-on-surface text-sm">จินดา นวลอนันต์</div>
+<div class="text-label-caption font-label-caption text-secondary">หัวหน้าทีมบริการลูกค้า CS</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-fixed border border-primary-container/30 flex items-center justify-center text-primary font-bold overflow-hidden shadow-sm">
+<span class="text-sm font-semibold">จน</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================== -->
+<!-- CONTENT CANVAS (Centered Max-width 1240px) -->
+<!-- ========================================== -->
+<main class="flex-1 p-6 md:p-8 flex flex-col items-center">
+<div class="w-full max-w-[1240px] flex flex-col gap-6">
+<!-- 1. Breadcrumb -->
+<nav class="flex items-center gap-2 text-label-caption font-label-caption text-secondary">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="home">home</span>
+<span>หน้าหลัก</span>
+</a>
+<span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">ลูกค้าและบริการ</a>
+<span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface font-medium" data-i18n-key="คำขอเข้า admin">คำขอเข้า admin</span>
+</nav>
+<!-- 2. Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-3 flex-wrap">
+<h1 class="text-headline-page font-headline-page text-on-surface tracking-tight" data-i18n-key="คำขอเข้า admin">
+                คำขอเข้า admin
+              </h1>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-surface-container text-secondary border border-outline-variant">
+                /josh/admin_access
+              </span>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347] border border-[#157347]/20 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n-key="อ่านอย่างเดียว · ข้อมูลจาก josh">อ่านอย่างเดียว · ข้อมูลจาก josh</span>
+</span>
+</div>
+<p class="text-body-default font-body-default text-secondary max-w-3xl">
+              ตรวจสอบและจัดการคำขอสิทธิ์การเข้าใช้งาน Web-Admin และ Josh Backoffice จากพนักงานและทีมงานภายนอก
+            </p>
+</div>
+<!-- Top Actions -->
+<div class="flex items-center gap-2.5">
+<button class="h-10 px-4 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low font-body-medium text-body-medium transition-all shadow-sm flex items-center gap-2" id="refresh-action-btn">
+<span class="material-symbols-outlined text-base" data-icon="refresh">refresh</span>
+<span data-i18n-key="Refresh">Refresh</span>
+</button>
+<button class="h-10 px-4 rounded-xl bg-primary-container text-on-primary hover:bg-primary font-body-medium text-body-medium transition-all shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="filter_alt">filter_alt</span>
+<span data-i18n-key="ค้นหา">ค้นหา</span>
+</button>
+</div>
+</div>
+<!-- 3. Information Notice Banner (PDPA & Josh Governance Context) -->
+<div class="rounded-xl border border-outline-variant bg-surface-container-low p-4 flex items-start gap-3.5 shadow-sm">
+<div class="p-1.5 rounded-lg bg-surface-container text-primary">
+<span class="material-symbols-outlined text-xl" data-icon="shield">shield</span>
+</div>
+<div class="flex-1 text-body-default font-body-default text-secondary">
+<span class="font-medium text-on-surface" data-i18n-key="อ่านอย่างเดียว · ข้อมูลจาก josh">อ่านอย่างเดียว · ข้อมูลจาก josh</span>
+<span> — </span>
+<span data-i18n-key="สั่ง josh ได้ · ตามสิทธิ์ใน josh">สั่ง josh ได้ · ตามสิทธิ์ใน josh</span>
+<span class="text-on-surface-variant font-normal">
+              (<span data-i18n-key="แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (">แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (</span><a class="text-primary underline hover:text-primary-container font-mono" href="#">https://josh-admin.internal</a><span data-i18n-key=") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง">) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง</span> เพื่อความปลอดภัยตามมาตรฐาน PDPA)
+            </span>
+</div>
+</div>
+<!-- 4. Metric / KPI Summary Bento Grid (4 Cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Total -->
+<div class="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:border-primary/40 transition-all">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-label-default" data-i18n-key="ทั้งหมด">ทั้งหมด</span>
+<span class="p-2 rounded-lg bg-surface-container text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="format_list_bulleted">format_list_bulleted</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-display font-display text-on-surface">6</span>
+<span class="text-label-caption font-label-caption text-secondary">
+<span data-i18n-key="พบ">พบ</span> 6 <span data-i18n-key="รายการ">รายการ</span>
+</span>
+</div>
+<div class="mt-2 text-xs text-secondary">คำขอเชื่อมต่อในระบบ Josh ทั้งหมด</div>
+</div>
+<!-- Card 2: Pending Approval -->
+<div class="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:border-[#b08900]/40 transition-all">
+<div class="flex items-center justify-between text-[#b08900]">
+<span class="text-label-default font-label-default text-on-surface">รอตรวจสอบสิทธิ์</span>
+<span class="p-2 rounded-lg bg-[#fef9e7] text-[#b08900]">
+<span class="material-symbols-outlined text-lg" data-icon="hourglass_top">hourglass_top</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-display font-display text-[#b08900]">3</span>
+<span class="text-label-caption font-label-caption text-secondary">รายการ (ต้องการการอนุมัติ)</span>
+</div>
+<div class="mt-2 text-xs text-secondary">ต้องตรวจสอบสิทธิ์ภายใน 24 ชม.</div>
+</div>
+<!-- Card 3: Approved / Active -->
+<div class="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:border-[#157347]/40 transition-all">
+<div class="flex items-center justify-between text-[#157347]">
+<span class="text-label-default font-label-default text-on-surface">สิทธิ์ใช้งานแล้ว</span>
+<span class="p-2 rounded-lg bg-[#eaf5ef] text-[#157347]">
+<span class="material-symbols-outlined text-lg" data-icon="check_circle">check_circle</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-display font-display text-[#157347]">2</span>
+<span class="text-label-caption font-label-caption text-secondary">รายการ (เปิดใช้งาน)</span>
+</div>
+<div class="mt-2 text-xs text-secondary">โทเค็นการเชื่อมต่อยังใช้งานได้ปกติ</div>
+</div>
+<!-- Card 4: Rejected / Expired -->
+<div class="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm flex flex-col justify-between hover:border-[#c2333f]/40 transition-all">
+<div class="flex items-center justify-between text-[#c2333f]">
+<span class="text-label-default font-label-default text-on-surface">ถูกปฏิเสธ / หมดอายุ</span>
+<span class="p-2 rounded-lg bg-[#faeaeb] text-[#c2333f]">
+<span class="material-symbols-outlined text-lg" data-icon="cancel">cancel</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-display font-display text-[#c2333f]">1</span>
+<span class="text-label-caption font-label-caption text-secondary">รายการ</span>
+</div>
+<div class="mt-2 text-xs text-secondary">สิทธิ์ถูกระงับเนื่องจากคำขอไม่ถูกต้อง</div>
+</div>
+</div>
+<!-- 5. Controls, Filter Bar & Tab Navigation -->
+<div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-4 shadow-sm flex flex-col gap-4">
+<!-- Segmented Filter Tabs -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-outline-variant pb-3">
+<div class="flex items-center gap-1 overflow-x-auto">
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container text-primary font-label-default text-label-default font-medium border border-outline-variant/40" data-i18n-key="ทั้งหมด">ทั้งหมด (6)</button>
+<button class="px-3.5 py-1.5 rounded-lg text-secondary hover:bg-surface-container-low font-label-default text-label-default transition-colors">รออนุมัติ (3)</button>
+<button class="px-3.5 py-1.5 rounded-lg text-secondary hover:bg-surface-container-low font-label-default text-label-default transition-colors">อนุมัติแล้ว (2)</button>
+<button class="px-3.5 py-1.5 rounded-lg text-secondary hover:bg-surface-container-low font-label-default text-label-default transition-colors">ถูกปฏิเสธ (1)</button>
+</div>
+<!-- Clear Filter Button -->
+<button class="text-label-caption font-label-caption text-secondary hover:text-primary flex items-center gap-1 self-end sm:self-center transition-colors" id="clear-filters-btn">
+<span class="material-symbols-outlined text-sm" data-icon="close">close</span>
+<span data-i18n-key="ล้างตัวกรอง">ล้างตัวกรอง</span>
+</button>
+</div>
+<!-- Search & Dropdown Filters Bar -->
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+<!-- Search Input with helper note -->
+<div class="sm:col-span-6 relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg" data-icon="search">search</span>
+</span>
+<input class="w-full h-10 pl-9 pr-24 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-default font-body-default text-on-surface placeholder-secondary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" id="inline-search-box" placeholder="ค้นหา…" type="text"/>
+<span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-xs text-secondary/70">
+                (ค้นหาในหน้านี้)
+              </span>
+</div>
+<!-- Role Scope Dropdown -->
+<div class="sm:col-span-3">
+<select class="w-full h-10 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-default font-body-default text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none">
+<option value="">ระดับสิทธิ์ทั้งหมด (Josh Role)</option>
+<option value="cs2">Josh Agent Level 2</option>
+<option value="wh">Warehouse Supervisor</option>
+<option value="fin">Billing &amp; Finance Officer</option>
+<option value="audit">Auditor Read-only</option>
+<option value="mkt">Marketing Ops</option>
+</select>
+</div>
+<!-- Department Dropdown -->
+<div class="sm:col-span-3">
+<select class="w-full h-10 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-default font-body-default text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none">
+<option value="">ทุกแผนก / สังกัด</option>
+<option value="cs">ฝ่ายบริการลูกค้า (Customer Support)</option>
+<option value="wh">ฝ่ายคลังและพัสดุ (Warehouse)</option>
+<option value="acc">ฝ่ายการเงินและการบัญชี (Finance)</option>
+<option value="audit">ฝ่ายตรวจสอบภายใน (Internal Audit)</option>
+<option value="mkt">ฝ่ายการตลาดและโปรโมชั่น (Marketing)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- 6. Bento Split: Data Table (Main) & Contextual Review Side Drawer (Inline preview) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- MAIN DATA TABLE (8 cols on Large Screens) -->
+<div class="lg:col-span-8 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="requests-table">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-outline-variant h-11 text-label-default font-label-default text-secondary">
+<th class="py-2.5 px-4 font-semibold text-xs uppercase tracking-wider"># / วันที่ขอ</th>
+<th class="py-2.5 px-4 font-semibold text-xs tracking-wider">ชื่อผู้ขอ / บัญชี Josh</th>
+<th class="py-2.5 px-4 font-semibold text-xs tracking-wider">อีเมล / เบอร์ (Masked)</th>
+<th class="py-2.5 px-4 font-semibold text-xs tracking-wider">สิทธิ์ที่ร้องขอ</th>
+<th class="py-2.5 px-4 font-semibold text-xs tracking-wider">สถานะ</th>
+<th class="py-2.5 px-4 font-semibold text-xs text-right tracking-wider pr-6" data-i18n-key="จัดการ">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-default font-body-default text-on-surface">
+<!-- Row 1: นายวรพงษ์ (Selected Row Example) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-surface-container-low/30 cursor-pointer" onclick="selectRow('row-1')">
+<td class="py-3 px-4 whitespace-nowrap text-xs text-secondary font-code-table">
+<span class="font-semibold text-primary">#JA-4821</span><br/>
+<span>28 ต.ค. 2024 14:22</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">นายวรพงษ์ ส.</div>
+<div class="text-xs text-secondary font-mono">josh.agent_wp@internal</div>
+</td>
+<td class="py-3 px-4 font-mono text-xs text-secondary">
+<div>w***@siamtrading.co.th</div>
+<div class="text-outline">089-***-4321</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-surface-container text-primary font-medium">
+<span class="material-symbols-outlined text-xs" data-icon="badge">badge</span>
+                        Josh Agent Level 2
+                      </span>
+<div class="text-xs text-secondary mt-0.5">ฝ่ายบริการลูกค้า (CS)</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef9e7] text-[#b08900] border border-[#b08900]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span>รอตรวจสอบ</span>
+</span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap pr-6">
+<button class="px-2.5 py-1 rounded-lg bg-primary-container text-on-primary text-xs font-medium hover:bg-primary transition-colors inline-flex items-center gap-1" data-i18n-key="จัดการ">
+<span>จัดการ</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: น.ส.ชลธิชา -->
+<tr class="hover:bg-surface-container-low/60 transition-colors cursor-pointer" onclick="selectRow('row-2')">
+<td class="py-3 px-4 whitespace-nowrap text-xs text-secondary font-code-table">
+<span class="font-semibold text-primary">#JA-4819</span><br/>
+<span>28 ต.ค. 2024 11:05</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">น.ส.ชลธิชา ม.</div>
+<div class="text-xs text-secondary font-mono">josh.wh_chon@internal</div>
+</td>
+<td class="py-3 px-4 font-mono text-xs text-secondary">
+<div>c***@siamtrading.co.th</div>
+<div class="text-outline">081-***-8842</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-surface-container text-primary font-medium">
+<span class="material-symbols-outlined text-xs" data-icon="inventory">inventory</span>
+                        Warehouse Supervisor
+                      </span>
+<div class="text-xs text-secondary mt-0.5">คลังสินค้าบางนา</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347] border border-[#157347]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>อนุมัติแล้ว</span>
+</span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap pr-6">
+<button class="px-2.5 py-1 rounded-lg border border-outline-variant text-secondary text-xs hover:bg-surface-container-low transition-colors inline-flex items-center gap-1">
+<span>ดูสิทธิ์</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: นายกิตติศักดิ์ -->
+<tr class="hover:bg-surface-container-low/60 transition-colors cursor-pointer" onclick="selectRow('row-3')">
+<td class="py-3 px-4 whitespace-nowrap text-xs text-secondary font-code-table">
+<span class="font-semibold text-primary">#JA-4818</span><br/>
+<span>27 ต.ค. 2024 17:40</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">นายกิตติศักดิ์ พ.</div>
+<div class="text-xs text-secondary font-mono">josh.fin_kitti@internal</div>
+</td>
+<td class="py-3 px-4 font-mono text-xs text-secondary">
+<div>k***@siamtrading.co.th</div>
+<div class="text-outline">092-***-9912</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-surface-container text-primary font-medium">
+<span class="material-symbols-outlined text-xs" data-icon="payments">payments</span>
+                        Billing &amp; Finance Officer
+                      </span>
+<div class="text-xs text-secondary mt-0.5">ฝ่ายการเงินและการชำระเงิน</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef9e7] text-[#b08900] border border-[#b08900]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span>รอตรวจสอบ</span>
+</span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap pr-6">
+<button class="px-2.5 py-1 rounded-lg bg-primary-container text-on-primary text-xs font-medium hover:bg-primary transition-colors inline-flex items-center gap-1" data-i18n-key="จัดการ">
+<span>จัดการ</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: นายณัฐวุฒิ -->
+<tr class="hover:bg-surface-container-low/60 transition-colors cursor-pointer" onclick="selectRow('row-4')">
+<td class="py-3 px-4 whitespace-nowrap text-xs text-secondary font-code-table">
+<span class="font-semibold text-primary">#JA-4815</span><br/>
+<span>26 ต.ค. 2024 10:15</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">นายณัฐวุฒิ ร.</div>
+<div class="text-xs text-secondary font-mono">josh.audit_nat@internal</div>
+</td>
+<td class="py-3 px-4 font-mono text-xs text-secondary">
+<div>n***@partner-audit.org</div>
+<div class="text-outline">084-***-1123</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-surface-container text-primary font-medium">
+<span class="material-symbols-outlined text-xs" data-icon="policy">policy</span>
+                        Auditor Read-only
+                      </span>
+<div class="text-xs text-secondary mt-0.5">ผู้ตรวจสอบภายนอก</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347] border border-[#157347]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>อนุมัติแล้ว</span>
+</span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap pr-6">
+<button class="px-2.5 py-1 rounded-lg border border-outline-variant text-secondary text-xs hover:bg-surface-container-low transition-colors inline-flex items-center gap-1">
+<span>ดูสิทธิ์</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: นายธนาวัฒน์ (Rejected) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors cursor-pointer" onclick="selectRow('row-5')">
+<td class="py-3 px-4 whitespace-nowrap text-xs text-secondary font-code-table">
+<span class="font-semibold text-primary">#JA-4810</span><br/>
+<span>25 ต.ค. 2024 09:30</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">นายธนาวัฒน์ ก.</div>
+<div class="text-xs text-secondary font-mono">josh.mkt_thana@internal</div>
+</td>
+<td class="py-3 px-4 font-mono text-xs text-secondary">
+<div>t***@siamtrading.co.th</div>
+<div class="text-outline">086-***-5544</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-surface-container text-primary font-medium">
+<span class="material-symbols-outlined text-xs" data-icon="ads_click">ads_click</span>
+                        Marketing Ops
+                      </span>
+<div class="text-xs text-secondary mt-0.5">ฝ่ายการตลาดและโปรโมชั่น</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#faeaeb] text-[#c2333f] border border-[#c2333f]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+<span>ถูกปฏิเสธ</span>
+</span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap pr-6">
+<button class="px-2.5 py-1 rounded-lg border border-outline-variant text-secondary text-xs hover:bg-surface-container-low transition-colors">
+                        เหตุผล
+                      </button>
+</td>
+</tr>
+<!-- Row 6: น.ส.แพรวพรรณ -->
+<tr class="hover:bg-surface-container-low/60 transition-colors cursor-pointer" onclick="selectRow('row-6')">
+<td class="py-3 px-4 whitespace-nowrap text-xs text-secondary font-code-table">
+<span class="font-semibold text-primary">#JA-4808</span><br/>
+<span>24 ต.ค. 2024 16:50</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">น.ส.แพรวพรรณ ว.</div>
+<div class="text-xs text-secondary font-mono">josh.cs_praew@internal</div>
+</td>
+<td class="py-3 px-4 font-mono text-xs text-secondary">
+<div>p***@siamtrading.co.th</div>
+<div class="text-outline">083-***-2299</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-surface-container text-primary font-medium">
+<span class="material-symbols-outlined text-xs" data-icon="support_agent">support_agent</span>
+                        Josh Agent Level 1
+                      </span>
+<div class="text-xs text-secondary mt-0.5">ฝ่ายบริการลูกค้า (CS)</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef9e7] text-[#b08900] border border-[#b08900]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span>รอตรวจสอบ</span>
+</span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap pr-6">
+<button class="px-2.5 py-1 rounded-lg bg-primary-container text-on-primary text-xs font-medium hover:bg-primary transition-colors inline-flex items-center gap-1" data-i18n-key="จัดการ">
+<span>จัดการ</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Bar -->
+<div class="px-4 py-3 bg-[#f6f8fc] border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary">
+<div>
+<span data-i18n-key="พบ">พบ</span> 6 <span data-i18n-key="รายการ">รายการ</span> (แสดง 1-6 จากทั้งหมด 6 รายการ)
+              </div>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 rounded border border-outline-variant bg-surface-container-lowest text-secondary opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary font-semibold">1</button>
+<button class="px-2 py-1 rounded border border-outline-variant bg-surface-container-lowest text-secondary opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SIDE DRAWER / PERMISSION REVIEW CARD (4 cols on Large Screens) -->
+<div class="lg:col-span-4 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="text-headline-card font-headline-card text-on-surface">รายละเอียดคำขอ #JA-4821</span>
+</div>
+<span class="px-2 py-0.5 rounded-md text-xs font-mono bg-surface-container text-primary">Josh ID: 1042</span>
+</div>
+<!-- Detail Fields List -->
+<div class="space-y-3.5 text-body-default font-body-default">
+<!-- Contact Person -->
+<div>
+<label class="text-label-caption font-label-caption text-secondary block" data-i18n-key="ชื่อผู้ติดต่อ">ชื่อผู้ติดต่อ</label>
+<div class="text-on-surface font-medium flex items-center justify-between mt-0.5">
+<span>นายวรพงษ์ ศรีสุวรรณการ</span>
+<span class="text-xs text-outline font-mono">ID: EMP-0492</span>
+</div>
+</div>
+<!-- Josh Role -->
+<div>
+<label class="text-label-caption font-label-caption text-secondary block">บทบาทใน Josh</label>
+<div class="text-on-surface font-medium mt-0.5 flex items-center gap-2">
+<span class="px-2 py-1 rounded bg-surface-container text-primary text-xs font-semibold">Josh Agent Level 2</span>
+<span class="text-xs text-secondary">(ฝ่ายบริการลูกค้า)</span>
+</div>
+</div>
+<!-- Start Date -->
+<div>
+<label class="text-label-caption font-label-caption text-secondary block" data-i18n-key="วันที่เริ่ม">วันที่เริ่ม</label>
+<div class="text-on-surface font-medium mt-0.5 flex items-center gap-1.5 text-sm">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="calendar_month">calendar_month</span>
+<span>1 พ.ย. 2024 (กำหนดสิ้นสุด: 31 ธ.ค. 2025)</span>
+</div>
+</div>
+<!-- Permission Scope Badges -->
+<div>
+<label class="text-label-caption font-label-caption text-secondary block mb-1.5">ขอบเขตสิทธิ์ที่ร้องขอ</label>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-1 rounded-md text-xs bg-surface-container-low text-secondary border border-outline-variant/50">ดูข้อมูลลูกค้า</span>
+<span class="px-2 py-1 rounded-md text-xs bg-surface-container-low text-secondary border border-outline-variant/50">ตอบแชท Josh Bot</span>
+<span class="px-2 py-1 rounded-md text-xs bg-surface-container-low text-secondary border border-outline-variant/50">ยกเลิกออเดอร์ &lt; 2,000฿</span>
+<span class="px-2 py-1 rounded-md text-xs bg-surface-container-low text-secondary border border-outline-variant/50">แก้ไขที่อยู่จัดส่ง</span>
+</div>
+</div>
+<!-- PDPA Masking Warning Notice -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant text-xs text-secondary">
+<span class="font-medium text-on-surface">การปฏิบัติตาม PDPA:</span>
+                ข้อมูลหมายเลขโทรศัพท์และอีเมลจะถูกปกปิด (Masked) ในระดับแอดมินทั่วไป จนกว่าจะมีการยืนยันสิทธิ์ขั้นสูงผ่าน OTP
+              </div>
+</div>
+<!-- Approval Action Buttons -->
+<div class="pt-3 border-t border-outline-variant flex flex-col gap-2">
+<div class="grid grid-cols-2 gap-2">
+<button class="h-10 rounded-xl bg-primary-container text-on-primary hover:bg-primary font-body-medium text-body-medium transition-all shadow-sm flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-base" data-icon="check">check</span>
+<span>อนุมัติสิทธิ์ Josh</span>
+</button>
+<button class="h-10 rounded-xl border border-error text-error hover:bg-error-container/30 font-body-medium text-body-medium transition-all flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-base" data-icon="close">close</span>
+<span>ปฏิเสธคำขอ</span>
+</button>
+</div>
+<button class="w-full py-1.5 text-xs text-secondary hover:text-on-surface text-center underline transition-colors">
+                ส่งต่อให้หัวหน้าแผนกตรวจสอบเพิ่มเติม
+              </button>
+</div>
+</div>
+</div>
+<!-- 7. Developer Route Meta & Audit Footer -->
+<footer class="mt-4 p-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-xs text-secondary flex flex-wrap items-center justify-between gap-2 shadow-sm font-code-table">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-semibold text-on-surface">Route Meta:</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-mono">route: admin-48264ed1301c</span>
+<span>|</span>
+<span class="font-mono">URL: /josh/admin_access</span>
+<span>|</span>
+<span>Component: <strong class="text-on-surface">JoshBackoffice</strong></span>
+<span>|</span>
+<span>View: <strong class="text-on-surface">screen</strong></span>
+</div>
+<div class="flex items-center gap-3">
+<span>Thai Commerce Operations v4.12</span>
+<span class="inline-flex items-center gap-1 text-[#157347]">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+              Josh System Online
+            </span>
+</div>
+</footer>
+</div>
+</main>
+</div>
+<!-- ========================================================================= -->
+<!-- CRITICAL EXPORT REQUIREMENT: Invisible Exact-Key Catalogue Script Block   -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ล้างตัวกรอง": {
+      "th": "ล้างตัวกรอง",
+      "en": "Clear Filters"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "ทั้งหมด": {
+      "th": "ทั้งหมด",
+      "en": "All"
+    },
+    "สั่ง josh ได้ · ตามสิทธิ์ใน josh": {
+      "th": "สั่ง josh ได้ · ตามสิทธิ์ใน josh",
+      "en": "Josh commands enabled · According to Josh role rights"
+    },
+    "อ่านอย่างเดียว · ข้อมูลจาก josh": {
+      "th": "อ่านอย่างเดียว · ข้อมูลจาก josh",
+      "en": "Read-only · Data sourced from Josh"
+    },
+    "แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (": {
+      "th": "แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (",
+      "en": "Other modifications must be done on Josh web-admin ("
+    },
+    ") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง": {
+      "th": ") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง",
+      "en": ") · Phone numbers, emails, and names are masked"
+    },
+    "ค้นหา…": {
+      "th": "ค้นหา…",
+      "en": "Search…"
+    },
+    "พบ": {
+      "th": "พบ",
+      "en": "Found"
+    },
+    "รายการ": {
+      "th": "รายการ",
+      "en": "items"
+    },
+    "จัดการ": {
+      "th": "จัดการ",
+      "en": "Manage"
+    },
+    "ไม่มีรายการ": {
+      "th": "ไม่มีรายการ",
+      "en": "No items available"
+    },
+    "ขอบเขตส่วนลด / Discount scope": {
+      "th": "ขอบเขตส่วนลด / Discount scope",
+      "en": "Discount scope"
+    },
+    "คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง": {
+      "th": "คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง",
+      "en": "Comma-separated · Real stock and price must be verified again"
+    },
+    "จำกัดต่อผู้ใช้/สาขา (ครั้ง)": {
+      "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+      "en": "Limit per user/branch (times)"
+    },
+    "ชื่อผู้ติดต่อ": {
+      "th": "ชื่อผู้ติดต่อ",
+      "en": "Contact person"
+    },
+    "ซ่อนองค์ประกอบนี้บน": {
+      "th": "ซ่อนองค์ประกอบนี้บน",
+      "en": "Hide this element on"
+    },
+    "ตั้งเวลาส่งไม่สำเร็จ": {
+      "th": "ตั้งเวลาส่งไม่สำเร็จ",
+      "en": "Schedule delivery failed"
+    },
+    "นำเข้า CSV": {
+      "th": "นำเข้า CSV",
+      "en": "Import CSV"
+    },
+    "ประเภท เช่น order_shipped": {
+      "th": "ประเภท เช่น order_shipped",
+      "en": "Type e.g., order_shipped"
+    },
+    "ผู้ใช้ไม่มีสาขา — เพิ่มสาขาก่อนสั่งซื้อแทนลูกค้า": {
+      "th": "ผู้ใช้ไม่มีสาขา — เพิ่มสาขาก่อนสั่งซื้อแทนลูกค้า",
+      "en": "User has no branch — Please assign branch prior to ordering"
+    },
+    "มีสิทธิ์หรือได้รับอนุญาตให้เก็บข้อมูลจากเว็บนี้": {
+      "th": "มีสิทธิ์หรือได้รับอนุญาตให้เก็บข้อมูลจากเว็บนี้",
+      "en": "Authorized or permitted to collect data from this website"
+    },
+    "ไม่ระบุแบรนด์": {
+      "th": "ไม่ระบุแบรนด์",
+      "en": "Unspecified brand"
+    },
+    "ยังไม่มีงาน ตรวจกลุ่มเป้าหมาย สินค้า ข้อเสนอ หรือมอบหมายฝ่ายขายก่อนเปิดใช้งาน": {
+      "th": "ยังไม่มีงาน ตรวจกลุ่มเป้าหมาย สินค้า ข้อเสนอ หรือมอบหมายฝ่ายขายก่อนเปิดใช้งาน",
+      "en": "No active tasks. Verify target groups, products, offers, or sales assignment before activating"
+    },
+    "ระบบจะมอบสิทธิ์คูปองให้": {
+      "th": "ระบบจะมอบสิทธิ์คูปองให้",
+      "en": "System will grant coupon entitlement"
+    },
+    "รูปแบบข้อความที่กระตุ้น Workflow (Trigger Pattern regex)": {
+      "th": "รูปแบบข้อความที่กระตุ้น Workflow (Trigger Pattern regex)",
+      "en": "Workflow trigger message format (Trigger Pattern regex)"
+    },
+    "ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)": {
+      "th": "ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)",
+      "en": "Link when clicking slide at {0} (URL, optional)"
+    },
+    "วันที่เริ่ม": {
+      "th": "วันที่เริ่ม",
+      "en": "Start date"
+    },
+    "สร้างรายชื่อจากกลุ่ม": {
+      "th": "สร้างรายชื่อจากกลุ่ม",
+      "en": "Generate list from group"
+    },
+    "ใส่ userId สำหรับทดสอบ": {
+      "th": "ใส่ userId สำหรับทดสอบ",
+      "en": "Enter test userId"
+    },
+    "โหลดรายการสินค้า": {
+      "th": "โหลดรายการสินค้า",
+      "en": "Load product list"
+    },
+    "ทุกสินค้า": {
+      "th": "ทุกสินค้า",
+      "en": "All products"
+    },
+    "ยังอยู่ในช่วง cooldown หลัง enrollment ก่อนหน้า": {
+      "th": "ยังอยู่ในช่วง cooldown หลัง enrollment ก่อนหน้า",
+      "en": "Still in cooldown period following prior enrollment"
+    },
+    "{0} กลุ่มประเภทร้าน": {
+      "th": "{0} กลุ่มประเภทร้าน",
+      "en": "{0} Store category groups"
+    },
+    "กรุณาระบุเงื่อนไขราคาตามจำนวนอย่างน้อย 1 รายการ": {
+      "th": "กรุณาระบุเงื่อนไขราคาตามจำนวนอย่างน้อย 1 รายการ",
+      "en": "Please provide at least 1 volume pricing condition"
+    }
+  }
+  </script>
+<!-- Bilingual Toggle and Interactive Logic -->
+<script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function updateLanguage(lang) {
+      currentLang = lang;
+
+      // Update Button Styles
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 text-label-caption font-label-caption font-medium rounded-lg bg-surface-container-lowest text-primary shadow-sm border border-outline-variant/30 transition-all";
+        btnEn.className = "px-2.5 py-1 text-label-caption font-label-caption font-medium rounded-lg text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = 'th';
+      } else {
+        btnEn.className = "px-2.5 py-1 text-label-caption font-label-caption font-medium rounded-lg bg-surface-container-lowest text-primary shadow-sm border border-outline-variant/30 transition-all";
+        btnTh.className = "px-2.5 py-1 text-label-caption font-label-caption font-medium rounded-lg text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = 'en';
+      }
+
+      // Translate tagged DOM elements
+      document.querySelectorAll('[data-i18n-key]').forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+    }
+
+    document.getElementById('lang-btn-th').addEventListener('click', () => updateLanguage('th'));
+    document.getElementById('lang-btn-en').addEventListener('click', () => updateLanguage('en'));
+
+    // Interactive Table Row Selection Feedback
+    function selectRow(rowId) {
+      console.log('Selected request row:', rowId);
+    }
+
+    // Refresh Action Demo
+    document.getElementById('refresh-action-btn').addEventListener('click', function() {
+      const icon = this.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 700);
+    });
+
+    // Clear Filters Action
+    document.getElementById('clear-filters-btn').addEventListener('click', function() {
+      document.getElementById('inline-search-box').value = '';
+      document.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
+    });
+  </script>
+</body></html>

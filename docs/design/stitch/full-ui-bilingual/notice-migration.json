@@ -1,0 +1,118 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketingAnalyst.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/TriggerRuleBuilder.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/components/batch-sticker/BatchUploader.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/components/bot/BotTemplateBuilder.tsx",
+    "changes": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/CsPlaceOrderPanel.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/batch-sticker/BatchSticker.tsx",
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotTemplate.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotTemplate.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CreateCampaign.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx",
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanicDiscountFields.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponAudienceFields.tsx",
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+    "changes": 15
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/WelcomeLeadEmailPage.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/EditProduct.tsx",
+    "changes": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PageForm.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetForm.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentCustomerListField.tsx",
+    "changes": 5
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/user/UserJourneyTimeline.tsx",
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignPageSection.tsx",
+    "changes": 1
+  }
+]

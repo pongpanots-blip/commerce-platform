@@ -2,6 +2,8 @@ import { Button } from '@josh/shared-ui-web';
 import React, { useEffect, useRef } from 'react';
 import { AiOutlineCheckCircle, AiOutlineExclamationCircle } from 'react-icons/ai';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Tone = 'primary' | 'danger';
 
 type Props = {
@@ -52,6 +54,7 @@ export default function CouponConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  __useUiLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -99,7 +102,7 @@ export default function CouponConfirmDialog({
           <Button variant="secondary" text={cancelLabel} disabled={busy} onClick={onCancel} />
           <Button
             variant={styles.button}
-            text={busy ? 'กำลังดำเนินการ...' : confirmLabel}
+            text={busy ? __uiText("กำลังดำเนินการ...") : confirmLabel}
             disabled={busy}
             onClick={onConfirm}
           />

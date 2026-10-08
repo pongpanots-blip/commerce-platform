@@ -5,7 +5,10 @@ import AdminInsertLayout from '../../components/AdminInsertLayout';
 import BotIntentRuleForm, { BotIntentRuleFormValue } from '../../components/bot/BotIntentRuleForm';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CreateBotIntentRule = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<BotIntentRuleFormValue>({
@@ -16,7 +19,7 @@ const CreateBotIntentRule = () => {
 
   const handleSubmit = async () => {
     if (!form.pattern) {
-      alert('กรุณากรอก Pattern');
+      alert(__uiText("กรุณากรอก Pattern"));
       return;
     }
     setSaving(true);
@@ -24,7 +27,7 @@ const CreateBotIntentRule = () => {
       await createBotIntentRule(form);
       navigate(ADMIN_ROUTES.botIntentRules);
     } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึก');
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
@@ -32,8 +35,8 @@ const CreateBotIntentRule = () => {
 
   return (
     <AdminInsertLayout
-      title="เพิ่ม Intent Rule"
-      subtitle="กฎจับคู่ intent ของ chatbot จาก pattern (regex)"
+      title={__uiText("เพิ่ม Intent Rule")}
+      subtitle={__uiText("กฎจับคู่ intent ของ chatbot จาก pattern (regex)")}
       backPath={ADMIN_ROUTES.botIntentRules}
       saving={saving}
       onSave={handleSubmit}

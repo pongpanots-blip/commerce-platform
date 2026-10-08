@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "3016",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2E1MzUxNzVkZDRlOTQwZWVhYTc4MmM3MzhkNGU3YzI5EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/5e38438d801446a6bf19d4a90cb18fd7"
+            },
+            "id": "0bb025b75d984ca197fb6b1c54cd5fc4",
+            "name": "projects/9809859018179965476/screens/0bb025b75d984ca197fb6b1c54cd5fc4",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1U_YR_vsOD8EZZ4lDgBUcp_v3MSlSjwK02v7OulMzljj-aRC889HzRan5RFXONtwqIM2RXnRFDFqorDHHmTDGU72JEUsMb2GJFMcTgVlQMsbWkDt124jE632KIN6tJwiBhb0VHeZfRGv81EynzHT17dVxeY_8_EvKfTS1z5XQUtdJ6z8BZPwz9Cl0XjY9DtK-nwMVma3BvINjGNAH-jUR0V6Jx6p-zwOWbgUOyEMIKlMnhckeK48_urVLk",
+              "name": "projects/9809859018179965476/files/8dca6558f2fc43feae17fdb3fc86dc25"
+            },
+            "theme": {},
+            "title": "คิวข้อมูลสินค้าจาก ERP (ProductMasterQueue - /product-master-queue)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบและสร้างหน้าจอ **คิวข้อมูลสินค้าจาก ERP (`ProductMasterQueue` - `/product-master-queue`)** (Route ID: `admin-e83868462b6c`) สำหรับระบบ Commerce Platform เรียบร้อยแล้ว\n\n### จุดเด่นและการปฏิบัติตามข้อกำหนดการออกแบบ:\n1. **ระบบภาพและ Layout (Design System):**\n   - แถบเมนูด้านข้าง (Sidebar) ขนาด 256px แบ่งครบ 7 พื้นที่ปฏิบัติการ โดยเน้นหมวด **สินค้าและสต็อก** พร้อมแสดงรายการย่อยตรงตามโครงสร้างของระบบ\n   - เนื้อหาหลักจัดวางในคอนเทนเนอร์ความกว้างมาตรฐาน ~1240px บนพื้นหลังสี `#f6f8fc` พร้อมการ์ดสีขาวขอบมน 12px (`#e1e7f0`)\n   - ระบบตัวอักษร Noto Sans Thai ขนาด body 14px, labels 13px, หัวเรื่อง 28px และสีหลัก `#365cf5`\n2. **ขอบเขตการทำงานของคิว ERP Master Data:**\n   - แบนเนอร์แสดงสถานะ Ownership Flag (`COMMERCE_OWNS_PRODUCT_MASTER: false`)\n   - ตารางเปรียบเทียบค่าเดิมและค่าใหม่ของ Master Data ที่ส่งมาจาก ERP (เช่น การเปลี่ยนหน่วย UOM, แบรนด์ลิขสิทธิ์, การปิดการใช้งานสินค้า)\n   - แถบค้นหาและตัวกรองที่ระบุชัดเจนว่าเป็นการค้นหาเฉพาะข้อมูลในหน้านี้ (Frontend search per Pagination API requirement)\n   - ตัวกำกับป้าย `ข้อมูลตัวอย่าง` ชัดเจนตามข้อกำหนด\n   - กล่องยืนยันการอนุมัติ / ไม่อนุมัติแบบ Modal รองรับปุ่ม Escape และแสดงข้อความตอบรับ\n3. **ระบบ 2 ภาษา (Bilingual Support) และ Translation Dictionary:**\n   - มีปุ่มสลับภาษา `ไทย / English` บนส่วนหัวที่ทำงานสลับภาษาได้ทันที\n   - บรรจุ Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่มี Key ครบถ้วนตาม Exact UI Copy Catalogue ทุกรายการ พร้อมโครงสร้าง `{ \"th\": \"...\", \"en\": \"...\" }` อย่างสมบูรณ์"
+    },
+    {
+      "suggestion": "ทดสอบสลับเป็นภาษา English บนหน้าจอ"
+    },
+    {
+      "suggestion": "ดูรายละเอียดการทำงานของ Modal อนุมัติ/ไม่อนุมัติ"
+    },
+    {
+      "suggestion": "ขยายไปออกแบบหน้าจอถัดไปในหมวดสินค้าและสต็อก"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "6528153509529326452"
+}

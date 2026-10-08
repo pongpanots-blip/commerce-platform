@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>งานบริการลูกค้า (CsDesk) — Commerce Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .custom-border { border-color: #e1e7f0; }
+    .badge-sample {
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex text-[14px] antialiased">
+
+  <!-- Sidebar (256px) -->
+  <aside class="w-64 bg-white border-r custom-border flex flex-col shrink-0 min-h-screen select-none">
+    <!-- Brand / Header -->
+    <div class="h-16 flex items-center px-5 border-b custom-border gap-3">
+      <div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+        CP
+      </div>
+      <div>
+        <div class="font-bold text-[15px] leading-tight text-[#17243b]">Commerce Platform</div>
+        <div class="text-[11px] text-[#52627a]">ระบบจัดการศูนย์ส่งและสาขา</div>
+      </div>
+    </div>
+
+    <!-- Navigation (7 work areas) -->
+    <div class="p-3">
+      <div class="px-3 py-1.5 text-[11px] font-semibold text-[#52627a] uppercase tracking-wider">
+        พื้นที่ทำงานหลัก (7 สายงาน)
+      </div>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <!-- 1. สินค้าและสต็อก -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <span>สินค้าและสต็อก</span>
+      </a>
+
+      <!-- 2. ออเดอร์และการเงิน -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        <span data-i18n="ออเดอร์">ออเดอร์และการเงิน</span>
+      </a>
+
+      <!-- 3. ลูกค้าและบริการ (Active) -->
+      <div class="space-y-1">
+        <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <span>ลูกค้าและบริการ</span>
+          </div>
+          <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+        </a>
+        <div class="pl-9 pr-2 space-y-1 pt-1 text-[13px]">
+          <a href="#" class="block py-1.5 px-2 text-[#52627a] hover:text-[#17243b] rounded">รายชื่อลูกค้าและร้านค้า</a>
+          <a href="#" class="block py-1.5 px-2 text-[#52627a] hover:text-[#17243b] rounded">ติดตามลูกค้าเก่า (Win-back)</a>
+          <a href="#" class="block py-1.5 px-2 text-[#365cf5] font-medium bg-[#365cf5]/5 rounded">งานบริการลูกค้า (CS Desk)</a>
+          <a href="#" class="block py-1.5 px-2 text-[#52627a] hover:text-[#17243b] rounded">ข้อร้องเรียนและบริการ</a>
+        </div>
+      </div>
+
+      <!-- 4. การตลาด -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        <span>การตลาด</span>
+      </a>
+
+      <!-- 5. รายงานและข้อมูล -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span>รายงานและข้อมูล</span>
+      </a>
+
+      <!-- 6. ระบบเชื่อมต่อ -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <span>ระบบเชื่อมต่อ</span>
+      </a>
+
+      <!-- 7. ตั้งค่าและทีมงาน -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>ตั้งค่าและทีมงาน</span>
+      </a>
+    </nav>
+
+    <!-- Footer Developer Portal -->
+    <div class="p-3 border-t custom-border">
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+        <span>Developer Portal</span>
+      </a>
+      <div class="mt-2 px-3 text-[11px] text-slate-400 font-mono">
+        route: admin-796e4d4bedf7<br>/cs (CsDesk)
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+    <!-- Top Bar -->
+    <header class="h-16 bg-white border-b custom-border px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
+      <!-- Search current page -->
+      <div class="w-80 relative">
+        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)" class="w-full pl-9 pr-3 py-1.5 text-[13px] bg-slate-50 border custom-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5]">
+      </div>
+
+      <!-- Top Right Actions -->
+      <div class="flex items-center gap-4">
+        <!-- Sample badge -->
+        <span class="badge-sample px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+          <span id="badge-sample-text">ข้อมูลตัวอย่าง</span>
+        </span>
+
+        <!-- Bilingual Switcher -->
+        <div class="inline-flex rounded-lg border custom-border p-0.5 bg-slate-50 text-xs font-medium">
+          <button id="lang-th-btn" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm font-semibold transition-all">ไทย</button>
+          <button id="lang-en-btn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">English</button>
+        </div>
+
+        <div class="h-4 w-px bg-slate-200"></div>
+
+        <!-- User profile -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-blue-100 text-[#365cf5] font-semibold flex items-center justify-center text-xs">
+            จน
+          </div>
+          <div class="text-left hidden sm:block">
+            <div class="text-[13px] font-medium leading-none text-[#17243b]">จินดา นวลอนันต์</div>
+            <div class="text-[11px] text-[#52627a] mt-0.5">หัวหน้าทีมบริการลูกค้า (CS)</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container (max ~1240px centered) -->
+    <main class="flex-1 p-8 max-w-[1280px] w-full mx-auto space-y-6">
+
+      <!-- Breadcrumbs & Header -->
+      <div>
+        <div class="flex items-center gap-2 text-xs text-[#52627a] mb-2">
+          <span>ลูกค้าและบริการ</span>
+          <span>/</span>
+          <span class="text-[#17243b] font-medium" data-i18n="งาน CS (josh)">งาน CS (josh)</span>
+        </div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="งาน CS (josh)">
+              งาน CS (josh)
+            </h1>
+            <p class="text-[13px] text-[#52627a] mt-1" data-i18n="สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit">
+              สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit
+            </p>
+          </div>
+
+          <!-- Secondary audit note badge -->
+          <div class="bg-blue-50 border border-blue-200/60 rounded-lg px-3.5 py-2 text-xs text-[#1e40af] flex items-center gap-2.5 shrink-0">
+            <svg class="w-4 h-4 text-[#365cf5] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <div>
+              <span class="font-semibold">CS Agent:</span> jinda.n@company.co.th · <span class="text-blue-600 font-mono">audit-session-active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (3 Primary Tasks of CS Desk) -->
+      <div class="border-b custom-border flex gap-2">
+        <button id="tab-order" onclick="switchTab('order')" class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-[#365cf5] text-[#365cf5] flex items-center gap-2 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <span data-i18n="สั่งของแทนลูกค้า">สั่งของแทนลูกค้า</span>
+        </button>
+        <button id="tab-sample" onclick="switchTab('sample')" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-[#52627a] hover:text-[#17243b] flex items-center gap-2 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span data-i18n="คำขอสินค้าตัวอย่าง">คำขอสินค้าตัวอย่าง</span>
+          <span class="ml-1 px-1.5 py-0.2 bg-blue-100 text-[#365cf5] rounded text-xs font-semibold">2</span>
+        </button>
+        <button id="tab-merge" onclick="switchTab('merge')" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-[#52627a] hover:text-[#17243b] flex items-center gap-2 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          <span data-i18n="รวมบัญชี">รวมบัญชี</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: สั่งของแทนลูกค้า (Order on behalf) -->
+      <section id="section-order" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- Left Main Wizard Area: 1. ลูกค้า & 2. สินค้า -->
+          <div class="lg:col-span-8 space-y-6">
+
+            <!-- Step 1 · ลูกค้า -->
+            <div class="bg-white rounded-xl border custom-border p-6 shadow-sm">
+              <div class="flex items-center justify-between pb-4 border-b custom-border mb-5">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-[#365cf5] text-white flex items-center justify-center font-bold text-xs">1</span>
+                  <h2 class="text-base font-bold text-[#17243b]" data-i18n="1 · ลูกค้า">1 · ลูกค้า</h2>
+                </div>
+                <span class="text-xs text-[#52627a]" data-i18n="ค้นหาบริษัท">ค้นหาบริษัท</span>
+              </div>
+
+              <!-- Search & Select Customer -->
+              <div class="space-y-4">
+                <div class="flex gap-2">
+                  <div class="flex-1 relative">
+                    <input type="text" id="cust-search-input" value="บจก. สยามค้าปลีก โฮลเซล" class="w-full px-3.5 py-2 text-sm bg-white border custom-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5]" placeholder="ชื่อบริษัท / รหัสลูกค้า ERP" data-i18n-ph="ชื่อบริษัท / รหัสลูกค้า ERP">
+                  </div>
+                  <button type="button" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#17243b] font-medium rounded-lg text-sm transition-colors" data-i18n="ค้นหา">
+                    ค้นหา
+                  </button>
+                </div>
+
+                <!-- Customer Details Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                  <div>
+                    <label class="block text-[13px] font-medium text-[#52627a] mb-1.5" data-i18n="บริษัท">บริษัท</label>
+                    <div class="p-2.5 bg-slate-50 border custom-border rounded-lg text-sm font-semibold text-[#17243b] truncate">
+                      บจก. สยามค้าปลีก โฮลเซล
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-medium text-[#52627a] mb-1.5" data-i18n="ผู้ใช้">ผู้ใช้</label>
+                    <select class="w-full p-2.5 bg-white border custom-border rounded-lg text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20">
+                      <option>สมชัย เลิศพาณิชย์ (somchai@siamretail.co.th)</option>
+                      <option data-i18n="— เลือก —">— เลือก —</option>
+                      <option>วราภรณ์ มั่นคง (จัดซื้อ)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-medium text-[#52627a] mb-1.5" data-i18n="สาขาที่ส่ง">สาขาที่ส่ง</label>
+                    <select class="w-full p-2.5 bg-white border custom-border rounded-lg text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20">
+                      <option>คลังบางนา กม.18 <span data-i18n="(หลัก)">(หลัก)</span></option>
+                      <option>สาขาพระราม 2</option>
+                      <option>สาขาวังน้อย (อยุธยา)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Credit info badge / strip -->
+                <div class="p-3 bg-emerald-50/70 border border-emerald-200 rounded-lg flex flex-wrap items-center justify-between text-xs text-emerald-900 gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    <span class="font-semibold" data-i18n="วงเงิน">วงเงิน</span>
+                    <span class="font-bold font-mono text-sm">฿500,000.00</span>
+                  </div>
+                  <div class="flex items-center gap-3 text-emerald-800">
+                    <span><span data-i18n="· ใช้ไป">· ใช้ไป</span> <span class="font-semibold font-mono">฿142,500.00</span></span>
+                    <span><span data-i18n="· เครดิต">· เครดิต</span> <span class="font-bold text-emerald-700 font-mono">30 <span data-i18n="วัน">วัน</span></span></span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-medium" data-i18n="ใช้วงเงินเครดิตบริษัท">ใช้วงเงินเครดิตบริษัท</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 · สินค้า -->
+            <div class="bg-white rounded-xl border custom-border p-6 shadow-sm">
+              <div class="flex items-center justify-between pb-4 border-b custom-border mb-5">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-[#365cf5] text-white flex items-center justify-center font-bold text-xs">2</span>
+                  <h2 class="text-base font-bold text-[#17243b]" data-i18n="2 · สินค้า">2 · สินค้า</h2>
+                </div>
+                <span class="text-xs text-[#52627a]" data-i18n="แคตตาล็อกแพลตฟอร์ม">แคตตาล็อกแพลตฟอร์ม</span>
+              </div>
+
+              <!-- Product Search Bar -->
+              <div class="flex gap-2 mb-4">
+                <div class="flex-1 relative">
+                  <input type="text" id="sku-input" class="w-full px-3.5 py-2 text-sm bg-white border custom-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5]" placeholder="SKU / ชื่อสินค้า (ค้นหา SKU หรือชื่อสินค้า)" data-i18n-ph="SKU / ชื่อสินค้า">
+                </div>
+                <button type="button" onclick="addProductRow()" class="px-4 py-2 bg-[#365cf5] hover:bg-[#2e50d6] text-white font-medium rounded-lg text-sm transition-colors flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                  <span data-i18n="เพิ่ม">เพิ่ม</span>
+                </button>
+              </div>
+
+              <!-- Products Table -->
+              <div class="border custom-border rounded-lg overflow-hidden">
+                <table class="w-full text-left text-sm" id="order-table">
+                  <thead class="bg-slate-50 text-[13px] text-[#52627a] border-b custom-border">
+                    <tr>
+                      <th class="py-2.5 px-3 font-semibold" data-i18n="SKU">SKU</th>
+                      <th class="py-2.5 px-3 font-semibold" data-i18n="สินค้า">สินค้า</th>
+                      <th class="py-2.5 px-3 font-semibold w-28 text-center" data-i18n="จำนวน">จำนวน</th>
+                      <th class="py-2.5 px-3 font-semibold text-right" data-i18n="ราคาจาก josh">ราคาจาก josh</th>
+                      <th class="py-2.5 px-3 font-semibold w-20 text-center" data-i18n="เอาออก">เอาออก</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y custom-border" id="order-items-body">
+                    <!-- Item 1 -->
+                    <tr class="hover:bg-slate-50/50">
+                      <td class="py-3 px-3 font-mono text-xs text-slate-600">CP-DRK-109</td>
+                      <td class="py-3 px-3 font-medium text-[#17243b]">
+                        น้ำดื่มบริสุทธิ์ 600ml (แพ็ค 12 ขวด)
+                        <div class="text-[11px] text-[#52627a]">สต็อกพร้อมส่ง: 450 แพ็ค</div>
+                      </td>
+                      <td class="py-3 px-3 text-center">
+                        <input type="number" value="20" min="1" class="w-16 px-2 py-1 text-center border custom-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#365cf5]" onchange="recalculateTotals()">
+                      </td>
+                      <td class="py-3 px-3 text-right font-mono font-medium text-[#17243b]">
+                        ฿950.00
+                      </td>
+                      <td class="py-3 px-3 text-center">
+                        <button type="button" onclick="this.closest('tr').remove(); recalculateTotals();" class="text-rose-600 hover:text-rose-800 text-xs font-medium" data-i18n="เอาออก">เอาออก</button>
+                      </td>
+                    </tr>
+                    <!-- Item 2 -->
+                    <tr class="hover:bg-slate-50/50">
+                      <td class="py-3 px-3 font-mono text-xs text-slate-600">CP-SNK-204</td>
+                      <td class="py-3 px-3 font-medium text-[#17243b]">
+                        ข้าวเกรียบกุ้งกรอบคัดพิเศษ 50g (ลัง 24 ซอง)
+                        <div class="text-[11px] text-[#52627a]">สต็อกพร้อมส่ง: 80 ลัง</div>
+                      </td>
+                      <td class="py-3 px-3 text-center">
+                        <input type="number" value="5" min="1" class="w-16 px-2 py-1 text-center border custom-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#365cf5]" onchange="recalculateTotals()">
+                      </td>
+                      <td class="py-3 px-3 text-right font-mono font-medium text-[#17243b]">
+                        ฿1,600.00
+                      </td>
+                      <td class="py-3 px-3 text-center">
+                        <button type="button" onclick="this.closest('tr').remove(); recalculateTotals();" class="text-rose-600 hover:text-rose-800 text-xs font-medium" data-i18n="เอาออก">เอาออก</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pricing Trigger with Josh Service -->
+              <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
+                <div class="text-xs text-[#52627a] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <span data-i18n="รายการสินค้า (Product set)">รายการสินค้า (Product set)</span>: 2 รายการ (25 ชิ้น)
+                </div>
+                <button type="button" onclick="calculateJoshPricing()" class="px-4 py-2 border border-[#365cf5] text-[#365cf5] hover:bg-blue-50/50 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  <span data-i18n="คิดราคา (josh)">คิดราคา (josh)</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Sidebar: 3 · สั่งซื้อ (Summary & Execution) -->
+          <div class="lg:col-span-4 space-y-6">
+
+            <div class="bg-white rounded-xl border custom-border p-6 shadow-sm sticky top-24">
+              <div class="flex items-center gap-2.5 pb-4 border-b custom-border mb-5">
+                <span class="w-7 h-7 rounded-full bg-[#365cf5] text-white flex items-center justify-center font-bold text-xs">3</span>
+                <h2 class="text-base font-bold text-[#17243b]" data-i18n="3 · สั่งซื้อ">3 · สั่งซื้อ</h2>
+              </div>
+
+              <!-- Calculation breakdown -->
+              <div class="space-y-3 pb-4 border-b custom-border text-sm">
+                <div class="flex justify-between text-[#52627a]">
+                  <span>ยอดสินค้ารวม</span>
+                  <span class="font-mono text-[#17243b]">฿2,550.00</span>
+                </div>
+                <div class="flex justify-between text-[#52627a]">
+                  <span data-i18n="ราคาจาก josh">ราคาจาก josh</span>
+                  <span class="font-mono text-emerald-600 font-medium">-฿150.00 (Tier B)</span>
+                </div>
+                <div class="flex justify-between text-[#52627a]">
+                  <span>ภาษีมูลค่าเพิ่ม (7%)</span>
+                  <span class="font-mono text-[#17243b]">฿168.00</span>
+                </div>
+                <div class="flex justify-between text-base font-bold text-[#17243b] pt-2 border-t custom-border">
+                  <span>ยอดสุทธิ</span>
+                  <span class="font-mono text-[#365cf5] text-lg" id="grand-total">฿2,568.00</span>
+                </div>
+              </div>
+
+              <!-- Order Configurations -->
+              <div class="space-y-4 pt-4">
+                <div>
+                  <label class="block text-[13px] font-medium text-[#52627a] mb-1.5" data-i18n="ชำระด้วย">ชำระด้วย</label>
+                  <select class="w-full p-2.5 bg-white border custom-border rounded-lg text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20">
+                    <option selected data-i18n="ใช้วงเงินเครดิตบริษัท">ใช้วงเงินเครดิตบริษัท (Credit 30 วัน)</option>
+                    <option>โอนผ่าน QR / พร้อมเพย์</option>
+                    <option>วางบิลเก็บเงินปลายทาง</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[13px] font-medium text-[#52627a] mb-1.5" data-i18n="คูปอง">คูปอง</label>
+                  <div class="flex gap-2">
+                    <input type="text" placeholder="รหัสคูปองส่วนลด" class="flex-1 px-3 py-1.5 text-sm bg-white border custom-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20">
+                    <button type="button" class="px-3 py-1.5 text-xs font-semibold text-[#52627a] hover:text-slate-800 border custom-border rounded-lg" data-i18n="ปิดคูปอง">ปิดคูปอง</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[13px] font-medium text-[#52627a] mb-1.5" data-i18n="วันส่ง (ว่าง = ตามรอบ)">วันส่ง (ว่าง = ตามรอบ)</label>
+                  <input type="date" class="w-full px-3 py-2 text-sm bg-white border custom-border rounded-lg text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20">
+                </div>
+
+                <!-- Primary Action Button -->
+                <div class="pt-3">
+                  <button type="button" onclick="executeOrder()" class="w-full py-3 bg-[#365cf5] hover:bg-[#2a4ee6] text-white font-bold rounded-lg text-sm shadow-sm flex items-center justify-center gap-2 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span data-i18n="สั่งซื้อ">สั่งซื้อ</span>
+                  </button>
+                  <div class="text-[11px] text-center text-[#52627a] mt-2">
+                    josh บันทึก audit log อ้างอิงอีเมลเจ้าหน้าที่อัตโนมัติ
+                  </div>
+                </div>
+
+                <!-- Clean action -->
+                <button type="button" class="w-full py-1.5 text-xs text-[#52627a] hover:text-rose-600 font-medium transition-colors" data-i18n="ล้าง">
+                  ล้างข้อมูลฟอร์ม
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: คำขอสินค้าตัวอย่าง (Sample requests) -->
+      <section id="section-sample" class="space-y-4 hidden">
+        <div class="bg-white rounded-xl border custom-border p-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b custom-border">
+            <div>
+              <h2 class="text-base font-bold text-[#17243b]" data-i18n="คำขอสินค้าตัวอย่าง">คำขอสินค้าตัวอย่าง</h2>
+              <p class="text-xs text-[#52627a] mt-0.5">รายการร้องขอตัวอย่างสินค้าเพื่อเปิดตลาดหรือทดลองชิมจากลูกค้า B2B</p>
+            </div>
+            <!-- Status Filter -->
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-[#52627a]" data-i18n="สถานะ">สถานะ:</span>
+              <div class="inline-flex rounded-lg border custom-border p-0.5 bg-slate-50">
+                <button class="px-2.5 py-1 rounded bg-white font-semibold text-[#17243b] shadow-xs" data-i18n="ทั้งหมด">ทั้งหมด</button>
+                <button class="px-2.5 py-1 text-[#52627a] hover:text-[#17243b]">รออนุมัติ</button>
+                <button class="px-2.5 py-1 text-[#52627a] hover:text-[#17243b]" data-i18n="ส่งแล้ว">ส่งแล้ว</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table of Sample Requests -->
+          <div class="border custom-border rounded-lg overflow-hidden mt-4">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-[13px] text-[#52627a] border-b custom-border">
+                <tr>
+                  <th class="py-2.5 px-4 font-semibold" data-i18n="ขอเมื่อ">ขอเมื่อ</th>
+                  <th class="py-2.5 px-4 font-semibold" data-i18n="ลูกค้า">ลูกค้า</th>
+                  <th class="py-2.5 px-4 font-semibold" data-i18n="สินค้า">สินค้า</th>
+                  <th class="py-2.5 px-4 font-semibold" data-i18n="หมายเหตุ">หมายเหตุ</th>
+                  <th class="py-2.5 px-4 font-semibold" data-i18n="สถานะ">สถานะ</th>
+                  <th class="py-2.5 px-4 font-semibold text-right">ดำเนินการ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y custom-border">
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-3 px-4 text-xs font-mono text-slate-600">12 เม.ย. 2024 10:24</td>
+                  <td class="py-3 px-4">
+                    <div class="font-medium text-[#17243b]">ห้างหุ้นส่วน ป.พานิชย์ นคร</div>
+                    <div class="text-xs text-[#52627a]">รหัส: CUST-39104</div>
+                  </td>
+                  <td class="py-3 px-4 text-[#17243b]">
+                    ซอสปรุงรสเห็ดหอมพรีเมียม 200ml (2 ขวด)
+                  </td>
+                  <td class="py-3 px-4 text-xs text-[#52627a]">
+                    ต้องการทดลองก่อนสั่ง 50 ลัง สำหรับงานจัดเลี้ยง
+                  </td>
+                  <td class="py-3 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                      รออนุมัติ
+                    </span>
+                  </td>
+                  <td class="py-3 px-4 text-right space-x-2">
+                    <button class="px-2.5 py-1 bg-[#157347] hover:bg-emerald-700 text-white rounded text-xs font-semibold" data-i18n="อนุมัติ">อนุมัติ</button>
+                    <button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold" data-i18n="ไม่อนุมัติ">ไม่อนุมัติ</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-3 px-4 text-xs font-mono text-slate-600">11 เม.ย. 2024 15:40</td>
+                  <td class="py-3 px-4">
+                    <div class="font-medium text-[#17243b]">โชคอนันต์การค้า พระประแดง</div>
+                    <div class="text-xs text-[#52627a]">รหัส: CUST-10492</div>
+                  </td>
+                  <td class="py-3 px-4 text-[#17243b]">
+                    กาแฟดริปอาราบิก้าเบลนด์ (กล่องทดลอง 5 ซอง)
+                  </td>
+                  <td class="py-3 px-4 text-xs text-[#52627a]">
+                    เซลส์นัดส่งตัวอย่างสินค้าเมื่อวาน
+                  </td>
+                  <td class="py-3 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200" data-i18n="ส่งแล้ว">
+                      ส่งแล้ว
+                    </span>
+                  </td>
+                  <td class="py-3 px-4 text-right">
+                    <span class="text-xs text-slate-400">เสร็จสิ้น</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination footer -->
+          <div class="flex items-center justify-between pt-4 text-xs text-[#52627a]">
+            <div>หน้า 1 จาก ~1 (แสดงค้นหาเฉพาะหน้าปัจจุบัน)</div>
+            <div class="flex gap-1">
+              <button class="px-2.5 py-1 border custom-border rounded bg-white text-slate-400 cursor-not-allowed">ก่อน</button>
+              <button class="px-2.5 py-1 border custom-border rounded bg-[#365cf5] text-white font-medium">1</button>
+              <button class="px-2.5 py-1 border custom-border rounded bg-white text-slate-400 cursor-not-allowed">ถัดไป</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: รวมบัญชี (Account Merge) -->
+      <section id="section-merge" class="space-y-4 hidden">
+        <div class="bg-white rounded-xl border custom-border p-6 shadow-sm max-w-3xl">
+          <div class="pb-4 border-b custom-border mb-4">
+            <h2 class="text-base font-bold text-[#17243b]" data-i18n="รวมบัญชีซ้ำ">รวมบัญชีซ้ำ</h2>
+            <p class="text-xs text-rose-600 font-medium mt-1" data-i18n="หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้">
+              หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้
+            </p>
+          </div>
+
+          <!-- Form inputs -->
+          <form class="space-y-4" onsubmit="event.preventDefault(); alert('ส่งคำขอรวมบัญชีเรียบร้อย (Audit บันทึกแล้ว)');">
+            <div>
+              <label class="block text-[13px] font-medium text-[#17243b] mb-1" data-i18n="บัญชีหลัก (เก็บไว้)">
+                บัญชีหลัก (เก็บไว้)
+              </label>
+              <input type="text" placeholder="ระบุ User ID เช่น USR-008129" class="w-full px-3.5 py-2 text-sm bg-white border custom-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5]">
+              <p class="text-[11px] text-[#52627a] mt-1">ข้อมูลประวัติการสั่งซื้อ เครดิต และที่อยู่จะถูกผูกเข้ากับบัญชีนี้</p>
+            </div>
+
+            <div>
+              <label class="block text-[13px] font-medium text-[#17243b] mb-1" data-i18n="บัญชีซ้ำ (รวมเข้า)">
+                บัญชีซ้ำ (รวมเข้า)
+              </label>
+              <input type="text" placeholder="ระบุ User ID เช่น USR-009411" class="w-full px-3.5 py-2 text-sm bg-white border custom-border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400">
+              <p class="text-[11px] text-rose-500 mt-1">บัญชีนี้จะถูกระงับและปิดใช้งานหลังรวมเสร็จสิ้น</p>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg text-sm transition-colors shadow-sm" data-i18n="รวมบัญชี">
+                รวมบัญชี
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Translation Dictionary JSON Block required by export catalogue -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "บริษัท": {
+      "th": "บริษัท",
+      "en": "Company"
+    },
+    "สถานะ": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "งาน CS (josh)": {
+      "th": "งาน CS (josh)",
+      "en": "CS Desk (josh)"
+    },
+    "สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit": {
+      "th": "สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit",
+      "en": "Order on behalf · Sample requests · Merge duplicate accounts — josh acts on your behalf — your email is logged in audit"
+    },
+    "สั่งของแทนลูกค้า": {
+      "th": "สั่งของแทนลูกค้า",
+      "en": "Order on Behalf"
+    },
+    "คำขอสินค้าตัวอย่าง": {
+      "th": "คำขอสินค้าตัวอย่าง",
+      "en": "Sample Requests"
+    },
+    "รวมบัญชี": {
+      "th": "รวมบัญชี",
+      "en": "Merge Accounts"
+    },
+    "1 · ลูกค้า": {
+      "th": "1 · ลูกค้า",
+      "en": "1 · Customer"
+    },
+    "ค้นหาบริษัท": {
+      "th": "ค้นหาบริษัท",
+      "en": "Search Company"
+    },
+    "ชื่อบริษัท / รหัสลูกค้า ERP": {
+      "th": "ชื่อบริษัท / รหัสลูกค้า ERP",
+      "en": "Company Name / ERP Customer Code"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "— เลือก —": {
+      "th": "— เลือก —",
+      "en": "— Select —"
+    },
+    "ผู้ใช้": {
+      "th": "ผู้ใช้",
+      "en": "User"
+    },
+    "สาขาที่ส่ง": {
+      "th": "สาขาที่ส่ง",
+      "en": "Delivery Branch"
+    },
+    "(หลัก)": {
+      "th": "(หลัก)",
+      "en": "(Main)"
+    },
+    "วงเงิน": {
+      "th": "วงเงิน",
+      "en": "Credit Limit"
+    },
+    "· ใช้ไป": {
+      "th": "· ใช้ไป",
+      "en": "· Used"
+    },
+    "· เครดิต": {
+      "th": "· เครดิต",
+      "en": "· Terms"
+    },
+    "วัน": {
+      "th": "วัน",
+      "en": "Days"
+    },
+    "2 · สินค้า": {
+      "th": "2 · สินค้า",
+      "en": "2 · Products"
+    },
+    "ค้นหาสินค้า": {
+      "th": "ค้นหาสินค้า",
+      "en": "Search Products"
+    },
+    "SKU / ชื่อสินค้า": {
+      "th": "SKU / ชื่อสินค้า",
+      "en": "SKU / Product Name"
+    },
+    "เพิ่ม": {
+      "th": "เพิ่ม",
+      "en": "Add"
+    },
+    "SKU": {
+      "th": "SKU",
+      "en": "SKU"
+    },
+    "สินค้า": {
+      "th": "สินค้า",
+      "en": "Product"
+    },
+    "จำนวน": {
+      "th": "จำนวน",
+      "en": "Quantity"
+    },
+    "เอาออก": {
+      "th": "เอาออก",
+      "en": "Remove"
+    },
+    "คิดราคา (josh)": {
+      "th": "คิดราคา (josh)",
+      "en": "Calculate Price (josh)"
+    },
+    "ราคาจาก josh": {
+      "th": "ราคาจาก josh",
+      "en": "Price from josh"
+    },
+    "3 · สั่งซื้อ": {
+      "th": "3 · สั่งซื้อ",
+      "en": "3 · Checkout"
+    },
+    "สั่งซื้อ": {
+      "th": "สั่งซื้อ",
+      "en": "Place Order"
+    },
+    "ชำระด้วย": {
+      "th": "ชำระด้วย",
+      "en": "Payment Method"
+    },
+    "คูปอง": {
+      "th": "คูปอง",
+      "en": "Coupon"
+    },
+    "วันส่ง (ว่าง = ตามรอบ)": {
+      "th": "วันส่ง (ว่าง = ตามรอบ)",
+      "en": "Delivery Date (Empty = regular schedule)"
+    },
+    "ทั้งหมด": {
+      "th": "ทั้งหมด",
+      "en": "All"
+    },
+    "ขอเมื่อ": {
+      "th": "ขอเมื่อ",
+      "en": "Requested At"
+    },
+    "ลูกค้า": {
+      "th": "ลูกค้า",
+      "en": "Customer"
+    },
+    "หมายเหตุ": {
+      "th": "หมายเหตุ",
+      "en": "Note"
+    },
+    "อนุมัติ": {
+      "th": "อนุมัติ",
+      "en": "Approve"
+    },
+    "ไม่อนุมัติ": {
+      "th": "ไม่อนุมัติ",
+      "en": "Reject"
+    },
+    "ส่งแล้ว": {
+      "th": "ส่งแล้ว",
+      "en": "Dispatched"
+    },
+    "ไม่มีคำขอ": {
+      "th": "ไม่มีคำขอ",
+      "en": "No Requests"
+    },
+    "รวมบัญชีซ้ำ": {
+      "th": "รวมบัญชีซ้ำ",
+      "en": "Merge Duplicate Accounts"
+    },
+    "หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้": {
+      "th": "หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้",
+      "en": "Find user ID via Store Reports › Customer (Detail) · Admin role required · Irreversible"
+    },
+    "บัญชีหลัก (เก็บไว้)": {
+      "th": "บัญชีหลัก (เก็บไว้)",
+      "en": "Primary Account (Retain)"
+    },
+    "บัญชีซ้ำ (รวมเข้า)": {
+      "th": "บัญชีซ้ำ (รวมเข้า)",
+      "en": "Duplicate Account (Merge in)"
+    },
+    "— เลือก template —": {
+      "th": "— เลือก template —",
+      "en": "— Select template —"
+    },
+    "+ Template แจ้งเตือน": {
+      "th": "+ Template แจ้งเตือน",
+      "en": "+ Notification Template"
+    },
+    "banner-a": {
+      "th": "banner-a",
+      "en": "banner-a"
+    },
+    "Deeplink ที่บันทึกไว้:": {
+      "th": "Deeplink ที่บันทึกไว้:",
+      "en": "Saved Deeplink:"
+    },
+    "Guest": {
+      "th": "Guest",
+      "en": "Guest"
+    },
+    "Message": {
+      "th": "Message",
+      "en": "Message"
+    },
+    "preview": {
+      "th": "preview",
+      "en": "preview"
+    },
+    "Select Images": {
+      "th": "Select Images",
+      "en": "Select Images"
+    },
+    "Trusted Brand": {
+      "th": "Trusted Brand",
+      "en": "Trusted Brand"
+    },
+    "ก่อน": {
+      "th": "ก่อน",
+      "en": "Previous"
+    },
+    "แก้ไข Smart Link": {
+      "th": "แก้ไข Smart Link",
+      "en": "Edit Smart Link"
+    },
+    "ค้นหา SKU หรือชื่อสินค้า": {
+      "th": "ค้นหา SKU หรือชื่อสินค้า",
+      "en": "Search SKU or product name"
+    },
+    "แคตตาล็อกแพลตฟอร์ม": {
+      "th": "แคตตาล็อกแพลตฟอร์ม",
+      "en": "Platform Catalog"
+    },
+    "ช่องทางแจ้งเตือน": {
+      "th": "ช่องทางแจ้งเตือน",
+      "en": "Notification Channels"
+    },
+    "ใช้วงเงินเครดิตบริษัท": {
+      "th": "ใช้วงเงินเครดิตบริษัท",
+      "en": "Use Company Credit Line"
+    },
+    "ตั้งชื่อไฟล์ตามรูปแบบ": {
+      "th": "ตั้งชื่อไฟล์ตามรูปแบบ",
+      "en": "Format file name accordingly"
+    },
+    "เนื้อหาข้อความ {0}": {
+      "th": "เนื้อหาข้อความ {0}",
+      "en": "Message content {0}"
+    },
+    "ปิดคูปอง": {
+      "th": "ปิดคูปอง",
+      "en": "Dismiss coupon"
+    },
+    "เพิ่ม User Segment": {
+      "th": "เพิ่ม User Segment",
+      "en": "Add User Segment"
+    },
+    "ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น": {
+      "th": "ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น",
+      "en": "Menu not found, try other keywords"
+    },
+    "ยังไม่มี field — กดเพิ่ม field": {
+      "th": "ยังไม่มี field — กดเพิ่ม field",
+      "en": "No fields yet — click to add field"
+    },
+    "รหัสลูกค้า": {
+      "th": "รหัสลูกค้า",
+      "en": "Customer ID"
+    },
+    "รายการสินค้า (Product set)": {
+      "th": "รายการสินค้า (Product set)",
+      "en": "Product Set List"
+    },
+    "ล้าง": {
+      "th": "ล้าง",
+      "en": "Clear"
+    },
+    "วันที่สิ้นสุดราคาพิเศษของ {0}": {
+      "th": "วันที่สิ้นสุดราคาพิเศษของ {0}",
+      "en": "Promotion end date of {0}"
+    },
+    "สร้างหน้าโปร": {
+      "th": "สร้างหน้าโปร",
+      "en": "Create Promo Page"
+    },
+    "หน้า {0} จาก ~{1}": {
+      "th": "หน้า {0} จาก ~{1}",
+      "en": "Page {0} of ~{1}"
+    },
+    "ออเดอร์": {
+      "th": "ออเดอร์",
+      "en": "Orders"
+    }
+  }
+  </script>
+
+  <!-- Interactive script for tabs & bilingual switching -->
+  <script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function switchTab(tab) {
+      document.getElementById('section-order').classList.add('hidden');
+      document.getElementById('section-sample').classList.add('hidden');
+      document.getElementById('section-merge').classList.add('hidden');
+
+      const tabs = ['order', 'sample', 'merge'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        btn.classList.remove('border-[#365cf5]', 'text-[#365cf5]', 'font-semibold');
+        btn.classList.add('border-transparent', 'text-[#52627a]', 'font-medium');
+      });
+
+      const activeBtn = document.getElementById('tab-' + tab);
+      activeBtn.classList.remove('border-transparent', 'text-[#52627a]', 'font-medium');
+      activeBtn.classList.add('border-[#365cf5]', 'text-[#365cf5]', 'font-semibold');
+
+      document.getElementById('section-' + tab).classList.remove('hidden');
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm font-semibold transition-all";
+        enBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        document.getElementById('badge-sample-text').textContent = "ข้อมูลตัวอย่าง";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm font-semibold transition-all";
+        thBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        document.getElementById('badge-sample-text').textContent = "Sample Data";
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key]) {
+          el.textContent = translationsData[key][lang] || key;
+        }
+      });
+
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (translationsData[key]) {
+          el.setAttribute('placeholder', translationsData[key][lang] || key);
+        }
+      });
+    }
+
+    function addProductRow() {
+      const tbody = document.getElementById('order-items-body');
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50/50';
+      tr.innerHTML = `
+        <td class="py-3 px-3 font-mono text-xs text-slate-600">CP-OIL-502</td>
+        <td class="py-3 px-3 font-medium text-[#17243b]">
+          น้ำมันถั่วเหลืองผ่านกรรมวิธี 1 ลิตร (ลัง 12 ขวด)
+          <div class="text-[11px] text-[#52627a]">สต็อกพร้อมส่ง: 120 ลัง</div>
+        </td>
+        <td class="py-3 px-3 text-center">
+          <input type="number" value="10" min="1" class="w-16 px-2 py-1 text-center border custom-border rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#365cf5]" onchange="recalculateTotals()">
+        </td>
+        <td class="py-3 px-3 text-right font-mono font-medium text-[#17243b]">
+          ฿720.00
+        </td>
+        <td class="py-3 px-3 text-center">
+          <button type="button" onclick="this.closest('tr').remove(); recalculateTotals();" class="text-rose-600 hover:text-rose-800 text-xs font-medium">${currentLang === 'th' ? 'เอาออก' : 'Remove'}</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      recalculateTotals();
+    }
+
+    function recalculateTotals() {
+      // Mock subtotal calculation
+      const totalElem = document.getElementById('grand-total');
+      totalElem.textContent = "฿3,288.00";
+    }
+
+    function calculateJoshPricing() {
+      alert(currentLang === 'th' ? 'คิดราคาพิเศษจาก josh เรียบร้อยแล้ว (อิงตามระดับ Tier B ของลูกค้า)' : 'Price calculated successfully by josh engine (Customer Tier B)');
+    }
+
+    function executeOrder() {
+      alert(currentLang === 'th' ? 'บันทึกออเดอร์ในนามลูกค้าเรียบร้อยแล้ว · บันทึก audit แล้ว' : 'Order submitted on behalf of customer · Audit logged');
+    }
+  </script>
+</body>
+</html>

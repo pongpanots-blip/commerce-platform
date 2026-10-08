@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -36,6 +39,8 @@ import {
   newEmailDesign,
 } from './creative-editor/element-factory';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponOption = { id: string; coupon_code: string; title: string };
 
 const INPUT_CLASS =
@@ -193,7 +198,7 @@ const PREVIEW_VAR_SAMPLES: Record<string, string> = {
   company_phone: '02-123-4567',
   company_credit_limit: '100,000',
   cuisine_name: 'อาหารไทย',
-  today: new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long' }),
+  today: new Date().toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { day: 'numeric', month: 'long' }),
 };
 
 function renderPreviewVars(text: string): string {
@@ -201,6 +206,7 @@ function renderPreviewVars(text: string): string {
 }
 
 export default function MarketingNotifyTemplates() {
+  __useUiLocale();
   const [templates, setTemplates] = useState<MarketingNotifyTemplate[]>([]);
   const [templatesLoading, setTemplatesLoading] = useState(true);
   /** null = nothing open, 'new' = creating, otherwise template id. */
@@ -295,7 +301,7 @@ export default function MarketingNotifyTemplates() {
         setError(
           err?.response?.data?.message ||
             err?.message ||
-            'โหลดรายการ template ไม่สำเร็จ',
+            __uiMessage("โหลดรายการ template ไม่สำเร็จ"),
         );
       } finally {
         // Always clear the loading flag for this effect instance when the
@@ -514,7 +520,7 @@ export default function MarketingNotifyTemplates() {
       (segment) => !draft.variants.some((v) => v.segmentId === segment.id),
     );
     if (!unusedSegment) {
-      setError('ทุก segment ถูกใช้ใน variant แล้ว (หรือยังไม่มี segment ในระบบ)');
+      setError(__uiMessage("ทุก segment ถูกใช้ใน variant แล้ว (หรือยังไม่มี segment ในระบบ)"));
       return;
     }
     const variant: MarketingTemplateVariant = {
@@ -607,13 +613,13 @@ export default function MarketingNotifyTemplates() {
     const isPopupSave = draft.template_type === 'popup';
 
     if (!draft.name.trim()) {
-      setError('กรอกชื่อ template ก่อน');
+      setError(__uiMessage("กรอกชื่อ template ก่อน"));
       return;
     }
     // Popup chrome title is optional (not shown on shop; content uses text elements).
     // Notify / email still require a title + body text.
     if (!isPopupSave && !draft.title.trim()) {
-      setError('กรอกชื่อ template และหัวข้อก่อน');
+      setError(__uiMessage("กรอกชื่อ template และหัวข้อก่อน"));
       return;
     }
 
@@ -645,7 +651,7 @@ export default function MarketingNotifyTemplates() {
     };
 
     if (!isPopupSave && !bodyForValidation.trim()) {
-      setError('กรอกข้อความแจ้งเตือนก่อน');
+      setError(__uiMessage("กรอกข้อความแจ้งเตือนก่อน"));
       return;
     }
     setBusy(true);
@@ -692,7 +698,7 @@ export default function MarketingNotifyTemplates() {
       setSavedFlash(true);
       setTimeout(() => setSavedFlash(false), 2000);
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'บันทึกไม่สำเร็จ');
+      setError(err?.response?.data?.message || __uiMessage("บันทึกไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -701,10 +707,10 @@ export default function MarketingNotifyTemplates() {
   const handleRestoreRevision = async (revisionId: string) => {
     if (!editingId || editingId === 'new') return;
     const revision = revisions.find((r) => r.id === revisionId);
-    const label = revision ? new Date(revision.created_at).toLocaleString('th-TH') : 'เวอร์ชันนี้';
+    const label = revision ? new Date(revision.created_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : 'เวอร์ชันนี้';
     if (
       !window.confirm(
-        `ย้อนกลับ template ไปเป็นเวอร์ชันเมื่อ ${label} ใช่หรือไม่? การแก้ไขปัจจุบันจะถูกแทนที่ (แต่ยังย้อนกลับมาได้อีกครั้งภายหลัง)`,
+        __uiText("ย้อนกลับ template ไปเป็นเวอร์ชันเมื่อ {0} ใช่หรือไม่? การแก้ไขปัจจุบันจะถูกแทนที่ (แต่ยังย้อนกลับมาได้อีกครั้งภายหลัง)", {"0": label}),
       )
     ) {
       return;
@@ -716,7 +722,7 @@ export default function MarketingNotifyTemplates() {
       setTemplates((prev) => prev.map((t) => (t.id === restored.id ? restored : t)));
       openTemplate(restored);
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'ย้อนกลับไม่สำเร็จ');
+      setError(err?.response?.data?.message || __uiMessage("ย้อนกลับไม่สำเร็จ"));
     } finally {
       setRestoringRevisionId(null);
     }
@@ -731,7 +737,7 @@ export default function MarketingNotifyTemplates() {
       setTemplates((prev) => prev.filter((t) => t.id !== template.id));
       if (editingId === template.id) setEditingId(null);
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'ลบไม่สำเร็จ');
+      setError(err?.response?.data?.message || __uiMessage("ลบไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -800,13 +806,10 @@ export default function MarketingNotifyTemplates() {
     <div className="flex flex-col gap-4 p-4">
       <div>
         <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-          &larr; Marketing Workflows
-        </Link>
-        <h1 className="mt-1 text-xl font-bold text-gray-800">Notify · Email · Popup Templates</h1>
+          {__uiText("&larr; Marketing Workflows")}</Link>
+        <h1 className="mt-1 text-xl font-bold text-gray-800">{__uiText("Notify · Email · Popup Templates")}</h1>
         <p className="mt-1 text-xs text-gray-500">
-          สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ ·
-          popup ทำ variant ตาม segment ได้ — ใช้ใน step "แจ้งเตือน" / "แสดง Offer"
-        </p>
+          {__uiText("สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ · popup ทำ variant ตาม segment ได้ — ใช้ใน step \"แจ้งเตือน\" / \"แสดง Offer\"")}</p>
       </div>
 
       {/* popup: 2 cols — PopupCreativeEditor มี panel ของตัวเองอยู่แล้ว ไม่จองคอลัมน์ขวา 300px ทิ้งไว้ */}
@@ -824,22 +827,19 @@ export default function MarketingNotifyTemplates() {
             onClick={() => openTemplate(null, 'notify')}
             className="w-full rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
           >
-            + Template แจ้งเตือน
-          </button>
+            {__uiText("+ Template แจ้งเตือน")}</button>
           <button
             type="button"
             onClick={() => openTemplate(null, 'notify', 'email')}
             className="w-full rounded-lg border border-sky-700 bg-white px-3 py-2 text-sm font-medium text-sky-800 hover:bg-sky-50"
           >
-            + Template Email (HTML layout)
-          </button>
+            {__uiText("+ Template Email (HTML layout)")}</button>
           <button
             type="button"
             onClick={() => openTemplate(null, 'popup')}
             className="w-full rounded-lg border border-gray-900 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
           >
-            + Template Popup (มีปุ่ม action)
-          </button>
+            {__uiText("+ Template Popup (มีปุ่ม action)")}</button>
           {templates.map((template) => (
             <div
               key={template.id}
@@ -862,23 +862,21 @@ export default function MarketingNotifyTemplates() {
                       }`}
                     >
                       {template.template_type === 'popup'
-                        ? 'POPUP'
+                        ? __uiText("POPUP")
                         : template.channels?.email
-                          ? 'แจ้งเตือน+EMAIL'
-                          : 'แจ้งเตือน'}
+                          ? __uiText("แจ้งเตือน+EMAIL")
+                          : __uiText("แจ้งเตือน")}
                     </span>
                     {template.is_system && (
                       <span
                         className="mr-1 rounded bg-emerald-100 px-1 py-px text-[9px] font-semibold text-emerald-700"
-                        title="เทมเพลตระบบ — ใช้แจ้งเตือนออเดอร์/สต๊อกจริง แก้ข้อความได้ แต่ลบไม่ได้"
+                        title={__uiText("เทมเพลตระบบ — ใช้แจ้งเตือนออเดอร์/สต๊อกจริง แก้ข้อความได้ แต่ลบไม่ได้")}
                       >
-                        ระบบ
-                      </span>
+                        {__uiText("ระบบ")}</span>
                     )}
                     {(template.variants?.length ?? 0) > 0 && (
                       <span className="mr-1 rounded bg-amber-100 px-1 py-px text-[9px] font-semibold text-amber-600">
-                        {template.variants!.length} variant
-                      </span>
+                        {template.variants!.length} {__uiText(" variant")}</span>
                     )}
                     {template.title}
                   </p>
@@ -887,8 +885,8 @@ export default function MarketingNotifyTemplates() {
                   type="button"
                   title={
                     template.is_system
-                      ? 'เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)'
-                      : 'ลบ template'
+                      ? __uiText("เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)")
+                      : __uiText("ลบ template")
                   }
                   disabled={template.is_system}
                   onClick={(event) => {
@@ -908,31 +906,30 @@ export default function MarketingNotifyTemplates() {
             </div>
           ))}
           {templatesLoading && (
-            <p className="px-1 text-[11px] text-gray-400">กำลังโหลด template...</p>
+            <p className="px-1 text-[11px] text-gray-400">{__uiText("กำลังโหลด template...")}</p>
           )}
           {error && templates.length === 0 && !templatesLoading && (
-            <p className="px-1 text-[11px] text-red-500">{error}</p>
+            <p className="px-1 text-[11px] text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>
           )}
           {templates.length === 0 && !error && !templatesLoading && (
-            <p className="px-1 text-[11px] text-gray-400">ยังไม่มี template — กดสร้างอันแรกเลย</p>
+            <p className="px-1 text-[11px] text-gray-400">{__uiText("ยังไม่มี template — กดสร้างอันแรกเลย")}</p>
           )}
         </div>
 
         {editingId === null ? (
           <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center text-sm text-gray-400 lg:col-span-2">
-            เลือก template ทางซ้าย หรือกด "+ สร้าง template ใหม่"
-          </div>
+            {__uiText("เลือก template ทางซ้าย หรือกด \"+ สร้าง template ใหม่\"")}</div>
         ) : (
           <>
             {/* กลาง: canvas (popup = WYSIWYG บนตัว popup, notify = ฟอร์ม + preview แยก) */}
             <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
               <div>
-                <label htmlFor={templateNameInputId} className={FIELD_LABEL}>ชื่อ template (ให้ทีมเห็นใน dropdown)</label>
+                <label htmlFor={templateNameInputId} className={FIELD_LABEL}>{__uiText("ชื่อ template (ให้ทีมเห็นใน dropdown)")}</label>
                 <input
                   id={templateNameInputId}
                   type="text"
                   className={INPUT_CLASS}
-                  placeholder={isPopup ? 'เช่น Popup ฝนตก' : 'เช่น โปรฝนตก push'}
+                  placeholder={isPopup ? __uiText("เช่น Popup ฝนตก") : __uiText("เช่น โปรฝนตก push")}
                   value={draft.name}
                   onChange={(event) => setDraft({ ...draft, name: event.target.value })}
                 />
@@ -951,8 +948,7 @@ export default function MarketingNotifyTemplates() {
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }`}
                   >
-                    ทุกคน (ค่าเริ่มต้น)
-                  </button>
+                    {__uiText("ทุกคน (ค่าเริ่มต้น)")}</button>
                   {draft.variants.map((variant) => (
                     <button
                       key={variant.id}
@@ -968,7 +964,7 @@ export default function MarketingNotifyTemplates() {
                     >
                       {variant.segmentName ||
                         segments.find((s) => s.id === variant.segmentId)?.name ||
-                        'segment'}
+                        __uiText("segment")}
                     </button>
                   ))}
                   <button
@@ -976,8 +972,7 @@ export default function MarketingNotifyTemplates() {
                     onClick={addVariant}
                     className="rounded-full border border-dashed border-gray-300 px-2.5 py-1 text-[11px] font-medium text-gray-500 hover:border-primary hover:text-primary"
                   >
-                    + variant ตาม segment
-                  </button>
+                    {__uiText("+ variant ตาม segment")}</button>
                 </div>
               )}
 
@@ -992,8 +987,7 @@ export default function MarketingNotifyTemplates() {
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }`}
                   >
-                    Push / In-app
-                  </button>
+                    {__uiText("Push / In-app")}</button>
                   <button
                     type="button"
                     onClick={() => setActiveNotifyTab('email')}
@@ -1003,16 +997,14 @@ export default function MarketingNotifyTemplates() {
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }`}
                   >
-                    Email
-                  </button>
+                    {__uiText("Email")}</button>
                 </div>
               )}
 
               {!isPopup && activeNotifyTab === 'blocks' && (
                 <div className="flex items-center justify-between gap-1.5">
                   <span className="text-[10px] font-semibold tracking-wide text-gray-400">
-                    ภาษาที่แก้ไข (push/in-app)
-                  </span>
+                    {__uiText("ภาษาที่แก้ไข (push/in-app)")}</span>
                   <div className="flex shrink-0 overflow-hidden rounded-md border border-gray-200">
                     {(['th', 'en'] as const).map((code) => (
                       <button
@@ -1025,7 +1017,7 @@ export default function MarketingNotifyTemplates() {
                             : 'bg-white text-gray-500 hover:text-gray-700'
                         }`}
                       >
-                        {code === 'th' ? 'ไทย' : 'EN'}
+                        {code === 'th' ? __uiText("ไทย") : __uiText("EN")}
                       </button>
                     ))}
                   </div>
@@ -1038,8 +1030,7 @@ export default function MarketingNotifyTemplates() {
                   {activeVariant && (
                     <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50/60 p-2.5">
                       <label htmlFor={segmentSelectId} className="block text-[10px] font-semibold tracking-wide text-amber-700">
-                        VARIANT ตาม SEGMENT
-                      </label>
+                        {__uiText("VARIANT ตาม SEGMENT")}</label>
                       <Select
                         id={segmentSelectId}
                         className="w-full"
@@ -1055,16 +1046,13 @@ export default function MarketingNotifyTemplates() {
                         ))}
                       </Select>
                       <p className="text-[11px] leading-relaxed text-amber-700/80">
-                        user ที่อยู่ใน segment นี้เห็นเนื้อหาชุดนี้แทนค่าเริ่มต้น (variant แรกที่ตรงชนะ ·
-                        guest เห็นค่าเริ่มต้นเสมอ)
-                      </p>
+                        {__uiText("user ที่อยู่ใน segment นี้เห็นเนื้อหาชุดนี้แทนค่าเริ่มต้น (variant แรกที่ตรงชนะ · guest เห็นค่าเริ่มต้นเสมอ)")}</p>
                       <button
                         type="button"
                         onClick={() => removeVariant(activeVariant.id)}
                         className="text-[11px] text-red-500 hover:underline"
                       >
-                        ลบ variant นี้
-                      </button>
+                        {__uiText("ลบ variant นี้")}</button>
                     </div>
                   )}
                   <PopupCreativeEditor
@@ -1078,20 +1066,20 @@ export default function MarketingNotifyTemplates() {
                   />
                   <p className="text-center text-[10px] text-gray-400">
                     {activeVariant
-                      ? `กำลังแก้ variant: ${activeVariant.segmentName ?? 'segment'} — คนใน segment นี้เห็นแบบนี้`
-                      : 'กำลังแก้ค่าเริ่มต้น — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้'}
+                      ? __uiText("กำลังแก้ variant: {0} — คนใน segment นี้เห็นแบบนี้", {"0": activeVariant.segmentName ?? 'segment'})
+                      : __uiText("กำลังแก้ค่าเริ่มต้น — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้")}
                   </p>
                 </div>
               ) : activeNotifyTab === 'email' ? (
                 /* ===== notify: Email tab — creative canvas on channels.email ===== */
                 <div className="space-y-2">
                   <div>
-                    <label htmlFor={emailSubjectInputId} className={FIELD_LABEL}>หัวข้ออีเมล (Subject — ใช้ตัวแปรได้)</label>
+                    <label htmlFor={emailSubjectInputId} className={FIELD_LABEL}>{__uiText("หัวข้ออีเมล (Subject — ใช้ตัวแปรได้)")}</label>
                     <input
                       id={emailSubjectInputId}
                       type="text"
                       className={INPUT_CLASS}
-                      placeholder="เช่น {{user_name}} มีคูปองรอคุณอยู่"
+                      placeholder={__uiText("เช่น {{user_name}} มีคูปองรอคุณอยู่")}
                       value={draft.title}
                       onChange={(event) => setDraft({ ...draft, title: event.target.value })}
                     />
@@ -1104,9 +1092,7 @@ export default function MarketingNotifyTemplates() {
                     variables={MARKETING_TEMPLATE_VARIABLES}
                   />
                   <p className="text-center text-[10px] text-gray-400">
-                    เนื้อหาอีเมลอยู่ที่ canvas นี้ · หัวข้อด้านบน = subject ที่ส่งจริง · แท็บ Push / In-app
-                    ยังใช้ตั้งแจ้งเตือนแยกได้
-                  </p>
+                    {__uiText("เนื้อหาอีเมลอยู่ที่ canvas นี้ · หัวข้อด้านบน = subject ที่ส่งจริง · แท็บ Push / In-app ยังใช้ตั้งแจ้งเตือนแยกได้")}</p>
                 </div>
               ) : pushLocale === 'en' ? (
                 /* ===== notify: push/in-app EN overlay — flat title/body/imageUrl, not blocks ===== */
@@ -1115,24 +1101,24 @@ export default function MarketingNotifyTemplates() {
                       even while the admin is on the EN tab, or the validation error points at
                       a field that's off screen. */}
                   <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-2">
-                    <label htmlFor={pushTitleInputId} className={FIELD_LABEL}>หัวข้อแจ้งเตือน (ไทย — ต้นฉบับ, จำเป็นต้องกรอก)</label>
+                    <label htmlFor={pushTitleInputId} className={FIELD_LABEL}>{__uiText("หัวข้อแจ้งเตือน (ไทย — ต้นฉบับ, จำเป็นต้องกรอก)")}</label>
                     <input
                       id={pushTitleInputId}
                       type="text"
                       className={INPUT_CLASS}
-                      placeholder="เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔"
+                      placeholder={__uiText("เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔")}
                       value={draft.title}
                       onChange={(event) => setDraft({ ...draft, title: event.target.value })}
                       onFocus={() => setPushEnFocusField('thTitle')}
                     />
                   </div>
                   <div>
-                    <label htmlFor={pushTitleEnInputId} className={FIELD_LABEL}>หัวข้อแจ้งเตือน (EN)</label>
+                    <label htmlFor={pushTitleEnInputId} className={FIELD_LABEL}>{__uiText("หัวข้อแจ้งเตือน (EN)")}</label>
                     <input
                       id={pushTitleEnInputId}
                       type="text"
                       className={INPUT_CLASS}
-                      placeholder={draft.title || 'Notification title'}
+                      placeholder={draft.title || __uiText("Notification title")}
                       value={pushEnEntry?.title ?? ''}
                       onFocus={() => setPushEnFocusField('title')}
                       onChange={(event) => {
@@ -1146,25 +1132,23 @@ export default function MarketingNotifyTemplates() {
                     {titleTranslationStale && (
                       <div className="mt-1 flex items-center justify-between gap-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-1">
                         <p className="text-[11px] leading-relaxed text-amber-700">
-                          ข้อความไทยเปลี่ยนหลังแปลแล้ว — ตรวจสอบคำแปลอังกฤษอีกครั้ง
-                        </p>
+                          {__uiText("ข้อความไทยเปลี่ยนหลังแปลแล้ว — ตรวจสอบคำแปลอังกฤษอีกครั้ง")}</p>
                         <button
                           type="button"
                           onClick={() => patchPushI18n({ sourceTitle: draft.title })}
                           className="shrink-0 rounded border border-amber-300 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 hover:bg-amber-100"
                         >
-                          ตรวจแล้ว
-                        </button>
+                          {__uiText("ตรวจแล้ว")}</button>
                       </div>
                     )}
                   </div>
                   <div>
-                    <label htmlFor={pushBodyEnInputId} className={FIELD_LABEL}>ข้อความ (EN)</label>
+                    <label htmlFor={pushBodyEnInputId} className={FIELD_LABEL}>{__uiText("ข้อความ (EN)")}</label>
                     <textarea
                       id={pushBodyEnInputId}
                       rows={4}
                       className={INPUT_CLASS}
-                      placeholder={compiled.body || 'Notification body'}
+                      placeholder={compiled.body || __uiText("Notification body")}
                       value={pushEnEntry?.body ?? ''}
                       onFocus={() => setPushEnFocusField('body')}
                       onChange={(event) => {
@@ -1178,86 +1162,80 @@ export default function MarketingNotifyTemplates() {
                     {bodyTranslationStale && (
                       <div className="mt-1 flex items-center justify-between gap-2 rounded-md border border-amber-200 bg-amber-50 px-2 py-1">
                         <p className="text-[11px] leading-relaxed text-amber-700">
-                          ข้อความไทยเปลี่ยนหลังแปลแล้ว — ตรวจสอบคำแปลอังกฤษอีกครั้ง
-                        </p>
+                          {__uiText("ข้อความไทยเปลี่ยนหลังแปลแล้ว — ตรวจสอบคำแปลอังกฤษอีกครั้ง")}</p>
                         <button
                           type="button"
                           onClick={() => patchPushI18n({ sourceBody: compiled.body })}
                           className="shrink-0 rounded border border-amber-300 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 hover:bg-amber-100"
                         >
-                          ตรวจแล้ว
-                        </button>
+                          {__uiText("ตรวจแล้ว")}</button>
                       </div>
                     )}
                   </div>
                   <ImageSourceField
-                    label="รูปภาพ (EN)"
+                    label={__uiText("รูปภาพ (EN)")}
                     value={pushEnEntry?.imageUrl ?? ''}
                     basePreviewValue={compiled.image_url ?? undefined}
                     onChange={(url) => patchPushI18n({ imageUrl: url })}
                     banners={banners}
                   />
                   <p className="text-[11px] leading-relaxed text-gray-400">
-                    เนื้อหาไทย (ต้นฉบับ) แก้ที่ช่องด้านบน — ค่า EN นี้แทนที่เฉพาะช่องที่กรอก
-                    ช่องว่าง = ใช้ค่าไทยแทน
-                  </p>
+                    {__uiText("เนื้อหาไทย (ต้นฉบับ) แก้ที่ช่องด้านบน — ค่า EN นี้แทนที่เฉพาะช่องที่กรอก ช่องว่าง = ใช้ค่าไทยแทน")}</p>
                 </div>
               ) : (
                 /* ===== notify: flat push/in-app form (TH) ===== */
                 <>
                   <div>
-                    <label htmlFor={pushTitleInputId} className={FIELD_LABEL}>หัวข้อแจ้งเตือน (ใช้ตัวแปรได้)</label>
+                    <label htmlFor={pushTitleInputId} className={FIELD_LABEL}>{__uiText("หัวข้อแจ้งเตือน (ใช้ตัวแปรได้)")}</label>
                     <input
                       id={pushTitleInputId}
                       type="text"
                       className={INPUT_CLASS}
-                      placeholder="เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔"
+                      placeholder={__uiText("เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔")}
                       value={draft.title}
                       onFocus={() => setPushEnFocusField('title')}
                       onChange={(event) => setDraft({ ...draft, title: event.target.value })}
                     />
                   </div>
                   <div>
-                    <label htmlFor={pushBodyThInputId} className={FIELD_LABEL}>ข้อความแจ้งเตือน</label>
+                    <label htmlFor={pushBodyThInputId} className={FIELD_LABEL}>{__uiText("ข้อความแจ้งเตือน")}</label>
                     <textarea
                       id={pushBodyThInputId}
                       rows={4}
                       className={INPUT_CLASS}
-                      placeholder="เช่น {{user_name}} ช้อปตอนนี้ลดพิเศษ"
+                      placeholder={__uiText("เช่น {{user_name}} ช้อปตอนนี้ลดพิเศษ")}
                       value={notifyBodyText}
                       onFocus={() => setPushEnFocusField('body')}
                       onChange={(event) => patchNotifyFlat({ body: event.target.value })}
                     />
                   </div>
                   <ImageSourceField
-                    label="รูปภาพ (ไม่บังคับ)"
+                    label={__uiText("รูปภาพ (ไม่บังคับ)")}
                     value={notifyImageUrl}
                     onChange={(url) => patchNotifyFlat({ imageUrl: url || null })}
                     banners={banners}
                   />
                   <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-2.5 space-y-2">
                     <p className="text-[10px] font-semibold tracking-wide text-gray-400">
-                      เนื้อหาที่ส่งจริงสำหรับผู้รับภาษาอังกฤษ (order_paid ฯลฯ) — เว้นว่างได้ ถ้าไม่กรอก
-                      ระบบจะใช้ข้อความ EN ที่ตั้งไว้ในโค้ดแทน
-                    </p>
+                      {__uiText("เนื้อหาที่ส่งจริงสำหรับผู้รับภาษาอังกฤษ (order_paid ฯลฯ) — เว้นว่างได้ ถ้าไม่กรอก ระบบจะใช้ข้อความ EN ที่ตั้งไว้ในโค้ดแทน")}</p>
                     <div>
-                      <label htmlFor={titleEnInputId} className={FIELD_LABEL}>หัวข้อ (EN)</label>
+                      <label htmlFor={titleEnInputId} className={FIELD_LABEL}>{__uiText("หัวข้อ (EN)")}</label>
                       <input
                         id={titleEnInputId}
                         type="text"
                         className={INPUT_CLASS}
-                        placeholder="เช่น Your order has been paid"
+                        placeholder={__uiText("เช่น Your order has been paid")}
                         value={draft.title_en}
                         onChange={(event) => setDraft({ ...draft, title_en: event.target.value })}
                       />
                     </div>
                     <div>
-                      <label htmlFor={bodyEnInputId} className={FIELD_LABEL}>ข้อความ (EN)</label>
+                      <label htmlFor={bodyEnInputId} className={FIELD_LABEL}>{__uiText("ข้อความ (EN)")}</label>
                       <textarea
                         id={bodyEnInputId}
                         rows={3}
                         className={INPUT_CLASS}
-                        placeholder="เช่น Thank you for your order, ..."
+                        placeholder={__uiText("เช่น Thank you for your order, ...")}
                         value={draft.body_en}
                         onChange={(event) => setDraft({ ...draft, body_en: event.target.value })}
                       />
@@ -1266,7 +1244,7 @@ export default function MarketingNotifyTemplates() {
                 </>
               )}
 
-              {error && <p className="text-xs text-red-500">{error}</p>}
+              {error && <p className="text-xs text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
               <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
                 <button
                   type="button"
@@ -1274,9 +1252,9 @@ export default function MarketingNotifyTemplates() {
                   onClick={handleSave}
                   className="rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
                 >
-                  {busy ? 'กำลังบันทึก...' : editingId === 'new' ? 'สร้าง template' : 'บันทึก'}
+                  {busy ? __uiText("กำลังบันทึก...") : editingId === 'new' ? __uiText("สร้าง template") : __uiText("บันทึก")}
                 </button>
-                {savedFlash && <span className="text-xs text-emerald-600">บันทึกแล้ว ✓</span>}
+                {savedFlash && <span className="text-xs text-emerald-600">{__uiText("บันทึกแล้ว ✓")}</span>}
               </div>
             </div>
 
@@ -1286,8 +1264,7 @@ export default function MarketingNotifyTemplates() {
               {activeNotifyTab === 'blocks' && (
                 <div className="flex flex-wrap items-center gap-1.5 rounded-lg bg-gray-50 px-2.5 py-2">
                   <span className="text-[10px] font-semibold tracking-wide text-gray-400">
-                    ตัวแปร (คลิกเพื่อแทรก)
-                  </span>
+                    {__uiText("ตัวแปร (คลิกเพื่อแทรก)")}</span>
                   {MARKETING_TEMPLATE_VARIABLES.map((variable) => (
                     <button
                       key={variable.key}
@@ -1305,35 +1282,30 @@ export default function MarketingNotifyTemplates() {
               {activeNotifyTab === 'blocks' && (
                 <div className="space-y-2">
                   <div className="text-[10px] font-semibold tracking-wide text-gray-400">
-                    PREVIEW (ตัวแปรถูกแทนด้วยค่าตัวอย่าง)
-                  </div>
+                    {__uiText("PREVIEW (ตัวแปรถูกแทนด้วยค่าตัวอย่าง)")}</div>
                   <div className="rounded-2xl border border-gray-200 bg-gray-900 p-3">
                     <div className="rounded-xl bg-white/95 p-3 shadow-lg">
                       <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
                         <span className="grid h-4 w-4 place-items-center rounded bg-primary/20 text-[8px] font-bold text-primary">
-                          J
-                        </span>
-                        JOSH · ตอนนี้
-                      </div>
+                          {__uiText("J")}</span>
+                        {__uiText("JOSH · ตอนนี้")}</div>
                       <p className="mt-1 text-sm font-semibold text-gray-900">
-                        {renderPreviewVars(resolvedPush.title) || 'หัวข้อแจ้งเตือน'}
+                        {renderPreviewVars(resolvedPush.title) || __uiText("หัวข้อแจ้งเตือน")}
                       </p>
                       <p className="whitespace-pre-line text-xs text-gray-600">
-                        {renderPreviewVars(resolvedPush.body) || 'ข้อความแจ้งเตือนจะแสดงที่นี่'}
+                        {renderPreviewVars(resolvedPush.body) || __uiText("ข้อความแจ้งเตือนจะแสดงที่นี่")}
                       </p>
                       {resolvedPush.imageUrl && (
                         <img
                           src={resolvedPush.imageUrl}
-                          alt="banner"
+                          alt={__uiText("banner")}
                           className="mt-2 w-full rounded-lg object-cover"
                         />
                       )}
                     </div>
                   </div>
                   <p className="text-[11px] leading-relaxed text-gray-400">
-                    push แสดงหัวข้อ + ข้อความ + รูปใหญ่ · in-app เก็บรูปไว้ใน data ·
-                    ตัวแปรจะถูกแทนด้วยข้อมูลลูกค้าจริงตอนส่ง
-                  </p>
+                    {__uiText("push แสดงหัวข้อ + ข้อความ + รูปใหญ่ · in-app เก็บรูปไว้ใน data · ตัวแปรจะถูกแทนด้วยข้อมูลลูกค้าจริงตอนส่ง")}</p>
                 </div>
               )}
 
@@ -1341,14 +1313,13 @@ export default function MarketingNotifyTemplates() {
                 <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-2.5">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-semibold tracking-wide text-gray-400">
-                      ประวัติการแก้ไข (ล่าสุด 20 ครั้ง)
-                    </p>
+                      {__uiText("ประวัติการแก้ไข (ล่าสุด 20 ครั้ง)")}</p>
                     {revisionsLoading && (
-                      <span className="text-[10px] text-gray-300">กำลังโหลด...</span>
+                      <span className="text-[10px] text-gray-300">{__uiText("กำลังโหลด...")}</span>
                     )}
                   </div>
                   {revisions.length === 0 ? (
-                    <p className="text-[11px] text-gray-400">ยังไม่มีประวัติการแก้ไข</p>
+                    <p className="text-[11px] text-gray-400">{__uiText("ยังไม่มีประวัติการแก้ไข")}</p>
                   ) : (
                     <ul className="max-h-56 space-y-1 overflow-y-auto">
                       {revisions.map((revision) => (
@@ -1357,7 +1328,7 @@ export default function MarketingNotifyTemplates() {
                           className="flex items-center justify-between gap-2 rounded-md border border-gray-100 px-2 py-1.5"
                         >
                           <p className="min-w-0 truncate text-[11px] text-gray-600">
-                            {new Date(revision.created_at).toLocaleString('th-TH')}
+                            {new Date(revision.created_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}
                             {revision.updated_by && (
                               <span className="text-gray-400"> · {revision.updated_by}</span>
                             )}
@@ -1368,7 +1339,7 @@ export default function MarketingNotifyTemplates() {
                             onClick={() => handleRestoreRevision(revision.id)}
                             className="shrink-0 rounded border border-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-600 hover:border-primary hover:text-primary disabled:opacity-50"
                           >
-                            {restoringRevisionId === revision.id ? 'กำลังย้อนกลับ...' : 'ย้อนกลับ'}
+                            {restoringRevisionId === revision.id ? __uiText("กำลังย้อนกลับ...") : __uiText("ย้อนกลับ")}
                           </button>
                         </li>
                       ))}

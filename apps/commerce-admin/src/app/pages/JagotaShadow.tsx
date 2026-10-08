@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
 import {
   Button, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Hint, Icon, Loading, Page, PageHeader, Panel, PanelHead, SectionTitle, Segmented, StatGrid, StatTile, StatusChip, Table, TBody, TD, TH, THead, TR, fmt,
@@ -5,6 +6,8 @@ import {
 import { jagotaGatewayApi, jagotaHistoryApi, jagotaShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const show = (v: unknown) => (v === undefined ? '—' : JSON.stringify(v));
 
 /**
@@ -12,6 +15,7 @@ const show = (v: unknown) => (v === undefined ? '—' : JSON.stringify(v));
  * each request josh sent and records whether its own would have been identical. Nothing is sent.
  */
 export function JagotaShadow() {
+  __useUiLocale();
   const [days, setDays] = useState(7);
   const [filter, setFilter] = useState('mismatched');
   const [page, setPage] = useState(1);
@@ -32,52 +36,52 @@ export function JagotaShadow() {
   return (
     <Page>
       <PageHeader
-        title="ส่ง order ผ่าน commerce · ทดลองคู่กัน"
-        subtitle="josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP"
+        title={__uiText("ส่ง order ผ่าน commerce · ทดลองคู่กัน")}
+        subtitle={__uiText("josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP")}
         actions={
           <>
-            <Button variant="primary" disabled={!!busy} onClick={() => act('run', jagotaShadowApi.run, (r: { checked: number }) => `ตรวจเพิ่ม ${r.checked} รายการ`)}>{busy === 'run' ? 'กำลังตรวจ…' : 'ตรวจตอนนี้'}</Button>
-            <Button icon="refresh" onClick={refresh}>Refresh</Button>
+            <Button variant="primary" disabled={!!busy} onClick={() => act('run', jagotaShadowApi.run, (r: { checked: number }) => `ตรวจเพิ่ม ${r.checked} รายการ`)}>{busy === 'run' ? __uiText("กำลังตรวจ…") : __uiText("ตรวจตอนนี้")}</Button>
+            <Button icon="refresh" onClick={refresh}>{__uiText("Refresh")}</Button>
           </>
         }
       />
 
-      {msg && <Hint>{msg}</Hint>}
+      {msg && <Hint>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Hint>}
       <ErrorText error={summary.error || list.error} />
 
       {s && (
         <>
-          <SectionTitle>ตรวจ ({days} วัน)</SectionTitle>
+          <SectionTitle>{__uiText("ตรวจ (")}{days} {__uiText(" วัน)")}</SectionTitle>
           <StatGrid cols={4}>
             <StatTile
-              label="ตรง"
+              label={__uiText("ตรง")}
               value={s.matchRate == null ? '—' : `${s.matchRate}%`}
-              foot={`${s.matched} / ${s.checked} รายการ`}
+              foot={__uiText("{0} / {1} รายการ",{'0':s.matched,'1':s.checked})}
               tone="ok"
             />
             <StatTile
-              label="ไม่ตรง"
+              label={__uiText("ไม่ตรง")}
               value={fmt.num(s.mismatched)}
               tone={s.mismatched ? 'warn' : 'ok'}
             />
             <StatTile
-              label="commerce สร้างไม่ได้"
+              label={__uiText("commerce สร้างไม่ได้")}
               value={fmt.num(s.could_not_build)}
               tone={s.could_not_build ? 'danger' : 'ok'}
             />
             <StatTile
-              label="ช่วงที่ตรวจ"
+              label={__uiText("ช่วงที่ตรวจ")}
               value={
                 <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface border border-secondary-container rounded-lg text-xs">
-                  {[1, 7, 30].map((d) => <option key={d} value={d}>{d} วัน</option>)}
+                  {[1, 7, 30].map((d) => <option key={d} value={d}>{d} {__uiText(" วัน")}</option>)}
                 </select>
               }
-              foot={`${fmt.date(s.first_at)} – ${fmt.date(s.last_at)}`}
+              foot={__uiText("{0} – {1}",{'0':fmt.date(s.first_at),'1':fmt.date(s.last_at)})}
             />
           </StatGrid>
 
           {!!s?.topFields.length && (
-            <Hint>ช่องที่ต่างบ่อย: {s.topFields.map((f) => `${f.field} (${f.n})`).join(' · ')}</Hint>
+            <Hint>{__uiText("ช่องที่ต่างบ่อย: ")}{s.topFields.map((f) => `${f.field} (${f.n})`).join(' · ')}</Hint>
           )}
         </>
       )}
@@ -85,9 +89,9 @@ export function JagotaShadow() {
       <div className="space-y-3">
         <Segmented
           options={[
-            { value: 'mismatched', label: 'ไม่ตรง / สร้างไม่ได้' },
-            { value: 'matched', label: 'ตรง' },
-            { value: 'all', label: 'ทั้งหมด' },
+            { value: 'mismatched', label: __uiText("ไม่ตรง / สร้างไม่ได้") },
+            { value: 'matched', label: __uiText("ตรง") },
+            { value: 'all', label: __uiText("ทั้งหมด") },
           ]}
           value={filter}
           onChange={(v) => { setFilter(v); setPage(1); }}
@@ -97,15 +101,15 @@ export function JagotaShadow() {
           {list.loading && !list.data ? (
             <Loading />
           ) : !list.data?.items.length ? (
-            <Empty>{filter === 'mismatched' ? 'ไม่มีรายการที่ไม่ตรง' : 'ยังไม่มีรายการ'}</Empty>
+            <Empty>{filter === 'mismatched' ? __uiText("ไม่มีรายการที่ไม่ตรง") : __uiText("ยังไม่มีรายการ")}</Empty>
           ) : (
             <Table>
               <THead>
-                <TH>Shipment / order</TH>
-                <TH>josh ส่งเมื่อ</TH>
-                <TH>ผล josh</TH>
-                <TH>เทียบ</TH>
-                <TH>ช่องที่ต่าง</TH>
+                <TH>{__uiText("Shipment / order")}</TH>
+                <TH>{__uiText("josh ส่งเมื่อ")}</TH>
+                <TH>{__uiText("ผล josh")}</TH>
+                <TH>{__uiText("เทียบ")}</TH>
+                <TH>{__uiText("ช่องที่ต่าง")}</TH>
                 <TH></TH>
               </THead>
               <TBody>
@@ -121,8 +125,8 @@ export function JagotaShadow() {
                         {c.note && c.diffs.length > 0 && <div className="text-[10px] text-on-surface-variant">{c.note}</div>}
                       </TD>
                       <TD kind="actions" className="space-x-1">
-                        <ExpandToggle open={open === c.id} onClick={() => setOpen(open === c.id ? null : c.id)} label={open === c.id ? 'ซ่อน' : 'ดู'} />
-                        <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => act(c.joshSyncId, () => jagotaShadowApi.recheck(c.joshSyncId), (r: { matched: boolean }) => `ตรวจซ้ำ: ${r.matched ? 'ตรง' : 'ยังไม่ตรง'}`)}>ตรวจซ้ำ</Button>
+                        <ExpandToggle open={open === c.id} onClick={() => setOpen(open === c.id ? null : c.id)} label={open === c.id ? __uiText("ซ่อน") : __uiText("ดู")} />
+                        <Button size="sm" variant="ghost" disabled={!!busy} onClick={() => act(c.joshSyncId, () => jagotaShadowApi.recheck(c.joshSyncId), (r: { matched: boolean }) => `ตรวจซ้ำ: ${r.matched ? 'ตรง' : 'ยังไม่ตรง'}`)}>{__uiText("ตรวจซ้ำ")}</Button>
                       </TD>
                     </TR>
                     {open === c.id && (
@@ -134,12 +138,12 @@ export function JagotaShadow() {
                           <div className="space-y-3">
                             {!!detail.data.diffs.length && (
                               <div>
-                                <p className="text-xs font-semibold text-on-surface-variant mb-2">ช่องที่ต่าง</p>
+                                <p className="text-xs font-semibold text-on-surface-variant mb-2">{__uiText("ช่องที่ต่าง")}</p>
                                 <Table maxHeight="240px">
                                   <THead>
-                                    <TH>ช่อง</TH>
-                                    <TH>josh ส่ง</TH>
-                                    <TH>commerce จะส่ง</TH>
+                                    <TH>{__uiText("ช่อง")}</TH>
+                                    <TH>{__uiText("josh ส่ง")}</TH>
+                                    <TH>{__uiText("commerce จะส่ง")}</TH>
                                   </THead>
                                   <TBody>
                                     {detail.data.diffs.map((d) => (
@@ -154,8 +158,8 @@ export function JagotaShadow() {
                               </div>
                             )}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <CodeBlock title="josh ส่งไป Jagota" value={detail.data.joshRequest} maxHeight={280} />
-                              <CodeBlock title="commerce จะส่ง" value={detail.data.commerceRequest} maxHeight={280} />
+                              <CodeBlock title={__uiText("josh ส่งไป Jagota")} value={detail.data.joshRequest} maxHeight={280} />
+                              <CodeBlock title={__uiText("commerce จะส่ง")} value={detail.data.commerceRequest} maxHeight={280} />
                             </div>
                           </div>
                         ) : null}
@@ -180,6 +184,7 @@ export function JagotaShadow() {
  * sent to Jagota, one row per order reference. Empty until josh routes a branch here.
  */
 function GatewaySends() {
+  __useUiLocale();
   const [status, setStatus] = useState('');
   const [open, setOpen] = useState<string | null>(null);
   const summary = useAsync(() => jagotaGatewayApi.summary(7), []);
@@ -188,7 +193,7 @@ function GatewaySends() {
   const s = summary.data;
   return (
     <div className="pt-6">
-      <SectionTitle>ส่งจริงผ่าน commerce</SectionTitle>
+      <SectionTitle>{__uiText("ส่งจริงผ่าน commerce")}</SectionTitle>
 
       <ErrorText error={summary.error || list.error} />
 
@@ -196,25 +201,25 @@ function GatewaySends() {
         <>
           <StatGrid cols={4}>
             <StatTile
-              label="ส่งสำเร็จ (7 วัน)"
+              label={__uiText("ส่งสำเร็จ (7 วัน)")}
               value={fmt.num(s.sent)}
-              foot={`จาก ${fmt.num(s.total)} รายการ`}
+              foot={__uiText("จาก {0} รายการ",{'0':fmt.num(s.total)})}
               tone={s.failed ? 'warn' : 'ok'}
             />
             <StatTile
-              label="ล้มเหลว"
+              label={__uiText("ล้มเหลว")}
               value={fmt.num(s.failed)}
-              foot="josh จะลองใหม่เอง"
+              foot={__uiText("josh จะลองใหม่เอง")}
               tone={s.failed ? 'danger' : 'ok'}
             />
             <StatTile
-              label="ส่งมากกว่า 1 ครั้ง"
+              label={__uiText("ส่งมากกว่า 1 ครั้ง")}
               value={fmt.num(s.retried)}
             />
             <StatTile
-              label="เวลาเฉลี่ย"
+              label={__uiText("เวลาเฉลี่ย")}
               value={s.avg_ms == null ? '—' : `${(s.avg_ms / 1000).toFixed(1)}s`}
-              foot={`ล่าสุด ${fmt.ago(s.last_at)}`}
+              foot={__uiText("ล่าสุด {0}",{'0':fmt.ago(s.last_at)})}
             />
           </StatGrid>
         </>
@@ -223,10 +228,10 @@ function GatewaySends() {
       <div className="space-y-3">
         <Segmented
           options={[
-            { value: '', label: 'ทั้งหมด' },
-            { value: 'failed', label: 'ล้มเหลว' },
-            { value: 'sent', label: 'สำเร็จ' },
-            { value: 'sending', label: 'กำลังส่ง' },
+            { value: '', label: __uiText("ทั้งหมด") },
+            { value: 'failed', label: __uiText("ล้มเหลว") },
+            { value: 'sent', label: __uiText("สำเร็จ") },
+            { value: 'sending', label: __uiText("กำลังส่ง") },
           ]}
           value={status}
           onChange={setStatus}
@@ -236,17 +241,17 @@ function GatewaySends() {
           {list.loading && !list.data ? (
             <Loading />
           ) : !list.data?.items.length ? (
-            <Empty>ยังไม่มี order ที่ส่งผ่าน commerce</Empty>
+            <Empty>{__uiText("ยังไม่มี order ที่ส่งผ่าน commerce")}</Empty>
           ) : (
             <Table>
               <THead>
-                <TH>Shipment / order</TH>
-                <TH>สถานะ</TH>
-                <TH>ครั้ง</TH>
-                <TH kind="mono">DOC</TH>
-                <TH right>เวลา</TH>
-                <TH right>ล่าสุด</TH>
-                <TH>ข้อผิดพลาด</TH>
+                <TH>{__uiText("Shipment / order")}</TH>
+                <TH>{__uiText("สถานะ")}</TH>
+                <TH>{__uiText("ครั้ง")}</TH>
+                <TH kind="mono">{__uiText("DOC")}</TH>
+                <TH right>{__uiText("เวลา")}</TH>
+                <TH right>{__uiText("ล่าสุด")}</TH>
+                <TH>{__uiText("ข้อผิดพลาด")}</TH>
                 <TH></TH>
               </THead>
               <TBody>
@@ -257,11 +262,11 @@ function GatewaySends() {
                       <TD><StatusChip status={r.status} /></TD>
                       <TD>{r.attempts}</TD>
                       <TD kind="mono">{r.docNo ? `${r.docBook}/${r.docNo}` : '—'}</TD>
-                      <TD kind="num">{r.durationMs == null ? '—' : `${(r.durationMs / 1000).toFixed(1)}s`}</TD>
+                      <TD kind="num">{r.durationMs == null ? '—' : __uiText("{0}s", {"0": (r.durationMs / 1000).toFixed(1)})}</TD>
                       <TD kind="time">{fmt.when(r.updatedAt)}</TD>
                       <TD>{r.lastError ?? '—'}</TD>
                       <TD kind="actions">
-                        <ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} label={open === r.id ? 'ซ่อน' : 'ดู'} />
+                        <ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} label={open === r.id ? __uiText("ซ่อน") : __uiText("ดู")} />
                       </TD>
                     </TR>
                     {open === r.id && (
@@ -271,8 +276,8 @@ function GatewaySends() {
                           <Loading />
                         ) : detail.data ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <CodeBlock title="ส่งไป Jagota" value={detail.data.request} maxHeight={280} />
-                            <CodeBlock title="Jagota ตอบ" value={detail.data.response} maxHeight={280} />
+                            <CodeBlock title={__uiText("ส่งไป Jagota")} value={detail.data.request} maxHeight={280} />
+                            <CodeBlock title={__uiText("Jagota ตอบ")} value={detail.data.response} maxHeight={280} />
                           </div>
                         ) : null}
                       </ExpandRow>
@@ -293,6 +298,7 @@ function GatewaySends() {
  * being down. Filled by CRON_JAGOTA_SYNC_IMPORT_ENABLED or the import button; reads josh only.
  */
 function SyncHistory() {
+  __useUiLocale();
   const [status, setStatus] = useState('');
   const [q, setQ] = useState('');
   const [search, setSearch] = useState('');
@@ -308,7 +314,7 @@ function SyncHistory() {
 
   async function importNow() {
     setBusy(true);
-    try { const r = await jagotaHistoryApi.run(); setMsg(`ดึงใหม่ ${r.added} รายการ · อัปเดต ${r.refreshed} รายการล่าสุด`); }
+    try { const r = await jagotaHistoryApi.run(); setMsg(__uiMessage("ดึงใหม่ {0} รายการ · อัปเดต {1} รายการล่าสุด", {"0": r.added, "1": r.refreshed})); }
     catch (e) { setMsg(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(false); }
   }
@@ -316,11 +322,11 @@ function SyncHistory() {
   return (
     <div className="pt-6">
       <div className="flex items-center justify-between mb-3">
-        <SectionTitle>ประวัติส่ง ERP (สำเนาจาก josh)</SectionTitle>
-        <Button size="sm" variant="secondary" disabled={busy} onClick={importNow}>{busy ? 'กำลังดึง…' : 'ดึงจาก josh ตอนนี้'}</Button>
+        <SectionTitle>{__uiText("ประวัติส่ง ERP (สำเนาจาก josh)")}</SectionTitle>
+        <Button size="sm" variant="secondary" disabled={busy} onClick={importNow}>{busy ? __uiText("กำลังดึง…") : __uiText("ดึงจาก josh ตอนนี้")}</Button>
       </div>
 
-      {msg && <Hint>{msg}</Hint>}
+      {msg && <Hint>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Hint>}
       <ErrorText error={summary.error || list.error} />
 
       {s && s.byStatus.length > 0 && (
@@ -328,7 +334,7 @@ function SyncHistory() {
           {s.byStatus.map((b) => (
             <StatTile
               key={b.sync_status}
-              label={`${b.sync_status} (7 วัน)`}
+              label={__uiText("{0} (7 วัน)", {"0": b.sync_status})}
               value={fmt.num(b.n)}
               tone={b.sync_status === 'failed' && b.n ? 'danger' : 'ok'}
             />
@@ -340,10 +346,10 @@ function SyncHistory() {
         <div className="flex flex-wrap items-center gap-3">
           <Segmented
             options={[
-              { value: '', label: 'ทั้งหมด' },
-              { value: 'failed', label: 'ล้มเหลว' },
-              { value: 'sent', label: 'ส่งแล้ว' },
-              { value: 'pending', label: 'รอส่ง' },
+              { value: '', label: __uiText("ทั้งหมด") },
+              { value: 'failed', label: __uiText("ล้มเหลว") },
+              { value: 'sent', label: __uiText("ส่งแล้ว") },
+              { value: 'pending', label: __uiText("รอส่ง") },
             ]}
             value={status}
             onChange={(v) => { setStatus(v); setPage(1); }}
@@ -351,14 +357,14 @@ function SyncHistory() {
           <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(q.trim()); setPage(1); }}>
             <div className="flex-1">
               <input
-                aria-label="ค้นหาเลข order หรือเลขเอกสาร ERP"
-                placeholder="เลข order / DOC no."
+                aria-label={__uiText("ค้นหาเลข order หรือเลขเอกสาร ERP")}
+                placeholder={__uiText("เลข order / DOC no.")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs"
               />
             </div>
-            <Button size="sm" variant="secondary" type="submit">ค้นหา</Button>
+            <Button size="sm" variant="secondary" type="submit">{__uiText("ค้นหา")}</Button>
           </form>
         </div>
 
@@ -366,16 +372,16 @@ function SyncHistory() {
           {list.loading && !list.data ? (
             <Loading />
           ) : !list.data?.items.length ? (
-            <Empty>{s?.total ? 'ไม่พบรายการ' : 'ยังไม่ได้ดึงประวัติจาก josh'}</Empty>
+            <Empty>{s?.total ? __uiText("ไม่พบรายการ") : __uiText("ยังไม่ได้ดึงประวัติจาก josh")}</Empty>
           ) : (
             <Table>
               <THead>
-                <TH>Order</TH>
-                <TH>สถานะ</TH>
-                <TH>ชำระ</TH>
-                <TH kind="mono">DOC</TH>
-                <TH>ส่งเมื่อ</TH>
-                <TH>ข้อผิดพลาด</TH>
+                <TH>{__uiText("Order")}</TH>
+                <TH>{__uiText("สถานะ")}</TH>
+                <TH>{__uiText("ชำระ")}</TH>
+                <TH kind="mono">{__uiText("DOC")}</TH>
+                <TH>{__uiText("ส่งเมื่อ")}</TH>
+                <TH>{__uiText("ข้อผิดพลาด")}</TH>
                 <TH></TH>
               </THead>
               <TBody>
@@ -384,7 +390,7 @@ function SyncHistory() {
                     <TR>
                       <TD kind="mono">
                         {r.orderNumber ?? r.orderId}
-                        {r.shipmentId && <div className="text-[10px] text-on-surface-variant">shipment</div>}
+                        {r.shipmentId && <div className="text-[10px] text-on-surface-variant">{__uiText("shipment")}</div>}
                       </TD>
                       <TD><StatusChip status={r.syncStatus} /></TD>
                       <TD>{r.paymentMethod}{r.paymentSuccess ? ' ✓' : ''}</TD>
@@ -392,7 +398,7 @@ function SyncHistory() {
                       <TD kind="time">{fmt.when(r.createdAt)}</TD>
                       <TD>{r.errorMessage ?? '—'}</TD>
                       <TD kind="actions">
-                        <ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} label={open === r.id ? 'ซ่อน' : 'ดู'} />
+                        <ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} label={open === r.id ? __uiText("ซ่อน") : __uiText("ดู")} />
                       </TD>
                     </TR>
                     {open === r.id && (
@@ -402,8 +408,8 @@ function SyncHistory() {
                           <Loading />
                         ) : detail.data ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <CodeBlock title="josh ส่ง" value={detail.data.requestJson} maxHeight={280} />
-                            <CodeBlock title="Jagota ตอบ" value={detail.data.jagotaResponseJson} maxHeight={280} />
+                            <CodeBlock title={__uiText("josh ส่ง")} value={detail.data.requestJson} maxHeight={280} />
+                            <CodeBlock title={__uiText("Jagota ตอบ")} value={detail.data.jagotaResponseJson} maxHeight={280} />
                           </div>
                         ) : null}
                       </ExpandRow>
@@ -417,9 +423,9 @@ function SyncHistory() {
 
         {pages > 1 && (
           <div className="flex items-center gap-3 justify-center py-2">
-            <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</Button>
-            <Hint>หน้า {page} / {pages}</Hint>
-            <Button size="sm" variant="secondary" disabled={page >= pages} onClick={() => setPage(page + 1)}>ถัดไป</Button>
+            <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>{__uiText("ก่อนหน้า")}</Button>
+            <Hint>{__uiText("หน้า ")}{page} / {pages}</Hint>
+            <Button size="sm" variant="secondary" disabled={page >= pages} onClick={() => setPage(page + 1)}>{__uiText("ถัดไป")}</Button>
           </div>
         )}
       </div>

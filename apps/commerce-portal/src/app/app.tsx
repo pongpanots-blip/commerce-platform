@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { AppShell, Button, IconButton, NavGroup, Sidebar, TopBar, NavProvider } from '@cp/ui';
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { AppShell, Button, CommandMenu, IconButton, LanguageSelector, NavGroup, Sidebar, TopBar, NavProvider, useUiLocale } from '@cp/ui';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -9,6 +9,8 @@ import { Webhooks } from './pages/Webhooks';
 import { Docs } from './pages/Docs';
 import { auth, tokenClaims } from '../lib/api';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const NAV: NavGroup[] = [
   {
     links: [
@@ -29,36 +31,39 @@ function RequireAuth({ children }: { children: ReactNode }) {
 }
 
 function PortalTopBar() {
-  const route = window.location.pathname;
+  __useUiLocale();
+  const { pathname: route } = useLocation();
+  const navigate = useNavigate();
   const pageTitle = route === '/' ? 'Dashboard' : route === '/keys' ? 'API Keys' : route === '/webhooks' ? 'Webhooks' : 'Documentation';
 
   return (
     <TopBar
       left={
         <>
-          <span className="font-headline text-xs font-semibold text-on-surface">Commerce Platform</span>
+          <span className="font-headline text-xs font-semibold text-on-surface">{__uiText("Commerce Platform")}</span>
           <span className="text-outline-variant">/</span>
-          <span className="text-outline-variant">Developer portal</span>
+          <span className="text-outline-variant">{__uiText("Developer portal")}</span>
           <span className="text-outline-variant">/</span>
-          <span className="text-primary font-semibold">{pageTitle}</span>
+          <span className="text-primary font-semibold">{__uiText(pageTitle)}</span>
         </>
       }
       right={
         <>
+          <LanguageSelector />
+          <CommandMenu />
           <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 border border-green-200 text-emerald-700 rounded-full text-xs font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-            <span>{import.meta.env.MODE === 'production' ? 'Production' : 'Local dev'}</span>
+            <span>{import.meta.env.MODE === 'production' ? __uiText("Production") : __uiText("Local dev")}</span>
           </div>
           <div className="h-4 w-px bg-outline-variant/30" />
-          <IconButton icon="help" title="Docs" onClick={() => window.location.assign('/docs')} />
+          <IconButton icon="help" title={__uiText("Docs")} onClick={() => navigate('/docs')} />
           <div className="h-4 w-px bg-outline-variant/30" />
           <Button
             variant="primary"
             icon="add"
-            onClick={() => window.location.assign('/keys')}
+            onClick={() => navigate('/keys?create=1')}
           >
-            Create Key
-          </Button>
+            {__uiText("Create Key")}</Button>
         </>
       }
     />
@@ -66,6 +71,7 @@ function PortalTopBar() {
 }
 
 export function App() {
+  useUiLocale();
   return (
     <BrowserRouter>
       <Routes>

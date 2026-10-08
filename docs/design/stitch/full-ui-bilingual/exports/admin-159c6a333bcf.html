@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full bg-[#f6f8fc]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Growth Workspace - ผลลัพธ์ของ workflow - Siam Commerce</title>
+  <!-- Google Fonts: Noto Sans Thai and Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            primary: '#365cf5',
+            'primary-dark': '#2a48c4',
+            'primary-light': '#eff3ff',
+            ink: '#17243b',
+            secondary: '#52627a',
+            border: '#e1e7f0',
+            success: '#157347',
+            'success-bg': '#eaf6ef',
+            warning: '#b08900',
+            'warning-bg': '#fef9e7',
+            error: '#c2333f',
+            'error-bg': '#fdf2f2',
+            surface: '#ffffff'
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      color: #17243b;
+      background-color: #f6f8fc;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col antialiased text-[#17243b]">
+
+  <!-- Top App Bar / Global Context Header -->
+  <header class="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-[#e1e7f0] bg-white px-4 lg:px-6">
+    <div class="flex items-center gap-3">
+      <!-- Mobile hamburger (visual only) -->
+      <button type="button" class="lg:hidden p-1.5 rounded-lg text-secondary hover:bg-slate-100">
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+
+      <!-- Brand Logo & App Area -->
+      <div class="flex items-center gap-2">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#365cf5] text-white font-bold text-base shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">storefront</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-[15px] leading-tight tracking-tight text-ink">สยาม คอมเมิร์ซ</span>
+            <span class="rounded bg-slate-100 px-1.5 py-0.2 text-[10px] font-semibold text-secondary uppercase tracking-wider">admin</span>
+          </div>
+          <span class="text-[11px] text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+        </div>
+      </div>
+
+      <div class="hidden sm:flex items-center text-slate-300 mx-1">/</div>
+
+      <!-- Breadcrumbs -->
+      <nav class="hidden sm:flex items-center gap-1.5 text-[13px] text-secondary font-medium">
+        <span class="hover:text-ink cursor-pointer">การตลาด</span>
+        <span class="text-slate-300">/</span>
+        <span class="hover:text-ink cursor-pointer" data-i18n="Growth Workspace">Growth Workspace</span>
+        <span class="text-slate-300">/</span>
+        <span class="text-ink font-semibold" data-i18n="ผลลัพธ์">ผลลัพธ์</span>
+      </nav>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-2.5">
+      <!-- Prototype / Sample Data Badge -->
+      <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/80 px-2.5 py-0.5 text-[12px] font-medium text-[#365cf5]">
+        <span class="h-1.5 w-1.5 rounded-full bg-[#365cf5] animate-pulse"></span>
+        <span data-i18n-raw="ข้อมูลตัวอย่าง / Sample data">ข้อมูลตัวอย่าง / Sample data</span>
+      </span>
+
+      <!-- Language Selector Switcher -->
+      <button id="lang-switch-btn" type="button" onclick="toggleLanguage()" class="flex h-8 items-center gap-1 rounded-lg border border-[#e1e7f0] bg-white px-2.5 text-[12px] font-medium text-secondary hover:border-slate-300 hover:text-ink transition-colors" title="เปลี่ยนภาษา / Switch Language">
+        <span class="material-symbols-outlined text-[16px]">translate</span>
+        <span id="current-lang-text" class="font-semibold text-ink">ไทย</span>
+        <span class="text-slate-300">/</span>
+        <span class="text-slate-400">EN</span>
+      </button>
+
+      <!-- Help & Notification Icons -->
+      <button type="button" class="relative flex h-8 w-8 items-center justify-center rounded-lg text-secondary hover:bg-slate-100 transition-colors">
+        <span class="material-symbols-outlined text-[20px]">notifications</span>
+        <span class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#365cf5]"></span>
+      </button>
+      <button type="button" class="flex h-8 w-8 items-center justify-center rounded-lg text-secondary hover:bg-slate-100 transition-colors">
+        <span class="material-symbols-outlined text-[20px]">help_outline</span>
+      </button>
+
+      <!-- User Profile Pill -->
+      <div class="flex items-center gap-2 pl-1 border-l border-[#e1e7f0]">
+        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-[#eff3ff] font-bold text-xs text-[#365cf5]">
+          SC
+        </div>
+        <div class="hidden xl:flex flex-col text-left">
+          <span class="text-[12px] font-medium leading-none text-ink">แอดมินผู้ดูแล</span>
+          <span class="text-[10px] text-secondary">admin-159c6a333bcf</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Layout -->
+  <div class="flex flex-1 w-full min-h-[calc(100vh-3.5rem)]">
+
+    <!-- 256px Fixed Standard Sidebar for 7 Work Areas -->
+    <aside class="hidden lg:flex w-64 flex-col justify-between border-r border-[#e1e7f0] bg-white p-4 shrink-0">
+      <div class="space-y-6">
+        <!-- Quick Action Button -->
+        <button type="button" class="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#365cf5] font-medium text-[13px] text-white hover:bg-[#2a48c4] transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          <span data-i18n="สร้างใหม่ด้วยตัวเลือก">สร้างใหม่ด้วยตัวเลือก</span>
+        </button>
+
+        <!-- Navigation Sections -->
+        <nav class="space-y-1 text-[13px]">
+          <!-- 1. สินค้าและสต็อก -->
+          <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-secondary hover:bg-slate-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+            <span>สินค้าและสต็อก</span>
+          </a>
+
+          <!-- 2. ออเดอร์และการเงิน -->
+          <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-secondary hover:bg-slate-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+            <span>ออเดอร์และการเงิน</span>
+          </a>
+
+          <!-- 3. ลูกค้าและบริการ -->
+          <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-secondary hover:bg-slate-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[20px]">group</span>
+            <span>ลูกค้าและบริการ</span>
+          </a>
+
+          <!-- 4. การตลาด (Active Area) -->
+          <div class="rounded-lg bg-[#eff3ff]/70 p-1">
+            <a href="#" class="flex items-center gap-3 rounded-lg px-2.5 py-1.5 font-semibold text-[#365cf5]">
+              <span class="material-symbols-outlined text-[20px]">campaign</span>
+              <span>การตลาด</span>
+            </a>
+
+            <!-- Marketing Sub-navigation -->
+            <div class="ml-7 mt-1 space-y-0.5 border-l border-blue-200 pl-2.5 text-[12px]">
+              <a href="#" class="flex items-center justify-between rounded px-2 py-1.5 text-secondary hover:text-ink">
+                <span>Marketing Workflows</span>
+              </a>
+              <a href="#" class="flex items-center justify-between rounded px-2 py-1.5 text-secondary hover:text-ink">
+                <span>ผู้ช่วยวิเคราะห์การตลาด</span>
+              </a>
+              <a href="#" class="flex items-center justify-between rounded px-2 py-1.5 text-secondary hover:text-ink">
+                <span data-i18n="แผนทั้งหมด">แผนทั้งหมด</span>
+              </a>
+              <a href="#" class="flex items-center justify-between rounded bg-white px-2 py-1.5 font-semibold text-[#365cf5] shadow-xs">
+                <span data-i18n="Growth Workspace">Growth Workspace</span>
+                <span class="h-1.5 w-1.5 rounded-full bg-[#365cf5]"></span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 5. รายงานและข้อมูล -->
+          <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-secondary hover:bg-slate-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[20px]">analytics</span>
+            <span>รายงานและข้อมูล</span>
+          </a>
+
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-secondary hover:bg-slate-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[20px]">hub</span>
+            <span>ระบบเชื่อมต่อ</span>
+          </a>
+
+          <!-- 7. ตั้งค่าและทีมงาน -->
+          <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-secondary hover:bg-slate-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[20px]">settings</span>
+            <span>ตั้งค่าและทีมงาน</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Footer User/System Links -->
+      <div class="border-t border-[#e1e7f0] pt-3 space-y-1 text-[13px] text-secondary">
+        <div class="px-3 py-1 text-[11px] text-slate-400 font-mono">
+          <span>Route: </span><span class="text-secondary font-medium">admin-159c6a333bcf</span>
+        </div>
+        <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-slate-50 hover:text-ink">
+          <span class="material-symbols-outlined text-[20px]">help</span>
+          <span>คู่มือใช้งาน</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-slate-50 hover:text-ink">
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span>ออกจากระบบ</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Canvas (max-w-[1240px] centered inside container) -->
+    <main class="flex-1 overflow-y-auto px-4 py-6 lg:px-8 bg-[#f6f8fc]">
+      <div class="mx-auto max-w-[1240px] space-y-6">
+
+        <!-- Page Header Card / Context Banner -->
+        <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 lg:p-6 shadow-sm">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="space-y-1.5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="rounded bg-[#eff3ff] px-2.5 py-0.5 text-[11px] font-semibold text-[#365cf5] uppercase tracking-wide">
+                  Growth Workspace
+                </span>
+                <span class="font-mono text-[12px] text-secondary">
+                  /marketing/growth/results/wf-8821-reactivate-d
+                </span>
+                <span class="inline-flex items-center gap-1 rounded bg-[#eaf6ef] px-2 py-0.5 text-[11px] font-medium text-[#157347]">
+                  <span class="h-1.5 w-1.5 rounded-full bg-[#157347]"></span>
+                  รันเสร็จสมบูรณ์
+                </span>
+              </div>
+              <h1 class="text-[26px] lg:text-[28px] font-bold tracking-tight text-ink">
+                <span data-i18n="ผลลัพธ์ของ workflow">ผลลัพธ์ของ workflow</span>: Winback B2B ลูกค้าค้างซื้อเกิน 14 วัน
+              </h1>
+              <p class="text-[13px] text-secondary" data-i18n="ยอดที่ให้เครดิตแคมเปญ ผลทดลอง และงานของทีมต้องอ่านแยกกัน">
+                ยอดที่ให้เครดิตแคมเปญ ผลทดลอง และงานของทีมต้องอ่านแยกกัน
+              </p>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button type="button" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#e1e7f0] bg-white px-3.5 text-[13px] font-medium text-ink hover:bg-slate-50 hover:border-slate-300 transition-colors">
+                <span class="material-symbols-outlined text-[18px] text-secondary">refresh</span>
+                <span data-i18n="Refresh">Refresh</span>
+              </button>
+              <a href="#" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#365cf5] bg-[#eff3ff] px-3.5 text-[13px] font-medium text-[#365cf5] hover:bg-blue-100/60 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">account_tree</span>
+                <span data-i18n="เปิด workflow">เปิด workflow</span>
+              </a>
+              <button type="button" class="flex h-10 items-center gap-1.5 rounded-lg bg-[#365cf5] px-4 text-[13px] font-medium text-white hover:bg-[#2a48c4] transition-colors shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">science</span>
+                <span data-i18n="เตรียมแผนการทดลองถัดไป">เตรียมแผนการทดลองถัดไป</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Metadata Pill Bar -->
+          <div class="mt-4 flex flex-wrap items-center gap-y-2 gap-x-4 border-t border-[#e1e7f0] pt-3 text-[12px] text-secondary">
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-medium" data-i18n="ชื่อ">ชื่อ:</span>
+              <span class="font-medium text-ink">wf-8821-reactivate-d</span>
+            </div>
+            <span class="text-slate-300">·</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-medium">เจ้าของงาน:</span>
+              <span class="text-ink font-medium">pimchanok.m</span>
+            </div>
+            <span class="text-slate-300">·</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-medium" data-i18n="อัปเดต">อัปเดต:</span>
+              <span class="text-ink">14:20 น. (วันนี้)</span>
+            </div>
+            <span class="text-slate-300">·</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-medium" data-i18n="เทมเพลตข้อความ (Template)">เทมเพลตข้อความ (Template):</span>
+              <span class="font-mono text-ink bg-slate-100 px-1.5 py-0.5 rounded">NOTIF_REACTIVATION_TH_V2</span>
+            </div>
+            <span class="text-slate-300">·</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-medium" data-i18n="· workflow">· workflow</span>
+              <span class="font-medium text-[#365cf5]">Active (ID: 8821)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric KPI Cards: 4 Column Grid -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <!-- Card 1: ยอดที่ให้เครดิตแคมเปญ -->
+          <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] font-medium text-secondary" data-i18n="ยอดที่ให้เครดิตแคมเปญ">ยอดที่ให้เครดิตแคมเปญ</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-[#365cf5]">
+                <span class="material-symbols-outlined text-[18px]">payments</span>
+              </span>
+            </div>
+            <div class="mt-2.5">
+              <div class="text-[24px] font-bold tracking-tight text-ink">฿ 842,500</div>
+              <div class="mt-1 flex items-center gap-1.5 text-[12px] text-[#157347]">
+                <span class="material-symbols-outlined text-[15px]">trending_up</span>
+                <span class="font-medium">18 ออเดอร์ที่ตรวจพบ</span>
+              </div>
+            </div>
+            <div class="mt-3 border-t border-slate-100 pt-2 text-[11px] text-slate-500" data-i18n="ยอด attributed ยังไม่ใช่ยอดขายเพิ่มจากการทดลอง">
+              ยอด attributed ยังไม่ใช่ยอดขายเพิ่มจากการทดลอง
+            </div>
+          </div>
+
+          <!-- Card 2: Contribution หลังต้นทุน -->
+          <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] font-medium text-secondary" data-i18n="Contribution หลังต้นทุน">Contribution หลังต้นทุน</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-[#157347]">
+                <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+              </span>
+            </div>
+            <div class="mt-2.5">
+              <div class="text-[24px] font-bold tracking-tight text-ink">฿ 214,800</div>
+              <div class="mt-1 flex items-center gap-1.5 text-[12px] text-secondary">
+                <span>อัตรากำไรผันแปร: </span>
+                <span class="font-semibold text-ink">25.5%</span>
+              </div>
+            </div>
+            <div class="mt-3 border-t border-slate-100 pt-2 text-[11px] text-slate-500" data-i18n="ไม่ใช่กำไรสุทธิของกิจการ">
+              ไม่ใช่กำไรสุทธิของกิจการ
+            </div>
+          </div>
+
+          <!-- Card 3: ส่วนต่าง conversion -->
+          <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] font-medium text-secondary" data-i18n="ส่วนต่าง conversion">ส่วนต่าง conversion</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
+              </span>
+            </div>
+            <div class="mt-2.5">
+              <div class="text-[24px] font-bold tracking-tight text-[#157347]">+4.8%</div>
+              <div class="mt-1 flex items-center gap-1.5 text-[12px] text-secondary">
+                <span>กลุ่มส่ง 14.2% vs ควบคุม 9.4%</span>
+              </div>
+            </div>
+            <div class="mt-3 border-t border-slate-100 pt-2 text-[11px] text-slate-500">
+              Uplift ทางสถิติ: 95% Confidence
+            </div>
+          </div>
+
+          <!-- Card 4: ต้นทุนที่ยังขาด -->
+          <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] font-medium text-secondary" data-i18n="ต้นทุนที่ยังขาด">ต้นทุนที่ยังขาด</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-[#b08900]">
+                <span class="material-symbols-outlined text-[18px]">receipt</span>
+              </span>
+            </div>
+            <div class="mt-2.5">
+              <div class="text-[24px] font-bold tracking-tight text-[#b08900]">2 รายการ</div>
+              <div class="mt-1 flex items-center gap-1.5 text-[12px] text-secondary">
+                <span data-i18n="ต้นทุนยังขาด {0} รายการ">ต้นทุนยังขาด 2 รายการ</span>
+              </div>
+            </div>
+            <div class="mt-3 border-t border-slate-100 pt-2 text-[11px] text-[#b08900] font-medium flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">warning</span>
+              <span>รอใบแจ้งหนี้ SMS / ส่วนลดพิเศษ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ข้อจำกัดในการอ่านผล (Notice Callout) -->
+        <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-4.5 text-[13px] text-ink flex items-start gap-3 shadow-xs">
+          <span class="material-symbols-outlined text-[22px] text-[#365cf5] shrink-0 mt-0.5">info</span>
+          <div class="space-y-1">
+            <div class="font-semibold text-ink flex items-center gap-2">
+              <span data-i18n="ข้อจำกัดในการอ่านผล">ข้อจำกัดในการอ่านผล</span>
+              <span class="rounded bg-white px-2 py-0.5 text-[11px] font-normal border border-blue-200 text-secondary">เกณฑ์การวัดผล</span>
+            </div>
+            <p class="text-secondary leading-relaxed">
+              ยอด Conversion ที่บันทึกนับเฉพาะคำสั่งซื้อภายใน 7 วันหลังเปิดอ่านข้อความ โดยเปรียบเทียบกับกลุ่มควบคุม Holdout 10%
+              การคำนวณกำไรยังขาดค่าธรรมเนียมจัดส่งด่วนและยอดส่วนลดหน้าร้าน ข้อมูลนี้ใช้สำหรับการตัดสินใจขยายกลุ่มเป้าหมายเท่านั้น
+            </p>
+          </div>
+        </div>
+
+        <!-- Section: Funnel ของ workflow & ผลของกลุ่มทดลอง (Two Columns) -->
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+          <!-- Funnel ของ workflow -->
+          <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-[#e1e7f0] pb-3.5">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[20px] text-[#365cf5]">filter_alt</span>
+                  <h2 class="text-[16px] font-bold text-ink" data-i18n="Funnel ของ workflow">Funnel ของ workflow</h2>
+                </div>
+                <span class="text-[12px] text-secondary">ช่วงเวลา: 30 วันที่ผ่านมา</span>
+              </div>
+
+              <!-- Funnel Horizontal Step Cards -->
+              <div class="mt-4 space-y-3">
+                <!-- Step 1: Enroll -->
+                <div class="rounded-lg border border-[#e1e7f0] bg-slate-50/50 p-3">
+                  <div class="flex items-center justify-between text-[13px]">
+                    <span class="font-medium text-ink">1. ตรวจพบตามเงื่อนไข (Triggered)</span>
+                    <span class="font-bold text-ink font-mono">1,420 ราย</span>
+                  </div>
+                  <div class="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+                    <div class="h-full bg-[#365cf5] rounded-full" style="width: 100%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-secondary">
+                    <span>กลุ่มเป้าหมาย B2B ค้างเกิน 14 วัน</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+
+                <!-- Step 2: Delivered -->
+                <div class="rounded-lg border border-[#e1e7f0] bg-slate-50/50 p-3">
+                  <div class="flex items-center justify-between text-[13px]">
+                    <span class="font-medium text-ink">2. ส่งข้อความสำเร็จ (Delivered)</span>
+                    <span class="font-bold text-ink font-mono">1,278 ราย</span>
+                  </div>
+                  <div class="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+                    <div class="h-full bg-[#365cf5] rounded-full" style="width: 90%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-secondary">
+                    <span>หักกลุ่มควบคุม Holdout 142 ราย</span>
+                    <span>90.0% ของที่เข้าร่วม</span>
+                  </div>
+                </div>
+
+                <!-- Step 3: Converted -->
+                <div class="rounded-lg border border-emerald-100 bg-emerald-50/30 p-3">
+                  <div class="flex items-center justify-between text-[13px]">
+                    <span class="font-semibold text-emerald-900">3. สั่งซื้อซ้ำสำเร็จ (Converted)</span>
+                    <span class="font-bold text-[#157347] font-mono">182 ราย</span>
+                  </div>
+                  <div class="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+                    <div class="h-full bg-[#157347] rounded-full" style="width: 14.2%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-secondary">
+                    <span>ยอดซื้อเฉลี่ย ฿4,629 / รายการ</span>
+                    <span class="font-semibold text-[#157347]">14.2% Conversion</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer note / empty fallback state check -->
+            <div class="mt-4 border-t border-slate-100 pt-3 text-[12px] text-secondary flex items-center justify-between">
+              <span class="flex items-center gap-1.5 text-slate-400">
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                เหตุการณ์บันทึกครบถ้วน
+              </span>
+              <span class="hidden" data-i18n="ยังไม่มีเหตุการณ์ของ workflow">ยังไม่มีเหตุการณ์ของ workflow</span>
+              <a href="#" class="text-[#365cf5] hover:underline font-medium" data-i18n="เปิดรายการ">เปิดรายการ</a>
+            </div>
+          </div>
+
+          <!-- ผลของกลุ่มทดลอง (A/B Test / Holdout Control Group) -->
+          <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-[#e1e7f0] pb-3.5">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[20px] text-[#365cf5]">tune</span>
+                  <h2 class="text-[16px] font-bold text-ink" data-i18n="ผลของกลุ่มทดลอง">ผลของกลุ่มทดลอง</h2>
+                </div>
+                <span class="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-secondary">Holdout 10% Control</span>
+              </div>
+
+              <!-- Experiment Table -->
+              <div class="mt-4 overflow-hidden rounded-lg border border-[#e1e7f0]">
+                <table class="w-full text-left text-[13px]">
+                  <thead class="bg-slate-50 text-[12px] font-medium text-secondary border-b border-[#e1e7f0]">
+                    <tr>
+                      <th class="py-2.5 px-3.5" data-i18n="กลุ่ม">กลุ่ม</th>
+                      <th class="py-2.5 px-3.5" data-i18n="เข้าร่วม">เข้าร่วม</th>
+                      <th class="py-2.5 px-3.5" data-i18n="Converted">Converted</th>
+                      <th class="py-2.5 px-3.5 text-right">อัตรา</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-[#e1e7f0] bg-white">
+                    <tr class="hover:bg-slate-50/60">
+                      <td class="py-3 px-3.5">
+                        <div class="flex items-center gap-2">
+                          <span class="h-2 w-2 rounded-full bg-[#365cf5]"></span>
+                          <span class="font-medium text-ink" data-i18n="กลุ่มส่ง">กลุ่มส่ง</span>
+                          <span class="text-[11px] text-secondary">(Variant A)</span>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3.5 font-mono text-secondary">1,278</td>
+                      <td class="py-3 px-3.5 font-mono font-medium text-ink">182</td>
+                      <td class="py-3 px-3.5 text-right font-mono font-bold text-[#157347]">14.2%</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/60">
+                      <td class="py-3 px-3.5">
+                        <div class="flex items-center gap-2">
+                          <span class="h-2 w-2 rounded-full bg-slate-400"></span>
+                          <span class="font-medium text-ink" data-i18n="กลุ่มควบคุม">กลุ่มควบคุม</span>
+                          <span class="text-[11px] text-secondary">(Holdout)</span>
+                        </div>
+                      </td>
+                      <td class="py-3 px-3.5 font-mono text-secondary">142</td>
+                      <td class="py-3 px-3.5 font-mono font-medium text-ink">13</td>
+                      <td class="py-3 px-3.5 text-right font-mono text-secondary">9.4%</td>
+                    </tr>
+                    <tr class="bg-blue-50/40 font-medium">
+                      <td class="py-2.5 px-3.5 text-[#365cf5]">ส่วนต่างสุทธิ (Incremental Lift)</td>
+                      <td class="py-2.5 px-3.5 font-mono text-secondary">-</td>
+                      <td class="py-2.5 px-3.5 font-mono text-[#157347]">+62 ออเดอร์</td>
+                      <td class="py-2.5 px-3.5 text-right font-mono font-bold text-[#157347]">+4.8%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="mt-4 border-t border-slate-100 pt-3 text-[12px] text-secondary flex items-center justify-between">
+              <span class="text-slate-500">ผลทดสอบพิสูจน์แล้วว่าข้อความกระตุ้นยอดซื้อซ้ำได้จริง</span>
+              <button type="button" class="text-[12px] font-medium text-[#365cf5] hover:underline" data-i18n="ปรับสัดส่วนคอลัมน์ละเอียด (%)">
+                ปรับสัดส่วนคอลัมน์ละเอียด (%)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: งานของทีมและการรัน (Execution Tasks & Step Logs) -->
+        <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#e1e7f0] pb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-[#365cf5]">assignment_turned_in</span>
+              <h2 class="text-[16px] font-bold text-ink" data-i18n="งานของทีมและการรัน">งานของทีมและการรัน</h2>
+              <span class="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-secondary">3 งานรับผิดชอบ</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" class="flex h-8 items-center gap-1.5 rounded-lg border border-[#e1e7f0] bg-white px-3 text-[12px] font-medium text-secondary hover:text-ink hover:border-slate-300">
+                <span class="material-symbols-outlined text-[16px]">list_alt</span>
+                <span data-i18n="เปิด step logs / enrollments">เปิด step logs / enrollments</span>
+              </button>
+              <button type="button" class="flex h-8 items-center gap-1.5 rounded-lg border border-[#e1e7f0] bg-white px-3 text-[12px] font-medium text-secondary hover:text-ink hover:border-slate-300">
+                <span class="material-symbols-outlined text-[16px]">add</span>
+                <span data-i18n="เพิ่มต่อท้าย">เพิ่มต่อท้าย</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Task table -->
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-[13px]">
+              <thead class="bg-slate-50 text-[12px] font-medium text-secondary border-b border-[#e1e7f0]">
+                <tr>
+                  <th class="py-2.5 px-3.5" data-i18n="ชื่อ">ชื่อ</th>
+                  <th class="py-2.5 px-3.5">ผู้รับผิดชอบ</th>
+                  <th class="py-2.5 px-3.5">กำหนดเสร็จ</th>
+                  <th class="py-2.5 px-3.5">สถานะ</th>
+                  <th class="py-2.5 px-3.5 text-right">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#e1e7f0]">
+                <tr class="hover:bg-slate-50/60">
+                  <td class="py-3 px-3.5">
+                    <div class="font-medium text-ink">สร้างโค้ดคูปอง BACK10 ในระบบการเงิน</div>
+                    <div class="text-[11px] text-secondary">ตรวจส่วนลด 10% วงเงินไม่เกิน 500 บาท</div>
+                  </td>
+                  <td class="py-3 px-3.5 text-secondary">somchai.p@siam.co.th</td>
+                  <td class="py-3 px-3.5 text-secondary">04 เม.ย. 2567</td>
+                  <td class="py-3 px-3.5">
+                    <span class="inline-flex items-center gap-1 rounded bg-[#eaf6ef] px-2 py-0.5 text-[11px] font-medium text-[#157347]">
+                      <span class="h-1.5 w-1.5 rounded-full bg-[#157347]"></span>
+                      เสร็จแล้ว
+                    </span>
+                  </td>
+                  <td class="py-3 px-3.5 text-right">
+                    <a href="#" class="font-medium text-[#365cf5] hover:underline" data-i18n="เปิดรายการ">เปิดรายการ</a>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/60">
+                  <td class="py-3 px-3.5">
+                    <div class="font-medium text-ink">เช็กสต็อกสินค้า SKU-GLOW-50ML ก่อนยิงแคมเปญ</div>
+                    <div class="text-[11px] text-secondary">คลังสินค้าลาดพร้าวและบางนา</div>
+                  </td>
+                  <td class="py-3 px-3.5 text-secondary">inventory-ops@siam.co.th</td>
+                  <td class="py-3 px-3.5 text-secondary">05 เม.ย. 2567</td>
+                  <td class="py-3 px-3.5">
+                    <span class="inline-flex items-center gap-1 rounded bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-[#b08900]">
+                      <span class="h-1.5 w-1.5 rounded-full bg-[#b08900]"></span>
+                      รอตรวจ
+                    </span>
+                  </td>
+                  <td class="py-3 px-3.5 text-right">
+                    <a href="#" class="font-medium text-[#365cf5] hover:underline" data-i18n="เปิดรายการ">เปิดรายการ</a>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/60">
+                  <td class="py-3 px-3.5">
+                    <div class="font-medium text-ink">โทรติดตามลูกค้าร้านเบเกอรี่รายใหญ่ที่ไม่เปิดอ่าน SMS</div>
+                    <div class="text-[11px] text-secondary">ส่งต่อรายชื่อให้ทีมขาย B2B ติดต่อโดยตรง</div>
+                  </td>
+                  <td class="py-3 px-3.5 text-secondary">kridtapas.b2b@siam.co.th</td>
+                  <td class="py-3 px-3.5 text-secondary">10 เม.ย. 2567</td>
+                  <td class="py-3 px-3.5">
+                    <span class="inline-flex items-center gap-1 rounded bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-[#365cf5]">
+                      <span class="h-1.5 w-1.5 rounded-full bg-[#365cf5]"></span>
+                      กำลังดำเนินการ
+                    </span>
+                  </td>
+                  <td class="py-3 px-3.5 text-right">
+                    <a href="#" class="font-medium text-[#365cf5] hover:underline" data-i18n="เปิดรายการ">เปิดรายการ</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section: สิ่งที่ควรทดสอบต่อ (Next Recommendations) -->
+        <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm">
+          <div class="flex items-center justify-between border-b border-[#e1e7f0] pb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-[#365cf5]">lightbulb</span>
+              <h2 class="text-[16px] font-bold text-ink" data-i18n="สิ่งที่ควรทดสอบต่อ">สิ่งที่ควรทดสอบต่อ</h2>
+            </div>
+            <span class="text-[12px] text-[#157347] font-medium flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">verified</span>
+              วิเคราะห์จากผล Lift ล่าสุด
+            </span>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Recommendation 1 -->
+            <div class="rounded-lg border border-[#e1e7f0] p-4 bg-slate-50/40 hover:border-blue-300 transition-colors">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-[12px] font-bold text-[#365cf5]">1</span>
+                  <h3 class="text-[14px] font-bold text-ink">ทดสอบปรับเวลาส่ง SMS จาก 14 วัน เป็น 10 วัน</h3>
+                </div>
+                <span class="rounded bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-[#157347]">คาดการณ์ +15% ยอดสั่ง</span>
+              </div>
+              <p class="mt-2 text-[12px] text-secondary leading-relaxed">
+                ข้อมูลระบุว่าลูกค้าร้านเบเกอรี่กว่า 42% เริ่มเปลี่ยนไปสั่งซื้อวัตถุดิบแป้งสาลีกับตัวแทนอื่นในวันที่ 11-12 การลดระยะเวลาส่งข้อความจะช่วยตัดวงจรการเปลี่ยนผู้ผลิตได้ทันท่วงที
+              </p>
+              <div class="mt-3 flex items-center gap-2">
+                <button type="button" class="h-8 rounded-lg bg-[#365cf5] px-3 text-[12px] font-medium text-white hover:bg-[#2a48c4]">
+                  สร้างแผนต่อยอดทันที
+                </button>
+              </div>
+            </div>
+
+            <!-- Recommendation 2 -->
+            <div class="rounded-lg border border-[#e1e7f0] p-4 bg-slate-50/40 hover:border-blue-300 transition-colors">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-[12px] font-bold text-[#365cf5]">2</span>
+                  <h3 class="text-[14px] font-bold text-ink">เสนอคูปองฟรีค่าจัดส่งแทนส่วนลด 10%</h3>
+                </div>
+                <span class="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-[#365cf5]">ประหยัดงบ Margin</span>
+              </div>
+              <p class="mt-2 text-[12px] text-secondary leading-relaxed">
+                การวิเคราะห์ตะกร้าพบว่าร้านเบเกอรี่มีค่าเฉลี่ยจัดส่ง ฿180 ต่อรอบ การให้ฟรีค่าจัดส่งมีต้นทุนจริงต่ำกว่าคูปองส่วนลด 10% แต่ให้อัตราคลิกสั่งซื้อกลับมาสูงเท่ากัน
+              </p>
+              <div class="mt-3 flex items-center gap-2">
+                <button type="button" class="h-8 rounded-lg border border-[#e1e7f0] bg-white px-3 text-[12px] font-medium text-ink hover:bg-slate-50">
+                  ส่งตรวจสมมติฐาน
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden condition fallback reference for i18n -->
+          <div class="hidden" data-i18n="ยังไม่มีข้อเสนอแนะที่มีข้อมูลรองรับ">ยังไม่มีข้อเสนอแนะที่มีข้อมูลรองรับ</div>
+        </div>
+
+        <!-- Section: ประวัติของบริษัท / บริษัทในแคมเปญ Winback (Company Context Modal/Panel) -->
+        <div class="rounded-xl border border-[#e1e7f0] bg-white p-5 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#e1e7f0] pb-3.5">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-[#365cf5]">domain</span>
+                <h2 class="text-[16px] font-bold text-ink" data-i18n="ประวัติของบริษัท">ประวัติของบริษัท</h2>
+                <span class="text-slate-300">/</span>
+                <span class="text-[14px] font-medium text-secondary" data-i18n="งาน Winback">งาน Winback</span>
+              </div>
+              <p class="text-[12px] text-secondary mt-0.5" data-i18n="ตรวจบริบทที่ระบบมี ก่อนมอบหมายงานหรือติดต่อบริษัท">
+                ตรวจบริบทที่ระบบมี ก่อนมอบหมายงานหรือติดต่อบริษัท
+              </p>
+            </div>
+
+            <!-- Search in stored offline snapshot -->
+            <div class="flex items-center gap-2">
+              <div class="relative w-72">
+                <span class="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-secondary">search</span>
+                <input type="text" value="COMP-4092" class="h-10 w-full rounded-lg border border-[#e1e7f0] bg-white pl-9 pr-8 text-[13px] text-ink focus:border-[#365cf5] focus:outline-none" placeholder="ค้นหา Company ID...">
+                <button type="button" class="absolute right-2 top-2.5 text-secondary hover:text-ink">
+                  <span class="material-symbols-outlined text-[16px]">clear</span>
+                </button>
+              </div>
+              <button type="button" class="flex h-10 items-center gap-1 rounded-lg border border-[#e1e7f0] bg-white px-3 text-[13px] font-medium text-secondary hover:text-ink">
+                <span class="material-symbols-outlined text-[18px]">history</span>
+                <span data-i18n="เก็บ">เก็บ</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stored Snapshot Notice -->
+          <div class="text-[12px] text-secondary bg-slate-50 border border-slate-200/80 rounded-lg p-2.5 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-slate-400">info</span>
+            <span data-i18n="ค้นในข้อมูลที่เก็บมาแล้ว ไม่ได้เปิดเว็บสด · ไม่เจอ = รอเก็บรอบคืนนี้">
+              ค้นในข้อมูลที่เก็บมาแล้ว ไม่ได้เปิดเว็บสด · ไม่เจอ = รอเก็บรอบคืนนี้
+            </span>
+          </div>
+
+          <!-- Company Details Card -->
+          <div class="rounded-lg border border-[#e1e7f0] p-4.5 bg-white space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-[12px] font-medium text-secondary" data-i18n="Company ID">Company ID:</span>
+                  <span class="font-mono text-[13px] font-bold text-ink bg-slate-100 px-2 py-0.5 rounded">COMP-4092</span>
+                  <span class="inline-flex items-center gap-1 rounded bg-[#eaf6ef] px-2 py-0.5 text-[11px] font-medium text-[#157347]">
+                    อยู่ในช่วงเวลาที่กำหนด
+                  </span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[12px] text-secondary" data-i18n="ชื่อบริษัท/ร้าน">ชื่อบริษัท/ร้าน:</span>
+                  <h3 class="text-[16px] font-bold text-ink">สยาม เบเกอรี่ โฮลเซลส์ (สาขากรุงเทพ ลาดพร้าว)</h3>
+                </div>
+              </div>
+
+              <!-- Quick Order/Credit Link Actions -->
+              <div class="flex items-center gap-2">
+                <button type="button" class="flex h-9 items-center gap-1.5 rounded-lg border border-[#e1e7f0] bg-white px-3 text-[12px] font-medium text-ink hover:bg-slate-50">
+                  <span class="material-symbols-outlined text-[16px] text-secondary">shopping_cart</span>
+                  <span data-i18n="ดูออเดอร์">ดูออเดอร์</span>
+                </button>
+                <button type="button" class="flex h-9 items-center gap-1.5 rounded-lg border border-[#365cf5] bg-[#eff3ff] px-3 text-[12px] font-medium text-[#365cf5] hover:bg-blue-100">
+                  <span class="material-symbols-outlined text-[16px]">mail</span>
+                  <span data-i18n="เปิดรายการ">เปิดรายการ</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3 Fields Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[13px]">
+              <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
+                <span class="text-[11px] text-secondary font-medium" data-i18n="วงเงินที่อนุมัติ">วงเงินที่อนุมัติ</span>
+                <div class="mt-1 text-[16px] font-bold text-ink">฿ 85,000 / ด.</div>
+                <span class="text-[11px] text-[#157347]">พร้อมอนุมัติ (30 วัน)</span>
+              </div>
+              <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
+                <span class="text-[11px] text-secondary font-medium" data-i18n="อีเมล:">อีเมล:</span>
+                <div class="mt-1 font-mono text-[13px] font-medium text-ink">procure@siambakery.co.th</div>
+                <span class="text-[11px] text-secondary">โทร: 02-539-88xx</span>
+              </div>
+              <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
+                <span class="text-[11px] text-secondary font-medium" data-i18n="เงื่อนไขเดิม:">เงื่อนไขเดิม:</span>
+                <div class="mt-1 text-[13px] font-medium text-ink">ซื้อสม่ำเสมอทุกสัปดาห์ (ขาดซื้อ 16 วัน)</div>
+                <span class="text-[11px] text-amber-600">สถานะ: ชวนกลับมาซื้อด่วน</span>
+              </div>
+            </div>
+
+            <!-- Sub-card: เหตุการณ์ที่ตรวจได้ & ข้อมูลที่ยังไม่ครอบคลุม -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+              <div class="rounded-lg border border-[#e1e7f0] p-3.5 space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5 font-semibold text-[13px] text-ink">
+                    <span class="material-symbols-outlined text-[18px] text-[#365cf5]">event_available</span>
+                    <span data-i18n="เหตุการณ์ที่ตรวจได้">เหตุการณ์ที่ตรวจได้</span>
+                  </div>
+                  <span class="text-[11px] text-secondary">2 เหตุการณ์</span>
+                </div>
+                <ul class="text-[12px] space-y-1.5 text-secondary">
+                  <li class="flex items-start gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-[#157347] shrink-0 mt-0.5">check</span>
+                    <span>คลิกข้อความ SMS คูปอง BACK10 เมื่อวานนี้ เวลา 16:40 น.</span>
+                  </li>
+                  <li class="flex items-start gap-1.5">
+                    <span class="material-symbols-outlined text-[15px] text-[#157347] shrink-0 mt-0.5">check</span>
+                    <span>เปิดตะกร้าสินค้าค้างไว้ในระบบ SKU-GLOW-50ML</span>
+                  </li>
+                </ul>
+                <div class="hidden" data-i18n="ยังไม่มีเหตุการณ์ของบริษัทนี้">ยังไม่มีเหตุการณ์ของบริษัทนี้</div>
+              </div>
+
+              <div class="rounded-lg border border-amber-200 bg-amber-50/30 p-3.5 space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5 font-semibold text-[13px] text-amber-900">
+                    <span class="material-symbols-outlined text-[18px] text-[#b08900]">fact_check</span>
+                    <span data-i18n="ข้อมูลที่ยังไม่ครอบคลุม">ข้อมูลที่ยังไม่ครอบคลุม</span>
+                  </div>
+                  <span class="text-[11px] text-[#b08900]">ต้องตรวจสอบเพิ่ม</span>
+                </div>
+                <p class="text-[12px] text-amber-900/80 leading-relaxed">
+                  ยังไม่ได้รับข้อมูลสาเหตุหยุดซื้อจากการสัมภาษณ์ฝ่ายจัดซื้อ หากจะให้ส่วนลดเพิ่มเกิน 10% หรือขยายวงเงินสินเชื่อ
+                  กรุณาตรวจสอบเครดิตบูโรพาณิชย์รอบไตรมาส 2 ก่อน
+                </p>
+                <div class="flex items-center gap-2 pt-1">
+                  <span class="text-[11px] text-secondary font-medium" data-i18n="ราคาขอ">ราคาขอ:</span>
+                  <span class="font-mono text-[12px] text-ink font-semibold">฿ 240 / ถุง (ต่อรองจาก ฿ 265)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Missing Items / Error Handling / Fallback State Demonstration -->
+        <div class="rounded-xl border border-dashed border-[#e1e7f0] bg-white p-4 text-[12px] text-secondary flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px] text-slate-400">info_outline</span>
+            <span>
+              <span data-i18n="ข้อมูลบริษัท">ข้อมูลบริษัท</span>: หากไม่มีประวัติเดิมในระบบ ระบบจะแสดง
+              <span class="font-medium text-ink" data-i18n="ไม่มีชื่อบริษัท">“ไม่มีชื่อบริษัท”</span>
+              หรือ <span class="font-medium text-ink" data-i18n="ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “">“ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “สร้างใหม่ด้วยตัวเลือก””</span>
+            </span>
+          </div>
+          <div class="flex items-center gap-2 font-mono text-[11px]">
+            <span class="text-slate-400" data-i18n="หรือกรอก REF_TOKEN เอง">หรือกรอก REF_TOKEN เอง</span>
+            <span class="text-slate-300">|</span>
+            <span class="text-red-500" data-i18n="ลบไม่สำเร็จ">ลบไม่สำเร็จ: ต้องเป็นเจ้าของแผนเท่านั้น</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- INVISIBLE REQUIRED JSON DICTIONARY FOR COMMERCIAL UI TRANSLATIONS -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "Growth Workspace": {
+      "th": "Growth Workspace",
+      "en": "Growth Workspace"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "ชื่อ": {
+      "th": "ชื่อ",
+      "en": "Name"
+    },
+    "แผนทั้งหมด": {
+      "th": "แผนทั้งหมด",
+      "en": "All Plans"
+    },
+    "ผลลัพธ์ของ workflow": {
+      "th": "ผลลัพธ์ของ workflow",
+      "en": "Workflow Results"
+    },
+    "ยอดที่ให้เครดิตแคมเปญ ผลทดลอง และงานของทีมต้องอ่านแยกกัน": {
+      "th": "ยอดที่ให้เครดิตแคมเปญ ผลทดลอง และงานของทีมต้องอ่านแยกกัน",
+      "en": "Campaign attributed revenue, experiment lift, and team tasks must be evaluated separately"
+    },
+    "เปิด workflow": {
+      "th": "เปิด workflow",
+      "en": "Open Workflow"
+    },
+    "อัปเดต": {
+      "th": "อัปเดต",
+      "en": "Updated"
+    },
+    "· workflow": {
+      "th": "· workflow",
+      "en": "· workflow"
+    },
+    "ยอดที่ให้เครดิตแคมเปญ": {
+      "th": "ยอดที่ให้เครดิตแคมเปญ",
+      "en": "Attributed Revenue"
+    },
+    "Contribution หลังต้นทุน": {
+      "th": "Contribution หลังต้นทุน",
+      "en": "Post-Cost Contribution"
+    },
+    "ส่วนต่าง conversion": {
+      "th": "ส่วนต่าง conversion",
+      "en": "Conversion Difference"
+    },
+    "ต้นทุนที่ยังขาด": {
+      "th": "ต้นทุนที่ยังขาด",
+      "en": "Missing Cost Items"
+    },
+    "ข้อจำกัดในการอ่านผล": {
+      "th": "ข้อจำกัดในการอ่านผล",
+      "en": "Measurement Limitations"
+    },
+    "Funnel ของ workflow": {
+      "th": "Funnel ของ workflow",
+      "en": "Workflow Funnel"
+    },
+    "ยังไม่มีเหตุการณ์ของ workflow": {
+      "th": "ยังไม่มีเหตุการณ์ของ workflow",
+      "en": "No workflow events recorded yet"
+    },
+    "ผลของกลุ่มทดลอง": {
+      "th": "ผลของกลุ่มทดลอง",
+      "en": "Experiment Group Results"
+    },
+    "กลุ่ม": {
+      "th": "กลุ่ม",
+      "en": "Group"
+    },
+    "เข้าร่วม": {
+      "th": "เข้าร่วม",
+      "en": "Enrolled"
+    },
+    "Converted": {
+      "th": "Converted",
+      "en": "Converted"
+    },
+    "กลุ่มส่ง": {
+      "th": "กลุ่มส่ง",
+      "en": "Send Group"
+    },
+    "กลุ่มควบคุม": {
+      "th": "กลุ่มควบคุม",
+      "en": "Control Group"
+    },
+    "งานของทีมและการรัน": {
+      "th": "งานของทีมและการรัน",
+      "en": "Team Tasks & Run"
+    },
+    "เปิด step logs / enrollments": {
+      "th": "เปิด step logs / enrollments",
+      "en": "Open Step Logs / Enrollments"
+    },
+    "สิ่งที่ควรทดสอบต่อ": {
+      "th": "สิ่งที่ควรทดสอบต่อ",
+      "en": "Next Recommended Tests"
+    },
+    "ยังไม่มีข้อเสนอแนะที่มีข้อมูลรองรับ": {
+      "th": "ยังไม่มีข้อเสนอแนะที่มีข้อมูลรองรับ",
+      "en": "No data-backed recommendations yet"
+    },
+    "เตรียมแผนการทดลองถัดไป": {
+      "th": "เตรียมแผนการทดลองถัดไป",
+      "en": "Prepare Next Experiment Plan"
+    },
+    "ประวัติของบริษัท": {
+      "th": "ประวัติของบริษัท",
+      "en": "Company History"
+    },
+    "ตรวจบริบทที่ระบบมี ก่อนมอบหมายงานหรือติดต่อบริษัท": {
+      "th": "ตรวจบริบทที่ระบบมี ก่อนมอบหมายงานหรือติดต่อบริษัท",
+      "en": "Review available system context before assigning tasks or contacting company"
+    },
+    "งาน Winback": {
+      "th": "งาน Winback",
+      "en": "Winback Task"
+    },
+    "ข้อมูลบริษัท": {
+      "th": "ข้อมูลบริษัท",
+      "en": "Company Information"
+    },
+    "Company ID": {
+      "th": "Company ID",
+      "en": "Company ID"
+    },
+    "ข้อมูลที่ยังไม่ครอบคลุม": {
+      "th": "ข้อมูลที่ยังไม่ครอบคลุม",
+      "en": "Uncovered Information"
+    },
+    "เหตุการณ์ที่ตรวจได้": {
+      "th": "เหตุการณ์ที่ตรวจได้",
+      "en": "Detected Events"
+    },
+    "ยังไม่มีเหตุการณ์ของบริษัทนี้": {
+      "th": "ยังไม่มีเหตุการณ์ของบริษัทนี้",
+      "en": "No events recorded for this company"
+    },
+    "เปิดรายการ": {
+      "th": "เปิดรายการ",
+      "en": "Open Item"
+    },
+    "เก็บ": {
+      "th": "เก็บ",
+      "en": "Collect"
+    },
+    "ค้นในข้อมูลที่เก็บมาแล้ว ไม่ได้เปิดเว็บสด · ไม่เจอ = รอเก็บรอบคืนนี้": {
+      "th": "ค้นในข้อมูลที่เก็บมาแล้ว ไม่ได้เปิดเว็บสด · ไม่เจอ = รอเก็บรอบคืนนี้",
+      "en": "Search in cached data, not live web · Not found = wait for tonight's run"
+    },
+    "เงื่อนไขเดิม:": {
+      "th": "เงื่อนไขเดิม:",
+      "en": "Prior Condition:"
+    },
+    "ชื่อบริษัท/ร้าน": {
+      "th": "ชื่อบริษัท/ร้าน",
+      "en": "Company / Store Name"
+    },
+    "ดูออเดอร์": {
+      "th": "ดูออเดอร์",
+      "en": "View Orders"
+    },
+    "เทมเพลตข้อความ (Template)": {
+      "th": "เทมเพลตข้อความ (Template)",
+      "en": "Message Template"
+    },
+    "ปรับสัดส่วนคอลัมน์ละเอียด (%)": {
+      "th": "ปรับสัดส่วนคอลัมน์ละเอียด (%)",
+      "en": "Adjust Granular Column Split (%)"
+    },
+    "เพิ่มต่อท้าย": {
+      "th": "เพิ่มต่อท้าย",
+      "en": "Append to End"
+    },
+    "ไม่มีชื่อบริษัท": {
+      "th": "ไม่มีชื่อบริษัท",
+      "en": "No Company Name"
+    },
+    "ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “": {
+      "th": "ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “",
+      "en": "No items yet, start with button “"
+    },
+    "ราคาขอ": {
+      "th": "ราคาขอ",
+      "en": "Requested Price"
+    },
+    "ลบไม่สำเร็จ": {
+      "th": "ลบไม่สำเร็จ",
+      "en": "Failed to Delete"
+    },
+    "วงเงินที่อนุมัติ": {
+      "th": "วงเงินที่อนุมัติ",
+      "en": "Approved Credit Limit"
+    },
+    "สร้างใหม่ด้วยตัวเลือก": {
+      "th": "สร้างใหม่ด้วยตัวเลือก",
+      "en": "Create New with Options"
+    },
+    "หรือกรอก REF_TOKEN เอง": {
+      "th": "หรือกรอก REF_TOKEN เอง",
+      "en": "Or enter REF_TOKEN manually"
+    },
+    "อีเมล:": {
+      "th": "อีเมล:",
+      "en": "Email:"
+    },
+    "ประวัติบริษัท": {
+      "th": "ประวัติบริษัท",
+      "en": "Company Profile"
+    },
+    "ผลลัพธ์": {
+      "th": "ผลลัพธ์",
+      "en": "Results"
+    },
+    "ยอด attributed ยังไม่ใช่ยอดขายเพิ่มจากการทดลอง": {
+      "th": "ยอด attributed ยังไม่ใช่ยอดขายเพิ่มจากการทดลอง",
+      "en": "Attributed revenue is not yet incremental sales from experiment"
+    },
+    "ต้นทุนยังขาด {0} รายการ": {
+      "th": "ต้นทุนยังขาด {0} รายการ",
+      "en": "Cost items still missing: {0}"
+    },
+    "ไม่ใช่กำไรสุทธิของกิจการ": {
+      "th": "ไม่ใช่กำไรสุทธิของกิจการ",
+      "en": "Not business net profit"
+    }
+  }
+  </script>
+
+  <!-- Bilingual Toggle Script -->
+  <script>
+    let currentLang = 'th';
+
+    function toggleLanguage() {
+      const script = document.getElementById('commerce-ui-translations');
+      if (!script) return;
+
+      const translations = JSON.parse(script.textContent);
+      const nextLang = currentLang === 'th' ? 'en' : 'th';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][nextLang]) {
+          el.textContent = translations[key][nextLang];
+        }
+      });
+
+      // Update button visual
+      currentLang = nextLang;
+      const langText = document.getElementById('current-lang-text');
+      if (langText) {
+        langText.textContent = nextLang === 'th' ? 'ไทย' : 'EN';
+      }
+    }
+  </script>
+</body>
+</html>

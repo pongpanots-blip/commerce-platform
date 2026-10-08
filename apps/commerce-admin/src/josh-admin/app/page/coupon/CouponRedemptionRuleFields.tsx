@@ -12,6 +12,8 @@ import {
   type CouponRedemptionForm,
 } from './coupon-redemption.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   value: CouponRedemptionForm;
   onChange: (next: CouponRedemptionForm) => void;
@@ -33,21 +35,21 @@ function LegacyScopeNotice({
   disabled?: boolean;
   onClear: () => void;
 }) {
+  __useUiLocale();
   if (categoryCount === 0 && skuCount === 0) return null;
   const parts: string[] = [];
   if (categoryCount > 0) parts.push(`${categoryCount} หมวด`);
   if (skuCount > 0) parts.push(`${skuCount} SKU`);
   return (
     <p className="text-xs text-gray-500">
-      เงื่อนไขเดิม: {parts.join(', ')}{' '}
+      {__uiText("เงื่อนไขเดิม: ")}{parts.join(', ')}{' '}
       <button
         type="button"
         disabled={disabled}
         onClick={onClear}
         className="text-gray-500 underline hover:text-gray-700"
       >
-        ล้าง
-      </button>
+        {__uiText("ล้าง")}</button>
     </p>
   );
 }
@@ -64,18 +66,18 @@ function SkuMinimumsLegacyNotice({
   disabled?: boolean;
   onClear: () => void;
 }) {
+  __useUiLocale();
   if (count === 0) return null;
   return (
     <p className="text-xs text-gray-500">
-      เงื่อนไข SKU ขั้นต่ำเดิม: {count} รายการ{' '}
+      {__uiText("เงื่อนไข SKU ขั้นต่ำเดิม: ")}{count} {__uiText(" รายการ")}{' '}
       <button
         type="button"
         disabled={disabled}
         onClick={onClear}
         className="text-gray-500 underline hover:text-gray-700"
       >
-        ล้าง
-      </button>
+        {__uiText("ล้าง")}</button>
     </p>
   );
 }
@@ -84,12 +86,11 @@ function SkuMinimumsLegacyNotice({
  * ค่าเดิมยังอยู่ที่ backend จนกว่าจะบันทึกจากฟอร์มนี้อีกครั้ง ซึ่งจะ normalise ให้เท่ากับยอดตะกร้าขั้นต่ำ.
  * (ส่วนลดคิดจากทั้งตะกร้าเสมอที่ backend — ไม่มีค่า "ฐานคำนวณส่วนลด" ให้แจ้งเตือนแล้ว) */
 function LegacyDiscountApplyNotice({ legacyMinEligible }: { legacyMinEligible: number | null }) {
+  __useUiLocale();
   if (legacyMinEligible == null) return null;
   return (
     <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-      คูปองนี้เคยตั้ง "ขั้นต่ำสินค้าเข้าเงื่อนไข ฿{legacyMinEligible.toLocaleString()}" ไว้ — ตัวเลือกนี้ถูกยกเลิกแล้ว
-      เมื่อบันทึกจะใช้ขั้นต่ำตะกร้าเท่านั้น
-    </p>
+      {__uiText("คูปองนี้เคยตั้ง \"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿")}{legacyMinEligible.toLocaleString()}{__uiText("\" ไว้ — ตัวเลือกนี้ถูกยกเลิกแล้ว เมื่อบันทึกจะใช้ขั้นต่ำตะกร้าเท่านั้น")}</p>
   );
 }
 
@@ -100,6 +101,7 @@ export function CouponRedemptionRuleFields({
   onDiscountScopeChange,
   disabled,
 }: Props) {
+  __useUiLocale();
   const discountScopeId = React.useId();
   const minSpendHeadingId = React.useId();
   const hasExcludeData =
@@ -128,8 +130,7 @@ export function CouponRedemptionRuleFields({
     <div className="space-y-6">
       <div className="sm:w-1/2 sm:pr-2">
         <FieldLabel required htmlFor={discountScopeId}>
-          ขอบเขตส่วนลด / Discount scope
-        </FieldLabel>
+          {__uiText("ขอบเขตส่วนลด / Discount scope")}</FieldLabel>
         <Select
           id={discountScopeId}
           className="w-full"
@@ -139,21 +140,18 @@ export function CouponRedemptionRuleFields({
             onDiscountScopeChange(event.target.value as CouponDiscountScope)
           }
         >
-          <option value="all">ทุกสินค้า (All products)</option>
-          <option value="product">เฉพาะสินค้าที่ร่วมรายการ (Selected products)</option>
-          <option value="brand">เฉพาะแบรนด์ที่ร่วมรายการ (Selected brands)</option>
-          <option value="category">เฉพาะหมวดหมู่ที่ร่วมรายการ (Selected categories)</option>
+          <option value="all">{__uiText("ทุกสินค้า (All products)")}</option>
+          <option value="product">{__uiText("เฉพาะสินค้าที่ร่วมรายการ (Selected products)")}</option>
+          <option value="brand">{__uiText("เฉพาะแบรนด์ที่ร่วมรายการ (Selected brands)")}</option>
+          <option value="category">{__uiText("เฉพาะหมวดหมู่ที่ร่วมรายการ (Selected categories)")}</option>
         </Select>
         <p className="mt-1 text-xs text-gray-500">
-          กำหนดข้อความที่ลูกค้าจะเห็นเมื่อตะกร้ายังไม่มีสินค้าที่เข้าเงื่อนไข — ถ้าไม่ใช่ "ทุกสินค้า"
-          ต้องเลือก Promotion Product Set ที่ร่วมรายการด้านล่างอย่างน้อย 1 ชุด
-        </p>
+          {__uiText("กำหนดข้อความที่ลูกค้าจะเห็นเมื่อตะกร้ายังไม่มีสินค้าที่เข้าเงื่อนไข — ถ้าไม่ใช่ \"ทุกสินค้า\" ต้องเลือก Promotion Product Set ที่ร่วมรายการด้านล่างอย่างน้อย 1 ชุด")}</p>
       </div>
 
       <div className="space-y-3 rounded-xl border border-gray-100 bg-white p-4">
         <div id={minSpendHeadingId} className="text-sm font-semibold text-gray-800">
-          ยอดขั้นต่ำ
-        </div>
+          {__uiText("ยอดขั้นต่ำ")}</div>
         {discountScope !== 'all' && (
           <div role="radiogroup" aria-labelledby={minSpendHeadingId} className="space-y-2">
             <label className="flex items-start gap-2 text-sm text-gray-700">
@@ -166,10 +164,9 @@ export function CouponRedemptionRuleFields({
                 onChange={() => patch({ minSpendBasis: 'cart' })}
               />
               <span>
-                <span className="block font-medium text-gray-800">นับยอดทั้งตะกร้า</span>
+                <span className="block font-medium text-gray-800">{__uiText("นับยอดทั้งตะกร้า")}</span>
                 <span className="mt-0.5 block text-xs text-gray-500">
-                  ทุก SKU ในตะกร้า (ไม่รวมสินค้าที่ยกเว้น) ก่อน VAT — ตะกร้าต้องมีสินค้าร่วมรายการอย่างน้อย 1 ชิ้น
-                </span>
+                  {__uiText("ทุก SKU ในตะกร้า (ไม่รวมสินค้าที่ยกเว้น) ก่อน VAT — ตะกร้าต้องมีสินค้าร่วมรายการอย่างน้อย 1 ชิ้น")}</span>
               </span>
             </label>
             <label className="flex items-start gap-2 text-sm text-gray-700">
@@ -182,10 +179,9 @@ export function CouponRedemptionRuleFields({
                 onChange={() => patch({ minSpendBasis: 'eligible_items' })}
               />
               <span>
-                <span className="block font-medium text-gray-800">นับเฉพาะสินค้าที่เข้าเงื่อนไข</span>
+                <span className="block font-medium text-gray-800">{__uiText("นับเฉพาะสินค้าที่เข้าเงื่อนไข")}</span>
                 <span className="mt-0.5 block text-xs text-gray-500">
-                  รวมยอดก่อน VAT ของ SKU ที่ร่วมรายการ (หักสินค้าที่ยกเว้น)
-                </span>
+                  {__uiText("รวมยอดก่อน VAT ของ SKU ที่ร่วมรายการ (หักสินค้าที่ยกเว้น)")}</span>
               </span>
             </label>
           </div>
@@ -196,30 +192,29 @@ export function CouponRedemptionRuleFields({
           inputMode="decimal"
           label={
             minSpendBasis === 'eligible_items'
-              ? 'ยอดขั้นต่ำเฉพาะสินค้าที่เข้าเงื่อนไข (บาท, ก่อน VAT)'
-              : 'ยอดขั้นต่ำทั้งตะกร้า (บาท, ก่อน VAT)'
+              ? __uiText("ยอดขั้นต่ำเฉพาะสินค้าที่เข้าเงื่อนไข (บาท, ก่อน VAT)")
+              : __uiText("ยอดขั้นต่ำทั้งตะกร้า (บาท, ก่อน VAT)")
           }
           value={value.minCartAmount}
           disabled={disabled}
           onChange={(event) => patch({ minCartAmount: event.target.value })}
-          placeholder="0 = ไม่กำหนด"
+          placeholder={__uiText("0 = ไม่กำหนด")}
         />
       </div>
 
       <LegacyDiscountApplyNotice legacyMinEligible={value.legacyMinEligible} />
 
       <div className="space-y-3 rounded-xl border border-blue-100 bg-blue-50/40 p-4">
-        <div className="text-sm font-semibold text-gray-800">สินค้าที่นับเข้าเงื่อนไข</div>
+        <div className="text-sm font-semibold text-gray-800">{__uiText("สินค้าที่นับเข้าเงื่อนไข")}</div>
 
         {discountScope === 'all' ? (
           <p className="text-xs text-gray-500">
-            ทุกสินค้าในตะกร้าเข้าเงื่อนไข — เปลี่ยนได้ที่ "ขอบเขตส่วนลด" ด้านบน
-          </p>
+            {__uiText("ทุกสินค้าในตะกร้าเข้าเงื่อนไข — เปลี่ยนได้ที่ \"ขอบเขตส่วนลด\" ด้านบน")}</p>
         ) : (
           <div className="space-y-2">
             <PromotionProductSetPicker
-              title="Promotion Product Set ที่นับเข้าเงื่อนไข"
-              hint="ส่วนลดคำนวณจากสินค้าในชุดที่เลือกเท่านั้น — ต้องเลือกอย่างน้อย 1 ชุด"
+              title={__uiText("Promotion Product Set ที่นับเข้าเงื่อนไข")}
+              hint={__uiText("ส่วนลดคำนวณจากสินค้าในชุดที่เลือกเท่านั้น — ต้องเลือกอย่างน้อย 1 ชุด")}
               selectedIds={value.includeProductSetIds}
               disabled={disabled}
               onChange={(includeProductSetIds) =>
@@ -247,15 +242,14 @@ export function CouponRedemptionRuleFields({
       </div>
 
       <div className="space-y-3 rounded-xl border border-amber-100 bg-amber-50/40 p-4">
-        <div className="text-sm font-semibold text-gray-800">สินค้าที่ไม่รวมในเงื่อนไข</div>
+        <div className="text-sm font-semibold text-gray-800">{__uiText("สินค้าที่ไม่รวมในเงื่อนไข")}</div>
         {excludeExpanded ? (
           <>
             <p className="text-xs text-gray-500">
-              สินค้าในชุดที่เลือกจะไม่ถูกนับเข้ายอดขั้นต่ำและไม่ได้รับส่วนลด
-            </p>
+              {__uiText("สินค้าในชุดที่เลือกจะไม่ถูกนับเข้ายอดขั้นต่ำและไม่ได้รับส่วนลด")}</p>
             <PromotionProductSetPicker
-              title="Promotion Product Set ที่ไม่รวม"
-              hint="เช่น สินค้าโปรโมชัน / แพ็กพิเศษ"
+              title={__uiText("Promotion Product Set ที่ไม่รวม")}
+              hint={__uiText("เช่น สินค้าโปรโมชัน / แพ็กพิเศษ")}
               selectedIds={value.excludeProductSetIds}
               disabled={disabled}
               onChange={(excludeProductSetIds) =>
@@ -296,8 +290,7 @@ export function CouponRedemptionRuleFields({
               }}
               className="text-xs text-gray-500 underline hover:text-gray-700"
             >
-              ยกเลิก
-            </button>
+              {__uiText("ยกเลิก")}</button>
           </>
         ) : (
           <button
@@ -306,8 +299,7 @@ export function CouponRedemptionRuleFields({
             onClick={() => setExcludeExpanded(true)}
             className="rounded-lg border border-dashed border-amber-300 px-3 py-2 text-sm text-amber-700 hover:bg-amber-50"
           >
-            + กำหนดสินค้า/หมวดที่ไม่รวม
-          </button>
+            {__uiText("+ กำหนดสินค้า/หมวดที่ไม่รวม")}</button>
         )}
       </div>
 
@@ -318,7 +310,7 @@ export function CouponRedemptionRuleFields({
       />
 
       <div>
-        <div className="mb-2 text-sm font-semibold text-gray-800">ช่องทางชำระเงิน</div>
+        <div className="mb-2 text-sm font-semibold text-gray-800">{__uiText("ช่องทางชำระเงิน")}</div>
         <div className="space-y-3">
           <CouponOptionToggle
             checked={value.restrictPaymentMethods}
@@ -329,12 +321,12 @@ export function CouponRedemptionRuleFields({
                 allowedPaymentMethods: checked ? value.allowedPaymentMethods : [],
               })
             }
-            title="จำกัดช่องทางชำระเงินที่ใช้คูปองได้"
+            title={__uiText("จำกัดช่องทางชำระเงินที่ใช้คูปองได้")}
           />
           {value.restrictPaymentMethods && (
             <Select
-              label="ช่องทางชำระเงินที่ใช้ได้"
-              placeholder="เลือกช่องทาง…"
+              label={__uiText("ช่องทางชำระเงินที่ใช้ได้")}
+              placeholder={__uiText("เลือกช่องทาง…")}
               multiple
               disabled={disabled}
               value={value.allowedPaymentMethods}
@@ -360,8 +352,7 @@ export function CouponRedemptionRuleFields({
                 )
                 .map((method) => (
                   <option key={method} value={method} disabled>
-                    {paymentMethodLabel(method)} — เลิกใช้แล้ว
-                  </option>
+                    {paymentMethodLabel(method)} {__uiText(" — เลิกใช้แล้ว")}</option>
                 ))}
             </Select>
           )}

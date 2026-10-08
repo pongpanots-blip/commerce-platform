@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เพิ่ม Workflow (CreateBotWorkflow) — Commerce Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              dark: '#2747cf',
+              light: '#f1f4fe',
+            },
+            surface: {
+              canvas: '#f6f8fc',
+              card: '#ffffff',
+              border: '#e1e7f0',
+            },
+            ink: {
+              primary: '#17243b',
+              secondary: '#52627a',
+              muted: '#7e8fa6',
+            },
+            status: {
+              success: '#157347',
+              'success-bg': '#eaf5ee',
+              warning: '#b08900',
+              'warning-bg': '#fef9e8',
+              error: '#c2333f',
+              'error-bg': '#fdeeed',
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+    }
+    input, select, textarea {
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body class="bg-surface-canvas text-ink-primary min-h-screen flex antialiased">
+
+  <!-- INVISIBLE COMMERCE UI TRANSLATIONS DICTIONARY -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "เพิ่ม Workflow": {
+      "th": "เพิ่ม Workflow",
+      "en": "Create Workflow"
+    },
+    "เกิดข้อผิดพลาดในการบันทึก": {
+      "th": "เกิดข้อผิดพลาดในการบันทึก",
+      "en": "An error occurred while saving"
+    },
+    "กรุณากรอกชื่อและ Trigger Pattern": {
+      "th": "กรุณากรอกชื่อและ Trigger Pattern",
+      "en": "Please enter name and Trigger Pattern"
+    },
+    "กำหนด trigger, action และ response template ของ chatbot workflow": {
+      "th": "กำหนด trigger, action และ response template ของ chatbot workflow",
+      "en": "Configure trigger, action and response template for chatbot workflow"
+    },
+    "ขนาดรูป": {
+      "th": "ขนาดรูป",
+      "en": "Image dimension / size"
+    },
+    "คำขอ Admin": {
+      "th": "คำขอ Admin",
+      "en": "Admin request"
+    },
+    "ชำระแล้ว รอ ERP ยืนยัน": {
+      "th": "ชำระแล้ว รอ ERP ยืนยัน",
+      "en": "Paid, awaiting ERP confirmation"
+    },
+    "เด้งหลังลูกค้าอยู่บนเว็บครบ (นาที)": {
+      "th": "เด้งหลังลูกค้าอยู่บนเว็บครบ (นาที)",
+      "en": "Trigger after customer spent time on site (minutes)"
+    },
+    "นามสกุลลูกค้า": {
+      "th": "นามสกุลลูกค้า",
+      "en": "Customer last name"
+    },
+    "เปิดร่าง workflow": {
+      "th": "เปิดร่าง workflow",
+      "en": "Open workflow draft"
+    },
+    "มูลค่าออเดอร์รวมไม่เกิน": {
+      "th": "มูลค่าออเดอร์รวมไม่เกิน",
+      "en": "Total order value not exceeding"
+    },
+    "ยังไม่มี delivery log": {
+      "th": "ยังไม่มี delivery log",
+      "en": "No delivery log yet"
+    },
+    "ราคาตามจำนวน (จาก Promotion Mechanic)": {
+      "th": "ราคาตามจำนวน (จาก Promotion Mechanic)",
+      "en": "Tiered volume pricing (from Promotion Mechanic)"
+    },
+    "ลิงก์ Marketing": {
+      "th": "ลิงก์ Marketing",
+      "en": "Marketing link"
+    },
+    "สถานะการสั่งซื้อ": {
+      "th": "สถานะการสั่งซื้อ",
+      "en": "Order status"
+    },
+    "หน้าตา POPUP (แก้เองได้)": {
+      "th": "หน้าตา POPUP (แก้เองได้)",
+      "en": "POPUP UI preview (customizable)"
+    },
+    "เป้า {0} · {1}%": {
+      "th": "เป้า {0} · {1}%",
+      "en": "Target {0} · {1}%"
+    },
+    "(ลด {0}%)": {
+      "th": "(ลด {0}%)",
+      "en": "(discount {0}%)"
+    },
+    "เลือก Product set อย่างน้อย 1 ชุด": {
+      "th": "เลือก Product set อย่างน้อย 1 ชุด",
+      "en": "Select at least 1 Product set"
+    }
+  }
+  </script>
+
+  <!-- SIDEBAR NAVIGATION (256px wide) -->
+  <aside class="w-64 bg-white border-r border-surface-border flex-shrink-0 flex flex-col justify-between fixed top-0 left-0 bottom-0 z-40">
+    <div class="flex flex-col h-full">
+      <!-- App Brand Header -->
+      <div class="h-16 flex items-center px-5 border-b border-surface-border gap-3">
+        <div class="w-9 h-9 rounded-lg bg-brand flex items-center justify-center text-white font-bold text-base shadow-sm">
+          CP
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-sm text-ink-primary leading-tight">Commerce Platform</span>
+          <span class="text-xs text-ink-muted leading-tight">ระบบจัดการศูนย์ส่งและสาขา</span>
+        </div>
+      </div>
+
+      <!-- Quick Action CTA -->
+      <div class="px-4 py-3">
+        <button class="w-full h-9 bg-brand-light text-brand hover:bg-blue-100 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-[18px]">add_circle</span>
+          <span>สร้างรายการใหม่</span>
+        </button>
+      </div>
+
+      <!-- Navigation Work Areas (7 Areas) -->
+      <nav class="flex-1 overflow-y-auto px-3 py-1 space-y-1 text-sm">
+        <div class="px-3 py-1.5 text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
+          พื้นที่ทำงานหลัก (7 สายงาน)
+        </div>
+
+        <!-- 1. สินค้าและสต็อก -->
+        <a href="#inventory" class="flex items-center gap-3 px-3 py-2 rounded-lg text-ink-secondary hover:bg-surface-canvas hover:text-ink-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+          <span>สินค้าและสต็อก</span>
+        </a>
+
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#orders" class="flex items-center gap-3 px-3 py-2 rounded-lg text-ink-secondary hover:bg-surface-canvas hover:text-ink-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+          <span>ออเดอร์และการเงิน</span>
+        </a>
+
+        <!-- 3. ลูกค้าและบริการ (ACTIVE WORK AREA) -->
+        <div class="space-y-0.5">
+          <a href="#customers" class="flex items-center justify-between px-3 py-2 rounded-lg bg-brand-light text-brand font-medium">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[20px] text-brand">support_agent</span>
+              <span>ลูกค้าและบริการ</span>
+            </div>
+            <span class="material-symbols-outlined text-[16px]">expand_less</span>
+          </a>
+          <!-- Sub-items under ลูกค้าและบริการ -->
+          <div class="pl-9 pr-2 py-1 space-y-1 text-xs border-l-2 border-brand/20 ml-5 my-1">
+            <a href="/customers" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">ลูกค้าแพลตฟอร์ม</a>
+            <a href="/j/allusers" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">จัดการผู้ใช้ (All Users)</a>
+            <a href="/j/kyc" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">KYC — ยืนยันตัวตน</a>
+            <a href="/j/membership-tiers" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">ระดับสมาชิก (Tiers)</a>
+            <a href="/cs" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">งานบริการลูกค้า (CS Desk)</a>
+            <a href="/livechat" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">แชตกับลูกค้า (Live chat)</a>
+            <a href="/j/bot/intent-rules" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">Bot Intent Rules</a>
+            <a href="/j/bot/workflows/create" class="block py-1.5 px-2 rounded bg-brand/10 text-brand font-semibold flex items-center justify-between">
+              <span>Bot Workflows</span>
+              <span class="text-[9px] bg-brand text-white px-1.5 py-0.5 rounded font-mono">NEW</span>
+            </a>
+            <a href="/reports/winback" class="block py-1.5 px-2 rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas">ติดตามลูกค้าเก่า (Win-back)</a>
+          </div>
+        </div>
+
+        <!-- 4. การตลาด -->
+        <a href="#marketing" class="flex items-center gap-3 px-3 py-2 rounded-lg text-ink-secondary hover:bg-surface-canvas hover:text-ink-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">campaign</span>
+          <span>การตลาด</span>
+        </a>
+
+        <!-- 5. รายงานและข้อมูล -->
+        <a href="#reports" class="flex items-center gap-3 px-3 py-2 rounded-lg text-ink-secondary hover:bg-surface-canvas hover:text-ink-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">analytics</span>
+          <span>รายงานและข้อมูล</span>
+        </a>
+
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#connections" class="flex items-center gap-3 px-3 py-2 rounded-lg text-ink-secondary hover:bg-surface-canvas hover:text-ink-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">hub</span>
+          <span>ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#settings" class="flex items-center gap-3 px-3 py-2 rounded-lg text-ink-secondary hover:bg-surface-canvas hover:text-ink-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">settings</span>
+          <span>ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Footer / Metadata -->
+      <div class="p-3 border-t border-surface-border text-xs text-ink-muted space-y-2">
+        <div class="px-2 py-1.5 bg-surface-canvas rounded border border-surface-border text-[11px]">
+          <div class="flex items-center gap-1 font-mono text-ink-secondary">
+            <span class="material-symbols-outlined text-[13px]">terminal</span>
+            <span>admin-9b3d79dc1f99</span>
+          </div>
+          <div class="text-[10px] text-ink-muted font-mono truncate">/j/bot/workflows/create</div>
+        </div>
+        <div class="flex items-center justify-between px-2 pt-1 text-ink-secondary">
+          <a href="#help" class="hover:text-brand flex items-center gap-1">
+            <span class="material-symbols-outlined text-[15px]">help_center</span> คู่มือ
+          </a>
+          <a href="#logout" class="hover:text-status-error flex items-center gap-1">
+            <span class="material-symbols-outlined text-[15px]">logout</span> ออกจากระบบ
+          </a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER (Shifted right by 256px) -->
+  <div class="flex-1 ml-64 flex flex-col min-h-screen">
+
+    <!-- TOP CONTEXTUAL NAVBAR (Sticky h-16) -->
+    <header class="h-16 bg-white border-b border-surface-border sticky top-0 z-30 px-8 flex items-center justify-between">
+      <div class="flex items-center gap-4 flex-1 max-w-xl">
+        <div class="relative w-full">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted text-[18px]">search</span>
+          <input type="text"
+                 placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+                 class="w-full h-10 pl-9 pr-4 text-xs rounded-lg border border-surface-border bg-surface-canvas focus:outline-none focus:border-brand focus:bg-white transition-colors">
+        </div>
+      </div>
+
+      <!-- Right Header Actions & Language Switcher -->
+      <div class="flex items-center gap-4">
+        <!-- Sample data badge -->
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-status-warning-bg text-status-warning border border-yellow-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
+          <span>ข้อมูลตัวอย่าง</span>
+        </span>
+
+        <!-- Bilingual Selector: ไทย / English -->
+        <div class="inline-flex items-center bg-surface-canvas border border-surface-border rounded-lg p-0.5 text-xs font-medium">
+          <button type="button" id="lang-th" class="px-2.5 py-1 rounded-md bg-white text-ink-primary shadow-xs font-semibold">
+            ไทย
+          </button>
+          <button type="button" id="lang-en" class="px-2.5 py-1 rounded-md text-ink-secondary hover:text-ink-primary transition-colors">
+            English
+          </button>
+        </div>
+
+        <div class="h-5 w-[1px] bg-surface-border"></div>
+
+        <!-- Notification & Help Icons -->
+        <button class="relative p-2 text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas rounded-lg">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand rounded-full"></span>
+        </button>
+        <button class="p-2 text-ink-secondary hover:text-ink-primary hover:bg-surface-canvas rounded-lg">
+          <span class="material-symbols-outlined text-[20px]">help_outline</span>
+        </button>
+
+        <!-- Current User Avatar Profile -->
+        <div class="flex items-center gap-2.5 pl-2">
+          <div class="w-8 h-8 rounded-full bg-blue-100 text-brand font-semibold text-xs flex items-center justify-center">
+            จน
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-xs font-semibold text-ink-primary leading-tight">จินดา นวลอนันต์</span>
+            <span class="text-[11px] text-ink-muted leading-tight">หัวหน้าทีมบริการลูกค้า (CS)</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN PAGE CONTENT (Max-width near 1240px) -->
+    <main class="flex-1 p-8">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Breadcrumb & Back -->
+        <div class="flex items-center justify-between">
+          <nav class="flex items-center gap-2 text-xs text-ink-secondary">
+            <a href="/customers" class="hover:text-brand">ลูกค้าและบริการ</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <a href="/j/bot/workflows" class="hover:text-brand">Bot Workflows</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-ink-primary font-medium">เพิ่ม Workflow</span>
+          </nav>
+
+          <div class="flex items-center gap-2 text-xs">
+            <a href="/j/bot/intent-rules" class="inline-flex items-center gap-1.5 text-ink-secondary hover:text-ink-primary px-3 py-1.5 rounded-lg border border-surface-border bg-white shadow-2xs">
+              <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+              <span>ย้อนกลับไปรายการ</span>
+            </a>
+            <button type="button" class="inline-flex items-center gap-1.5 text-brand hover:text-brand-dark px-3 py-1.5 rounded-lg border border-brand/20 bg-brand-light font-medium">
+              <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+              <span>ทดสอบกับ Live Bot</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-[28px] font-bold text-ink-primary leading-tight">เพิ่ม Workflow</h1>
+              <span class="font-mono text-xs px-2.5 py-0.5 rounded-md bg-surface-canvas text-ink-secondary border border-surface-border">
+                /j/bot/workflows/create
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-status-success-bg text-status-success border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                <span>ฉบับร่าง (DRAFT)</span>
+              </span>
+            </div>
+            <p class="text-xs text-ink-secondary mt-1">
+              กำหนด trigger, action และ response template ของ chatbot workflow
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="button" class="h-10 px-4 rounded-lg border border-surface-border bg-white hover:bg-surface-canvas text-xs font-semibold text-ink-secondary flex items-center gap-2 transition-colors">
+              <span class="material-symbols-outlined text-[16px]">folder_open</span>
+              <span>เปิดร่าง workflow</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline Validation / Informational Banner -->
+        <div id="validation-banner" class="rounded-xl border border-blue-100 bg-blue-50/70 p-4 flex items-start gap-3">
+          <span class="material-symbols-outlined text-brand text-[20px] mt-0.5">info</span>
+          <div class="flex-1 text-xs">
+            <span class="font-semibold text-brand">ข้อกำหนดในการสร้าง Chatbot Workflow:</span>
+            <span class="text-ink-secondary ml-1">
+              กำหนด trigger, action และ response template ของ chatbot workflow ให้ครบถ้วน เมื่อผู้ใช้พิมพ์ข้อความหรือเกิดอีเวนต์บนระบบ ระบบจะจับคู่และส่ง Response ทันที
+            </span>
+            <div class="mt-1 flex items-center gap-4 text-[11px] text-ink-muted">
+              <span>• หากบันทึกไม่สำเร็จจะแสดง: <strong class="text-status-error">เกิดข้อผิดพลาดในการบันทึก</strong></span>
+              <span>• ตรวจสอบให้แน่ใจว่าได้ระบุ: <strong class="text-ink-secondary">กรุณากรอกชื่อและ Trigger Pattern</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-COLUMN WORKFLOW CREATION FORM GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          <!-- LEFT COLUMN: Main Configuration Sections (8 Cols) -->
+          <div class="lg:col-span-8 space-y-6">
+
+            <!-- SECTION 1: ข้อมูลพื้นฐาน & Trigger Pattern -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-2xs overflow-hidden">
+              <div class="p-5 border-b border-surface-border flex items-center justify-between bg-surface-canvas/40">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">1</div>
+                  <h2 class="text-base font-bold text-ink-primary">ข้อมูลพื้นฐานและ Trigger Pattern</h2>
+                </div>
+                <span class="text-xs text-ink-muted">* ช่องที่มีเครื่องหมายจำเป็นต้องกรอก</span>
+              </div>
+
+              <div class="p-6 space-y-5">
+                <!-- Workflow Name & Slug -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      ชื่อ Workflow *
+                    </label>
+                    <input type="text"
+                           id="workflow-name"
+                           value="ตอบกลับสถานะการจัดส่งและโปรโมชันด่วน"
+                           placeholder="เช่น ตรวจสอบสถานะพัสดุและโปรสั่งซ้ำ"
+                           class="w-full h-10 px-3.5 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+                    <span class="text-[11px] text-ink-muted mt-1 block">ชื่อสำหรับแสดงในแดชบอร์ดและการตรวจสอบ</span>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      Workflow Code (Slug) *
+                    </label>
+                    <input type="text"
+                           value="WF_ORDER_STATUS_PROMO"
+                           class="w-full h-10 px-3.5 text-xs font-mono rounded-lg border border-surface-border bg-surface-canvas text-ink-secondary focus:outline-none">
+                    <span class="text-[11px] text-ink-muted mt-1 block">รหัสอ้างอิงภายในระบบ bot engine</span>
+                  </div>
+                </div>
+
+                <!-- Trigger Category & Priority -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      หมวดหมู่บริการ (Category)
+                    </label>
+                    <select class="w-full h-10 px-3 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                      <option value="cs">ลูกค้าและบริการ (Customer Support)</option>
+                      <option value="orders">สถานะการสั่งซื้อ และจัดส่ง</option>
+                      <option value="marketing">การตลาด และโปรโมชัน</option>
+                      <option value="admin">คำขอ Admin และสิทธิ์การใช้งาน</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      ประเภท Trigger
+                    </label>
+                    <select class="w-full h-10 px-3 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                      <option value="intent">ข้อความแชต (Regex Intent Pattern)</option>
+                      <option value="web_event">อีเวนต์บนหน้าเว็บ (Web Trigger / POPUP)</option>
+                      <option value="order_status">เปลี่ยนสถานะออเดอร์ (Webhook Event)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Trigger Pattern (Regex / Keywords) -->
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-[13px] font-semibold text-ink-primary">
+                      Trigger Pattern (Regular Expression) *
+                    </label>
+                    <span class="text-[11px] font-mono text-brand bg-brand-light px-2 py-0.5 rounded">PCRE Engine Compatible</span>
+                  </div>
+                  <input type="text"
+                         id="trigger-pattern"
+                         value="(สถานะการสั่งซื้อ|เช็คพัสดุ|เลขแทร็ก|ติดตามของ|ord-\d+)"
+                         class="w-full h-10 px-3.5 text-xs font-mono rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                  <span class="text-[11px] text-ink-muted mt-1 block">จับคู่คำถามอัตโนมัติ เช่น "สอบถามสถานะการสั่งซื้อ ord-98214" หรือ "เช็คพัสดุ"</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: เงื่อนไขและตัวกรองลูกค้า (Audience & Rules) -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-2xs overflow-hidden">
+              <div class="p-5 border-b border-surface-border flex items-center justify-between bg-surface-canvas/40">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">2</div>
+                  <h2 class="text-base font-bold text-ink-primary">เงื่อนไขผู้ใช้และสถานะการสั่งซื้อ</h2>
+                </div>
+                <span class="text-xs text-ink-muted">Commerce Filter Rules</span>
+              </div>
+
+              <div class="p-6 space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- สถานะการสั่งซื้อ Filter -->
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      สถานะการสั่งซื้อ ที่รองรับ
+                    </label>
+                    <select class="w-full h-10 px-3 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                      <option>ทุกสถานะคำสั่งซื้อ</option>
+                      <option selected>ชำระแล้ว รอ ERP ยืนยัน</option>
+                      <option>กำลังจัดส่ง (In Transit)</option>
+                      <option>จัดส่งสำเร็จ (Delivered)</option>
+                    </select>
+                    <span class="text-[11px] text-ink-muted mt-1 block">ระบบจะดึงเฉพาะออเดอร์ในสถานะที่เลือก</span>
+                  </div>
+
+                  <!-- มูลค่าออเดอร์รวมไม่เกิน -->
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      มูลค่าออเดอร์รวมไม่เกิน (บาท)
+                    </label>
+                    <div class="relative">
+                      <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted text-xs">฿</span>
+                      <input type="number"
+                             value="500000"
+                             placeholder="ไม่จำกัดวงเงิน"
+                             class="w-full h-10 pl-8 pr-3.5 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                    </div>
+                    <span class="text-[11px] text-ink-muted mt-1 block">กำหนดเพดานมูลค่าออเดอร์สำหรับ workflow อัตโนมัตินี้</span>
+                  </div>
+                </div>
+
+                <!-- นามสกุลลูกค้า & Customer Attributes -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      นามสกุลลูกค้า / ค้นหากลุ่มบัญชี
+                    </label>
+                    <input type="text"
+                           placeholder="เช่น มั่งมี, โชติสวัสดิ์ (เว้นว่าง = ทุกลูกค้า)"
+                           class="w-full h-10 px-3.5 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                    <span class="text-[11px] text-ink-muted mt-1 block">กรองเฉพาะลูกค้านามสกุลหรือนิติบุคคลที่กำหนด</span>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      เด้งหลังลูกค้าอยู่บนเว็บครบ (นาที)
+                    </label>
+                    <input type="number"
+                           value="3"
+                           min="1"
+                           max="60"
+                           class="w-full h-10 px-3.5 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                    <span class="text-[11px] text-ink-muted mt-1 block">ระยะเวลารอให้อยู่บนหน้าเว็บก่อนเปิด Trigger Popup</span>
+                  </div>
+                </div>
+
+                <!-- Product Set Selection Requirement -->
+                <div class="p-3.5 rounded-lg bg-surface-canvas border border-surface-border">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-ink-primary">การผูกสินค้าและแคมเปญ (Promotion Binding)</span>
+                    <span class="text-[11px] text-brand font-medium">เลือก Product set อย่างน้อย 1 ชุด</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-brand bg-white cursor-pointer">
+                      <input type="checkbox" checked class="mt-0.5 rounded text-brand focus:ring-brand">
+                      <div class="text-xs">
+                        <div class="font-semibold text-ink-primary">เครื่องดื่ม & น้ำดื่ม</div>
+                        <div class="text-[11px] text-ink-secondary">CP-DRK-109 (ลด 15%)</div>
+                      </div>
+                    </label>
+                    <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-surface-border bg-white hover:border-brand/40 cursor-pointer">
+                      <input type="checkbox" class="mt-0.5 rounded text-brand focus:ring-brand">
+                      <div class="text-xs">
+                        <div class="font-semibold text-ink-primary">ขนมขบเคี้ยว B2B</div>
+                        <div class="text-[11px] text-ink-secondary">CP-SNK-204 (ลด 10%)</div>
+                      </div>
+                    </label>
+                    <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-surface-border bg-white hover:border-brand/40 cursor-pointer">
+                      <input type="checkbox" class="mt-0.5 rounded text-brand focus:ring-brand">
+                      <div class="text-xs">
+                        <div class="font-semibold text-ink-primary">ของใช้โภคภัณฑ์</div>
+                        <div class="text-[11px] text-ink-secondary">CP-CON-088 (ลด 5%)</div>
+                      </div>
+                    </label>
+                  </div>
+                  <div class="mt-2.5 flex items-center justify-between text-[11px] text-ink-secondary pt-2 border-t border-surface-border/60">
+                    <span class="text-brand font-medium">ราคาตามจำนวน (จาก Promotion Mechanic)</span>
+                    <span>คำนวณขั้นบันไดตาม volume tier B2B อัตโนมัติ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 3: Action Response Template & Marketing Link -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-2xs overflow-hidden">
+              <div class="p-5 border-b border-surface-border flex items-center justify-between bg-surface-canvas/40">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">3</div>
+                  <h2 class="text-base font-bold text-ink-primary">การตอบกลับ Action & Response Template</h2>
+                </div>
+                <span class="text-xs text-ink-muted">Chatbot Response Builder</span>
+              </div>
+
+              <div class="p-6 space-y-5">
+                <!-- Action Type Selector -->
+                <div>
+                  <label class="block text-[13px] font-semibold text-ink-primary mb-2">
+                    รูปแบบการตอบกลับ (Response Type)
+                  </label>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="p-3 rounded-lg border-2 border-brand bg-brand-light/50 flex flex-col gap-1 cursor-pointer">
+                      <div class="flex items-center gap-2 font-semibold text-xs text-brand">
+                        <span class="material-symbols-outlined text-[18px]">view_carousel</span>
+                        <span>Rich Card + ลิงก์</span>
+                      </div>
+                      <span class="text-[11px] text-ink-secondary">ส่งการ์ดข้อมูลสินค้าพร้อมลิงก์ไปยังออเดอร์</span>
+                    </div>
+
+                    <div class="p-3 rounded-lg border border-surface-border bg-white hover:border-brand/40 flex flex-col gap-1 cursor-pointer">
+                      <div class="flex items-center gap-2 font-semibold text-xs text-ink-primary">
+                        <span class="material-symbols-outlined text-[18px]">chat</span>
+                        <span>ข้อความอัตโนมัติ (Text)</span>
+                      </div>
+                      <span class="text-[11px] text-ink-secondary">ตอบกลับด้วยเทมเพลตข้อความธรรมดา</span>
+                    </div>
+
+                    <div class="p-3 rounded-lg border border-surface-border bg-white hover:border-brand/40 flex flex-col gap-1 cursor-pointer">
+                      <div class="flex items-center gap-2 font-semibold text-xs text-ink-primary">
+                        <span class="material-symbols-outlined text-[18px]">support_agent</span>
+                        <span>คำขอ Admin / CS Hand-off</span>
+                      </div>
+                      <span class="text-[11px] text-ink-secondary">สร้าง คำขอ Admin โอนสายให้เจ้าหน้าที่ทันที</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message Template with variables -->
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-[13px] font-semibold text-ink-primary">
+                      เทมเพลตข้อความตอบกลับ (Response Text Template)
+                    </label>
+                    <span class="text-[11px] text-ink-muted">รองรับตัวแปร: {order_id}, {customer_name}, {status}</span>
+                  </div>
+                  <textarea rows="3"
+                            class="w-full p-3 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand leading-relaxed">สวัสดีครับคุณ {customer_name} ขณะนี้คำสั่งซื้อ {order_id} อยู่ในสถานะ: "ชำระแล้ว รอ ERP ยืนยัน" พร้อมรับสิทธิ์พิเศษ (ลด 15%) สำหรับการสั่งซื้อรอบถัดไปครับ</textarea>
+                </div>
+
+                <!-- ลิงก์ Marketing & ขนาดรูป -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      ลิงก์ Marketing
+                    </label>
+                    <div class="relative">
+                      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted text-[16px]">link</span>
+                      <input type="text"
+                             value="https://commerce.company.internal/campaign/reorder-tierb"
+                             placeholder="https://..."
+                             class="w-full h-10 pl-9 pr-3 text-xs font-mono rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                    </div>
+                    <span class="text-[11px] text-ink-muted mt-1 block">ลิงก์แนบกับปุ่ม CTA ใน Rich Message หรือ Popup</span>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-semibold text-ink-primary mb-1.5">
+                      ขนาดรูป (Aspect Ratio / Dimension)
+                    </label>
+                    <select class="w-full h-10 px-3 text-xs rounded-lg border border-surface-border bg-white focus:outline-none focus:border-brand">
+                      <option>1040 x 1040 px (Square 1:1) — แนะนำ</option>
+                      <option>1200 x 630 px (Banner 1.91:1)</option>
+                      <option>800 x 1200 px (Poster 2:3)</option>
+                    </select>
+                    <span class="text-[11px] text-ink-muted mt-1 block">มาตรฐานขนาดรูปบน LINE OA และหน้าเว็บแชต</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Side Panels, Preview & Status Log (4 Cols) -->
+          <div class="lg:col-span-4 space-y-6">
+
+            <!-- Card A: POPUP Preview / Simulator -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-2xs overflow-hidden">
+              <div class="p-4 border-b border-surface-border flex items-center justify-between bg-surface-canvas/40">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-brand">preview</span>
+                  <h3 class="text-xs font-bold text-ink-primary uppercase tracking-wider">หน้าตา POPUP (แก้เองได้)</h3>
+                </div>
+                <span class="text-[10px] bg-brand-light text-brand px-2 py-0.5 rounded font-medium">Real-time Preview</span>
+              </div>
+
+              <div class="p-4 bg-surface-canvas/60">
+                <!-- Popup Mock Container -->
+                <div class="border border-surface-border rounded-xl bg-white shadow-sm p-4 space-y-3 relative overflow-hidden">
+                  <div class="flex items-center justify-between border-b border-surface-border/60 pb-2">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-status-success"></span>
+                      <span class="text-xs font-bold text-ink-primary">แจ้งเตือนสถานะคำสั่งซื้อ</span>
+                    </div>
+                    <span class="material-symbols-outlined text-ink-muted text-[16px] cursor-pointer">close</span>
+                  </div>
+
+                  <div class="space-y-1.5 text-xs">
+                    <p class="text-ink-secondary leading-snug">
+                      สวัสดีคุณ <strong class="text-ink-primary font-semibold">ณภพกฤต มั่งมี</strong>
+                    </p>
+                    <div class="p-2 rounded bg-blue-50/60 border border-blue-100 text-[11px] text-brand">
+                      สถานะการสั่งซื้อ: <strong>ชำระแล้ว รอ ERP ยืนยัน</strong>
+                    </div>
+                    <p class="text-[11px] text-ink-muted leading-tight">
+                      คำสั่งซื้อ ORD-2025-0891 กำลังจัดเตรียมส่งออกจากคลังบางนา กม.18
+                    </p>
+                  </div>
+
+                  <!-- Banner Graphic Simulation -->
+                  <div class="w-full h-24 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/80 flex flex-col items-center justify-center p-2 text-center">
+                    <span class="text-xs font-bold text-brand">สั่งซ้ำวันนี้ (ลด 15%)</span>
+                    <span class="text-[10px] text-ink-secondary mt-0.5">ราคาตามจำนวน (จาก Promotion Mechanic)</span>
+                    <span class="text-[9px] text-ink-muted mt-1 font-mono">ขนาดรูป 1040 x 1040 px</span>
+                  </div>
+
+                  <!-- Mock Action Buttons -->
+                  <div class="flex items-center gap-2 pt-1">
+                    <button class="flex-1 h-8 rounded-lg bg-brand text-white text-xs font-semibold hover:bg-brand-dark transition-colors">
+                      ดูสถานะออเดอร์
+                    </button>
+                    <button class="px-2.5 h-8 rounded-lg border border-surface-border bg-surface-canvas text-xs text-ink-secondary">
+                      ปิด
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Target Stats Widget -->
+              <div class="p-4 border-t border-surface-border text-xs space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-ink-secondary font-medium">เป้าหมายแคมเปญ</span>
+                  <span class="font-semibold text-brand font-mono">เป้า {0} · {1}%</span>
+                </div>
+                <div class="w-full bg-surface-canvas h-2 rounded-full overflow-hidden border border-surface-border">
+                  <div class="bg-brand h-full rounded-full" style="width: 78%;"></div>
+                </div>
+                <div class="flex justify-between text-[11px] text-ink-muted">
+                  <span>ตอบสำเร็จ 390 ครั้ง</span>
+                  <span>เป้า 500 ครั้ง (78%)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card B: Delivery & Execution Log status -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-2xs p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-ink-primary uppercase tracking-wider flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-ink-muted">history</span>
+                  <span>ประวัติการทำงาน (Delivery Log)</span>
+                </h3>
+                <span class="text-[10px] text-ink-muted font-mono">v1.0-draft</span>
+              </div>
+
+              <!-- Empty state requirement -->
+              <div class="py-8 px-4 text-center rounded-lg border border-dashed border-surface-border bg-surface-canvas/50">
+                <span class="material-symbols-outlined text-ink-muted text-[32px] mb-1">inbox</span>
+                <p class="text-xs font-semibold text-ink-secondary">ยังไม่มี delivery log</p>
+                <p class="text-[11px] text-ink-muted mt-0.5">
+                  ระบบจะบันทึกประวัติการส่งเมื่อ workflow นี้ถูกบันทึกและเปิดใช้งาน
+                </p>
+              </div>
+
+              <div class="pt-1 text-[11px] text-ink-muted flex items-center justify-between">
+                <span>บันทึกประวัติในชื่อ: <strong class="text-ink-secondary">jinda.n@company.co.th</strong></span>
+                <span class="material-symbols-outlined text-[14px]">verified_user</span>
+              </div>
+            </div>
+
+            <!-- Card C: Integration Connections -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-2xs p-4 space-y-3">
+              <div class="text-xs font-bold text-ink-primary uppercase tracking-wider flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-ink-muted">lan</span>
+                <span>ระบบเชื่อมต่อที่รองรับ (Gateway Sync)</span>
+              </div>
+
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-surface-canvas border border-surface-border">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-status-success"></span>
+                    <span class="font-medium text-ink-primary">LINE OA & Webchat Gateway</span>
+                  </div>
+                  <span class="text-[11px] text-status-success font-semibold">เชื่อมต่ออยู่</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-lg bg-surface-canvas border border-surface-border">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-status-success"></span>
+                    <span class="font-medium text-ink-primary">ERP Core (SAP Gateway v2.4)</span>
+                  </div>
+                  <span class="text-[11px] text-status-success font-semibold">SYNCED</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-lg bg-surface-canvas border border-surface-border">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-status-warning"></span>
+                    <span class="font-medium text-ink-primary">CS Desk Auto-escalation</span>
+                  </div>
+                  <span class="text-[11px] text-status-warning font-semibold">พร้อมรับงาน</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- STICKY BOTTOM FORM ACTIONS BAR -->
+        <div class="sticky bottom-4 z-20 bg-white/95 backdrop-blur-md rounded-xl border border-surface-border shadow-md p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3 text-xs text-ink-secondary">
+            <span class="flex items-center gap-1.5 text-status-success font-medium">
+              <span class="w-2 h-2 rounded-full bg-status-success"></span>
+              <span>บันทึกไปยังฐานข้อมูล Bot Workflow (Active Service)</span>
+            </span>
+            <span class="hidden md:inline text-surface-border">|</span>
+            <span class="hidden md:inline text-ink-muted">สิทธิ์การเข้าถึง: หัวหน้าทีมบริการลูกค้า (CS Admin)</span>
+          </div>
+
+          <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <button type="button"
+                    id="btn-cancel"
+                    class="h-10 px-5 rounded-lg border border-surface-border bg-white hover:bg-surface-canvas text-xs font-semibold text-ink-secondary transition-colors">
+              ยกเลิก
+            </button>
+            <button type="button"
+                    id="btn-save"
+                    class="h-10 px-6 rounded-lg bg-brand hover:bg-brand-dark text-white text-xs font-semibold shadow-xs flex items-center gap-2 transition-colors">
+              <span class="material-symbols-outlined text-[18px]">check_circle</span>
+              <span>บันทึก Workflow</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- System Developer Footer -->
+        <div class="pt-2 pb-6 border-t border-surface-border flex items-center justify-between text-[11px] text-ink-muted font-mono">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">code</span>
+            <span>Developer Portal route: admin-9b3d79dc1f99 /j/bot/workflows/create (CreateBotWorkflow)</span>
+          </div>
+          <div>Commerce Platform Operations &copy; 2025</div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- INTERACTIVE CLIENT SCRIPT -->
+  <script>
+    // Validation alert demonstration
+    document.getElementById('btn-save')?.addEventListener('click', function() {
+      const name = document.getElementById('workflow-name').value.trim();
+      const pattern = document.getElementById('trigger-pattern').value.trim();
+
+      if (!name || !pattern) {
+        alert('กรุณากรอกชื่อและ Trigger Pattern\nเกิดข้อผิดพลาดในการบันทึก');
+        return;
+      }
+
+      const banner = document.getElementById('validation-banner');
+      if (banner) {
+        banner.className = 'rounded-xl border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3 transition-all';
+        banner.innerHTML = `
+          <span class="material-symbols-outlined text-status-success text-[20px] mt-0.5">check_circle</span>
+          <div class="flex-1 text-xs">
+            <span class="font-semibold text-status-success">บันทึก Workflow เรียบร้อยแล้ว:</span>
+            <span class="text-ink-secondary ml-1">
+              ระบบได้บันทึกข้อกำหนด trigger, action และ response template ของ chatbot workflow เข้าสู่ระบบเรียบร้อยแล้ว
+            </span>
+          </div>
+        `;
+      }
+    });
+
+    // Language Toggle Handling
+    const btnTh = document.getElementById('lang-th');
+    const btnEn = document.getElementById('lang-en');
+
+    if (btnTh && btnEn) {
+      btnTh.addEventListener('click', function() {
+        btnTh.classList.add('bg-white', 'text-ink-primary', 'shadow-xs', 'font-semibold');
+        btnTh.classList.remove('text-ink-secondary');
+        btnEn.classList.remove('bg-white', 'text-ink-primary', 'shadow-xs', 'font-semibold');
+        btnEn.classList.add('text-ink-secondary');
+      });
+
+      btnEn.addEventListener('click', function() {
+        btnEn.classList.add('bg-white', 'text-ink-primary', 'shadow-xs', 'font-semibold');
+        btnEn.classList.remove('text-ink-secondary');
+        btnTh.classList.remove('bg-white', 'text-ink-primary', 'shadow-xs', 'font-semibold');
+        btnTh.classList.add('text-ink-secondary');
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,9 +1,12 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import { MdMoreVert, MdDragIndicator, MdFormatAlignLeft, MdImage, MdSmartButton, MdLocalOffer, MdSpaceBar, MdHorizontalRule, MdPlayCircle, MdCode, MdTimer, MdViewCarousel, MdGridView, MdArticle, MdExpandMore } from 'react-icons/md';
 import { gridStackOrder } from '@josh/shared-api';
 import { useCreativeI18n } from './use-creative-i18n';
 import type { ChannelDesign, CreativeElement, CreativeRow } from './creative-editor.types';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ELEMENT_ICONS: Record<CreativeElement['type'], React.ReactNode> = {
   text: <MdFormatAlignLeft size={13} />,
   image: <MdImage size={13} />,
@@ -21,19 +24,19 @@ const ELEMENT_ICONS: Record<CreativeElement['type'], React.ReactNode> = {
 };
 
 const ELEMENT_LABELS: Record<CreativeElement['type'], string> = {
-  text: 'ข้อความ',
-  image: 'รูปภาพ',
-  button: 'ปุ่ม',
-  coupon: 'คูปอง',
-  spacer: 'ระยะห่าง',
-  divider: 'เส้นคั่น',
-  video: 'วิดีโอ',
-  html: 'HTML',
-  countdown: 'นับถอยหลัง',
-  carousel: 'สไลด์รูป',
-  product_grid: 'กริดสินค้า',
-  rich_text: 'ข้อความ (Rich Text)',
-  accordion: 'แอคคอร์เดียน',
+  get text(){return __uiText("ข้อความ");},
+  get image(){return __uiText("รูปภาพ");},
+  get button(){return __uiText("ปุ่ม");},
+  get coupon(){return __uiText("คูปอง");},
+  get spacer(){return __uiText("ระยะห่าง");},
+  get divider(){return __uiText("เส้นคั่น");},
+  get video(){return __uiText("วิดีโอ");},
+  get html(){return __uiText("HTML");},
+  get countdown(){return __uiText("นับถอยหลัง");},
+  get carousel(){return __uiText("สไลด์รูป");},
+  get product_grid(){return __uiText("กริดสินค้า");},
+  get rich_text(){return __uiText("ข้อความ (Rich Text)");},
+  get accordion(){return __uiText("แอคคอร์เดียน");},
 };
 
 function ElementMenu({
@@ -43,12 +46,13 @@ function ElementMenu({
   onDuplicate: () => void;
   onRemove: () => void;
 }) {
+  __useUiLocale();
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
       <button
         type="button"
-        aria-label="Element actions"
+        aria-label={__uiText("Element actions")}
         onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
         className="rounded p-0.5 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"
       >
@@ -63,15 +67,13 @@ function ElementMenu({
               className="flex w-full items-center px-3 py-1.5 text-left text-[11px] hover:bg-neutral-50"
               onClick={(e) => { e.stopPropagation(); onDuplicate(); setOpen(false); }}
             >
-              Duplicate
-            </button>
+              {__uiText("Duplicate")}</button>
             <button
               type="button"
               className="flex w-full items-center px-3 py-1.5 text-left text-[11px] text-red-500 hover:bg-red-50"
               onClick={(e) => { e.stopPropagation(); onRemove(); setOpen(false); }}
             >
-              Delete
-            </button>
+              {__uiText("Delete")}</button>
           </div>
         </>
       )}
@@ -97,16 +99,17 @@ function RowSection({
   /** True when the element still needs a translation (translatable type + no meaningful overlay). */
   needsTranslation: (elementId: string, elementType: CreativeElement['type']) => boolean;
 }) {
+  __useUiLocale();
   return (
     <div className="mb-2">
       <p className="mb-0.5 px-1 text-[9px] font-semibold uppercase tracking-wider text-neutral-400">
-        แถว {rowIndex + 1}
+        {__uiText("แถว ")}{rowIndex + 1}
       </p>
       {row.columns.map((column, colIndex) => (
         <div key={column.id} className="mb-1 ml-2">
           {row.columns.length > 1 && (
             <p className="mb-0.5 text-[9px] text-neutral-400">
-              คอลัมน์ {colIndex + 1}
+              {__uiText("คอลัมน์ ")}{colIndex + 1}
             </p>
           )}
           <div className="ml-2 space-y-0.5">
@@ -124,7 +127,7 @@ function RowSection({
                 <span className="shrink-0 text-neutral-400">{ELEMENT_ICONS[element.type]}</span>
                 <span className="flex-1 truncate">{ELEMENT_LABELS[element.type]}</span>
                 {needsTranslation(element.id, element.type) && (
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" title="ยังไม่ได้แปล" />
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" title={__uiText("ยังไม่ได้แปล")} />
                 )}
                 <div className="opacity-0 group-hover:opacity-100">
                   <ElementMenu
@@ -135,12 +138,12 @@ function RowSection({
               </div>
             ))}
             {column.elements.length === 0 && (
-              <p className="px-2 py-1 text-[10px] italic text-neutral-300">ว่างเปล่า</p>
+              <p className="px-2 py-1 text-[10px] italic text-neutral-300">{__uiText("ว่างเปล่า")}</p>
             )}
             {/* Nested rows */}
             {(column.rows ?? []).map((nestedRow, nri) => (
               <div key={nestedRow.id} className="ml-2 mt-1">
-                <p className="mb-0.5 text-[9px] text-neutral-400">แถวย่อย {nri + 1}</p>
+                <p className="mb-0.5 text-[9px] text-neutral-400">{__uiText("แถวย่อย ")}{nri + 1}</p>
                 {nestedRow.columns.map((nestedCol) => (
                   <div key={nestedCol.id} className="ml-2 space-y-0.5">
                     {nestedCol.elements.map((element) => (
@@ -157,7 +160,7 @@ function RowSection({
                         <span className="shrink-0 text-neutral-400">{ELEMENT_ICONS[element.type]}</span>
                         <span className="flex-1 truncate">{ELEMENT_LABELS[element.type]}</span>
                         {needsTranslation(element.id, element.type) && (
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" title="ยังไม่ได้แปล" />
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" title={__uiText("ยังไม่ได้แปล")} />
                         )}
                         <div className="opacity-0 group-hover:opacity-100">
                           <ElementMenu
@@ -193,6 +196,7 @@ export function LayersOutlinePanel({
   onDuplicateElement: (id: string) => void;
   editorLocale?: string;
 }) {
+  __useUiLocale();
   // Pure reads only (needsTranslation/hasOverlay) — this panel never mutates the design.
   const { needsTranslation } = useCreativeI18n(design, () => {}, editorLocale ?? 'th');
   const grid = design.body.grid;
@@ -201,8 +205,7 @@ export function LayersOutlinePanel({
     if (sorted.length === 0) {
       return (
         <p className="px-2 py-3 text-center text-[11px] italic text-neutral-300">
-          ยังไม่มี element — ลากจาก Elements มาวางได้เลย
-        </p>
+          {__uiText("ยังไม่มี element — ลากจาก Elements มาวางได้เลย")}</p>
       );
     }
     const byId = new Map(grid.elements.map((el) => [el.id, el]));
@@ -224,10 +227,10 @@ export function LayersOutlinePanel({
               <span className="shrink-0 text-neutral-400">{ELEMENT_ICONS[element.type]}</span>
               <span className="flex-1 truncate">{ELEMENT_LABELS[element.type]}</span>
               {needsTranslation(element.id, element.type) && (
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" title="ยังไม่ได้แปล" />
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" title={__uiText("ยังไม่ได้แปล")} />
               )}
               <span className="text-[9px] text-neutral-300">
-                r{it.row} c{it.col}·{it.colSpan}
+                {__uiText("r")}{it.row} {__uiText(" c")}{it.col}·{it.colSpan}
               </span>
               <div className="opacity-0 group-hover:opacity-100">
                 <ElementMenu
@@ -244,8 +247,7 @@ export function LayersOutlinePanel({
   if (design.body.rows.length === 0) {
     return (
       <p className="px-2 py-3 text-center text-[11px] italic text-neutral-300">
-        ยังไม่มี element — ลากจาก Elements มาวางได้เลย
-      </p>
+        {__uiText("ยังไม่มี element — ลากจาก Elements มาวางได้เลย")}</p>
     );
   }
   return (

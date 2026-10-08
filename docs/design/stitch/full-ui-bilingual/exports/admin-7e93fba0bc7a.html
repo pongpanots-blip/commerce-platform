@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ - Commerce Platform (/login)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .font-latin {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f6f8fc] flex flex-col justify-between selection:bg-[#365cf5]/15 selection:text-[#365cf5]">
+
+  <!-- Top Global Bar / Navigation -->
+  <header class="w-full bg-white border-b border-[#e1e7f0] px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-base shadow-sm">
+        CP
+      </div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-base text-[#17243b] tracking-tight" data-i18n="Commerce Platform">Commerce Platform</span>
+          <span class="text-[11px] font-medium px-2 py-0.5 rounded bg-blue-50 text-[#365cf5] border border-blue-100" data-i18n="Admin console">Admin console</span>
+        </div>
+        <span class="text-xs text-[#52627a] font-latin">v2.4.0 (Enterprise Gateway)</span>
+      </div>
+    </div>
+
+    <!-- Right Controls: Sample Tag, Language Switcher, Help Links -->
+    <div class="flex items-center gap-4">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium bg-amber-50 text-[#b08900] border border-amber-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+        <span id="badge-sample">ข้อมูลตัวอย่าง</span>
+      </span>
+
+      <!-- Working Language Selector (TH / EN) -->
+      <div class="inline-flex items-center bg-[#f0f3f8] p-0.5 rounded-lg border border-[#e1e7f0] text-xs font-medium">
+        <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded bg-white text-[#17243b] shadow-xs font-semibold transition-all">
+          ไทย
+        </button>
+        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all">
+          English
+        </button>
+      </div>
+
+      <a href="/docs/api" class="text-xs font-medium text-[#52627a] hover:text-[#365cf5] flex items-center gap-1 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+        <span data-i18n="API Documentation">API Documentation</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Area: Calm Centered Auth Card -->
+  <main class="flex-1 flex items-center justify-center p-6">
+    <div class="w-full max-w-[460px]">
+
+      <!-- System / Environment Banner -->
+      <div class="mb-4 bg-white border border-[#e1e7f0] rounded-xl p-3.5 shadow-sm flex items-start gap-3">
+        <div class="w-7 h-7 rounded-lg bg-blue-50 text-[#365cf5] flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div class="text-xs text-[#52627a] leading-relaxed">
+          <div class="font-medium text-[#17243b] mb-0.5 flex items-center gap-2">
+            <span id="txt-auth-title">พอร์ทัลความปลอดภัยระบบร้านค้า</span>
+            <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-medium bg-emerald-50 text-[#157347] border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1"></span>
+              2FA Ready
+            </span>
+          </div>
+          <span id="txt-auth-desc">เข้าสู่ระบบเพื่อจัดการ 7 หมวดงานบริหารร้านค้าและ API Webhooks</span>
+        </div>
+      </div>
+
+      <!-- Main Login Card -->
+      <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm p-8">
+
+        <!-- Header inside Card -->
+        <div class="mb-6 text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 text-[#365cf5] mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+          </div>
+          <h1 class="text-[26px] font-bold text-[#17243b] tracking-tight leading-snug" id="page-title">
+            เข้าสู่ระบบ
+          </h1>
+          <p class="text-xs text-[#52627a] mt-1 font-latin">
+            Commerce Platform Management &middot; /login
+          </p>
+        </div>
+
+        <!-- Login Form -->
+        <form onsubmit="handleFormSubmit(event)" class="space-y-4" novalidate>
+
+          <!-- Email Field -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="email" class="block text-[13px] font-medium text-[#17243b]">
+                <span data-i18n="Email">Email</span> <span class="text-[#c2333f]">*</span>
+              </label>
+              <span class="text-[11px] text-[#52627a]" id="hint-email">บัญชีผู้ดูแลหรือทีมงาน</span>
+            </div>
+            <div class="relative">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value="admin@example.com"
+                class="w-full h-10 px-3.5 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition-all bg-white font-latin"
+                placeholder="admin@example.com"
+                required
+              />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#52627a]">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="password" class="block text-[13px] font-medium text-[#17243b]">
+                <span data-i18n="Password">Password</span> <span class="text-[#c2333f]">*</span>
+              </label>
+              <a href="/account/password" class="text-xs text-[#365cf5] hover:underline" id="link-forgot-pw">
+                ลืมรหัสผ่าน?
+              </a>
+            </div>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value="••••••••••••"
+                class="w-full h-10 px-3.5 pr-10 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition-all bg-white font-latin"
+                placeholder="••••••••••••"
+                required
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#17243b] focus:outline-none"
+                title="แสดง/ซ่อนรหัสผ่าน"
+              >
+                <svg id="eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember me & Session Mode -->
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#365cf5] focus:ring-[#365cf5]/30">
+              <span class="text-xs text-[#52627a]" id="lbl-remember">บันทึกการเข้าสู่ระบบในเครื่องนี้</span>
+            </label>
+            <span class="text-[11px] font-medium text-slate-400">Security SSL 256-bit</span>
+          </div>
+
+          <!-- Primary Submit Action -->
+          <div class="pt-2">
+            <button
+              type="submit"
+              class="w-full h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm transition-colors shadow-sm flex items-center justify-center gap-2"
+            >
+              <span data-i18n="Sign in">Sign in</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-[#e1e7f0]"></div>
+          </div>
+          <div class="relative flex justify-center text-xs">
+            <span class="bg-white px-3 text-[#52627a]" id="divider-text">การจัดการสิทธิ์การเข้าใช้งาน</span>
+          </div>
+        </div>
+
+        <!-- Help / Contact Admin Banner (Required catalogue copy) -->
+        <div class="p-3.5 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0] text-center">
+          <p class="text-xs text-[#52627a] leading-relaxed" data-i18n="ยังไม่มีบัญชี? ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าใช้งาน">
+            ยังไม่มีบัญชี? ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าใช้งาน
+          </p>
+          <div class="mt-2 text-[11px] text-[#52627a] flex items-center justify-center gap-2">
+            <span class="font-medium text-[#17243b]">ฝ่ายจัดการสิทธิ์:</span>
+            <span>it-security@siamstore.co.th</span>
+          </div>
+        </div>
+
+        <!-- Navigation return link (Required catalogue copy) -->
+        <div class="mt-6 text-center">
+          <a
+            href="/workspaces/settings"
+            class="inline-flex items-center gap-1.5 text-xs font-medium text-[#52627a] hover:text-[#365cf5] transition-colors"
+          >
+            <span data-i18n="&larr; กลับไปหน้ารายการ Workflow">&larr; กลับไปหน้ารายการ Workflow</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Security / Compliance Notes Card -->
+      <div class="mt-4 p-3 rounded-lg border border-[#e1e7f0] bg-white/60 text-xs text-[#52627a] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+          <span id="footer-status">ระบบปฏิบัติการเครือข่ายร้านค้า: พร้อมทำงานปกติ</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/settings/security-audit" class="hover:text-[#365cf5]" id="link-policy">นโยบายความปลอดภัย</a>
+          <span>&middot;</span>
+          <a href="/josh/internal_docs" class="hover:text-[#365cf5]" id="link-docs">เอกสารภายใน</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Global Operational Footer -->
+  <footer class="w-full bg-white border-t border-[#e1e7f0] px-6 py-3.5 text-xs text-[#52627a]">
+    <div class="max-w-[1240px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="font-medium text-[#17243b]">Commerce Platform</span>
+        <span class="text-slate-300">|</span>
+        <span>ระบบบริหารจัดการร้านค้าแบบรวมศูนย์ (Unified Hub)</span>
+        <span class="text-slate-300">|</span>
+        <span class="text-slate-400">Siam Store Online</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-latin">
+        <span>© 2024 Siam Commerce Co., Ltd.</span>
+        <a href="/developer" class="text-[#365cf5] hover:underline flex items-center gap-1">
+          <span>&lt;/&gt; Developer Portal</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- REQUIRED INVISIBLE JSON TRANSLATIONS OBJECT FOR ALL REQUIRED KEYS -->
+  <script id="commerce-ui-translations" type="application/json">
+{
+  "Commerce Platform": {
+    "th": "Commerce Platform",
+    "en": "Commerce Platform"
+  },
+  "Admin console": {
+    "th": "คอนโซลผู้ดูแลระบบ",
+    "en": "Admin console"
+  },
+  "Sign in": {
+    "th": "เข้าสู่ระบบ",
+    "en": "Sign in"
+  },
+  "Email": {
+    "th": "อีเมล",
+    "en": "Email"
+  },
+  "admin@example.com": {
+    "th": "admin@example.com",
+    "en": "admin@example.com"
+  },
+  "Password": {
+    "th": "รหัสผ่าน",
+    "en": "Password"
+  },
+  "ยังไม่มีบัญชี? ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าใช้งาน": {
+    "th": "ยังไม่มีบัญชี? ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าใช้งาน",
+    "en": "Don't have an account? Contact administrator to request access."
+  },
+  "&larr; กลับไปหน้ารายการ Workflow": {
+    "th": "&larr; กลับไปหน้ารายการ Workflow",
+    "en": "&larr; Back to Workflow List"
+  },
+  "API Documentation": {
+    "th": "เอกสาร API",
+    "en": "API Documentation"
+  },
+  "Credit Term Applications": {
+    "th": "คำขอวงเงินสินเชื่อ",
+    "en": "Credit Term Applications"
+  },
+  "Filters": {
+    "th": "ตัวกรอง",
+    "en": "Filters"
+  },
+  "Login แล้ว": {
+    "th": "Login แล้ว",
+    "en": "Logged in"
+  },
+  "Payment Link สำหรับส่งให้ลูกค้าจะเพิ่มในขั้นตอนถัดไป": {
+    "th": "Payment Link สำหรับส่งให้ลูกค้าจะเพิ่มในขั้นตอนถัดไป",
+    "en": "Payment Link for customers will be added in the next step"
+  },
+  "role": {
+    "th": "บทบาท (role)",
+    "en": "role"
+  },
+  "Test your webhook setup": {
+    "th": "ทดสอบการตั้งค่า Webhook ของคุณ",
+    "en": "Test your webhook setup"
+  },
+  "กรุณากรอกชื่อบริษัท": {
+    "th": "กรุณากรอกชื่อบริษัท",
+    "en": "Please enter company name"
+  },
+  "เก็บทุกคืน 00:00–06:00": {
+    "th": "เก็บทุกคืน 00:00–06:00",
+    "en": "Collected every night 00:00–06:00"
+  },
+  "เข้าพบ": {
+    "th": "เข้าพบ",
+    "en": "Meet"
+  },
+  "คืนเงิน": {
+    "th": "คืนเงิน",
+    "en": "Refund"
+  },
+  "แจ้งเตือนครบแล้ว": {
+    "th": "แจ้งเตือนครบแล้ว",
+    "en": "Notifications sent"
+  },
+  "เช่น ราคาปกติ สาขา… ไม่มีคูปองสมาชิก ไม่รวมค่าส่ง": {
+    "th": "เช่น ราคาปกติ สาขา… ไม่มีคูปองสมาชิก ไม่รวมค่าส่ง",
+    "en": "e.g. Regular branch price… No member coupons, shipping excluded"
+  },
+  "ตอนนี้": {
+    "th": "ตอนนี้",
+    "en": "Now"
+  },
+  "นักช้อป VIP": {
+    "th": "นักช้อป VIP",
+    "en": "VIP Shopper"
+  },
+  "ประวัติการแก้ไข (20 รายการล่าสุด)": {
+    "th": "ประวัติการแก้ไข (20 รายการล่าสุด)",
+    "en": "Revision history (latest 20 records)"
+  },
+  "พร้อมอัปโหลด": {
+    "th": "พร้อมอัปโหลด",
+    "en": "Ready to upload"
+  },
+  "ไม่บังคับ ระบบกำหนดจากประเภทเมื่อเว้นว่าง": {
+    "th": "ไม่บังคับ ระบบกำหนดจากประเภทเมื่อเว้นว่าง",
+    "en": "Optional; system assigns by type when left blank"
+  },
+  "ยังไม่เคยใช้": {
+    "th": "ยังไม่เคยใช้",
+    "en": "Never used"
+  },
+  "รวมบัญชี": {
+    "th": "รวมบัญชี",
+    "en": "Merge accounts"
+  },
+  "ราคาสินค้า": {
+    "th": "ราคาสินค้า",
+    "en": "Product price"
+  },
+  "ลบหัวข้อที่ {0}": {
+    "th": "ลบหัวข้อที่ {0}",
+    "en": "Remove topic {0}"
+  },
+  "วงเงินขอ": {
+    "th": "วงเงินขอ",
+    "en": "Requested limit"
+  },
+  "สร้างกลุ่มลูกค้าด้วยเงื่อนไข AND/OR แบบไม่ต้องเขียนโค้ด": {
+    "th": "สร้างกลุ่มลูกค้าด้วยเงื่อนไข AND/OR แบบไม่ต้องเขียนโค้ด",
+    "en": "Build customer segments using AND/OR rules without writing code"
+  },
+  "แสดงป้ายโปรโมชัน": {
+    "th": "แสดงป้ายโปรโมชัน",
+    "en": "Display promo badge"
+  },
+  "อ": {
+    "th": "อ",
+    "en": "Tue"
+  }
+}
+  </script>
+
+  <!-- Interactive JavaScript logic for Language Switcher & Form UX -->
+  <script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update toggle buttons styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        btnEn.className = "px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all";
+        document.getElementById('badge-sample').textContent = 'ข้อมูลตัวอย่าง';
+        document.getElementById('page-title').textContent = 'เข้าสู่ระบบ';
+        document.getElementById('txt-auth-title').textContent = 'พอร์ทัลความปลอดภัยระบบร้านค้า';
+        document.getElementById('txt-auth-desc').textContent = 'เข้าสู่ระบบเพื่อจัดการ 7 หมวดงานบริหารร้านค้าและ API Webhooks';
+        document.getElementById('hint-email').textContent = 'บัญชีผู้ดูแลหรือทีมงาน';
+        document.getElementById('link-forgot-pw').textContent = 'ลืมรหัสผ่าน?';
+        document.getElementById('lbl-remember').textContent = 'บันทึกการเข้าสู่ระบบในเครื่องนี้';
+        document.getElementById('divider-text').textContent = 'การจัดการสิทธิ์การเข้าใช้งาน';
+        document.getElementById('footer-status').textContent = 'ระบบปฏิบัติการเครือข่ายร้านค้า: พร้อมทำงานปกติ';
+        document.getElementById('link-policy').textContent = 'นโยบายความปลอดภัย';
+        document.getElementById('link-docs').textContent = 'เอกสารภายใน';
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        btnTh.className = "px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all";
+        document.getElementById('badge-sample').textContent = 'Sample data';
+        document.getElementById('page-title').textContent = 'Sign in';
+        document.getElementById('txt-auth-title').textContent = 'Commerce Security Portal';
+        document.getElementById('txt-auth-desc').textContent = 'Sign in to manage 7 commerce work areas and API Webhooks';
+        document.getElementById('hint-email').textContent = 'Admin or staff credentials';
+        document.getElementById('link-forgot-pw').textContent = 'Forgot password?';
+        document.getElementById('lbl-remember').textContent = 'Remember this device session';
+        document.getElementById('divider-text').textContent = 'Access & Permission Controls';
+        document.getElementById('footer-status').textContent = 'Commerce Network Services: Operational';
+        document.getElementById('link-policy').textContent = 'Security Policy';
+        document.getElementById('link-docs').textContent = 'Internal Docs';
+      }
+
+      // Translate all data-i18n elements using dictionary
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          if (key === '&larr; กลับไปหน้ารายการ Workflow') {
+            el.innerHTML = translations[key][lang];
+          } else {
+            el.textContent = translations[key][lang];
+          }
+        }
+      });
+    }
+
+    function togglePasswordVisibility() {
+      const pwInput = document.getElementById('password');
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+      } else {
+        pwInput.type = 'password';
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      alert(currentLang === 'th' ? `ยินดีต้อนรับ: ${email} (Login แล้ว)` : `Welcome: ${email} (Logged in)`);
+      // Simulating redirection to main console
+      window.location.href = '/workspaces/settings';
+    }
+  </script>
+</body>
+</html>

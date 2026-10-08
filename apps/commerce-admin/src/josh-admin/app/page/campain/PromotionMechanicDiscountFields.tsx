@@ -11,6 +11,8 @@ import {
   type MechanicValueType,
 } from './promotion-mechanic-form.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   form: MechanicForm;
   onChange: (patch: Partial<MechanicForm>) => void;
@@ -21,6 +23,7 @@ type Props = {
 
 /** Fields for the one `value` every SKU of the mechanic shares. */
 export default function PromotionMechanicDiscountFields({ form, onChange, errors, disabled }: Props) {
+  __useUiLocale();
   const tiersErrorId = useId();
   const updateTier = (id: string, patch: Partial<MechanicTierRow>) =>
     onChange({
@@ -31,7 +34,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
     <div className="space-y-4">
       <div className="sm:w-1/2 sm:pr-2">
         <Select
-          label="รูปแบบส่วนลด"
+          label={__uiText("รูปแบบส่วนลด")}
           data={VALUE_TYPE_OPTIONS}
           value={form.valueType}
           disabled={disabled}
@@ -42,7 +45,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
       {form.valueType === 'percentage' && (
         <div className="sm:w-1/2 sm:pr-2">
           <Input
-            label="ส่วนลด"
+            label={__uiText("ส่วนลด")}
             required
             type="number"
             min={0}
@@ -60,13 +63,13 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
       {form.valueType === 'special_price' && (
         <div className="sm:w-1/2 sm:pr-2">
           <Input
-            label="ราคาโปร (ต่อหน่วย)"
+            label={__uiText("ราคาโปร (ต่อหน่วย)")}
             required
             type="number"
             min={0}
             step="0.01"
             unit="บาท"
-            hint="ทุก SKU ในโปรได้ราคานี้ตั้งแต่ชิ้นแรก"
+            hint={__uiText("ทุก SKU ในโปรได้ราคานี้ตั้งแต่ชิ้นแรก")}
             disabled={disabled}
             value={form.specialPrice}
             error={errors.specialPrice}
@@ -79,7 +82,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
       {form.valueType === 'tiered' && (
         <div
           role="group"
-          aria-label="ขั้นราคา"
+          aria-label={__uiText("ขั้นราคา")}
           aria-describedby={errors.tiers ? tiersErrorId : undefined}
           className="space-y-3"
         >
@@ -89,7 +92,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
               className="grid grid-cols-1 items-end gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]"
             >
               <Input
-                label={`ซื้อตั้งแต่ (ขั้นที่ ${index + 1})`}
+                label={__uiText("ซื้อตั้งแต่ (ขั้นที่ {0})", {"0": index + 1})}
                 required
                 type="number"
                 min={1}
@@ -100,7 +103,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
                 onChange={(event) => updateTier(row.id, { minQty: event.target.value })}
               />
               <Input
-                label="ถึง (ว่าง = ไม่จำกัด)"
+                label={__uiText("ถึง (ว่าง = ไม่จำกัด)")}
                 type="number"
                 min={1}
                 disabled={disabled}
@@ -110,7 +113,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
                 onChange={(event) => updateTier(row.id, { maxQty: event.target.value })}
               />
               <Input
-                label="ราคาโปร (ต่อหน่วย)"
+                label={__uiText("ราคาโปร (ต่อหน่วย)")}
                 required
                 type="number"
                 min={0}
@@ -124,8 +127,8 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
               />
               <button
                 type="button"
-                title="ลบขั้นนี้"
-                aria-label={`ลบขั้นที่ ${index + 1}`}
+                title={__uiText("ลบขั้นนี้")}
+                aria-label={__uiText("ลบขั้นที่ {0}", {"0": index + 1})}
                 disabled={disabled || form.tiers.length <= 1}
                 onClick={() => onChange({ tiers: form.tiers.filter((r) => r.id !== row.id) })}
                 className="mb-1 rounded-lg p-1.5 text-ink-muted hover:bg-alert-soft hover:text-alert disabled:pointer-events-none disabled:opacity-40"
@@ -136,13 +139,13 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
           ))}
           {errors.tiers && (
             <p id={tiersErrorId} className="text-sm text-alert">
-              {errors.tiers}
+              {(typeof (errors.tiers) === 'string' ? __uiText(errors.tiers) : errors.tiers)}
             </p>
           )}
           <Button
             variant="secondary"
             disabled={disabled}
-            text="เพิ่มขั้น"
+            text={__uiText("เพิ่มขั้น")}
             icon={<AiOutlinePlus size={20} />}
             onClick={() => onChange({ tiers: [...form.tiers, nextTierRow(form.tiers)] })}
           />
@@ -152,7 +155,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
       {form.valueType === 'bogo' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Input
-            label="ซื้อ (จำนวน)"
+            label={__uiText("ซื้อ (จำนวน)")}
             required
             type="number"
             min={1}
@@ -163,7 +166,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
             onChange={(event) => onChange({ buyQty: event.target.value })}
           />
           <Input
-            label="แถม (จำนวน)"
+            label={__uiText("แถม (จำนวน)")}
             required
             type="number"
             min={1}
@@ -174,13 +177,13 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
             onChange={(event) => onChange({ getQty: event.target.value })}
           />
           <Input
-            label="ส่วนลดของที่แถม"
+            label={__uiText("ส่วนลดของที่แถม")}
             required
             type="number"
             min={0}
             max={100}
             unit="%"
-            hint="100 = แถมฟรี"
+            hint={__uiText("100 = แถมฟรี")}
             disabled={disabled}
             value={form.getDiscountPercent}
             error={errors.getDiscountPercent}
@@ -192,3 +195,5 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
     </div>
   );
 }
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

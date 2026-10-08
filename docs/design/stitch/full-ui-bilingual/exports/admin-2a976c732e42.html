@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เปลี่ยนรหัสผ่าน - Commerce Platform (/account/password)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: '#365cf5',
+            'primary-hover': '#2b4edb',
+            ink: '#17243b',
+            secondary: '#52627a',
+            success: '#157347',
+            warning: '#b08900',
+            error: '#c2333f'
+          },
+          fontFamily: {
+            thai: ['"Noto Sans Thai"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+    }
+    input::placeholder {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-ink antialiased min-h-screen flex">
+
+  <!-- Sidebar: 256px wide, fixed/sticky navigation -->
+  <aside class="w-64 min-w-[256px] max-w-[256px] bg-white border-r border-border min-h-screen flex flex-col justify-between shrink-0 select-none">
+    <div>
+      <!-- Workspace Switcher & Brand -->
+      <div class="p-4 border-b border-border">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-base shadow-sm">
+            CP
+          </div>
+          <div class="overflow-hidden">
+            <div class="font-semibold text-ink text-sm leading-tight flex items-center gap-1.5">
+              <span>Commerce Admin</span>
+            </div>
+            <div class="text-[11px] text-secondary truncate mt-0.5" data-i18n="store_name">สยาม สโตร์ ออนไลน์ (สาขาหลัก)</div>
+          </div>
+        </div>
+
+        <!-- Scope / Workspace selector -->
+        <div class="mt-3.5 bg-canvas border border-border rounded-lg p-2 flex items-center justify-between text-xs text-secondary">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="font-medium text-ink">Commerce Hub v2.4</span>
+          </div>
+          <svg class="w-3.5 h-3.5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Seven Core Work Areas Navigation -->
+      <div class="px-3 py-3">
+        <div class="text-[11px] font-semibold text-secondary px-2.5 mb-1.5 tracking-wider uppercase" data-i18n="nav_heading">หมวดงานหลัก</div>
+        <nav class="space-y-0.5">
+          <!-- 1. สินค้าและสต็อก -->
+          <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+            <span class="text-sm font-medium" data-i18n="nav_products">สินค้าและสต็อก</span>
+          </a>
+
+          <!-- 2. ออเดอร์และการเงิน -->
+          <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <span class="text-sm font-medium" data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+          </a>
+
+          <!-- 3. ลูกค้าและบริการ -->
+          <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <span class="text-sm font-medium" data-i18n="nav_customers">ลูกค้าและบริการ</span>
+          </a>
+
+          <!-- 4. การตลาด -->
+          <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+            </svg>
+            <span class="text-sm font-medium" data-i18n="nav_marketing">การตลาด</span>
+          </a>
+
+          <!-- 5. รายงานและข้อมูล -->
+          <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span class="text-sm font-medium" data-i18n="nav_reports">รายงานและข้อมูล</span>
+          </a>
+
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            <span class="text-sm font-medium" data-i18n="nav_connections">ระบบเชื่อมต่อ</span>
+          </a>
+
+          <!-- 7. ตั้งค่าและทีมงาน (Active Area) -->
+          <div class="pt-1">
+            <a href="javascript:void(0)" class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-blue-50/70 text-primary font-semibold">
+              <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span class="text-sm font-semibold" data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+            </a>
+
+            <!-- Submenu items -->
+            <div class="ml-6 pl-3 border-l border-blue-200 mt-1 space-y-1">
+              <a href="javascript:void(0)" class="block py-1 text-xs text-secondary hover:text-ink font-medium" data-i18n="subnav_staff">บัญชีทีมงาน</a>
+              <a href="javascript:void(0)" class="block py-1 text-xs text-secondary hover:text-ink font-medium" data-i18n="subnav_roles">บทบาทและสิทธิ์</a>
+              <a href="javascript:void(0)" class="block py-1 text-xs text-primary font-semibold" data-i18n="subnav_password">เปลี่ยนรหัสผ่าน</a>
+              <a href="javascript:void(0)" class="block py-1 text-xs text-secondary hover:text-ink font-medium" data-i18n="subnav_store">ข้อมูลร้านค้า</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Sidebar Footer with Developer Portal link -->
+    <div class="p-3 border-t border-border">
+      <a href="javascript:void(0)" class="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-mono text-secondary hover:text-primary hover:bg-slate-50 transition-colors">
+        <svg class="w-3.5 h-3.5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+        </svg>
+        <span class="font-sans font-medium text-xs">Developer Portal</span>
+        <span class="text-[10px] text-slate-400 font-mono ml-auto">API & Keys &rarr;</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Top contextual header -->
+    <header class="bg-white border-b border-border h-14 px-6 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <!-- Sample data badge -->
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200" data-i18n="sample_badge">
+          ข้อมูลตัวอย่าง
+        </span>
+        <span class="text-xs text-secondary hidden sm:inline" data-i18n="header_store_label">
+          ร้าน: สยาม สโตร์ ออนไลน์ (สาขาหลัก)
+        </span>
+      </div>
+
+      <!-- Right Header Actions (Language Switcher & User Profile) -->
+      <div class="flex items-center gap-3">
+        <!-- Bilingual toggle button -->
+        <div class="flex items-center bg-canvas border border-border rounded-lg p-0.5 text-xs font-medium">
+          <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded bg-white text-ink shadow-xs transition-all font-semibold">
+            ไทย
+          </button>
+          <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded text-secondary hover:text-ink transition-all">
+            English
+          </button>
+        </div>
+
+        <div class="h-4 w-px bg-border"></div>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-2.5 pl-1">
+          <div class="w-7 h-7 rounded-full bg-blue-100 text-primary flex items-center justify-center font-bold text-xs">
+            ภช
+          </div>
+          <div class="text-left hidden md:block">
+            <div class="text-xs font-medium text-ink flex items-center gap-1.5">
+              <span>ภานุชญา ส.</span>
+              <span class="text-[10px] px-1 py-0.2 bg-blue-50 text-primary border border-blue-200 rounded font-normal" data-i18n="badge_you">คุณ</span>
+            </div>
+            <div class="text-[11px] text-secondary leading-none mt-0.5" data-i18n="badge_admin_sub">Admin (ผู้ดูแลระบบ)</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Body: Content constrained to ~1240px readable width -->
+    <main class="flex-1 p-6 md:p-8 max-w-[1240px] w-full mx-auto">
+
+      <!-- Breadcrumb & Top Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <nav class="flex items-center gap-1.5 text-xs text-secondary mb-1.5">
+            <span data-i18n="bc_settings">ตั้งค่าและทีมงาน</span>
+            <span>/</span>
+            <span data-i18n="bc_account">บัญชีผู้ใช้</span>
+            <span>/</span>
+            <span class="text-ink font-medium" data-i18n="bc_password">เปลี่ยนรหัสผ่าน</span>
+          </nav>
+          <div class="flex items-center gap-3 flex-wrap">
+            <h1 class="text-2xl font-bold text-ink tracking-tight" data-i18n="title_change_password">
+              เปลี่ยนรหัสผ่าน
+            </h1>
+            <span class="text-xs font-mono px-2 py-0.5 bg-slate-100 text-secondary rounded border border-slate-200">
+              /account/password
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-secondary mt-1" data-i18n="subtitle_desc">
+            จัดการความปลอดภัยของบัญชีผู้ใช้งานส่วนตัว กำหนดรหัสผ่านใหม่ที่ปลอดภัยและรัดกุม
+          </p>
+        </div>
+
+        <!-- Logout Action Button -->
+        <div class="shrink-0">
+          <button type="button" onclick="handleLogout()" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-rose-700 bg-white border border-rose-200 hover:bg-rose-50 rounded-lg shadow-xs transition-colors">
+            <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            <span data-i18n="btn_logout">ออกจากระบบ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Warning Alert Banner: Policy Notice -->
+      <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50/70 p-4 flex items-start justify-between gap-3 shadow-xs">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          <div>
+            <div class="text-sm font-semibold text-amber-900" data-i18n="alert_title">
+              ตั้งรหัสผ่านใหม่ก่อนใช้งาน
+            </div>
+            <div class="text-xs sm:text-sm text-amber-800/90 mt-0.5 leading-relaxed" data-i18n="alert_body">
+              เพื่อความปลอดภัยของระบบและการเข้าถึงข้อมูลลูกค้า กรุณาเปลี่ยนรหัสผ่านชั่วคราวหรือรหัสผ่านที่มีอายุเกิน 90 วันก่อนดำเนินการในส่วนอื่นๆ
+            </div>
+          </div>
+        </div>
+        <button type="button" class="text-amber-600 hover:text-amber-800 p-1" onclick="this.parentElement.remove()" title="Close notice">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Success Notification (Hidden by default, shown upon successful update) -->
+      <div id="success-banner" class="hidden mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 items-center justify-between gap-3 shadow-xs">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div class="text-sm font-medium text-emerald-900" data-i18n="msg_success">
+            เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่
+          </div>
+        </div>
+        <button type="button" onclick="document.getElementById('success-banner').classList.add('hidden')" class="text-emerald-700 hover:text-emerald-900 p-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Main Layout: 2 Columns Grid (Form 7 cols, Summary/Policy Sidebar 5 cols) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left: Change Password Form (7 cols) -->
+        <div class="lg:col-span-7 bg-white rounded-xl border border-border p-6 shadow-xs">
+
+          <!-- Card Header -->
+          <div class="flex items-center justify-between pb-4 border-b border-border mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-primary flex items-center justify-center border border-blue-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-base font-semibold text-ink" data-i18n="card_title">
+                  รหัสผ่านของคุณ
+                </h2>
+                <p class="text-xs text-secondary mt-0.5" data-i18n="card_subtitle">
+                  กรอกรหัสผ่านปัจจุบันเพื่อยืนยันตัวตน จากนั้นตั้งรหัสผ่านใหม่
+                </p>
+              </div>
+            </div>
+            <span class="text-xs font-mono text-secondary bg-canvas px-2.5 py-1 rounded border border-border">
+              ID: STF-001
+            </span>
+          </div>
+
+          <form id="change-password-form" onsubmit="handleFormSubmit(event)" class="space-y-5">
+
+            <!-- Field 1: Current Password -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="current-password" class="text-xs font-semibold text-ink">
+                  <span data-i18n="label_current_password">รหัสผ่านปัจจุบัน</span> <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-secondary" data-i18n="hint_required">จำเป็นต้องระบุ</span>
+              </div>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="current-password"
+                  name="current_password"
+                  required
+                  placeholder="••••••••••••"
+                  class="w-full h-10 px-3.5 pr-10 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all font-mono placeholder:font-sans"
+                />
+                <button
+                  type="button"
+                  onclick="togglePasswordVisibility('current-password', 'eye-curr')"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-ink p-1 focus:outline-none"
+                  aria-label="Toggle password visibility">
+                  <svg id="eye-curr" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+              <div id="error-current" class="hidden text-xs text-error mt-1.5 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span data-i18n="err_current_invalid">รหัสผ่านปัจจุบันไม่ถูกต้อง</span>
+              </div>
+            </div>
+
+            <!-- Field 2: New Password -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="new-password" class="text-xs font-semibold text-ink">
+                  <span data-i18n="label_new_password">รหัสผ่านใหม่</span> <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-secondary" data-i18n="hint_min8">อย่างน้อย 8 ตัวอักษร</span>
+              </div>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="new-password"
+                  name="new_password"
+                  required
+                  placeholder="••••••••••••"
+                  oninput="handlePasswordInput()"
+                  class="w-full h-10 px-3.5 pr-10 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all font-mono placeholder:font-sans"
+                />
+                <button
+                  type="button"
+                  onclick="togglePasswordVisibility('new-password', 'eye-new')"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-ink p-1 focus:outline-none"
+                  aria-label="Toggle password visibility">
+                  <svg id="eye-new" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Password Policy Checkpoints Box -->
+              <div class="mt-2.5 p-3 rounded-lg bg-canvas border border-border text-xs space-y-1.5">
+                <div class="font-medium text-ink mb-1 flex items-center justify-between">
+                  <span data-i18n="policy_box_title">ข้อกำหนดความปลอดภัยของรหัสผ่าน:</span>
+                  <span id="strength-badge" class="text-[10px] px-1.5 py-0.2 rounded bg-slate-200 text-secondary font-mono">Level 0/4</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-secondary">
+                  <div id="rule-len" class="flex items-center gap-1.5 transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 rule-dot"></span>
+                    <span data-i18n="rule_length">ความยาว 8 ตัวอักษรขึ้นไป</span>
+                  </div>
+                  <div id="rule-distinct" class="flex items-center gap-1.5 transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 rule-dot"></span>
+                    <span data-i18n="err_not_same_old">รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม</span>
+                  </div>
+                  <div id="rule-mix" class="flex items-center gap-1.5 transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 rule-dot"></span>
+                    <span data-i18n="rule_mix">มีตัวพิมพ์และตัวเลขผสม</span>
+                  </div>
+                  <div id="rule-special" class="flex items-center gap-1.5 transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 rule-dot"></span>
+                    <span data-i18n="rule_special">มีอักขระพิเศษอย่างน้อย 1 ตัว</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Field 3: Confirm New Password -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="confirm-password" class="text-xs font-semibold text-ink">
+                  <span data-i18n="label_confirm_password">รหัสผ่านใหม่อีกครั้ง</span> <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-secondary" data-i18n="hint_match">กรอกให้ตรงกัน</span>
+              </div>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="confirm-password"
+                  name="confirm_password"
+                  required
+                  placeholder="••••••••••••"
+                  oninput="handlePasswordInput()"
+                  class="w-full h-10 px-3.5 pr-10 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all font-mono placeholder:font-sans"
+                />
+                <button
+                  type="button"
+                  onclick="togglePasswordVisibility('confirm-password', 'eye-conf')"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-ink p-1 focus:outline-none"
+                  aria-label="Toggle password visibility">
+                  <svg id="eye-conf" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+              <!-- Inline Error: Mismatch -->
+              <div id="error-mismatch" class="hidden text-xs text-error mt-1.5 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span data-i18n="err_mismatch">รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน</span>
+              </div>
+            </div>
+
+            <!-- Form Action Footer: Sticky Save/Cancel buttons & Interactive simulation shortcuts -->
+            <div class="pt-5 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <button
+                  type="button"
+                  onclick="resetForm()"
+                  class="h-10 px-4 rounded-lg border border-border text-ink bg-white hover:bg-slate-50 font-medium text-xs sm:text-sm transition-colors"
+                  data-i18n="btn_cancel">
+                  ยกเลิก
+                </button>
+                <div class="text-[11px] text-secondary flex items-center gap-2">
+                  <button type="button" onclick="simulateMismatch()" class="hover:underline text-secondary hover:text-ink cursor-pointer" data-i18n="sim_mismatch">
+                    จำลอง: รหัสไม่ตรงกัน
+                  </button>
+                  <span>·</span>
+                  <button type="button" onclick="simulateSameAsOld()" class="hover:underline text-secondary hover:text-ink cursor-pointer" data-i18n="sim_same">
+                    จำลอง: รหัสซ้ำเดิม
+                  </button>
+                </div>
+              </div>
+
+              <!-- Primary Action Button: 40px height, primary blue -->
+              <button
+                type="submit"
+                id="submit-btn"
+                class="h-10 px-6 rounded-lg bg-primary hover:bg-primary-hover text-white font-medium text-xs sm:text-sm shadow-xs transition-colors flex items-center justify-center gap-2">
+                <span data-i18n="btn_submit">เปลี่ยนรหัสผ่าน</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </button>
+            </div>
+          </form>
+
+        </div>
+
+        <!-- Right: Current Account Info & Security Policies (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- Card: Current User Summary -->
+          <div class="bg-white rounded-xl border border-border p-5 shadow-xs">
+            <div class="flex items-center justify-between pb-3.5 border-b border-border">
+              <h3 class="text-xs font-semibold text-ink uppercase tracking-wider" data-i18n="summary_card_title">
+                ข้อมูลบัญชีผู้ใช้ปัจจุบัน
+              </h3>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span data-i18n="status_active">บัญชีเปิดใช้งาน</span>
+              </span>
+            </div>
+
+            <div class="pt-4 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-blue-100 text-primary font-bold text-base flex items-center justify-center border border-blue-200">
+                ภช
+              </div>
+              <div>
+                <div class="font-semibold text-ink text-sm" data-i18n="user_name">ภานุชญา สุวรรณรัตน์</div>
+                <div class="text-xs font-mono text-secondary">panuchaya.s@siamstore.co.th</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">ID: STF-001 · รหัสพนักงานหลัก</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border text-xs">
+              <div>
+                <span class="text-secondary block" data-i18n="col_role">บทบาทและสิทธิ์</span>
+                <span class="font-medium text-ink mt-0.5 block" data-i18n="val_role">Admin (ผู้ดูแลระบบสูงสุด)</span>
+              </div>
+              <div>
+                <span class="text-secondary block" data-i18n="col_last_changed">เปลี่ยนรหัสล่าสุด</span>
+                <span class="font-medium text-amber-700 mt-0.5 block" data-i18n="val_last_changed">12 ม.ค. 2024 (98 วันก่อน)</span>
+              </div>
+            </div>
+
+            <!-- Linked device state -->
+            <div class="mt-4 p-2.5 rounded-lg bg-canvas border border-border flex items-center justify-between text-xs">
+              <span class="text-secondary" data-i18n="label_device_link">การเชื่อมโยงอุปกรณ์</span>
+              <span class="font-mono text-slate-400 text-[11px]">device_linked_user_id: &mdash; (ยังไม่ลิงก์)</span>
+            </div>
+          </div>
+
+          <!-- Card: Corporate Security Policy Guidelines -->
+          <div class="bg-white rounded-xl border border-border p-5 shadow-xs">
+            <div class="flex items-center gap-2 pb-3.5 border-b border-border">
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+              <h3 class="text-xs font-semibold text-ink uppercase tracking-wider" data-i18n="policy_guidelines_title">
+                ข้อกำหนดนโยบายความปลอดภัยขององค์กร
+              </h3>
+            </div>
+
+            <ul class="pt-3.5 space-y-2.5 text-xs text-secondary leading-relaxed">
+              <li class="flex items-start gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                <span data-i18n="rule_corp_1">ห้ามใช้รหัสผ่านเดียวกับบัญชีอีเมลส่วนตัวหรือบริการโซเชียลมีเดียภายนอก</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                <span data-i18n="rule_corp_2">เมื่อเปลี่ยนรหัสผ่านแล้ว เซสชันในอุปกรณ์อื่นจะถูกบังคับให้ออกจากระบบทันที</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                <span data-i18n="rule_corp_3">ระบบรองรับการยืนยันตัวตนแบบ 2 ขั้นตอน (2FA) สามารถเปิดใช้งานได้ในหน้าความปลอดภัย</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- BILINGUAL TRANSLATION DATA DICTIONARY (Required UI Copy Catalogue Export) -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "เปลี่ยนรหัสผ่าน": {
+      "th": "เปลี่ยนรหัสผ่าน",
+      "en": "Change Password"
+    },
+    "รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน": {
+      "th": "รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน",
+      "en": "New passwords do not match"
+    },
+    "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม": {
+      "th": "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม",
+      "en": "New password cannot be the same as the old password"
+    },
+    "ตั้งรหัสผ่านใหม่ก่อนใช้งาน": {
+      "th": "ตั้งรหัสผ่านใหม่ก่อนใช้งาน",
+      "en": "Set new password before continuing"
+    },
+    "ออกจากระบบ": {
+      "th": "ออกจากระบบ",
+      "en": "Sign out"
+    },
+    "เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่": {
+      "th": "เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่",
+      "en": "Password changed · Use new password next time"
+    },
+    "รหัสผ่านของคุณ": {
+      "th": "รหัสผ่านของคุณ",
+      "en": "Your Password"
+    },
+    "รหัสผ่านปัจจุบัน": {
+      "th": "รหัสผ่านปัจจุบัน",
+      "en": "Current password"
+    },
+    "รหัสผ่านใหม่": {
+      "th": "รหัสผ่านใหม่",
+      "en": "New password"
+    },
+    "รหัสผ่านใหม่อีกครั้ง": {
+      "th": "รหัสผ่านใหม่อีกครั้ง",
+      "en": "Confirm new password"
+    },
+    "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก \"ดูเอกสาร\"": {
+      "th": "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก \"ดูเอกสาร\"",
+      "en": "— Actual approval/rejection is processed via separate CS-CRM system; table rows therefore only provide \"View Document\" action"
+    },
+    "เขตเวลา (Timezone)": {
+      "th": "เขตเวลา (Timezone)",
+      "en": "Timezone"
+    },
+    "เครื่องมือที่ใช้ (Tool)": {
+      "th": "เครื่องมือที่ใช้ (Tool)",
+      "en": "Tool Used"
+    },
+    "ชื่อ Template": {
+      "th": "ชื่อ Template",
+      "en": "Template Name"
+    },
+    "ดู Users": {
+      "th": "ดู Users",
+      "en": "View Users"
+    },
+    "ทุก SKU ในชุดที่เลือกได้ส่วนลดเดียวกัน — ระบบคัดลอกรายการ SKU ไว้ตอนกดบันทึก": {
+      "th": "ทุก SKU ในชุดที่เลือกได้ส่วนลดเดียวกัน — ระบบคัดลอกรายการ SKU ไว้ตอนกดบันทึก",
+      "en": "All SKUs in selected set receive identical discount — SKUs are cloned when saved"
+    },
+    "ประเภทลูกค้า (Custype)": {
+      "th": "ประเภทลูกค้า (Custype)",
+      "en": "Customer Type (Custype)"
+    },
+    "เพิ่ม field เพื่อดูพรีวิว": {
+      "th": "เพิ่ม field เพื่อดูพรีวิว",
+      "en": "Add field to see preview"
+    },
+    "ไม่พบลูกค้า": {
+      "th": "ไม่พบลูกค้า",
+      "en": "Customer not found"
+    },
+    "ยังไม่มีโจทย์": {
+      "th": "ยังไม่มีโจทย์",
+      "en": "No tasks yet"
+    },
+    "ระบุลูกค้าเป็นรายคน ด้วยไฟล์ CSV หรือวางรายชื่อ": {
+      "th": "ระบุลูกค้าเป็นรายคน ด้วยไฟล์ CSV หรือวางรายชื่อ",
+      "en": "Specify individual customers via CSV file or paste list"
+    },
+    "ลบ Campaign นี้?": {
+      "th": "ลบ Campaign นี้?",
+      "en": "Delete this Campaign?"
+    },
+    "เลือกสาขาก่อน": {
+      "th": "เลือกสาขาก่อน",
+      "en": "Please select a branch first"
+    },
+    "สร้างคูปองแล้ว — แก้รูปแบบ/เงื่อนไข chain ที่หน้ารายละเอียดคูปอง": {
+      "th": "สร้างคูปองแล้ว — แก้รูปแบบ/เงื่อนไข chain ที่หน้ารายละเอียดคูปอง",
+      "en": "Coupon created — edit chain rules and conditions on the coupon details page"
+    },
+    "หน้าเริ่มต้น / Sitemap (หนึ่งลิงก์ต่อบรรทัด)": {
+      "th": "หน้าเริ่มต้น / Sitemap (หนึ่งลิงก์ต่อบรรทัด)",
+      "en": "Landing Page / Sitemap (one link per line)"
+    },
+    "อัปโหลดไม่สำเร็จ ลองใหม่อีกครั้ง": {
+      "th": "อัปโหลดไม่สำเร็จ ลองใหม่อีกครั้ง",
+      "en": "Upload failed, please try again"
+    }
+  }
+  </script>
+
+  <!-- Client-side Interactive Logic -->
+  <script>
+    let currentLang = 'th';
+
+    const translations = {
+      th: {
+        store_name: "สยาม สโตร์ ออนไลน์ (สาขาหลัก)",
+        nav_heading: "หมวดงานหลัก",
+        nav_products: "สินค้าและสต็อก",
+        nav_orders: "ออเดอร์และการเงิน",
+        nav_customers: "ลูกค้าและบริการ",
+        nav_marketing: "การตลาด",
+        nav_reports: "รายงานและข้อมูล",
+        nav_connections: "ระบบเชื่อมต่อ",
+        nav_settings: "ตั้งค่าและทีมงาน",
+        subnav_staff: "บัญชีทีมงาน",
+        subnav_roles: "บทบาทและสิทธิ์",
+        subnav_password: "เปลี่ยนรหัสผ่าน",
+        subnav_store: "ข้อมูลร้านค้า",
+        sample_badge: "ข้อมูลตัวอย่าง",
+        header_store_label: "ร้าน: สยาม สโตร์ ออนไลน์ (สาขาหลัก)",
+        badge_you: "คุณ",
+        badge_admin_sub: "Admin (ผู้ดูแลระบบ)",
+        bc_settings: "ตั้งค่าและทีมงาน",
+        bc_account: "บัญชีผู้ใช้",
+        bc_password: "เปลี่ยนรหัสผ่าน",
+        title_change_password: "เปลี่ยนรหัสผ่าน",
+        subtitle_desc: "จัดการความปลอดภัยของบัญชีผู้ใช้งานส่วนตัว กำหนดรหัสผ่านใหม่ที่ปลอดภัยและรัดกุม",
+        btn_logout: "ออกจากระบบ",
+        alert_title: "ตั้งรหัสผ่านใหม่ก่อนใช้งาน",
+        alert_body: "เพื่อความปลอดภัยของระบบและการเข้าถึงข้อมูลลูกค้า กรุณาเปลี่ยนรหัสผ่านชั่วคราวหรือรหัสผ่านที่มีอายุเกิน 90 วันก่อนดำเนินการในส่วนอื่นๆ",
+        msg_success: "เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่",
+        card_title: "รหัสผ่านของคุณ",
+        card_subtitle: "กรอกรหัสผ่านปัจจุบันเพื่อยืนยันตัวตน จากนั้นตั้งรหัสผ่านใหม่",
+        label_current_password: "รหัสผ่านปัจจุบัน",
+        hint_required: "จำเป็นต้องระบุ",
+        err_current_invalid: "รหัสผ่านปัจจุบันไม่ถูกต้อง",
+        label_new_password: "รหัสผ่านใหม่",
+        hint_min8: "อย่างน้อย 8 ตัวอักษร",
+        policy_box_title: "ข้อกำหนดความปลอดภัยของรหัสผ่าน:",
+        rule_length: "ความยาว 8 ตัวอักษรขึ้นไป",
+        err_not_same_old: "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม",
+        rule_mix: "มีตัวพิมพ์และตัวเลขผสม",
+        rule_special: "มีอักขระพิเศษอย่างน้อย 1 ตัว",
+        label_confirm_password: "รหัสผ่านใหม่อีกครั้ง",
+        hint_match: "กรอกให้ตรงกัน",
+        err_mismatch: "รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน",
+        btn_cancel: "ยกเลิก",
+        btn_submit: "เปลี่ยนรหัสผ่าน",
+        sim_mismatch: "จำลอง: รหัสไม่ตรงกัน",
+        sim_same: "จำลอง: รหัสซ้ำเดิม",
+        summary_card_title: "ข้อมูลบัญชีผู้ใช้ปัจจุบัน",
+        status_active: "บัญชีเปิดใช้งาน",
+        user_name: "ภานุชญา สุวรรณรัตน์",
+        col_role: "บทบาทและสิทธิ์",
+        val_role: "Admin (ผู้ดูแลระบบสูงสุด)",
+        col_last_changed: "เปลี่ยนรหัสล่าสุด",
+        val_last_changed: "12 ม.ค. 2024 (98 วันก่อน)",
+        label_device_link: "การเชื่อมโยงอุปกรณ์",
+        policy_guidelines_title: "ข้อกำหนดนโยบายความปลอดภัยขององค์กร",
+        rule_corp_1: "ห้ามใช้รหัสผ่านเดียวกับบัญชีอีเมลส่วนตัวหรือบริการโซเชียลมีเดียภายนอก",
+        rule_corp_2: "เมื่อเปลี่ยนรหัสผ่านแล้ว เซสชันในอุปกรณ์อื่นจะถูกบังคับให้ออกจากระบบทันที",
+        rule_corp_3: "ระบบรองรับการยืนยันตัวตนแบบ 2 ขั้นตอน (2FA) สามารถเปิดใช้งานได้ในหน้าความปลอดภัย"
+      },
+      en: {
+        store_name: "Siam Store Online (Main Branch)",
+        nav_heading: "Core Work Areas",
+        nav_products: "Products & Stock",
+        nav_orders: "Orders & Finance",
+        nav_customers: "Customers & Service",
+        nav_marketing: "Marketing",
+        nav_reports: "Reports & Data",
+        nav_connections: "Integrations",
+        nav_settings: "Settings & Team",
+        subnav_staff: "Staff Accounts",
+        subnav_roles: "Roles & Permissions",
+        subnav_password: "Change Password",
+        subnav_store: "Store Information",
+        sample_badge: "Sample Data",
+        header_store_label: "Store: Siam Store Online (Main Branch)",
+        badge_you: "You",
+        badge_admin_sub: "Admin (System Administrator)",
+        bc_settings: "Settings & Team",
+        bc_account: "User Account",
+        bc_password: "Change Password",
+        title_change_password: "Change Password",
+        subtitle_desc: "Manage your personal user account security. Set a strong, compliant password.",
+        btn_logout: "Sign out",
+        alert_title: "Set new password before continuing",
+        alert_body: "For platform security and customer data protection, please replace your temporary password or passwords older than 90 days before continuing.",
+        msg_success: "Password changed · Use new password next time",
+        card_title: "Your Password",
+        card_subtitle: "Enter your current password to authenticate, then establish a new secure password.",
+        label_current_password: "Current password",
+        hint_required: "Required",
+        err_current_invalid: "Incorrect current password",
+        label_new_password: "New password",
+        hint_min8: "At least 8 characters",
+        policy_box_title: "Password Security Requirements:",
+        rule_length: "At least 8 characters long",
+        err_not_same_old: "New password cannot be the same as the old password",
+        rule_mix: "Mix of letters and numbers",
+        rule_special: "At least 1 special character",
+        label_confirm_password: "Confirm new password",
+        hint_match: "Must match",
+        err_mismatch: "New passwords do not match",
+        btn_cancel: "Cancel",
+        btn_submit: "Change Password",
+        sim_mismatch: "Simulate: Mismatch",
+        sim_same: "Simulate: Same as Old",
+        summary_card_title: "Current Account Summary",
+        status_active: "Active Account",
+        user_name: "Panuchaya Suwannarat",
+        col_role: "Role & Permissions",
+        val_role: "Admin (Super Administrator)",
+        col_last_changed: "Last Changed",
+        val_last_changed: "12 Jan 2024 (98 days ago)",
+        label_device_link: "Device Linking",
+        policy_guidelines_title: "Corporate Security Guidelines",
+        rule_corp_1: "Do not reuse personal email or external social media passwords.",
+        rule_corp_2: "After password update, active sessions on other devices will be terminated immediately.",
+        rule_corp_3: "Two-Factor Authentication (2FA) is supported and can be managed in Security Settings."
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded bg-white text-ink shadow-xs transition-all font-semibold";
+        enBtn.className = "px-2.5 py-1 rounded text-secondary hover:text-ink transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded bg-white text-ink shadow-xs transition-all font-semibold";
+        thBtn.className = "px-2.5 py-1 rounded text-secondary hover:text-ink transition-all";
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerText = translations[lang][key];
+        }
+      });
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>';
+      } else {
+        input.type = 'password';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+      }
+    }
+
+    function handlePasswordInput() {
+      const curr = document.getElementById('current-password').value;
+      const pwd = document.getElementById('new-password').value;
+      const conf = document.getElementById('confirm-password').value;
+
+      const ruleLen = pwd.length >= 8;
+      const ruleDistinct = pwd.length > 0 && curr.length > 0 && pwd !== curr;
+      const ruleMix = /[a-zA-Z]/.test(pwd) && /[0-9]/.test(pwd);
+      const ruleSpecial = /[^a-zA-Z0-9]/.test(pwd);
+
+      updateRule('rule-len', ruleLen);
+      updateRule('rule-distinct', ruleDistinct);
+      updateRule('rule-mix', ruleMix);
+      updateRule('rule-special', ruleSpecial);
+
+      let score = (ruleLen ? 1 : 0) + (ruleDistinct ? 1 : 0) + (ruleMix ? 1 : 0) + (ruleSpecial ? 1 : 0);
+      const badge = document.getElementById('strength-badge');
+      badge.textContent = 'Level ' + score + '/4';
+      if (score === 4) {
+        badge.className = 'text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono';
+      } else if (score >= 2) {
+        badge.className = 'text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-mono';
+      } else {
+        badge.className = 'text-[10px] px-1.5 py-0.2 rounded bg-slate-200 text-secondary font-mono';
+      }
+
+      // Mismatch check
+      const mismatchErr = document.getElementById('error-mismatch');
+      if (conf.length > 0 && pwd !== conf) {
+        mismatchErr.classList.remove('hidden');
+      } else {
+        mismatchErr.classList.add('hidden');
+      }
+    }
+
+    function updateRule(elementId, passed) {
+      const el = document.getElementById(elementId);
+      const dot = el.querySelector('.rule-dot');
+      if (passed) {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 rule-dot';
+        el.className = 'flex items-center gap-1.5 transition-colors text-emerald-700 font-medium';
+      } else {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-slate-300 rule-dot';
+        el.className = 'flex items-center gap-1.5 transition-colors text-secondary';
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const curr = document.getElementById('current-password').value;
+      const pwd = document.getElementById('new-password').value;
+      const conf = document.getElementById('confirm-password').value;
+
+      if (curr === pwd && pwd.length > 0) {
+        alert(currentLang === 'th' ? 'รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม' : 'New password cannot be the same as the old password');
+        return;
+      }
+
+      if (pwd !== conf) {
+        document.getElementById('error-mismatch').classList.remove('hidden');
+        return;
+      }
+
+      // Success feedback
+      document.getElementById('success-banner').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      document.getElementById('change-password-form').reset();
+      handlePasswordInput();
+      document.getElementById('error-mismatch').classList.add('hidden');
+    }
+
+    function simulateMismatch() {
+      document.getElementById('current-password').value = 'OldPassword@123';
+      document.getElementById('new-password').value = 'NewPassSecure#99';
+      document.getElementById('confirm-password').value = 'NewPassSecure#88';
+      handlePasswordInput();
+    }
+
+    function simulateSameAsOld() {
+      document.getElementById('current-password').value = 'SamePassword!1';
+      document.getElementById('new-password').value = 'SamePassword!1';
+      document.getElementById('confirm-password').value = 'SamePassword!1';
+      handlePasswordInput();
+    }
+
+    function handleLogout() {
+      if (confirm(currentLang === 'th' ? 'ต้องการออกจากระบบหรือไม่?' : 'Are you sure you want to sign out?')) {
+        alert(currentLang === 'th' ? 'ออกจากระบบเรียบร้อยแล้ว' : 'Signed out successfully');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -7,6 +7,8 @@ import { getErrorMessage } from '../promotion-common';
 import { pageContentNotices } from './campaign.helpers';
 
 /** หน้าโปร: 1 campaign มีได้ 1 หน้า — สร้างที่นี่ (ผูก campaign ให้เลย) หรือแก้ฟอร์มเดียวกับเมนู Promotion Pages */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function CampaignPageSection({
   campaign,
   onChanged,
@@ -18,6 +20,7 @@ export default function CampaignPageSection({
   /** The page form has (or no longer has) unsaved edits — the hub warns before leaving. Pass a stable function. */
   onDirtyChange: (dirty: boolean) => void;
 }) {
+  __useUiLocale();
   const headingId = useId();
   const pageId = campaign.page?.id ?? null;
   const [page, setPage] = useState<PromotionPageSummary | null>(null);
@@ -49,14 +52,14 @@ export default function CampaignPageSection({
   const campaigns = [campaign];
   let body;
   if (loading) {
-    body = <p className="text-sm text-ink-muted">กำลังโหลด...</p>;
+    body = <p className="text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</p>;
   } else if (loadError) {
     body = (
       <div className="flex flex-col items-start gap-3">
         <CouponFormErrorBanner error={loadError} />
         <Button
           variant="secondary"
-          text="ลองใหม่"
+          text={__uiText("ลองใหม่")}
           onClick={() => {
             setLoading(true);
             setReloadKey((key) => key + 1);
@@ -96,15 +99,15 @@ export default function CampaignPageSection({
           }}
         />
         <div>
-          <Button variant="secondary" text="ยกเลิก" onClick={() => setCreating(false)} />
+          <Button variant="secondary" text={__uiText("ยกเลิก")} onClick={() => setCreating(false)} />
         </div>
       </div>
     );
   } else {
     body = (
       <div className="flex flex-col items-start gap-3">
-        <p className="text-sm text-ink-muted">ยังไม่มีหน้าโปร — ลูกค้ายังเปิดดูสินค้าของงานนี้ทั้งชุดในหน้าเดียวไม่ได้</p>
-        <Button text="สร้างหน้าโปร" onClick={() => setCreating(true)} />
+        <p className="text-sm text-ink-muted">{__uiText("ยังไม่มีหน้าโปร — ลูกค้ายังเปิดดูสินค้าของงานนี้ทั้งชุดในหน้าเดียวไม่ได้")}</p>
+        <Button text={__uiText("สร้างหน้าโปร")} onClick={() => setCreating(true)} />
       </div>
     );
   }
@@ -117,12 +120,10 @@ export default function CampaignPageSection({
     >
       <div>
         <h2 id={headingId} className="text-base font-bold text-ink">
-          หน้าโปร (Page)
-        </h2>
+          {__uiText("หน้าโปร (Page)")}</h2>
         <p className="mt-1 text-xs text-ink-secondary">
-          แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะที่ใช้งานอยู่ของ Campaign (และสินค้าที่คูปองจำกัดไว้) —{' '}
-          <strong>บันทึกแยก</strong>จากข้อมูล Campaign ด้านบน (ปุ่มของหน้าโปรอยู่ท้ายการ์ดนี้)
-        </p>
+          {__uiText("แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะที่ใช้งานอยู่ของ Campaign (และสินค้าที่คูปองจำกัดไว้) —")}{' '}
+          <strong>{__uiText("บันทึกแยก")}</strong>{__uiText("จากข้อมูล Campaign ด้านบน (ปุ่มของหน้าโปรอยู่ท้ายการ์ดนี้)")}</p>
       </div>
       {pageContentNotices(campaign).map((notice) => (
         <p
@@ -134,10 +135,12 @@ export default function CampaignPageSection({
               : 'text-xs text-ink-muted'
           }
         >
-          {notice.text}
+          {(typeof (notice.text) === 'string' ? __uiText(notice.text) : notice.text)}
         </p>
       ))}
       {body}
     </section>
   );
 }
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   getCartMoveAllowedCategories,
   putCartMoveAllowedCategories,
@@ -11,6 +12,8 @@ import {
 } from '../category/category-form';
 import { childrenOf } from '../category/category-tree.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function parentMap(rows: CategoryRow[]): Map<string, string | null> {
   return new Map(
     rows.map((row) => [row.category_id_uuid, row.parent_id_uuid ?? null]),
@@ -85,6 +88,7 @@ function CategoryNode({
   onToggle: (id: string) => void;
   depth: number;
 }) {
+  __useUiLocale();
   const id = row.category_id_uuid;
   const kids = childrenOf(rows, id);
   const covered = isCoveredByAncestor(id, selected, parents);
@@ -102,7 +106,7 @@ function CategoryNode({
             type="button"
             className="w-5 text-xs text-gray-500"
             onClick={() => onToggleExpand(id)}
-            aria-label={isOpen ? 'Collapse' : 'Expand'}
+            aria-label={isOpen ? __uiText("Collapse") : __uiText("Expand")}
           >
             {isOpen ? '▼' : '▶'}
           </button>
@@ -148,6 +152,7 @@ function CategoryNode({
 }
 
 export default function CartMoveCategoriesAdmin() {
+  __useUiLocale();
   const { rows, isLoading: loadingTree } = useCategoryRowsQuery();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -166,7 +171,7 @@ export default function CartMoveCategoriesAdmin() {
       })
       .catch((err: { response?: { data?: { message?: string } }; message?: string }) => {
         setError(
-          err?.response?.data?.message ?? err.message ?? 'โหลด allowlist ไม่สำเร็จ',
+          err?.response?.data?.message ?? err.message ?? __uiMessage("โหลด allowlist ไม่สำเร็จ"),
         );
       })
       .finally(() => setLoadingAllowlist(false));
@@ -211,7 +216,7 @@ export default function CartMoveCategoriesAdmin() {
         response?: { data?: { message?: string } };
         message?: string;
       };
-      setError(e?.response?.data?.message ?? e.message ?? 'บันทึกไม่สำเร็จ');
+      setError(e?.response?.data?.message ?? e.message ?? __uiMessage("บันทึกไม่สำเร็จ"));
     } finally {
       setSaving(false);
     }
@@ -222,18 +227,15 @@ export default function CartMoveCategoriesAdmin() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Unlock Move Categories"
-        subtitle="หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate"
+        title={__uiText("Unlock Move Categories")}
+        subtitle={__uiText("หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate")}
       />
 
       <p className="mb-4 max-w-2xl text-sm text-gray-600">
-        สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้
-        ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา)
-        ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่
-      </p>
+        {__uiText("สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่")}</p>
 
       {loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
@@ -242,21 +244,20 @@ export default function CartMoveCategoriesAdmin() {
               onClick={() => void handleSave()}
               disabled={saving}
             >
-              {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+              {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
             </Button>
             <span className="text-sm text-gray-500">
-              เลือกแล้ว {selected.size} หมวด
-            </span>
+              {__uiText("เลือกแล้ว ")}{selected.size} {__uiText(" หมวด")}</span>
             {savedMsg ? (
               <span className="text-sm text-green-700">{savedMsg}</span>
             ) : null}
           </div>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p> : null}
 
           <div className="max-h-[70vh] overflow-auto rounded-lg border border-gray-200 bg-white p-3">
             {roots.length === 0 ? (
-              <p className="text-sm text-gray-500">ไม่พบหมวดหมู่</p>
+              <p className="text-sm text-gray-500">{__uiText("ไม่พบหมวดหมู่")}</p>
             ) : (
               <ul>
                 {roots.map((row) => (

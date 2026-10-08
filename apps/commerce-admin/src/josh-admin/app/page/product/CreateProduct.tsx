@@ -25,7 +25,10 @@ import { LeafCategorySelect, useCategoryRows } from '../category/category-form';
 // 🌟 สมมติพิกัด Import ของ Components กลางในโปรเจกต์ของคุณ
 // import { Button, Input, DragDropUpload, DateRangeInput } from '@/components/common';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function InsertProductForm() {
+  __useUiLocale();
   const categoryRows = useCategoryRows();
   // 1. สเตตสำหรับข้อมูลข้อความทั่วไป (Global & Translations)
   const [formData, setFormData] = useState({
@@ -91,7 +94,7 @@ export default function InsertProductForm() {
     if (!file) return;
     setUploadedFiles((prev) => {
       if (prev.length >= 3) {
-        alert('อัปโหลดรูปภาพได้สูงสุด 3 รูปเท่านั้นครับ!');
+        alert(__uiText("อัปโหลดรูปภาพได้สูงสุด 3 รูปเท่านั้นครับ!"));
         return prev;
       }
       return [...prev, file];
@@ -113,7 +116,7 @@ export default function InsertProductForm() {
       !sellingPrice.trim()
     ) {
       alert(
-        'กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ',
+        __uiText("กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ"),
       );
       return;
     }
@@ -171,15 +174,15 @@ export default function InsertProductForm() {
 
       if (result?.product_inventory_id) {
         alert(
-          `🎉 สร้างสินค้าใหม่และอัปโหลดรูปภาพสำเร็จ! SKU ${result.product_inventory_sku ?? formData.product_sku} · ID: ${result.product_inventory_id}`,
+          __uiText("🎉 สร้างสินค้าใหม่และอัปโหลดรูปภาพสำเร็จ! SKU {0} · ID: {1}", {"0": result.product_inventory_sku ?? formData.product_sku, "1": result.product_inventory_id}),
         );
         // ตั้งค่าเคลียร์ฟอร์มตามใจชอบหลังจากทำรายการสำเร็จ
       } else {
-        alert(`❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน: ${result.message}`);
+        alert(__uiText("❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน: {0}", {"0": result.message}));
       }
     } catch (error) {
       console.error('Submit Product Form Failed:', error);
-      alert(`❌ สร้างสินค้าไม่สำเร็จ: ${saveErrorMessage(error, 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์หลังบ้านได้ในขณะนี้')}`);
+      alert(__uiText("❌ สร้างสินค้าไม่สำเร็จ: {0}", {"0": saveErrorMessage(error, 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์หลังบ้านได้ในขณะนี้')}));
     }
   };
 
@@ -187,28 +190,26 @@ export default function InsertProductForm() {
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="space-y-6 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
         <h2 className="text-2xl font-bold text-gray-800 border-b pb-4">
-          ✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ
-        </h2>
+          {__uiText("✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ")}</h2>
 
         {/* 📌 ส่วนที่ 1: ข้อมูลหลักสินค้า (ใช้ Component กลาง <Input />) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">
-            📦 1. ข้อมูลหลักสินค้า (Global Info)
-          </h3>
+            {__uiText("📦 1. ข้อมูลหลักสินค้า (Global Info)")}</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Input
-                label="รหัสสินค้า (SKU) *"
+                label={__uiText("รหัสสินค้า (SKU) *")}
                 value={formData.product_sku}
                 onChange={(e: any) =>
                   handleInputChange('product_sku', e.target.value)
                 }
-                placeholder="เช่น BIDBEK666640977"
+                placeholder={__uiText("เช่น BIDBEK666640977")}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                <span className="mb-1 block">หมวดหมู่สินค้า</span>
+                <span className="mb-1 block">{__uiText("หมวดหมู่สินค้า")}</span>
                 <LeafCategorySelect
                   rows={categoryRows}
                   value={formData.category_id}
@@ -216,18 +217,16 @@ export default function InsertProductForm() {
                 />
               </label>
               <p className="mt-1 text-xs text-gray-500">
-                เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ
-                (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)
-              </p>
+                {__uiText("เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)")}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">แบรนด์</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>
               <select
                 className="w-full border rounded-lg px-3 py-2"
                 value={formData.brand_code}
                 onChange={(e) => handleInputChange('brand_code', e.target.value)}
               >
-                <option value="">-- เลือกแบรนด์ --</option>
+                <option value="">{__uiText("-- เลือกแบรนด์ --")}</option>
                 {brandOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -235,13 +234,13 @@ export default function InsertProductForm() {
                 ))}
               </select>
               <Input
-                label="หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)"
+                label={__uiText("หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)")}
                 value={newBrandCode}
                 onChange={(e: any) => {
                   setNewBrandCode(e.target.value);
                   handleInputChange('brand_code', e.target.value || formData.brand_code);
                 }}
-                placeholder="เช่น ACME"
+                placeholder={__uiText("เช่น ACME")}
               />
             </div>
           </div>
@@ -252,7 +251,7 @@ export default function InsertProductForm() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label="ราคาขาย (฿) *"
+              label={__uiText("ราคาขาย (฿) *")}
               type="number"
               min={0}
               step="0.01"
@@ -260,28 +259,27 @@ export default function InsertProductForm() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSellingPrice(e.target.value)
               }
-              placeholder="เช่น 100"
+              placeholder={__uiText("เช่น 100")}
             />
           </div>
           <div>
             <Input
-              label="หน่วยขาย"
+              label={__uiText("หน่วยขาย")}
               value={sellingUnit}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSellingUnit(e.target.value)
               }
-              placeholder="เช่น ชิ้น"
+              placeholder={__uiText("เช่น ชิ้น")}
             />
           </div>
         </div>
         <p className="text-xs text-gray-500">
-          ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic
-        </p>
+          {__uiText("ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic")}</p>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label="จำนวนสต็อกเริ่มต้น"
+              label={__uiText("จำนวนสต็อกเริ่มต้น")}
               type="number"
               value={stockQty}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -294,8 +292,7 @@ export default function InsertProductForm() {
 
         <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
           <h3 className="mb-2 text-sm font-semibold text-gray-800">
-            ราคาตามจำนวนซื้อ (Tier)
-          </h3>
+            {__uiText("ราคาตามจำนวนซื้อ (Tier)")}</h3>
           <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} />
         </div>
 
@@ -304,17 +301,16 @@ export default function InsertProductForm() {
         {/* 🇹🇭 ส่วนที่ 2: ข้อมูลภาษาไทย (Thai Translation) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-red-600">
-            🇹🇭 2. ข้อมูลภาษาไทย (Thai Translation)
-          </h3>
+            {__uiText("🇹🇭 2. ข้อมูลภาษาไทย (Thai Translation)")}</h3>
           <Input
-            label="ชื่อสินค้า (ภาษาไทย) *"
+            label={__uiText("ชื่อสินค้า (ภาษาไทย) *")}
             value={formData.product_name_th}
             onChange={(e: any) =>
               handleInputChange('product_name_th', e.target.value)
             }
           />
           <Input
-            label="รายละเอียดสินค้าอย่างย่อ (ภาษาไทย)"
+            label={__uiText("รายละเอียดสินค้าอย่างย่อ (ภาษาไทย)")}
             value={formData.product_description_th}
             onChange={(e: any) =>
               handleInputChange('product_description_th', e.target.value)
@@ -327,17 +323,16 @@ export default function InsertProductForm() {
         {/* 🇺🇸 ส่วนที่ 3: ข้อมูลภาษาอังกฤษ (English Translation) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">
-            🇺🇸 3. ข้อมูลภาษาอังกฤษ (English Translation)
-          </h3>
+            {__uiText("🇺🇸 3. ข้อมูลภาษาอังกฤษ (English Translation)")}</h3>
           <Input
-            label="ชื่อสินค้า (ภาษาอังกฤษ) *"
+            label={__uiText("ชื่อสินค้า (ภาษาอังกฤษ) *")}
             value={formData.product_name_en}
             onChange={(e: any) =>
               handleInputChange('product_name_en', e.target.value)
             }
           />
           <Input
-            label="รายละเอียดสินค้าอย่างย่อ (ภาษาอังกฤษ)"
+            label={__uiText("รายละเอียดสินค้าอย่างย่อ (ภาษาอังกฤษ)")}
             value={formData.product_description_en}
             onChange={(e: any) =>
               handleInputChange('product_description_en', e.target.value)
@@ -359,8 +354,7 @@ export default function InsertProductForm() {
         {/* 📸 ส่วนที่ 4: ลากวางอัปโหลดไฟล์จริง (Component กลาง <DragDropUpload />) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-green-600">
-            📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)
-          </h3>
+            {__uiText("📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)")}</h3>
 
           {/* เสียบตัวลากวางส่วนกลางของคุณที่นี่ */}
           <DragDropUpload
@@ -379,22 +373,21 @@ export default function InsertProductForm() {
                 >
                   <img
                     src={URL.createObjectURL(file)}
-                    alt={`preview-${index}`}
+                    alt={__uiText("preview-{0}", {"0": index})}
                     className="h-24 w-24 object-cover rounded-md shadow-inner"
                   />
                   <span className="text-xs text-gray-500 mt-1 truncate max-w-full px-1">
                     {file.name}
                   </span>
                   <span className="absolute top-1 right-1 bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow">
-                    รูปที่ {index + 1} {index === 0 && '⭐'}
+                    {__uiText("รูปที่ ")}{index + 1} {index === 0 && '⭐'}
                   </span>
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
                     className="mt-2 text-xs text-red-500 font-semibold hover:text-red-700 hover:underline"
                   >
-                    🛑 ลบรูปนี้
-                  </button>
+                    {__uiText("🛑 ลบรูปนี้")}</button>
                 </div>
               ))}
             </div>
@@ -404,7 +397,7 @@ export default function InsertProductForm() {
         {/* 🚀 ปุ่มกดบันทึกโดยใช้ Component กลาง <Button /> ของคุณ */}
         <div className="pt-4">
           <Button
-            text="💾 บันทึกข้อมูลและประมวลผล AI"
+            text={__uiText("💾 บันทึกข้อมูลและประมวลผล AI")}
             onClick={() => handleSubmit()}
           />
         </div>

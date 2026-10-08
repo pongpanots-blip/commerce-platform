@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>คืนสินค้าและคืนเงิน (Returns &amp; Refunds) - Commerce Admin</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "surface-container-high": "#e0e8ff",
+            "surface-dim": "#cddaf9",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#38485e",
+            "background": "#f9f9ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "secondary-fixed": "#d3e3ff",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#d0e1fd",
+            "on-secondary-container": "#54647c",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#bc4600",
+            "surface-container-low": "#f1f3ff",
+            "tertiary-fixed": "#ffdbcd",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary-fixed": "#360f00",
+            "on-error": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-container": "#ffebe4",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-primary-container": "#ededff",
+            "primary": "#0a3fdc",
+            "inverse-surface": "#243048",
+            "inverse-primary": "#b9c3ff",
+            "secondary": "#4f5f77",
+            "surface-container-highest": "#d7e2ff",
+            "surface-bright": "#f9f9ff",
+            "outline-variant": "#c4c5d8",
+            "surface": "#f9f9ff",
+            "outline": "#747687",
+            "on-background": "#0e1b32",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-surface-variant": "#444655",
+            "primary-container": "#365cf5",
+            "on-primary": "#ffffff",
+            "surface-variant": "#d7e2ff",
+            "surface-tint": "#214ce7",
+            "on-primary-fixed": "#001257",
+            "tertiary": "#943500",
+            "on-surface": "#0e1b32",
+            "error": "#ba1a1a",
+            "primary-fixed": "#dde1ff",
+            "surface-container": "#e8eeff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "gutter": "1rem",
+            "gutter-compact": "0.75rem",
+            "space-2xl": "2rem",
+            "space-sm": "0.5rem",
+            "margin": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Noto Sans"],
+            "table-cell": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "headline-xl": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "numeric-data": ["Noto Sans"],
+            "body-md": ["Noto Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["22px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "numeric-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface font-body-md text-body-md antialiased min-h-screen flex selection:bg-primary selection:text-white">
+<!-- Fixed Left Sidebar (256px wide) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-[#e1e7f0] flex flex-col justify-between py-4 px-3 select-none">
+<div class="flex flex-col space-y-3">
+<!-- Brand Logo / Header -->
+<div class="px-2 pb-2 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-white flex items-center justify-center font-headline-md text-headline-md">
+<span class="material-symbols-outlined text-[20px]" data-icon="storefront">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary tracking-tight leading-tight">Commerce Admin</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none">ศูนย์จัดการระบบพาณิชย์</span>
+</div>
+</div>
+</div>
+<!-- Navigation Menu (7 Main Categories) -->
+<nav class="flex flex-col space-y-1 overflow-y-auto max-h-[calc(100vh-210px)] pr-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน (ACTIVE ACCORDION CATEGORY) -->
+<div class="flex flex-col space-y-0.5 pt-0.5">
+<div class="flex items-center justify-between px-3 py-2 bg-surface-container-high text-primary font-semibold rounded-lg transition-colors duration-150">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">ออเดอร์และการเงิน</span>
+</div>
+<span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Sub-items under Orders & Finance -->
+<div class="pl-7 pr-1 py-1 flex flex-col space-y-0.5 border-l-2 border-primary ml-4">
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">ออเดอร์ทั้งหมด</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">จัดการออเดอร์ (/j/order)</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">จัดการการจัดส่ง (/j/shipments)</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">Payment Transactions</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">ใบแจ้งหนี้ค้างชำระ</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">ใบลดหนี้ (Credit Notes)</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">เครดิตคืน (Credit Backs)</a>
+<!-- Active Sub-item: Returns & Refunds -->
+<a class="px-2 py-1.5 bg-primary-container text-white font-semibold rounded text-body-sm font-body-sm flex items-center justify-between shadow-xs" href="/j/refunds">
+<span>คืนสินค้าและคืนเงิน (/j/refunds)</span>
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+</a>
+<a class="px-2 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded text-body-sm font-body-sm transition-colors" href="#">การจองสต็อก</a>
+</div>
+</div>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="support_agent">support_agent</span>
+<span class="font-label-md text-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="campaign">campaign</span>
+<span class="font-label-md text-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="monitoring">monitoring</span>
+<span class="font-label-md text-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="hub">hub</span>
+<span class="font-label-md text-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px] mr-2.5" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Navigation -->
+<div class="pt-3 border-t border-[#e1e7f0] flex flex-col space-y-1">
+<a class="flex items-center px-3 py-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors duration-150 text-body-sm" href="#">
+<span class="material-symbols-outlined text-[16px] mr-2 text-primary" data-icon="terminal">terminal</span>
+<span class="font-label-md text-label-md font-medium">Developer Portal</span>
+</a>
+<a class="flex items-center px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 text-body-sm" href="#">
+<span class="material-symbols-outlined text-[16px] mr-2" data-icon="help">help</span>
+<span class="font-label-md text-label-md">ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center px-3 py-1.5 text-error hover:bg-error-container rounded-lg transition-colors duration-150 text-body-sm" href="#">
+<span class="material-symbols-outlined text-[16px] mr-2" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- Main View Area (Offset by sidebar 256px) -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- Top Contextual Navigation Bar (Fixed 56px height) -->
+<header class="fixed top-0 right-0 left-64 h-14 bg-surface-container-lowest border-b border-[#e1e7f0] z-30 flex items-center justify-between px-6">
+<!-- Left side: Breadcrumb & Route identifier -->
+<div class="flex items-center space-x-3">
+<nav class="flex items-center text-body-sm space-x-1.5 text-secondary">
+<span class="text-on-surface-variant">ออเดอร์และการเงิน</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">คืนสินค้าและคืนเงิน (/j/refunds)</span>
+</nav>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-numeric-data text-label-sm font-semibold border border-outline-variant/30">
+          admin-703ddfd14941
+        </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-secondary font-label-sm text-[11px] border border-dashed border-outline-variant">
+          ข้อมูลตัวอย่าง / Sample data
+        </span>
+</div>
+<!-- Center: Omni-Search Input -->
+<div class="flex-1 max-w-md mx-6">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-secondary text-[18px]" data-icon="search">search</span>
+<input class="w-full h-9 pl-9 pr-4 bg-background border border-[#e1e7f0] rounded-lg text-body-sm placeholder:text-secondary focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" placeholder="ค้นหาตามเลขที่คำขอ, Order ID, ลูกค้า..." type="text"/>
+</div>
+</div>
+<!-- Right Actions: Language Switcher, Notifications, Help, User Profile -->
+<div class="flex items-center space-x-3.5">
+<!-- Language Switcher Pill -->
+<div class="bg-[#edf2f9] p-0.5 rounded-full flex items-center h-7 border border-[#e1e7f0]">
+<button class="px-2 py-0.5 rounded-full bg-white text-on-surface text-[11px] font-semibold shadow-xs transition-all">ไทย (TH)</button>
+<button class="px-2 py-0.5 rounded-full text-secondary hover:text-on-surface text-[11px] font-medium transition-all">English (EN)</button>
+</div>
+<!-- Action Icons -->
+<button class="relative p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="ศูนย์ช่วยเหลือ">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+</button>
+<!-- User Profile Avatar Pill -->
+<div class="flex items-center space-x-2 pl-2 border-l border-[#e1e7f0]">
+<div class="w-7 h-7 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-[11px]">
+            สม
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-body-sm font-semibold leading-tight text-on-surface">สมชาย บริการค้า</span>
+<span class="text-[10px] text-secondary leading-tight">Admin / Operations</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Canvas (Offset 56px top) -->
+<main class="mt-14 p-6 flex-1 flex flex-col items-center">
+<div class="w-full max-w-[1240px] flex flex-col space-y-6">
+<!-- Notification Banner / Flash Message Container -->
+<div class="flex items-center justify-between px-4 py-2.5 rounded-lg bg-[#edf2f9] border border-[#e1e7f0] text-body-sm text-on-surface" id="statusNotification">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="info">info</span>
+<span class="text-secondary">ข้อความแจ้งเตือนจะแสดงที่นี่ (ระบบเชื่อมต่อคลังสินค้าและบัญชีพร้อมทำงานปกติ)</span>
+</div>
+<button class="text-secondary hover:text-on-surface" onclick="document.getElementById('statusNotification').style.display='none'">
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- 1. Header & Primary Actions Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div>
+<div class="flex items-center space-x-3">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">คืนสินค้าและคืนเงิน (Returns &amp; Refunds)</h1>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8] font-semibold">
+                เชื่อมต่อระบบสำเร็จ
+              </span>
+</div>
+<p class="font-body-md text-secondary mt-1">
+              ตรวจสอบและจัดการคำขอคืนสินค้า คืนเงินค่าสินค้า และการพิจารณาอนุมัติสำหรับฝ่ายบริการลูกค้า
+            </p>
+</div>
+<div class="flex items-center space-x-3">
+<button class="h-9 px-3.5 bg-white text-on-surface border border-[#e1e7f0] rounded-lg hover:bg-[#f6f8fc] hover:border-[#d1dbe8] flex items-center space-x-1.5 transition-all shadow-xs" onclick="window.location.reload()">
+<span class="material-symbols-outlined text-[18px]" data-icon="refresh">refresh</span>
+<span class="font-label-md text-label-md">รีเฟรช</span>
+</button>
+<button class="h-9 px-4 bg-primary-container text-white font-semibold rounded-lg hover:bg-primary transition-all flex items-center space-x-1.5 shadow-sm" onclick="toggleModal(true)">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+<span class="font-label-md text-label-md">+ สร้างคำขอคืนเงิน</span>
+</button>
+</div>
+</div>
+<!-- 2. KPI / Metrics Summary (Bento-like 5 Cards Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+<!-- Total Card -->
+<div class="bg-white rounded-xl p-4 border border-[#e1e7f0] shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-md text-label-md">คำขอคืนเงิน / คืนสินค้าทั้งหมด</span>
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="assignment_return">assignment_return</span>
+</div>
+<div class="mt-3">
+<div class="text-[26px] font-bold font-numeric-data text-on-surface">42 <span class="text-body-sm font-normal text-secondary">รายการ</span></div>
+<div class="text-[11px] text-secondary mt-1 flex items-center">
+<span class="text-[#157347] font-semibold mr-1">↑ +4</span> รายการใหม่ใน 24 ชม.
+              </div>
+</div>
+</div>
+<!-- under_review Card -->
+<div class="bg-white rounded-xl p-4 border border-[#fae392] bg-gradient-to-b from-[#fdf8e6]/30 to-white shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-[#b08900]">
+<span class="font-label-md text-label-md font-semibold">under_review (รอตรวจสอบ)</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="pending">pending</span>
+</div>
+<div class="mt-3">
+<div class="text-[26px] font-bold font-numeric-data text-[#b08900]">12 <span class="text-body-sm font-normal text-[#b08900]">รายการ</span></div>
+<div class="text-[11px] text-secondary mt-1">ต้องตรวจสภาพพัสดุจากคลัง</div>
+</div>
+</div>
+<!-- pending_decision Card -->
+<div class="bg-white rounded-xl p-4 border border-[#d0e1fd] bg-gradient-to-b from-[#ebf0ff]/40 to-white shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-[#365cf5]">
+<span class="font-label-md text-label-md font-semibold">pending_decision (รอการตัดสินใจ)</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="gavel">gavel</span>
+</div>
+<div class="mt-3">
+<div class="text-[26px] font-bold font-numeric-data text-[#365cf5]">8 <span class="text-body-sm font-normal text-[#365cf5]">รายการ</span></div>
+<div class="text-[11px] text-secondary mt-1">รอ ผจก. CS หรือ บัญชีอนุมัติ</div>
+</div>
+</div>
+<!-- refunded Card -->
+<div class="bg-white rounded-xl p-4 border border-[#b7dfc8] bg-gradient-to-b from-[#e8f5ee]/40 to-white shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-[#157347]">
+<span class="font-label-md text-label-md font-semibold">refunded (คืนเงินแล้ว)</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="mt-3">
+<div class="text-[26px] font-bold font-numeric-data text-[#157347]">19 <span class="text-body-sm font-normal text-[#157347]">รายการ</span></div>
+<div class="text-[11px] font-semibold text-[#157347] mt-1">ยอดรวม ฿84,320.00</div>
+</div>
+</div>
+<!-- rejected Card -->
+<div class="bg-white rounded-xl p-4 border border-[#f1b3b8] bg-gradient-to-b from-[#faecee]/40 to-white shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-[#c2333f]">
+<span class="font-label-md text-label-md font-semibold">rejected (ปฏิเสธ)</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="cancel">cancel</span>
+</div>
+<div class="mt-3">
+<div class="text-[26px] font-bold font-numeric-data text-[#c2333f]">3 <span class="text-body-sm font-normal text-[#c2333f]">รายการ</span></div>
+<div class="text-[11px] text-secondary mt-1">สินค้าเสียหายจากผู้ใช้/พ้นกำหนด</div>
+</div>
+</div>
+</div>
+<!-- 3. Filter & Controls Bar -->
+<div class="bg-white p-4 rounded-xl border border-[#e1e7f0] shadow-xs flex flex-col lg:flex-row items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+<!-- Filter Dropdown: Status -->
+<div class="flex items-center space-x-2">
+<span class="text-label-md text-secondary font-medium">สถานะ:</span>
+<select class="h-9 text-body-sm bg-white border border-[#e1e7f0] rounded-lg px-3 pr-8 focus:ring-1 focus:ring-primary focus:border-primary" id="statusFilter" onchange="filterTable()">
+<option value="all">ทุกสถานะ</option>
+<option value="under_review">under_review (รอตรวจสอบ)</option>
+<option value="pending_decision">pending_decision (รอการตัดสินใจ)</option>
+<option value="refunded">refunded (คืนเงินแล้ว)</option>
+<option value="rejected">rejected (ปฏิเสธคำขอ)</option>
+</select>
+</div>
+<!-- Filter Dropdown: Time Range -->
+<div class="flex items-center space-x-2">
+<span class="text-label-md text-secondary font-medium">ช่วงเวลา:</span>
+<select class="h-9 text-body-sm bg-white border border-[#e1e7f0] rounded-lg px-3 pr-8 focus:ring-1 focus:ring-primary focus:border-primary">
+<option>30 วันล่าสุด (ล่าสุด)</option>
+<option>วันนี้ (Today)</option>
+<option>7 วันที่ผ่านมา</option>
+<option>ไตรมาสนี้ (Q1 2025)</option>
+<option>กำหนดช่วงวันเอง...</option>
+</select>
+</div>
+</div>
+<!-- Table Search Input -->
+<div class="w-full lg:w-80">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-secondary text-[18px]" data-icon="search">search</span>
+<input class="w-full h-9 pl-9 pr-3 text-body-sm bg-background border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="searchInput" onkeyup="filterTable()" placeholder="ค้นหาเฉพาะในหน้านี้ (เลขคำขอ, Order ID)" type="text"/>
+</div>
+</div>
+</div>
+<!-- 4. Active Refunds List Table -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs overflow-hidden">
+<div class="px-5 py-3 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="receipt_long">receipt_long</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">รายการคำขอคืนสินค้าและการคืนเงิน</h2>
+</div>
+<div class="text-label-sm text-secondary">
+              แสดง 1 - 6 จากทั้งหมด 42 รายการ
+            </div>
+</div>
+<!-- Table Wrapper -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="refundsTable">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-secondary font-label-md text-label-md uppercase tracking-wider">
+<th class="py-2.5 px-4 font-semibold"># Request ID</th>
+<th class="py-2.5 px-4 font-semibold">Order</th>
+<th class="py-2.5 px-4 font-semibold">ชื่อจริงลูกค้า</th>
+<th class="py-2.5 px-4 font-semibold">รายการสินค้า (SKU &amp; คืน)</th>
+<th class="py-2.5 px-4 font-semibold text-right">ยอดเงินคืน (฿)</th>
+<th class="py-2.5 px-4 font-semibold">เหตุผล</th>
+<th class="py-2.5 px-4 font-semibold">หมายเหตุ CS</th>
+<th class="py-2.5 px-4 font-semibold text-center">สถานะ</th>
+<th class="py-2.5 px-4 font-semibold">สร้างเมื่อ</th>
+<th class="py-2.5 px-4 font-semibold text-right">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-table-cell font-table-cell">
+<!-- Row 1: under_review -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-status="under_review">
+<td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250328-01</td>
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline" href="#">ORD-20250327-089</a>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">ธีรเดช วงศ์สว่าง</div>
+<div class="text-body-sm text-secondary">081-992-12xx</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">SKU: TECH-WLS-PRO</div>
+<div class="text-body-sm text-secondary">หูฟังไร้สาย Pro Sound · จำนวนคืน: 1</div>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+                    ฿2,490.00
+                  </td>
+<td class="py-3 px-4 text-secondary">สินค้าชำรุดจากการผลิต ไม่ติดเสียง</td>
+<td class="py-3 px-4 text-secondary max-w-xs truncate" title="ลูกค้านำส่ง Drop-off สาขาสยามแล้ว รอคลังตรวจของ">
+                    ลูกค้านำส่ง Drop-off สาขาสยามแล้ว รอคลังตรวจของ
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#fdf8e6] text-[#b08900] border border-[#fae392]">
+                      under_review
+                    </span>
+</td>
+<td class="py-3 px-4 text-secondary font-numeric-data">28 มี.ค. 2025 10:14</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end space-x-1.5">
+<button class="px-2 py-1 text-label-sm bg-surface-container text-primary hover:bg-surface-container-high rounded font-medium transition" onclick="updateRowStatus(this, 'pending_decision')" title="ส่งต่อให้ผู้จัดการพิจารณา">
+                        Pending decision
+                      </button>
+<button class="px-2 py-1 text-label-sm bg-[#faecee] text-[#c2333f] hover:bg-error-container rounded font-medium transition" onclick="updateRowStatus(this, 'rejected')" title="ปฏิเสธคำขอ">
+                        Reject
+                      </button>
+</div>
+</td>
+</tr>
+<!-- Row 2: pending_decision -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-status="pending_decision">
+<td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250328-02</td>
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline" href="#">ORD-20250326-401</a>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">พิมพาภรณ์ สุขใจ</div>
+<div class="text-body-sm text-secondary">089-432-88xx</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">SKU: HOME-ROBOT-V3</div>
+<div class="text-body-sm text-secondary">หุ่นยนต์ดูดฝุ่น CleanMax · จำนวนคืน: 1</div>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+                    ฿7,890.00
+                  </td>
+<td class="py-3 px-4 text-secondary">จัดส่งผิดรุ่น (ได้รับรุ่น V2 แทน)</td>
+<td class="py-3 px-4 text-secondary max-w-xs truncate" title="คลังยืนยันสลับกล่องจริง เสนอคืนเงินเต็มจำนวน">
+                    คลังยืนยันสลับกล่องจริง เสนอคืนเงินเต็มจำนวน
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#ebf0ff] text-[#365cf5] border border-[#d0e1fd]">
+                      pending_decision
+                    </span>
+</td>
+<td class="py-3 px-4 text-secondary font-numeric-data">28 มี.ค. 2025 09:42</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end space-x-1.5">
+<button class="px-2 py-1 text-label-sm bg-[#e8f5ee] text-[#157347] hover:bg-green-100 rounded font-medium transition" onclick="updateRowStatus(this, 'refunded')" title="อนุมัติและคืนเงิน">
+                        Refunded
+                      </button>
+<button class="px-2 py-1 text-label-sm bg-[#faecee] text-[#c2333f] hover:bg-error-container rounded font-medium transition" onclick="updateRowStatus(this, 'rejected')" title="ปฏิเสธคำขอ">
+                        Reject
+                      </button>
+</div>
+</td>
+</tr>
+<!-- Row 3: refunded -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-status="refunded">
+<td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250327-09</td>
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline" href="#">ORD-20250325-112</a>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">อนันต์ กาญจนาภรณ์</div>
+<div class="text-body-sm text-secondary">092-111-54xx</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">SKU: KITCH-AIR-FRY</div>
+<div class="text-body-sm text-secondary">หม้อทอดไร้น้ำมัน 5L · จำนวนคืน: 2</div>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+                    ฿3,580.00
+                  </td>
+<td class="py-3 px-4 text-secondary">สั่งซื้อซ้ำซ้อนโดยไม่ได้ตั้งใจ</td>
+<td class="py-3 px-4 text-secondary max-w-xs truncate" title="คืนเงินผ่านบัตรเครดิตเดิมเรียบร้อย TXN-99812">
+                    คืนเงินผ่านบัตรเครดิตเดิมเรียบร้อย TXN-99812
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">
+                      refunded
+                    </span>
+</td>
+<td class="py-3 px-4 text-secondary font-numeric-data">27 มี.ค. 2025 16:30</td>
+<td class="py-3 px-4 text-right">
+<span class="text-label-sm text-[#157347] font-semibold flex items-center justify-end">
+<span class="material-symbols-outlined text-[16px] mr-1" data-icon="done_all">done_all</span> สำเร็จแล้ว
+                    </span>
+</td>
+</tr>
+<!-- Row 4: under_review -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-status="under_review">
+<td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250327-08</td>
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline" href="#">ORD-20250325-774</a>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">กนกวรรณ เลิศวิมล</div>
+<div class="text-body-sm text-secondary">085-771-90xx</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">SKU: WEAR-SMART-B2</div>
+<div class="text-body-sm text-secondary">สมาร์ทวอทช์ Fit Band 2 · จำนวนคืน: 1</div>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+                    ฿1,250.00
+                  </td>
+<td class="py-3 px-4 text-secondary">ไม่เชื่อมต่อกับโทรศัพท์ iOS</td>
+<td class="py-3 px-4 text-secondary max-w-xs truncate" title="รอทีม QA ตรวจสอบการอัปเดตเฟิร์มแวร์">
+                    รอทีม QA ตรวจสอบการอัปเดตเฟิร์มแวร์
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#fdf8e6] text-[#b08900] border border-[#fae392]">
+                      under_review
+                    </span>
+</td>
+<td class="py-3 px-4 text-secondary font-numeric-data">27 มี.ค. 2025 14:15</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end space-x-1.5">
+<button class="px-2 py-1 text-label-sm bg-surface-container text-primary hover:bg-surface-container-high rounded font-medium transition" onclick="updateRowStatus(this, 'pending_decision')">
+                        Pending decision
+                      </button>
+<button class="px-2 py-1 text-label-sm bg-[#faecee] text-[#c2333f] hover:bg-error-container rounded font-medium transition" onclick="updateRowStatus(this, 'rejected')">
+                        Reject
+                      </button>
+</div>
+</td>
+</tr>
+<!-- Row 5: rejected -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-status="rejected">
+<td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250326-03</td>
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline" href="#">ORD-20250320-008</a>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">ชาญชัย บุญเจริญ</div>
+<div class="text-body-sm text-secondary">081-344-99xx</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">SKU: BEAUTY-SER-50</div>
+<div class="text-body-sm text-secondary">เซรั่มบำรุงผิวหน้าไฮยา · จำนวนคืน: 3</div>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+                    ฿1,950.00
+                  </td>
+<td class="py-3 px-4 text-secondary">เปลี่ยนใจไม่ต้องการสินค้า</td>
+<td class="py-3 px-4 text-secondary max-w-xs truncate" title="กล่องสินค้าถูกแกะซีลแล้ว ไม่ตรงตามนโยบายคืนของ">
+                    กล่องสินค้าถูกแกะซีลแล้ว ไม่ตรงตามนโยบายคืนของ
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#faecee] text-[#c2333f] border border-[#f1b3b8]">
+                      rejected
+                    </span>
+</td>
+<td class="py-3 px-4 text-secondary font-numeric-data">26 มี.ค. 2025 11:20</td>
+<td class="py-3 px-4 text-right">
+<span class="text-label-sm text-[#c2333f] font-semibold flex items-center justify-end">
+<span class="material-symbols-outlined text-[16px] mr-1" data-icon="block">block</span> ปฏิเสธแล้ว
+                    </span>
+</td>
+</tr>
+<!-- Row 6: refunded -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-status="refunded">
+<td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250326-01</td>
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline" href="#">ORD-20250319-551</a>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">วรรณา เกษมสุข</div>
+<div class="text-body-sm text-secondary">084-210-67xx</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">SKU: OFFICE-CHAIR-ER</div>
+<div class="text-body-sm text-secondary">เก้าอี้เพื่อสุขภาพ Ergonomic · จำนวนคืน: 1</div>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+                    ฿4,990.00
+                  </td>
+<td class="py-3 px-4 text-secondary">ชิ้นส่วนพนักพิงหักจากการขนส่ง</td>
+<td class="py-3 px-4 text-secondary max-w-xs truncate" title="บริษัทขนส่งเคลมประกันความเสียหายแล้ว โอนคืนบัญชีลูกค้า">
+                    บริษัทขนส่งเคลมประกันความเสียหายแล้ว โอนคืนบัญชีลูกค้า
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">
+                      refunded
+                    </span>
+</td>
+<td class="py-3 px-4 text-secondary font-numeric-data">26 มี.ค. 2025 09:10</td>
+<td class="py-3 px-4 text-right">
+<span class="text-label-sm text-[#157347] font-semibold flex items-center justify-end">
+<span class="material-symbols-outlined text-[16px] mr-1" data-icon="done_all">done_all</span> สำเร็จแล้ว
+                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm text-secondary">
+<div>
+              กำลังแสดงแถว <span class="font-semibold text-on-surface">1 ถึง 6</span> จากทั้งหมด <span class="font-semibold text-on-surface">42</span> รายการ
+            </div>
+<div class="flex items-center space-x-1">
+<button class="h-8 px-2.5 border border-[#e1e7f0] rounded bg-white hover:bg-[#f6f8fc] disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded bg-primary-container text-white font-semibold flex items-center justify-center">1</button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-on-surface font-medium flex items-center justify-center">2</button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-on-surface font-medium flex items-center justify-center">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-on-surface font-medium flex items-center justify-center">7</button>
+<button class="h-8 px-2.5 border border-[#e1e7f0] rounded bg-white hover:bg-[#f6f8fc]">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal / Overlay Drawer: Create Refund Request ("สร้างคำขอคืนเงิน") -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-[#17243b]/45 backdrop-blur-[2px] hidden transition-opacity duration-200" id="createRefundModal">
+<div class="bg-white rounded-xl shadow-2xl border border-[#e1e7f0] w-full max-w-2xl max-h-[921px] overflow-y-auto flex flex-col animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="assignment_return">assignment_return</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">สร้างคำขอคืนเงิน</h3>
+<p class="text-body-sm text-secondary">กรอก Order ID, เลือกรายการสินค้าอย่างน้อย 1 รายการ, และเหตุผล</p>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded-lg hover:bg-[#f6f8fc]" onclick="toggleModal(false)">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Body Form -->
+<form class="p-6 flex flex-col space-y-4" id="refundForm" onsubmit="handleFormSubmit(event)">
+<!-- Step 1: Order ID Input & Load Button -->
+<div>
+<label class="block text-label-md font-semibold text-on-surface mb-1">
+            รหัสออเดอร์ (Order ID) <span class="text-error">*</span>
+</label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-2 text-secondary text-[18px]" data-icon="tag">tag</span>
+<input class="w-full h-9 pl-9 pr-3 text-body-md bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-numeric-data" id="orderIdInput" placeholder="เช่น ORD-20250328-001" required="" type="text" value="ORD-20250328-994"/>
+</div>
+<button class="h-9 px-4 bg-surface-container hover:bg-surface-container-high text-primary font-semibold rounded-lg text-body-sm border border-outline-variant/30 flex items-center space-x-1 transition" id="btnLoadItems" onclick="loadOrderItems()" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="sync">sync</span>
+<span>โหลดรายการสินค้า</span>
+</button>
+</div>
+</div>
+<!-- Warning Banner -->
+<div class="p-3 bg-[#fdf8e6] border border-[#fae392] rounded-lg flex items-start space-x-2 text-body-sm text-[#b08900]">
+<span class="material-symbols-outlined text-[18px] text-[#b08900] mt-0.5 shrink-0" data-icon="warning">warning</span>
+<span>จำนวนและยอดเงินคืนของแต่ละรายการต้องมากกว่า 0 และไม่เกินจำนวนที่สั่งซื้อ</span>
+</div>
+<!-- Step 2: Loaded Product Item Selection Table -->
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-label-md font-semibold text-on-surface">รายการสินค้าในออเดอร์</span>
+<span class="text-body-sm text-secondary font-numeric-data">พบ 2 รายการสินค้า</span>
+</div>
+<div class="border border-[#e1e7f0] rounded-lg overflow-hidden">
+<table class="w-full text-left text-body-sm">
+<thead class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-secondary font-semibold">
+<tr>
+<th class="py-2 px-3 w-8 text-center">เลือก</th>
+<th class="py-2 px-3">SKU</th>
+<th class="py-2 px-3">สินค้า</th>
+<th class="py-2 px-3 text-center">จำนวน</th>
+<th class="py-2 px-3 text-center">จำนวนคืน</th>
+<th class="py-2 px-3 text-right">ยอดเงินคืน (฿)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0]">
+<tr>
+<td class="py-2 px-3 text-center">
+<input checked="" class="rounded border-[#e1e7f0] text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3 font-numeric-data text-primary">AUD-NC-700</td>
+<td class="py-2 px-3">หูฟังบลูทูธตัดเสียงรบกวน ANC</td>
+<td class="py-2 px-3 text-center font-numeric-data">1</td>
+<td class="py-2 px-3 text-center">
+<input class="w-16 h-7 text-center border border-[#e1e7f0] rounded font-numeric-data py-0 px-1 text-body-sm" max="1" min="1" type="number" value="1"/>
+</td>
+<td class="py-2 px-3 text-right font-numeric-data font-semibold text-on-surface">
+                    ฿3,190.00
+                  </td>
+</tr>
+<tr>
+<td class="py-2 px-3 text-center">
+<input class="rounded border-[#e1e7f0] text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3 font-numeric-data text-primary">ACC-CBL-C2C</td>
+<td class="py-2 px-3">สายชาร์จถัก Fast Charge 100W</td>
+<td class="py-2 px-3 text-center font-numeric-data">2</td>
+<td class="py-2 px-3 text-center">
+<input class="w-16 h-7 text-center border border-[#e1e7f0] rounded font-numeric-data py-0 px-1 text-body-sm" max="2" min="0" type="number" value="0"/>
+</td>
+<td class="py-2 px-3 text-right font-numeric-data text-secondary">
+                    ฿0.00
+                  </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Step 3: Refund Reason Selection -->
+<div>
+<label class="block text-label-md font-semibold text-on-surface mb-1">
+            เหตุผลการคืนเงิน <span class="text-error">*</span>
+</label>
+<select class="w-full h-9 bg-white border border-[#e1e7f0] rounded-lg px-3 text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" required="">
+<option value="">-- กรุณาเลือกเหตุผล --</option>
+<option selected="" value="defective">สินค้าชำรุดเสียหาย / ใช้งานไม่ได้ตั้งแต่แรก (Defective)</option>
+<option value="wrong_item">จัดส่งผิดรุ่น / ผิดสี / ผิดขนาด (Wrong Item)</option>
+<option value="missing_parts">อุปกรณ์ในกล่องไม่ครบถ้วน (Missing Parts)</option>
+<option value="duplicate_order">สั่งซื้อซ้ำซ้อน (Duplicate Order)</option>
+<option value="customer_change_mind">ลูกค้าเปลี่ยนใจ (ภายใน 7 วัน เงื่อนไขเปิดกล่องสมบูรณ์)</option>
+</select>
+</div>
+<!-- Step 4: CS Note Textarea -->
+<div>
+<label class="block text-label-md font-semibold text-on-surface mb-1">
+            CS note (หมายเหตุ CS)
+          </label>
+<textarea class="w-full p-2.5 bg-white border border-[#e1e7f0] rounded-lg text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-secondary" placeholder="ระบุรายละเอียดเพิ่มเติมสำหรับการตรวจสอบของคลังและการเงิน..." rows="3">ลูกค้าระบุว่าเปิดกล่องแล้วตัวเครื่องไม่ตอบสนองต่อการชาร์จไฟ ยินดีส่งสินค้ากลับมายังศูนย์บางนา</textarea>
+</div>
+<!-- Modal Actions Footer -->
+<div class="pt-4 border-t border-[#e1e7f0] flex items-center justify-end space-x-3">
+<button class="h-9 px-4 bg-white text-on-surface border border-[#e1e7f0] rounded-lg hover:bg-[#f6f8fc] text-body-sm font-medium transition" onclick="toggleModal(false)" type="button">
+            ยกเลิก
+          </button>
+<button class="h-9 px-5 bg-primary-container text-white font-semibold rounded-lg hover:bg-primary text-body-sm flex items-center space-x-1.5 transition shadow-sm" id="btnSubmitRefund" type="submit">
+<span class="material-symbols-outlined text-[18px]" data-icon="check">check</span>
+<span id="btnSubmitText">สร้างคำขอคืนเงิน</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Interactive JavaScript logic -->
+<script>
+    function toggleModal(show) {
+      const modal = document.getElementById('createRefundModal');
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function loadOrderItems() {
+      const btn = document.getElementById('btnLoadItems');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin" data-icon="refresh">refresh</span><span>กำลังโหลด...</span>`;
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        showNotification('โหลดรายการสินค้าของ ' + document.getElementById('orderIdInput').value + ' สำเร็จแล้ว');
+      }, 600);
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitRefund');
+      const btnText = document.getElementById('btnSubmitText');
+      btnText.innerText = "กำลังบันทึก...";
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btnText.innerText = "สร้างคำขอคืนเงิน";
+        btn.disabled = false;
+        toggleModal(false);
+        showNotification('สร้างคำขอคืนเงินสำเร็จแล้ว (เลขที่อ้างอิง RF-20250328-03)');
+
+        // Add a mock row at the top of the table
+        const tbody = document.querySelector('#refundsTable tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = "hover:bg-[#f9fafc] transition-colors bg-blue-50/20";
+        newRow.setAttribute('data-status', 'under_review');
+        newRow.innerHTML = `
+          <td class="py-3 px-4 font-semibold text-primary font-numeric-data">RF-20250328-03</td>
+          <td class="py-3 px-4 font-numeric-data">
+            <a href="#" class="text-primary hover:underline">${document.getElementById('orderIdInput').value}</a>
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-medium text-on-surface">ลูกค้าใหม่ (CS Entry)</div>
+            <div class="text-body-sm text-secondary">08x-xxx-xxxx</div>
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-medium text-on-surface">SKU: AUD-NC-700</div>
+            <div class="text-body-sm text-secondary">หูฟังบลูทูธตัดเสียงรบกวน ANC · จำนวนคืน: 1</div>
+          </td>
+          <td class="py-3 px-4 text-right font-numeric-data font-bold text-on-surface">
+            ฿3,190.00
+          </td>
+          <td class="py-3 px-4 text-secondary">สินค้าชำรุดเสียหาย (Defective)</td>
+          <td class="py-3 px-4 text-secondary max-w-xs truncate" title="สร้างจากหน้าต่างแบบฟอร์ม">
+            ลูกค้าระบุว่าเปิดกล่องแล้วตัวเครื่องไม่ตอบสนอง
+          </td>
+          <td class="py-3 px-4 text-center">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#fdf8e6] text-[#b08900] border border-[#fae392]">
+              under_review
+            </span>
+          </td>
+          <td class="py-3 px-4 text-secondary font-numeric-data">เมื่อสักครู่</td>
+          <td class="py-3 px-4 text-right">
+            <div class="flex items-center justify-end space-x-1.5">
+              <button onclick="updateRowStatus(this, 'pending_decision')" class="px-2 py-1 text-label-sm bg-surface-container text-primary hover:bg-surface-container-high rounded font-medium transition">
+                Pending decision
+              </button>
+              <button onclick="updateRowStatus(this, 'rejected')" class="px-2 py-1 text-label-sm bg-[#faecee] text-[#c2333f] hover:bg-error-container rounded font-medium transition">
+                Reject
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.prepend(newRow);
+      }, 700);
+    }
+
+    function showNotification(msg) {
+      const banner = document.getElementById('statusNotification');
+      banner.style.display = 'flex';
+      banner.querySelector('.text-secondary').innerText = msg;
+    }
+
+    function filterTable() {
+      const status = document.getElementById('statusFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#refundsTable tbody tr');
+
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        const rowText = row.innerText.toLowerCase();
+
+        const matchStatus = (status === 'all') || (rowStatus === status);
+        const matchSearch = (!search) || (rowText.includes(search));
+
+        if (matchStatus && matchSearch) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function updateRowStatus(btn, targetStatus) {
+      const row = btn.closest('tr');
+      row.setAttribute('data-status', targetStatus);
+      const statusCell = row.children[7];
+      const actionCell = row.children[9];
+
+      if (targetStatus === 'pending_decision') {
+        statusCell.innerHTML = `
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#ebf0ff] text-[#365cf5] border border-[#d0e1fd]">
+            pending_decision
+          </span>
+        `;
+        actionCell.innerHTML = `
+          <div class="flex items-center justify-end space-x-1.5">
+            <button onclick="updateRowStatus(this, 'refunded')" class="px-2 py-1 text-label-sm bg-[#e8f5ee] text-[#157347] hover:bg-green-100 rounded font-medium transition">
+              Refunded
+            </button>
+            <button onclick="updateRowStatus(this, 'rejected')" class="px-2 py-1 text-label-sm bg-[#faecee] text-[#c2333f] hover:bg-error-container rounded font-medium transition">
+              Reject
+            </button>
+          </div>
+        `;
+        showNotification('ปรับสถานะเป็น pending_decision (รอการตัดสินใจ) เรียบร้อย');
+      } else if (targetStatus === 'refunded') {
+        statusCell.innerHTML = `
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">
+            refunded
+          </span>
+        `;
+        actionCell.innerHTML = `
+          <span class="text-label-sm text-[#157347] font-semibold flex items-center justify-end">
+            <span class="material-symbols-outlined text-[16px] mr-1" data-icon="done_all">done_all</span> สำเร็จแล้ว
+          </span>
+        `;
+        showNotification('บันทึกการคืนเงินเรียบร้อยแล้ว (สถานะ: Refunded)');
+      } else if (targetStatus === 'rejected') {
+        statusCell.innerHTML = `
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#faecee] text-[#c2333f] border border-[#f1b3b8]">
+            rejected
+          </span>
+        `;
+        actionCell.innerHTML = `
+          <span class="text-label-sm text-[#c2333f] font-semibold flex items-center justify-end">
+            <span class="material-symbols-outlined text-[16px] mr-1" data-icon="block">block</span> ปฏิเสธแล้ว
+          </span>
+        `;
+        showNotification('ปฏิเสธคำขอคืนเงินเรียบร้อย');
+      }
+    }
+  </script>
+<!-- Required Invisible Translation Script Tag -->
+<script id="commerce-ui-translations" type="application/json">
+{
+  "ทุกสถานะ": {"th": "ทุกสถานะ", "en": "All statuses"},
+  "รีเฟรช": {"th": "รีเฟรช", "en": "Refresh"},
+  "สถานะ": {"th": "สถานะ", "en": "Status"},
+  "SKU": {"th": "SKU", "en": "SKU"},
+  "สินค้า": {"th": "สินค้า", "en": "Product"},
+  "จำนวน": {"th": "จำนวน", "en": "Quantity"},
+  "หมายเหตุ": {"th": "หมายเหตุ", "en": "Note"},
+  "สร้างเมื่อ": {"th": "สร้างเมื่อ", "en": "Created at"},
+  "เหตุผล": {"th": "เหตุผล", "en": "Reason"},
+  "Order": {"th": "Order", "en": "Order"},
+  "จัดการ": {"th": "จัดการ", "en": "Action"},
+  "กำลังโหลด...": {"th": "กำลังโหลด...", "en": "Loading..."},
+  "กำลังบันทึก...": {"th": "กำลังบันทึก...", "en": "Saving..."},
+  "Returns & Refunds": {"th": "คืนสินค้าและคืนเงิน", "en": "Returns & Refunds"},
+  "under_review": {"th": "รอตรวจสอบ", "en": "Under Review"},
+  "pending_decision": {"th": "รอการตัดสินใจ", "en": "Pending Decision"},
+  "rejected": {"th": "ปฏิเสธคำขอ", "en": "Rejected"},
+  "refunded": {"th": "คืนเงินแล้ว", "en": "Refunded"},
+  "กรอก Order ID, เลือกรายการสินค้าอย่างน้อย 1 รายการ, และเหตุผล": {"th": "กรอก Order ID, เลือกรายการสินค้าอย่างน้อย 1 รายการ, และเหตุผล", "en": "Enter Order ID, select at least 1 item, and provide a reason"},
+  "จำนวนและยอดเงินคืนของแต่ละรายการต้องมากกว่า 0": {"th": "จำนวนและยอดเงินคืนของแต่ละรายการต้องมากกว่า 0", "en": "Quantity and refund amount for each item must be greater than 0"},
+  "รายการสินค้า": {"th": "รายการสินค้า", "en": "Order Items"},
+  "฿": {"th": "฿", "en": "THB ฿"},
+  "CS note": {"th": "หมายเหตุ CS (CS Note)", "en": "CS Note"},
+  "Pending decision": {"th": "รอการตัดสินใจ", "en": "Pending decision"},
+  "Reject": {"th": "ปฏิเสธ", "en": "Reject"},
+  "Refunded": {"th": "คืนเงินสำเร็จ", "en": "Refunded"},
+  "คำขอคืนเงิน / คืนสินค้า": {"th": "คำขอคืนเงิน / คืนสินค้า", "en": "Refund & Return Requests"},
+  "รหัสออเดอร์ (Order ID) *": {"th": "รหัสออเดอร์ (Order ID) *", "en": "Order ID *"},
+  "โหลดรายการสินค้า": {"th": "โหลดรายการสินค้า", "en": "Load Items"},
+  "เหตุผลการคืนเงิน *": {"th": "เหตุผลการคืนเงิน *", "en": "Refund Reason *"},
+  "จำนวนคืน": {"th": "จำนวนคืน", "en": "Return Qty"},
+  "ยอดเงินคืน": {"th": "ยอดเงินคืน", "en": "Refund Amount"},
+  "สร้างคำขอคืนเงิน": {"th": "สร้างคำขอคืนเงิน", "en": "Create Refund Request"},
+  "ข้อความแจ้งเตือนจะแสดงที่นี่": {"th": "ข้อความแจ้งเตือนจะแสดงที่นี่", "en": "Notification messages will appear here"},
+  "คำอธิบายรูปภาพ (Alt text)": {"th": "คำอธิบายรูปภาพ (Alt text)", "en": "Image alt text"},
+  "ชื่อจริงลูกค้า": {"th": "ชื่อจริงลูกค้า", "en": "Customer Full Name"},
+  "ตรวจสอบรายชื่อ": {"th": "ตรวจสอบรายชื่อ", "en": "Verify list"},
+  "น้ำหนักยังไม่ชัดเจน": {"th": "น้ำหนักยังไม่ชัดเจน", "en": "Weight undetermined"},
+  "ไปใช้ที่ตะกร้า": {"th": "ไปใช้ที่ตะกร้า", "en": "Apply to cart"},
+  "ไม่ active": {"th": "ไม่ active", "en": "Inactive"},
+  "ยังไม่มีข้อมูลโภชนาการ": {"th": "ยังไม่มีข้อมูลโภชนาการ", "en": "No nutritional info yet"},
+  "รายการ ·": {"th": "รายการ ·", "en": "items ·"},
+  "ลูกค้าแต่ละคนได้รหัสไม่ซ้ำกัน เช่น SUMMER-7F3K": {"th": "ลูกค้าแต่ละคนได้รหัสไม่ซ้ำกัน เช่น SUMMER-7F3K", "en": "Each customer receives a unique code e.g. SUMMER-7F3K"},
+  "สร้าง Campaign": {"th": "สร้าง Campaign", "en": "Create Campaign"},
+  "หรือวาง URL รูปภาพเอง": {"th": "หรือวาง URL รูปภาพเอง", "en": "Or paste image URL directly"},
+  "ปิดการแจ้งเตือนประเภทนี้ไว้ทั้งระบบ": {"th": "ปิดการแจ้งเตือนประเภทนี้ไว้ทั้งระบบ", "en": "Disable this alert type system-wide"},
+  "เงื่อนไข SKU ขั้นต่ำเดิม {0} รายการ": {"th": "เงื่อนไข SKU ขั้นต่ำเดิม {0} รายการ", "en": "Previous minimum SKU condition {0} items"},
+  "กรุณาระบุมูลค่าส่วนลดให้ถูกต้อง": {"th": "กรุณาระบุมูลค่าส่วนลดให้ถูกต้อง", "en": "Please enter a valid discount amount"},
+  "สร้างคำขอคืนเงินไม่สำเร็จ": {"th": "สร้างคำขอคืนเงินไม่สำเร็จ", "en": "Failed to create refund request"}
+}
+  </script>
+</body></html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Platform — Developer Portal</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {},
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Public Sans", "Noto Sans Thai", "sans-serif"],
+            display: ["Public Sans", "Noto Sans Thai", "sans-serif"],
+            body: ["Public Sans", "Noto Sans Thai", "sans-serif"],
+            label: ["Public Sans", "Noto Sans Thai", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Public Sans', 'Noto Sans Thai', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+    }
+    /* Restrained, crisp borders */
+    .border-subtle {
+      border-color: #e1e7f0;
+    }
+    .bg-canvas {
+      background-color: #f6f8fc;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-[#17243b] antialiased selection:bg-[#365cf5]/20 selection:text-[#365cf5]">
+<!-- Shell Wrapper -->
+<div class="flex min-h-screen">
+<!-- 256px Fixed Left Navigation (Shared Component SideNavBar blueprint adapted for Dev Portal) -->
+<aside class="fixed top-0 left-0 h-screen w-64 bg-white border-r border-[#e1e7f0] flex flex-col justify-between z-30">
+<div class="flex flex-col h-full">
+<!-- Brand & App Identity -->
+<div class="h-16 px-5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#365cf5] flex items-center justify-center text-white font-bold text-sm">
+<span class="material-symbols-outlined text-white" style="font-size: 20px;">developer_board</span>
+</div>
+<div>
+<h1 class="text-sm font-bold text-[#17243b] font-headline tracking-tight leading-tight">Commerce Platform</h1>
+<p class="text-xs text-[#52627a] font-normal leading-tight">Developer Portal</p>
+</div>
+</div>
+</div>
+<!-- Back to Merchant Ops -->
+<div class="px-3 pt-3">
+<a class="flex items-center justify-between px-3 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition-colors border border-dashed border-[#e1e7f0]" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#52627a]" style="font-size: 16px;">arrow_back</span>
+              กลับสู่ระบบจัดการร้านค้า
+            </span>
+<span class="text-[10px] bg-slate-100 text-[#52627a] px-1.5 py-0.5 rounded font-mono">App</span>
+</a>
+</div>
+<!-- Section Label -->
+<div class="px-5 pt-4 pb-1">
+<span class="text-[11px] font-semibold text-[#52627a] uppercase tracking-wider">ระบบนักพัฒนา (API)</span>
+</div>
+<!-- Primary Navigation List -->
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+<!-- Active: Overview -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold transition-colors duration-150" href="#overview">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-sm font-label">ภาพรวม (Overview)</span>
+</a>
+<!-- API Keys -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#api-keys">
+<span class="material-symbols-outlined">key</span>
+<span class="text-sm font-label">คีย์เชื่อมต่อ (API Keys)</span>
+</a>
+<!-- Webhooks -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#webhooks">
+<span class="material-symbols-outlined">webhook</span>
+<span class="text-sm font-label">เว็บฮุก (Webhooks)</span>
+</a>
+<!-- Logs -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#delivery-logs">
+<span class="material-symbols-outlined">history</span>
+<span class="text-sm font-label">บันทึกส่งข้อมูล (Delivery Logs)</span>
+</a>
+<!-- Documentation -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#docs">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-sm font-label">คู่มือ &amp; API Reference</span>
+</a>
+<div class="pt-3 pb-1 px-2">
+<hr class="border-[#e1e7f0]"/>
+</div>
+<!-- Sandbox Tools -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#testing">
+<span class="material-symbols-outlined">network_check</span>
+<span class="text-sm font-label">ตัวจำลองยิง Webhook</span>
+</a>
+</nav>
+<!-- Sidebar Footer Status & Platform Info -->
+<div class="p-3 border-t border-[#e1e7f0] bg-slate-50/60">
+<div class="px-2 py-1.5 rounded bg-white border border-[#e1e7f0] mb-2 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span class="text-xs font-medium text-[#17243b]">API Gateway 100%</span>
+</div>
+<span class="text-[11px] text-[#52627a] font-mono">Operational</span>
+</div>
+<div class="flex items-center justify-between px-2 text-[11px] text-[#52627a]">
+<span>Commerce Platform</span>
+<span class="font-mono">v2.4.1</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area (Offset by 256px) -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- Sticky Top Header (Matching Design System Breadcrumb & Search) -->
+<header class="sticky top-0 z-20 bg-white border-b border-[#e1e7f0] h-16">
+<div class="max-w-[1240px] h-full mx-auto px-6 flex items-center justify-between gap-4">
+<!-- Breadcrumb & Search -->
+<div class="flex items-center gap-4 flex-1 min-w-0">
+<nav class="flex items-center text-xs font-medium text-[#52627a] whitespace-nowrap">
+<span>หน้าหลัก</span>
+<span class="material-symbols-outlined text-slate-400 mx-1" style="font-size: 14px;">chevron_right</span>
+<span>นักพัฒนา &amp; API</span>
+<span class="material-symbols-outlined text-slate-400 mx-1" style="font-size: 14px;">chevron_right</span>
+<span class="text-[#17243b] font-semibold">Overview</span>
+</nav>
+<span class="text-slate-300">|</span>
+<!-- Compact Search Bar (Explicit Page-Scoped Search) -->
+<div class="relative max-w-md w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#52627a]" style="font-size: 18px;">search</span>
+<input class="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-50 hover:bg-white focus:bg-white border border-[#e1e7f0] rounded text-[#17243b] placeholder-[#52627a] focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] transition-colors" placeholder="ค้นหา API, endpoints หรือ webhook event ในหน้านี้..." type="text"/>
+</div>
+</div>
+<!-- Trailing Actions & Profile Status -->
+<div class="flex items-center gap-3 shrink-0">
+<!-- Documentation Shortcut -->
+<a class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 border border-[#e1e7f0] rounded transition-colors" href="#docs">
+<span class="material-symbols-outlined" style="font-size: 16px;">library_books</span>
+<span>OpenAPI Docs</span>
+</a>
+<!-- Quick Refresh -->
+<button class="p-1.5 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 border border-[#e1e7f0] rounded transition-colors" title="รีเฟรชข้อมูลสถานะ" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">refresh</span>
+</button>
+<div class="h-5 w-[1px] bg-[#e1e7f0]"></div>
+<!-- Developer Profile Badge -->
+<div class="flex items-center gap-2 pl-1">
+<div class="w-8 h-8 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center font-bold text-xs text-[#365cf5]">
+                สช
+              </div>
+<div class="text-left hidden lg:block">
+<div class="text-xs font-semibold text-[#17243b] leading-tight">สมชาย ปฏิบัติการ</div>
+<div class="text-[11px] text-[#52627a] leading-tight">Admin / Developer</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas Container (Max 1240px as mandated) -->
+<main class="flex-1 max-w-[1240px] w-full mx-auto px-6 py-8 space-y-8">
+<!-- Page Header & Main Creation CTA -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-2.5">
+<h2 class="text-2xl font-bold font-headline text-[#17243b] tracking-tight">Developer Portal</h2>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-[#f6f8fc] text-[#52627a] border border-[#e1e7f0]">
+                ข้อมูลตัวอย่าง (Sample data)
+              </span>
+</div>
+<p class="text-sm text-[#52627a] mt-1">
+              Manage API keys, configure webhook endpoints, and monitor real-time event delivery logs.
+            </p>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2.5 shrink-0">
+<button class="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#17243b] bg-white border border-[#e1e7f0] rounded hover:bg-slate-50 active:bg-slate-100 transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+              รีเฟรชข้อมูล
+            </button>
+<button class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2c4ecb] active:scale-[0.98] rounded transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+              + Create API Key
+            </button>
+</div>
+</div>
+<!-- 3-Step Setup Onboarding Checklist (Bento Style Progress) -->
+<div class="bg-white border border-[#e1e7f0] rounded-[12px] p-5 shadow-none">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-[#e1e7f0]">
+<div>
+<h3 class="text-sm font-bold font-headline text-[#17243b]">เริ่มต้นเชื่อมต่อระบบ (Integration Onboarding)</h3>
+<p class="text-xs text-[#52627a] mt-0.5">ทำตาม 3 ขั้นตอนหลักเพื่อเริ่มต้นเชื่อมต่อระบบร้านค้าเข้ากับ ERP หรือระบบภายนอกของคุณ</p>
+</div>
+<div class="mt-2 sm:mt-0 flex items-center gap-2">
+<span class="text-xs font-medium text-[#52627a]">ความคืบหน้า:</span>
+<span class="text-xs font-bold text-[#365cf5]">1 / 3 เรียบร้อยแล้ว</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Step 1: Completed -->
+<div class="p-3.5 rounded-lg border border-[#157347]/30 bg-[#157347]/5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#157347]">
+<span class="material-symbols-outlined" style="font-size: 16px; font-variation-settings: 'FILL' 1;">check_circle</span>
+                    Step 1 · สำเร็จแล้ว
+                  </span>
+<span class="text-[10px] bg-[#157347]/10 text-[#157347] font-semibold px-2 py-0.5 rounded">Completed</span>
+</div>
+<h4 class="text-xs font-bold text-[#17243b]">Create an active API key</h4>
+<p class="text-xs text-[#52627a] mt-1">สร้าง API Key พร้อมกำหนดสิทธิ์ Environment สำหรับ Core ERP และ Mobile App</p>
+</div>
+<div class="pt-3 mt-2 border-t border-[#157347]/20 flex items-center justify-between text-xs text-[#157347] font-medium">
+<span>มี 2 คีย์ใช้งานอยู่</span>
+<span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+</div>
+</div>
+<!-- Step 2: In Progress -->
+<div class="p-3.5 rounded-lg border border-[#365cf5] bg-[#365cf5]/5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#365cf5]">
+<span class="material-symbols-outlined" style="font-size: 16px;">pending</span>
+                    Step 2 · กำลังดำเนินการ
+                  </span>
+<span class="text-[10px] bg-[#365cf5]/20 text-[#365cf5] font-semibold px-2 py-0.5 rounded">In Progress</span>
+</div>
+<h4 class="text-xs font-bold text-[#17243b]">Add a webhook endpoint</h4>
+<p class="text-xs text-[#52627a] mt-1">กำหนด HTTPS URL สำหรับรับแจ้งเตือนเมื่อเกิดออเดอร์ใหม่หรือสต็อกสินค้าปรับปรุง</p>
+</div>
+<div class="pt-3 mt-2 border-t border-[#365cf5]/20 flex items-center justify-between text-xs">
+<span class="text-[#52627a]">กำหนดแล้ว 2 endpoints</span>
+<a class="text-[#365cf5] font-semibold hover:underline inline-flex items-center gap-0.5" href="#webhooks">
+                  ตั้งค่า <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Step 3: Pending -->
+<div class="p-3.5 rounded-lg border border-[#e1e7f0] bg-slate-50/70 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="inline-flex items-center gap-1 text-[11px] font-medium text-[#52627a]">
+<span class="material-symbols-outlined" style="font-size: 16px;">radio_button_unchecked</span>
+                    Step 3 · รอดำเนินการ
+                  </span>
+<span class="text-[10px] bg-slate-200 text-[#52627a] font-medium px-2 py-0.5 rounded">Pending</span>
+</div>
+<h4 class="text-xs font-bold text-[#17243b]">Test delivery ping</h4>
+<p class="text-xs text-[#52627a] mt-1">ทดสอบส่งข้อความ Mock Payload ตรวจสอบ Signature (HMAC-SHA256) และสถานะ 200 OK</p>
+</div>
+<div class="pt-3 mt-2 border-t border-[#e1e7f0] flex items-center justify-between text-xs">
+<span class="text-[#52627a]">รอทดสอบ endpoint ล่าสุด</span>
+<button class="text-[#52627a] hover:text-[#17243b] font-medium inline-flex items-center gap-0.5" type="button">
+                  ทดสอบตอนนี้
+                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: API Keys Panel -->
+<section class="bg-white border border-[#e1e7f0] rounded-[12px] p-6" id="api-keys">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#365cf5]">key</span>
+<h3 class="text-base font-bold font-headline text-[#17243b]">กุญแจเชื่อมต่อระบบ (API Keys)</h3>
+</div>
+<p class="text-xs text-[#52627a] mt-1">
+                ใช้สำหรับยืนยันตัวตนใน HTTP Header สำหรับเรียกใช้งาน Commerce Platform REST API
+              </p>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2c4ecb] rounded transition-colors self-start sm:self-auto" type="button">
+<span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+              สร้างคีย์ใหม่ (+ New Key)
+            </button>
+</div>
+<!-- Strict Security Callout -->
+<div class="mt-4 p-3 bg-amber-50/60 border border-amber-200/80 rounded-lg flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[#b08900] mt-0.5" style="font-size: 18px;">security</span>
+<div class="text-xs text-[#17243b]">
+<span class="font-semibold text-[#b08900]">ข้อควรระวังความปลอดภัย:</span>
+<span class="text-[#52627a] ml-1">Key values display prefixes only for security. Full secrets are shown only once upon creation. หากคีย์รั่วไหลโปรดกด Revoke หรือ Roll key ทันที</span>
+</div>
+</div>
+<!-- Table: Active API Keys -->
+<div class="mt-4 overflow-x-auto border border-[#e1e7f0] rounded-lg">
+<table class="w-full text-left text-xs">
+<thead class="bg-slate-50 border-b border-[#e1e7f0] text-[#52627a]">
+<tr>
+<th class="py-3 px-4 font-semibold" scope="col">ชื่อ / วัตถุประสงค์ (Name &amp; Purpose)</th>
+<th class="py-3 px-4 font-semibold" scope="col">Prefix</th>
+<th class="py-3 px-4 font-semibold" scope="col">Environment</th>
+<th class="py-3 px-4 font-semibold" scope="col">วันที่สร้าง</th>
+<th class="py-3 px-4 font-semibold" scope="col">ใช้งานล่าสุด</th>
+<th class="py-3 px-4 font-semibold" scope="col">สถานะ</th>
+<th class="py-3 px-4 font-semibold text-right" scope="col">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0]">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3.5 px-4 font-medium text-[#17243b]">
+<div class="font-semibold">Production Core ERP</div>
+<div class="text-[11px] text-[#52627a]">SAP Connector / Stock Sync</div>
+</td>
+<td class="py-3.5 px-4 font-mono text-slate-700 bg-slate-50/40">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">cp_live_9a4f••••••••</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-[#157347] border border-emerald-200">
+                      Production
+                    </span>
+</td>
+<td class="py-3.5 px-4 text-[#52627a]">12 ม.ค. 2025</td>
+<td class="py-3.5 px-4 text-[#17243b] font-mono">1 นาทีที่แล้ว</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      Active
+                    </span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs text-[#365cf5] hover:underline font-medium mr-3" type="button">Roll key</button>
+<button class="text-xs text-[#c2333f] hover:underline font-medium" type="button">Revoke</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3.5 px-4 font-medium text-[#17243b]">
+<div class="font-semibold">Mobile App Client (Staging)</div>
+<div class="text-[11px] text-[#52627a]">Warehouse Mobile POS App Testing</div>
+</td>
+<td class="py-3.5 px-4 font-mono text-slate-700 bg-slate-50/40">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">cp_test_3b81••••••••</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-[#b08900] border border-amber-200">
+                      Staging
+                    </span>
+</td>
+<td class="py-3.5 px-4 text-[#52627a]">04 ก.พ. 2025</td>
+<td class="py-3.5 px-4 text-[#17243b] font-mono">3 ชั่วโมงที่แล้ว</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      Active
+                    </span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs text-[#365cf5] hover:underline font-medium mr-3" type="button">Roll key</button>
+<button class="text-xs text-[#c2333f] hover:underline font-medium" type="button">Revoke</button>
+</td>
+</tr>
+<!-- Row 3: Revoked -->
+<tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+<td class="py-3.5 px-4 font-medium text-[#52627a]">
+<div class="font-semibold line-through text-slate-500">Legacy BI Exporter</div>
+<div class="text-[11px] text-slate-400">ยกเลิกการใช้งานแล้ว (Decommissioned)</div>
+</td>
+<td class="py-3.5 px-4 font-mono text-slate-400">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-400 border border-slate-200">cp_live_e012••••••••</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                      Production
+                    </span>
+</td>
+<td class="py-3.5 px-4 text-slate-400">18 พ.ย. 2024</td>
+<td class="py-3.5 px-4 text-slate-400 font-mono">30 วันที่แล้ว</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#c2333f]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+                      Revoked
+                    </span>
+</td>
+<td class="py-3.5 px-4 text-right text-slate-400 text-xs italic">
+                    ยกเลิกถาวรแล้ว
+                  </td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section: Webhook Subscriptions Panel -->
+<section class="bg-white border border-[#e1e7f0] rounded-[12px] p-6" id="webhooks">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#365cf5]">webhook</span>
+<h3 class="text-base font-bold font-headline text-[#17243b]">ปลายทางรับเหตุการณ์ (Webhook Subscriptions)</h3>
+</div>
+<p class="text-xs text-[#52627a] mt-1">
+                ระบบจะส่งข้อมูลแบบ Real-time POST JSON เมื่อมีเหตุการณ์เกิดขึ้นตามที่ระบุไว้
+              </p>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2c4ecb] rounded transition-colors self-start sm:self-auto" type="button">
+<span class="material-symbols-outlined" style="font-size: 16px;">add_link</span>
+              + Add Webhook Endpoint
+            </button>
+</div>
+<!-- Webhooks Table -->
+<div class="mt-4 overflow-x-auto border border-[#e1e7f0] rounded-lg">
+<table class="w-full text-left text-xs">
+<thead class="bg-slate-50 border-b border-[#e1e7f0] text-[#52627a]">
+<tr>
+<th class="py-3 px-4 font-semibold" scope="col">Endpoint URL</th>
+<th class="py-3 px-4 font-semibold" scope="col">Subscribed Events</th>
+<th class="py-3 px-4 font-semibold" scope="col">Signing Secret</th>
+<th class="py-3 px-4 font-semibold" scope="col">Health Status</th>
+<th class="py-3 px-4 font-semibold text-right" scope="col">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0]">
+<!-- Endpoint 1: Healthy -->
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3.5 px-4 font-mono font-medium text-[#17243b]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#157347]" style="font-size: 16px;">lock</span>
+<span>https://api.merchant-domain.com/v1/webhooks</span>
+</div>
+<span class="text-[11px] font-sans text-[#52627a]">Primary Production Ingestion</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-wrap gap-1 max-w-xs">
+<span class="px-1.5 py-0.5 rounded bg-blue-50 text-[#365cf5] font-mono text-[11px] border border-blue-100">order.created</span>
+<span class="px-1.5 py-0.5 rounded bg-blue-50 text-[#365cf5] font-mono text-[11px] border border-blue-100">order.paid</span>
+<span class="px-1.5 py-0.5 rounded bg-blue-50 text-[#365cf5] font-mono text-[11px] border border-blue-100">inventory.updated</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-mono text-[#52627a]">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">whsec_89f••••••••</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#157347]">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+                      Healthy (200 OK)
+                    </span>
+<div class="text-[10px] text-[#52627a] mt-0.5">Avg latency: 142ms</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#17243b] hover:text-[#365cf5] bg-slate-50 hover:bg-slate-100 border border-[#e1e7f0] rounded mr-2 transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 14px;">send</span>
+                      Send test ping
+                    </button>
+<button class="text-xs text-[#52627a] hover:text-[#17243b] font-medium" type="button">Edit</button>
+</td>
+</tr>
+<!-- Endpoint 2: Failing -->
+<tr class="hover:bg-slate-50/80 transition-colors bg-red-50/20">
+<td class="py-3.5 px-4 font-mono font-medium text-[#17243b]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#157347]" style="font-size: 16px;">lock</span>
+<span>https://backup-log.merchant-domain.com/events</span>
+</div>
+<span class="text-[11px] font-sans text-[#52627a]">Analytics Archival Worker</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-wrap gap-1 max-w-xs">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 text-[#52627a] font-mono text-[11px] border border-slate-200">customer.registered</span>
+<span class="px-1.5 py-0.5 rounded bg-slate-100 text-[#52627a] font-mono text-[11px] border border-slate-200">payment.failed</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-mono text-[#52627a]">
+<span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">whsec_14a••••••••</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#c2333f]">
+<span class="w-2 h-2 rounded-full bg-[#c2333f]"></span>
+                      Failing (504 Timeout)
+                    </span>
+<div class="text-[10px] text-[#c2333f] mt-0.5">Consecutive failures: 4</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#c2333f] bg-red-50 hover:bg-red-100 border border-red-200 rounded mr-2 transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 14px;">replay</span>
+                      Send test ping
+                    </button>
+<button class="text-xs text-[#52627a] hover:text-[#17243b] font-medium" type="button">Edit</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section: Recent Webhook Delivery Logs Panel -->
+<section class="bg-white border border-[#e1e7f0] rounded-[12px] p-6" id="delivery-logs">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#365cf5]">receipt_long</span>
+<h3 class="text-base font-bold font-headline text-[#17243b]">บันทึกการส่งข้อมูลล่าสุด (Recent Delivery Logs)</h3>
+</div>
+<p class="text-xs text-[#52627a] mt-1">
+                ตรวจสอบผลการยิงข้อมูล HTTP Callback ตามลำดับเวลา สามารถกดส่งซ้ำ (Retry) รายการที่ล้มเหลวได้
+              </p>
+</div>
+<!-- Filter Controls -->
+<div class="flex items-center gap-2 self-start sm:self-auto">
+<div class="inline-flex bg-slate-100 p-0.5 rounded border border-[#e1e7f0] text-xs">
+<button class="px-2.5 py-1 font-semibold rounded bg-white text-[#17243b] shadow-sm" type="button">
+                  ทั้งหมด (All)
+                </button>
+<button class="px-2.5 py-1 font-medium text-[#52627a] hover:text-[#17243b]" type="button">
+                  สำเร็จ (2xx)
+                </button>
+<button class="px-2.5 py-1 font-medium text-[#52627a] hover:text-[#c2333f]" type="button">
+                  ล้มเหลว (4xx/5xx)
+                </button>
+</div>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#17243b] bg-white border border-[#e1e7f0] rounded hover:bg-slate-50 transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+                Refresh logs
+              </button>
+</div>
+</div>
+<!-- Logs Table -->
+<div class="mt-4 overflow-x-auto border border-[#e1e7f0] rounded-lg">
+<table class="w-full text-left text-xs">
+<thead class="bg-slate-50 border-b border-[#e1e7f0] text-[#52627a]">
+<tr>
+<th class="py-3 px-4 font-semibold" scope="col">Event ID</th>
+<th class="py-3 px-4 font-semibold" scope="col">Event Type</th>
+<th class="py-3 px-4 font-semibold" scope="col">Target URL</th>
+<th class="py-3 px-4 font-semibold" scope="col">Status</th>
+<th class="py-3 px-4 font-semibold" scope="col">Latency</th>
+<th class="py-3 px-4 font-semibold" scope="col">Timestamp</th>
+<th class="py-3 px-4 font-semibold text-right" scope="col">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0]">
+<!-- Log 1: Success -->
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-4 font-mono font-medium text-[#365cf5]">evt_99182a17</td>
+<td class="py-3 px-4 font-mono text-[#17243b]">
+<span class="font-semibold">order.paid</span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a] truncate max-w-[200px]" title="https://api.merchant-domain.com/v1/webhooks">
+                    api.merchant-domain.com/...
+                  </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-[#157347] border border-emerald-200">
+                      200 OK
+                    </span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a]">142ms</td>
+<td class="py-3 px-4 text-[#52627a]">14:28:10 (วันนี้)</td>
+<td class="py-3 px-4 text-right">
+<span class="text-[11px] text-[#52627a] italic">Delivered</span>
+</td>
+</tr>
+<!-- Log 2: Success -->
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-4 font-mono font-medium text-[#365cf5]">evt_88319f02</td>
+<td class="py-3 px-4 font-mono text-[#17243b]">
+<span class="font-semibold">stock.adjusted</span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a] truncate max-w-[200px]" title="https://api.merchant-domain.com/v1/webhooks">
+                    api.merchant-domain.com/...
+                  </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-[#157347] border border-emerald-200">
+                      200 OK
+                    </span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a]">198ms</td>
+<td class="py-3 px-4 text-[#52627a]">14:26:44 (วันนี้)</td>
+<td class="py-3 px-4 text-right">
+<span class="text-[11px] text-[#52627a] italic">Delivered</span>
+</td>
+</tr>
+<!-- Log 3: Error 504 Gateway Timeout -->
+<tr class="hover:bg-slate-50/80 transition-colors bg-red-50/20">
+<td class="py-3 px-4 font-mono font-medium text-[#c2333f]">evt_77209e41</td>
+<td class="py-3 px-4 font-mono text-[#17243b]">
+<span class="font-semibold">customer.registered</span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a] truncate max-w-[200px]" title="https://backup-log.merchant-domain.com/events">
+                    backup-log.merchant-domain.com/...
+                  </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-red-50 text-[#c2333f] border border-red-200">
+                      504 Gateway Timeout
+                    </span>
+</td>
+<td class="py-3 px-4 font-mono text-[#c2333f]">5000ms</td>
+<td class="py-3 px-4 text-[#52627a]">14:22:05 (วันนี้)</td>
+<td class="py-3 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2c4ecb] rounded transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 14px;">replay</span>
+                      Retry
+                    </button>
+</td>
+</tr>
+<!-- Log 4: Error 400 Bad Request -->
+<tr class="hover:bg-slate-50/80 transition-colors bg-amber-50/15">
+<td class="py-3 px-4 font-mono font-medium text-[#b08900]">evt_66190b88</td>
+<td class="py-3 px-4 font-mono text-[#17243b]">
+<span class="font-semibold">payment.failed</span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a] truncate max-w-[200px]" title="https://backup-log.merchant-domain.com/events">
+                    backup-log.merchant-domain.com/...
+                  </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-[#b08900] border border-amber-200">
+                      400 Bad Request
+                    </span>
+</td>
+<td class="py-3 px-4 font-mono text-[#52627a]">84ms</td>
+<td class="py-3 px-4 text-[#52627a]">14:15:20 (วันนี้)</td>
+<td class="py-3 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2c4ecb] rounded transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 14px;">replay</span>
+                      Retry
+                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination / Page Notice -->
+<div class="mt-3 flex items-center justify-between text-xs text-[#52627a]">
+<span>แสดง 4 รายการล่าสุดจากการยิงข้อมูลแบบเรียลไทม์ (ข้อมูลตัวอย่าง)</span>
+<div class="flex items-center gap-2">
+<button class="px-2 py-1 border border-[#e1e7f0] rounded bg-slate-50 text-slate-400 cursor-not-allowed" disabled="">ก่อนหน้า</button>
+<span class="font-medium text-[#17243b]">หน้า 1 / 1</span>
+<button class="px-2 py-1 border border-[#e1e7f0] rounded bg-slate-50 text-slate-400 cursor-not-allowed" disabled="">ถัดไป</button>
+</div>
+</div>
+</section>
+<!-- Documentation & Next Steps Callout Card -->
+<section class="bg-white border border-[#e1e7f0] rounded-[12px] p-6 mb-8" id="docs">
+<div class="flex flex-col lg:flex-row gap-6 items-start justify-between">
+<div class="lg:max-w-xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#365cf5]">terminal</span>
+<h3 class="text-base font-bold font-headline text-[#17243b]">Next Step: Authenticate your integration</h3>
+</div>
+<p class="text-xs text-[#52627a] mt-1.5 leading-relaxed">
+                ส่ง API Key ของคุณใน <code class="bg-slate-100 text-[#17243b] px-1 py-0.5 rounded font-mono">Authorization</code> HTTP Header ทุกครั้งที่มีการเรียกใช้งาน Rest Endpoints. รหัสลับของคุณไม่ควรถูกแชร์หรือฝังลงใน Client-side JavaScript.
+              </p>
+<div class="mt-4 flex flex-wrap items-center gap-3">
+<a class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#365cf5] bg-[#365cf5]/10 hover:bg-[#365cf5]/20 rounded transition-colors" href="#docs">
+<span class="material-symbols-outlined" style="font-size: 16px;">description</span>
+                  View Full API Reference &amp; OpenAPI Specs (v2.4)
+                </a>
+<a class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#17243b] hover:bg-slate-50 border border-[#e1e7f0] rounded transition-colors" href="#docs">
+<span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+                  ดาวน์โหลด Postman Collection
+                </a>
+</div>
+</div>
+<!-- Code Snippet Box (Restrained, Crisp) -->
+<div class="w-full lg:w-1/2 bg-[#17243b] text-slate-200 rounded-lg p-4 font-mono text-xs border border-slate-700">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-700 text-slate-400 text-[11px]">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-slate-400" style="font-size: 14px;">code</span>
+                  cURL Example — Get Products
+                </span>
+<span class="text-[10px] uppercase font-bold text-slate-400">Bash</span>
+</div>
+<pre class="overflow-x-auto leading-relaxed text-slate-300"><code>curl -X GET "https://api.commerceplatform.co.th/v2/products?page=1" \
+  -H "<span class="text-[#365cf5] font-semibold">Authorization: Bearer cp_live_9a4f••••••••</span>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json"</code></pre>
+</div>
+</div>
+</section>
+</main>
+<!-- App Canvas Bottom Status Footer -->
+<footer class="border-t border-[#e1e7f0] bg-white py-4 px-6 mt-auto">
+<div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+<div class="flex items-center gap-3">
+<span class="font-semibold text-[#17243b]">Commerce Platform — Developer Portal</span>
+<span>•</span>
+<span>Thai Commerce Operations Engine</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<a class="hover:text-[#17243b] transition-colors" href="#">ข้อตกลงการเชื่อมต่อ API</a>
+<a class="hover:text-[#17243b] transition-colors" href="#">ความปลอดภัย &amp; การเข้ารหัส</a>
+<span class="font-mono text-slate-400">Environment: Production-TH-Cluster</span>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

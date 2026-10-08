@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { AppShell, Button, IconButton, Loading, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, useUiLocale } from '@cp/ui';
+import { navFor } from './navigation';
+import { Workspace } from './pages/Workspace';
 import { AdminStats, api, reportsApi, session, staffApi } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
@@ -55,229 +57,44 @@ import { GrowthWorkspace } from './pages/growth/Workspace';
 import { GrowthPlans } from './pages/growth/Plans';
 import { GrowthPlanPage } from './pages/growth/Plan';
 import { GrowthResults, GrowthTimeline } from './pages/growth/Results';
-
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
 
-const NAV: NavGroup[] = [
-  { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
-  {
-    group: 'รายงานร้าน (josh)', icon: 'storefront',
-    links: [
-      { to: '/reports/sales', label: 'ยอดขาย', end: false },
-      { to: '/reports/products', label: 'สินค้า (josh)', end: false },
-      { to: '/reports/orders', label: 'Orders (josh)', end: false },
-      { to: '/reports/customers', label: 'ลูกค้า / บริษัท (josh)', end: false },
-      { to: '/reports/prices', label: 'ราคาที่ลูกค้าเห็น (josh)', end: false },
-      { to: '/reports/price-shadow', label: 'ราคา: commerce คิดคู่กัน (ทดลอง)', end: false },
-      { to: '/prices/staff', label: 'ราคาลูกค้า / ราคาสัญญา (commerce)', end: false },
-      { to: '/reports/traffic', label: 'Traffic', end: false },
-      { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
-      { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
-      { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
-    ],
-  },
-  {
-    group: 'หลังบ้าน josh (อ่านจาก replica ใช้ได้แม้ josh ล่ม)', icon: 'inventory_2',
-    links: [
-      { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
-      { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
-      { to: '/josh/admin_access', label: 'คำขอเข้า admin', end: false },
-      { to: '/josh/shipments', label: 'Shipments', end: false },
-      { to: '/josh/payments', label: 'รายการชำระเงิน', end: false },
-      { to: '/josh/credit_notes', label: 'Credit notes', end: false },
-      { to: '/josh/credit_backs', label: 'Credit backs', end: false },
-      { to: '/josh/invoices', label: 'ใบแจ้งหนี้', end: false },
-      { to: '/josh/coupons', label: 'Coupons', end: false },
-      { to: '/josh/campaigns', label: 'Campaigns', end: false },
-      { to: '/josh/segments', label: 'Segments', end: false },
-      { to: '/josh/suppliers', label: 'Suppliers', end: false },
-      { to: '/josh/internal_docs', label: 'เอกสารภายใน', end: false },
-      { to: '/josh-api-logs', label: 'API log ของ josh', end: false },
-    ],
-  },
-  {
-    group: 'Marketing', icon: 'campaign',
-    links: [
-      { to: '/marketing/analyst', label: 'ถาม Marketing Analyst', end: false },
-      { to: '/marketing/growth', label: 'Growth Workspace', end: true },
-      { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน Growth', end: false },
-      { to: '/marketing/research', label: 'Research', end: false },
-      { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
-      { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
-      { to: '/j/coupons', label: 'Coupons', end: false },
-      { to: '/j/promotion-product-sets', label: 'Promotion product sets', end: false },
-      { to: '/j/promotions-mechanic', label: 'Promotion mechanics', end: false },
-      { to: '/j/promotion-pages', label: 'Promotion pages', end: false },
-      { to: '/j/promotions/campaigns', label: 'Campaigns', end: false },
-      { to: '/j/segments', label: 'Segments', end: false },
-      { to: '/j/marketing/push-campaigns', label: 'Push campaigns', end: false },
-      { to: '/j/cs/notification-catalog', label: 'Notification catalog', end: false },
-      { to: '/j/cs/notification-log', label: 'Notification log', end: false },
-      { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
-      { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', end: false },
-      { to: '/j/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
-      { to: '/j/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
-      { to: '/j/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
-    ],
-  },
-  {
-    group: 'CS / แชต', icon: 'support_agent',
-    links: [
-      { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
-      { to: '/livechat', label: 'Live chat', end: false },
-      { to: '/j/bot/intent-rules', label: 'Bot · intent rules', end: false },
-      { to: '/j/bot/workflows', label: 'Bot · workflows', end: false },
-      { to: '/j/bot/templates', label: 'Bot · templates', end: false },
-    ],
-  },
-  {
-    group: 'สินค้า / ลูกค้า (จาก josh)', icon: 'shelves',
-    links: [
-      { to: '/j/allproducts', label: 'สินค้า (จัดการ)', end: false },
-      { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true },
-      { to: '/j/product/video-upload', label: 'Video upload', end: true },
-      { to: '/j/product/bulk-image-upload', label: 'Bulk image upload', end: true },
-      { to: '/j/suppliers', label: 'Suppliers', end: false },
-      { to: '/j/brands', label: 'แบรนด์', end: false },
-      { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
-      { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
-      { to: '/j/company', label: 'บริษัท', end: false },
-      { to: '/j/kyc', label: 'KYC', end: false },
-      { to: '/j/cs/sample-requests', label: 'Sample requests', end: false },
-      { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', end: false },
-      { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', end: false },
-      { to: '/j/price-requests', label: 'Price requests', end: false },
-      { to: '/j/active-offers', label: 'Active offers', end: false },
-      { to: '/j/admin-access', label: 'Admin access requests', end: false },
-    ],
-  },
-  {
-    group: 'Order / การเงิน (จาก josh)', icon: 'receipt_long',
-    links: [
-      { to: '/j/order', label: 'Orders (จัดการ)', end: false },
-      { to: '/j/shipments', label: 'Shipments (จัดการ)', end: false },
-      { to: '/j/payment-transactions', label: 'รายการชำระเงิน (จัดการ)', end: false },
-      { to: '/j/order/import', label: 'นำเข้า order', end: true },
-      { to: '/j/batch-sticker', label: 'พิมพ์ sticker', end: false },
-      { to: '/j/kbank/testing-console', label: 'KBank testing console', end: false },
-      { to: '/j/invoices', label: 'Overdue invoices', end: false },
-      { to: '/j/credit-notes', label: 'Credit notes', end: false },
-      { to: '/j/credit-backs', label: 'Credit backs', end: false },
-      { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', end: false },
-      { to: '/j/billing', label: 'Billing', end: false },
-      { to: '/j/refunds', label: 'Returns & refunds', end: false },
-      { to: '/j/jagota/payment-testing', label: 'Jagota payment testing', end: false },
-      { to: '/j/erp/webhook-simulator', label: 'ERP webhook simulator (josh)', end: false },
-    ],
-  },
-  {
-    group: 'Marketing (จาก josh)', icon: 'campaign',
-    links: [
-      { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', end: false },
-      { to: '/j/smart-links', label: 'Smart links', end: false },
-      { to: '/j/marketing-links', label: 'Marketing links', end: false },
-      { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', end: false },
-      { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', end: false },
-      { to: '/j/marketing/queue', label: 'คิวงานการตลาด', end: false },
-      { to: '/j/marketing/journey-funnel', label: 'Journey funnel', end: false },
-      { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', end: false },
-    ],
-  },
-  { group: 'AI', icon: 'smart_toy', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
-  {
-    group: 'ERP hub', icon: 'hub',
-    links: [
-      { to: '/erp/inbound-log', label: 'Inbound log', end: false },
-      { to: '/erp/josh-logs', label: 'ERP log ของ josh', end: false },
-      { to: '/erp/webhook-dead-letter', label: 'Dead letter', end: false },
-      { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
-      { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
-      { to: '/erp/simulator', label: 'ERP simulator', end: false },
-      { to: '/erp/jagota-shadow', label: 'ส่ง order ผ่าน commerce (ทดลอง)', end: false },
-    ],
-  },
-  {
-    group: 'Integration', icon: 'cable',
-    links: [
-      { to: '/integrations', label: 'Integrations', end: false },
-      { to: '/webhooks', label: 'Webhook events (in)', end: false },
-      { to: '/subscriptions', label: 'Outgoing webhooks', end: false },
-      { to: '/sync-jobs', label: 'Sync jobs', end: false },
-      { to: '/erp-stock', label: 'ERP stub stock', end: false },
-      { to: '/erp-ingest', label: 'ERP ingest', end: false },
-    ],
-  },
-  {
-    group: 'Commerce data', icon: 'database',
-    links: [
-      { to: '/customers', label: 'Customers', end: false },
-      { to: '/products', label: 'Products', end: false },
-      { to: '/stock-moves', label: 'Stock moves', end: false },
-      { to: '/product-prices', label: 'ราคาสินค้า', end: false },
-      { to: '/product-master-queue', label: 'คิวข้อมูลสินค้าจาก ERP', end: false },
-      { to: '/order-periods', label: 'รอบสั่งซื้อ supplier', end: false },
-      { to: '/orders', label: 'Orders', end: false },
-      { to: '/reservations', label: 'Reservations', end: false },
-    ],
-  },
-  {
-    group: 'ตั้งค่า', icon: 'settings',
-    links: [
-      { to: '/settings/staff', label: 'บัญชี staff', end: false },
-      { to: '/settings/josh-staff', label: 'บัญชี josh (staff)', end: false },
-      { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', end: false },
-    ],
-  },
-];
-/** Staff accounts (commerce's and josh's) are admin-only (the API refuses others too); everyone can change their own password. */
-const ADMIN_ONLY = new Set(['/settings/staff', '/settings/josh-staff']);
-const navFor = (role?: string): NavGroup[] =>
-  role === 'admin' ? NAV : NAV.map((g) => ({ ...g, links: g.links.filter((l) => !ADMIN_ONLY.has(l.to)) }));
-
-/** Live operations strip above every page (Stitch "Overview" top bar), fed by the same endpoints the pages use. */
+/** Route context and a single page-search entry point across every category. */
 function AdminTopBar() {
+  __useUiLocale();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [pageHeading, setPageHeading] = useState('');
+  useEffect(() => {
+    const main = document.querySelector('main');
+    if (!main) return;
+    const refresh = () => setPageHeading(main.querySelector('h1')?.textContent?.trim() ?? '');
+    const observer = new MutationObserver(refresh);
+    observer.observe(main, { childList: true, subtree: true, characterData: true });
+    refresh();
+    return () => observer.disconnect();
+  }, [pathname]);
+  const nav = navFor(session.claims()?.role);
+  const current = nav.flatMap(group => group.links.map(link => ({ group, link })))
+    .filter(({ link }) => pathname === link.to || (link.to !== '/' && !link.end && pathname.startsWith(link.to + '/')))
+    .sort((a, b) => b.link.to.length - a.link.to.length)[0];
   const stats = useAsync(() => api.get<AdminStats>('/admin/stats'));
   const health = useAsync(() => reportsApi.health({ period: 'today' }));
   const problems = health.data?.now.problems.length ?? 0;
-  const failed = stats.data?.webhooksFailed ?? 0;
-  return (
-    <TopBar
-      left={
-        <>
-          <span className="font-headline text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Commerce Operations</span>
-          <span className="h-3 w-px bg-secondary-container" />
-          {health.data ? (
-            <StatusDot tone={problems ? 'danger' : 'ok'}>
-              <span className="text-on-surface font-medium">{problems ? `System: ${problems} problem${problems > 1 ? 's' : ''}` : 'System: healthy'}</span>
-            </StatusDot>
-          ) : (
-            <StatusDot tone="muted">System: …</StatusDot>
-          )}
-          {stats.data && (
-            <span className="hidden md:inline-flex">
-              <StatusDot tone={stats.data.webhooksPending ? 'warn' : 'primary'}>
-                <span className="text-on-surface-variant tabular-nums">Webhooks pending: {stats.data.webhooksPending.toLocaleString()}</span>
-              </StatusDot>
-            </span>
-          )}
-        </>
-      }
-      right={
-        <>
-          <Button icon="sync_alt" onClick={() => navigate('/sync-jobs')}>Manual Sync Trigger</Button>
-          <Button onClick={() => navigate('/erp/inbound-log')}>Export Logs</Button>
-          <span className="h-4 w-px bg-secondary-container mx-1" />
-          <IconButton icon="notifications" title={failed ? `${failed} failed webhooks` : 'Notifications'} dot={failed > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />
-          <IconButton icon="terminal" title="API docs" onClick={() => window.open('/api/docs', '_blank', 'noopener')} />
-          <IconButton icon="help_outline" title="AI connectors / help" onClick={() => navigate('/ai/connectors')} />
-        </>
-      }
-    />
-  );
+  const docsBase = import.meta.env.VITE_COMMERCE_API || (import.meta.env.DEV ? 'http://localhost:3100/api' : '/api');
+  return <TopBar
+    left={<div className="flex flex-wrap items-center gap-3">
+      <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("Commerce workspace")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "พื้นที่ทำงาน")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
+      <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>
+    </div>}
+    right={<><LanguageSelector /><CommandMenu /><IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} /><IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
+  />;
 }
 
 export function App() {
+  useUiLocale();
   const [signedIn, setSignedIn] = useState(() => Boolean(session.get()));
   // null = not checked yet; the API refuses everything else while true, so the app waits for the change
   const [mustChangePassword, setMustChangePassword] = useState<boolean | null>(null);
@@ -315,8 +132,8 @@ export function App() {
       <AppShell
         sidebar={
           <Sidebar
-            brand={{ title: 'Commerce Platform', subtitle: 'Admin console' }}
-            env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? 'Prod' : 'Local dev'}</>}
+            brand={{ title: 'Commerce Platform', subtitle: 'พื้นที่ทำงานของทีม' }}
+            env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
             nav={nav}
             searchable
             user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${claims.role}` : undefined, onSignOut: signOut }}
@@ -326,6 +143,7 @@ export function App() {
       >
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/workspaces/:workspaceId" element={<Workspace />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />
             <Route path="/account/password" element={<ChangePassword />} />

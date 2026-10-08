@@ -1,0 +1,27 @@
+[
+  {
+    "text": "s",
+    "kinds": [
+      "jsx-expression",
+      "localized-expression",
+      "runtime-ui-key"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+        "line": 179,
+        "kind": "jsx-expression"
+      },
+      {
+        "file": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+        "kind": "localized-expression"
+      },
+      {
+        "file": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+        "kind": "runtime-ui-key"
+      }
+    ],
+    "retired": true,
+    "retirementReason": "Portal webhook event counts now translate one complete sentence instead of appending an English plural suffix."
+  }
+]

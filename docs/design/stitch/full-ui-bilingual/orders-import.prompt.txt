@@ -1,0 +1,62 @@
+Design exactly one complete, easy-to-use Commerce Platform order-import page, route /j/order/import. Preserve the actual supported workflows: upload orders CSV and items CSV together; relink users from a separate orders CSV; relink all existing orders by stored customer_code with an explicit confirmation. Group import as the primary task, and put the two relink maintenance actions in a separate Advanced section with consequences explained. List required files, readable labeled file pickers, clear primary action, busy/error/success states. Back link to orders. No invented export/template download action or operational KPI. # Commerce Platform — task-based UI
+
+Design for Thai commerce operations teams. The product has seven work areas:
+สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล,
+ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. A separate developer portal manages API keys and webhooks.
+
+## Visual language
+
+- Light canvas `#f6f8fc`, white cards, restrained borders `#e1e7f0`.
+- Primary blue `#365cf5`; ink `#17243b`; secondary text `#52627a`.
+- Success `#157347`, warning `#b08900`, error `#c2333f`; always pair color with text.
+- Noto Sans Thai for Thai and Latin; body 14px, labels 13px, page titles 28px.
+- Cards have 12px corners; controls 8px. Use 16/24/32px spacing.
+- A 256px sidebar, compact contextual header, and a readable content width near 1240px.
+- SVG icons and local fonts in the application. No decorative stock photos or gradients.
+- Phone layouts stack cards and collapse navigation. Scroll wide tables inside their panel.
+
+## Usability
+
+- Lead with the task and one primary action. Show records before creation forms.
+- Organize each work area's links into short task sections, with useful descriptions.
+- Creation and editing use named dialogs, clear labels, inline errors, and Cancel/Save actions.
+- Keep keyboard focus inside dialogs, support Escape, and return focus to the trigger.
+- Record links open their own detail URLs; preserve existing routes and role restrictions.
+- Show loading, empty, filtered-empty and failed states separately.
+- Counts and operational status in the application must come from its API. Prototype samples
+  must be labeled `ข้อมูลตัวอย่าง`; never copy sample figures into application code.
+- List APIs for platform products/customers support pagination only. A frontend search must
+  explicitly say it searches the current page. Do not imply a complete catalog search.
+- Every action in the application must work. Do not add export/import, bulk changes, charts,
+  advanced filters or copy-secret actions without an existing supported API.
+
+## Business fields and workflows
+
+- Product list: SKU, name, status. Create/edit: SKU, name, description. Product detail also
+  shows fulfillment mode, lead time, update date and inventory by warehouse when available.
+- Customer list: name/code, email, phone, status. Detail shows contact data and actual orders.
+- Orders: code, status, total, creation date. Create with customer/product selectors,
+  editable quantity/unit price, add/remove lines and a calculated subtotal.
+- Stock movements: receive, count, damage/return/correction, transfer. Choose an owned
+  warehouse, enter SKU/quantity/note, show a clear explanation of the selected movement.
+- Marketing: planning, campaigns/promotions, content/communication, tracking results.
+- Reports: select a business/system report and its existing filters; show unavailable data
+  honestly, with a retry action where supported.
+- Connections: connections, inbound data, sync jobs, outgoing deliveries and failed records.
+- Team settings: staff list, create account, role management and existing password/status actions.
+- Portal: active key/webhook onboarding, key creation with the existing one-time secret,
+  subscriptions, webhook test results, and recent delivery status filters.
+
+## Implementation boundary
+
+Stitch screens are visual references. React implements the supported interactions using
+`@cp/ui`; preserve API payloads, confirmation behavior and server permissions. Complex
+migrated management pages retain their domain-specific workflows while adopting the common
+visual system. Never replace a working business screen with static generated HTML.
+
+
+New requirement: fully bilingual Thai/English with a visible ไทย / English selector in the topbar. The design shown should be Thai-first but provide complete English copy too. Do not translate record data, IDs, API payload values or CSV headers.
+
+Exact UI messages used by this page: ["Order Import","ต้องเลือกไฟล์ orders และ items (.csv)","เลือกไฟล์ orders CSV สำหรับ relink","Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?","นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)","← All Orders","Import orders + items","อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน","Orders CSV *","Items CSV *","กำลัง import...","Import CSV","Relink users จาก CSV","อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่","Orders CSV","กำลัง relink...","Relink from CSV","Relink all (จาก customer_code ใน DB)","ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order","Relink all orders"]
+
+IMPORTANT EXPORT REQUIREMENT: Include an invisible <script id="commerce-ui-translations" type="application/json"> object in the exported HTML, keyed by EVERY exact source UI message above. Each value must be {"th":"natural Thai UI translation","en":"natural English UI translation"}. Preserve exact source keys. Translate even original English messages into Thai; keep technical identifiers (CSV, orders.csv, items.csv, customer_code) intact. This translation data must not be displayed in the interface. Use it for a working Thai/English selector. Deliver a polished practical screen, not a dictionary preview. Main content near 1240px, sidebar256px, color #365cf5, white cards and #f6f8fc canvas, local-app typography Noto Sans Thai. Include labelled prototype sample status ข้อมูลตัวอย่าง / Sample data only if sample results are shown.

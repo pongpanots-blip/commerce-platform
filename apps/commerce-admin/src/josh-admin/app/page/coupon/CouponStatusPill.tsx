@@ -1,9 +1,10 @@
+import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 /** `coupons.status` (server-derived) → pill label/color. */
 const COUPON_STATUS_PILLS: Record<string, { label: string; className: string }> = {
-  scheduled: { label: 'รอใช้งาน', className: 'bg-amber-50 text-amber-700' },
-  active: { label: 'ใช้งานอยู่', className: 'bg-green-50 text-green-700' },
-  expired: { label: 'หมดเวลา', className: 'bg-gray-100 text-gray-500' },
-  disabled: { label: 'ปิดโดยแอดมิน', className: 'bg-red-50 text-red-700' },
+  scheduled: { get label() { return __uiText("รอใช้งาน"); }, className: 'bg-amber-50 text-amber-700' },
+  active: { get label() { return __uiText("ใช้งานอยู่"); }, className: 'bg-green-50 text-green-700' },
+  expired: { get label() { return __uiText("หมดเวลา"); }, className: 'bg-gray-100 text-gray-500' },
+  disabled: { get label() { return __uiText("ปิดโดยแอดมิน"); }, className: 'bg-red-50 text-red-700' },
 };
 
 /**
@@ -33,6 +34,7 @@ export type CouponStatusPillCoupon = {
 };
 
 export default function CouponStatusPill({ coupon }: { coupon: CouponStatusPillCoupon }) {
+  __useUiLocale();
   const status = coupon.status ?? fallbackCouponStatus(coupon);
   const pill = COUPON_STATUS_PILLS[status] ?? COUPON_STATUS_PILLS.active;
   return (

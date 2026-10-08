@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Import | Commerce Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans Thai & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: '#365cf5',
+            'primary-hover': '#254adb',
+            ink: '#17243b',
+            secondary: '#52627a',
+            success: '#157347',
+            warning: '#b08900',
+            error: '#c2333f',
+            'success-bg': '#eaf6ed',
+            'warning-bg': '#fef8e7',
+            'error-bg': '#fbebec',
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif'],
+          },
+          borderRadius: {
+            card: '12px',
+            control: '8px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-ink antialiased min-h-screen flex">
+
+  <!-- INVISIBLE COMMERCE UI TRANSLATIONS JSON (EXACT EXPORT REQUIREMENT) -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "Order Import": {
+      "th": "นำเข้าออเดอร์",
+      "en": "Order Import"
+    },
+    "ต้องเลือกไฟล์ orders และ items (.csv)": {
+      "th": "ต้องเลือกไฟล์ orders และ items (.csv)",
+      "en": "Both orders and items (.csv) files are required"
+    },
+    "เลือกไฟล์ orders CSV สำหรับ relink": {
+      "th": "เลือกไฟล์ orders CSV สำหรับ relink",
+      "en": "Select an orders CSV file for relinking"
+    },
+    "Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?": {
+      "th": "Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?",
+      "en": "Relink all orders by stored customer_code — Confirm?"
+    },
+    "นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)": {
+      "th": "นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)",
+      "en": "Import CSV / Link users to orders (staff only)"
+    },
+    "← All Orders": {
+      "th": "← ออเดอร์ทั้งหมด",
+      "en": "← All Orders"
+    },
+    "Import orders + items": {
+      "th": "นำเข้า orders + items",
+      "en": "Import orders + items"
+    },
+    "อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน": {
+      "th": "อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน",
+      "en": "Upload orders.csv and items.csv simultaneously"
+    },
+    "Orders CSV *": {
+      "th": "Orders CSV *",
+      "en": "Orders CSV *"
+    },
+    "Items CSV *": {
+      "th": "Items CSV *",
+      "en": "Items CSV *"
+    },
+    "กำลัง import...": {
+      "th": "กำลัง import...",
+      "en": "Importing..."
+    },
+    "Import CSV": {
+      "th": "นำเข้า CSV",
+      "en": "Import CSV"
+    },
+    "Relink users จาก CSV": {
+      "th": "Relink users จาก CSV",
+      "en": "Relink users from CSV"
+    },
+    "อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่": {
+      "th": "อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่",
+      "en": "Read customer code from orders file and re-associate user"
+    },
+    "Orders CSV": {
+      "th": "Orders CSV",
+      "en": "Orders CSV"
+    },
+    "กำลัง relink...": {
+      "th": "กำลัง relink...",
+      "en": "Relinking..."
+    },
+    "Relink from CSV": {
+      "th": "Relink จาก CSV",
+      "en": "Relink from CSV"
+    },
+    "Relink all (จาก customer_code ใน DB)": {
+      "th": "Relink ทั้งหมด (จาก customer_code ใน DB)",
+      "en": "Relink all (from customer_code in DB)"
+    },
+    "ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order": {
+      "th": "ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order",
+      "en": "No file upload required — uses customer_code stored on orders"
+    },
+    "Relink all orders": {
+      "th": "Relink ทุกออเดอร์",
+      "en": "Relink all orders"
+    }
+  }
+  </script>
+
+  <!-- 256px STANDARD SIDEBAR -->
+  <aside class="w-64 bg-white border-r border-border min-h-screen flex flex-col flex-shrink-0 select-none z-10">
+    <!-- Brand / Platform Header -->
+    <div class="h-16 flex items-center px-6 border-b border-border gap-3">
+      <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-base shadow-sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="font-bold text-ink text-sm tracking-tight leading-tight">Commerce Platform</div>
+        <div class="text-[11px] text-secondary">ระบบจัดการการค้ากลาง</div>
+      </div>
+    </div>
+
+    <!-- Navigation Areas (7 standard platform work areas) -->
+    <nav class="flex-1 py-4 px-3 space-y-6 overflow-y-auto custom-scrollbar">
+      <div>
+        <div class="px-3 pb-2 text-[11px] font-semibold text-secondary uppercase tracking-wider">
+          งานหลัก / Operations
+        </div>
+        <ul class="space-y-1">
+          <!-- 1. สินค้าและสต็อก -->
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-ink hover:bg-slate-50 rounded-control font-medium transition-colors text-[13px]">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              <span>สินค้าและสต็อก</span>
+            </a>
+          </li>
+          <!-- 2. ออเดอร์และการเงิน (Active Area) -->
+          <li>
+            <div class="space-y-1">
+              <a href="#" class="flex items-center justify-between px-3 py-2 text-primary bg-blue-50/70 rounded-control font-semibold text-[13px]">
+                <div class="flex items-center gap-3">
+                  <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  <span>ออเดอร์และการเงิน</span>
+                </div>
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              </a>
+              <!-- Sub-links -->
+              <div class="pl-9 pr-2 py-1 space-y-1">
+                <a href="#" class="block py-1.5 px-2 text-[13px] text-secondary hover:text-ink rounded-md transition-colors" data-i18n-key="← All Orders">
+                  ← All Orders
+                </a>
+                <a href="#" class="block py-1.5 px-2 text-[13px] text-primary font-medium bg-white border border-border shadow-xs rounded-md">
+                  <span data-i18n-key="Order Import">Order Import</span>
+                  <span class="ml-1 text-[10px] text-primary bg-blue-100/60 px-1.5 py-0.5 rounded font-mono">/j</span>
+                </a>
+              </div>
+            </div>
+          </li>
+          <!-- 3. ลูกค้าและบริการ -->
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-ink hover:bg-slate-50 rounded-control font-medium transition-colors text-[13px]">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <span>ลูกค้าและบริการ</span>
+            </a>
+          </li>
+          <!-- 4. การตลาด -->
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-ink hover:bg-slate-50 rounded-control font-medium transition-colors text-[13px]">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+              </svg>
+              <span>การตลาด</span>
+            </a>
+          </li>
+          <!-- 5. รายงานและข้อมูล -->
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-ink hover:bg-slate-50 rounded-control font-medium transition-colors text-[13px]">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              <span>รายงานและข้อมูล</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="px-3 pb-2 text-[11px] font-semibold text-secondary uppercase tracking-wider">
+          การจัดการระบบ / Admin
+        </div>
+        <ul class="space-y-1">
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-ink hover:bg-slate-50 rounded-control font-medium transition-colors text-[13px]">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              <span>ระบบเชื่อมต่อ</span>
+            </a>
+          </li>
+          <!-- 7. ตั้งค่าและทีมงาน -->
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-ink hover:bg-slate-50 rounded-control font-medium transition-colors text-[13px]">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span>ตั้งค่าและทีมงาน</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Developer Portal Link (Separate portal requirement) -->
+    <div class="p-3 border-t border-border bg-slate-50/50">
+      <a href="#" class="flex items-center justify-between px-3 py-2 text-[12px] text-secondary hover:text-ink bg-white border border-border rounded-control transition-colors shadow-2xs">
+        <span class="flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+          </svg>
+          <span>Developer Portal</span>
+        </span>
+        <span class="text-[10px] text-slate-400 font-mono">API & Webhooks ↗</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT CONTENT (CONTENT WIDTH ~1240PX MAX) -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+    <!-- COMPACT CONTEXTUAL TOPBAR -->
+    <header class="h-16 bg-white border-b border-border flex items-center justify-between px-8 sticky top-0 z-20">
+      <!-- Breadcrumb / Route & Back link -->
+      <div class="flex items-center gap-3">
+        <a href="#orders" class="inline-flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-ink px-2.5 py-1.5 rounded-control hover:bg-slate-100 transition-colors" data-i18n-key="← All Orders">
+          ← All Orders
+        </a>
+        <span class="text-slate-300">/</span>
+        <span class="font-mono text-xs text-secondary bg-slate-100 px-2 py-0.5 rounded">/j/order/import</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-warning border border-amber-200">
+          Staff Only
+        </span>
+      </div>
+
+      <!-- Right Actions: Language Selector & User Info -->
+      <div class="flex items-center gap-4">
+        <!-- Thai / English Visible Selector Switcher -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-control border border-border text-xs">
+          <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-control font-medium transition-all bg-white text-ink shadow-xs">
+            ไทย
+          </button>
+          <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-control font-medium transition-all text-secondary hover:text-ink">
+            English
+          </button>
+        </div>
+
+        <div class="h-4 w-px bg-border"></div>
+
+        <!-- User info -->
+        <div class="flex items-center gap-2.5 text-xs text-secondary">
+          <div class="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-bold text-slate-600">
+            OP
+          </div>
+          <span class="font-medium text-ink hidden sm:inline">สมชาย บริการค้า (Admin)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY (Restrained ~1240px container) -->
+    <main class="flex-1 p-6 md:p-8 max-w-[1240px] w-full mx-auto space-y-6">
+
+      <!-- PAGE HEADER -->
+      <div class="border-b border-border pb-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 class="text-[28px] font-bold text-ink tracking-tight leading-tight flex items-center gap-3">
+              <span data-i18n-key="Order Import">Order Import</span>
+              <span class="text-xs font-normal font-mono px-2 py-0.5 rounded bg-slate-100 text-secondary border border-border">POST /j/order/import</span>
+            </h1>
+            <p class="text-sm text-secondary mt-1" data-i18n-key="นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)">
+              นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)
+            </p>
+          </div>
+          <!-- Environment & Role badge -->
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-success border border-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-success"></span>
+              <span>ระบบพร้อมรับงาน (Ready)</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALERT MESSAGE BANNER (Dynamic Inline Notifications) -->
+      <div id="status-banner" class="hidden rounded-card p-4 border transition-all duration-200">
+        <div class="flex items-start gap-3">
+          <div id="status-icon" class="flex-shrink-0 mt-0.5"></div>
+          <div class="flex-1">
+            <h3 id="status-title" class="text-sm font-semibold"></h3>
+            <p id="status-desc" class="text-xs mt-0.5"></p>
+          </div>
+          <button onclick="dismissStatusBanner()" class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- SECTION 1: PRIMARY TASK (IMPORT ORDERS + ITEMS) -->
+      <!-- ========================================== -->
+      <section class="bg-white rounded-card border border-border shadow-2xs overflow-hidden">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-border bg-white flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">1</span>
+              <h2 class="text-lg font-bold text-ink" data-i18n-key="Import orders + items">
+                Import orders + items
+              </h2>
+            </div>
+            <p class="text-xs text-secondary mt-1 pl-8" data-i18n-key="อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน">
+              อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน
+            </p>
+          </div>
+          <div class="pl-8 md:pl-0">
+            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-secondary border border-slate-200">
+              รองรับ UTF-8 CSV เท่านั้น
+            </span>
+          </div>
+        </div>
+
+        <!-- Form / Upload Workspace -->
+        <form id="import-form" onsubmit="handleImportSubmit(event)" class="p-6 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Picker 1: Orders CSV -->
+            <div class="space-y-2">
+              <label class="block text-[13px] font-semibold text-ink flex items-center justify-between">
+                <span data-i18n-key="Orders CSV *">Orders CSV *</span>
+                <span class="text-xs font-normal text-secondary font-mono">orders.csv</span>
+              </label>
+
+              <div id="dropzone-orders" class="border-2 border-dashed border-border rounded-control p-5 bg-slate-50/50 hover:bg-blue-50/20 hover:border-primary/50 transition-all text-center relative group">
+                <input type="file" id="input-orders-file" accept=".csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleFileChange('orders', this)">
+                <div id="orders-placeholder-ui" class="space-y-2">
+                  <div class="w-10 h-10 rounded-full bg-white border border-border mx-auto flex items-center justify-center text-secondary group-hover:text-primary group-hover:border-primary/30 transition-colors shadow-2xs">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-semibold text-primary group-hover:underline">คลิกเพื่อเลือกไฟล์</span>
+                    <span class="text-xs text-secondary"> หรือลากไฟล์มาวางที่นี่</span>
+                  </div>
+                  <div class="text-[11px] text-slate-400">คอลัมน์สำคัญ: code, customer_code, total, creation_date</div>
+                </div>
+
+                <!-- Selected File Display -->
+                <div id="orders-selected-ui" class="hidden items-center justify-between bg-white border border-emerald-300 p-2.5 rounded-control text-left">
+                  <div class="flex items-center gap-2.5 overflow-hidden">
+                    <div class="w-8 h-8 rounded bg-emerald-50 text-success flex items-center justify-center font-mono text-xs font-bold flex-shrink-0">CSV</div>
+                    <div class="truncate">
+                      <div id="orders-filename" class="text-xs font-semibold text-ink truncate">orders_2025_03.csv</div>
+                      <div id="orders-filesize" class="text-[11px] text-secondary">245 KB • 1,280 แถว</div>
+                    </div>
+                  </div>
+                  <button type="button" onclick="clearFile('orders', event)" class="p-1 text-slate-400 hover:text-error rounded hover:bg-slate-100 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Picker 2: Items CSV -->
+            <div class="space-y-2">
+              <label class="block text-[13px] font-semibold text-ink flex items-center justify-between">
+                <span data-i18n-key="Items CSV *">Items CSV *</span>
+                <span class="text-xs font-normal text-secondary font-mono">items.csv</span>
+              </label>
+
+              <div id="dropzone-items" class="border-2 border-dashed border-border rounded-control p-5 bg-slate-50/50 hover:bg-blue-50/20 hover:border-primary/50 transition-all text-center relative group">
+                <input type="file" id="input-items-file" accept=".csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleFileChange('items', this)">
+                <div id="items-placeholder-ui" class="space-y-2">
+                  <div class="w-10 h-10 rounded-full bg-white border border-border mx-auto flex items-center justify-center text-secondary group-hover:text-primary group-hover:border-primary/30 transition-colors shadow-2xs">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-semibold text-primary group-hover:underline">คลิกเพื่อเลือกไฟล์</span>
+                    <span class="text-xs text-secondary"> หรือลากไฟล์มาวางที่นี่</span>
+                  </div>
+                  <div class="text-[11px] text-slate-400">คอลัมน์สำคัญ: order_code, sku, quantity, unit_price</div>
+                </div>
+
+                <!-- Selected File Display -->
+                <div id="items-selected-ui" class="hidden items-center justify-between bg-white border border-emerald-300 p-2.5 rounded-control text-left">
+                  <div class="flex items-center gap-2.5 overflow-hidden">
+                    <div class="w-8 h-8 rounded bg-emerald-50 text-success flex items-center justify-center font-mono text-xs font-bold flex-shrink-0">CSV</div>
+                    <div class="truncate">
+                      <div id="items-filename" class="text-xs font-semibold text-ink truncate">items_2025_03.csv</div>
+                      <div id="items-filesize" class="text-[11px] text-secondary">512 KB • 3,420 แถว</div>
+                    </div>
+                  </div>
+                  <button type="button" onclick="clearFile('items', event)" class="p-1 text-slate-400 hover:text-error rounded hover:bg-slate-100 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Processing & Action Bar -->
+          <div class="pt-4 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="text-xs text-secondary flex items-center gap-2">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>ระบบจะตรวจสอบความสอดคล้องระหว่างรหัส order_code และ sku ก่อนบันทึกจริง</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="resetImportForm()" class="px-4 py-2 border border-border text-ink hover:bg-slate-50 rounded-control font-medium text-xs transition-colors">
+                ล้างข้อมูล / Reset
+              </button>
+              <!-- Primary Action Button -->
+              <button type="submit" id="btn-submit-import" class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-control font-semibold text-sm shadow-sm transition-all focus:ring-2 focus:ring-primary/20">
+                <svg id="import-btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+                <span id="import-btn-text" data-i18n-key="Import CSV">Import CSV</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Progress State (Visible during upload) -->
+        <div id="import-progress-panel" class="hidden p-6 bg-slate-50 border-t border-border">
+          <div class="max-w-xl mx-auto space-y-3">
+            <div class="flex justify-between text-xs font-semibold">
+              <span id="import-progress-status" class="text-primary flex items-center gap-2">
+                <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span data-i18n-key="กำลัง import...">กำลัง import...</span>
+              </span>
+              <span id="import-progress-percent" class="font-mono text-secondary">65%</span>
+            </div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+              <div id="import-progress-bar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 65%"></div>
+            </div>
+            <div class="text-[11px] text-secondary flex justify-between">
+              <span>กำลังตรวจสอบแถว 832 จาก 1,280 ใน orders.csv...</span>
+              <span class="font-mono">batch #4/7</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 2: ADVANCED MAINTENANCE (RELINK ACTIONS) -->
+      <!-- ========================================== -->
+      <section class="border border-border rounded-card bg-white shadow-2xs overflow-hidden">
+        <!-- Advanced Collapsible / Section Header -->
+        <div class="p-5 bg-slate-50/70 border-b border-border flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-6 h-6 rounded-md bg-slate-200 text-slate-700 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-sm font-bold text-ink">ส่วนการบำรุงรักษาขั้นสูง / Advanced Maintenance Actions</h2>
+              <p class="text-xs text-secondary">เครื่องมือปรับปรุงความสัมพันธ์ของข้อมูลระหว่างบัญชีลูกค้าและรายการออเดอร์เดิม</p>
+            </div>
+          </div>
+          <span class="text-xs text-secondary bg-white px-2.5 py-1 rounded border border-border">
+            2 งานบำรุงรักษา
+          </span>
+        </div>
+
+        <div class="p-6 divide-y divide-border">
+
+          <!-- Action A: Relink users จาก CSV -->
+          <div class="pb-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-5 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <h3 class="text-sm font-bold text-ink" data-i18n-key="Relink users จาก CSV">
+                  Relink users จาก CSV
+                </h3>
+              </div>
+              <p class="text-xs text-secondary" data-i18n-key="อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่">
+                อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่
+              </p>
+
+              <!-- Consequence Explanation Warning -->
+              <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-control text-[12px] text-amber-900 space-y-1">
+                <div class="font-semibold flex items-center gap-1.5 text-warning">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  <span>ผลกระทบ (Consequence):</span>
+                </div>
+                <p class="text-secondary leading-relaxed">
+                  ระบบจะค้นหา user ID ใหม่ตาม <code class="bg-amber-100/60 px-1 py-0.5 rounded text-amber-950 font-mono text-[11px]">customer_code</code> ในไฟล์ CSV ที่ระบุ และแทนที่ user_id เดิมบนออเดอร์ทันที ออเดอร์ที่เคยผูกกับลูกค้าอื่นจะถูกย้ายมายังบัญชีใหม่
+                </p>
+              </div>
+            </div>
+
+            <!-- Upload + Action for Relink from CSV -->
+            <div class="lg:col-span-7 bg-slate-50/50 p-4 rounded-control border border-border space-y-4">
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-ink flex items-center justify-between">
+                  <span data-i18n-key="Orders CSV">Orders CSV</span>
+                  <span class="text-[11px] text-secondary">เฉพาะคอลัมน์ code และ customer_code</span>
+                </label>
+                <div class="flex items-center gap-3">
+                  <div class="relative flex-1">
+                    <input type="file" id="input-relink-csv" accept=".csv" class="hidden" onchange="handleRelinkFileChange(this)">
+                    <button type="button" onclick="document.getElementById('input-relink-csv').click()" class="w-full text-left px-3 py-2 bg-white border border-border hover:border-slate-400 rounded-control text-xs text-secondary flex items-center justify-between">
+                      <span id="relink-file-display" class="truncate">เลือกไฟล์ orders.csv สำหรับ relink...</span>
+                      <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Browse</span>
+                    </button>
+                  </div>
+                  <button type="button" id="btn-relink-csv" onclick="triggerRelinkCsv()" class="px-4 py-2 bg-white border border-border hover:bg-slate-100 text-ink font-semibold text-xs rounded-control transition-colors shadow-2xs whitespace-nowrap flex items-center gap-1.5">
+                    <span id="relink-csv-btn-text" data-i18n-key="Relink from CSV">Relink from CSV</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action B: Relink all (จาก customer_code ใน DB) -->
+          <div class="pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-5 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <h3 class="text-sm font-bold text-ink" data-i18n-key="Relink all (จาก customer_code ใน DB)">
+                  Relink all (จาก customer_code ใน DB)
+                </h3>
+              </div>
+              <p class="text-xs text-secondary" data-i18n-key="ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order">
+                ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order
+              </p>
+
+              <!-- Consequence Explanation Warning -->
+              <div class="p-3 bg-rose-50/70 border border-rose-200/80 rounded-control text-[12px] text-rose-900 space-y-1">
+                <div class="font-semibold flex items-center gap-1.5 text-error">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  <span>ผลกระทบวงกว้าง (System-wide Consequence):</span>
+                </div>
+                <p class="text-secondary leading-relaxed">
+                  กระบวนการนี้จะวนรอบตรวจ <strong class="text-ink">ทุกออเดอร์ในฐานข้อมูลทั้งหมด</strong> เพื่อจับคู่ใหม่กับลูกค้าตามรหัสที่บันทึกไว้ งานนี้ใช้ทรัพยากรฐานข้อมูลสูงและไม่สามารถย้อนคืนได้
+                </p>
+              </div>
+            </div>
+
+            <!-- Direct Action with Explicit Confirmation -->
+            <div class="lg:col-span-7 bg-slate-50/50 p-4 rounded-control border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="text-xs text-secondary">
+                <div class="font-medium text-ink">รันกระบวนการจับคู่ทั้งระบบ</div>
+                <div class="text-[11px] mt-0.5">ทำงานแบบ Background Worker Job ในฝั่งเซิร์ฟเวอร์</div>
+              </div>
+              <button type="button" onclick="openRelinkConfirmModal()" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-error font-semibold text-xs rounded-control transition-colors shadow-2xs whitespace-nowrap flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span data-i18n-key="Relink all orders">Relink all orders</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SECTION 3: RECENT IMPORT JOBS AUDIT LIST -->
+      <!-- ========================================== -->
+      <section class="bg-white rounded-card border border-border shadow-2xs overflow-hidden">
+        <div class="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-ink">ประวัติงานนำเข้าล่าสุด / Recent Import Jobs</h2>
+              <span class="text-[11px] font-medium bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono">ข้อมูลตัวอย่าง / Sample data</span>
+            </div>
+            <p class="text-xs text-secondary mt-0.5">แสดงสถานะงานนำเข้า 5 รายการล่าสุดในระบบ</p>
+          </div>
+          <span class="text-xs text-secondary font-mono">Total 14 jobs recorded</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-border text-secondary font-semibold">
+                <th class="py-3 px-4">Job ID</th>
+                <th class="py-3 px-4">ประเภทงาน</th>
+                <th class="py-3 px-4">ไฟล์ที่ใช้</th>
+                <th class="py-3 px-4">รายการ (Orders / Items)</th>
+                <th class="py-3 px-4">สถานะ</th>
+                <th class="py-3 px-4">ผู้ดำเนินการ</th>
+                <th class="py-3 px-4 text-right">เวลา</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border font-normal text-ink">
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-mono font-medium text-slate-700">#JOB-20250328-01</td>
+                <td class="py-3 px-4">Import orders + items</td>
+                <td class="py-3 px-4 font-mono text-[11px] text-secondary">orders_mar28.csv, items_mar28.csv</td>
+                <td class="py-3 px-4 font-mono">850 / 2,120</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-success-bg text-success border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    สำเร็จ (Success)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-secondary">somchai@store.th</td>
+                <td class="py-3 px-4 text-secondary text-right">วันนี้ 09:42</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-mono font-medium text-slate-700">#JOB-20250327-04</td>
+                <td class="py-3 px-4">Relink users (CSV)</td>
+                <td class="py-3 px-4 font-mono text-[11px] text-secondary">relink_batch_vip.csv</td>
+                <td class="py-3 px-4 font-mono">142 orders</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-success-bg text-success border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    สำเร็จ (Success)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-secondary">nattaporn@store.th</td>
+                <td class="py-3 px-4 text-secondary text-right">27 มี.ค. 16:15</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-mono font-medium text-slate-700">#JOB-20250326-02</td>
+                <td class="py-3 px-4">Import orders + items</td>
+                <td class="py-3 px-4 font-mono text-[11px] text-secondary">corrupted_header.csv, items.csv</td>
+                <td class="py-3 px-4 font-mono">0 / 0</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-error-bg text-error border border-rose-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    ล้มเหลว (Invalid SKU)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-secondary">somchai@store.th</td>
+                <td class="py-3 px-4 text-secondary text-right">26 มี.ค. 11:20</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- EXPLICIT CONFIRMATION MODAL (Relink All Orders) -->
+  <!-- ========================================== -->
+  <div id="relink-confirm-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-card shadow-xl max-w-md w-full border border-border p-6 space-y-4 animate-scale-in" role="dialog" aria-modal="true">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-full bg-rose-100 text-error flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-base font-bold text-ink" data-i18n-key="Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?">
+            Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?
+          </h3>
+          <p class="text-xs text-secondary leading-relaxed">
+            ระบบจะเริ่มสแกนออเดอร์ทั้งหมดในฐานข้อมูลเพื่อจับคู่ user ID ใหม่อัตโนมัติ การทำงานนี้อาจใช้เวลาหลายนาทีและไม่สามารถกดยกเลิกกลางคันได้
+          </p>
+        </div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border border-slate-200 rounded-control text-xs text-secondary space-y-1">
+        <div class="font-medium text-ink">ข้อกำหนดความปลอดภัย (Safety Protocol):</div>
+        <ul class="list-disc pl-4 space-y-0.5 text-[11px]">
+          <li>ใช้เฉพาะค่า <code class="font-mono bg-white px-1 py-0.5 rounded border border-slate-200">customer_code</code> ที่มีอยู่แล้ว</li>
+          <li>ไม่มีผลกระทบต่อยอดเงิน ยอดรวม หรือสต็อกสินค้า</li>
+        </ul>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-2.5">
+        <button type="button" onclick="closeRelinkConfirmModal()" class="px-4 py-2 border border-border text-ink hover:bg-slate-50 rounded-control font-medium text-xs transition-colors">
+          ยกเลิก / Cancel
+        </button>
+        <button type="button" onclick="executeRelinkAllConfirmed()" class="px-5 py-2 bg-error hover:bg-red-700 text-white rounded-control font-semibold text-xs transition-colors shadow-2xs">
+          ยืนยันการ Relink ทั้งหมด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVITY & TRANSLATION ENGINE SCRIPT -->
+  <script>
+    // State management
+    const state = {
+      lang: 'th',
+      ordersFile: null,
+      itemsFile: null,
+      relinkFile: null,
+      isImporting: false,
+      isRelinking: false,
+    };
+
+    // Load translations from hidden application/json script
+    let translations = {};
+    try {
+      const scriptElem = document.getElementById('commerce-ui-translations');
+      if (scriptElem) {
+        translations = JSON.parse(scriptElem.textContent);
+      }
+    } catch(e) {
+      console.error("Failed to parse commerce-ui-translations", e);
+    }
+
+    // Language switcher
+    function setLanguage(lang) {
+      state.lang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-control font-medium transition-all bg-white text-ink shadow-xs";
+        enBtn.className = "px-2.5 py-1 rounded-control font-medium transition-all text-secondary hover:text-ink";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-control font-medium transition-all bg-white text-ink shadow-xs";
+        thBtn.className = "px-2.5 py-1 rounded-control font-medium transition-all text-secondary hover:text-ink";
+      }
+
+      // Update all data-i18n-key nodes
+      document.querySelectorAll('[data-i18n-key]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n-key');
+        if (translations[key] && translations[key][lang]) {
+          elem.textContent = translations[key][lang];
+        }
+      });
+    }
+
+    // File pickers handling
+    function handleFileChange(type, input) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+
+      if (type === 'orders') {
+        state.ordersFile = file;
+        document.getElementById('orders-placeholder-ui').classList.add('hidden');
+        const sel = document.getElementById('orders-selected-ui');
+        sel.classList.remove('hidden');
+        sel.classList.add('flex');
+        document.getElementById('orders-filename').textContent = file.name;
+        document.getElementById('orders-filesize').textContent = (file.size / 1024).toFixed(1) + ' KB • พร้อมนำเข้า';
+      } else if (type === 'items') {
+        state.itemsFile = file;
+        document.getElementById('items-placeholder-ui').classList.add('hidden');
+        const sel = document.getElementById('items-selected-ui');
+        sel.classList.remove('hidden');
+        sel.classList.add('flex');
+        document.getElementById('items-filename').textContent = file.name;
+        document.getElementById('items-filesize').textContent = (file.size / 1024).toFixed(1) + ' KB • พร้อมนำเข้า';
+      }
+    }
+
+    function clearFile(type, e) {
+      if (e) e.stopPropagation();
+      if (type === 'orders') {
+        state.ordersFile = null;
+        document.getElementById('input-orders-file').value = '';
+        document.getElementById('orders-placeholder-ui').classList.remove('hidden');
+        document.getElementById('orders-selected-ui').classList.add('hidden');
+        document.getElementById('orders-selected-ui').classList.remove('flex');
+      } else if (type === 'items') {
+        state.itemsFile = null;
+        document.getElementById('input-items-file').value = '';
+        document.getElementById('items-placeholder-ui').classList.remove('hidden');
+        document.getElementById('items-selected-ui').classList.add('hidden');
+        document.getElementById('items-selected-ui').classList.remove('flex');
+      }
+    }
+
+    function resetImportForm() {
+      clearFile('orders');
+      clearFile('items');
+      dismissStatusBanner();
+      document.getElementById('import-progress-panel').classList.add('hidden');
+    }
+
+    // Primary workflow: Import orders + items
+    function handleImportSubmit(e) {
+      e.preventDefault();
+      dismissStatusBanner();
+
+      // Check required validation
+      if (!state.ordersFile || !state.itemsFile) {
+        showStatusBanner('error',
+          state.lang === 'th' ? 'เกิดข้อผิดพลาดในการตรวจสอบไฟล์' : 'File Validation Error',
+          translations['ต้องเลือกไฟล์ orders และ items (.csv)'][state.lang] || 'ต้องเลือกไฟล์ orders และ items (.csv)'
+        );
+        return;
+      }
+
+      // Simulate busy import state
+      state.isImporting = true;
+      const submitBtn = document.getElementById('btn-submit-import');
+      const submitText = document.getElementById('import-btn-text');
+      const progressPanel = document.getElementById('import-progress-panel');
+      const progressBar = document.getElementById('import-progress-bar');
+      const progressPercent = document.getElementById('import-progress-percent');
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+      submitText.textContent = translations['กำลัง import...'][state.lang];
+      progressPanel.classList.remove('hidden');
+
+      let currentPct = 15;
+      progressBar.style.width = currentPct + '%';
+      progressPercent.textContent = currentPct + '%';
+
+      const interval = setInterval(() => {
+        currentPct += 25;
+        if (currentPct > 100) currentPct = 100;
+        progressBar.style.width = currentPct + '%';
+        progressPercent.textContent = currentPct + '%';
+
+        if (currentPct >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            state.isImporting = false;
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            submitText.textContent = translations['Import CSV'][state.lang];
+            progressPanel.classList.add('hidden');
+
+            // Show success notification
+            showStatusBanner('success',
+              state.lang === 'th' ? 'นำเข้าสำเร็จ (Import Completed)' : 'Import Completed Successfully',
+              state.lang === 'th'
+                ? `นำเข้าไฟล์ ${state.ordersFile.name} และ ${state.itemsFile.name} เรียบร้อยแล้ว (สร้าง 1,280 ออเดอร์)`
+                : `Successfully imported ${state.ordersFile.name} and ${state.itemsFile.name} (1,280 orders created)`
+            );
+          }, 400);
+        }
+      }, 350);
+    }
+
+    // Action A: Relink from CSV
+    function handleRelinkFileChange(input) {
+      if (!input.files || input.files.length === 0) return;
+      state.relinkFile = input.files[0];
+      document.getElementById('relink-file-display').textContent = state.relinkFile.name + ` (${(state.relinkFile.size / 1024).toFixed(1)} KB)`;
+      document.getElementById('relink-file-display').classList.add('text-ink', 'font-medium');
+    }
+
+    function triggerRelinkCsv() {
+      dismissStatusBanner();
+      if (!state.relinkFile) {
+        showStatusBanner('warning',
+          state.lang === 'th' ? 'ยังไม่ได้เลือกไฟล์' : 'File Missing',
+          translations['เลือกไฟล์ orders CSV สำหรับ relink'][state.lang] || 'เลือกไฟล์ orders CSV สำหรับ relink'
+        );
+        return;
+      }
+
+      const btn = document.getElementById('btn-relink-csv');
+      const text = document.getElementById('relink-csv-btn-text');
+      btn.disabled = true;
+      text.textContent = translations['กำลัง relink...'][state.lang];
+
+      setTimeout(() => {
+        btn.disabled = false;
+        text.textContent = translations['Relink from CSV'][state.lang];
+        showStatusBanner('success',
+          state.lang === 'th' ? 'Relink users สำเร็จ' : 'Users Relinked Successfully',
+          state.lang === 'th'
+            ? `ผูก user ใหม่ให้กับออเดอร์จากไฟล์ ${state.relinkFile.name} เรียบร้อยแล้ว (อัปเดต 342 ออเดอร์)`
+            : `Users successfully re-associated with orders from ${state.relinkFile.name} (342 orders updated)`
+        );
+      }, 1000);
+    }
+
+    // Action B: Relink all orders with explicit modal confirmation
+    function openRelinkConfirmModal() {
+      document.getElementById('relink-confirm-modal').classList.remove('hidden');
+      document.getElementById('relink-confirm-modal').classList.add('flex');
+    }
+
+    function closeRelinkConfirmModal() {
+      document.getElementById('relink-confirm-modal').classList.add('hidden');
+      document.getElementById('relink-confirm-modal').classList.remove('flex');
+    }
+
+    function executeRelinkAllConfirmed() {
+      closeRelinkConfirmModal();
+      showStatusBanner('success',
+        state.lang === 'th' ? 'เริ่มงาน Relink ทั้งหมดแล้ว (Job Enqueued)' : 'Relink Job Enqueued',
+        state.lang === 'th'
+          ? 'เริ่มการประมวลผล relink orders ทั้งระบบตาม customer_code ในฐานข้อมูลแล้ว รหัสงาน #JOB-RELINK-AUTO'
+          : 'System-wide order relinking initiated using customer_code in DB. Job ID #JOB-RELINK-AUTO'
+      );
+    }
+
+    // Banner helpers
+    function showStatusBanner(type, title, desc) {
+      const banner = document.getElementById('status-banner');
+      const titleElem = document.getElementById('status-title');
+      const descElem = document.getElementById('status-desc');
+      const iconElem = document.getElementById('status-icon');
+
+      banner.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-rose-50', 'border-rose-200', 'text-rose-900', 'bg-amber-50', 'border-amber-200', 'text-amber-900');
+
+      titleElem.textContent = title;
+      descElem.textContent = desc;
+
+      if (type === 'success') {
+        banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+        iconElem.innerHTML = `<svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (type === 'error') {
+        banner.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+        iconElem.innerHTML = `<svg class="w-5 h-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (type === 'warning') {
+        banner.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-900');
+        iconElem.innerHTML = `<svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+      }
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function dismissStatusBanner() {
+      document.getElementById('status-banner').classList.add('hidden');
+    }
+
+    // Keyboard support: Escape closes modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeRelinkConfirmModal();
+      }
+    });
+
+    // Default to Thai
+    setLanguage('th');
+  </script>
+</body>
+</html>

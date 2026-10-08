@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Promotion product sets - Siam Commerce</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#365cf5",
+            "primary-hover": "#2848d6",
+            "ink": "#17243b",
+            "secondary-text": "#52627a",
+            "canvas": "#f6f8fc",
+            "border-subtle": "#e1e7f0",
+            "surface": "#ffffff",
+            "success": "#157347",
+            "warning": "#b08900",
+            "error": "#c2333f",
+            "surface-container-low": "#f1f3ff",
+            "surface-container": "#e8eeff",
+            "surface-container-highest": "#d7e2ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "sm": "0.375rem",
+            "md": "0.5rem", // 8px for controls
+            "lg": "0.75rem", // 12px for cards
+            "xl": "1rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            sans: ['Noto Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] antialiased min-h-screen flex">
+
+<!-- Translation Catalogue (Immutable Required Exact Spec) -->
+<script id="commerce-ui-translations" type="application/json">
+{
+  "สถานะ": {"th": "สถานะ", "en": "Status"},
+  "แก้ไข": {"th": "แก้ไข", "en": "Edit"},
+  "ลบ": {"th": "ลบ", "en": "Delete"},
+  "ชื่อ": {"th": "ชื่อ", "en": "Name"},
+  "แก้ไขล่าสุด": {"th": "แก้ไขล่าสุด", "en": "Last modified"},
+  "Promotion Product Set": {"th": "Promotion Product Set", "en": "Promotion Product Set"},
+  "Active": {"th": "Active", "en": "Active"},
+  "เครื่องมือ": {"th": "เครื่องมือ", "en": "Tools"},
+  "Inactive": {"th": "Inactive", "en": "Inactive"},
+  "โหลดรายการไม่สำเร็จ ลองใหม่อีกครั้ง": {"th": "โหลดรายการไม่สำเร็จ ลองใหม่อีกครั้ง", "en": "Failed to load records. Please try again."},
+  "ยืนยันการลบ Product Set นี้?": {"th": "ยืนยันการลบ Product Set นี้?", "en": "Confirm deletion of this Product Set?"},
+  "ลบไม่สำเร็จ ลองใหม่อีกครั้ง": {"th": "ลบไม่สำเร็จ ลองใหม่อีกครั้ง", "en": "Failed to delete. Please try again."},
+  "จำนวนสินค้า": {"th": "จำนวนสินค้า", "en": "Product count"},
+  "จำนวนหมวดหมู่": {"th": "จำนวนหมวดหมู่", "en": "Category count"},
+  "จำนวนแบรนด์": {"th": "จำนวนแบรนด์", "en": "Brand count"},
+  "← กลับไปที่คูปอง": {"th": "← กลับไปที่คูปอง", "en": "← Back to coupons"},
+  "รายการ SKU แบบตั้งชื่อ ใช้เป็นเงื่อนไข include/exclude ของคูปอง": {"th": "รายการ SKU แบบตั้งชื่อ ใช้เป็นเงื่อนไข include/exclude ของคูปอง", "en": "Named SKU list used as coupon include/exclude conditions"},
+  "สร้าง Product Set": {"th": "สร้าง Product Set", "en": "Create Product Set"},
+  "ค้นหาชื่อ Product Set": {"th": "ค้นหาชื่อ Product Set", "en": "Search Product Set name"},
+  "ขนาดแพ็กนี้": {"th": "ขนาดแพ็กนี้", "en": "Pack size"},
+  "ค้นหาร้าน / Company": {"th": "ค้นหาร้าน / Company", "en": "Search Shop / Company"},
+  "คูปองรางวัล": {"th": "คูปองรางวัล", "en": "Reward coupon"},
+  "ชนิดไฟล์ไม่รองรับทั้งหมด": {"th": "ชนิดไฟล์ไม่รองรับทั้งหมด", "en": "Unsupported file types"},
+  "เช่น ซื้อ 5 ลด": {"th": "เช่น ซื้อ 5 ลด", "en": "e.g. Buy 5 get discount"},
+  "ตรวจหมวด{0}ครบแล้ว": {"th": "ตรวจหมวด{0}ครบแล้ว", "en": "Checked all {0} categories"},
+  "แถว": {"th": "แถว", "en": "rows"},
+  "บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL": {"th": "บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL", "en": "Save failed — duplicate slug or invalid URL format"},
+  "เปิดร่าง workflow": {"th": "เปิดร่าง workflow", "en": "Open draft workflow"},
+  "เพิ่มใน flow หลัก (ไม่ผูกกิ่ง):": {"th": "เพิ่มใน flow หลัก (ไม่ผูกกิ่ง):", "en": "Add to main flow (no branch):"},
+  "ไม่แน่ใจ {0}% — ตรวจก่อนติ๊ก": {"th": "ไม่แน่ใจ {0}% — ตรวจก่อนติ๊ก", "en": "Uncertain {0}% — check before selecting"},
+  "ยังไม่ชำระ": {"th": "ยังไม่ชำระ", "en": "Unpaid"},
+  "รหัสขั้นตอน (Step ID, แก้ไขไม่ได้)": {"th": "รหัสขั้นตอน (Step ID, แก้ไขไม่ได้)", "en": "Step ID (uneditable)"},
+  "รายงาน": {"th": "รายงาน", "en": "Report"},
+  "ลบไฟล์": {"th": "ลบไฟล์", "en": "Delete file"},
+  "เลือกจาก user segment ที่สร้างไว้ (รองรับ segment builder)": {"th": "เลือกจาก user segment ที่สร้างไว้ (รองรับ segment builder)", "en": "Select from existing user segments (supports segment builder)"},
+  "สถานะจัดส่ง (invoice.delivery)": {"th": "สถานะจัดส่ง (invoice.delivery)", "en": "Delivery status (invoice.delivery)"},
+  "สินค้าในชุดที่เลือกจะไม่ถูกนับเข้ายอดขั้นต่ำและไม่ได้รับส่วนลด": {"th": "สินค้าในชุดที่เลือกจะไม่ถูกนับเข้ายอดขั้นต่ำและไม่ได้รับส่วนลด", "en": "Items in the selected set will not count towards minimum spend and will not receive discounts"},
+  "เหตุการณ์ย้อนหลัง": {"th": "เหตุการณ์ย้อนหลัง", "en": "Historical events"},
+  "อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ \"ERP log ของ josh\"": {"th": "อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ \"ERP log ของ josh\"", "en": "Read-only from josh Mongo (last 24 hrs, max 7 days) · ERP sent to josh, see \"josh ERP log\""},
+  "ยิงทุก{0} เวลา {1} น. — ส่ง Audience ที่เลือก (คนละ 1 ครั้ง/รอบ)": {"th": "ยิงทุก{0} เวลา {1} น. — ส่ง Audience ที่เลือก (คนละ 1 ครั้ง/รอบ)", "en": "Triggers every {0} at {1} — send to selected audience (once per person/round)"},
+  "นับเฉพาะ {0}": {"th": "นับเฉพาะ {0}", "en": "Count only {0}"},
+  "เกิดข้อผิดพลาดในการลบ": {"th": "เกิดข้อผิดพลาดในการลบ", "en": "Error occurred during deletion"}
+}
+</script>
+
+<!-- SHARED COMPONENT: SideNavBar (Fixed 256px) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-white border-r border-[#e1e7f0] flex flex-col justify-between p-4 select-none">
+  <div class="flex flex-col gap-y-4">
+    <!-- Header Brand -->
+    <div class="flex items-center gap-3 px-2 py-2">
+      <div class="w-10 h-10 rounded-lg bg-[#365cf5] text-white flex items-center justify-center font-bold text-lg shadow-sm">
+        S
+      </div>
+      <div class="flex flex-col">
+        <span class="text-base font-bold text-[#17243b] leading-tight">สยาม คอมเมิร์ซ</span>
+        <span class="text-[11px] text-[#52627a] font-normal">ศูนย์จัดการระบบร้านค้า</span>
+      </div>
+    </div>
+
+    <!-- Quick Action CTA -->
+    <button class="w-full h-10 px-3 bg-[#f1f3ff] hover:bg-[#e0e8ff] text-[#365cf5] text-[13px] font-semibold rounded-lg flex items-center justify-center gap-2 border border-[#d0e1fd] transition-colors duration-150">
+      <span class="material-symbols-outlined text-[18px]">add_circle</span>
+      <span>สร้างรายการใหม่</span>
+    </button>
+
+    <!-- Main Navigation Tabs (7 Work Areas) -->
+    <nav class="flex flex-col gap-1 mt-1">
+      <!-- 1. สินค้าและสต็อก -->
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[14px]" href="#">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>สินค้าและสต็อก</span>
+      </a>
+      <!-- 2. ออเดอร์และการเงิน -->
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[14px]" href="#">
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span>ออเดอร์และการเงิน</span>
+      </a>
+      <!-- 3. ลูกค้าและบริการ -->
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[14px]" href="#">
+        <span class="material-symbols-outlined">group</span>
+        <span>ลูกค้าและบริการ</span>
+      </a>
+      <!-- 4. การตลาด (Active Navigation) -->
+      <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#f1f3ff] text-[#365cf5] font-semibold text-[14px] border-l-4 border-[#365cf5]" href="/j/promotion-product-sets">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+          <span>การตลาด</span>
+        </a>
+        <!-- Sub-items under การตลาด -->
+        <div class="pl-9 pr-2 py-1.5 flex flex-col gap-1 text-[13px]">
+          <a class="text-[#52627a] hover:text-[#17243b] py-1" href="#">Marketing Workflows</a>
+          <a class="text-[#52627a] hover:text-[#17243b] py-1" href="#">Smart Links</a>
+          <a class="text-[#52627a] hover:text-[#17243b] py-1" href="#">Promotion Pages</a>
+          <a class="text-[#365cf5] font-semibold py-1 flex items-center justify-between" href="/j/promotion-product-sets">
+            <span>Product Sets</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+          </a>
+          <a class="text-[#52627a] hover:text-[#17243b] py-1" href="#">User Segments</a>
+          <a class="text-[#52627a] hover:text-[#17243b] py-1" href="#">Growth Workspace</a>
+        </div>
+      </div>
+      <!-- 5. รายงานและข้อมูล -->
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[14px]" href="#">
+        <span class="material-symbols-outlined">analytics</span>
+        <span>รายงานและข้อมูล</span>
+      </a>
+      <!-- 6. ระบบเชื่อมต่อ -->
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[14px]" href="#">
+        <span class="material-symbols-outlined">hub</span>
+        <span>ระบบเชื่อมต่อ</span>
+      </a>
+      <!-- 7. ตั้งค่าและทีมงาน -->
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[14px]" href="#">
+        <span class="material-symbols-outlined">settings</span>
+        <span>ตั้งค่าและทีมงาน</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Footer Area of Sidebar -->
+  <div class="pt-4 border-t border-[#e1e7f0] flex flex-col gap-1">
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[13px]" href="#">
+      <span class="material-symbols-outlined text-[18px]">help</span>
+      <span>คู่มือใช้งาน</span>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f3ff] transition-colors duration-150 text-[13px]" href="#">
+      <span class="material-symbols-outlined text-[18px]">logout</span>
+      <span>ออกจากระบบ</span>
+    </a>
+  </div>
+</aside>
+
+<!-- SHARED COMPONENT: TopNavBar (Fixed) -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-white border-b border-[#e1e7f0] flex justify-between items-center px-6">
+  <!-- Left: Breadcrumbs & Quick Global Search -->
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 text-[13px] text-[#52627a]">
+      <a href="#" class="text-[#365cf5] hover:underline font-medium">การตลาด</a>
+      <span>/</span>
+      <span class="text-[#17243b] font-medium" data-i18n="Promotion Product Set">Promotion Product Set</span>
+    </div>
+    <div class="hidden lg:flex items-center ml-4 relative">
+      <span class="material-symbols-outlined absolute left-3 text-[#747687]">search</span>
+      <input class="w-64 pl-9 pr-3 py-1.5 text-[13px] bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[#17243b] transition-all" placeholder="ค้นหาเมนู, ฟังก์ชัน หรือแคมเปญ..." type="text"/>
+    </div>
+  </div>
+
+  <!-- Right: Language Switcher, Sample Data Badge, Actions & Profile -->
+  <div class="flex items-center gap-3">
+    <!-- Language Toggle Switcher -->
+    <button class="flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-semibold rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[#17243b] transition-all cursor-pointer shadow-sm" id="lang-toggle-btn">
+      <span class="material-symbols-outlined text-[16px] text-[#365cf5]">language</span>
+      <span id="lang-display-text">ไทย / English</span>
+    </button>
+    <!-- Sample data badge -->
+    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#e8eeff] text-[#365cf5] border border-[#d0e1fd]">
+      ข้อมูลตัวอย่าง / Sample data
+    </span>
+    <div class="h-5 w-[1px] bg-[#e1e7f0] mx-1"></div>
+    <!-- Notifications & Help -->
+    <button class="w-9 h-9 rounded-lg flex items-center justify-center text-[#52627a] hover:bg-[#f6f8fc] relative transition-colors" title="แจ้งเตือน">
+      <span class="material-symbols-outlined">notifications</span>
+      <span class="absolute top-2 right-2 w-2 h-2 bg-[#c2333f] rounded-full"></span>
+    </button>
+    <button class="w-9 h-9 rounded-lg flex items-center justify-center text-[#52627a] hover:bg-[#f6f8fc] transition-colors" title="ช่วยเหลือ">
+      <span class="material-symbols-outlined">help_outline</span>
+    </button>
+    <!-- User Profile Badge -->
+    <div class="flex items-center gap-2 pl-2">
+      <div class="w-8 h-8 rounded-full bg-[#d0e1fd] text-[#365cf5] flex items-center justify-center font-bold text-xs ring-1 ring-[#c4c5d8]">
+        SC
+      </div>
+      <div class="hidden xl:flex flex-col">
+        <span class="text-xs font-semibold text-[#17243b] leading-tight">แอดมินการตลาด</span>
+        <span class="text-[10px] text-[#52627a]">Promotion Ops</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN VIEWPORT CANVAS -->
+<main class="ml-64 mt-16 flex-1 min-h-[calc(100vh-4rem)] p-6 flex justify-center">
+  <div class="w-full max-w-[1240px] flex flex-col gap-6">
+
+    <!-- TOP TASK CONTEXT & HEADER -->
+    <section class="bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-sm flex flex-col gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-col gap-1.5">
+          <div class="flex items-center gap-3">
+            <a href="#" class="text-[13px] font-medium text-[#365cf5] hover:underline inline-flex items-center gap-1" data-i18n="← กลับไปที่คูปอง">
+              ← กลับไปที่คูปอง
+            </a>
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono text-[#52627a] bg-[#f6f8fc] border border-[#e1e7f0]">
+              route: admin-1622343e8a5e
+            </span>
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono text-[#52627a] bg-[#f6f8fc] border border-[#e1e7f0]">
+              URL: /j/promotion-product-sets
+            </span>
+          </div>
+          <h1 class="text-[28px] font-bold text-[#17243b] leading-tight">Promotion Product Sets</h1>
+          <p class="text-[14px] text-[#52627a]" data-i18n="รายการ SKU แบบตั้งชื่อ ใช้เป็นเงื่อนไข include/exclude ของคูปอง">
+            รายการ SKU แบบตั้งชื่อ ใช้เป็นเงื่อนไข include/exclude ของคูปอง
+          </p>
+        </div>
+
+        <!-- Primary Action -->
+        <div class="flex items-center gap-3 self-start sm:self-auto">
+          <button onclick="toggleErrorBanner()" class="h-10 px-3 bg-white border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[#52627a] text-[13px] font-medium rounded-lg inline-flex items-center gap-1.5 transition-all shadow-sm" title="ทดสอบ Error State">
+            <span class="material-symbols-outlined text-[16px]">sync</span>
+            <span>รีเฟรช</span>
+          </button>
+          <button onclick="openCreateModal()" class="h-10 px-4 bg-[#365cf5] hover:bg-[#2848d6] text-white text-[13px] font-semibold rounded-lg inline-flex items-center gap-2 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            <span data-i18n="สร้าง Product Set">สร้าง Product Set</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- INFORMATIVE OPERATIONAL CALLOUT -->
+      <div class="bg-[#f1f3ff] border border-[#d0e1fd] rounded-lg p-3.5 flex items-start gap-3">
+        <span class="material-symbols-outlined text-[#365cf5] mt-0.5 text-[20px]">info</span>
+        <div class="text-[13px] text-[#17243b] flex-1">
+          <span class="font-semibold text-[#365cf5]">ข้อกำหนดการคำนวณส่วนลด:</span>
+          <span data-i18n="สินค้าในชุดที่เลือกจะไม่ถูกนับเข้ายอดขั้นต่ำและไม่ได้รับส่วนลด">
+            สินค้าในชุดที่เลือกจะไม่ถูกนับเข้ายอดขั้นต่ำและไม่ได้รับส่วนลด
+          </span>
+          <span class="text-[#52627a] ml-1">(เมื่อกำหนดชุดนี้เป็นเงื่อนไข Exclude ในโปรโมชันหรือคูปอง)</span>
+        </div>
+      </div>
+
+      <!-- SIMULATED ERROR ALERT (Hidden by default, toggleable) -->
+      <div id="error-alert" class="hidden bg-[#ffdad6]/40 border border-[#ffdad6] rounded-lg p-3.5 flex items-center justify-between text-[#c2333f] text-[13px]">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">error</span>
+          <span data-i18n="โหลดรายการไม่สำเร็จ ลองใหม่อีกครั้ง">โหลดรายการไม่สำเร็จ ลองใหม่อีกครั้ง</span>
+        </div>
+        <button onclick="toggleErrorBanner()" class="px-2.5 py-1 bg-white border border-[#ffdad6] text-[#c2333f] rounded font-semibold text-xs hover:bg-[#ffdad6]/20">
+          ลองใหม่
+        </button>
+      </div>
+    </section>
+
+    <!-- METRICS OVERVIEW (Task-based stats) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex items-center justify-between">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[13px] font-medium text-[#52627a]">ชุดสินค้าทั้งหมด</span>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-2xl font-bold text-[#17243b] tabular-nums">4</span>
+            <span class="text-xs text-[#52627a]">ชุด</span>
+          </div>
+          <span class="text-[11px] text-[#157347] font-medium mt-1">3 Active · 1 Inactive</span>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-[#f1f3ff] text-[#365cf5] flex items-center justify-center">
+          <span class="material-symbols-outlined">category</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex items-center justify-between">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[13px] font-medium text-[#52627a]" data-i18n="จำนวนสินค้า">จำนวนสินค้า</span>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-2xl font-bold text-[#17243b] tabular-nums">148</span>
+            <span class="text-xs text-[#52627a]">SKU รวม</span>
+          </div>
+          <span class="text-[11px] text-[#52627a] mt-1">ผูกกับ 6 แคมเปญคูปอง</span>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-[#f1f3ff] text-[#365cf5] flex items-center justify-center">
+          <span class="material-symbols-outlined">inventory_2</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex items-center justify-between">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[13px] font-medium text-[#52627a]" data-i18n="จำนวนหมวดหมู่">จำนวนหมวดหมู่</span>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-2xl font-bold text-[#17243b] tabular-nums">12</span>
+            <span class="text-xs text-[#52627a]">หมวดหมู่หลัก</span>
+          </div>
+          <span class="text-[11px] text-[#52627a] mt-1">ครอบคลุม เบเกอรี่, เนื้อสัตว์, เครื่องดื่ม</span>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-[#f1f3ff] text-[#365cf5] flex items-center justify-center">
+          <span class="material-symbols-outlined">folder_open</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex items-center justify-between">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[13px] font-medium text-[#52627a]" data-i18n="จำนวนแบรนด์">จำนวนแบรนด์</span>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-2xl font-bold text-[#17243b] tabular-nums">18</span>
+            <span class="text-xs text-[#52627a]">แบรนด์</span>
+          </div>
+          <span class="text-[11px] text-[#52627a] mt-1">วัตถุดิบและอุปกรณ์ B2B</span>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-[#f1f3ff] text-[#365cf5] flex items-center justify-center">
+          <span class="material-symbols-outlined">loyalty</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH & FILTER BAR -->
+    <section class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      <!-- Frontend Page Search -->
+      <div class="relative w-full sm:w-80">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#747687]">search</span>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="ค้นหาชื่อ Product Set (ค้นหาเฉพาะหน้านี้)..."
+          class="w-full h-10 pl-9 pr-9 text-[13px] bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[#17243b] transition-all"
+          oninput="handleSearch(this.value)"
+        />
+        <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-[#747687] hover:text-[#17243b]">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+        </button>
+      </div>
+
+      <!-- Filters & Sorting -->
+      <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+        <!-- Status Filter -->
+        <div class="flex items-center gap-1.5 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg px-2.5 h-10">
+          <span class="text-[12px] font-medium text-[#52627a]" data-i18n="สถานะ">สถานะ:</span>
+          <select id="filter-status" onchange="filterRecords()" class="bg-transparent text-[13px] font-medium text-[#17243b] border-none focus:ring-0 cursor-pointer py-1 pl-1 pr-6">
+            <option value="all">ทั้งหมด</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <!-- Sort Select -->
+        <div class="flex items-center gap-1.5 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg px-2.5 h-10">
+          <span class="text-[12px] font-medium text-[#52627a]">เรียงตาม:</span>
+          <select class="bg-transparent text-[13px] font-medium text-[#17243b] border-none focus:ring-0 cursor-pointer py-1 pl-1 pr-6">
+            <option value="updated">แก้ไขล่าสุด</option>
+            <option value="name">ชื่อชุดสินค้า (A-Z)</option>
+            <option value="items">จำนวนสินค้า (มาก-น้อย)</option>
+          </select>
+        </div>
+
+        <!-- Reset Button -->
+        <button onclick="resetFilters()" class="h-10 px-3 border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[#52627a] hover:text-[#17243b] text-[13px] font-medium rounded-lg flex items-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+          <span>รีเซ็ต</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- DATA TABLE: PROMOTION PRODUCT SETS -->
+    <section class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden flex flex-col">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse" id="records-table">
+          <thead>
+            <tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-xs font-semibold text-[#52627a]">
+              <th class="py-3 px-4 w-12 text-center">
+                <input type="checkbox" class="rounded border-[#e1e7f0] text-[#365cf5] focus:ring-[#365cf5]/20 cursor-pointer"/>
+              </th>
+              <th class="py-3 px-4" data-i18n="ชื่อ">ชื่อ</th>
+              <th class="py-3 px-4 w-44" data-i18n="จำนวนสินค้า">จำนวนสินค้า</th>
+              <th class="py-3 px-4 w-48">หมวดหมู่ / แบรนด์</th>
+              <th class="py-3 px-4 w-44" data-i18n="แก้ไขล่าสุด">แก้ไขล่าสุด</th>
+              <th class="py-3 px-4 w-32" data-i18n="สถานะ">สถานะ</th>
+              <th class="py-3 px-4 w-32 text-right pr-6" data-i18n="เครื่องมือ">เครื่องมือ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#e1e7f0] text-[14px]" id="table-body">
+
+            <!-- Record 1 -->
+            <tr class="hover:bg-[#f8fafd] transition-colors group" data-name="วัตถุดิบเบเกอรี่พรีเมียม (Premium Bakery)" data-status="Active">
+              <td class="py-3.5 px-4 text-center">
+                <input type="checkbox" class="rounded border-[#e1e7f0] text-[#365cf5] focus:ring-[#365cf5]/20 cursor-pointer"/>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-[#17243b] hover:text-[#365cf5] cursor-pointer">วัตถุดิบเบเกอรี่พรีเมียม (Premium Bakery)</span>
+                    <span class="text-[11px] font-mono px-1.5 py-0.2 bg-[#f1f3ff] text-[#365cf5] rounded border border-[#d0e1fd]">SET-BKR-01</span>
+                  </div>
+                  <span class="text-[12px] text-[#52627a] mt-0.5">เนยสด ช็อกโกแลตคูแวร์เจอร์ แป้งสาลี และยีสต์นำเข้า</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-[#17243b] tabular-nums">48 SKU</span>
+                  <span class="text-[11px] text-[#52627a]">ขนาดแพ็ก: ลัง / กระสอบ</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">3 หมวดหมู่</span>
+                  <span class="text-[#52627a]">5 แบรนด์ (Anchor, Cacao Barry, etc.)</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">วันนี้ 14:20 น.</span>
+                  <span class="text-[#52627a]">โดย แอดมินการตลาด</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#157347]/10 text-[#157347]" data-i18n="Active">
+                  Active
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-1">
+                  <button onclick="openEditModal('วัตถุดิบเบเกอรี่พรีเมียม (Premium Bakery)', 'SET-BKR-01', 48, 'Active')" class="p-1.5 text-[#52627a] hover:text-[#365cf5] hover:bg-[#f1f3ff] rounded-lg transition-colors" data-i18n-title="แก้ไข" title="แก้ไข">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button onclick="openDeleteModal('วัตถุดิบเบเกอรี่พรีเมียม (Premium Bakery)')" class="p-1.5 text-[#52627a] hover:text-[#c2333f] hover:bg-[#ffdad6]/40 rounded-lg transition-colors" data-i18n-title="ลบ" title="ลบ">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Record 2 -->
+            <tr class="hover:bg-[#f8fafd] transition-colors group" data-name="เนื้อสัตว์ตัดแต่งและอาหารทะเลแช่แข็ง" data-status="Active">
+              <td class="py-3.5 px-4 text-center">
+                <input type="checkbox" class="rounded border-[#e1e7f0] text-[#365cf5] focus:ring-[#365cf5]/20 cursor-pointer"/>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-[#17243b] hover:text-[#365cf5] cursor-pointer">เนื้อสัตว์ตัดแต่งและอาหารทะเลแช่แข็ง</span>
+                    <span class="text-[11px] font-mono px-1.5 py-0.2 bg-[#f1f3ff] text-[#365cf5] rounded border border-[#d0e1fd]">SET-FRZ-02</span>
+                  </div>
+                  <span class="text-[12px] text-[#52627a] mt-0.5">เนื้อสันคอสไลซ์ อกไก่ลอกหนัง กุ้งขาว และแซลมอนนอร์เวย์</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-[#17243b] tabular-nums">62 SKU</span>
+                  <span class="text-[11px] text-[#52627a]">ขนาดแพ็ก: บล็อก / ลัง</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">4 หมวดหมู่</span>
+                  <span class="text-[#52627a]">6 แบรนด์ (สยามฟู้ดส์, Freshket, etc.)</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">เมื่อวานนี้ 09:15 น.</span>
+                  <span class="text-[#52627a]">โดย กิตติศักดิ์ พ.</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#157347]/10 text-[#157347]" data-i18n="Active">
+                  Active
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-1">
+                  <button onclick="openEditModal('เนื้อสัตว์ตัดแต่งและอาหารทะเลแช่แข็ง', 'SET-FRZ-02', 62, 'Active')" class="p-1.5 text-[#52627a] hover:text-[#365cf5] hover:bg-[#f1f3ff] rounded-lg transition-colors" data-i18n-title="แก้ไข" title="แก้ไข">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button onclick="openDeleteModal('เนื้อสัตว์ตัดแต่งและอาหารทะเลแช่แข็ง')" class="p-1.5 text-[#52627a] hover:text-[#c2333f] hover:bg-[#ffdad6]/40 rounded-lg transition-colors" data-i18n-title="ลบ" title="ลบ">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Record 3 -->
+            <tr class="hover:bg-[#f8fafd] transition-colors group" data-name="น้ำมันพืชและเครื่องปรุงรสยกลัง (Condiments Bulk)" data-status="Active">
+              <td class="py-3.5 px-4 text-center">
+                <input type="checkbox" class="rounded border-[#e1e7f0] text-[#365cf5] focus:ring-[#365cf5]/20 cursor-pointer"/>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-[#17243b] hover:text-[#365cf5] cursor-pointer">น้ำมันพืชและเครื่องปรุงรสยกลัง (Condiments Bulk)</span>
+                    <span class="text-[11px] font-mono px-1.5 py-0.2 bg-[#f1f3ff] text-[#365cf5] rounded border border-[#d0e1fd]">SET-CND-03</span>
+                  </div>
+                  <span class="text-[12px] text-[#52627a] mt-0.5">น้ำมันปาล์มปี๊บ ซอสปรุงรส ซอสหอยนางรม ขนาดร้านอาหาร</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-[#17243b] tabular-nums">26 SKU</span>
+                  <span class="text-[11px] text-[#52627a]">ขนาดแพ็ก: ปี๊บ 13.75 ลิตร / ลัง</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">2 หมวดหมู่</span>
+                  <span class="text-[#52627a]">4 แบรนด์ (มรกต, ง่วนเชียง, etc.)</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">22 พ.ค. 2567</span>
+                  <span class="text-[#52627a]">โดย วรัชญา ม.</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#157347]/10 text-[#157347]" data-i18n="Active">
+                  Active
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-1">
+                  <button onclick="openEditModal('น้ำมันพืชและเครื่องปรุงรสยกลัง (Condiments Bulk)', 'SET-CND-03', 26, 'Active')" class="p-1.5 text-[#52627a] hover:text-[#365cf5] hover:bg-[#f1f3ff] rounded-lg transition-colors" data-i18n-title="แก้ไข" title="แก้ไข">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button onclick="openDeleteModal('น้ำมันพืชและเครื่องปรุงรสยกลัง (Condiments Bulk)')" class="p-1.5 text-[#52627a] hover:text-[#c2333f] hover:bg-[#ffdad6]/40 rounded-lg transition-colors" data-i18n-title="ลบ" title="ลบ">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Record 4 -->
+            <tr class="hover:bg-[#f8fafd] transition-colors group" data-name="กลุ่มสินค้าแคมเปญ 11.11 เคลียร์สต็อก (Archived)" data-status="Inactive">
+              <td class="py-3.5 px-4 text-center">
+                <input type="checkbox" class="rounded border-[#e1e7f0] text-[#365cf5] focus:ring-[#365cf5]/20 cursor-pointer"/>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-[#17243b] hover:text-[#365cf5] cursor-pointer">กลุ่มสินค้าแคมเปญ 11.11 เคลียร์สต็อก (Archived)</span>
+                    <span class="text-[11px] font-mono px-1.5 py-0.2 bg-[#f1f3ff] text-[#52627a] rounded border border-[#e1e7f0]">SET-1111-CLR</span>
+                  </div>
+                  <span class="text-[12px] text-[#52627a] mt-0.5">สินค้าเครื่องดื่มกระป๋องและแพ็กเกจจิ้งที่หมดโปรโมชัน</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-[#17243b] tabular-nums">12 SKU</span>
+                  <span class="text-[11px] text-[#52627a]">ขนาดแพ็ก: ลัง</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">3 หมวดหมู่</span>
+                  <span class="text-[#52627a]">3 แบรนด์</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col text-[12px]">
+                  <span class="text-[#17243b] font-medium">12 พ.ย. 2567</span>
+                  <span class="text-[#52627a]">โดย แอดมินการตลาด</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#f1f3ff] text-[#52627a]" data-i18n="Inactive">
+                  Inactive
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-1">
+                  <button onclick="openEditModal('กลุ่มสินค้าแคมเปญ 11.11 เคลียร์สต็อก (Archived)', 'SET-1111-CLR', 12, 'Inactive')" class="p-1.5 text-[#52627a] hover:text-[#365cf5] hover:bg-[#f1f3ff] rounded-lg transition-colors" data-i18n-title="แก้ไข" title="แก้ไข">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button onclick="openDeleteModal('กลุ่มสินค้าแคมเปญ 11.11 เคลียร์สต็อก (Archived)')" class="p-1.5 text-[#52627a] hover:text-[#c2333f] hover:bg-[#ffdad6]/40 rounded-lg transition-colors" data-i18n-title="ลบ" title="ลบ">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- FILTERED EMPTY STATE (Hidden initially) -->
+      <div id="filtered-empty-state" class="hidden py-12 flex flex-col items-center justify-center text-center">
+        <div class="w-12 h-12 rounded-full bg-[#f1f3ff] text-[#52627a] flex items-center justify-center mb-2">
+          <span class="material-symbols-outlined text-[24px]">search_off</span>
+        </div>
+        <span class="text-[14px] font-semibold text-[#17243b]">ไม่พบ Product Set ที่ตรงกับเงื่อนไข</span>
+        <span class="text-[12px] text-[#52627a] mt-1">ลองล้างคำค้นหาหรือเปลี่ยนตัวกรองสถานะ</span>
+        <button onclick="resetFilters()" class="mt-3 px-3 py-1.5 text-[12px] font-medium text-[#365cf5] hover:bg-[#f1f3ff] rounded-lg border border-[#d0e1fd]">
+          ล้างตัวกรองทั้งหมด
+        </button>
+      </div>
+
+      <!-- TABLE PAGINATION FOOTER -->
+      <div class="px-4 py-3 border-t border-[#e1e7f0] bg-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+        <div class="flex items-center gap-2">
+          <span>แสดง</span>
+          <select class="bg-white border border-[#e1e7f0] rounded py-1 px-2 text-xs text-[#17243b] focus:ring-[#365cf5]">
+            <option>10 <span data-i18n="แถว">แถว</span></option>
+            <option>25 <span data-i18n="แถว">แถว</span></option>
+            <option>50 <span data-i18n="แถว">แถว</span></option>
+          </select>
+          <span>จากทั้งหมด <span class="font-bold text-[#17243b]" id="visible-count">4</span> รายการ</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button class="px-2 py-1 rounded border border-[#e1e7f0] bg-white text-[#747687] hover:bg-[#f6f8fc] disabled:opacity-50 cursor-not-allowed" disabled>
+            <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+          </button>
+          <span class="px-3 py-1 rounded bg-[#365cf5] text-white font-semibold">1</span>
+          <button class="px-2 py-1 rounded border border-[#e1e7f0] bg-white text-[#747687] hover:bg-[#f6f8fc] disabled:opacity-50 cursor-not-allowed" disabled>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPERATIONAL CONTEXT GUIDE -->
+    <section class="bg-gradient-to-r from-white to-[#f1f3ff] border border-[#d0e1fd] rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5]/10 text-[#365cf5] flex items-center justify-center shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-[20px]">lightbulb</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold text-[#365cf5]">วิธีนำ Promotion Product Set ไปใช้งาน</span>
+          <span class="text-xs text-[#52627a] mt-0.5">
+            สามารถเลือกชุดสินค้านี้ในหน้าแก้ไขคูปอง เพื่อระบุเป็นรายการสินค้าที่เข้าร่วมโปรโมชัน (Include) หรือยกเว้นจากการคิดส่วนลด (Exclude) ได้อย่างสะดวกรวดเร็ว
+          </span>
+        </div>
+      </div>
+      <a href="#" class="shrink-0 text-xs font-semibold text-[#365cf5] hover:underline flex items-center gap-1">
+        <span>ดูคู่มือการตั้งเงื่อนไขคูปอง</span>
+        <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+      </a>
+    </section>
+
+  </div>
+</main>
+
+<!-- CREATE / EDIT MODAL DIALOG -->
+<div id="product-set-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17243b]/40 backdrop-blur-sm hidden">
+  <div class="bg-white rounded-xl border border-[#e1e7f0] max-w-lg w-full p-6 shadow-xl transform transition-all animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex items-center justify-between border-b border-[#e1e7f0] pb-3 mb-4">
+      <h3 id="modal-title" class="text-[18px] font-bold text-[#17243b]">สร้าง Product Set</h3>
+      <button onclick="closeModal()" class="text-[#52627a] hover:text-[#17243b]">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Form -->
+    <form id="set-form" onsubmit="handleFormSubmit(event)" class="flex flex-col gap-4">
+      <!-- Name field -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13px] font-semibold text-[#17243b]" data-i18n="ชื่อ">ชื่อ Product Set *</label>
+        <input
+          id="form-name"
+          type="text"
+          required
+          placeholder="เช่น วัตถุดิบเบเกอรี่พรีเมียม"
+          class="h-10 px-3 text-[14px] bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[#17243b]"
+        />
+      </div>
+
+      <!-- Code / Identifier -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13px] font-semibold text-[#17243b]">รหัสชุดสินค้า (Code / Key) *</label>
+        <input
+          id="form-code"
+          type="text"
+          required
+          placeholder="เช่น SET-BKR-01"
+          class="h-10 px-3 text-[14px] font-mono bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[#17243b]"
+        />
+        <span class="text-[11px] text-[#52627a]">ใช้ตัวพิมพ์ใหญ่ ตัวเลข และเครื่องหมายขีด (-)</span>
+      </div>
+
+      <!-- Description -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13px] font-semibold text-[#17243b]">คำอธิบาย (Description)</label>
+        <textarea
+          id="form-desc"
+          rows="2"
+          placeholder="ระบุวัตถุประสงค์ของชุดสินค้า เช่น สำหรับโปรโมชันส่วนลดรายสัปดาห์"
+          class="p-2.5 text-[14px] bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[#17243b]"
+        ></textarea>
+      </div>
+
+      <!-- Status Selection -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[13px] font-semibold text-[#17243b]" data-i18n="สถานะ">สถานะ</label>
+        <select id="form-status" class="h-10 px-3 text-[14px] bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[#17243b]">
+          <option value="Active">Active (เปิดใช้งาน)</option>
+          <option value="Inactive">Inactive (ปิดใช้งาน)</option>
+        </select>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="mt-4 pt-3 border-t border-[#e1e7f0] flex justify-end gap-2.5">
+        <button type="button" onclick="closeModal()" class="h-10 px-4 rounded-lg border border-[#e1e7f0] text-[13px] font-medium text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+          ยกเลิก
+        </button>
+        <button type="submit" class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2848d6] text-white text-[13px] font-semibold transition-colors shadow-sm">
+          บันทึกข้อมูล
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17243b]/40 backdrop-blur-sm hidden">
+  <div class="bg-white rounded-xl border border-[#e1e7f0] max-w-md w-full p-6 shadow-xl transform transition-all animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-full bg-[#ffdad6] text-[#c2333f] flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[22px]">warning</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-[16px] font-bold text-[#17243b]" data-i18n="ยืนยันการลบ Product Set นี้?">ยืนยันการลบ Product Set นี้?</h3>
+        <p class="text-[13px] text-[#52627a] mt-1" id="delete-target-text">
+          ยืนยันการลบ Product Set "..."?
+        </p>
+        <span class="text-[12px] text-[#c2333f] mt-1">
+          การลบชุดสินค้านี้อาจกระทบต่อคูปองและโปรโมชันที่กำลังอ้างอิงอยู่
+        </span>
+      </div>
+    </div>
+    <div class="mt-6 flex justify-end gap-2.5">
+      <button type="button" onclick="closeDeleteModal()" class="h-9 px-4 rounded-lg border border-[#e1e7f0] text-[13px] font-medium text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+        ยกเลิก
+      </button>
+      <button type="button" onclick="confirmDelete()" class="h-9 px-4 rounded-lg bg-[#c2333f] hover:bg-[#a52631] text-white text-[13px] font-semibold transition-colors shadow-sm" data-i18n="ลบ">
+        ลบ
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- INTERACTION & LOCALIZATION SCRIPT -->
+<script>
+  let currentLang = 'th';
+  const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+  // Language Toggle
+  const langBtn = document.getElementById('lang-toggle-btn');
+  const langText = document.getElementById('lang-display-text');
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    langText.textContent = lang === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[key] && translations[key][lang]) {
+        el.textContent = translations[key][lang];
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const key = el.getAttribute('data-i18n-title');
+      if (translations[key] && translations[key][lang]) {
+        el.setAttribute('title', translations[key][lang]);
+      }
+    });
+  }
+
+  langBtn.addEventListener('click', () => {
+    applyLanguage(currentLang === 'th' ? 'en' : 'th');
+  });
+
+  // Search & Filter Logic
+  const searchInput = document.getElementById('search-input');
+  const clearSearchBtn = document.getElementById('clear-search-btn');
+  const statusFilter = document.getElementById('filter-status');
+  const visibleCount = document.getElementById('visible-count');
+  const emptyState = document.getElementById('filtered-empty-state');
+
+  function filterRecords() {
+    const query = searchInput.value.toLowerCase().trim();
+    const statusVal = statusFilter.value;
+    const rows = document.querySelectorAll('#table-body tr');
+    let visible = 0;
+
+    clearSearchBtn.classList.toggle('hidden', query.length === 0);
+
+    rows.forEach(row => {
+      const name = (row.getAttribute('data-name') || '').toLowerCase();
+      const status = row.getAttribute('data-status');
+
+      const matchesQuery = query === '' || name.includes(query);
+      const matchesStatus = statusVal === 'all' || status === statusVal;
+
+      if (matchesQuery && matchesStatus) {
+        row.style.display = '';
+        visible++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    visibleCount.textContent = visible;
+    if (visible === 0) {
+      emptyState.classList.remove('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+    }
+  }
+
+  function handleSearch(val) {
+    filterRecords();
+  }
+
+  function clearSearch() {
+    searchInput.value = '';
+    filterRecords();
+    searchInput.focus();
+  }
+
+  function resetFilters() {
+    searchInput.value = '';
+    statusFilter.value = 'all';
+    filterRecords();
+  }
+
+  // Error Alert Banner Toggle (Demonstration of failure state handling)
+  function toggleErrorBanner() {
+    const alert = document.getElementById('error-alert');
+    alert.classList.toggle('hidden');
+  }
+
+  // Modal Handlers
+  const modal = document.getElementById('product-set-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const formName = document.getElementById('form-name');
+  const formCode = document.getElementById('form-code');
+  const formDesc = document.getElementById('form-desc');
+  const formStatus = document.getElementById('form-status');
+
+  function openCreateModal() {
+    modalTitle.textContent = currentLang === 'th' ? 'สร้าง Product Set' : 'Create Product Set';
+    formName.value = '';
+    formCode.value = '';
+    formDesc.value = '';
+    formStatus.value = 'Active';
+    modal.classList.remove('hidden');
+    formName.focus();
+  }
+
+  function openEditModal(name, code, count, status) {
+    modalTitle.textContent = currentLang === 'th' ? 'แก้ไข Product Set' : 'Edit Product Set';
+    formName.value = name;
+    formCode.value = code;
+    formDesc.value = 'ชุดสินค้าสำหรับคูปองและโปรโมชันแคมเปญ';
+    formStatus.value = status;
+    modal.classList.remove('hidden');
+    formName.focus();
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+  }
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    closeModal();
+    // Re-filter to keep UI consistent
+    filterRecords();
+  }
+
+  // Delete Modal Handlers
+  let currentDeleteTarget = '';
+  const deleteModal = document.getElementById('delete-modal');
+  const deleteTargetText = document.getElementById('delete-target-text');
+
+  function openDeleteModal(name) {
+    currentDeleteTarget = name;
+    deleteTargetText.textContent = `ยืนยันการลบ Product Set "${name}"?`;
+    deleteModal.classList.remove('hidden');
+  }
+
+  function closeDeleteModal() {
+    deleteModal.classList.add('hidden');
+    currentDeleteTarget = '';
+  }
+
+  function confirmDelete() {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach(row => {
+      if (row.getAttribute('data-name') === currentDeleteTarget) {
+        row.style.opacity = '0.3';
+        row.style.pointerEvents = 'none';
+        setTimeout(() => {
+          row.remove();
+          filterRecords();
+        }, 200);
+      }
+    });
+    closeDeleteModal();
+  }
+
+  // Escape Key Support
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (!modal.classList.contains('hidden')) closeModal();
+      if (!deleteModal.classList.contains('hidden')) closeDeleteModal();
+    }
+  });
+</script>
+
+</body>
+</html>

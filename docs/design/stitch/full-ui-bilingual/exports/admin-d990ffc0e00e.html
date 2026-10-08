@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>งานวิจัยตลาด (Marketing Research) - สยาม คอมเมิร์ซ</title>
+<!-- Google Fonts: Noto Sans Thai & Noto Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#d3e3ff",
+            "on-surface": "#0e1b32",
+            "on-secondary-container": "#54647c",
+            "surface-container-low": "#f1f3ff",
+            "on-error-container": "#93000a",
+            "tertiary": "#006139",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "inverse-surface": "#243048",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#ededff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "on-tertiary-fixed-variant": "#00522f",
+            "primary-fixed": "#dde1ff",
+            "primary-container": "#365cf5",
+            "surface-container-high": "#e0e8ff",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary-fixed": "#002110",
+            "inverse-primary": "#b9c3ff",
+            "on-background": "#0e1b32",
+            "error": "#ba1a1a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary": "#0a3fdc",
+            "background": "#f9f9ff",
+            "surface": "#f9f9ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-surface-variant": "#444655",
+            "on-primary": "#ffffff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#9ef5be",
+            "surface-bright": "#f9f9ff",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-tint": "#214ce7",
+            "surface-container": "#e8eeff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary-container": "#b7ffcf",
+            "tertiary-container": "#217b4e",
+            "on-primary-fixed": "#001257",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "outline-variant": "#c4c5d8",
+            "outline": "#747687",
+            "surface-dim": "#cddaf9",
+            "secondary": "#4f5f77",
+            "surface-variant": "#d7e2ff",
+            "secondary-container": "#d0e1fd"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "1.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"]
+          },
+          "fontSize": {
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #F6F8FC;
+      color: #0e1b32;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#F6F8FC] text-on-surface antialiased flex flex-col">
+<!-- Invisible Script Tag Translation Dictionary -->
+<script id="commerce-ui-translations" type="application/json">
+{
+  "Refresh": {"th": "Refresh", "en": "Refresh"},
+  "วัน": {"th": "วัน", "en": "Days"},
+  "ประเภท": {"th": "ประเภท", "en": "Type"},
+  "ก่อนหน้า": {"th": "ก่อนหน้า", "en": "Previous"},
+  "ถัดไป": {"th": "ถัดไป", "en": "Next"},
+  "รายการ": {"th": "รายการ", "en": "Items"},
+  "หลักฐาน": {"th": "หลักฐาน", "en": "Evidence"},
+  "พื้นที่": {"th": "พื้นที่", "en": "Area"},
+  "ย้อนหลัง": {"th": "ย้อนหลัง", "en": "Historical"},
+  "Marketing Research": {"th": "Marketing Research", "en": "Marketing Research"},
+  "ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง": {"th": "ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง", "en": "Search verified business listings from TAT and OpenStreetMap free with evidence citations"},
+  "ตั้งโจทย์ใหม่": {"th": "ตั้งโจทย์ใหม่", "en": "New Research Topic"},
+  "กำลังบันทึก…": {"th": "กำลังบันทึก…", "en": "Saving…"},
+  "บันทึกโจทย์": {"th": "บันทึกโจทย์", "en": "Save Topic"},
+  "หัวข้อ": {"th": "หัวข้อ", "en": "Topic"},
+  "เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ": {"th": "เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ", "en": "e.g., Newly opened Japanese restaurants in Bangkok"},
+  "กลุ่มลูกค้า": {"th": "กลุ่มลูกค้า", "en": "Target Audience"},
+  "แหล่งข้อมูล (สีเทา = ยังไม่เชื่อม)": {"th": "แหล่งข้อมูล (สีเทา = ยังไม่เชื่อม)", "en": "Data Sources (Gray = Not Connected)"},
+  "ติดตามทุกชั่วโมง": {"th": "ติดตามทุกชั่วโมง", "en": "Hourly Tracking"},
+  "โจทย์ทั้งหมด": {"th": "โจทย์ทั้งหมด", "en": "All Topics"},
+  "ยังไม่มีโจทย์": {"th": "ยังไม่มีโจทย์", "en": "No research topics yet"},
+  "พื้นที่ / ช่วง": {"th": "พื้นที่ / ช่วง", "en": "Area / Range"},
+  "แหล่ง": {"th": "แหล่ง", "en": "Source"},
+  "รอบถัดไป": {"th": "รอบถัดไป", "en": "Next Run"},
+  "archived": {"th": "archived", "en": "archived"},
+  "รายงาน": {"th": "รายงาน", "en": "Report"},
+  "รันตอนนี้": {"th": "รันตอนนี้", "en": "Run Now"},
+  "เพิ่มแหล่งฟรี": {"th": "เพิ่มแหล่งฟรี", "en": "Add Free Source"},
+  "เก็บ": {"th": "เก็บ", "en": "Archive"},
+  "ยังไม่มีการรัน": {"th": "ยังไม่มีการรัน", "en": "No runs yet"},
+  "· พบ": {"th": "· พบ", "en": "· Found"},
+  "ข้อ": {"th": "ข้อ", "en": "items"},
+  "ข้อจำกัด:": {"th": "ข้อจำกัด:", "en": "Limitations:"},
+  "ร่างแผน Growth จากหลักฐานนี้": {"th": "ร่างแผน Growth จากหลักฐานนี้", "en": "Draft Growth Plan from this Evidence"},
+  "สรุปด้วย AI ·": {"th": "สรุปด้วย AI ·", "en": "AI Summary ·"},
+  "สรุปด้วย AI": {"th": "สรุปด้วย AI", "en": "AI Summary"},
+  "เก็บรายงานนี้": {"th": "เก็บรายงานนี้", "en": "Save this Report"},
+  "เก็บ % ของผู้ใช้ไว้เป็นกลุ่มควบคุม (ไม่ส่งข้อความ) เพื่อเปรียบเทียบผล": {"th": "เก็บ % ของผู้ใช้ไว้เป็นกลุ่มควบคุม (ไม่ส่งข้อความ) เพื่อเปรียบเทียบผล", "en": "Holdout % of users as control group (no messages sent) for comparison"},
+  "คลิกองค์ประกอบบน canvas เพื่อแก้ไข · ลาก ⋮⋮ เพื่อย้ายข้ามคอลัมน์ · เลือก Layout แถว (1/2/3 คอลัมน์)": {"th": "คลิกองค์ประกอบบน canvas เพื่อแก้ไข · ลาก ⋮⋮ เพื่อย้ายข้ามคอลัมน์ · เลือก Layout แถว (1/2/3 คอลัมน์)", "en": "Click canvas elements to edit · Drag ⋮⋮ to move columns · Select row layout (1/2/3 columns)"},
+  "จำลองลูกค้าเข้าเว็บช่วงเงื่อนไข": {"th": "จำลองลูกค้าเข้าเว็บช่วงเงื่อนไข", "en": "Simulate customer visiting during condition period"},
+  "ซองรวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกัน — วันที่อยู่ที่ Campaign ที่เดียว": {"th": "ซองรวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกัน — วันที่อยู่ที่ Campaign ที่เดียว", "en": "Unified bundle for auto-promotions, coupons, and promo pages of the same event — Date set at Campaign only"},
+  "ถูกสุดในตลาด": {"th": "ถูกสุดในตลาด", "en": "Lowest in market"},
+  "ประเภทภาษีมูลค่าเพิ่ม (VAT Type)": {"th": "ประเภทภาษีมูลค่าเพิ่ม (VAT Type)", "en": "VAT Type"},
+  "ไฟล์ต่อครั้ง · ไฟล์ละไม่เกิน": {"th": "ไฟล์ต่อครั้ง · ไฟล์ละไม่เกิน", "en": "files per upload · max per file"},
+  "ยอดตะกร้า ≥": {"th": "ยอดตะกร้า ≥", "en": "Cart Total ≥"},
+  "รอยืนยัน": {"th": "รอยยืนยัน", "en": "Pending Confirmation"},
+  "ลบ {0} รายการ?": {"th": "ลบ {0} รายการ?", "en": "Delete {0} items?"},
+  "วิธีชำระเงินของลูกค้า": {"th": "วิธีชำระเงินของลูกค้า", "en": "Customer Payment Method"},
+  "เส้นคั่น": {"th": "เส้นคั่น", "en": "Divider"},
+  "อยู่ใน Segment": {"th": "อยู่ใน Segment", "en": "In Segment"},
+  "Action: แสดง Popup": {"th": "Action: แสดง Popup", "en": "Action: Show Popup"},
+  "พรีวิวไม่สำเร็จ": {"th": "พรีวิวไม่สำเร็จ", "en": "Preview failed"},
+  "โอกาสขาย": {"th": "โอกาสขาย", "en": "Sales Opportunity"},
+  "คู่แข่ง": {"th": "คู่แข่ง", "en": "Competitor"},
+  "จัดซื้อ / วัตถุดิบ": {"th": "จัดซื้อ / วัตถุดิบ", "en": "Procurement / Raw Materials"},
+  "เทรนด์ตลาด": {"th": "เทรนด์ตลาด", "en": "Market Trends"}
+}
+  </script>
+<!-- Left Sidebar (SideNavBar Anchor: 256px Fixed) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-[#E1E7F0] flex flex-col justify-between p-space-md">
+<div class="flex flex-col gap-y-4">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-space-sm py-2">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+</div>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight">สยาม คอมเมิร์ซ</h1>
+<p class="text-body-sm font-body-sm text-secondary">ศูนย์จัดการระบบร้านค้า</p>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full h-9 px-space-md bg-primary-container text-white text-label-md font-label-md rounded-lg flex items-center justify-center gap-2 hover:bg-[#2848D6] transition-colors duration-150">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Main Navigation Cluster -->
+<nav class="flex flex-col gap-y-1 mt-2">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (Active Menu Node with Sub-items) -->
+<div class="flex flex-col">
+<a class="flex items-center justify-between px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary" href="#">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px]">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</div>
+<span class="material-symbols-outlined text-[16px]">expand_less</span>
+</a>
+<!-- Sub-items Cluster -->
+<div class="ml-4 pl-3 border-l border-[#E1E7F0] mt-1 flex flex-col gap-1">
+<a class="px-2 py-1.5 rounded text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#">Marketing Workflows</a>
+<a class="px-2 py-1.5 rounded text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#">Growth Workspace</a>
+<a class="px-2 py-1.5 rounded text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#">ผู้ช่วยวิเคราะห์การตลาด</a>
+<a class="px-2 py-1.5 rounded text-body-sm font-body-sm font-semibold text-primary bg-surface-container-high/60 flex items-center justify-between" href="#">
+<span>งานวิจัยตลาด</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="px-2 py-1.5 rounded text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#">แผนและปฏิทิน</a>
+</div>
+</div>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-3 border-t border-[#E1E7F0] flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span class="text-label-md font-label-md">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-error hover:bg-error-container/30 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- Top Bar (TopNavBar Anchor) -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-[#E1E7F0] flex justify-between items-center px-gutter-desktop">
+<!-- Breadcrumb & Path -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-headline-sm font-headline-sm">
+<span class="text-secondary font-normal">การตลาด</span>
+<span class="text-outline-variant font-normal">/</span>
+<span class="text-on-surface font-semibold">งานวิจัยตลาด (Marketing Research)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-secondary-fixed/50 text-on-secondary-fixed">
+        ข้อมูลตัวอย่าง / Sample data
+      </span>
+</div>
+<!-- Right Controls Cluster -->
+<div class="flex items-center gap-4">
+<button class="text-body-sm font-body-sm text-secondary hover:text-primary transition-colors flex items-center gap-1 border border-[#E1E7F0] rounded-lg px-2.5 py-1">
+<span class="material-symbols-outlined text-[16px]">translate</span>
+<span>ไทย / English</span>
+</button>
+<button class="relative w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<div class="h-6 w-px bg-[#E1E7F0]"></div>
+<!-- Admin Profile Avatar -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-label-sm font-bold shadow-sm">
+          AD
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface leading-tight">Admin System</span>
+<span class="text-[11px] text-secondary">ผู้ดูแลระบบ Siam Commerce</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Viewport Canvas Workspace -->
+<main class="ml-64 mt-16 p-gutter-desktop flex-1 flex flex-col items-center">
+<div class="w-full max-w-[1240px] flex flex-col gap-6">
+<!-- SECTION 1: Header Area & Context Bar -->
+<section class="flex flex-col gap-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2.5">
+<h2 class="text-headline-lg font-headline-lg text-on-surface">งานวิจัยตลาด</h2>
+<span class="text-body-md font-body-md text-secondary">Marketing Research</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm bg-surface-container-high text-primary border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                ข้อมูลตัวอย่าง
+              </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+              สำรวจข้อมูลเชิงลึก พิกัดคู่แข่ง และแนวโน้มสินค้าอัตโนมัติด้วย AI ขับเคลื่อนจากฐานข้อมูลพาณิชย์
+            </p>
+</div>
+<!-- Primary Actions -->
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 bg-surface-container-lowest text-on-surface border border-[#E1E7F0] rounded-lg text-label-md font-label-md flex items-center gap-2 hover:bg-[#F6F8FC] hover:border-primary-container transition-all" id="btn-refresh">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Refresh</span>
+</button>
+<button class="h-10 px-5 bg-primary-container text-white rounded-lg text-label-md font-label-md font-semibold flex items-center gap-2 hover:bg-[#2848D6] transition-colors shadow-sm" onclick="document.getElementById('new-topic-card').scrollIntoView({behavior: 'smooth'})">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>ตั้งโจทย์ใหม่</span>
+</button>
+</div>
+</div>
+<!-- Regional Intelligence Context Banner -->
+<div class="bg-surface-container-low border border-[#E1E7F0] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<div>
+<p class="text-body-md font-body-md text-on-surface font-medium">
+                ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง
+              </p>
+<p class="text-body-sm font-body-sm text-secondary">
+                ระบบเชื่อมต่อ API ฐานข้อมูลเปิดระดับประเทศเพื่อประมวลผลตำแหน่งร้านค้าและวิเคราะห์ความหนาแน่นเชิงพื้นที่
+              </p>
+</div>
+</div>
+<button class="h-9 px-3.5 bg-surface-container-lowest text-primary border border-primary/30 rounded-lg text-label-md font-label-md hover:bg-primary-fixed/30 flex items-center gap-1.5 shrink-0 self-start sm:self-auto transition-colors">
+<span class="material-symbols-outlined text-[16px]">link</span>
+<span>เพิ่มแหล่งฟรี</span>
+</button>
+</div>
+</section>
+<!-- SECTION 2: New Research Topic Form Card ("ตั้งโจทย์ใหม่") -->
+<section class="bg-surface-container-lowest border border-[#E1E7F0] rounded-xl p-6 shadow-sm" id="new-topic-card">
+<div class="flex items-center justify-between pb-4 border-b border-[#E1E7F0] mb-5">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[22px]">post_add</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">ตั้งโจทย์ใหม่</h3>
+<span class="text-body-sm text-secondary">| กำหนดเป้าหมายการสำรวจตลาดอัจฉริยะ</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-1 rounded">ฟอร์มสร้างงานวิจัย</span>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-12 gap-5" id="research-form" onsubmit="event.preventDefault(); simulateSave();">
+<!-- Field 1: หัวข้อ -->
+<div class="md:col-span-6 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>หัวข้อ</span>
+<span class="text-error">*</span>
+</label>
+<input class="h-10 px-3.5 rounded-lg border border-[#E1E7F0] text-body-md font-body-md text-on-surface bg-white focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-secondary/60" placeholder="เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ" required="" type="text" value="เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ"/>
+</div>
+<!-- Field 2: กลุ่มลูกค้า -->
+<div class="md:col-span-6 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-on-surface font-semibold">
+              กลุ่มลูกค้า
+            </label>
+<input class="h-10 px-3.5 rounded-lg border border-[#E1E7F0] text-body-md font-body-md text-on-surface bg-white focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" placeholder="เช่น วัยทำงาน 25-40 ปี, กำลังซื้อระดับกลาง-สูง" type="text" value="พนักงานออฟฟิศ ย่านสุขุมวิท-สาทร กำลังซื้อ 300+ บาท/มื้อ"/>
+</div>
+<!-- Field 3: พื้นที่ / ช่วง -->
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-on-surface font-semibold flex items-center justify-between">
+<span>พื้นที่ / ช่วง</span>
+<span class="text-[11px] text-secondary font-normal">พื้นที่ / 90 วัน ย้อนหลัง</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">map</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#E1E7F0] text-body-md font-body-md text-on-surface bg-white focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" type="text" value="กรุงเทพฯ (เขตวัฒนา, คลองเตย, ปทุมวัน)"/>
+</div>
+</div>
+<!-- Field 4: ประเภท (Dropdown) -->
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-on-surface font-semibold">
+              ประเภท
+            </label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 rounded-lg border border-[#E1E7F0] text-body-md font-body-md text-on-surface bg-white focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer">
+<option selected="" value="โอกาสขาย">โอกาสขาย</option>
+<option value="คู่แข่ง">คู่แข่ง</option>
+<option value="จัดซื้อ / วัตถุดิบ">จัดซื้อ / วัตถุดิบ</option>
+<option value="เทรนด์ตลาด">เทรนด์ตลาด</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-secondary pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Field 5: แหล่งข้อมูล -->
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-on-surface font-semibold">
+              แหล่งข้อมูล (สีเทา = ยังไม่เชื่อม)
+            </label>
+<div class="h-10 px-2.5 rounded-lg border border-[#E1E7F0] bg-[#F8FAFD] flex items-center gap-2 overflow-x-auto text-[11px]">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ททท. API
+              </span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> OpenStreetMap
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-secondary flex items-center gap-1 opacity-60">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Google Maps API
+              </span>
+</div>
+</div>
+<!-- Row Bottom: Tracking Checkbox & Submit Button -->
+<div class="md:col-span-12 flex flex-col sm:flex-row sm:items-center justify-between pt-2 border-t border-[#E1E7F0]/60 gap-4 mt-1">
+<label class="flex items-center gap-2.5 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary-container border-[#E1E7F0] focus:ring-primary-container" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface font-medium">ติดตามทุกชั่วโมง</span>
+<span class="text-body-sm font-body-sm text-secondary">(อัปเดตแจ้งเตือนเมื่อพบข้อมูลสถานประกอบการใหม่)</span>
+</label>
+<div class="flex items-center gap-3">
+<span class="text-body-sm font-body-sm text-secondary hidden" id="save-status-text">
+                กำลังบันทึก…
+              </span>
+<button class="h-10 px-6 bg-primary-container text-white rounded-lg text-label-md font-label-md font-semibold flex items-center justify-center gap-2 hover:bg-[#2848D6] transition-colors shadow-sm" id="submit-topic-btn" type="submit">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>บันทึกโจทย์</span>
+</button>
+</div>
+</div>
+</form>
+</section>
+<!-- SECTION 3: Topic List & Runs Panel ("โจทย์ทั้งหมด") -->
+<section class="bg-surface-container-lowest border border-[#E1E7F0] rounded-xl overflow-hidden shadow-sm">
+<div class="p-4 px-5 border-b border-[#E1E7F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+<div class="flex items-center gap-3">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">โจทย์ทั้งหมด</h3>
+<span class="text-data-tabular font-data-tabular px-2 py-0.5 bg-surface-container-low text-primary rounded-full text-xs font-semibold">
+              3 รายการ
+            </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<input class="h-9 w-60 pl-8 pr-3 text-body-sm rounded-lg border border-[#E1E7F0] bg-white focus:outline-none focus:border-primary-container" placeholder="ค้นหาโจทย์การวิจัย..." type="text"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2 text-secondary text-[16px]">search</span>
+</div>
+<button class="h-9 px-3 border border-[#E1E7F0] rounded-lg text-secondary hover:text-on-surface text-label-md flex items-center gap-1.5 bg-white">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+<span>ตัวกรอง</span>
+</button>
+</div>
+</div>
+<!-- Topics Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-[#E1E7F0] text-secondary text-[12px] font-semibold uppercase tracking-wider">
+<th class="py-3 px-4">หัวข้อ</th>
+<th class="py-3 px-4">ประเภท</th>
+<th class="py-3 px-4">พื้นที่ / ช่วง</th>
+<th class="py-3 px-4">แหล่ง</th>
+<th class="py-3 px-4">รอบถัดไป</th>
+<th class="py-3 px-4">สถานะ</th>
+<th class="py-3 px-4 text-right">การกระทำ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#E1E7F0] text-body-md font-body-md">
+<!-- Active Row 1 (Selected Topic) -->
+<tr class="bg-[#F8FAFD] hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-primary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span>ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-surface-container-high text-primary font-medium">
+                    โอกาสขาย
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm">กรุงเทพฯ (สุขุมวิท/อโศก) / 30 วัน</td>
+<td class="py-3.5 px-4 text-body-sm">
+<div class="flex items-center gap-1 text-[11px]">
+<span class="text-tertiary font-semibold">ททท.</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary font-medium">OSM</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-data-tabular font-data-tabular text-secondary text-body-sm">อีก 42 นาที</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#157347]/10 text-[#157347]">
+                    active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="h-8 px-2.5 rounded text-xs font-semibold bg-primary text-white hover:bg-primary-container transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+<span>รันตอนนี้</span>
+</button>
+<button class="h-8 px-2 rounded text-xs text-secondary hover:text-on-surface border border-[#E1E7F0] hover:bg-white transition-colors" title="ดูรายงาน">
+<span class="material-symbols-outlined text-[14px]">description</span>
+</button>
+<button class="h-8 px-2 rounded text-xs text-secondary hover:text-error border border-[#E1E7F0] hover:bg-white transition-colors" title="เก็บโจทย์">
+<span>เก็บ</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors bg-white">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+                  ร้านกาแฟ Specialty ในเชียงใหม่ (นิมมาน)
+                </td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-surface-container-low text-secondary font-medium">
+                    คู่แข่ง
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm">เชียงใหม่ / 60 วัน</td>
+<td class="py-3.5 px-4 text-body-sm">
+<span class="text-[11px] text-secondary font-medium">OSM</span>
+</td>
+<td class="py-3.5 px-4 text-data-tabular font-data-tabular text-secondary text-body-sm">พรุ่งนี้ 09:00</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#B08900]/15 text-[#B08900]">
+                    รอยืนยัน
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="h-8 px-2.5 rounded text-xs text-secondary border border-[#E1E7F0] hover:border-primary hover:text-primary transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+<span>รันตอนนี้</span>
+</button>
+<button class="h-8 px-2 rounded text-xs text-secondary border border-[#E1E7F0] hover:bg-[#F8FAFD]">
+<span>เก็บ</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Archived) -->
+<tr class="hover:bg-[#F8FAFD] transition-colors bg-white opacity-70">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+                  ซัพพลายเออร์เมล็ดกาแฟอาราบิก้าภาคเหนือ
+                </td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-surface-container-low text-secondary font-medium">
+                    จัดซื้อ / วัตถุดิบ
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm">ภาคเหนือ / 180 วัน</td>
+<td class="py-3.5 px-4 text-body-sm">
+<span class="text-[11px] text-secondary">ททท. (กรมส่งเสริม)</span>
+</td>
+<td class="py-3.5 px-4 text-data-tabular font-data-tabular text-secondary text-body-sm">-</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-secondary">
+                    archived
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="h-8 px-2.5 rounded text-xs text-secondary border border-[#E1E7F0] hover:bg-white">
+<span>รายงาน</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Dynamic Notice for empty queries / Runs State -->
+<div class="px-5 py-3 bg-[#F8FAFD] border-t border-[#E1E7F0] flex items-center justify-between text-body-sm text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+<span>สถานะระบบการรันล่าสุด: สมบูรณ์ (ไม่มีค้างชำระโควต้า API)</span>
+</div>
+<div class="flex items-center gap-4 text-xs">
+<span>ยังไม่มีโจทย์ที่ล้มเหลว</span>
+<span class="text-outline-variant">|</span>
+<span>ยังไม่มีการรันที่ถูกปฏิเสธ</span>
+</div>
+</div>
+</section>
+<!-- SECTION 4: Evidence & Insight Detail Card (Selected Topic Results) -->
+<section class="bg-surface-container-lowest border border-[#E1E7F0] rounded-xl p-6 shadow-sm flex flex-col gap-5">
+<!-- Findings Header & Meta Summary -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-[#E1E7F0] gap-3">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">find_in_page</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">
+                ผลการสำรวจ: ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ
+              </h3>
+</div>
+<div class="flex items-center gap-2 mt-1 text-body-sm text-secondary">
+<span class="font-medium text-on-surface">· พบ</span>
+<span class="text-data-tabular font-semibold text-primary text-body-md">24</span>
+<span>ข้อ</span>
+<span class="text-outline-variant">•</span>
+<span>หลักฐานยืนยันพิกัดและจดทะเบียนการค้า</span>
+<span class="text-outline-variant">•</span>
+<span>รายงานฉบับย่อ</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5">
+<button class="h-9 px-3.5 bg-surface-container-low text-secondary border border-[#E1E7F0] rounded-lg text-label-md font-label-md hover:text-on-surface transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">bookmark</span>
+<span>เก็บรายงานนี้</span>
+</button>
+<button class="h-9 px-4 bg-tertiary-container text-white rounded-lg text-label-md font-label-md font-semibold hover:bg-tertiary transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">auto_graph</span>
+<span>ร่างแผน Growth จากหลักฐานนี้</span>
+</button>
+</div>
+</div>
+<!-- AI Executive Summary Banner -->
+<div class="bg-surface-container-low/70 border border-primary/20 rounded-xl p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+<h4 class="text-headline-sm font-headline-sm text-primary">สรุปด้วย AI ·</h4>
+<span class="text-body-sm text-secondary font-medium">สังเคราะห์จากพิกัดและข้อมูลนำเข้า 24 จุด</span>
+</div>
+<button class="h-7 px-2.5 bg-white border border-primary/30 rounded text-xs font-semibold text-primary hover:bg-primary hover:text-white transition-all flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">neurology</span>
+<span>สรุปด้วย AI</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface leading-relaxed">
+            พบการกระจุกตัวของร้านอาหารสไตล์ Izakaya และ Omakase พรีเมียม เพิ่มขึ้น 18% ภายในรัศมี 800 เมตรจากสถานีรถไฟฟ้าพร้อมพงษ์และทองหล่อในรอบ 30 วันที่ผ่านมา โอกาสทางธุรกิจเด่นชัดคือการนำเสนอโซลูชันระบบวัตถุดิบซาชิมิแช่แข็งเกรดพรีเมียมและระบบจองโต๊ะออนไลน์สำหรับชาวต่างชาติ
+          </p>
+<div class="flex items-center gap-2 text-label-sm text-secondary pt-1 border-t border-[#E1E7F0]/60">
+<span class="font-semibold text-on-surface-variant">ข้อจำกัด:</span>
+<span>ข้อจำกัด: ข้อมูลประมวลผลจากแหล่งเปิดและระบบภายใน อาจมีความคลาดเคลื่อนของเวลาปิดบริการในวันหยุดนักขัตฤกษ์</span>
+</div>
+</div>
+<!-- Evidence Grid / Findings List -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Evidence Item 1 -->
+<div class="p-4 rounded-xl border border-[#E1E7F0] bg-white hover:border-primary-container transition-all flex flex-col justify-between gap-3 shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-tertiary bg-tertiary-fixed/30 px-2 py-0.5 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">pin_drop</span>
+                  OpenStreetMap ยืนยัน
+                </span>
+<span class="text-label-sm text-secondary">สำรวจพบ 2 วันที่แล้ว</span>
+</div>
+<h5 class="text-headline-sm font-headline-sm text-on-surface">Kurobuta Izakaya Thonglor</h5>
+<p class="text-body-sm font-body-sm text-secondary">
+                พิกัด: ซอยสุขุมวิท 55 (ทองหล่อ ซอย 9) · ขนาด 42 ที่นั่ง · กลุ่มเป้าหมาย: นักท่องเที่ยวและคนทำงาน
+              </p>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-[#E1E7F0] text-xs">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>หลักฐาน: ใบอนุญาตประกอบกิจการ ททท. #TH-BKK-88301</span>
+</div>
+<span class="text-primary font-semibold hover:underline cursor-pointer">ตรวจพิกัด</span>
+</div>
+</div>
+<!-- Evidence Item 2 -->
+<div class="p-4 rounded-xl border border-[#E1E7F0] bg-white hover:border-primary-container transition-all flex flex-col justify-between gap-3 shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-primary bg-primary-fixed/40 px-2 py-0.5 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                  ฐานข้อมูลการค้า ททท.
+                </span>
+<span class="text-label-sm text-secondary">สำรวจพบ 4 วันที่แล้ว</span>
+</div>
+<h5 class="text-headline-sm font-headline-sm text-on-surface">Shin Omakase Sukhumvit 39</h5>
+<p class="text-body-sm font-body-sm text-secondary">
+                พิกัด: สุขุมวิท 39 เขตวัฒนา · ราคาเฉลี่ย 3,500 บาท/ท่าน · ปริมาณออเดอร์ปลาสดคาดการณ์ 35 กก./สัปดาห์
+              </p>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-[#E1E7F0] text-xs">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>หลักฐาน: จดทะเบียนนิติบุคคล กรมพัฒนาธุรกิจการค้า</span>
+</div>
+<span class="text-primary font-semibold hover:underline cursor-pointer">ตรวจพิกัด</span>
+</div>
+</div>
+<!-- Evidence Item 3 -->
+<div class="p-4 rounded-xl border border-[#E1E7F0] bg-white hover:border-primary-container transition-all flex flex-col justify-between gap-3 shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-tertiary bg-tertiary-fixed/30 px-2 py-0.5 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">pin_drop</span>
+                  OpenStreetMap ยืนยัน
+                </span>
+<span class="text-label-sm text-secondary">สำรวจพบ 5 วันที่แล้ว</span>
+</div>
+<h5 class="text-headline-sm font-headline-sm text-on-surface">Ramen Tei Ekkamai Branch</h5>
+<p class="text-body-sm font-body-sm text-secondary">
+                พิกัด: ศูนย์การค้าเกตเวย์เอกมัย · สาขาเปิดใหม่รองรับครอบครัว · ยอดการค้นหาออนไลน์เติบโต 32%
+              </p>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-[#E1E7F0] text-xs">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>หลักฐาน: พิกัดแผนที่ Node OSM #9021482</span>
+</div>
+<span class="text-primary font-semibold hover:underline cursor-pointer">ตรวจพิกัด</span>
+</div>
+</div>
+<!-- Evidence Item 4 -->
+<div class="p-4 rounded-xl border border-[#E1E7F0] bg-white hover:border-primary-container transition-all flex flex-col justify-between gap-3 shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-secondary bg-surface-container-high px-2 py-0.5 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">store</span>
+                  บันทึกสำรวจภาคสนาม
+                </span>
+<span class="text-label-sm text-secondary">สำรวจพบ 7 วันที่แล้ว</span>
+</div>
+<h5 class="text-headline-sm font-headline-sm text-on-surface">Tokyo Yakitori Sathorn 11</h5>
+<p class="text-body-sm font-body-sm text-secondary">
+                พิกัด: ซอยสาทร 11 (เซนต์หลุยส์ 3) · ร้านกินดื่มขนาดเล็ก 20 ที่นั่ง · ต้องการซัพพลายเออร์ซอสปรุงรส
+              </p>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-[#E1E7F0] text-xs">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>หลักฐาน: รายงานระบบเชื่อมต่อภายนอก POS</span>
+</div>
+<span class="text-primary font-semibold hover:underline cursor-pointer">ตรวจพิกัด</span>
+</div>
+</div>
+</div>
+<!-- Pagination & Filtering Controls Panel -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-[#E1E7F0] gap-3 text-body-sm text-secondary">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span>แสดง</span>
+<span class="font-semibold text-on-surface font-data-tabular">4</span>
+<span>จาก</span>
+<span class="font-semibold text-on-surface font-data-tabular">24</span>
+<span>รายการ</span>
+</div>
+<span class="text-outline-variant">|</span>
+<div class="flex items-center gap-2">
+<span>ช่วง:</span>
+<span class="px-2 py-0.5 bg-surface-container-low text-on-surface rounded font-medium">90 วัน</span>
+<span>ย้อนหลัง</span>
+<span class="text-outline-variant">•</span>
+<span>พื้นที่</span>
+<span class="text-on-surface font-medium">กรุงเทพฯ</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 border border-[#E1E7F0] rounded-lg bg-white text-secondary hover:text-on-surface hover:border-primary-container disabled:opacity-40 flex items-center gap-1" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+<span>ก่อนหน้า</span>
+</button>
+<span class="px-2.5 py-1 rounded bg-primary text-white text-xs font-semibold">1</span>
+<span class="px-2.5 py-1 rounded text-secondary hover:bg-surface-container-low text-xs cursor-pointer">2</span>
+<span class="px-2.5 py-1 rounded text-secondary hover:bg-surface-container-low text-xs cursor-pointer">3</span>
+<button class="h-8 px-3 border border-[#E1E7F0] rounded-lg bg-white text-secondary hover:text-on-surface hover:border-primary-container flex items-center gap-1">
+<span>ถัดไป</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Interactive JavaScript for Form and Micro-interactions -->
+<script>
+    function simulateSave() {
+      const submitBtn = document.getElementById('submit-topic-btn');
+      const statusText = document.getElementById('save-status-text');
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-70');
+      statusText.classList.remove('hidden');
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-70');
+        statusText.classList.add('hidden');
+        alert('บันทึกโจทย์วิจัยการตลาดเรียบร้อยแล้ว');
+      }, 1200);
+    }
+
+    document.getElementById('btn-refresh').addEventListener('click', function() {
+      const icon = this.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 800);
+    });
+  </script>
+</body></html>

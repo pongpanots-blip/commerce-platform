@@ -9,6 +9,8 @@ import {
   type CouponCoreForm as CouponCoreFormState,
 } from './coupon-core-form.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function Section({
   title,
   description,
@@ -102,6 +104,7 @@ export function CouponCoreForm({
   originalCoupon,
   audienceIsPublic = false,
 }: CouponCoreFormProps) {
+  __useUiLocale();
   const couponTypeId = React.useId();
   const discountTypeId = React.useId();
   const couponCodeId = React.useId();
@@ -120,11 +123,11 @@ export function CouponCoreForm({
   return (
     <>
       <Section
-        title="ข้อมูลพื้นฐาน"
-        description="รหัสและชื่อที่ลูกค้าจะเห็นตอนใช้คูปอง"
+        title={__uiText("ข้อมูลพื้นฐาน")}
+        description={__uiText("รหัสและชื่อที่ลูกค้าจะเห็นตอนใช้คูปอง")}
       >
         <div className="sm:w-1/2 sm:pr-2">
-          <FieldLabel required htmlFor={couponCodeId}>รหัสคูปอง</FieldLabel>
+          <FieldLabel required htmlFor={couponCodeId}>{__uiText("รหัสคูปอง")}</FieldLabel>
           <Input
             id={couponCodeId}
             value={form.coupon_code}
@@ -134,38 +137,38 @@ export function CouponCoreForm({
             hint={
               codeLocked
                 ? codeLockedHint
-                : `สูงสุด ${COUPON_CODE_MAX_LENGTH} ตัวอักษร`
+                : __uiText("สูงสุด {0} ตัวอักษร", {"0": COUPON_CODE_MAX_LENGTH})
             }
             onChange={(event) =>
               patch({ coupon_code: event.target.value.toUpperCase().replace(/\s+/g, '') })
             }
-            placeholder="เช่น SUMMER26"
+            placeholder={__uiText("เช่น SUMMER26")}
           />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <FieldLabel required htmlFor={titleId}>ชื่อคูปอง (ไทย)</FieldLabel>
+            <FieldLabel required htmlFor={titleId}>{__uiText("ชื่อคูปอง (ไทย)")}</FieldLabel>
             <Input
               id={titleId}
               value={form.title}
               disabled={disabled}
               onChange={(event) => patch({ title: event.target.value })}
-              placeholder="เช่น ลด 10% ซื้อครบ 3,000"
+              placeholder={__uiText("เช่น ลด 10% ซื้อครบ 3,000")}
             />
           </div>
           <div>
-            <FieldLabel required htmlFor={titleEnId}>ชื่อคูปอง (ภาษาอังกฤษ)</FieldLabel>
+            <FieldLabel required htmlFor={titleEnId}>{__uiText("ชื่อคูปอง (ภาษาอังกฤษ)")}</FieldLabel>
             <Input
               id={titleEnId}
               value={form.title_en}
               disabled={disabled}
               onChange={(event) => patch({ title_en: event.target.value })}
-              placeholder="e.g. 10% off orders over 3,000"
+              placeholder={__uiText("e.g. 10% off orders over 3,000")}
             />
           </div>
         </div>
         <div>
-          <FieldLabel required>ระยะเวลา</FieldLabel>
+          <FieldLabel required>{__uiText("ระยะเวลา")}</FieldLabel>
           <DateTimeRangeInput
             startValue={form.start_date}
             endValue={form.end_date}
@@ -176,7 +179,7 @@ export function CouponCoreForm({
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <FieldLabel required>สินค้าที่ร่วมรายการ (ไทย)</FieldLabel>
+            <FieldLabel required>{__uiText("สินค้าที่ร่วมรายการ (ไทย)")}</FieldLabel>
             <RichTextEditor
               value={form.applicable_products_th}
               ariaLabel="สินค้าที่ร่วมรายการ (ไทย)"
@@ -186,7 +189,7 @@ export function CouponCoreForm({
             />
           </div>
           <div>
-            <FieldLabel required>สินค้าที่ร่วมรายการ (ภาษาอังกฤษ)</FieldLabel>
+            <FieldLabel required>{__uiText("สินค้าที่ร่วมรายการ (ภาษาอังกฤษ)")}</FieldLabel>
             <RichTextEditor
               value={form.applicable_products_en}
               ariaLabel="สินค้าที่ร่วมรายการ (ภาษาอังกฤษ)"
@@ -198,7 +201,7 @@ export function CouponCoreForm({
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <FieldLabel required>รายละเอียด (ไทย)</FieldLabel>
+            <FieldLabel required>{__uiText("รายละเอียด (ไทย)")}</FieldLabel>
             <RichTextEditor
               value={form.description}
               ariaLabel="รายละเอียด (ไทย)"
@@ -208,7 +211,7 @@ export function CouponCoreForm({
             />
           </div>
           <div>
-            <FieldLabel required>รายละเอียด (ภาษาอังกฤษ)</FieldLabel>
+            <FieldLabel required>{__uiText("รายละเอียด (ภาษาอังกฤษ)")}</FieldLabel>
             <RichTextEditor
               value={form.description_en}
               ariaLabel="รายละเอียด (ภาษาอังกฤษ)"
@@ -229,11 +232,11 @@ export function CouponCoreForm({
       {audienceSection}
 
       <Section
-        title="ประเภทและส่วนลด"
-        description="กำหนดรูปแบบส่วนลดและจำนวนครั้งที่ใช้ได้"
+        title={__uiText("ประเภทและส่วนลด")}
+        description={__uiText("กำหนดรูปแบบส่วนลดและจำนวนครั้งที่ใช้ได้")}
       >
         <div className="sm:w-1/2 sm:pr-2">
-          <FieldLabel htmlFor={couponTypeId}>ประเภทคูปอง</FieldLabel>
+          <FieldLabel htmlFor={couponTypeId}>{__uiText("ประเภทคูปอง")}</FieldLabel>
           <Select
             id={couponTypeId}
             className="w-full"
@@ -243,14 +246,14 @@ export function CouponCoreForm({
               patch({ coupon_type: event.target.value as CouponCoreFormState['coupon_type'] })
             }
           >
-            <option value="discount">ส่วนลดทันที (Discount)</option>
-            <option value="cashback">คืนเงิน/เครดิต (Cashback)</option>
+            <option value="discount">{__uiText("ส่วนลดทันที (Discount)")}</option>
+            <option value="cashback">{__uiText("คืนเงิน/เครดิต (Cashback)")}</option>
           </Select>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <FieldLabel required htmlFor={discountTypeId}>ประเภทส่วนลด</FieldLabel>
+            <FieldLabel required htmlFor={discountTypeId}>{__uiText("ประเภทส่วนลด")}</FieldLabel>
             <Select
               id={discountTypeId}
               className="w-full"
@@ -260,13 +263,13 @@ export function CouponCoreForm({
                 patch({ discount_type: event.target.value as 'PERCENTAGE' | 'FIXED_AMOUNT' })
               }
             >
-              <option value="PERCENTAGE">เปอร์เซ็นต์ (%)</option>
-              <option value="FIXED_AMOUNT">จำนวนเงินคงที่ (บาท)</option>
+              <option value="PERCENTAGE">{__uiText("เปอร์เซ็นต์ (%)")}</option>
+              <option value="FIXED_AMOUNT">{__uiText("จำนวนเงินคงที่ (บาท)")}</option>
             </Select>
           </div>
           <div>
             <FieldLabel required htmlFor={discountValueId}>
-              {form.discount_type === 'PERCENTAGE' ? 'ส่วนลด (%)' : 'ส่วนลด (บาท)'}
+              {form.discount_type === 'PERCENTAGE' ? __uiText("ส่วนลด (%)") : __uiText("ส่วนลด (บาท)")}
             </FieldLabel>
             <Input
               id={discountValueId}
@@ -281,13 +284,13 @@ export function CouponCoreForm({
         {form.discount_type === 'PERCENTAGE' && (
           <div>
             <Input
-              label="ส่วนลดสูงสุด (บาท)"
+              label={__uiText("ส่วนลดสูงสุด (บาท)")}
               required
               value={form.maximum_discount_amount}
               disabled={disabled}
               error={fieldErrors.maximum_discount_amount}
               onChange={(event) => patch({ maximum_discount_amount: event.target.value })}
-              placeholder="เช่น 200"
+              placeholder={__uiText("เช่น 200")}
             />
           </div>
         )}
@@ -295,20 +298,20 @@ export function CouponCoreForm({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Input
-              label="จำกัดทั้งระบบ (ครั้ง)"
+              label={__uiText("จำกัดทั้งระบบ (ครั้ง)")}
               required
               value={form.global_limit}
               disabled={disabled}
               error={fieldErrors.global_limit}
               onChange={(event) => patch({ global_limit: event.target.value })}
-              placeholder="เช่น 1000"
+              placeholder={__uiText("เช่น 1000")}
             />
           </div>
           <div>
             <Input
-              label="จำกัดต่อผู้ใช้/สาขา (ครั้ง)"
+              label={__uiText("จำกัดต่อผู้ใช้/สาขา (ครั้ง)")}
               required
-              hint="นับรวมทุก user ในสาขาเดียวกัน"
+              hint={__uiText("นับรวมทุก user ในสาขาเดียวกัน")}
               value={form.user_limit}
               disabled={disabled}
               error={fieldErrors.user_limit}
@@ -322,11 +325,11 @@ export function CouponCoreForm({
           checked={!!form.auto_apply && audienceIsPublic}
           disabled={disabled || !audienceIsPublic}
           onChange={(checked) => patch({ auto_apply: checked })}
-          title="ใช้อัตโนมัติ (ไม่ต้องกรอกโค้ด) (Auto apply)"
+          title={__uiText("ใช้อัตโนมัติ (ไม่ต้องกรอกโค้ด) (Auto apply)")}
           description={
             audienceIsPublic
-              ? 'ระบบใส่ให้ตอน checkout เมื่อลูกค้าไม่ได้กรอกโค้ดอื่น (ถ้ามีหลายใบ เลือกใบที่ลดมากสุด) — ตั้งจำนวนครั้งที่ใช้ให้เหมาะสม เพราะค่าเริ่มต้นจำกัดต่อผู้ใช้/สาขาแค่ 1 ครั้ง'
-              : 'ต้องตั้งกลุ่มเป้าหมายเป็น "ทุกคน (Public)" ก่อน จึงเปิดใช้อัตโนมัติได้'
+              ? __uiText("ระบบใส่ให้ตอน checkout เมื่อลูกค้าไม่ได้กรอกโค้ดอื่น (ถ้ามีหลายใบ เลือกใบที่ลดมากสุด) — ตั้งจำนวนครั้งที่ใช้ให้เหมาะสม เพราะค่าเริ่มต้นจำกัดต่อผู้ใช้/สาขาแค่ 1 ครั้ง")
+              : __uiText("ต้องตั้งกลุ่มเป้าหมายเป็น \"ทุกคน (Public)\" ก่อน จึงเปิดใช้อัตโนมัติได้")
           }
         />
       </Section>

@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2550",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzJlNmEyMmQ5MmJjNjQ0MWU5NTI1NmJmMGIyMGRjY2MyEgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/873c9b14e4f04e849e2ae18d65d1f64f"
+            },
+            "id": "e4241190b7be4592aada23fbad51a3e8",
+            "name": "projects/9809859018179965476/screens/e4241190b7be4592aada23fbad51a3e8",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XrSeQJ-qMsziYlpkHzM9v8A8Qkvi19GMnlDuSsxLyyoYWyqgrkTERT2cxJAqoAuYE3lGofUs7X9UPW9c0ZFl1ZCLI-h5Ir59xjHA0nuuFb_i67SDmIU8U5m7fdLg3Fn7HHZnOI-kEaykIIL6Z6-VoV_wdr_bdaC8s-T36lXbMlGnft-buLD3w06ZOPdVoDfYL9DLFHD4jz-rqQqNnSswKG9CvMsIHu3v_Ow7m_lW6BAwkqIVYx284h2-s",
+              "name": "projects/9809859018179965476/files/487c93c265624c73b6803f39b25d8b9a"
+            },
+            "theme": {},
+            "title": "อัปโหลดวิดีโอสินค้า (ProductVideoUpload - /j/product/video-upload)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบหน้าจอ **อัปโหลดวิดีโอสินค้า (ProductVideoUpload - `/j/product/video-upload`)** ตามข้อกำหนดของ Commerce Platform ครบถ้วนสมบูรณ์แล้วครับ\n\n### จุดเด่นและการออกแบบตามข้อกำหนด (Design Highlights)\n1. **โครงสร้างและ Design Language ของ Commerce Platform**:\n   - Sidebar ความกว้าง 256px พร้อม 7 กลุ่มพื้นที่ปฏิบัติการ โดยเน้นหมวด **สินค้าและสต็อก** เป็นสถานะ active อย่างถูกต้อง\n   - Canvas โทนสว่าง `#f6f8fc`, การ์ดสีขาวขอบมน 12px, เส้นขอบ `#e1e7f0`, Primary Blue `#365cf5` และแบบอักษร Noto Sans Thai ขนาดตามมาตรฐาน\n   - Breadcrumb ระบุ Route Identifier `admin-224327a6e890`, ป้ายกำกับ `ข้อมูลตัวอย่าง (Sample data)` และปุ่มสลับภาษา **ไทย / English** ที่ใช้งานได้จริง\n\n2. **ขั้นตอนการทำงาน 2 ส่วน (Task-Based 2-Step Workflow)**:\n   - **ขั้นตอนที่ 1: เลือกวิดีโอ (Video Upload Dropzone & Media Card)**:\n     - รองรับการลากวางไฟล์ MP4, WebM, MOV ไม่เกิน 50MB\n     - แสดงการ์ดไฟล์ตัวอย่าง (`rice_cooking_tutorial_5kg.mp4`, 18.4MB, 1080p 60fps) พร้อมปุ่มลบไฟล์\n     - แสดงข้อจำกัดและข้อกำหนดเรื่องลำดับการแสดงผลวิดีโอท้ายภาพสินค้า (Gallery)\n   - **ขั้นตอนที่ 2: เลือก SKU เป้าหมาย (Target SKU Selection)**:\n     - ช่องค้นหาสินค้าพร้อมระบุข้อกำหนดชัดเจนว่าค้นหาเฉพาะในหน้าปัจจุบัน (Pagination API)\n     - ตารางเลือกสินค้าจากแคตตาล็อกตัวอย่างพร้อมสถานะสต็อกและ Checkbox\n     - ฟิลด์ **เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง** สำหรับสินค้าโปรโมชัน/แพ็กพิเศษ\n     - ชิปรายการ SKU ที่เลือก (`SKU-TH-8890`, `SKU-CH-4412`) พร้อมปุ่มลบทีละรายการและล้างทั้งหมด\n     - การ์ดแนะนำแนวทางปฏิบัติงานด้านสื่อและ CDN ด้านล่างหน้าจอ\n\n3. **Bilingual & Export Requirements**:\n   - บรรจุ Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่มี Key ครบถ้วนทุกคำตามรายการ UI Copy Catalogue พร้อมค่าแปล `th` และ `en` อย่างแม่นยำ\n   - ฟังก์ชัน JavaScript รองรับการสลับภาษาแบบ Dynamic, การตรวจสอบเงื่อนไข (Validation) แจ้งเตือนเมื่อไม่เลือกวิดีโอหรือไม่เลือก SKU อย่างเป็นมิตรต่อผู้ปฏิบัติงานครับ"
+    },
+    {
+      "suggestion": "เพิ่ม Modal ดูตัวอย่างวิดีโอก่อนผูก SKU (Video Preview Modal)"
+    },
+    {
+      "suggestion": "ออกแบบหน้าจัดการสื่อสินค้าทั้งหมด (Product Media Library)"
+    },
+    {
+      "suggestion": "เพิ่มสถานะแสดงเปอร์เซ็นต์ความคืบหน้าขณะอัปโหลดไฟล์ (Upload Progress Bar)"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "10537988828114684128"
+}

@@ -1,0 +1,82 @@
+{
+  "Order Import": {
+    "th": "นำเข้าออเดอร์",
+    "en": "Order Import"
+  },
+  "ต้องเลือกไฟล์ orders และ items (.csv)": {
+    "th": "ต้องเลือกไฟล์ orders และ items (.csv)",
+    "en": "Both orders and items (.csv) files are required"
+  },
+  "เลือกไฟล์ orders CSV สำหรับ relink": {
+    "th": "เลือกไฟล์ orders CSV สำหรับ relink",
+    "en": "Select an orders CSV file for relinking"
+  },
+  "Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?": {
+    "th": "Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?",
+    "en": "Relink all orders by stored customer_code — Confirm?"
+  },
+  "นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)": {
+    "th": "นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)",
+    "en": "Import CSV / Link users to orders (staff only)"
+  },
+  "← All Orders": {
+    "th": "← ออเดอร์ทั้งหมด",
+    "en": "← All Orders"
+  },
+  "Import orders + items": {
+    "th": "นำเข้า orders + items",
+    "en": "Import orders + items"
+  },
+  "อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน": {
+    "th": "อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน",
+    "en": "Upload orders.csv and items.csv simultaneously"
+  },
+  "Orders CSV *": {
+    "th": "Orders CSV *",
+    "en": "Orders CSV *"
+  },
+  "Items CSV *": {
+    "th": "Items CSV *",
+    "en": "Items CSV *"
+  },
+  "กำลัง import...": {
+    "th": "กำลัง import...",
+    "en": "Importing..."
+  },
+  "Import CSV": {
+    "th": "นำเข้า CSV",
+    "en": "Import CSV"
+  },
+  "Relink users จาก CSV": {
+    "th": "Relink users จาก CSV",
+    "en": "Relink users from CSV"
+  },
+  "อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่": {
+    "th": "อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่",
+    "en": "Read customer code from orders file and re-associate user"
+  },
+  "Orders CSV": {
+    "th": "Orders CSV",
+    "en": "Orders CSV"
+  },
+  "กำลัง relink...": {
+    "th": "กำลัง relink...",
+    "en": "Relinking..."
+  },
+  "Relink from CSV": {
+    "th": "Relink จาก CSV",
+    "en": "Relink from CSV"
+  },
+  "Relink all (จาก customer_code ใน DB)": {
+    "th": "Relink ทั้งหมด (จาก customer_code ใน DB)",
+    "en": "Relink all (from customer_code in DB)"
+  },
+  "ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order": {
+    "th": "ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order",
+    "en": "No file upload required — uses customer_code stored on orders"
+  },
+  "Relink all orders": {
+    "th": "Relink ทุกออเดอร์",
+    "en": "Relink all orders"
+  }
+}

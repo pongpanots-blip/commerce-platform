@@ -1,0 +1,336 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "designSystem": {
+              "designSystem": {
+                "displayName": "Siam Enterprise Operations",
+                "styleGuidelines": "## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+                "theme": {
+                  "bodyFont": "NOTO_SANS",
+                  "bodyFontFamily": "Noto Sans",
+                  "colorMode": "LIGHT",
+                  "colorVariant": "FIDELITY",
+                  "customColor": "#365cf5",
+                  "designMd": "---\nname: Siam Enterprise Operations\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#943500'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#bc4600'\n  on-tertiary-container: '#ffebe4'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#ffdbcd'\n  tertiary-fixed-dim: '#ffb597'\n  on-tertiary-fixed: '#360f00'\n  on-tertiary-fixed-variant: '#7e2c00'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  display:\n    fontFamily: Noto Sans\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n  headline-page:\n    fontFamily: Noto Sans\n    fontSize: 28px\n    fontWeight: '600'\n    lineHeight: 36px\n  headline-page-mobile:\n    fontFamily: Noto Sans\n    fontSize: 22px\n    fontWeight: '600'\n    lineHeight: 30px\n  headline-card:\n    fontFamily: Noto Sans\n    fontSize: 18px\n    fontWeight: '600'\n    lineHeight: 26px\n  subheading:\n    fontFamily: Noto Sans\n    fontSize: 16px\n    fontWeight: '500'\n    lineHeight: 24px\n  body-default:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-medium:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 22px\n  label-default:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n  label-caption:\n    fontFamily: Noto Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  code-table:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  gutter: 1rem\n  gutter-desktop: 1.5rem\n  margin: 1rem\n  margin-desktop: 2rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n---\n\n## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Colors\n\nThe palette establishes high semantic contrast designed for daylight data-entry environments and detailed dashboard monitoring:\n\n- **Canvas & Surface**: Backing canvas defaults to `#f6f8fc`. Elevated containers, data tables, and card shells use pure `#ffffff`.\n- **Primary Accent**: `#365cf5` acts as the primary interactive anchor for primary actions, selected navigation items, focused state rings, and critical progress indications.\n- **Ink & Typography Hierarchy**: Primary ink sits at `#17243b`, delivering crisp optical contrast against white backdrops. Secondary labels, supporting metadata, and table column headers map to `#52627a`. Muted hints and disabled states leverage `#94a3b8`.\n- **Structural Lines**: Container division, table cell borders, and form inputs employ `#e1e7f0`. Hover strokes on inputs step to `#cbd5e1`.\n- **Semantic Feedback**:\n  - Success (Fulfilled, Paid, Connected): `#157347` (surface tint `#eaf5ef`)\n  - Warning (Pending, Low Stock, Requires Review): `#b08900` (surface tint `#fef9e7`)\n  - Error (Cancelled, Gateway Failure, Discrepancy): `#c2333f` (surface tint `#faeaeb`)\n\n## Typography\n\nTypography is standardized on `Noto Sans` (with comprehensive support for the Thai loopless and looped scripts via Noto Sans Thai). The baseline line heights are intentionally calibrated with an extra 2px to 4px clearance relative to standard Latin typesets to ensure Thai vowel markers, tone marks, and descenders do not clip or blur during dense information display.\n\nPage titles anchor screens at 28px (`headline-page`). Operational tables and forms run primarily on 14px (`body-default` and `body-medium`) with secondary metadata, form labels, and badge indicators set to 13px (`label-default`). Numeric columns, order IDs, tracking codes, and monetary currencies align using tabular numeric figures (`tnum`).\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Shapes\n\nThe interface balances soft container geometry with sharper functional controls:\n\n- **Cards & Data Panels**: Border radius is strictly 12px (`0.75rem`), providing clear modular separation between discrete operational modules.\n- **Controls & Form Elements**: Input fields, buttons, dropdown toggles, and search filters use an 8px (`0.5rem`) radius.\n- **Status Pills & Chips**: Retain a pill radius of 9999px for rapid scannability in order statuses.\n- **Internal Table Cells & Nested Rows**: Corner radiuses are maintained at 0px inside data grids, reserving rounded corners exclusively for outer perimeter table containers.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+                  "font": "NOTO_SANS",
+                  "headlineFont": "NOTO_SANS",
+                  "headlineFontFamily": "Noto Sans",
+                  "labelFont": "NOTO_SANS",
+                  "labelFontFamily": "Noto Sans",
+                  "namedColors": {
+                    "background": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "error_container": "#ffdad6",
+                    "inverse_on_surface": "#ecf0ff",
+                    "inverse_primary": "#b9c3ff",
+                    "inverse_surface": "#243048",
+                    "on_background": "#0e1b32",
+                    "on_error": "#ffffff",
+                    "on_error_container": "#93000a",
+                    "on_primary": "#ffffff",
+                    "on_primary_container": "#ededff",
+                    "on_primary_fixed": "#001257",
+                    "on_primary_fixed_variant": "#0034c0",
+                    "on_secondary": "#ffffff",
+                    "on_secondary_container": "#54647c",
+                    "on_secondary_fixed": "#0b1c31",
+                    "on_secondary_fixed_variant": "#38485e",
+                    "on_surface": "#0e1b32",
+                    "on_surface_variant": "#444655",
+                    "on_tertiary": "#ffffff",
+                    "on_tertiary_container": "#ffebe4",
+                    "on_tertiary_fixed": "#360f00",
+                    "on_tertiary_fixed_variant": "#7e2c00",
+                    "outline": "#747687",
+                    "outline_variant": "#c4c5d8",
+                    "primary": "#0a3fdc",
+                    "primary_container": "#365cf5",
+                    "primary_fixed": "#dde1ff",
+                    "primary_fixed_dim": "#b9c3ff",
+                    "secondary": "#4f5f77",
+                    "secondary_container": "#d0e1fd",
+                    "secondary_fixed": "#d3e3ff",
+                    "secondary_fixed_dim": "#b7c7e3",
+                    "surface": "#f9f9ff",
+                    "surface_bright": "#f9f9ff",
+                    "surface_container": "#e8eeff",
+                    "surface_container_high": "#e0e8ff",
+                    "surface_container_highest": "#d7e2ff",
+                    "surface_container_low": "#f1f3ff",
+                    "surface_container_lowest": "#ffffff",
+                    "surface_dim": "#cddaf9",
+                    "surface_tint": "#214ce7",
+                    "surface_variant": "#d7e2ff",
+                    "tertiary": "#943500",
+                    "tertiary_container": "#bc4600",
+                    "tertiary_fixed": "#ffdbcd",
+                    "tertiary_fixed_dim": "#ffb597"
+                  },
+                  "overrideNeutralColor": "#17243b",
+                  "overridePrimaryColor": "#365cf5",
+                  "overrideSecondaryColor": "#52627a",
+                  "roundness": "ROUND_FOUR",
+                  "spacing": {
+                    "gutter": "1rem",
+                    "gutter-desktop": "1.5rem",
+                    "margin": "1rem",
+                    "margin-desktop": "2rem",
+                    "space-lg": "1.5rem",
+                    "space-md": "1rem",
+                    "space-sm": "0.5rem",
+                    "space-xl": "2rem",
+                    "space-xs": "0.25rem"
+                  },
+                  "spacingScale": 2,
+                  "typography": {
+                    "body-default": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "400",
+                      "lineHeight": "22px"
+                    },
+                    "body-medium": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "500",
+                      "lineHeight": "22px"
+                    },
+                    "code-table": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "display": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "32px",
+                      "fontWeight": "600",
+                      "lineHeight": "40px"
+                    },
+                    "headline-card": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "18px",
+                      "fontWeight": "600",
+                      "lineHeight": "26px"
+                    },
+                    "headline-page": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "28px",
+                      "fontWeight": "600",
+                      "lineHeight": "36px"
+                    },
+                    "headline-page-mobile": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "22px",
+                      "fontWeight": "600",
+                      "lineHeight": "30px"
+                    },
+                    "label-caption": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "12px",
+                      "fontWeight": "400",
+                      "lineHeight": "16px"
+                    },
+                    "label-default": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "500",
+                      "lineHeight": "18px"
+                    },
+                    "subheading": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "16px",
+                      "fontWeight": "500",
+                      "lineHeight": "24px"
+                    }
+                  }
+                }
+              },
+              "name": "assets/f82a75c9d0f54b0a89448b88e894b80a",
+              "version": "1"
+            },
+            "deviceType": "DESKTOP",
+            "generatedBy": "figaro_agent",
+            "height": "4264",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2RkOGJjOGRjZTA4ZDRhZTZiNTJkNGY2YzExMTVhYmQ1EgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/c492d1ca7c92490fa757fb6d49f2bf18"
+            },
+            "id": "88b39b24853d4bc3b3eadeda6eca810e",
+            "name": "projects/18348214526789030153/screens/88b39b24853d4bc3b3eadeda6eca810e",
+            "prompt": "Generate an admin screen for the Commerce Platform with the exact title 'หมวดที่ย้ายของในตะกร้าได้' (Unlock Move Categories) for route /j/cs/cart-move-categories.\nDeveloper route meta: route admin-43b0b0cc3a65, URL /j/cs/cart-move-categories, app admin, category ลูกค้าและบริการ, component CartMoveCategoriesAdmin, view type screen.\n\nKey specifications and UI requirements:\n1. Navigation & Layout:\n   - Sidebar (256px wide / w-64): Commerce Admin / Commerce Platform with 7 work areas: สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ (Active with open sub-menu: เช่น รายชื่อลูกค้าและร้านค้า, งานบริการลูกค้า (CS Desk), แชตกับลูกค้า, หมวดที่ย้ายของในตะกร้าได้ (Active tab), บันทึกและกฎอัตโนมัติ), การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. Footer with คู่มือใช้งาน, ออกจากระบบ.\n   - Header (64px / h-16): Search input, sample data toggle badge (\"ข้อมูลตัวอย่าง\"), Thai/English language toggle ('ไทย | EN'), notifications bell, user avatar 'จินดา นวลอนันต์ หัวหน้าทีมบริการลูกค้า (CS)'.\n   - Breadcrumbs: หน้าหลัก > ลูกค้าและบริการ > หมวดที่ย้ายของในตะกร้าได้.\n   - Main container: max-w-[1240px] centered, canvas bg #f6f8fc, text #17243b.\n\n2. Page Header & Key Actions:\n   - Title: 'หมวดที่ย้ายของในตะกร้าได้' with badge 'Unlock Move Categories' and status tag 'Active'.\n   - Subtitle / Description: 'หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate'\n   - Top action buttons: 'ย้อนกลับ', 'บันทึก' (Primary CTA, with loading state text indicator 'กำลังบันทึก...'), 'Expand' / 'Collapse' tree toggles.\n   - Meta info badge: Route 'admin-43b0b0cc3a65' · '/j/cs/cart-move-categories'.\n\n3. Information & Guidance Alert Banner:\n   - Alert info banner with icon and clear explanation:\n     \"สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่\"\n   - Counter summary badges: 'เลือกแล้ว' (Selected categories count: 18 หมวด), 'แก้ไขแล้ว' (Modified: 3 รายการ), 'อัปเดตล่าสุด: 14 ก.พ. 2568 15:30 น. โดย จินดา นวลอนันต์'.\n\n4. Search and Filter Bar:\n   - Category search input: \"ค้นหาหมวดหมู่สินค้าในหน้านี้...\" (with clear button).\n   - Filter dropdowns: \"สถานะการเลือก (ทั้งหมด / เลือกแล้ว / ยังไม่เลือก)\", \"ระดับชั้น (ทุกระดับ / หมวดหลัก Tier 1 / หมวดย่อย Tier 2-3)\".\n   - Tree control buttons: 'Expand ทั้งหมด', 'Collapse ทั้งหมด'.\n   - Quick counter badge: \"แสดง 4 หมวดหลัก, 24 หมวดย่อย (ข้อมูลตัวอย่าง)\".\n\n5. Category Tree Selection Card (Interactive Tree Hierarchy):\n   - Category Tree Table / Hierarchical List showing:\n     * Checkbox (parent checked causes children to be checked/grayed out with tooltip / visual indication: 'ครอบอัตโนมัติ').\n     * Category Icon & Name ('หมวด') with slug / code (e.g., CAT-DRK เครื่องดื่มและน้ำดื่ม, CAT-SNK ขนมขบเคี้ยวและของว่าง, CAT-DRY อาหารแห้งและเครื่องปรุง, CAT-CHL ของสดและแช่เย็น).\n     * Level badge (หมวดหลัก, หมวดย่อย Subcategory 1, Subcategory 2).\n     * Order-taking restriction flag (e.g. \"Order-taking: ไม่อนุญาตย้ายข้ามวันส่ง\").\n     * Shipment compatibility tags (e.g. \"Unlock Free Shipping: elligible\", \"Ambient Dry\", \"Cold Chain 4°C\").\n     * Status column: \"เลือกแล้ว (ครอบทั้งต้นไม้)\", \"เลือกแล้ว (เฉพาะบาง subcate)\", \"ยังไม่เลือก\".\n   - Include realistic nested rows with indentation, expand/collapse icons, toggle indicators.\n   - Empty/Filter states handling hint and notification toast simulation.\n\n6. Sticky Bottom Action Bar:\n   - Status badge: \"มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก: 2 หมวดหมู่\"\n   - Revert button: \"ย้อนกลับ\"\n   - Primary button: \"บันทึก\" (พร้อมปุ่มแสดง \"กำลังบันทึก...\" เมื่อกด).\n\n7. CRITICAL TRANSLATION EXPORT REQUIREMENT:\n   Include the invisible script `<script id=\"commerce-ui-translations\" type=\"application/json\">` containing the JSON dictionary mapping ALL required exact strings from the catalogue to their {\"th\": \"...\", \"en\": \"...\"} translations:\n   [\"หมวด\",\"บันทึก\",\"กำลังโหลด...\",\"กำลังบันทึก...\",\"Unlock Move Categories\",\"Collapse\",\"Expand\",\"หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate\",\"สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่\",\"เลือกแล้ว\",\"ไม่พบหมวดหมู่\",\"แก้ไขแล้ว\",\"ค้นหาบริษัทไม่สำเร็จ\",\"คูปองนี้เคยตั้ง \\\"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿\\\"\",\"เฉพาะบริษัทที่เลือก\",\"เช่น vip-customers\",\"ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ\",\"ถึง/เกิน (≥)\",\"บันทึกโจทย์\",\"เปิดใช้ Global Frequency Cap\",\"เพิ่ม Coupon\",\"ไม่ต้องตั้งค่าเพิ่มเติมสำหรับ rule นี้\",\"ย้อนกลับไปใช้เวอร์ชันนี้? การแก้ไขปัจจุบันที่ยังไม่ได้บันทึกจะหายไป\",\"รวมบัญชีไม่สำเร็จ\",\"ร้านอาหารจีน, ร้านกาแฟ\",\"ลบ {0}\",\"เลือกคูปอง\",\"สถานะ shipment {0}\",\"สินค้าที่นับเข้าเงื่อนไข\",\"หัวเรื่อง:\",\"อัปเดตล่าสุด:\",\"ทุกคนที่เข้าเว็บช่วงเงื่อนไขได้ action\",\"เงื่อนไข SKU ขั้นต่ำเดิม {0} รายการ\",\"พรีวิวไม่สำเร็จ\",\"กรุณาเลือกประเภทร้านหรือกลุ่มอย่างน้อย 1 รายการ\",\"บันทึกไม่สำเร็จ\"]\n\nPolished Thai enterprise styling with Tailwind CSS, Lucide / Material Symbols SVG icons, clean hierarchy, precise 1240px container, and full operational fidelity.",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WNbCYUb7f8VvAnbokOjVwF4Woqa9wMuZ1Y3Tm1oNjzh-4hMxmai3mBrCQoztwNdK8wFJ-NefUNAVY2RHxzeQIfS3YSBlGiGnJ2cRNk4RjWBYmpcKVdZVIWzfIQq8Tc3WnbB2zA95LMiHCebDKasNPdXN2bvaMVFDqfHWsXjg2FlLzAaDkNBFHJOUh2bVE-C4MdOtXXOd7G106V2A63oCeTy0SAITa_DgqSdNamU34HHcDMOllxarQxO0A",
+              "name": "projects/18348214526789030153/files/8bd88e569d6349568fd225d932c34ef9"
+            },
+            "theme": {
+              "bodyFont": "NOTO_SANS",
+              "bodyFontFamily": "Noto Sans",
+              "colorMode": "LIGHT",
+              "colorVariant": "FIDELITY",
+              "customColor": "#365cf5",
+              "font": "NOTO_SANS",
+              "headlineFont": "NOTO_SANS",
+              "headlineFontFamily": "Noto Sans",
+              "labelFont": "NOTO_SANS",
+              "labelFontFamily": "Noto Sans",
+              "namedColors": {
+                "background": "#f9f9ff",
+                "error": "#ba1a1a",
+                "error_container": "#ffdad6",
+                "inverse_on_surface": "#ecf0ff",
+                "inverse_primary": "#b9c3ff",
+                "inverse_surface": "#243048",
+                "on_background": "#0e1b32",
+                "on_error": "#ffffff",
+                "on_error_container": "#93000a",
+                "on_primary": "#ffffff",
+                "on_primary_container": "#ededff",
+                "on_primary_fixed": "#001257",
+                "on_primary_fixed_variant": "#0034c0",
+                "on_secondary": "#ffffff",
+                "on_secondary_container": "#54647c",
+                "on_secondary_fixed": "#0b1c31",
+                "on_secondary_fixed_variant": "#38485e",
+                "on_surface": "#0e1b32",
+                "on_surface_variant": "#444655",
+                "on_tertiary": "#ffffff",
+                "on_tertiary_container": "#ffebe4",
+                "on_tertiary_fixed": "#360f00",
+                "on_tertiary_fixed_variant": "#7e2c00",
+                "outline": "#747687",
+                "outline_variant": "#c4c5d8",
+                "primary": "#0a3fdc",
+                "primary_container": "#365cf5",
+                "primary_fixed": "#dde1ff",
+                "primary_fixed_dim": "#b9c3ff",
+                "secondary": "#4f5f77",
+                "secondary_container": "#d0e1fd",
+                "secondary_fixed": "#d3e3ff",
+                "secondary_fixed_dim": "#b7c7e3",
+                "surface": "#f9f9ff",
+                "surface_bright": "#f9f9ff",
+                "surface_container": "#e8eeff",
+                "surface_container_high": "#e0e8ff",
+                "surface_container_highest": "#d7e2ff",
+                "surface_container_low": "#f1f3ff",
+                "surface_container_lowest": "#ffffff",
+                "surface_dim": "#cddaf9",
+                "surface_tint": "#214ce7",
+                "surface_variant": "#d7e2ff",
+                "tertiary": "#943500",
+                "tertiary_container": "#bc4600",
+                "tertiary_fixed": "#ffdbcd",
+                "tertiary_fixed_dim": "#ffb597"
+              },
+              "overrideNeutralColor": "#17243b",
+              "overridePrimaryColor": "#365cf5",
+              "overrideSecondaryColor": "#52627a",
+              "roundness": "ROUND_FOUR",
+              "spacing": {
+                "gutter": "1rem",
+                "gutter-desktop": "1.5rem",
+                "margin": "1rem",
+                "margin-desktop": "2rem",
+                "space-lg": "1.5rem",
+                "space-md": "1rem",
+                "space-sm": "0.5rem",
+                "space-xl": "2rem",
+                "space-xs": "0.25rem"
+              },
+              "spacingScale": 2,
+              "typography": {
+                "body-default": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "400",
+                  "lineHeight": "22px"
+                },
+                "body-medium": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "500",
+                  "lineHeight": "22px"
+                },
+                "code-table": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "400",
+                  "lineHeight": "18px"
+                },
+                "display": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "32px",
+                  "fontWeight": "600",
+                  "lineHeight": "40px"
+                },
+                "headline-card": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "18px",
+                  "fontWeight": "600",
+                  "lineHeight": "26px"
+                },
+                "headline-page": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "28px",
+                  "fontWeight": "600",
+                  "lineHeight": "36px"
+                },
+                "headline-page-mobile": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "22px",
+                  "fontWeight": "600",
+                  "lineHeight": "30px"
+                },
+                "label-caption": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "12px",
+                  "fontWeight": "400",
+                  "lineHeight": "16px"
+                },
+                "label-default": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "500",
+                  "lineHeight": "18px"
+                },
+                "subheading": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "16px",
+                  "fontWeight": "500",
+                  "lineHeight": "24px"
+                }
+              }
+            },
+            "title": "หมวดที่ย้ายของในตะกร้าได้ (CartMoveCategoriesAdmin)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบหน้าจอ **หมวดที่ย้ายของในตะกร้าได้ (CartMoveCategoriesAdmin)** เรียบร้อยแล้วครับ โดยมีรายละเอียดการออกแบบและโครงสร้างการทำงานดังนี้:\n\n### สรุปรายละเอียดการออกแบบ (Design Summary)\n1. **โครงสร้างและขอบเขตหน้าจอ (Layout & Navigation):**\n   - **Route Identifier:** `admin-43b0b0cc3a65` | **URL:** `/j/cs/cart-move-categories` | **หมวดงาน:** ลูกค้าและบริการ\n   - แถบเมนูด้านซ้ายขนาด 256px พร้อม 7 พื้นที่การทำงานหลักตามระบบ Commerce Platform โดยเน้นสถานะ active ที่เมนูย่อย *\"หมวดที่ย้ายของในตะกร้าได้\"*\n   - ส่วนหัวระบบ (Contextual Header) แสดงแถบค้นหา, ตัวบ่งชี้ `ข้อมูลตัวอย่าง`, ปุ่มสลับภาษา `ไทย | EN`, และโปรไฟล์เจ้าหน้าที่ CS จินดา นวลอนันต์\n   - ขอบเขตเนื้อหาหลักความกว้าง 1,240px บนพื้นหลัง `#f6f8fc` พร้อม Card สีขาวมุมโค้ง 12px และระยะห่างเป็นระเบียบ\n\n2. **ระบบการจัดการหมวดหมู่และการสืบทอด (Tree & Inheritance Rules):**\n   - **คำอธิบายและข้อกำหนด:** มีแถบประกาศแจ้งชัดเจน *\"สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่\"*\n   - **การแสดงผลระดับหมวด (Tree Hierarchy):**\n     - ตารางแจกแจงระดับชั้นหมวดหลัก (Tier 1) และหมวดย่อย (Tier 2) พร้อมปุ่ม Expand/Collapse\n     - แสดงเงื่อนไขการควบคุมการจัดส่ง เช่น *Unlock Free Shipping*, *Ambient Dry*, *Cold Chain 4°C* และระบบล็อค *Order-taking Lock*\n     - แท็กสถานะการเลือก: *\"เลือกแล้ว (ครอบทั้งต้นไม้)\"*, *\"เลือกแล้ว (เฉพาะบาง subcate)\"*, และ *\"ยังไม่เลือก\"*\n   - **แถบเครื่องมือค้นหาและฟิลเตอร์:** กรองตามระดับชั้น, สถานะการเลือก, และค้นหาชื่อหมวดหมู่ในหน้านี้\n\n3. **แถบสรุปสถานะและปุ่มบันทึกการเปลี่ยนแปลง (Sticky Action Bar):**\n   - แถบด้านล่างแจ้งเตือนการเปลี่ยนแปลงที่ยังไม่ได้บันทึก พร้อมปุ่ม *ย้อนกลับ* และปุ่มหลัก *บันทึก*\n   - กล่องสรุปกฎเกณฑ์ 3 คอลัมน์ด้านล่าง: กฎการสืบทอด (Tree Inheritance), ข้อจำกัด Order-taking, และ Unlock Free Shipping\n\n4. **การรองรับสองภาษาและการ Export JSON:**\n   - ได้รวมแท็กสคริปต์ `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่บรรจุคำศัพท์ UI catalogue ครบถ้วนทุกคำทั้งภาษาไทย (`th`) และภาษาอังกฤษ (`en`) รองรับ placeholder `{0}` และฟังก์ชันสลับภาษาได้อย่างสมบูรณ์"
+    },
+    {
+      "suggestion": "เพิ่มโมดอลสำหรับยืนยันการบันทึกการเปลี่ยนแปลงหมวดหมู่ข้าม shipment"
+    },
+    {
+      "suggestion": "จำลองสถานะการค้นหาแล้วไม่พบหมวดหมู่ (Filtered Empty State)"
+    },
+    {
+      "suggestion": "ปรับแต่งการแสดงผลหมวดหมู่ Cold Chain และสินค้าควบคุมอุณหภูมิเพิ่มเติม"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "2562618651129455592"
+}

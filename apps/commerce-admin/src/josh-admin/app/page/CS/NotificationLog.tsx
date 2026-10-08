@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   getAdminNotifications,
   type AdminNotification,
@@ -13,7 +16,10 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
  * specific user was notified about (order updates, back-in-stock, etc.)
  * and whether they've read it. No write actions on purpose.
  */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function NotificationLog() {
+  __useUiLocale();
   const [userIdInput, setUserIdInput] = useState('');
   const [activeUserId, setActiveUserId] = useState('');
   const [rows, setRows] = useState<AdminNotification[]>([]);
@@ -44,7 +50,7 @@ export default function NotificationLog() {
       } catch {
         setRows([]);
         setNextCursor(null);
-        setError('ไม่พบข้อมูล หรือ userId ไม่ถูกต้อง');
+        setError(__uiMessage("ไม่พบข้อมูล หรือ userId ไม่ถูกต้อง"));
       } finally {
         setLoading(false);
       }
@@ -85,16 +91,16 @@ export default function NotificationLog() {
   const columns: TableColumn<AdminNotification>[] = [
     {
       key: 'created_at',
-      label: 'เวลา',
+      label: __uiText("เวลา"),
       render: (value: string) =>
-        new Date(value).toLocaleString('th-TH', {
+        new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
           dateStyle: 'medium',
           timeStyle: 'short',
         }),
     },
     {
       key: 'user_id',
-      label: 'ผู้ใช้',
+      label: __uiText("ผู้ใช้"),
       render: (value: string) => (
         <Link
           to={ADMIN_ROUTES.userDetail(value)}
@@ -104,20 +110,18 @@ export default function NotificationLog() {
         </Link>
       ),
     },
-    { key: 'type', label: 'ประเภท' },
-    { key: 'title', label: 'หัวข้อ' },
+    { key: 'type', label: __uiText("ประเภท") },
+    { key: 'title', label: __uiText("หัวข้อ") },
     {
       key: 'read_at',
-      label: 'สถานะอ่าน',
+      label: __uiText("สถานะอ่าน"),
       render: (value: string | null) =>
         value ? (
           <span className="rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-700">
-            อ่านแล้ว
-          </span>
+            {__uiText("อ่านแล้ว")}</span>
         ) : (
           <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-500">
-            ยังไม่อ่าน
-          </span>
+            {__uiText("ยังไม่อ่าน")}</span>
         ),
     },
   ];
@@ -125,13 +129,13 @@ export default function NotificationLog() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Notification Log"
-        subtitle="ประวัติการแจ้งเตือนของผู้ใช้ (อ่านอย่างเดียว) — สำหรับทีมซัพพอร์ต"
+        title={__uiText("Notification Log")}
+        subtitle={__uiText("ประวัติการแจ้งเตือนของผู้ใช้ (อ่านอย่างเดียว) — สำหรับทีมซัพพอร์ต")}
       />
 
       <div className="mb-4 flex items-end gap-2">
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">รหัสผู้ใช้ (User ID)</span>
+          <span className="text-xs text-gray-500">{__uiText("รหัสผู้ใช้ (User ID)")}</span>
           <input
             className="w-96 rounded-lg border border-gray-200 px-3 py-2 text-sm"
             value={userIdInput}
@@ -146,16 +150,15 @@ export default function NotificationLog() {
           className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
           onClick={handleSearch}
         >
-          ค้นหา
-        </button>
+          {__uiText("ค้นหา")}</button>
       </div>
 
-      {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
+      {error && <p className="mb-3 text-sm text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       {!activeUserId ? (
-        <p className="text-sm text-gray-400">ใส่ userId เพื่อดูประวัติการแจ้งเตือน</p>
+        <p className="text-sm text-gray-400">{__uiText("ใส่ userId เพื่อดูประวัติการแจ้งเตือน")}</p>
       ) : loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <>
           <Table columns={columns} data={rows} idKey="id" />
@@ -166,16 +169,14 @@ export default function NotificationLog() {
               className="rounded border px-3 py-1 disabled:opacity-40"
               onClick={handlePrev}
             >
-              ก่อนหน้า
-            </button>
+              {__uiText("ก่อนหน้า")}</button>
             <button
               type="button"
               disabled={!nextCursor}
               className="rounded border px-3 py-1 disabled:opacity-40"
               onClick={handleNext}
             >
-              ถัดไป
-            </button>
+              {__uiText("ถัดไป")}</button>
           </div>
         </>
       )}

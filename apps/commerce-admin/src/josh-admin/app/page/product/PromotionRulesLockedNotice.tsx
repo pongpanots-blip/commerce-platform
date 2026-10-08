@@ -4,6 +4,8 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 import type { PromotionMechanicRowForm } from '../campain/promotion-mechanic.helpers';
 
 /** `promotion_rules_locked_by` on the admin product read: the mechanic that owns the SKU's price tiers. */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type PromotionRulesLockedBy = { mechanic_id: string; mechanic_name: string };
 
 /**
@@ -19,22 +21,22 @@ export function PromotionRulesLockedNotice({
   lockedBy: PromotionRulesLockedBy;
   rules: PromotionMechanicRowForm[];
 }) {
+  __useUiLocale();
   const editHref = ADMIN_ROUTES.promotionsMechanicEdit(lockedBy.mechanic_id);
   return (
     <div data-testid="promotion-rules-locked" className="space-y-3">
       <p className="text-sm text-amber-800">
-        ราคาตามจำนวนของสินค้านี้มาจากโปรโมชัน <b>{lockedBy.mechanic_name}</b> — แก้ที่นี่ไม่ได้
-      </p>
+        {__uiText("ราคาตามจำนวนของสินค้านี้มาจากโปรโมชัน ")}<b>{lockedBy.mechanic_name}</b> {__uiText(" — แก้ที่นี่ไม่ได้")}</p>
       {rules.length > 0 ? (
         <>
           <Link to={editHref} className="inline-block text-sm font-medium text-blue-700 underline">
-            แก้ที่โปรโมชัน “{lockedBy.mechanic_name}”
+            {__uiText("แก้ที่โปรโมชัน “")}{lockedBy.mechanic_name}”
           </Link>
           <table className="min-w-full text-sm text-gray-600">
             <thead className="text-left text-xs text-gray-500">
               <tr>
-                <th className="px-2 py-1 font-medium">ซื้อขั้นต่ำ</th>
-                <th className="px-2 py-1 font-medium">ราคา/หน่วย (฿)</th>
+                <th className="px-2 py-1 font-medium">{__uiText("ซื้อขั้นต่ำ")}</th>
+                <th className="px-2 py-1 font-medium">{__uiText("ราคา/หน่วย (฿)")}</th>
               </tr>
             </thead>
             <tbody>
@@ -49,8 +51,7 @@ export function PromotionRulesLockedNotice({
         </>
       ) : (
         <Link to={editHref} className="inline-block text-sm font-medium text-blue-700 underline">
-          ดูเงื่อนไขในหน้าโปร
-        </Link>
+          {__uiText("ดูเงื่อนไขในหน้าโปร")}</Link>
       )}
     </div>
   );

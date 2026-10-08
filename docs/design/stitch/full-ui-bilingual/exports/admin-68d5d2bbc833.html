@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>สถานะ - Siam Commerce Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "outline": "#747687",
+            "tertiary": "#006139",
+            "surface-bright": "#f9f9ff",
+            "on-tertiary-container": "#b7ffcf",
+            "error-container": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "surface-tint": "#214ce7",
+            "primary-container": "#365cf5",
+            "on-background": "#0e1b32",
+            "primary": "#0a3fdc",
+            "surface-container": "#e8eeff",
+            "on-tertiary-fixed": "#002110",
+            "tertiary-fixed-dim": "#82d8a3",
+            "surface-container-low": "#f1f3ff",
+            "primary-fixed": "#dde1ff",
+            "on-error": "#ffffff",
+            "on-surface": "#0e1b32",
+            "secondary-fixed": "#d3e3ff",
+            "on-primary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "surface": "#f9f9ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-container": "#217b4e",
+            "inverse-surface": "#243048",
+            "inverse-primary": "#b9c3ff",
+            "background": "#f9f9ff",
+            "secondary": "#4f5f77",
+            "outline-variant": "#c4c5d8",
+            "on-tertiary-fixed-variant": "#00522f",
+            "on-secondary-fixed-variant": "#38485e",
+            "primary-fixed-dim": "#b9c3ff",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-high": "#e0e8ff",
+            "on-secondary-fixed": "#0b1c31",
+            "tertiary-fixed": "#9ef5be",
+            "surface-variant": "#d7e2ff",
+            "on-primary-fixed": "#001257",
+            "on-error-container": "#93000a",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "secondary-container": "#d0e1fd",
+            "on-surface-variant": "#444655",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#ededff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-dim": "#cddaf9"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "space-xs": "0.25rem",
+            "margin-desktop": "1.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "margin": "1rem"
+          },
+          fontFamily: {
+            "label-lg": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "body-lg": ["Noto Sans"]
+          },
+          fontSize: {
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full bg-background text-on-background font-body-md antialiased flex">
+<script id="commerce-ui-translations" type="application/json">
+    {
+      "th": {
+        "status": "สถานะ",
+        "edit": "แก้ไข",
+        "manage": "จัดการ",
+        "retry": "ลองใหม่",
+        "loading": "กำลังโหลด...",
+        "promo_name": "ชื่อโปร",
+        "sku_count": "จำนวน SKU",
+        "top_save_notice": "ปุ่มบันทึกด้านบนบันทึกเฉพาะข้อมูล Campaign — คูปองบันทึกทันทีที่เพิ่ม/ถอด และหน้าโปรมีปุ่มบันทึกของตัวเอง",
+        "campaign_info": "ข้อมูล Campaign",
+        "saved": "บันทึกแล้ว",
+        "campaign_name": "ชื่อ Campaign",
+        "duration": "ระยะเวลา",
+        "date_override_notice": "แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร และแบนเนอร์ใน Campaign นี้",
+        "enable_campaign": "เปิดใช้งาน Campaign",
+        "disable_notice": "ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)",
+        "delete_campaign": "ลบ Campaign",
+        "promo_mechanics": "โปรอัตโนมัติ (Promotion mechanics)",
+        "product_discount": "ส่วนลดระดับสินค้า — ใช้วันที่ของ Campaign และ SKU จาก Product set",
+        "add_promo": "เพิ่มโปร",
+        "delete_confirm": "ลบ Campaign นี้?"
+      },
+      "en": {
+        "status": "Status",
+        "edit": "Edit",
+        "manage": "Manage",
+        "retry": "Retry",
+        "loading": "Loading...",
+        "promo_name": "Promotion Name",
+        "sku_count": "SKU Count",
+        "top_save_notice": "The top save button only saves Campaign data — Coupons save immediately upon add/remove, and promo pages have their own save buttons.",
+        "campaign_info": "Campaign Info",
+        "saved": "Saved",
+        "campaign_name": "Campaign Name",
+        "duration": "Duration",
+        "date_override_notice": "Modifying and saving dates will overwrite dates for all promos, promo pages, and banners in this Campaign.",
+        "enable_campaign": "Enable Campaign",
+        "disable_notice": "Off = Overall Campaign status is 'Disabled' — does not disable individual promos, pages, or coupons (manageable on their respective pages).",
+        "delete_campaign": "Delete Campaign",
+        "promo_mechanics": "Promotion mechanics",
+        "product_discount": "Product-level discount — Uses Campaign dates and SKUs from Product set",
+        "add_promo": "Add Promo",
+        "delete_confirm": "Delete this Campaign?"
+      }
+    }
+  </script>
+<!-- SideNavBar -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center gap-space-sm px-space-sm py-space-xs">
+<div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold">ส</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">สยาม คอมเมิร์ซ</h1>
+<p class="text-body-sm text-secondary">ศูนย์จัดการระบบร้านค้า</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1 mt-4">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-2 pt-4 border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-2 px-4 rounded-lg text-label-lg font-label-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+        สร้างรายการใหม่
+      </button>
+<div class="flex items-center justify-between text-secondary px-2 pt-2">
+<a class="flex items-center gap-1 text-body-sm hover:text-on-surface" href="#">
+<span class="material-symbols-outlined text-sm">help</span> คู่มือใช้งาน
+        </a>
+<a class="flex items-center gap-1 text-body-sm hover:text-error" href="#">
+<span class="material-symbols-outlined text-sm">logout</span> ออกจากระบบ
+        </a>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop transition-all duration-150 ease-in-out">
+<div class="flex items-center gap-4">
+<h2 class="text-headline-sm font-headline-sm font-semibold text-on-surface">การตลาด / Marketing Workflows</h2>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-outline">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="pl-9 pr-4 py-1.5 w-72 bg-surface border border-outline-variant rounded-lg text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="ค้นหาแคมเปญ, SKU, โปรโมชั่น..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a class="text-secondary hover:text-on-surface text-label-md" href="#">ไทย / English</a>
+<a class="text-secondary hover:text-on-surface text-label-md" href="#">ข้อมูลตัวอย่าง / Sample data</a>
+<button class="bg-surface border border-outline-variant text-on-surface px-3 py-1.5 rounded-lg text-label-md hover:bg-surface-container">นำเข้าข้อมูล</button>
+<button class="bg-primary text-on-primary px-3 py-1.5 rounded-lg text-label-md hover:bg-primary/90">สร้างเวิร์กโฟลว์</button>
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-on-surface">notifications</span>
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-on-surface">help_outline</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center font-bold text-primary ml-2 overflow-hidden border border-outline-variant" data-alt="Professional portrait photo of an Asian male e-commerce system administrator wearing a modern navy blue button-down shirt, smiling slightly, captured with soft office lighting and a neutral blurred background, high fidelity B2B SaaS executive style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBSxxx17bzzPpKB1xmrNKTueXj34B6li9Acubb8mKyk6XE_hSB07k-q4eZk9PhAMoTE7brpqYFRYRDNAt9t1_KnxalkiUzdeqipX0no6hu4gEb_2TaOwdxpCi8mGyHaR6xoIAvB0pr6RIVisXjrcfQfSMy-q99r8Fg_Vbt0rA7mQtT5PDMqpAbWoqb5vn7DLkL2RMTNjrc2whI9V-J_kzcMQH03jdnycGmgOjzrGHXk-rmkRZfrJJpIFQkIM9rcJ1PHeOOV2127L-Y')">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Viewport Canvas -->
+<main class="ml-64 mt-16 flex-1 p-space-lg overflow-y-auto">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-lg pb-12">
+<!-- Breadcrumb & Top Bar Action -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-secondary text-body-sm mb-1">
+<span>การตลาด</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span>แคมเปญทั้งหมด</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary font-medium">CMP-2024-8891</span>
+</div>
+<div class="flex items-center gap-3">
+<h1 class="text-display-lg text-on-background">สถานะ</h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-label-md font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+              กำลังใช้งาน (Active)
+            </span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-surface border border-outline-variant text-on-surface px-4 py-2 rounded-lg text-label-lg font-label-lg hover:bg-surface-container flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span> แก้ไข
+          </button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-lg font-label-lg hover:bg-primary/90 flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm">save</span> บันทึกแล้ว
+          </button>
+</div>
+</div>
+<!-- Top Notice Banner -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-space-md flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<p class="text-body-md text-on-surface-variant">
+          ปุ่มบันทึกด้านบนบันทึกเฉพาะข้อมูล Campaign — คูปองบันทึกทันทีที่เพิ่ม/ถอด และหน้าโปรมีปุ่มบันทึกของตัวเอง
+        </p>
+</div>
+<!-- Campaign Info Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant mb-6">
+<h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">campaign</span>
+            ข้อมูล Campaign
+          </h3>
+<span class="text-secondary text-body-sm">ID: CMP-2024-8891</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-label-lg text-on-surface mb-2">ชื่อ Campaign</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" type="text" value="มหกรรมลดใหญ่กลางปี Mid-Year Super Sale 2024"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface mb-2">ระยะเวลา</label>
+<div class="grid grid-cols-2 gap-2">
+<input class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md text-on-surface focus:outline-none focus:border-primary" type="text" value="15/06/2024 00:00"/>
+<input class="bg-surface border border-outline-variant rounded-lg px-3 py-2 text-body-md text-on-surface focus:outline-none focus:border-primary" type="text" value="30/06/2024 23:59"/>
+</div>
+</div>
+</div>
+<p class="text-body-sm text-outline mt-4 italic">
+          แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร และแบนเนอร์ใน Campaign นี้
+        </p>
+<div class="mt-6 pt-6 border-t border-outline-variant flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer right-0 border-primary checked:bg-primary checked:right-0 duration-200" id="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-primary-fixed cursor-pointer" for="toggle"></label>
+</div>
+<div>
+<span class="text-label-lg font-semibold text-on-surface">เปิดใช้งาน Campaign</span>
+<p class="text-body-sm text-secondary">ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)</p>
+</div>
+</div>
+<button class="text-error bg-error/10 hover:bg-error/20 px-4 py-2 rounded-lg text-label-lg font-medium transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">delete</span> ลบ Campaign
+          </button>
+</div>
+</div>
+<!-- Promotion Mechanics Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant mb-6">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">local_offer</span>
+              โปรอัตโนมัติ (Promotion mechanics)
+            </h3>
+<p class="text-body-sm text-secondary mt-1">ส่วนลดระดับสินค้า — ใช้วันที่ของ Campaign และ SKU จาก Product set</p>
+</div>
+<button class="bg-primary text-on-primary px-3 py-2 rounded-lg text-label-md font-label-md hover:bg-primary/90 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">add</span> เพิ่มโปร
+          </button>
+</div>
+<!-- Data Table -->
+<div class="border border-outline-variant rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-outline-variant text-secondary text-label-sm uppercase">
+<th class="py-3 px-4 font-semibold">ชื่อโปร</th>
+<th class="py-3 px-4 font-semibold">จำนวน SKU</th>
+<th class="py-3 px-4 font-semibold">สถานะโปร</th>
+<th class="py-3 px-4 font-semibold text-right">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4 text-on-surface font-medium">ส่วนลด Flash Sale 30% ทุกไอเทมแฟชั่น</td>
+<td class="py-3.5 px-4 text-data-tabular">128 SKU</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+                    ใช้งานอยู่
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="text-primary hover:underline text-label-md font-medium">จัดการ</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4 text-on-surface font-medium">ซื้อคู่ถูกกว่า 15% (Skin Care Set)</td>
+<td class="py-3.5 px-4 text-data-tabular">45 SKU</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+                    ใช้งานอยู่
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="text-primary hover:underline text-label-md font-medium">จัดการ</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4 text-on-surface font-medium">แจกโค้ดส่วนลดท้ายบิล 200.-</td>
+<td class="py-3.5 px-4 text-data-tabular">ทั้งหมด (Store-wide)</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#B08900]/10 text-[#B08900]">
+                    รอเริ่ม
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="text-primary hover:underline text-label-md font-medium">จัดการ</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Delete Confirmation Modal Trigger Preview / Note section -->
+<div class="flex justify-end pt-4">
+<button class="text-error bg-surface border border-error/30 hover:bg-error/10 px-4 py-2 rounded-lg text-label-lg transition-colors flex items-center gap-2" onclick="alert('ลบ Campaign นี้?')">
+<span class="material-symbols-outlined text-sm">warning</span> ลบ Campaign นี้?
+        </button>
+</div>
+</div>
+</main>
+<style>
+    /* Custom toggle switch styling to match design system */
+    .toggle-checkbox:checked {
+      right: 0;
+      border-color: #0a3fdc;
+    }
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #dde1ff;
+    }
+  </style>
+</body></html>

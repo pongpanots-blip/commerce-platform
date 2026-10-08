@@ -1,0 +1,560 @@
+<html><head><meta charset="utf-8"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-container": "#e8eeff",
+          "background": "#f9f9ff",
+          "surface-container-lowest": "#ffffff",
+          "surface-dim": "#cddaf9",
+          "on-tertiary-container": "#b7ffcf",
+          "surface-container-highest": "#d7e2ff",
+          "on-tertiary-fixed": "#002110",
+          "error-container": "#ffdad6",
+          "secondary-fixed": "#d3e3ff",
+          "on-secondary": "#ffffff",
+          "surface-container-low": "#f1f3ff",
+          "on-surface-variant": "#444655",
+          "secondary-container": "#d0e1fd",
+          "on-primary": "#ffffff",
+          "inverse-on-surface": "#ecf0ff",
+          "secondary-fixed-dim": "#b7c7e3",
+          "secondary": "#4f5f77",
+          "on-secondary-fixed-variant": "#38485e",
+          "on-error": "#ffffff",
+          "surface-tint": "#214ce7",
+          "surface-bright": "#f9f9ff",
+          "primary-fixed-dim": "#b9c3ff",
+          "primary-fixed": "#dde1ff",
+          "outline-variant": "#c4c5d8",
+          "inverse-primary": "#b9c3ff",
+          "tertiary-fixed-dim": "#82d8a3",
+          "surface": "#f9f9ff",
+          "on-surface": "#0e1b32",
+          "on-background": "#0e1b32",
+          "inverse-surface": "#243048",
+          "tertiary": "#006139",
+          "primary": "#0a3fdc",
+          "outline": "#747687",
+          "on-tertiary": "#ffffff",
+          "tertiary-container": "#217b4e",
+          "primary-container": "#365cf5",
+          "on-tertiary-fixed-variant": "#00522f",
+          "on-secondary-fixed": "#0b1c31",
+          "on-primary-fixed": "#001257",
+          "on-primary-fixed-variant": "#0034c0",
+          "on-secondary-container": "#54647c",
+          "on-primary-container": "#ededff",
+          "tertiary-fixed": "#9ef5be",
+          "error": "#ba1a1a",
+          "surface-variant": "#d7e2ff",
+          "surface-container-high": "#e0e8ff",
+          "on-error-container": "#93000a"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-lg": "1.5rem",
+          "margin-desktop": "1.5rem",
+          "space-md": "1rem",
+          "margin": "1rem",
+          "space-sm": "0.5rem",
+          "space-xl": "2rem",
+          "gutter-desktop": "1.5rem",
+          "space-xs": "0.25rem",
+          "gutter": "1rem"
+        },
+        "fontFamily": {
+          "display-lg": ["Noto Sans"],
+          "body-lg": ["Noto Sans"],
+          "label-lg": ["Noto Sans"],
+          "headline-lg": ["Noto Sans"],
+          "body-sm": ["Noto Sans"],
+          "label-md": ["Noto Sans"],
+          "headline-md": ["Noto Sans"],
+          "label-sm": ["Noto Sans"],
+          "data-tabular": ["Noto Sans"],
+          "headline-sm": ["Noto Sans"],
+          "body-md": ["Noto Sans"]
+        },
+        "fontSize": {
+          "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+          "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+          "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+          "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+          "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+          "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+          "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+          "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+          "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+          "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+          "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+        }
+      }
+    }
+  }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="commerce-ui-translations" type="application/json">
+{
+  "th": {
+    "อีเมล": "อีเมล",
+    "กำลังโหลด...": "กำลังโหลด...",
+    "Notify Templates": "Notify Templates",
+    "Notification Catalog": "Notification Catalog",
+    "ในแอป": "ในแอป",
+    "Push": "Push",
+    "ไม่สามารถโหลดรายการแจ้งเตือนได้": "ไม่สามารถโหลดรายการแจ้งเตือนได้",
+    "ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน": "ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน",
+    "ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน": "ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน",
+    "การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น": "การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น",
+    "แก้ข้อความที่": "แก้ข้อความที่",
+    "ดูผลการส่งที่": "ดูผลการส่งที่",
+    "Notification Stats": "Notification Stats",
+    "สำคัญ": "สำคัญ",
+    "แก้ไขแล้ว": "แก้ไขแล้ว",
+    "เปิดใช้งาน": "เปิดใช้งาน",
+    "ปิดอยู่": "ปิดอยู่"
+  },
+  "en": {
+    "อีเมล": "Email",
+    "กำลังโหลด...": "Loading...",
+    "Notify Templates": "Notify Templates",
+    "Notification Catalog": "Notification Catalog",
+    "ในแอป": "In-App",
+    "Push": "Push",
+    "ไม่สามารถโหลดรายการแจ้งเตือนได้": "Unable to load notification items",
+    "ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน": "At least one channel must be enabled — to stop sending, disable the entire item instead.",
+    "ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน": "Configure system notification events and delivery channels.",
+    "การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น": "Disabling here acts as a system-level switch — no customers will receive it when off, regardless of their preferences. Enabled channels still respect individual customer preferences.",
+    "แก้ข้อความที่": "Edit template at",
+    "ดูผลการส่งที่": "View delivery logs at",
+    "Notification Stats": "Notification Stats",
+    "สำคัญ": "Important",
+    "แก้ไขแล้ว": "Modified",
+    "เปิดใช้งาน": "Active",
+    "ปิดอยู่": "Inactive"
+  }
+}
+</script>
+</head><body class="bg-[#f6f8fc] text-[#17243b] font-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-headline-md">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<div>
+<h1 class="text-headline-md font-bold text-on-surface">สยาม คอมเมิร์ซ</h1>
+<p class="text-body-sm text-secondary">ศูนย์จัดการระบบร้านค้า</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">สินค้าและสต็อก</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">ออเดอร์และการเงิน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">ลูกค้าและบริการ</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="font-label-md text-label-md">การตลาด</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">รายงานและข้อมูล</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-label-md text-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-2 pt-4 border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-2 px-4 rounded-lg font-label-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<div class="flex items-center justify-between pt-2 text-secondary">
+<a class="flex items-center gap-1 text-body-sm hover:text-on-surface" href="#">
+<span class="material-symbols-outlined text-sm">help</span> คู่มือใช้งาน
+        </a>
+<a class="flex items-center gap-1 text-body-sm hover:text-error" href="#">
+<span class="material-symbols-outlined text-sm">logout</span> ออกจากระบบ
+        </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant px-gutter-desktop flex justify-between items-center transition-all duration-150 ease-in-out">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="w-72 h-9 pl-9 pr-4 rounded-lg bg-surface border border-outline-variant text-on-surface placeholder:text-secondary text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20" placeholder="ค้นหาแคมเปญ, เทมเพลต, หรือลูกค้า..." type="text"/>
+</div>
+<span class="text-headline-sm font-semibold text-on-surface">การตลาด / Marketing Workflows</span>
+</div>
+<div class="flex items-center gap-3">
+<!-- Language Switcher -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface hover:bg-surface-container text-label-md font-medium text-on-surface transition-colors" id="lang-toggle-btn" onclick="toggleLanguage()">
+<span class="material-symbols-outlined text-sm text-primary">language</span>
+<span id="current-lang-label">ไทย / English</span>
+</button>
+<button class="w-9 h-9 rounded-lg border border-outline-variant bg-surface flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors relative">
+<span class="material-symbols-outlined text-sm">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="w-9 h-9 rounded-lg border border-outline-variant bg-surface flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm">help_outline</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant mx-1"></div>
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Portrait photo of a professional Thai male administrator wearing a crisp white shirt and a subtle blue tie, smiling warmly in a well-lit modern corporate office with glass partitions and soft natural daylight illuminating the background workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANXjNqgsmdTBEcanBnp5gwBDNX-9ynGELGdSb6EFf0F05FKHyq93D5tFPSX-EVh0KwvwPgEXaWC7O7AGX4M72zenG7JZVrQH0E5kkMY7VGcEKWcrZo8RoCVzbV6aIfmjxZuhU4DjwsEs482KZbnwwNp1cS_aBWIU-2Ehto2uJFa_1TqOaGszuhRJkicKLVuOW0VY_EQsMxPyODIr0JM9aDsvsjXnwAcDedheoHCFk1G1IK7UguE75vE1U9797Oy2Fj3FZ90SyS8Lw"/>
+</div>
+<div class="hidden md:block text-left">
+<div class="text-label-md font-semibold text-on-surface">สมชาย ผู้ดูแล</div>
+<div class="text-body-sm text-secondary">Siam Admin</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas Workspace -->
+<main class="mt-16 p-6 max-w-[1240px] mx-auto w-full flex flex-col gap-6">
+<!-- Breadcrumb & Page Title -->
+<div class="flex flex-col gap-1">
+<div class="text-body-sm text-secondary flex items-center gap-2">
+<span>การตลาด</span>
+<span>/</span>
+<span class="text-primary font-medium" data-i18n="Notification Catalog">Notification Catalog</span>
+</div>
+<div class="flex justify-between items-center">
+<h2 class="text-display-lg text-on-surface tracking-tight" data-i18n="Notification Catalog" style="font-size: 28px; line-height: 36px;">Notification catalog</h2>
+<div class="flex items-center gap-3">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-label-md font-medium text-secondary flex items-center gap-1.5 transition-colors" onclick="toggleLoadingState()">
+<span class="material-symbols-outlined text-sm">refresh</span>
+<span>Test Loading State</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-label-md font-medium text-error flex items-center gap-1.5 transition-colors" onclick="toggleErrorState()">
+<span class="material-symbols-outlined text-sm">error</span>
+<span>Test Error State</span>
+</button>
+</div>
+</div>
+<p class="text-body-md text-secondary mt-1" data-i18n="ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน">ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน</p>
+</div>
+<!-- Feature Section 1: Overview Cards for Notification Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-body-sm font-medium text-secondary" data-i18n="Notification Stats">Notification Stats</span>
+<span class="p-2 rounded-lg bg-primary-container/10 text-primary">
+<span class="material-symbols-outlined">campaign</span>
+</span>
+</div>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="text-display-lg text-on-surface" style="font-size: 32px;">24</span>
+<span class="text-label-md text-tertiary font-medium flex items-center"><span class="material-symbols-outlined text-sm">trending_up</span> +2 ใหม่</span>
+</div>
+<div class="text-body-sm text-secondary mt-1">Total active notifications in system</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-body-sm font-medium text-secondary">Delivery Success Rate</span>
+<span class="p-2 rounded-lg bg-tertiary-container/10 text-tertiary">
+<span class="material-symbols-outlined">verified</span>
+</span>
+</div>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="text-display-lg text-on-surface" style="font-size: 32px;">99.4%</span>
+<span class="text-label-md text-tertiary font-medium">Stable</span>
+</div>
+<div class="text-body-sm text-secondary mt-1">Average throughput across Email &amp; Push</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="text-body-sm font-medium text-secondary">Channel Distribution</span>
+<span class="p-2 rounded-lg bg-secondary-container text-on-secondary-container">
+<span class="material-symbols-outlined">hub</span>
+</span>
+</div>
+<div class="mt-4 flex items-center gap-3">
+<div class="flex items-center gap-1 text-label-md bg-surface px-2 py-1 rounded border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-primary"></span> <span data-i18n="อีเมล">อีเมล</span> (100%)
+            </div>
+<div class="flex items-center gap-1 text-label-md bg-surface px-2 py-1 rounded border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> <span data-i18n="Push">Push</span> (85%)
+            </div>
+<div class="flex items-center gap-1 text-label-md bg-surface px-2 py-1 rounded border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> <span data-i18n="ในแอป">ในแอป</span> (92%)
+            </div>
+</div>
+<div class="text-body-sm text-secondary mt-1">Active channels in pipeline</div>
+</div>
+</div>
+<!-- Feature Section 2: Informational Banner -->
+<div class="bg-surface-container-low border border-outline-variant/60 rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div class="flex flex-col gap-1">
+<p class="text-body-md font-medium text-on-surface" data-i18n="การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น">
+            การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น
+          </p>
+<p class="text-body-sm text-secondary" data-i18n="ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน">
+            ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน
+          </p>
+</div>
+</div>
+<!-- Feature Section 3: Notification Catalog Table / List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm" id="catalog-container">
+<!-- Loading Indicator (Hidden by default) -->
+<div class="hidden p-12 flex flex-col items-center justify-center gap-3" id="loading-state">
+<div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+<span class="text-body-md text-secondary font-medium" data-i18n="กำลังโหลด...">กำลังโหลด...</span>
+</div>
+<!-- Error State (Hidden by default) -->
+<div class="hidden p-12 flex flex-col items-center justify-center gap-3 text-center" id="error-state">
+<span class="material-symbols-outlined text-error text-4xl">warning</span>
+<span class="text-headline-sm text-on-surface font-semibold" data-i18n="ไม่สามารถโหลดรายการแจ้งเตือนได้">ไม่สามารถโหลดรายการแจ้งเตือนได้</span>
+<p class="text-body-md text-secondary max-w-md">เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์ระบบแจ้งเตือน กรุณาลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ</p>
+<button class="mt-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-label-lg" onclick="toggleErrorState()">ลองใหม่อีกครั้ง</button>
+</div>
+<!-- Table Data View -->
+<div class="overflow-x-auto" id="table-content">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-outline-variant text-[#52627A] text-label-md font-medium">
+<th class="py-3 px-4 font-semibold">Event / Notification Name</th>
+<th class="py-3 px-4 font-semibold">Channels Enabled</th>
+<th class="py-3 px-4 font-semibold">Status</th>
+<th class="py-3 px-4 font-semibold">Importance</th>
+<th class="py-3 px-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60 text-data-tabular">
+<!-- Row 1 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-body-md">Order Confirmed (ยืนยันคำสั่งซื้อสำเร็จ)</span>
+<span class="text-body-sm text-secondary">Triggered immediately when payment is verified and order enters processing queue.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary-container/10 text-primary border border-primary/20" data-i18n="อีเมล">อีเมล</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-tertiary-container/10 text-tertiary border border-tertiary/20" data-i18n="Push">Push</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-secondary-container text-on-secondary-container" data-i18n="ในแอป">ในแอป</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="เปิดใช้งาน">เปิดใช้งาน</span>
+</span>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-xs font-semibold" data-i18n="สำคัญ">สำคัญ</span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-3">
+<div class="text-right text-body-sm">
+<a class="text-primary hover:underline block" href="#"><span data-i18n="แก้ข้อความที่">แก้ข้อความที่</span> OrderEmail_v2</a>
+<a class="text-secondary hover:underline block" href="#"><span data-i18n="ดูผลการส่งที่">ดูผลการส่งที่</span> Logs #ord_pay</a>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-body-md">Shipping Update (พัสดุอยู่ระหว่างจัดส่ง)</span>
+<span class="text-body-sm text-secondary">Sent when courier picks up package from warehouse hub and tracking ID is generated.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary-container/10 text-primary border border-primary/20" data-i18n="อีเมล">อีเมล</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-tertiary-container/10 text-tertiary border border-tertiary/20" data-i18n="Push">Push</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="เปิดใช้งาน">เปิดใช้งาน</span>
+</span>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary text-xs font-semibold">ปกติ</span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-3">
+<div class="text-right text-body-sm">
+<a class="text-primary hover:underline block" href="#"><span data-i18n="แก้ข้อความที่">แก้ข้อความที่</span> ShipDispatch_v1</a>
+<a class="text-secondary hover:underline block" href="#"><span data-i18n="ดูผลการส่งที่">ดูผลการส่งที่</span> Logs #shp_dispatch</a>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-body-md">Abandoned Cart Reminder (แจ้งเตือนสินค้าคงค้างในตะกร้า)</span>
+<span class="text-body-sm text-secondary">Automated reminder sent 24 hours after user leaves items in cart without checkout.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-primary-container/10 text-primary border border-primary/20" data-i18n="อีเมล">อีเมล</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-secondary-container text-on-secondary-container" data-i18n="ในแอป">ในแอป</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-fixed-dim">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim"></span>
+<span data-i18n="ปิดอยู่">ปิดอยู่</span>
+</span>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary text-xs font-semibold">ต่ำ</span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-3">
+<div class="text-right text-body-sm">
+<a class="text-primary hover:underline block" href="#"><span data-i18n="แก้ข้อความที่">แก้ข้อความที่</span> CartAbandon_v3</a>
+<a class="text-secondary hover:underline block" href="#"><span data-i18n="ดูผลการส่งที่">ดูผลการส่งที่</span> Logs #cart_remind</a>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-body-md">Flash Sale Alert (แจ้งเตือนดีลพิเศษแฟลชเซล)</span>
+<span class="text-body-sm text-secondary">Broadcast notification sent to VIP tier subscribers when 2-hour mega flash sale begins.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-tertiary-container/10 text-tertiary border border-tertiary/20" data-i18n="Push">Push</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-secondary-container text-on-secondary-container" data-i18n="ในแอป">ในแอป</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="เปิดใช้งาน">เปิดใช้งาน</span>
+</span>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-xs font-semibold" data-i18n="สำคัญ">สำคัญ</span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-3">
+<div class="text-right text-body-sm">
+<a class="text-primary hover:underline block" href="#"><span data-i18n="แก้ข้อความที่">แก้ข้อความที่</span> FlashSale_v1</a>
+<a class="text-secondary hover:underline block" href="#"><span data-i18n="ดูผลการส่งที่">ดูผลการส่งที่</span> Logs #flash_sale</a>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Translation & State Toggle Script -->
+<script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      document.getElementById('current-lang-label').innerText = currentLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+      const elements = document.querySelectorAll('[data-i18n]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+          el.innerText = translations[currentLang][key];
+        }
+      });
+    }
+
+    function toggleLoadingState() {
+      const tableContent = document.getElementById('table-content');
+      const loadingState = document.getElementById('loading-state');
+      const errorState = document.getElementById('error-state');
+
+      errorState.classList.add('hidden');
+      if (loadingState.classList.contains('hidden')) {
+        loadingState.classList.remove('hidden');
+        tableContent.classList.add('hidden');
+      } else {
+        loadingState.classList.add('hidden');
+        tableContent.classList.remove('hidden');
+      }
+    }
+
+    function toggleErrorState() {
+      const tableContent = document.getElementById('table-content');
+      const loadingState = document.getElementById('loading-state');
+      const errorState = document.getElementById('error-state');
+
+      loadingState.classList.add('hidden');
+      if (errorState.classList.contains('hidden')) {
+        errorState.classList.remove('hidden');
+        tableContent.classList.add('hidden');
+      } else {
+        errorState.classList.add('hidden');
+        tableContent.classList.remove('hidden');
+      }
+    }
+  </script>
+</body></html>

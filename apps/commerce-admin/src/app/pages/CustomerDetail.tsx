@@ -1,17 +1,21 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Page, PageHeader, Panel, PanelHead, RowLink,
+  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, RowLink,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
 import { api, customersApi, Customer, OrderRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Form = { name: string; code: string; email: string; phone: string };
 const toForm = (c: Customer): Form => ({ name: c.name, code: c.code ?? '', email: c.email ?? '', phone: c.phone ?? '' });
 
 /** One commerce customer: facts, edit (PATCH /customers/:id) and their orders. */
 export function CustomerDetail() {
+  __useUiLocale();
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const customer = useAsync<Customer>(() => customersApi.get(id), [id]);
@@ -25,12 +29,12 @@ export function CustomerDetail() {
   useEffect(() => { if (c) setForm(toForm(c)); }, [c]);
 
   async function save() {
-    if (!window.confirm(`Save changes to ${c?.name}?`)) return;
+    if (!window.confirm(__uiText("บันทึกการแก้ไขลูกค้า {0}?", {"0": c?.name}))) return;
     setBusy(true);
     setError(null);
     try {
       await customersApi.update(id, { name: form.name.trim(), code: form.code.trim() || null, email: form.email.trim() || null, phone: form.phone.trim() || null });
-      setMsg('Saved');
+      setMsg(__uiMessage("บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว"));
       setEditing(false);
       customer.reload();
     } catch (err) {
@@ -41,64 +45,69 @@ export function CustomerDetail() {
   }
 
   const list = orders.data?.items ?? [];
-  const spent = list.reduce((sum, o) => sum + Number(o.total || 0), 0);
+  const values = list.reduce<Record<string, number>>((sums, order) => ({ ...sums, [order.currency]: (sums[order.currency] ?? 0) + Number(order.total || 0) }), {});
+  function cancelEdit() {
+    if (busy) return;
+    setEditing(false);
+    if (c) setForm(toForm(c));
+    setError(null);
+  }
 
   return (
     <Page>
       <PageHeader
-        back={{ to: '/customers', label: 'Customers' }}
-        title={c?.name ?? 'Customer'}
+        back={{ to: '/customers', label: 'ลูกค้าแพลตฟอร์ม' }}
+        title={c?.name ?? __uiText("รายละเอียดลูกค้า")}
         badge={c && <StatusChip status={c.status} />}
         subtitle={c?.code && <span className="font-mono">{c.code}</span>}
         actions={
           <>
-            {c && !editing && <Button icon="edit" onClick={() => setEditing(true)}>Edit</Button>}
-            <Button icon="refresh" onClick={() => { customer.reload(); orders.reload(); }}>Refresh</Button>
+            <Button icon="refresh" onClick={() => { customer.reload(); orders.reload(); }}>{__uiText("รีเฟรช")}</Button>
+            {c && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขลูกค้า")}</Button>}
           </>
         }
       />
 
-      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{msg}</Alert>}
+      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
       <ErrorText error={customer.error} />
 
       {customer.loading && !c ? (
         <Loading />
       ) : c ? (
         <>
-          {editing ? (
-            <FormPanel title="Edit customer" icon="edit" busy={busy} error={error} onSubmit={save} onCancel={() => { setEditing(false); setForm(toForm(c)); setError(null); }}>
-              <Field label="Name"><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-              <Field label="Code"><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field>
-              <Field label="Email"><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
-              <Field label="Phone"><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
+          {editing && <Modal title={__uiText("แก้ไขลูกค้า")} onClose={cancelEdit} width={640}>
+            <FormPanel title={__uiText("ข้อมูลลูกค้า")} icon="edit" busy={busy} error={error} onSubmit={save} onCancel={cancelEdit}>
+              <Field label={__uiText("ชื่อลูกค้า")}><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
+              <Field label={__uiText("รหัสลูกค้า")}><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field>
+              <Field label={__uiText("อีเมล")}><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
+              <Field label={__uiText("เบอร์โทร")}><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
             </FormPanel>
-          ) : (
+          </Modal>}
             <Panel className="p-4">
               <KeyValueGrid
                 items={[
-                  { label: 'Code', value: c.code ?? '—', mono: true },
-                  { label: 'Email', value: c.email ?? '—' },
-                  { label: 'Phone', value: c.phone ?? '—' },
+                  { label: __uiText("รหัสลูกค้า"), value: c.code ?? '—', mono: true },
+                  { label: __uiText("อีเมล"), value: c.email ?? '—' },
+                  { label: __uiText("เบอร์โทร"), value: c.phone ?? '—' },
                   { label: 'Customer ID', value: c.id, mono: true },
-                  { label: 'Orders', value: orders.data ? fmt.num(orders.data.total) : '…' },
-                  { label: 'Order value (shown)', value: list.length ? `${list[0].currency} ${fmt.num(spent.toFixed(2))}` : '—' },
+                  { label: __uiText("จำนวนออเดอร์"), value: orders.data ? fmt.num(orders.data.total) : orders.error ? 'โหลดไม่สำเร็จ' : '…' },
+                  { label: __uiText("มูลค่าออเดอร์ที่แสดง"), value: Object.entries(values).map(([currency, value]) => `${currency} ${fmt.num(value.toFixed(2))}`).join(' · ') || '—' },
                 ]}
               />
             </Panel>
-          )}
 
           <Panel className="overflow-hidden">
-            <PanelHead icon="receipt_long" title="Orders" sub={orders.data && `${fmt.num(orders.data.total)} total`} />
+            <PanelHead icon="receipt_long" title={__uiText("ออเดอร์ของลูกค้า")} sub={orders.data && __uiText("แสดง {0} จาก {1} รายการ",{'0':list.length,'1':fmt.num(orders.data.total)})} />
             <ErrorText error={orders.error} />
             {orders.loading && !orders.data ? (
               <Loading />
-            ) : list.length ? (
+            ) : orders.error && !orders.data ? null : list.length ? (
               <Table>
                 <THead>
-                  <TH>Code</TH>
-                  <TH>Status</TH>
-                  <TH right>Total</TH>
-                  <TH>Created</TH>
+                  <TH>{__uiText("รหัสออเดอร์")}</TH>
+                  <TH>{__uiText("สถานะ")}</TH>
+                  <TH right>{__uiText("ยอดรวม")}</TH>
+                  <TH>{__uiText("สร้างเมื่อ")}</TH>
                 </THead>
                 <TBody>
                   {list.map((o) => (
@@ -112,7 +121,7 @@ export function CustomerDetail() {
                 </TBody>
               </Table>
             ) : (
-              <Empty icon="receipt_long">No orders yet</Empty>
+              <Empty icon="receipt_long">{__uiText("ยังไม่มีออเดอร์ของลูกค้านี้")}</Empty>
             )}
           </Panel>
         </>

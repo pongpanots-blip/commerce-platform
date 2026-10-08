@@ -66,6 +66,8 @@ import {
   type CouponPendingImage,
 } from './coupon-form-draft.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponKind = 'normal' | 'chain';
 
 type CouponCreateDraft = {
@@ -86,6 +88,7 @@ type CouponCreateDraft = {
 };
 
 const CreateCoupon = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -203,7 +206,7 @@ const CreateCoupon = () => {
         // Image is deliberately not copied — the admin uploads a fresh one for the new coupon.
         setDuplicatedFromCode(coupon.coupon_code ?? '');
         if (rulesFailed) {
-          setFormError('โหลดเงื่อนไขใช้โค้ดของคูปองต้นฉบับไม่สำเร็จ — ตรวจเงื่อนไขก่อนบันทึก');
+          setFormError(__uiMessage("โหลดเงื่อนไขใช้โค้ดของคูปองต้นฉบับไม่สำเร็จ — ตรวจเงื่อนไขก่อนบันทึก"));
         }
       } catch (error: unknown) {
         if (cancelled) return;
@@ -325,7 +328,7 @@ const CreateCoupon = () => {
 
     if (kind === 'chain') {
       if (!chainSourceId) {
-        setFormError('กรุณาเลือกคูปองที่ต้องใช้ก่อน');
+        setFormError(__uiMessage("กรุณาเลือกคูปองที่ต้องใช้ก่อน"));
         return;
       }
       const rewardFormError = validateCouponRewardForm(rewardForm);
@@ -369,7 +372,7 @@ const CreateCoupon = () => {
         couponId = response.data?.data?.id as string | undefined;
 
         if (!couponId) {
-          setFormError('สร้างคูปองไม่สำเร็จ — ไม่พบรหัสคูปองจากระบบ');
+          setFormError(__uiMessage("สร้างคูปองไม่สำเร็จ — ไม่พบรหัสคูปองจากระบบ"));
           return;
         }
         setCreatedCouponId(couponId);
@@ -508,11 +511,11 @@ const CreateCoupon = () => {
   return (
     <CouponDraftStashContext.Provider value={stashDraft}>
       <AdminInsertLayout
-        title={duplicateParams ? 'คัดลอกคูปอง' : 'เพิ่ม Coupon'}
+        title={duplicateParams ? __uiText("คัดลอกคูปอง") : __uiText("เพิ่ม Coupon")}
         subtitle={
           duplicatedFromCode
-            ? `คัดลอกจาก ${duplicatedFromCode} — ตรวจวันที่เริ่ม/สิ้นสุดก่อนบันทึก`
-            : 'สร้างคูปองพร้อมกลุ่มเป้าหมายและเงื่อนไขใช้โค้ดในครั้งเดียว'
+            ? __uiText("คัดลอกจาก {0} — ตรวจวันที่เริ่ม/สิ้นสุดก่อนบันทึก", {"0": duplicatedFromCode})
+            : __uiText("สร้างคูปองพร้อมกลุ่มเป้าหมายและเงื่อนไขใช้โค้ดในครั้งเดียว")
         }
         backPath={ADMIN_ROUTES.coupons}
         saving={saving || loadingSource}
@@ -534,35 +537,32 @@ const CreateCoupon = () => {
               to={ADMIN_ROUTES.couponDetail(createdCouponId)}
               className="text-blue-600 hover:underline"
             >
-              เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)
-            </Link>
+              {__uiText("เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)")}</Link>
           </p>
         )}
 
-        <Section title="รูปแบบคูปอง">
+        <Section title={__uiText("รูปแบบคูปอง")}>
           <Select
-            label="รูปแบบคูปอง"
+            label={__uiText("รูปแบบคูปอง")}
             className="w-full"
             value={kind}
             disabled={saving || createLocked}
             onChange={(event) => setKind(event.target.value as CouponKind)}
           >
-            <option value="normal">คูปองปกติ</option>
+            <option value="normal">{__uiText("คูปองปกติ")}</option>
             <option value="chain">
-              คูปองต่อเนื่อง (Chain) — มอบให้อัตโนมัติหลังลูกค้าใช้คูปองอื่นสำเร็จ
-            </option>
+              {__uiText("คูปองต่อเนื่อง (Chain) — มอบให้อัตโนมัติหลังลูกค้าใช้คูปองอื่นสำเร็จ")}</option>
           </Select>
 
           {createLocked && (
             <p className="text-xs text-gray-500">
-              สร้างคูปองแล้ว — แก้รูปแบบ/เงื่อนไข chain ที่หน้ารายละเอียดคูปอง
-            </p>
+              {__uiText("สร้างคูปองแล้ว — แก้รูปแบบ/เงื่อนไข chain ที่หน้ารายละเอียดคูปอง")}</p>
           )}
 
           {kind === 'chain' && (
             <div className="space-y-4">
               <div>
-                <FieldLabel required htmlFor={chainSourceSelectId}>คูปองที่ต้องใช้ก่อน</FieldLabel>
+                <FieldLabel required htmlFor={chainSourceSelectId}>{__uiText("คูปองที่ต้องใช้ก่อน")}</FieldLabel>
                 <Select
                   id={chainSourceSelectId}
                   className="w-full"
@@ -570,7 +570,7 @@ const CreateCoupon = () => {
                   disabled={saving || createLocked}
                   onChange={(event) => setChainSourceId(event.target.value)}
                 >
-                  <option value="">— เลือกคูปอง —</option>
+                  <option value="">{__uiText("— เลือกคูปอง —")}</option>
                   {couponOptions.map((coupon) => (
                     <option key={coupon.id} value={coupon.id}>
                       {coupon.coupon_code} — {coupon.title}
@@ -586,15 +586,13 @@ const CreateCoupon = () => {
               />
 
               <p className="text-xs text-gray-500">
-                ส่วนลดของคูปองนี้กำหนดในส่วน &quot;ประเภทและส่วนลด&quot; ด้านล่าง
-                เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ
-              </p>
+                {__uiText("ส่วนลดของคูปองนี้กำหนดในส่วน &quot;ประเภทและส่วนลด&quot; ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ")}</p>
             </div>
           )}
         </Section>
 
         {loadingSource ? (
-          <p className="text-sm text-gray-500">กำลังโหลดคูปองต้นฉบับ…</p>
+          <p className="text-sm text-gray-500">{__uiText("กำลังโหลดคูปองต้นฉบับ…")}</p>
         ) : (
         <CouponCoreForm
           form={form}
@@ -621,8 +619,7 @@ const CreateCoupon = () => {
             >
               {audienceSaved && (
                 <p className="text-xs text-gray-500">
-                  บันทึกกลุ่มเป้าหมายแล้ว — แก้ต่อที่หน้ารายละเอียดคูปอง
-                </p>
+                  {__uiText("บันทึกกลุ่มเป้าหมายแล้ว — แก้ต่อที่หน้ารายละเอียดคูปอง")}</p>
               )}
             </CouponAudienceSection>
           }

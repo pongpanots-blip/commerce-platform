@@ -1,7 +1,10 @@
+// ui-metadata-migration: static labels and UI notices only
 import { getBrands, updateBrand } from '@josh/shared-api';
 import { Table, TableColumn, Input, Button } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface BrandRow {
   id: string;
   brand_code: string;
@@ -10,6 +13,7 @@ interface BrandRow {
 }
 
 const BrandList = () => {
+  __useUiLocale();
   const [brands, setBrands] = useState<BrandRow[]>([]);
   const [onlyMissingName, setOnlyMissingName] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -43,20 +47,20 @@ const BrandList = () => {
   };
 
   const columns: TableColumn<BrandRow>[] = [
-    { key: 'brand_code', label: 'โค้ด' },
+    { key: 'brand_code', label: __uiText("โค้ด") },
     {
       key: 'brand_name_th',
-      label: 'ชื่อไทย',
+      label: __uiText("ชื่อไทย"),
       render: (value: string | null, row) =>
         editingId === row.id ? (
           <Input value={editTh} onChange={(e: any) => setEditTh(e.target.value)} />
         ) : (
-          value || <span className="text-gray-400">ยังไม่มีชื่อ</span>
+          value || <span className="text-gray-400">{__uiText("ยังไม่มีชื่อ")}</span>
         ),
     },
     {
       key: 'brand_name_en',
-      label: 'ชื่ออังกฤษ',
+      label: __uiText("ชื่ออังกฤษ"),
       render: (value: string | null, row) =>
         editingId === row.id ? (
           <Input value={editEn} onChange={(e: any) => setEditEn(e.target.value)} />
@@ -66,20 +70,19 @@ const BrandList = () => {
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_, row) =>
         editingId === row.id ? (
           <div className="flex gap-2">
-            <Button onClick={saveEdit}>บันทึก</Button>
-            <Button onClick={() => setEditingId(null)}>ยกเลิก</Button>
+            <Button onClick={saveEdit}>{__uiText("บันทึก")}</Button>
+            <Button onClick={() => setEditingId(null)}>{__uiText("ยกเลิก")}</Button>
           </div>
         ) : (
           <button
             onClick={() => startEdit(row)}
             className="text-sm text-primary hover:underline"
           >
-            แก้ไข
-          </button>
+            {__uiText("แก้ไข")}</button>
         ),
     },
   ];
@@ -87,15 +90,14 @@ const BrandList = () => {
   return (
     <div className="flex flex-col gap-5 p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Brand Management</h2>
+        <h2 className="text-xl font-bold">{__uiText("Brand Management")}</h2>
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={onlyMissingName}
             onChange={(e) => setOnlyMissingName(e.target.checked)}
           />
-          แสดงเฉพาะที่ยังไม่มีชื่อ
-        </label>
+          {__uiText("แสดงเฉพาะที่ยังไม่มีชื่อ")}</label>
       </div>
       <Table columns={columns} data={brands} idKey="id" />
     </div>

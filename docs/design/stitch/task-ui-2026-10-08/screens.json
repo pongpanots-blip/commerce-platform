@@ -1,0 +1,127 @@
+{
+  "projectId": "13919217234596972121",
+  "projectUrl": "https://stitch.withgoogle.com/projects/13919217234596972121",
+  "designSystem": "assets/8866186635564433101",
+  "screens": [
+    {
+      "category": "catalog",
+      "id": "9e3c81c7e3364f6996a2b89cf3341ef7",
+      "name": "projects/13919217234596972121/screens/9e3c81c7e3364f6996a2b89cf3341ef7",
+      "title": "สินค้าและสต็อก — แคตตาล็อกแพลตฟอร์ม",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2Y3ZDJlNmRiOGY5ODRlNTQ5M2EzODZmOGUxMmVlNzAyEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VY8nmc3kkBhp41n3P6PqNWK4nCHZItvo-crnAEcovit10BS922KR6KKpV7aKxTjZJRLbgB6pemGxnYhkSaitA-7StEKSQnXq1TwiYUw9xZRs5KJfStOoWfy6UswrFvFJ_Ws-PRfian0N565_UwXSo0r_VzTeNv8usn_CI6Wl24KOsgu1W9F--nhjUWjsCI3lD6g8lDEQeQi-7GrrRKpXSZfwePd__6ngyrXmQ-c4evlbucGzwh6yCBaG0r",
+      "status": "COMPLETE",
+      "suggestions": [
+        "สร้างหน้าต่างโมดอลสำหรับ 'เพิ่มสินค้า' (Create Product Dialog) พร้อมการตรวจสอบฟิลด์ SKU, ชื่อ และคำอธิบาย",
+        "ออกแบบหน้าจอถัดไปในระบบ เช่น 'บันทึกการเคลื่อนไหวสต็อก (Stock Movements)' หรือ 'ออเดอร์และการเงิน'",
+        "ดูตัวอย่างหน้าจอในสถานะ 'ไม่พบผลการค้นหา (Filtered-empty state)' หรือ 'กำลังโหลดข้อมูล'"
+      ]
+    },
+    {
+      "category": "orders",
+      "id": "52592323c7dd46e1bacdcb7897d0a471",
+      "name": "projects/13919217234596972121/screens/52592323c7dd46e1bacdcb7897d0a471",
+      "title": "ออเดอร์และการเงิน — ศูนย์รวมงานปฏิบัติการ",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2ZjMDUxZWM5NGU5NzRlOGRhZWRjYTFmY2E5MzVlZjU4EgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WnXWrlUrrSlVLiwAJIE26_5M9_Ym-tANAXWH-WqDHKfxeQUhtl6-zae8KqdSWfmalNhXsUM64whvyyeXcG8nhtBQK7ISjsXdo5GsDZSyXX3h4bFL4FMCEjB2oxs83ubZ1plzPQQmNstOeJdI9l-2mUQRqg3KZv9qsCpslEek_7uEvIWMmjhPAncUeXgjbyx9sZpO007Bm4w3HP-lC7TgpS2vvJXtyKPlbhsiB8xRzfEfCwC3zCedpjpd-c",
+      "status": "COMPLETE",
+      "suggestions": [
+        "ออกแบบหน้าจอโมดอล 'สร้างคำสั่งซื้อใหม่' (Create Order Dialog)",
+        "ออกแบบหน้ารายการ 'จัดการออเดอร์' (Order Management List) เพิ่มเติม",
+        "ปรับแต่งการแสดงสถานะหรือ badge ของงานในแต่ละหมวดหมู่"
+      ]
+    },
+    {
+      "category": "customers",
+      "id": "4a7a841c5f2546afb7490b583d7ea0d2",
+      "name": "projects/13919217234596972121/screens/4a7a841c5f2546afb7490b583d7ea0d2",
+      "title": "ลูกค้าและบริการ — ลูกค้าแพลตฟอร์ม",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzQ0MjRmNzk1ZTc1YjQ1NTk4NzU2ZWMwYjVhNTFiNGMzEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XhtbPIS1fofu-aa5PNTnhg3_2_pFX4GOXdFbvqeolqIU_xfGBZbCmu4z_clRIrvs7Zog1v7SvkftB3Kgi4AbayeLKczHulaMXxsDT4O7035g2bwYp3l6HE674eqMLODILlsR5xzVZhNzLoFZ9_yAUZRr0R9L_sz6k7crxMvigVhXZTk4Uxbs2YaZKMed6VVKAu7AgEBU1SBEMybmpWtL6jdo3va9crNsHamH0jGj9l8zbVhipuMLnqpa0",
+      "status": "COMPLETE",
+      "suggestions": [
+        "สร้างหน้ารายละเอียดลูกค้า (Customer Detail) สำหรับดูข้อมูลการติดต่อและคำสั่งซื้อจริง",
+        "สร้างแบบฟอร์มไดอะล็อก \"เพิ่มลูกค้า\" (Modal Dialog) ตามข้อกำหนดระบบดีไซน์",
+        "สร้างหน้าจอถัดไปในหมวดหมู่ \"การตลาด\" หรือ \"รายงานและข้อมูล\""
+      ]
+    },
+    {
+      "category": "marketing",
+      "id": "f38e516ea3e94075809bde82c91175f5",
+      "name": "projects/13919217234596972121/screens/f38e516ea3e94075809bde82c91175f5",
+      "title": "การตลาด — ศูนย์รวมงานปฏิบัติการ",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2Q5NWZjM2UxODRlMzRkMGVhMzNjYTI1MDU5YzYwOWMwEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XLplpLow1yCvOEByw8Q64y-F-HmkAIOPXnEKKreIIBPmT1BqWqtzU_AvENwAnsfqmFMOxlZNEskjqRCZK-kogr-295rOXj3M_YuXe2jHgEpskoO4QXM1EQFbJYkgn5NqJ9LF_NmD-Pm9qLD_zrtfj2kyyh209ZwYMYbS0rAIa5R8hCpsNZ4CUzzDTmkC7Y3oAqYFe8FghaHYtHaF6LwXHGJ9mdU7yQB7cgQy3v5zeIFXONP2fPcv354eci",
+      "status": "COMPLETE",
+      "suggestions": [
+        "สร้างหน้าเจาะลึก \"จัดการแคมเปญ (Campaigns)\" ต่อเนื่องจากหน้านี้",
+        "สร้างหน้าฟอร์ม \"สร้างคูปองส่วนลดใหม่ (Create Coupon)\"",
+        "ออกแบบหน้ารายงานและข้อมูล (Reports) หมวดถัดไป"
+      ]
+    },
+    {
+      "category": "reports",
+      "id": "85c21d5d1e9d4b53b7a036856dd50a2b",
+      "name": "projects/13919217234596972121/screens/85c21d5d1e9d4b53b7a036856dd50a2b",
+      "title": "รายงานและข้อมูล — ศูนย์รวมรายงานและข้อมูลระบบ",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzdjZTZhNWQzZDdkZTRkZmQ4MDUyNzRiYTEzZTg0MzM1EgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XqlACQ1WCXhYO1Ue-8XOkwqs8osuB2APB26QWbDHrLvcAiotIMOw6XiP8YHHlXGoOfXOg8PCCrFd044tqiVOprxT5v56IPFfcvv_NSVyQFD4Pflr9AxkqQmc01Ti8F0hS2J4c8r6bsxlEcvJWuLRUcCjleKqgVtIiXfk2jN-73QinH6eksq0UsXdNNR17JbOBuyKbLn-Xr7gw38bj7vquIe8_bAbwxccO9VarKmK0yqgs79wV_7iDaQQ-J",
+      "status": "COMPLETE",
+      "suggestions": [
+        "ดูหน้ารายละเอียดของ \"รายงานยอดขาย\" (Sales Summary Report) พร้อมฟิลเตอร์ช่วงเวลาและตารางข้อมูลจริง",
+        "ดูหน้าจอสถานะ \"สุขภาพระบบและคิวงาน\" (System Health & Queue Status)",
+        "ปรับแต่งการ์ดรายงานหรือเพิ่มตัวเลือกการค้นหาเพิ่มเติมในหน้านี้"
+      ]
+    },
+    {
+      "category": "connections",
+      "id": "1b96f005f1f44d09b1734d4e0d4431c3",
+      "name": "projects/13919217234596972121/screens/1b96f005f1f44d09b1734d4e0d4431c3",
+      "title": "ระบบเชื่อมต่อ — การเชื่อมต่อ",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2M2ZjlhNjQyOGRkYjQ5OTE4OWZjYjliNGExMzRhYjI0EgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1W-iRKH3sSliFv1q7BdsJdZYeumFBK311Mm2ST5wJazZ0B1WUaZfWHhw-3TemHdEuTjzR8hxw2TEwnMzOKAhuX6cEv9vsZWn_Z7cVjih8aaM5oyzIae_MHjLI4JQLBBC2VXCrHieI54peN2qWCjTORjeRhbCCPREq6u1SFgp-9pllrkISqcOp4mqmOXxJbWR0pIIdD21ILVgQYdrwptiTtx3V0BgNOxbfETgNJu_861lCfYk_ro573IFgY",
+      "status": "COMPLETE",
+      "suggestions": [
+        "ดูหน้าจองานซิงก์ข้อมูล (Sync Jobs) เพื่อตรวจสอบรอบเวลาและประวัติ CRON",
+        "ดูหน้ารายการส่งไม่สำเร็จ (Failed Deliveries) เพื่อจัดการข้อผิดพลาดและ Retry ข้อมูล",
+        "ดูหน้าข้อมูลขาเข้า (Inbound Data) สำหรับตรวจสอบ Webhook Payload ดิบ"
+      ]
+    },
+    {
+      "category": "settings",
+      "id": "950087d91b2a4cd1852458a87f1c9981",
+      "name": "projects/13919217234596972121/screens/950087d91b2a4cd1852458a87f1c9981",
+      "title": "ตั้งค่าและทีมงาน — บัญชีทีมงาน",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzBkN2IxY2YwMmYxZTQ5YWE4NDIwY2VkY2RkNTM3MDkxEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Vm53-pESQrRedQPTDGPHB1x752bZK70L7PI4Wg4ZBCo2uM8n3im2oMiBNo5oCvE9V4qxx1mDLOeAcBZ76uARNEPiM0sWICHYPOh-xN4ZC9XIftE6whwwUQXUQPxF6o40eyJZbVJjOZiwDHJsDY-ci-WJRjq4irZmxQ_VFIpWZUMEEBOsXakxME3uzHU6_K76ODC7Wp29CKOnSBtB80L5JoJ-WmQscVtyZpTQV6Rh_EiNsMDGjH9uZHC6ot",
+      "status": "COMPLETE",
+      "suggestions": [
+        "สร้างหน้าจอโมดอล (Dialog) สำหรับ \"เพิ่มบัญชี\" พร้อมฟอร์มกำหนดบทบาทและอีเมล",
+        "สร้างหน้าจอ \"บัญชีทีมงานร้านค้า\" สำหรับจัดการผู้ดูแลสาขาและร้านค้าเครือข่าย",
+        "สร้างหน้าจอ \"กำหนดสิทธิ์และบทบาท\" เพื่อดู Matrix สิทธิ์การเข้าถึงแต่ละเมนู"
+      ]
+    },
+    {
+      "category": "portal",
+      "id": "5f63cce2e8c844968dfd58cf22d03e39",
+      "name": "projects/13919217234596972121/screens/5f63cce2e8c844968dfd58cf22d03e39",
+      "title": "นักพัฒนา & API — Developer Portal",
+      "deviceType": "DESKTOP",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2Y4NmZmODRhZTU2OTRjNzY4Njg1OTIzODkxODY3YTExEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxMzkxOTIxNzIzNDU5Njk3MjEyMQ&filename=&opi=96797242",
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UVzFH02AJO-klG34Tr2rE2W07oqLLJD06Ph0P5PnIN055Y6uB5NvZqBaLuA4IPWVzjsDUqiy5ST3HC6kZmb-u-4PiIRW3hX0geympPBiJlp1nAljdgMHFtjRNHfcCHQAOq6L_bYpl2uzeAdRpczLGjsksFotDtDnriUMrijCUPBpnS5fZuOv2BbBuun901je8BGiUri4Wa_NN6J5-laubA9EtLDtlgtaGaL5iunY_pN_pjDLQFE9YeW1Qw",
+      "status": "COMPLETE",
+      "suggestions": [
+        "Design a modal dialog for creating a new API key with the one-time secret display",
+        "Create the Webhook endpoint configuration & test ping details screen",
+        "Design the API Reference & Interactive OpenAPI documentation screen"
+      ]
+    }
+  ]
+}

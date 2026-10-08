@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commerce Platform — Developer Portal Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #f6f8fc;
+      --border: #e1e7f0;
+      --card-bg: #ffffff;
+      --primary: #365cf5;
+      --primary-hover: #2948d3;
+      --ink: #17243b;
+      --secondary: #52627a;
+      --success: #157347;
+      --warning: #b08900;
+      --error: #c2333f;
+    }
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--canvas);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .input-control {
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 14px;
+      color: var(--ink);
+      background-color: #ffffff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      outline: none;
+    }
+    .input-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(54, 92, 245, 0.12);
+    }
+    .btn-primary {
+      height: 40px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+    .btn-secondary {
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: #ffffff;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-secondary:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- Top Contextual Navigation Bar -->
+  <header class="bg-white border-b border-[#e1e7f0] px-6 py-3 shrink-0">
+    <div class="max-w-[1240px] mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+          CP
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#52627a]" data-i18n="Developer portal">Developer portal</span>
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-[#f1f3ff] text-[#365cf5] border border-[#d6defc]">v2.4 API</span>
+          </div>
+          <h1 class="text-sm font-semibold text-[#17243b] leading-tight" data-i18n="Commerce Platform">Commerce Platform</h1>
+        </div>
+      </div>
+
+      <!-- Right Header Actions: Environment, Docs Link, Language Switcher -->
+      <div class="flex items-center gap-4">
+        <a href="#docs" class="text-xs font-medium text-[#52627a] hover:text-[#17243b] flex items-center gap-1.5 transition-colors">
+          <svg class="w-3.5 h-3.5 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <span data-i18n="Request Doc">Request Doc</span>
+        </a>
+        <div class="h-4 w-px bg-[#e1e7f0]"></div>
+        <!-- Language Switcher Selector -->
+        <div class="inline-flex items-center p-0.5 rounded-lg bg-[#f1f5f9] border border-[#e1e7f0] text-xs font-medium">
+          <button id="lang-btn-th" type="button" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all">ไทย</button>
+          <button id="lang-btn-en" type="button" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">English</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Area (Max width 1240px, centered auth & task onboarding) -->
+  <main class="flex-1 max-w-[1240px] w-full mx-auto px-6 py-10 flex flex-col justify-center items-center">
+
+    <!-- Hero / Scope Notification Badge -->
+    <div class="w-full max-w-[500px] mb-4">
+      <div class="flex items-center justify-between text-xs text-[#52627a] px-1">
+        <span class="inline-flex items-center gap-1.5 font-medium">
+          <span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+          <span>API Gateway: Sandbox & Production Ready</span>
+        </span>
+        <span class="bg-[#eef2f6] text-[#52627a] px-2 py-0.5 rounded font-mono-code text-[11px]">/register</span>
+      </div>
+    </div>
+
+    <!-- Centered Form Card (12px corners, restrained border, white background) -->
+    <div class="w-full max-w-[500px] bg-white rounded-[12px] border border-[#e1e7f0] shadow-sm overflow-hidden">
+
+      <!-- Card Header -->
+      <div class="p-8 pb-6 border-b border-[#f1f3ff]">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <div class="inline-block px-2 py-0.5 mb-2 rounded text-xs font-semibold text-[#365cf5] bg-[#eef2ff]" data-i18n="Register">
+              Register
+            </div>
+            <h2 class="text-[24px] font-bold text-[#17243b] tracking-tight leading-snug" data-i18n="Create account">
+              Create account
+            </h2>
+            <p class="text-sm text-[#52627a] mt-1.5" data-i18n="Get API keys and subscribe to webhooks">
+              Get API keys and subscribe to webhooks
+            </p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-[#f6f8fc] border border-[#e1e7f0] text-[#365cf5]">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form Body -->
+      <form id="register-form" onsubmit="handleRegister(event)" class="p-8 pt-6 space-y-5">
+
+        <!-- Email field -->
+        <div class="space-y-1.5">
+          <label for="email" class="block text-[13px] font-medium text-[#17243b]">
+            <span data-i18n="Email">Email</span> <span class="text-[#c2333f]">*</span>
+          </label>
+          <div class="relative">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="input-control w-full pl-9 pr-3 text-sm placeholder-[#94a3b8]"
+              placeholder="dev@example.com"
+              value=""
+            />
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94a3b8]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"></path>
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-[#52627a]" data-i18n="Your account email">Your account email</p>
+        </div>
+
+        <!-- Password field -->
+        <div class="space-y-1.5">
+          <label for="password" class="block text-[13px] font-medium text-[#17243b]">
+            <span data-i18n="Password">Password</span> <span class="text-[#c2333f]">*</span>
+          </label>
+          <div class="relative">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              minlength="8"
+              class="input-control w-full pl-9 pr-10 text-sm placeholder-[#94a3b8]"
+              placeholder="••••••••"
+            />
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94a3b8]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+            </div>
+            <button
+              type="button"
+              onclick="togglePasswordVisibility()"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#52627a] hover:text-[#17243b] focus:outline-none"
+              aria-label="Toggle password visibility"
+            >
+              <svg id="eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.257-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs text-[#52627a]">
+            <svg class="w-3.5 h-3.5 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span data-i18n="At least 8 characters">At least 8 characters</span>
+          </div>
+        </div>
+
+        <!-- Scope / Role Information Notice -->
+        <div class="p-3.5 bg-[#f8fafc] rounded-lg border border-[#e1e7f0] text-xs text-[#52627a] flex gap-2.5 items-start">
+          <svg class="w-4 h-4 text-[#365cf5] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <div class="space-y-0.5">
+            <span class="font-medium text-[#17243b]" id="scope-notice-title">สิทธิ์การใช้งานของบัญชีนักพัฒนา</span>
+            <p class="leading-relaxed text-[#52627a]" id="scope-notice-body">หลังจากสร้างบัญชีแล้ว คุณสามารถสร้าง API Keys (Sandboxed/Production) และลงทะเบียน Webhooks ได้ทันที</p>
+          </div>
+        </div>
+
+        <!-- Inline Status & Messages container -->
+        <div id="status-container" class="hidden"></div>
+
+        <!-- Form Submit Button -->
+        <div class="pt-2">
+          <button
+            type="submit"
+            id="submit-btn"
+            class="btn-primary w-full text-center shadow-xs"
+          >
+            <span id="submit-text" data-i18n="Create account">Create account</span>
+            <span id="submitting-spinner" class="hidden items-center gap-2">
+              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span data-i18n="Creating account…">Creating account…</span>
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Card Footer: Sign In Link -->
+      <div class="px-8 py-4 bg-[#f8fafc] border-t border-[#e1e7f0] flex items-center justify-center text-xs text-[#52627a] gap-1.5">
+        <span data-i18n="Already have an account?">Already have an account?</span>
+        <a href="#signin" class="font-semibold text-[#365cf5] hover:underline" data-i18n="Sign in">Sign in</a>
+      </div>
+
+    </div>
+
+    <!-- Bottom Contextual Links & Admin Console Switcher -->
+    <div class="w-full max-w-[500px] mt-6 flex items-center justify-between text-xs text-[#52627a]">
+      <a href="#admin-console" class="inline-flex items-center gap-1.5 hover:text-[#17243b] transition-colors">
+        <svg class="w-3.5 h-3.5 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+        <span data-i18n="Admin console">Admin console</span>
+      </a>
+
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1 text-[11px] text-[#52627a] bg-white px-2 py-0.5 rounded border border-[#e1e7f0]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+          <span id="prototype-badge">ข้อมูลตัวอย่าง (Sandbox Mode)</span>
+        </span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Calm Minimal Footer -->
+  <footer class="border-t border-[#e1e7f0] bg-white py-4 px-6 shrink-0">
+    <div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-[#52627a] gap-2">
+      <div class="flex items-center gap-2">
+        <span class="font-medium text-[#17243b]">Commerce Platform</span>
+        <span>&copy; 2025 Siam Developer Commerce</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs">
+        <span class="text-[#52627a]">Route: <code class="font-mono-code text-[#17243b]">portal-d4699c05385a</code></span>
+        <span>API Docs</span>
+        <span>Privacy Policy</span>
+        <span>Terms of Service</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Invisible UI Translations Dictionary matching the exact catalogue required -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "Commerce Platform": {
+      "th": "Commerce Platform",
+      "en": "Commerce Platform"
+    },
+    "Sign in": {
+      "th": "เข้าสู่ระบบ",
+      "en": "Sign in"
+    },
+    "Email": {
+      "th": "อีเมล",
+      "en": "Email"
+    },
+    "Password": {
+      "th": "รหัสผ่าน",
+      "en": "Password"
+    },
+    "Developer portal": {
+      "th": "พอร์ทัลนักพัฒนา",
+      "en": "Developer portal"
+    },
+    "Your account email": {
+      "th": "อีเมลสำหรับบัญชีของคุณ",
+      "en": "Your account email"
+    },
+    "dev@example.com": {
+      "th": "dev@example.com",
+      "en": "dev@example.com"
+    },
+    "Create account": {
+      "th": "สร้างบัญชีผู้ใช้",
+      "en": "Create account"
+    },
+    "Get API keys and subscribe to webhooks": {
+      "th": "รับคีย์ API และสมัครรับข้อมูล Webhooks",
+      "en": "Get API keys and subscribe to webhooks"
+    },
+    "At least 8 characters": {
+      "th": "อย่างน้อย 8 ตัวอักษร",
+      "en": "At least 8 characters"
+    },
+    "Creating account…": {
+      "th": "กำลังสร้างบัญชี…",
+      "en": "Creating account…"
+    },
+    "Register": {
+      "th": "ลงทะเบียน",
+      "en": "Register"
+    },
+    "Already have an account?": {
+      "th": "มีบัญชีอยู่แล้วใช่หรือไม่?",
+      "en": "Already have an account?"
+    },
+    "{0} กก.": {
+      "th": "{0} กก.",
+      "en": "{0} kg"
+    },
+    "Admin console": {
+      "th": "คอนโซลผู้ดูแลระบบ",
+      "en": "Admin console"
+    },
+    "Create a new webhook": {
+      "th": "สร้าง Webhook ใหม่",
+      "en": "Create a new webhook"
+    },
+    "existing": {
+      "th": "ที่มีอยู่แล้ว",
+      "en": "existing"
+    },
+    "Layout": {
+      "th": "โครงสร้างหน้าจอ",
+      "en": "Layout"
+    },
+    "Orders CSV *": {
+      "th": "ไฟล์คำสั่งซื้อ CSV *",
+      "en": "Orders CSV *"
+    },
+    "Request Doc": {
+      "th": "เอกสาร API",
+      "en": "Request Doc"
+    },
+    "Summary": {
+      "th": "สรุปข้อมูล",
+      "en": "Summary"
+    },
+    "กรอกเพื่อแก้ไข": {
+      "th": "กรอกเพื่อแก้ไข",
+      "en": "Enter to edit"
+    },
+    "กำหนดระดับสมาชิกตามยอดใช้จ่ายสะสม (lifetime spend) — ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์": {
+      "th": "กำหนดระดับสมาชิกตามยอดใช้จ่ายสะสม (lifetime spend) — ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์",
+      "en": "Tier membership by lifetime spend — used for customer segmentation and benefits"
+    },
+    "ขอวงเงิน:": {
+      "th": "ขอวงเงิน:",
+      "en": "Credit limit request:"
+    },
+    "คำขอราคาพิเศษจากลูกค้า": {
+      "th": "คำขอราคาพิเศษจากลูกค้า",
+      "en": "Special price requests from customers"
+    },
+    "จำนวนสินค้าที่สั่ง": {
+      "th": "จำนวนสินค้าที่สั่ง",
+      "en": "Ordered quantity"
+    },
+    "เช่น beef-fest-1111": {
+      "th": "เช่น beef-fest-1111",
+      "en": "e.g. beef-fest-1111"
+    },
+    "ตรวจสเปกจากแหล่งที่มาแล้ว และยืนยันน้ำหนักต่อหน่วยขายของเรา": {
+      "th": "ตรวจสเปกจากแหล่งที่มาแล้ว และยืนยันน้ำหนักต่อหน่วยขายของเรา",
+      "en": "Source spec verified, weight confirmed per sale unit"
+    },
+    "ทุกสินค้าในตะกร้าเข้าเงื่อนไข — เปลี่ยนได้ที่ \"ขอบเขตส่วนลด\" ด้านบน": {
+      "th": "ทุกสินค้าในตะกร้าเข้าเงื่อนไข — เปลี่ยนได้ที่ \"ขอบเขตส่วนลด\" ด้านบน",
+      "en": "All items in cart qualify — change in \"Discount Scope\" above"
+    },
+    "ประเภทการเคลื่อนไหวสต็อก": {
+      "th": "ประเภทการเคลื่อนไหวสต็อก",
+      "en": "Stock movement type"
+    },
+    "แผน": {
+      "th": "แผน",
+      "en": "Plan"
+    },
+    "ไม่เจอ — กรอกลิงก์จากเว็บอื่นเอง": {
+      "th": "ไม่เจอ — กรอกลิงก์จากเว็บอื่นเอง",
+      "en": "Not found — enter custom external URL manually"
+    },
+    "ยอดรวม": {
+      "th": "ยอดรวม",
+      "en": "Total"
+    },
+    "ยืนยันการลบ Workflow นี้?": {
+      "th": "ยืนยันการลบ Workflow นี้?",
+      "en": "Confirm deletion of this workflow?"
+    },
+    "ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง": {
+      "th": "ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง",
+      "en": "Prices shown: THB incl. VAT · Verify unspecified weights manually"
+    },
+    "ลบคู่ {0} กับ {1}?": {
+      "th": "ลบคู่ {0} กับ {1}?",
+      "en": "Delete pair {0} and {1}?"
+    },
+    "เลือกแล้ว": {
+      "th": "เลือกแล้ว",
+      "en": "Selected"
+    },
+    "สมัครเสร็จ": {
+      "th": "สมัครเสร็จ",
+      "en": "Registration completed"
+    },
+    "สีพื้นหลัง": {
+      "th": "สีพื้นหลัง",
+      "en": "Background color"
+    },
+    "โหลดราคาพิเศษไม่สำเร็จ": {
+      "th": "โหลดราคาพิเศษไม่สำเร็จ",
+      "en": "Failed to load special prices"
+    }
+  }
+  </script>
+
+  <!-- Interactive Scripts for Bilingual Toggle, Accessibility and Form Workflow -->
+  <script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update toggle buttons styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        btnEn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        document.documentElement.lang = 'th';
+        document.getElementById('scope-notice-title').textContent = "สิทธิ์การใช้งานของบัญชีนักพัฒนา";
+        document.getElementById('scope-notice-body').textContent = "หลังจากสร้างบัญชีแล้ว คุณสามารถสร้าง API Keys (Sandboxed/Production) และลงทะเบียน Webhooks ได้ทันที";
+        document.getElementById('prototype-badge').textContent = "ข้อมูลตัวอย่าง (Sandbox Mode)";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        btnTh.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        document.documentElement.lang = 'en';
+        document.getElementById('scope-notice-title').textContent = "Developer Account Permissions";
+        document.getElementById('scope-notice-body').textContent = "Once your account is created, you can generate API Keys (Sandbox/Production) and register Webhooks immediately.";
+        document.getElementById('prototype-badge').textContent = "Sample data (Sandbox Mode)";
+      }
+
+      // Update elements with data-i18n attribute
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+    }
+
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.257-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+      }
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const submittingSpinner = document.getElementById('submitting-spinner');
+      const statusContainer = document.getElementById('status-container');
+
+      // Clear previous status
+      statusContainer.className = "hidden";
+      statusContainer.innerHTML = "";
+
+      // Validation
+      if (!email || !password) {
+        statusContainer.className = "p-3 rounded-lg bg-[#fef2f2] border border-[#fecaca] text-xs text-[#c2333f] flex items-center gap-2";
+        statusContainer.innerHTML = `
+          <svg class="w-4 h-4 shrink-0 text-[#c2333f]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>${currentLang === 'th' ? 'กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน' : 'Please provide both email and password'}</span>
+        `;
+        return;
+      }
+
+      if (password.length < 8) {
+        statusContainer.className = "p-3 rounded-lg bg-[#fef2f2] border border-[#fecaca] text-xs text-[#c2333f] flex items-center gap-2";
+        statusContainer.innerHTML = `
+          <svg class="w-4 h-4 shrink-0 text-[#c2333f]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>${currentLang === 'th' ? 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร' : 'Password must be at least 8 characters'}</span>
+        `;
+        return;
+      }
+
+      // Enter loading state
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+      submitText.classList.add('hidden');
+      submittingSpinner.classList.remove('hidden');
+      submittingSpinner.classList.add('inline-flex');
+
+      // Emulate server register roundtrip
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+        submitText.classList.remove('hidden');
+        submittingSpinner.classList.add('hidden');
+        submittingSpinner.classList.remove('inline-flex');
+
+        // Success State
+        const completedLabel = translationsData['สมัครเสร็จ'][currentLang];
+        statusContainer.className = "p-3 rounded-lg bg-[#ecfdf5] border border-[#a7f3d0] text-xs text-[#157347] flex items-start gap-2";
+        statusContainer.innerHTML = `
+          <svg class="w-4 h-4 shrink-0 text-[#157347] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div>
+            <div class="font-semibold">${completedLabel}</div>
+            <div class="text-[11px] text-[#065f46] mt-0.5">${currentLang === 'th' ? 'ระบบสร้างบัญชีเรียบร้อย กำลังนำคุณไปยังคอนโซล API Keys...' : 'Account created successfully. Redirecting to API keys onboarding...'}</div>
+          </div>
+        `;
+      }, 900);
+    }
+
+    // Initialize default language
+    document.addEventListener('DOMContentLoaded', () => {
+      setLanguage('th');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "3226",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2E0YWE1NzU3ZDI0NTQyMjhhZTAwZjljZDgxYWVmYjRiEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/871b3450a7de40b4879b48210dcd4bf1"
+            },
+            "id": "6bb41f20440e4928aa405d71846e47ac",
+            "name": "projects/18348214526789030153/screens/6bb41f20440e4928aa405d71846e47ac",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1U9JOgqR-XLnTInxzyTLWQniclWl-L5sTIQ4e-NRmwmJxMyDuVXxqnNTTokSBnoNSZdiEmO15XPPWmnpT_52SslOf750eJj-QNM9-MOWGXPSyhQM8s3U3eRA6ZSq05ZGGHOJGHsU21P0ZkCsuNZ_3LiL7o34apL8bYmIzKCg1822khuabut0ComgQq-94aTrroUlmiEQhNmqG2Rniyuk_0L9B_sNtwJiVAcgMa9JKILhf-aer5BjHv1Mk_u",
+              "name": "projects/18348214526789030153/files/c8f1abe68ec84d1bb8baa8d922e1deed"
+            },
+            "theme": {},
+            "title": "ภาพรวมผู้ใช้ (UserDetail)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **ภาพรวมผู้ใช้ (UserDetail)** สำหรับ Commerce Platform เสร็จเรียบร้อยแล้ว:\n\n### 1. โครงสร้างและการนำทาง (Navigation & Layout)\n- **แถบเมนูหลัก 256px**: จัดกลุ่ม 7 สายงานตามระบบ Commerce Platform โดยเน้นสายงาน `ลูกค้าและบริการ` และเมนูย่อย `All Users (จัดการผู้ใช้)` (`/j/allusers`)\n- **กรอบการแสดงผล 1240px**: ใช้ชุดสีหลัก `#365cf5` (Primary blue), `#f6f8fc` (Canvas), `#17243b` (Ink) และเส้นขอบมน 12px\n- **การเชื่อมโยงระบบ**: แสดงเส้นทาง URL `/j/allusers/:userId` (Route ID: `admin-ad24894a21e7`) พร้อมลิงก์กลับหน้ารายชื่อผู้ใช้ `← กลับรายชื่อผู้ใช้`\n\n### 2. ข้อมูลและการดำเนินการ (Business Facts & Actions)\n- **สถิติภาพรวมสำคัญ 4 ด้าน**:\n  - ยอดสั่งซื้อรวม (`฿142,500.00` / 3 ออเดอร์ทั้งหมด)\n  - เฉลี่ยต่อออเดอร์ (`฿47,500.00`)\n  - จำนวนสินค้าที่สั่ง (`625 ชิ้น` จาก 6 SKU สัญญา)\n  - บทบาทผู้ใช้ (`Store Manager` / B2B User)\n- **ข้อมูลผู้ใช้และบริษัท**: ชื่อผู้ติดต่อ, อีเมล, เบอร์โทร OTP, Company (ร้านทรัพย์ทวีค้าส่ง), Cuisine / Type, สาขาจัดส่ง และที่อยู่ลงทะเบียน\n- **สินค้าที่สั่งบ่อย (Top 10)**: ตารางแสดง SKU, ชื่อสินค้า, ชนิดแพ็ก, จำนวนที่สั่ง, ราคาพิเศษ และมูลค่ารวม รองรับการเลื่อนแนวนอน\n- **ออเดอร์ล่าสุด**: ประวัติคำสั่งซื้อ 3 รายการล่าสุด พร้อมสถานะการชำระเงิน\n- **เงื่อนไขและสิทธิ์ B2B**: สาขาเชื่อมโยง, ราคาสัญญา ERP, คูปองต่อเนื่อง (`B2B-PROMO-FEB25`), ขั้นตอน Journey และสถานะ API ซิงก์ภายนอก\n\n### 3. ระบบสองภาษาและ UI Copy Catalogue (Bilingual Support)\n- รองรับปุ่มสลับภาษา **ไทย / English** ทำงานได้ทันที\n- ฝังแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่ครอบคลุมทุกคีย์คำใน UI copy catalogue ครบถ้วนตามข้อกำหนด"
+    },
+    {
+      "suggestion": "สลับไปโหมดภาษาอังกฤษ (English view) เพื่อตรวจสอบคำแปล"
+    },
+    {
+      "suggestion": "เปิดดูโมดอลแก้ไขเงื่อนไขและสิทธิ์เริ่มต้น B2B"
+    },
+    {
+      "suggestion": "ดูหน้ารายการผู้ใช้ทั้งหมด /j/allusers"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "15407171211200892737"
+}

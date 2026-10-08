@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2368",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzc0NmY3MDIxZjYxYzQ5NjY5YWI3N2IyMDEwNzhiNWZlEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/2b4d8fd64b0044088869be8339b7ae46"
+            },
+            "id": "0984c28ab6c1460d854fff54309bf6bd",
+            "name": "projects/18348214526789030153/screens/0984c28ab6c1460d854fff54309bf6bd",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WTxzgbfyTHyEEoIgv66Zb6hqtFEqek-iJc2gN420ik4FFzI6Wr8HTVLmTDWHRTJn7vsqXMwcW0kMA7LEmP35fGvcjn6UiqoF015JuCvA_62c3TC1e99GOBP-u7uOVUviIHCCU161VweelTUrYaDfXKpYMG3KW3BdD_w_gSmTLlESX8d3NAa86FssLk-UUaQsO2xued6i38Qme_SBhO9t1AGvYx4EvCG7-p0861dg30splfFlOaH1IKwM4",
+              "name": "projects/18348214526789030153/files/c3d96c3ea64f451aba0a747b79ebc5c8"
+            },
+            "theme": {},
+            "title": "ลูกค้าแพลตฟอร์ม (Platform Customers)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบและปรับปรุงหน้าจอ **\"ลูกค้าแพลตฟอร์ม\" (Platform Customers)** สำหรับระบบ Commerce Platform เรียบร้อยแล้วครับ\n\n### สรุปรายละเอียดการออกแบบและการทำงาน:\n1. **โครงสร้างและงานออกแบบตาม Design System:**\n   - **โทนสีและ Layout:** ใช้พื้นหลังสี `#f6f8fc`, การ์ดสีขาวมุมมน 12px เส้นขอบ `#e1e7f0`, สี Primary เป็นสีน้ำเงิน `#365cf5`, และสี Ink `#17243b` ชัดเจนตามมาตรฐาน\n   - **Sidebar (256px):** แสดงโครงสร้างพื้นที่ทำงานหลักทั้ง 7 สายงานครบถ้วน พร้อมไฮไลต์หมวดหมู่งาน \"ลูกค้าและบริการ\" และ Submenu หน้าปัจจุบัน \"ลูกค้าแพลตฟอร์ม\"\n   - **Contextual Header:** แถบค้นหาเฉพาะหน้าปัจจุบัน (Current page only) ตามข้อกำหนดที่ไม่สื่อถึงการค้นหาข้ามทั้งแคตตาล็อก, ป้ายกำกับ `ข้อมูลตัวอย่าง` (Sample data), ปุ่มสลับภาษา ไทย / English ที่ทำงานได้จริง, และโปรไฟล์ผู้ใช้งาน\n\n2. **ฟังก์ชันการทำงานและการใช้งาน (Usability):**\n   - **การแสดงรายการและตารางลูกค้า:** แสดงรหัสลูกค้า (เช่น `C1`), ชื่อบริษัท/ลูกค้า, ประเภท, อีเมล (`billing@acme.test`), เบอร์โทร, และสถานะ พร้อมการจำแนกสถานะด้วยสีและข้อความคู่กัน\n   - **Dialogs & Forms:** มีหน้าต่าง \"เพิ่มลูกค้า\" และ \"ดูข้อมูลลูกค้า\" รองรับการกดปุ่มบันทึก/ยกเลิก และการปิดด้วยปุ่ม `Escape`\n   - **ตัวกรองและการค้นหา:** รองรับตัวกรองสถานะ (ทั้งหมด / ปกติ / รอคิว / ระงับชั่วคราว) พร้อม State แสดงผลกรณีค้นหาหรือกรองไม่พบข้อมูล (Filtered-empty state)\n   - **ส่วนงาน B2B:** กล่องควบคุมเครดิตเทอม B2B ด้านล่าง เพื่อจัดการและตรวจสอบสถานะ Overdue ของลูกค้านิติบุคคล\n\n3. **Bilingual & Export Translations:**\n   - รวมแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่บรรจุคำศัพท์ Exact UI copy catalogue ครบทุกรายการ ทั้งเวอร์ชันภาษาไทย (`th`) และภาษาอังกฤษ (`en`) รองรับการนำไปใช้งานต่อในระบบจริงครับ"
+    },
+    {
+      "suggestion": "ต้องการดูหน้าจอแบบฟอร์มสร้างลูกค้าในรูปแบบแยกหน้าเต็มหรือไม่?"
+    },
+    {
+      "suggestion": "ต้องการให้จำลองสถานะข้อผิดพลาดขณะโหลดข้อมูล (Failed State) เพิ่มเติมไหมครับ?"
+    },
+    {
+      "suggestion": "ต้องการเพิ่มแท็บหรือตารางเชื่อมต่อประวัติคำสั่งซื้อแบบละเอียดในหน้านี้หรือไม่?"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "1815861136803055487"
+}

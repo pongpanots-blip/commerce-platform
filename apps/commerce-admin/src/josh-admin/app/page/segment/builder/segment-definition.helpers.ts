@@ -1,3 +1,6 @@
+import { uiText as __uiText } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import type {
   SegmentBranch,
   SegmentDefinition,
@@ -42,8 +45,8 @@ export function optionsForField(
 
 /** `has_company` is the only boolean-shaped `enum` field with no `optionsSource`. */
 const BOOLEAN_ENUM_OPTIONS: SegmentFieldOption[] = [
-  { value: 'true', label: 'ใช่' },
-  { value: 'false', label: 'ไม่ใช่' },
+  { value: 'true', get label(){return uiText("ใช่");} },
+  { value: 'false', get label(){return uiText("ไม่ใช่");} },
 ];
 
 export function valueOptionsForField(
@@ -188,11 +191,11 @@ function formatLeafValue(
 ): string {
   if (leaf.operator === 'between' && Array.isArray(leaf.value)) {
     const [from, to] = leaf.value;
-    return `${formatSingleValue(field, from as string | number, options)} ถึง ${formatSingleValue(
+    return __uiText("{0} ถึง {1}",{"0":formatSingleValue(field, from as string | number, options),"1":formatSingleValue(
       field,
       to as string | number,
       options,
-    )}`;
+    )});
   }
   if (leaf.operator === 'in' && Array.isArray(leaf.value)) {
     return leaf.value
@@ -225,11 +228,11 @@ export function describeDefinition(
   fields: SegmentFieldSummary[],
   options: SegmentFieldsResponse['options'],
 ): string {
-  if (!def) return 'ยังไม่ได้ตั้งเงื่อนไข';
+  if (!def) return __uiText("ยังไม่ได้ตั้งเงื่อนไข");
 
   if (isSegmentBranch(def)) {
-    if (def.children.length === 0) return 'ยังไม่ได้ตั้งเงื่อนไขในกลุ่มนี้';
-    const joiner = def.op === 'AND' ? ' และ ' : ' หรือ ';
+    if (def.children.length === 0) return __uiText("ยังไม่ได้ตั้งเงื่อนไขในกลุ่มนี้");
+    const joiner = def.op === 'AND' ? __uiText(" และ ") : __uiText(" หรือ ");
     const parts = def.children.map((child) => {
       const text = describeDefinition(child, fields, options);
       return isSegmentBranch(child) ? `(${text})` : text;
@@ -274,7 +277,7 @@ export type SegmentPreset = {
 export const SEGMENT_PRESETS: SegmentPreset[] = [
   {
     id: 'about-to-churn',
-    label: 'ลูกค้าใกล้หาย',
+    get label() { return __uiText("ลูกค้าใกล้หาย"); },
     build: () => ({
       field: 'last_order_days_ago',
       operator: '>=',
@@ -283,7 +286,7 @@ export const SEGMENT_PRESETS: SegmentPreset[] = [
   },
   {
     id: 'new-30d',
-    label: 'ลูกค้าใหม่ 30 วัน',
+    get label() { return __uiText("ลูกค้าใหม่ 30 วัน"); },
     build: () => ({
       field: 'registered_days_ago',
       operator: '<=',
@@ -292,7 +295,7 @@ export const SEGMENT_PRESETS: SegmentPreset[] = [
   },
   {
     id: 'vip',
-    label: 'นักช้อป VIP',
+    get label() { return __uiText("นักช้อป VIP"); },
     build: () => ({
       field: 'tier',
       operator: 'in',
@@ -301,7 +304,7 @@ export const SEGMENT_PRESETS: SegmentPreset[] = [
   },
   {
     id: 'low-spend',
-    label: 'ยอดต่ำกว่า ฿1,000',
+    get label() { return __uiText("ยอดต่ำกว่า ฿1,000"); },
     build: () => ({
       field: 'lifetime_spend',
       operator: '<',
@@ -309,3 +312,5 @@ export const SEGMENT_PRESETS: SegmentPreset[] = [
     }),
   },
 ];
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

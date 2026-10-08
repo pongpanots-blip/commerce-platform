@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เพิ่มสินค้า | Commerce Operations Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              hover: '#284cd6',
+              light: '#eff3ff',
+            },
+            ink: '#17243b',
+            secondary: '#52627a',
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            success: '#157347',
+            warning: '#b08900',
+            danger: '#c2333f',
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-canvas text-ink flex flex-col">
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar (256px) -->
+    <aside class="w-64 w-[256px] flex-shrink-0 bg-white border-r border-border flex flex-col fixed inset-y-0 left-0 z-30">
+      <!-- App Brand Header -->
+      <div class="h-16 flex items-center justify-between px-5 border-b border-border">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-brand text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            C
+          </div>
+          <div>
+            <div class="font-bold text-ink text-sm leading-tight flex items-center gap-1.5">
+              <span>Commerce</span>
+              <span class="text-[10px] font-medium bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded uppercase tracking-wider">ADMIN</span>
+            </div>
+            <div class="text-[11px] text-secondary">Operations Hub</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Area (7 Work Areas) -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar px-3 py-4 space-y-6">
+        <div>
+          <div class="px-3 text-[11px] font-semibold text-secondary uppercase tracking-wider mb-2">
+            พื้นที่ปฏิบัติการ (7 กลุ่ม)
+          </div>
+
+          <!-- Section 1: สินค้าและสต็อก (Active Group) -->
+          <div class="space-y-1">
+            <div class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-brand rounded-lg bg-brand-light/60">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m4 10M4 7v10l8 4" />
+                </svg>
+                <span>สินค้าและสต็อก</span>
+              </div>
+              <svg class="w-3.5 h-3.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <!-- Submenu Items -->
+            <div class="pl-8 pr-1 space-y-0.5 pt-1 text-[13px]">
+              <a href="/products" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>แคตตาล็อกแพลตฟอร์ม</span>
+              </a>
+              <a href="/j/product/create" class="flex items-center justify-between px-2.5 py-1.5 text-brand font-medium bg-brand-light rounded-md">
+                <span>เพิ่มสินค้าใหม่</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
+              </a>
+              <a href="/j/brands" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>แบรนด์</span>
+              </a>
+              <a href="/order-periods" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>รอบสั่งซื้อ supplier</span>
+              </a>
+              <a href="/product-master-queue" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>คิวข้อมูลสินค้าจาก ERP</span>
+                <span class="px-1.5 py-0.2 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">3</span>
+              </a>
+              <a href="/product-prices" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>ราคาสินค้า</span>
+              </a>
+              <a href="/stock-moves" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>ความเคลื่อนไหวสต็อก</span>
+              </a>
+              <a href="/prices/staff" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>ราคาลูกค้า / ราคาสัญญา</span>
+              </a>
+              <a href="/erp/inventory-warehouse" class="flex items-center justify-between px-2.5 py-1.5 text-secondary hover:text-ink hover:bg-slate-50 rounded-md">
+                <span>สต็อกแยกตามคลัง</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Section 2: ออเดอร์และการเงิน -->
+          <div class="mt-2">
+            <a href="#orders" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-50 rounded-lg">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>ออเดอร์และการเงิน</span>
+            </a>
+          </div>
+
+          <!-- Section 3: ลูกค้าและบริการ -->
+          <div>
+            <a href="#customers" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-50 rounded-lg">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <span>ลูกค้าและบริการ</span>
+            </a>
+          </div>
+
+          <!-- Section 4: การตลาด -->
+          <div>
+            <a href="#marketing" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-50 rounded-lg">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+              <span>การตลาด</span>
+            </a>
+          </div>
+
+          <!-- Section 5: รายงานและข้อมูล -->
+          <div>
+            <a href="#reports" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-50 rounded-lg">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>รายงานและข้อมูล</span>
+            </a>
+          </div>
+
+          <!-- Section 6: ระบบเชื่อมต่อ -->
+          <div>
+            <a href="#integrations" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-50 rounded-lg">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>ระบบเชื่อมต่อ</span>
+            </a>
+          </div>
+
+          <!-- Section 7: ตั้งค่าและทีมงาน -->
+          <div>
+            <a href="#settings" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-50 rounded-lg">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>ตั้งค่าและทีมงาน</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Developer Portal footer item -->
+      <div class="p-3 border-t border-border bg-slate-50/50">
+        <a href="#devportal" class="flex items-center justify-between px-3 py-2 text-xs font-medium text-secondary hover:text-ink hover:bg-slate-100 rounded-md">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            <span>Developer Portal</span>
+          </div>
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+        <div class="px-3 pt-2 text-[11px] text-slate-400 flex items-center justify-between">
+          <span>Route: /j/product/create</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500" title="API Status: Connected"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper (shifted by 256px) -->
+    <div class="pl-64 pl-[256px] flex-1 flex flex-col min-w-0">
+      <!-- Top Contextual Header -->
+      <header class="h-16 bg-white border-b border-border flex items-center justify-between px-8 sticky top-0 z-20">
+        <!-- Breadcrumbs & Route Identifiers -->
+        <nav class="flex items-center gap-2 text-xs text-secondary">
+          <a href="/products" class="hover:text-brand transition-colors">สินค้าและสต็อก</a>
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <a href="/products" class="hover:text-brand transition-colors">แคตตาล็อกสินค้า</a>
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="text-ink font-semibold">เพิ่มสินค้า</span>
+          <span class="ml-2 font-mono text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">
+            admin-eaf5fc6977ae
+          </span>
+        </nav>
+
+        <!-- Right Utilities: Sample Badge, Language Switcher, User Profile -->
+        <div class="flex items-center gap-3">
+          <!-- ข้อมูลตัวอย่าง Badge -->
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
+            <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>ข้อมูลตัวอย่าง</span>
+          </span>
+
+          <!-- Language Switcher (Bilingual UI Toggle) -->
+          <div class="flex items-center bg-slate-100 rounded-lg p-0.5 text-xs font-medium border border-border">
+            <button id="lang-th-btn" class="px-2.5 py-1 rounded-md bg-brand text-white shadow-sm transition-all" onclick="setLanguage('th')">
+              ไทย
+            </button>
+            <button id="lang-en-btn" class="px-2.5 py-1 rounded-md text-secondary hover:text-ink transition-all" onclick="setLanguage('en')">
+              English
+            </button>
+          </div>
+
+          <div class="h-5 w-px bg-border"></div>
+
+          <!-- User avatar -->
+          <div class="flex items-center gap-2.5 pl-1">
+            <div class="w-8 h-8 rounded-full bg-brand-light text-brand font-semibold text-xs flex items-center justify-center border border-brand/20">
+              OP
+            </div>
+            <div class="text-left hidden md:block">
+              <div class="text-xs font-medium text-ink leading-tight">ทีมปฏิบัติการ</div>
+              <div class="text-[11px] text-secondary">Commerce Ops</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Container: max-w ~ 1240px -->
+      <main class="flex-1 p-8">
+        <div class="max-w-[1240px] mx-auto space-y-6">
+
+          <!-- Page Header & Action Bar -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/80">
+            <div>
+              <div class="flex items-center gap-3">
+                <h1 class="text-[28px] font-bold text-ink tracking-tight leading-tight">เพิ่มสินค้า</h1>
+                <span class="font-mono text-xs text-secondary bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                  /j/product/create
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-brand border border-blue-200">
+                  InsertProductForm
+                </span>
+              </div>
+              <p class="text-secondary text-sm mt-1">
+                สร้างรายการสินค้าใหม่ในระบบ Commerce Hub พร้อมเชื่อมโยงแคตตาล็อกและประมวลผลข้อมูลอัตโนมัติ
+              </p>
+            </div>
+
+            <!-- Sticky/Action Buttons (Back & Quick Save Trigger) -->
+            <div class="flex items-center gap-3">
+              <a href="/products" class="h-10 px-4 inline-flex items-center gap-2 text-sm font-medium text-secondary bg-white border border-border rounded-lg hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>ยกเลิกและย้อนกลับ</span>
+              </a>
+              <button type="button" onclick="validateAndSubmit()" class="h-10 px-5 inline-flex items-center gap-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg shadow-sm transition-all focus:ring-2 focus:ring-brand/30">
+                <span>💾 บันทึกข้อมูลและประมวลผล AI</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feature Callout Banner -->
+          <div class="p-4 rounded-xl bg-gradient-to-r from-blue-50/90 via-indigo-50/50 to-white border border-blue-200/80 flex items-start gap-3.5 shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-blue-600 flex-shrink-0 border border-blue-100">
+              <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-sm font-bold text-ink">
+                ✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ
+              </h2>
+              <p class="text-xs text-secondary mt-0.5 leading-relaxed">
+                รองรับการแปลงและแมปปิ้งข้อมูล SKU แบบสองภาษา (ไทย-อังกฤษ) อัตโนมัติ พร้อมส่งเข้าโมเดลวิเคราะห์ภาพและแคตตาล็อกสินค้าของ Storefront
+              </p>
+            </div>
+          </div>
+
+          <!-- Inline Validation Notification (Alert box) -->
+          <div id="validation-banner" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div class="text-xs">
+              <p class="font-semibold text-amber-950">กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ</p>
+              <p class="text-amber-800 mt-0.5">ระบบต้องการฟิลด์สำคัญเพื่อสร้างรหัสในระบบและจัดทำดัชนีการค้นหาบน Storefront ให้สมบูรณ์</p>
+            </div>
+          </div>
+
+          <!-- Main InsertProductForm Form Body -->
+          <form id="insert-product-form" onsubmit="event.preventDefault(); validateAndSubmit();" class="space-y-6">
+
+            <!-- ========================================== -->
+            <!-- SECTION 1: ข้อมูลหลักสินค้า (Global Info) -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded-[12px] border border-border shadow-sm overflow-hidden">
+              <div class="px-6 py-4 bg-slate-50/60 border-b border-border flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-md bg-blue-100 text-brand flex items-center justify-center font-bold text-xs">1</span>
+                  <h3 class="font-bold text-ink text-base">📦 1. ข้อมูลหลักสินค้า (Global Info)</h3>
+                </div>
+                <span class="text-xs text-secondary font-medium">* กำหนดค่าหลักของระบบ</span>
+              </div>
+
+              <div class="p-6 space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <!-- SKU Field -->
+                  <div>
+                    <label for="product-sku" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      รหัสสินค้า (SKU) *
+                    </label>
+                    <div class="relative">
+                      <input
+                        type="text"
+                        id="product-sku"
+                        name="sku"
+                        placeholder="เช่น BIDBEK666640977"
+                        value="BIDBEK666640977"
+                        required
+                        class="w-full h-10 px-3.5 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand font-mono"
+                      />
+                    </div>
+                    <p class="text-[12px] text-secondary mt-1">ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร — แก้ไม่ได้หลังสร้าง</p>
+                  </div>
+
+                  <!-- Category Field -->
+                  <div>
+                    <label for="product-category" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      หมวดหมู่สินค้า
+                    </label>
+                    <select
+                      id="product-category"
+                      name="category"
+                      class="w-full h-10 px-3 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
+                    >
+                      <option value="cat-rice">อาหารและเครื่องดื่ม > ข้าวสารและธัญพืช (หมวดปลายกิ่ง)</option>
+                      <option value="cat-oil">วัตถุดิบและน้ำมันประกอบอาหาร > น้ำมันพืช (หมวดปลายกิ่ง)</option>
+                      <option value="cat-dairy">ผลิตภัณฑ์แช่เย็นและชีส > ชีสและเนยสด (หมวดปลายกิ่ง)</option>
+                      <option value="cat-coffee">เครื่องดื่มและกาแฟ > เมล็ดกาแฟคั่ว (หมวดปลายกิ่ง)</option>
+                      <option value="cat-meat">เนื้อสัตว์และโปรตีน > เนื้อไก่สดอนามัย (หมวดปลายกิ่ง)</option>
+                    </select>
+                    <p class="text-[12px] text-secondary mt-1">
+                      เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)
+                    </p>
+                  </div>
+
+                </div>
+
+                <!-- Brand Selection & Custom Brand Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-100">
+                  <div>
+                    <label for="product-brand" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      แบรนด์
+                    </label>
+                    <select
+                      id="product-brand"
+                      name="brand_id"
+                      class="w-full h-10 px-3 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
+                    >
+                      <option value="">-- เลือกแบรนด์ --</option>
+                      <option value="BR-99021" selected>ตราดอกบัวหลวง (Lotus Heritage - BR-99021)</option>
+                      <option value="BR-99022">โกลเด้น ฮาร์เวสต์ เชฟ โปร (Golden Harvest - BR-99022)</option>
+                      <option value="BR-99015">ไทไทย ออร์แกนิค ฟาร์ม (Thai Organic Farm - BR-99015)</option>
+                      <option value="BR-99034">แดรี่โกลด์ ไทยแลนด์ (DairyGold TH - BR-99034)</option>
+                    </select>
+                    <span class="inline-block text-[12px] text-secondary mt-1">เลือกแบรนด์ที่ลงทะเบียนในระบบ หรือระบุโค้ดใหม่ด้านขวา</span>
+                  </div>
+
+                  <div>
+                    <label for="custom-brand" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)
+                    </label>
+                    <input
+                      type="text"
+                      id="custom-brand"
+                      name="custom_brand"
+                      placeholder="เช่น ACME"
+                      class="w-full h-10 px-3.5 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
+                    />
+                    <p class="text-[12px] text-secondary mt-1">หากระบุแบรนด์ใหม่ ระบบจะสร้างรหัสแบรนด์ดราฟต์ไว้ใน /j/brands</p>
+                  </div>
+                </div>
+
+                <!-- Pricing, Unit & Initial Stock -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 border-t border-slate-100">
+                  <div>
+                    <label for="product-price" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      ราคาขาย (฿) *
+                    </label>
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-secondary text-sm font-medium">฿</span>
+                      <input
+                        type="number"
+                        id="product-price"
+                        name="price"
+                        placeholder="เช่น 100"
+                        value="210.00"
+                        step="0.01"
+                        required
+                        class="w-full h-10 pl-8 pr-3 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand font-medium"
+                      />
+                    </div>
+                    <p class="text-[12px] text-secondary mt-1">ราคาฐานขายต่อหน่วย (ยังไม่รวมภาษีมูลค่าเพิ่มถ้ามี)</p>
+                  </div>
+
+                  <div>
+                    <label for="product-unit" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      หน่วยขาย
+                    </label>
+                    <input
+                      type="text"
+                      id="product-unit"
+                      name="sale_unit"
+                      placeholder="เช่น ชิ้น"
+                      value="ถุง (5 กก.)"
+                      class="w-full h-10 px-3.5 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
+                    />
+                    <p class="text-[12px] text-secondary mt-1">หน่วยนับที่แสดงบน Storefront และเอกสารจัดส่ง</p>
+                  </div>
+
+                  <div>
+                    <label for="product-stock" class="block text-[13px] font-semibold text-ink mb-1.5">
+                      จำนวนสต็อกเริ่มต้น
+                    </label>
+                    <input
+                      type="number"
+                      id="product-stock"
+                      name="initial_stock"
+                      placeholder="0"
+                      value="450"
+                      class="w-full h-10 px-3.5 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand font-medium"
+                    />
+                    <p class="text-[12px] text-secondary mt-1">จะถูกตั้งเป็นยอด on_hand ในคลังกลางหลัก (WH-BKK01)</p>
+                  </div>
+                </div>
+
+                <!-- Tier Pricing Note -->
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs text-secondary">
+                  <div class="flex items-center gap-2.5">
+                    <span class="font-semibold text-ink">ราคาตามจำนวนซื้อ (Tier)</span>
+                    <span class="text-slate-400">|</span>
+                    <span>ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic</span>
+                  </div>
+                  <a href="/prices/staff" class="text-brand hover:underline font-medium flex items-center gap-1">
+                    <span>เปิดตั้งค่าสัญญาและราคาลูกค้า</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- SECTION 2: ข้อมูลภาษาไทย (Thai Translation) -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded-[12px] border border-border shadow-sm overflow-hidden">
+              <div class="px-6 py-4 bg-slate-50/60 border-b border-border flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-md bg-emerald-100 text-success flex items-center justify-center font-bold text-xs">2</span>
+                  <h3 class="font-bold text-ink text-base">🇹🇭 2. ข้อมูลภาษาไทย (Thai Translation)</h3>
+                </div>
+                <span class="text-xs text-success font-medium">ภาษาเริ่มต้น (Default UI)</span>
+              </div>
+
+              <div class="p-6 space-y-5">
+                <div>
+                  <label for="name-th" class="block text-[13px] font-semibold text-ink mb-1.5">
+                    ชื่อสินค้า (ภาษาไทย) *
+                  </label>
+                  <input
+                    type="text"
+                    id="name-th"
+                    name="name_th"
+                    placeholder="เช่น ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง"
+                    value="ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง"
+                    required
+                    class="w-full h-10 px-3.5 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand font-medium"
+                  />
+                  <p class="text-[12px] text-secondary mt-1">ชื่อทางการที่แสดงบนแคตตาล็อกภาษาไทย และใบสั่งซื้อ</p>
+                </div>
+
+                <div>
+                  <label for="desc-th" class="block text-[13px] font-semibold text-ink mb-1.5">
+                    รายละเอียดสินค้าอย่างย่อ (ภาษาไทย)
+                  </label>
+                  <textarea
+                    id="desc-th"
+                    name="description_th"
+                    rows="3"
+                    placeholder="ระบุจุดเด่น วิธีการใช้ ข้อมูลโภชนาการ หรือมาตรฐานสินค้า..."
+                    class="w-full p-3 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand resize-none"
+                  >ข้าวหอมมะลิแท้ 100% จากทุ่งกุลาร้องไห้ ผ่านกระบวนการขัดสีและคัดเมล็ดด้วยระบบเลเซอร์คุณภาพสูง เมล็ดเรียวยาว ขาวใส หุงขึ้นหม้อ เหนียวนุ่ม หอมกรุ่นชวนรับประทาน เหมาะสำหรับร้านอาหารและสถาบันบริการอาหาร จัดเก็บในห้องควบคุมอุณหภูมิและความชื้นมาตรฐานสากล</textarea>
+                  <p class="text-[12px] text-secondary mt-1">แนะนำความยาว 100–300 ตัวอักษร เพื่อผลการแสดงผลที่ดีที่สุดบนแอปมือถือ</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- SECTION 3: ข้อมูลภาษาอังกฤษ (English Translation) -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded-[12px] border border-border shadow-sm overflow-hidden">
+              <div class="px-6 py-4 bg-slate-50/60 border-b border-border flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-md bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">3</span>
+                  <h3 class="font-bold text-ink text-base">🇺🇸 3. ข้อมูลภาษาอังกฤษ (English Translation)</h3>
+                </div>
+                <span class="text-xs text-indigo-700 font-medium">Bilingual Support (Storefront International)</span>
+              </div>
+
+              <div class="p-6 space-y-5">
+                <div>
+                  <label for="name-en" class="block text-[13px] font-semibold text-ink mb-1.5">
+                    ชื่อสินค้า (ภาษาอังกฤษ) *
+                  </label>
+                  <input
+                    type="text"
+                    id="name-en"
+                    name="name_en"
+                    placeholder="เช่น Jasmine Rice Premium Export 5kg - Lotus Heritage"
+                    value="Jasmine Rice Premium Export Grade 5kg - Lotus Heritage Brand"
+                    required
+                    class="w-full h-10 px-3.5 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand font-medium"
+                  />
+                  <p class="text-[12px] text-secondary mt-1">Display title for English locale shoppers and multinational partner invoices</p>
+                </div>
+
+                <div>
+                  <label for="desc-en" class="block text-[13px] font-semibold text-ink mb-1.5">
+                    รายละเอียดสินค้าอย่างย่อ (ภาษาอังกฤษ)
+                  </label>
+                  <textarea
+                    id="desc-en"
+                    name="description_en"
+                    rows="3"
+                    placeholder="Enter English product summary, specs or serving guide..."
+                    class="w-full p-3 bg-white border border-border rounded-lg text-ink text-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand resize-none"
+                  >100% Thai Hom Mali jasmine rice harvested from certified Thung Kula Ronghai paddies. Laser-sorted grains with natural pandan fragrance and soft texture when steamed. Ideal for commercial culinary kitchens, cafes, and premium hotels.</textarea>
+                  <p class="text-[12px] text-secondary mt-1">English summary will sync to the multilingual storefront search index</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- SECTION 4: คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป) -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded-[12px] border border-border shadow-sm overflow-hidden">
+              <div class="px-6 py-4 bg-slate-50/60 border-b border-border flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">4</span>
+                  <h3 class="font-bold text-ink text-base">📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-secondary border border-slate-200">
+                    อัปโหลดแล้ว <span id="image-count-display" class="font-bold text-ink ml-1 mr-0.5">2</span>/3 รูป
+                  </span>
+                </div>
+              </div>
+
+              <div class="p-6 space-y-4">
+                <!-- Limit Warning Note -->
+                <div class="p-3 bg-blue-50/60 rounded-lg border border-blue-200/60 text-xs text-blue-900 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>ข้อจำกัดระบบ: <strong>อัปโหลดรูปภาพได้สูงสุด 3 รูปเท่านั้นครับ!</strong> (รูปที่ 1 จะถูกใช้เป็นรูปหลักบนหน้ารายการสินค้า)</span>
+                  </div>
+                  <span class="text-[11px] text-blue-700 font-medium">รองรับ PNG, JPG, WebP ขนาดไม่เกิน 5MB</span>
+                </div>
+
+                <!-- Image Slots Grid (3 slots) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-2">
+
+                  <!-- Slot 1: Uploaded (Main Image) -->
+                  <div id="slot-1" class="border border-border rounded-xl p-3.5 bg-slate-50/40 relative group hover:border-brand/60 transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        รูปที่ 1 <span class="text-[11px] font-normal text-secondary">(รูปหลัก)</span>
+                      </span>
+                      <button type="button" onclick="removeImage(1)" class="text-[11px] text-danger hover:text-red-700 font-medium flex items-center gap-1 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded transition-colors">
+                        <span>🛑 ลบรูปนี้</span>
+                      </button>
+                    </div>
+
+                    <div class="aspect-square rounded-lg bg-white border border-border overflow-hidden relative flex items-center justify-center p-2">
+                      <!-- Rendered Mock Packaging -->
+                      <div class="w-full h-full bg-gradient-to-b from-amber-50 via-amber-100/50 to-amber-200/40 rounded flex flex-col items-center justify-center p-3 text-center border border-amber-200/50 shadow-inner">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-700 flex items-center justify-center mb-1 font-bold text-sm">
+                          🌾
+                        </div>
+                        <span class="text-xs font-bold text-amber-950 leading-tight">ข้าวหอมมะลิตัดพิเศษ</span>
+                        <span class="text-[10px] text-amber-800">5 กก. • บัวหลวง</span>
+                        <div class="mt-2 text-[9px] bg-white px-2 py-0.5 rounded text-amber-900 border border-amber-300 font-mono">
+                          img-th-8890-front.webp
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                      <span class="text-[11px] text-secondary">รูปถ่าย ด้านหน้าบรรจุภัณฑ์</span>
+                    </div>
+                  </div>
+
+                  <!-- Slot 2: Uploaded (Nutrition & Back) -->
+                  <div id="slot-2" class="border border-border rounded-xl p-3.5 bg-slate-50/40 relative group hover:border-brand/60 transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        รูปที่ 2 <span class="text-[11px] font-normal text-secondary">(ฉลากหลัง)</span>
+                      </span>
+                      <button type="button" onclick="removeImage(2)" class="text-[11px] text-danger hover:text-red-700 font-medium flex items-center gap-1 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded transition-colors">
+                        <span>🛑 ลบรูปนี้</span>
+                      </button>
+                    </div>
+
+                    <div class="aspect-square rounded-lg bg-white border border-border overflow-hidden relative flex items-center justify-center p-2">
+                      <!-- Rendered Label Mock -->
+                      <div class="w-full h-full bg-slate-100 rounded flex flex-col items-center justify-center p-3 text-center border border-slate-200 shadow-inner">
+                        <div class="w-8 h-8 rounded bg-slate-200 text-slate-500 flex items-center justify-center mb-1 font-mono text-xs">
+                          📊
+                        </div>
+                        <span class="text-xs font-semibold text-slate-800">ฉลากโภชนาการ & บาร์โค้ด</span>
+                        <span class="text-[10px] text-slate-500">8851759002341</span>
+                        <div class="mt-2 text-[9px] bg-white px-2 py-0.5 rounded text-slate-600 border border-slate-300 font-mono">
+                          img-th-8890-label.webp
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                      <span class="text-[11px] text-secondary">รูปถ่าย ฉลากหลังและเครื่องหมาย อย.</span>
+                    </div>
+                  </div>
+
+                  <!-- Slot 3: Empty / Upload CTA -->
+                  <div id="slot-3" class="border-2 border-dashed border-border rounded-xl p-3.5 bg-white flex flex-col justify-between hover:border-brand hover:bg-brand-light/30 transition-all cursor-pointer group" onclick="triggerUploadMock()">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                        รูปที่ 3 <span class="text-[11px] font-normal text-secondary">(ว่าง)</span>
+                      </span>
+                      <span class="text-[10px] text-slate-400">ยังไม่อัปโหลด</span>
+                    </div>
+
+                    <div class="aspect-square rounded-lg border border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center text-center p-4 group-hover:bg-white transition-colors">
+                      <div class="w-10 h-10 rounded-full bg-blue-50 group-hover:bg-brand text-brand group-hover:text-white flex items-center justify-center transition-all mb-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                      </div>
+                      <span class="text-xs font-semibold text-ink group-hover:text-brand">คลิกเพื่ออัปโหลด</span>
+                      <span class="text-[11px] text-secondary mt-0.5">ลากไฟล์รูปภาพมาวางที่นี่</span>
+                      <span class="text-[10px] text-slate-400 mt-1">รูปถ่ายสินค้าจริง</span>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                      <span class="text-[11px] text-slate-400">โควตาเหลือ 1 รูปสุดท้าย</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Sticky Bottom Action Footer -->
+            <div class="sticky bottom-4 z-20 bg-white/95 backdrop-blur-sm p-4 rounded-xl border border-border shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center gap-3 text-xs text-secondary">
+                <span class="flex h-2.5 w-2.5 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span>บันทึกดราฟต์อัตโนมัติเมื่อ 1 นาทีที่แล้ว (Admin Session Active)</span>
+              </div>
+
+              <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <a href="/products" class="h-10 px-5 inline-flex items-center justify-center text-sm font-medium text-secondary bg-white border border-border rounded-lg hover:bg-slate-50 transition-colors">
+                  ยกเลิก
+                </a>
+                <button type="submit" class="h-10 px-6 inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg shadow transition-all focus:ring-2 focus:ring-brand/30">
+                  <span>💾 บันทึกข้อมูลและประมวลผล AI</span>
+                </button>
+              </div>
+            </div>
+
+          </form>
+
+          <!-- Domain Reference Guide & Policy Cards (Consistent with other Hub screens) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4">
+
+            <div class="bg-white p-5 rounded-[12px] border border-border shadow-sm">
+              <div class="w-7 h-7 rounded-md bg-blue-50 text-brand flex items-center justify-center font-bold text-xs mb-3">
+                1
+              </div>
+              <h4 class="font-bold text-sm text-ink mb-1.5">นโยบายรหัสสินค้า (Product SKU)</h4>
+              <p class="text-xs text-secondary leading-relaxed">
+                รหัสสินค้าถูกนำไปใช้เป็น Primary Key ในการแมปปิ้งกับระบบ ERP (SAP), สต็อกคลังสินค้า และรหัสสัญญาของลูกค้า รหัสต้องไม่ซ้ำกันในระบบ
+              </p>
+            </div>
+
+            <div class="bg-white p-5 rounded-[12px] border border-border shadow-sm">
+              <div class="w-7 h-7 rounded-md bg-emerald-50 text-success flex items-center justify-center font-bold text-xs mb-3">
+                2
+              </div>
+              <h4 class="font-bold text-sm text-ink mb-1.5">การตั้งราคาและการเชื่อมโยงโปรโมชัน</h4>
+              <p class="text-xs text-secondary leading-relaxed">
+                ราคาขายที่กรอกเป็นราคาขายปลีกมาตรฐาน หากต้องการให้มีส่วนลดตามยอดสั่งซื้อ (Tier pricing) หรือราคาสัญญาเฉพาะลูกค้า ให้กำหนดที่เมนูราคาลูกค้า
+              </p>
+            </div>
+
+            <div class="bg-white p-5 rounded-[12px] border border-border shadow-sm">
+              <div class="w-7 h-7 rounded-md bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs mb-3">
+                3
+              </div>
+              <h4 class="font-bold text-sm text-ink mb-1.5">ระบบจัดการภาพและ AI Auto-Tagging</h4>
+              <p class="text-xs text-secondary leading-relaxed">
+                รูปถ่ายที่อัปโหลดจะถูกส่งไปยังระบบประมวลผลเพื่อลบพื้นหลัง สร้าง thumbnail หลายขนาด และวิเคราะห์คีย์เวิร์ดของสินค้าสำหรับการค้นหาบนเว็บ
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Client-side Interactive Scripts for Language Switching & Mock Validation -->
+  <script>
+    function setLanguage(lang) {
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+      if (lang === 'th') {
+        thBtn.className = 'px-2.5 py-1 rounded-md bg-brand text-white shadow-sm transition-all';
+        enBtn.className = 'px-2.5 py-1 rounded-md text-secondary hover:text-ink transition-all';
+        document.documentElement.lang = 'th';
+      } else {
+        enBtn.className = 'px-2.5 py-1 rounded-md bg-brand text-white shadow-sm transition-all';
+        thBtn.className = 'px-2.5 py-1 rounded-md text-secondary hover:text-ink transition-all';
+        document.documentElement.lang = 'en';
+      }
+    }
+
+    function removeImage(slotNum) {
+      const slot = document.getElementById('slot-' + slotNum);
+      if (!slot) return;
+      slot.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+            รูปที่ ${slotNum} <span class="text-[11px] font-normal text-secondary">(ว่าง)</span>
+          </span>
+          <span class="text-[10px] text-slate-400">ลบเรียบร้อย</span>
+        </div>
+        <div class="aspect-square rounded-lg border-2 border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:bg-white hover:border-brand transition-all" onclick="triggerUploadMock()">
+          <div class="w-9 h-9 rounded-full bg-blue-50 text-brand flex items-center justify-center mb-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          </div>
+          <span class="text-xs font-medium text-ink">คลิกเพื่ออัปโหลด</span>
+          <span class="text-[10px] text-slate-400 mt-0.5">รูปถ่ายสินค้า</span>
+        </div>
+        <div class="mt-2 text-center">
+          <span class="text-[11px] text-slate-400">สามารถเลือกรูปใหม่ได้</span>
+        </div>
+      `;
+      updateImageCount();
+    }
+
+    function triggerUploadMock() {
+      alert("อัปโหลดรูปภาพได้สูงสุด 3 รูปเท่านั้นครับ!");
+    }
+
+    function updateImageCount() {
+      const countEl = document.getElementById('image-count-display');
+      if (countEl) {
+        let current = parseInt(countEl.textContent || '2', 10);
+        if (current > 1) {
+          countEl.textContent = (current - 1).toString();
+        }
+      }
+    }
+
+    function validateAndSubmit() {
+      const sku = document.getElementById('product-sku').value.trim();
+      const nameTh = document.getElementById('name-th').value.trim();
+      const nameEn = document.getElementById('name-en').value.trim();
+      const price = document.getElementById('product-price').value.trim();
+      const banner = document.getElementById('validation-banner');
+
+      if (!sku || !nameTh || !nameEn || !price) {
+        banner.classList.remove('hidden');
+        window.scrollTo({ top: 180, behavior: 'smooth' });
+      } else {
+        banner.classList.add('hidden');
+        alert("บันทึกข้อมูลและประมวลผลสินค้า " + sku + " เรียบร้อยแล้ว!");
+      }
+    }
+  </script>
+
+  <!-- ========================================================================= -->
+  <!-- MANDATORY EXACT INVISIBLE TRANSLATION DICTIONARY (KEYED BY ALL STRINGS) -->
+  <!-- ========================================================================= -->
+  <script id="commerce-ui-translations" type="application/json">
+{
+  "แบรนด์": {
+    "th": "แบรนด์",
+    "en": "Brand"
+  },
+  "หน่วยขาย": {
+    "th": "หน่วยขาย",
+    "en": "Sale Unit"
+  },
+  "อัปโหลดรูปภาพได้สูงสุด 3 รูปเท่านั้นครับ!": {
+    "th": "อัปโหลดรูปภาพได้สูงสุด 3 รูปเท่านั้นครับ!",
+    "en": "You can upload a maximum of 3 images only!"
+  },
+  "กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ": {
+    "th": "กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ",
+    "en": "Please fill in all required fields (* SKU, bilingual product names, and sale price)."
+  },
+  "✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ": {
+    "th": "✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ",
+    "en": "✨ Add new product with 3D image gallery upload system"
+  },
+  "📦 1. ข้อมูลหลักสินค้า (Global Info)": {
+    "th": "📦 1. ข้อมูลหลักสินค้า (Global Info)",
+    "en": "📦 1. Product Global Info"
+  },
+  "รหัสสินค้า (SKU) *": {
+    "th": "รหัสสินค้า (SKU) *",
+    "en": "Product SKU *"
+  },
+  "เช่น BIDBEK666640977": {
+    "th": "เช่น BIDBEK666640977",
+    "en": "e.g. BIDBEK666640977"
+  },
+  "หมวดหมู่สินค้า": {
+    "th": "หมวดหมู่สินค้า",
+    "en": "Product Category"
+  },
+  "เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)": {
+    "th": "เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)",
+    "en": "Leaf categories only — products are always bound to categories without sub-levels (type to search when open)"
+  },
+  "-- เลือกแบรนด์ --": {
+    "th": "-- เลือกแบรนด์ --",
+    "en": "-- Select Brand --"
+  },
+  "หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)": {
+    "th": "หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)",
+    "en": "Or type new brand code (if not yet in list)"
+  },
+  "เช่น ACME": {
+    "th": "เช่น ACME",
+    "en": "e.g. ACME"
+  },
+  "ราคาขาย (฿) *": {
+    "th": "ราคาขาย (฿) *",
+    "en": "Sale Price (฿) *"
+  },
+  "เช่น 100": {
+    "th": "เช่น 100",
+    "en": "e.g. 100"
+  },
+  "เช่น ชิ้น": {
+    "th": "เช่น ชิ้น",
+    "en": "e.g. piece"
+  },
+  "ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic": {
+    "th": "ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic",
+    "en": "Volume tier pricing (buy 5 get discount) is configured under Promotion Mechanic"
+  },
+  "จำนวนสต็อกเริ่มต้น": {
+    "th": "จำนวนสต็อกเริ่มต้น",
+    "en": "Initial Stock Quantity"
+  },
+  "ราคาตามจำนวนซื้อ (Tier)": {
+    "th": "ราคาตามจำนวนซื้อ (Tier)",
+    "en": "Tier Pricing (Volume Discount)"
+  },
+  "🇹🇭 2. ข้อมูลภาษาไทย (Thai Translation)": {
+    "th": "🇹🇭 2. ข้อมูลภาษาไทย (Thai Translation)",
+    "en": "🇹🇭 2. Thai Information (Thai Translation)"
+  },
+  "ชื่อสินค้า (ภาษาไทย) *": {
+    "th": "ชื่อสินค้า (ภาษาไทย) *",
+    "en": "Product Name (Thai) *"
+  },
+  "รายละเอียดสินค้าอย่างย่อ (ภาษาไทย)": {
+    "th": "รายละเอียดสินค้าอย่างย่อ (ภาษาไทย)",
+    "en": "Short Description (Thai)"
+  },
+  "🇺🇸 3. ข้อมูลภาษาอังกฤษ (English Translation)": {
+    "th": "🇺🇸 3. ข้อมูลภาษาอังกฤษ (English Translation)",
+    "en": "🇺🇸 3. English Information (English Translation)"
+  },
+  "ชื่อสินค้า (ภาษาอังกฤษ) *": {
+    "th": "ชื่อสินค้า (ภาษาอังกฤษ) *",
+    "en": "Product Name (English) *"
+  },
+  "รายละเอียดสินค้าอย่างย่อ (ภาษาอังกฤษ)": {
+    "th": "รายละเอียดสินค้าอย่างย่อ (ภาษาอังกฤษ)",
+    "en": "Short Description (English)"
+  },
+  "📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)": {
+    "th": "📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)",
+    "en": "📸 4. Product Gallery (Max 3 Images)"
+  },
+  "รูปที่": {
+    "th": "รูปที่",
+    "en": "Image #"
+  },
+  "🛑 ลบรูปนี้": {
+    "th": "🛑 ลบรูปนี้",
+    "en": "🛑 Remove this image"
+  },
+  "💾 บันทึกข้อมูลและประมวลผล AI": {
+    "th": "💾 บันทึกข้อมูลและประมวลผล AI",
+    "en": "💾 Save Data and Run AI Processing"
+  },
+  "ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้": {
+    "th": "ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้",
+    "en": "of Jagota to force REF_TOKEN to paid status — staging only, production backend will return"
+  },
+  "คาดว่าจะเกิด Credit Back ≈ ฿": {
+    "th": "คาดว่าจะเกิด Credit Back ≈ ฿",
+    "en": "Expected Credit Back ≈ ฿"
+  },
+  "เจ้าของแผน (อีเมล)": {
+    "th": "เจ้าของแผน (อีเมล)",
+    "en": "Plan Owner (Email)"
+  },
+  "เช่น วัฒนา": {
+    "th": "เช่น วัฒนา",
+    "en": "e.g. Wattana"
+  },
+  "ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร — แก้ไม่ได้หลังสร้าง": {
+    "th": "ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร — แก้ไม่ได้หลังสร้าง",
+    "en": "Lowercase a-z, numbers, and - (3–80 chars) — cannot be edited after creation"
+  },
+  "บันทึกราคาสัญญาไม่สำเร็จ": {
+    "th": "บันทึกราคาสัญญาไม่สำเร็จ",
+    "en": "Failed to save contract price"
+  },
+  "ผลลัพธ์": {
+    "th": "ผลลัพธ์",
+    "en": "Result"
+  },
+  "เมื่อลูกค้าเข้าสู่ระบบครั้งแรกบนแอป/เว็บ": {
+    "th": "เมื่อลูกค้าเข้าสู่ระบบครั้งแรกบนแอป/เว็บ",
+    "en": "When customer logs in for the first time on app/web"
+  },
+  "ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และ Campaign ได้โดยไม่ต้องเลือก Product set แต่ถ้าเลือก Product set ตอนบันทึก SKU และส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก": {
+    "th": "ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และ Campaign ได้โดยไม่ต้องเลือก Product set แต่ถ้าเลือก Product set ตอนบันทึก SKU และส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก",
+    "en": "Still usable as before. You can edit name, date, status, and campaign without choosing a product set. If selected, all previous SKUs and discounts will be replaced."
+  },
+  "รหัสผู้ใช้พนักงานขาย (Sales User ID)": {
+    "th": "รหัสผู้ใช้พนักงานขาย (Sales User ID)",
+    "en": "Sales User ID"
+  },
+  "รูปถ่าย": {
+    "th": "รูปถ่าย",
+    "en": "Photo"
+  },
+  "เลยกำหนด": {
+    "th": "เลยกำหนด",
+    "en": "Overdue"
+  },
+  "ส่งให้ josh อีกครั้ง": {
+    "th": "ส่งให้ josh อีกครั้ง",
+    "en": "Resend to Josh"
+  },
+  "สีพื้นหลังการ์ดเนื้อหา": {
+    "th": "สีพื้นหลังการ์ดเนื้อหา",
+    "en": "Card Content Background Color"
+  },
+  "โหลดรายชื่อเดิมไม่สำเร็จ — กดลองใหม่": {
+    "th": "โหลดรายชื่อเดิมไม่สำเร็จ — กดลองใหม่",
+    "en": "Failed to load original list — click to retry"
+  },
+  "ยังไม่ได้ตั้งค่า OneSignal": {
+    "th": "ยังไม่ได้ตั้งค่า OneSignal",
+    "en": "OneSignal is not configured yet"
+  }
+}
+  </script>
+</body>
+</html>

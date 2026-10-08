@@ -1,43 +1,53 @@
+@font-face {
+  font-family: 'Noto Sans Thai'; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url('./fonts/noto-sans-thai-thai-wght-normal.woff2') format('woff2');
+  unicode-range: U+0E00-0E7F, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Noto Sans Thai'; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url('./fonts/noto-sans-thai-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 /*
  * Shared design tokens for commerce-admin and commerce-portal.
- * Source of truth: the Stitch project "Commerce Platform — Admin + Portal refresh"
- * (exported screens live in docs/design/stitch/). Names match Stitch's Tailwind config,
- * so classes copied from a Stitch export (bg-surface-container-low, text-on-surface-variant…) work as-is.
+ * Current interaction system: docs/design/workspace-redesign.md.
+ * Original Stitch exports live in docs/design/stitch/. Token names stay compatible
+ * with existing screens (bg-surface-container-low, text-on-surface-variant…).
  *
  * Each app's styles.css does: @import "tailwindcss"; @import "<this file>"; @source "<libs/ui/src>";
  */
 @theme {
-  --font-sans: Inter, 'Noto Sans Thai', ui-sans-serif, system-ui, sans-serif;
-  --font-headline: Inter, 'Noto Sans Thai', sans-serif;
-  --font-body: Inter, 'Noto Sans Thai', sans-serif;
+  --font-sans: 'Noto Sans Thai', Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-headline: 'Noto Sans Thai', Inter, sans-serif;
+  --font-body: 'Noto Sans Thai', Inter, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-background: #f9f9ff;
-  --color-surface: #f9f9ff;
-  --color-surface-bright: #f9f9ff;
+  --color-background: #f6f8fc;
+  --color-surface: #f6f8fc;
+  --color-surface-bright: #f6f8fc;
   --color-surface-dim: #c7dbff;
-  --color-surface-tint: #3052d2;
-  --color-surface-variant: #d5e3ff;
+  --color-surface-tint: #365cf5;
+  --color-surface-variant: #dbe4f0;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f0f3ff;
-  --color-surface-container: #e7eeff;
-  --color-surface-container-high: #dee8ff;
-  --color-surface-container-highest: #d5e3ff;
-  --color-on-background: #1b3353;
-  --color-on-surface: #1b3353;
-  --color-on-surface-variant: #4a6083;
+  --color-surface-container-low: #f1f4fa;
+  --color-surface-container: #eaf0f8;
+  --color-surface-container-high: #e3eaf4;
+  --color-surface-container-highest: #dbe4f0;
+  --color-on-background: #17243b;
+  --color-on-surface: #17243b;
+  --color-on-surface-variant: #52627a;
   --color-inverse-surface: #070e19;
   --color-inverse-on-surface: #969dac;
   --color-inverse-primary: #6d88ff;
-  --color-outline: #657ca0;
-  --color-outline-variant: #9cb3da;
+  --color-outline: #64748b;
+  --color-outline-variant: #c5cfdd;
 
-  --color-primary: #3052d2;
-  --color-primary-dim: #2044c5;
+  --color-primary: #365cf5;
+  --color-primary-dim: #2948d4;
   --color-on-primary: #f9f6ff;
-  --color-primary-container: #dde1ff;
-  --color-on-primary-container: #1e43c5;
-  --color-primary-fixed: #dde1ff;
+  --color-primary-container: #e8edff;
+  --color-on-primary-container: #2948d4;
+  --color-primary-fixed: #e8edff;
   --color-primary-fixed-dim: #cbd2ff;
   --color-on-primary-fixed: #002fab;
   --color-on-primary-fixed-variant: #2d4ecf;
@@ -45,7 +55,7 @@
   --color-secondary: #5f5e62;
   --color-secondary-dim: #535356;
   --color-on-secondary: #fbf8fc;
-  --color-secondary-container: #e4e1e6;
+  --color-secondary-container: #e1e7f0;
   --color-on-secondary-container: #525155;
   --color-secondary-fixed: #e4e1e6;
   --color-secondary-fixed-dim: #d6d3d8;
@@ -81,14 +91,11 @@
     -webkit-font-smoothing: antialiased;
   }
   td, .tabular-nums { font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+  button:not(:disabled), a { -webkit-tap-highlight-color: transparent; }
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
 }
 
-/* Material Symbols (font loaded in each app's index.html), sized like the Stitch exports. */
-.material-symbols-outlined {
-  font-size: 18px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-}
+.cp-command-dialog { margin: 12vh auto auto; }

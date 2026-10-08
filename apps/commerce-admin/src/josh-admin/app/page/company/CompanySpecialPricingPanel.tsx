@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   bulkDeletePrivatePrices,
   createCompanyPrivatePrice,
@@ -10,10 +11,12 @@ import {
 import { DateRangeInput, Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_LABELS: Record<PrivatePriceListItem['status'], string> = {
-  active: 'ใช้งาน',
-  scheduled: 'รอเริ่ม',
-  expired: 'หมดอายุ',
+  get active(){return __uiText("ใช้งาน");},
+  get scheduled(){return __uiText("รอเริ่ม");},
+  get expired(){return __uiText("หมดอายุ");},
 };
 
 const STATUS_STYLES: Record<PrivatePriceListItem['status'], string> = {
@@ -29,6 +32,7 @@ type Props = {
 
 /** Company-level special / private price (Customer SKU → private_price). */
 export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) {
+  __useUiLocale();
   const [rows, setRows] = useState<PrivatePriceListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -55,7 +59,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           ? (err as { response?: { data?: { message?: string } } }).response
               ?.data?.message
           : undefined;
-      setError(message ?? 'โหลดราคาพิเศษไม่สำเร็จ');
+      setError(message ?? __uiMessage("โหลดราคาพิเศษไม่สำเร็จ"));
     } finally {
       setLoading(false);
     }
@@ -73,7 +77,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
 
   const handleBulkDelete = async () => {
     if (!selectedIds.length) return;
-    if (!window.confirm(`ลบราคาพิเศษ ${selectedIds.length} รายการ?`)) return;
+    if (!window.confirm(__uiText("ลบราคาพิเศษ {0} รายการ?", {"0": selectedIds.length}))) return;
     await bulkDeletePrivatePrices(selectedIds);
     setSelectedIds([]);
     await load();
@@ -96,7 +100,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           ? (err as { response?: { data?: { message?: string } } }).response
               ?.data?.message
           : undefined;
-      setError(message ?? 'นำเข้า CSV ไม่สำเร็จ');
+      setError(message ?? __uiMessage("นำเข้า CSV ไม่สำเร็จ"));
     } finally {
       setImporting(false);
     }
@@ -106,7 +110,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
     e.preventDefault();
     const price = Number(form.price);
     if (!form.sku.trim() || Number.isNaN(price)) {
-      setError('กรุณาระบุ SKU และราคา');
+      setError(__uiMessage("กรุณาระบุ SKU และราคา"));
       return;
     }
 
@@ -128,7 +132,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           ? (err as { response?: { data?: { message?: string } } }).response
               ?.data?.message
           : undefined;
-      setError(message ?? 'บันทึกราคาพิเศษไม่สำเร็จ');
+      setError(message ?? __uiMessage("บันทึกราคาพิเศษไม่สำเร็จ"));
     } finally {
       setSaving(false);
     }
@@ -141,17 +145,17 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
       render: (_, row) => (
         <input
           type="checkbox"
-          aria-label={`เลือกราคาพิเศษของ ${row.sku}`}
+          aria-label={__uiText("เลือกราคาพิเศษของ {0}", {"0": row.sku})}
           checked={selectedIds.includes(row.id)}
           onChange={() => toggleSelect(row.id)}
         />
       ),
     },
-    { key: 'sku', label: 'SKU' },
-    { key: 'product_name', label: 'ชื่อสินค้า' },
+    { key: 'sku', label: __uiText("SKU") },
+    { key: 'product_name', label: __uiText("ชื่อสินค้า") },
     {
       key: 'private_selling_price',
-      label: 'ราคาพิเศษ',
+      label: __uiText("ราคาพิเศษ"),
       render: (value, row) => (
         <button
           type="button"
@@ -165,17 +169,17 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
             await load();
           }}
         >
-          ฿{Number(value).toLocaleString()}
+          {__uiText("฿")}{Number(value).toLocaleString()}
         </button>
       ),
     },
     {
       key: 'start_date',
-      label: 'เริ่ม',
+      label: __uiText("เริ่ม"),
       render: (value, row) => (
         <input
           type="date"
-          aria-label={`วันที่เริ่มต้นราคาพิเศษของ ${row.sku}`}
+          aria-label={__uiText("วันที่เริ่มต้นราคาพิเศษของ {0}", {"0": row.sku})}
           value={String(value ?? '')}
           onChange={async (e) => {
             const next = e.target.value;
@@ -189,11 +193,11 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
     },
     {
       key: 'end_date',
-      label: 'สิ้นสุด',
+      label: __uiText("สิ้นสุด"),
       render: (value, row) => (
         <input
           type="date"
-          aria-label={`วันที่สิ้นสุดราคาพิเศษของ ${row.sku}`}
+          aria-label={__uiText("วันที่สิ้นสุดราคาพิเศษของ {0}", {"0": row.sku})}
           value={value ? String(value) : ''}
           min={row.start_date}
           onChange={async (e) => {
@@ -208,7 +212,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: PrivatePriceListItem['status']) => (
         <span
           className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[value]}`}
@@ -225,13 +229,12 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           type="button"
           className="text-xs text-red-600 hover:underline"
           onClick={async () => {
-            if (!window.confirm('ลบราคาพิเศษนี้?')) return;
+            if (!window.confirm(__uiText("ลบราคาพิเศษนี้?"))) return;
             await deletePrivatePrice(row.id);
             await load();
           }}
         >
-          ลบ
-        </button>
+          {__uiText("ลบ")}</button>
       ),
     },
   ];
@@ -239,15 +242,13 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
   return (
     <div className="grid gap-4">
       <p className="text-sm text-gray-500">
-        ราคาพิเศษระดับบริษัท (Customer SKU) — เว้นสาขา = ใช้ทุกสาขาของบริษัทนี้
-      </p>
+        {__uiText("ราคาพิเศษระดับบริษัท (Customer SKU) — เว้นสาขา = ใช้ทุกสาขาของบริษัทนี้")}</p>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       <div className="flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-xs text-gray-500">
-          นำเข้า CSV (SKU, price, start_date, end_date)
-          <input
+          {__uiText("นำเข้า CSV (SKU, price, start_date, end_date)")}<input
             type="file"
             accept=".csv"
             disabled={importing}
@@ -265,7 +266,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
             onClick={() => void handleBulkDelete()}
             className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
           >
-            ลบที่เลือก ({selectedIds.length})
+            {__uiText("ลบที่เลือก (")}{selectedIds.length})
           </button>
         )}
       </div>
@@ -275,22 +276,22 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
         className="grid gap-3 rounded-lg border border-gray-100 bg-gray-50 p-4 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_2fr_auto]"
       >
         <Input
-          label="รหัสสินค้า (SKU)"
+          label={__uiText("รหัสสินค้า (SKU)")}
           value={form.sku}
           onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))}
         />
         <Input
-          label="ราคาพิเศษ (บาท)"
+          label={__uiText("ราคาพิเศษ (บาท)")}
           type="number"
           value={form.price}
           onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
         />
         <Select
-          label="สาขา"
+          label={__uiText("สาขา")}
           value={form.branch_id}
           onChange={(e) => setForm((f) => ({ ...f, branch_id: e.target.value }))}
         >
-          <option value="">ทุกสาขา (company-wide)</option>
+          <option value="">{__uiText("ทุกสาขา (company-wide)")}</option>
           {branches.map((b) => (
             <option key={b.id} value={b.id}>
               {b.name}
@@ -298,7 +299,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           ))}
         </Select>
         <DateRangeInput
-          label="ช่วงวันที่มีผล"
+          label={__uiText("ช่วงวันที่มีผล")}
           startDate={form.start_date}
           endDate={form.end_date}
           onStartDateChange={(v) => setForm((f) => ({ ...f, start_date: v }))}
@@ -310,14 +311,14 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           disabled={saving}
           className="h-10 self-end rounded-lg bg-gray-900 px-4 text-sm font-medium text-white disabled:opacity-50"
         >
-          {saving ? 'กำลังบันทึก...' : 'เพิ่มราคา'}
+          {saving ? __uiText("กำลังบันทึก...") : __uiText("เพิ่มราคา")}
         </button>
       </form>
 
       {loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-gray-500">ยังไม่มีราคาพิเศษสำหรับบริษัทนี้</p>
+        <p className="text-sm text-gray-500">{__uiText("ยังไม่มีราคาพิเศษสำหรับบริษัทนี้")}</p>
       ) : (
         <Table columns={columns} data={rows} idKey="id" />
       )}

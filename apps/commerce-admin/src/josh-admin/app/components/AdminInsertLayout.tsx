@@ -1,7 +1,9 @@
-import { Button } from '@josh/shared-ui-web';
+import { Button, PageHeader, Panel } from '@cp/ui';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type AdminInsertLayoutProps = {
   title: string;
   subtitle?: string;
@@ -31,36 +33,18 @@ export function AdminInsertLayout({
   headerActions,
   children,
 }: AdminInsertLayoutProps) {
+  __useUiLocale();
   const navigate = useNavigate();
   const handleBack = () => (onBack ? onBack() : backPath ? navigate(backPath) : navigate(-1));
 
   return (
-    <div className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto p-4 md:p-6`}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <button
-            type="button"
-            onClick={handleBack}
-            className="text-sm text-ink-muted hover:text-ink mb-2"
-          >
-            ← กลับ
-          </button>
-          <h1 className="text-xl font-bold leading-7 text-ink">{title}</h1>
-          {subtitle && <p className="text-sm text-ink-muted mt-1">{subtitle}</p>}
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {headerActions}
-          <Button variant="secondary" text="ยกเลิก" onClick={handleBack} />
-          <Button
-            variant="primary"
-            text={saving ? 'กำลังบันทึก...' : saveLabel}
-            onClick={onSave}
-          />
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-level-1 p-6 flex flex-col gap-5">
-        {children}
+    <div className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`}>
+      <Button variant="ghost" icon="arrow_back" onClick={handleBack}>{__uiText("กลับ")}</Button>
+      <PageHeader title={title} subtitle={subtitle} actions={headerActions} />
+      <Panel className="p-4 md:p-6 flex flex-col gap-5">{children}</Panel>
+      <div className="sticky bottom-0 z-20 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-secondary-container bg-white/95 p-3 shadow-sm backdrop-blur-sm">
+        <Button variant="secondary" onClick={handleBack} disabled={saving}>{__uiText("ยกเลิก")}</Button>
+        <Button variant="primary" icon="check" onClick={onSave} disabled={saving}>{saving ? __uiText("กำลังบันทึก...") : __uiText(saveLabel)}</Button>
       </div>
     </div>
   );

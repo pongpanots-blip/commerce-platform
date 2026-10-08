@@ -17,6 +17,8 @@ import {
   useUnsavedChangesGuard,
 } from './useUnsavedChangesGuard';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function PageEditor({
   page,
   campaigns,
@@ -24,6 +26,7 @@ function PageEditor({
   page: PromotionPageSummary | null;
   campaigns: CampaignListItem[];
 }) {
+  __useUiLocale();
   const navigate = useNavigate();
   // Bumped on every save so an open History section refetches.
   const [historyKey, setHistoryKey] = useState(0);
@@ -41,8 +44,8 @@ function PageEditor({
   return (
     <LeaveGuardContext.Provider value={guard.context}>
       <AdminInsertLayout
-        title={page ? 'แก้ไขหน้าโปรโมชัน' : 'สร้างหน้าโปรโมชัน'}
-        subtitle="แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish"
+        title={page ? __uiText("แก้ไขหน้าโปรโมชัน") : __uiText("สร้างหน้าโปรโมชัน")}
+        subtitle={__uiText("แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish")}
         saving={state.saving}
         wide
         onBack={() =>
@@ -56,8 +59,7 @@ function PageEditor({
             role="status"
             className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
           >
-            บันทึกแล้ว
-          </div>
+            {__uiText("บันทึกแล้ว")}</div>
         )}
         <PageFormFields state={state} campaigns={campaigns} />
         {page && (
@@ -75,6 +77,7 @@ function PageEditor({
 }
 
 function PageEditorLoader({ id }: { id?: string }) {
+  __useUiLocale();
   const [page, setPage] = useState<PromotionPageSummary | null>(null);
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,14 +109,14 @@ function PageEditorLoader({ id }: { id?: string }) {
   }, [id, reloadKey]);
 
   if (loading)
-    return <div className="p-6 text-sm text-ink-muted">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
   if (loadError) {
     return (
       <div className="mx-auto max-w-3xl p-6">
         <CouponFormErrorBanner error={loadError} />
         <Button
           variant="secondary"
-          text="ลองใหม่"
+          text={__uiText("ลองใหม่")}
           onClick={() => {
             setLoading(true);
             setReloadKey((key) => key + 1);

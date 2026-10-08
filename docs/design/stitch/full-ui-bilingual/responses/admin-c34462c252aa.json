@@ -1,0 +1,356 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "designSystem": {
+              "designSystem": {
+                "displayName": "Siam Operations Direct",
+                "styleGuidelines": "## Brand & Style\n\nThis design system is engineered for high-throughput enterprise commerce operations in Thailand. The visual posture is strictly professional, highly legible, structured, and modern B2B SaaS. It merges crisp technical efficiency with effortless Thai and Latin dual-script readability.\n\n### Aesthetic Tone\n- **Utilitarian Elegance:** Information-dense without clutter. Crisp boundaries establish clear structural mental models for merchants and ops teams.\n- **Cognitive Clarity:** High functional contrast between structural controls, actionable states, and informational feedback indicators.\n- **Regional Precision:** Native balance between Latin script alphanumeric identifiers (SKUs, currency amounts, order IDs) and Thai script status descriptions, prompts, and titles.\n\n## Layout & Spacing\n\nThe layout is built around a persistent 256px operational sidebar coupled with a fluid main canvas designed for data-heavy workflows.\n\n### Grid & Layout Structure\n- **Sidebar Navigation:** Fixed width of `256px`, height 100vh, surface-level background, separating structural platform routing from the interactive canvas.\n- **Main Viewport Canvas:** Fluid grid with adaptive columns (`4` on mobile `<768px`, `8` on tablet `<1200px`, `12` on desktop `≥1200px`).\n- **Maximum Content Constraints:** Data tables and canvas workspaces span fluidly across the canvas with a standard minimum padding of `24px` (`space-lg`) on desktop screens.\n- **Density System:** Tables and compact list views operate on an 8px vertical baseline, while standard card views utilize a 16px spatial step.\n\n## Elevation & Depth\n\nVisual hierarchy is maintained primarily through surface contrasts and crisp 1px borders rather than heavy dropshadows, avoiding visual mud in data grids.\n\n### Layers\n- **Base Canvas (`Level 0`):** `#F6F8FC` — non-elevated background for overall application layout.\n- **Structured Container (`Level 1`):** `#FFFFFF` fill with a crisp `1px solid #E1E7F0` outline. Shadows are absent or limited to `0 1px 2px rgba(23, 36, 59, 0.04)`.\n- **Interactive Flyouts & Menus (`Level 2`):** `#FFFFFF` fill with `1px solid #E1E7F0` and an ambient shadow `0 4px 16px -2px rgba(23, 36, 59, 0.08)`. Used for dropdowns, datepickers, and bulk action drawers.\n- **Modal Overlays (`Level 3`):** `#FFFFFF` with `0 12px 32px -4px rgba(23, 36, 59, 0.14)` over a semi-transparent backdrop (`rgba(23, 36, 59, 0.4)`).\n\n## Components\n\n### Buttons\n- **Primary:** Solid `#365CF5` fill, `#FFFFFF` text, `8px` radius, 36px standard operational height (44px on touch), bold label text. Hover: `#2848D6`.\n- **Secondary / Outline:** `#FFFFFF` fill, `1px solid #E1E7F0`, `#17243B` text. Hover: `#F6F8FC` background, `#365CF5` border.\n- **Destructive:** Solid `#C2333F` or `#FFFFFF` with `#C2333F` text and border for secondary destruction.\n\n### Data Tables\n- **Container:** Wrapped in a `12px` rounded card with `1px solid #E1E7F0`.\n- **Header Row:** Background `#F6F8FC`, text `#52627A`, uppercase or medium weight, `12px` font size, `1px solid #E1E7F0` bottom boundary.\n- **Data Rows:** Height 48px standard (36px high-density toggle), alternating `#FFFFFF` rows with hover highlight `#F8FAFD`. All numbers rendered in tabular lining figures.\n\n### Status Chips & Badges\n- **Success (e.g., \"ชำระเงินแล้ว\" / Paid):** `#157347` text with 10% `#157347` background tint, no heavy border.\n- **Pending (e.g., \"รอตรวจสอบ\" / In Review):** `#B08900` text with 10% `#B08900` background tint.\n- **Failure (e.g., \"ยกเลิกแล้ว\" / Cancelled):** `#C2333F` text with 10% `#C2333F` background tint.\n\n### Inputs & Form Fields\n- **Container:** 38px height, `8px` radius, background `#FFFFFF`, border `1px solid #E1E7F0`, text `#17243B`.\n- **Focus State:** Border color `#365CF5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- **Thai Typography Alignment:** Baseline adjusted vertically to ensure centered visual weight between Thai vowels, tone marks, and input borders.\n\n### Checkboxes & Radios\n- **Unchecked:** `1px solid #E1E7F0`, `#FFFFFF` surface.\n- **Checked:** `#365CF5` background fill with `#FFFFFF` iconography. `4px` radius for checkboxes, full circle for radio buttons.\n\n### Cards\n- **Structure:** `#FFFFFF` background, `12px` border radius, `1px solid #E1E7F0` outline, `16px` to `24px` internal padding. Dividers use `#E1E7F0`.",
+                "theme": {
+                  "bodyFont": "NOTO_SANS",
+                  "bodyFontFamily": "Noto Sans",
+                  "colorMode": "LIGHT",
+                  "colorVariant": "FIDELITY",
+                  "customColor": "#365cf5",
+                  "designMd": "---\nname: Siam Operations Direct\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#006139'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#217b4e'\n  on-tertiary-container: '#b7ffcf'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#9ef5be'\n  tertiary-fixed-dim: '#82d8a3'\n  on-tertiary-fixed: '#002110'\n  on-tertiary-fixed-variant: '#00522f'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  display-lg:\n    fontFamily: Noto Sans\n    fontSize: 32px\n    fontWeight: '700'\n    lineHeight: 40px\n    letterSpacing: -0.02em\n  headline-lg:\n    fontFamily: Noto Sans\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.01em\n  headline-md:\n    fontFamily: Noto Sans\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n  headline-sm:\n    fontFamily: Noto Sans\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Noto Sans\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 24px\n  body-md:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 20px\n  body-sm:\n    fontFamily: Noto Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 18px\n  label-lg:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 20px\n  label-md:\n    fontFamily: Noto Sans\n    fontSize: 12px\n    fontWeight: '500'\n    lineHeight: 16px\n  label-sm:\n    fontFamily: Noto Sans\n    fontSize: 11px\n    fontWeight: '600'\n    lineHeight: 14px\n    letterSpacing: 0.04em\n  data-tabular:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 20px\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  gutter: 1rem\n  gutter-desktop: 1.5rem\n  margin: 1rem\n  margin-desktop: 1.5rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n---\n\n## Brand & Style\n\nThis design system is engineered for high-throughput enterprise commerce operations in Thailand. The visual posture is strictly professional, highly legible, structured, and modern B2B SaaS. It merges crisp technical efficiency with effortless Thai and Latin dual-script readability.\n\n### Aesthetic Tone\n- **Utilitarian Elegance:** Information-dense without clutter. Crisp boundaries establish clear structural mental models for merchants and ops teams.\n- **Cognitive Clarity:** High functional contrast between structural controls, actionable states, and informational feedback indicators.\n- **Regional Precision:** Native balance between Latin script alphanumeric identifiers (SKUs, currency amounts, order IDs) and Thai script status descriptions, prompts, and titles.\n\n## Colors\n\nThe palette establishes an operational canvas engineered for sustained focus, minimizing eye fatigue across multi-hour back-office shifts.\n\n### Palette Architecture\n- **Canvas Base (`#F6F8FC`):** Soft, low-strain cool slate canvas that defines spatial boundaries without the stark glare of pure `#FFFFFF`.\n- **Surface Layer (`#FFFFFF`):** Reserved for card containers, data grids, modal panels, and elevated operational context blocks.\n- **Border / Structural Dividers (`#E1E7F0`):** Defines clean cell grids, card perimeters, horizontal rules, and disabled input contours.\n- **Primary Action (`#365CF5`):** High-signal cobalt blue reserved for primary interactive states, system anchors, focused borders, and selected statuses.\n- **Primary Ink (`#17243B`):** Deep navy-charcoal delivering maximum contrast for key figures, metrics, headers, and active table text.\n- **Secondary Ink (`#52627A`):** Neutral slate tone for field labels, secondary actions, helper text, and metadata.\n- **Functional Semantics:**\n  - **Success (`#157347`):** Payment settled, inventory synced, fulfillment complete.\n  - **Warning (`#B08900`):** Low inventory alerts, pending verification, payment timeouts.\n  - **Error (`#C2333F`):** Order cancelled, sync failed, payment declined.\n\n## Typography\n\nNoto Sans Thai provides the baseline typographical infrastructure, optimized for simultaneous rendering of Thai complex script tone marks and precise Latin operational terms.\n\n### Rules & Hierarchy\n- **Line Heights:** Thai ascenders and descenders require generous vertical clearances. Standard body text must not go below a 1.4x line-height ratio to prevent diacritical marks from clipping or clashing.\n- **Tabular Figures:** All numeric displays (pricing in THB ฿, batch counts, SKU quantities, dates) must use `font-variant-numeric: tabular-nums` for seamless table scanning.\n- **Labels & Headers:** Field labels avoid all-caps formatting when Thai characters are present to preserve natural glyph shapes.\n\n## Layout & Spacing\n\nThe layout is built around a persistent 256px operational sidebar coupled with a fluid main canvas designed for data-heavy workflows.\n\n### Grid & Layout Structure\n- **Sidebar Navigation:** Fixed width of `256px`, height 100vh, surface-level background, separating structural platform routing from the interactive canvas.\n- **Main Viewport Canvas:** Fluid grid with adaptive columns (`4` on mobile `<768px`, `8` on tablet `<1200px`, `12` on desktop `≥1200px`).\n- **Maximum Content Constraints:** Data tables and canvas workspaces span fluidly across the canvas with a standard minimum padding of `24px` (`space-lg`) on desktop screens.\n- **Density System:** Tables and compact list views operate on an 8px vertical baseline, while standard card views utilize a 16px spatial step.\n\n## Elevation & Depth\n\nVisual hierarchy is maintained primarily through surface contrasts and crisp 1px borders rather than heavy dropshadows, avoiding visual mud in data grids.\n\n### Layers\n- **Base Canvas (`Level 0`):** `#F6F8FC` — non-elevated background for overall application layout.\n- **Structured Container (`Level 1`):** `#FFFFFF` fill with a crisp `1px solid #E1E7F0` outline. Shadows are absent or limited to `0 1px 2px rgba(23, 36, 59, 0.04)`.\n- **Interactive Flyouts & Menus (`Level 2`):** `#FFFFFF` fill with `1px solid #E1E7F0` and an ambient shadow `0 4px 16px -2px rgba(23, 36, 59, 0.08)`. Used for dropdowns, datepickers, and bulk action drawers.\n- **Modal Overlays (`Level 3`):** `#FFFFFF` with `0 12px 32px -4px rgba(23, 36, 59, 0.14)` over a semi-transparent backdrop (`rgba(23, 36, 59, 0.4)`).\n\n## Shapes\n\nThe design uses a dual-radius philosophy to separate actionable UI controls from content surfaces.\n\n### Radius System\n- **Cards & Data Panels:** `12px` border radius (`rounded-lg`), establishing clear sectional grouping and modern framing.\n- **Interactive Controls:** `8px` border radius (`rounded`), applied strictly to input fields, search boxes, buttons, dropdown selectors, and modal dialog footers.\n- **Status Badges & Chips:** `6px` or `9999px` (pill) depending on operational context; standard tabular status indicators default to `6px` to maintain typographic alignment.\n\n## Components\n\n### Buttons\n- **Primary:** Solid `#365CF5` fill, `#FFFFFF` text, `8px` radius, 36px standard operational height (44px on touch), bold label text. Hover: `#2848D6`.\n- **Secondary / Outline:** `#FFFFFF` fill, `1px solid #E1E7F0`, `#17243B` text. Hover: `#F6F8FC` background, `#365CF5` border.\n- **Destructive:** Solid `#C2333F` or `#FFFFFF` with `#C2333F` text and border for secondary destruction.\n\n### Data Tables\n- **Container:** Wrapped in a `12px` rounded card with `1px solid #E1E7F0`.\n- **Header Row:** Background `#F6F8FC`, text `#52627A`, uppercase or medium weight, `12px` font size, `1px solid #E1E7F0` bottom boundary.\n- **Data Rows:** Height 48px standard (36px high-density toggle), alternating `#FFFFFF` rows with hover highlight `#F8FAFD`. All numbers rendered in tabular lining figures.\n\n### Status Chips & Badges\n- **Success (e.g., \"ชำระเงินแล้ว\" / Paid):** `#157347` text with 10% `#157347` background tint, no heavy border.\n- **Pending (e.g., \"รอตรวจสอบ\" / In Review):** `#B08900` text with 10% `#B08900` background tint.\n- **Failure (e.g., \"ยกเลิกแล้ว\" / Cancelled):** `#C2333F` text with 10% `#C2333F` background tint.\n\n### Inputs & Form Fields\n- **Container:** 38px height, `8px` radius, background `#FFFFFF`, border `1px solid #E1E7F0`, text `#17243B`.\n- **Focus State:** Border color `#365CF5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- **Thai Typography Alignment:** Baseline adjusted vertically to ensure centered visual weight between Thai vowels, tone marks, and input borders.\n\n### Checkboxes & Radios\n- **Unchecked:** `1px solid #E1E7F0`, `#FFFFFF` surface.\n- **Checked:** `#365CF5` background fill with `#FFFFFF` iconography. `4px` radius for checkboxes, full circle for radio buttons.\n\n### Cards\n- **Structure:** `#FFFFFF` background, `12px` border radius, `1px solid #E1E7F0` outline, `16px` to `24px` internal padding. Dividers use `#E1E7F0`.",
+                  "font": "NOTO_SANS",
+                  "headlineFont": "NOTO_SANS",
+                  "headlineFontFamily": "Noto Sans",
+                  "labelFont": "NOTO_SANS",
+                  "labelFontFamily": "Noto Sans",
+                  "namedColors": {
+                    "background": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "error_container": "#ffdad6",
+                    "inverse_on_surface": "#ecf0ff",
+                    "inverse_primary": "#b9c3ff",
+                    "inverse_surface": "#243048",
+                    "on_background": "#0e1b32",
+                    "on_error": "#ffffff",
+                    "on_error_container": "#93000a",
+                    "on_primary": "#ffffff",
+                    "on_primary_container": "#ededff",
+                    "on_primary_fixed": "#001257",
+                    "on_primary_fixed_variant": "#0034c0",
+                    "on_secondary": "#ffffff",
+                    "on_secondary_container": "#54647c",
+                    "on_secondary_fixed": "#0b1c31",
+                    "on_secondary_fixed_variant": "#38485e",
+                    "on_surface": "#0e1b32",
+                    "on_surface_variant": "#444655",
+                    "on_tertiary": "#ffffff",
+                    "on_tertiary_container": "#b7ffcf",
+                    "on_tertiary_fixed": "#002110",
+                    "on_tertiary_fixed_variant": "#00522f",
+                    "outline": "#747687",
+                    "outline_variant": "#c4c5d8",
+                    "primary": "#0a3fdc",
+                    "primary_container": "#365cf5",
+                    "primary_fixed": "#dde1ff",
+                    "primary_fixed_dim": "#b9c3ff",
+                    "secondary": "#4f5f77",
+                    "secondary_container": "#d0e1fd",
+                    "secondary_fixed": "#d3e3ff",
+                    "secondary_fixed_dim": "#b7c7e3",
+                    "surface": "#f9f9ff",
+                    "surface_bright": "#f9f9ff",
+                    "surface_container": "#e8eeff",
+                    "surface_container_high": "#e0e8ff",
+                    "surface_container_highest": "#d7e2ff",
+                    "surface_container_low": "#f1f3ff",
+                    "surface_container_lowest": "#ffffff",
+                    "surface_dim": "#cddaf9",
+                    "surface_tint": "#214ce7",
+                    "surface_variant": "#d7e2ff",
+                    "tertiary": "#006139",
+                    "tertiary_container": "#217b4e",
+                    "tertiary_fixed": "#9ef5be",
+                    "tertiary_fixed_dim": "#82d8a3"
+                  },
+                  "overrideNeutralColor": "#17243b",
+                  "overridePrimaryColor": "#365cf5",
+                  "overrideSecondaryColor": "#52627a",
+                  "overrideTertiaryColor": "#157347",
+                  "roundness": "ROUND_EIGHT",
+                  "spacing": {
+                    "gutter": "1rem",
+                    "gutter-desktop": "1.5rem",
+                    "margin": "1rem",
+                    "margin-desktop": "1.5rem",
+                    "space-lg": "1.5rem",
+                    "space-md": "1rem",
+                    "space-sm": "0.5rem",
+                    "space-xl": "2rem",
+                    "space-xs": "0.25rem"
+                  },
+                  "spacingScale": 2,
+                  "typography": {
+                    "body-lg": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "16px",
+                      "fontWeight": "400",
+                      "lineHeight": "24px"
+                    },
+                    "body-md": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "400",
+                      "lineHeight": "20px"
+                    },
+                    "body-sm": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "12px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "data-tabular": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "20px"
+                    },
+                    "display-lg": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "32px",
+                      "fontWeight": "700",
+                      "letterSpacing": "-0.02em",
+                      "lineHeight": "40px"
+                    },
+                    "headline-lg": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "24px",
+                      "fontWeight": "600",
+                      "letterSpacing": "-0.01em",
+                      "lineHeight": "32px"
+                    },
+                    "headline-md": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "20px",
+                      "fontWeight": "600",
+                      "lineHeight": "28px"
+                    },
+                    "headline-sm": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "16px",
+                      "fontWeight": "600",
+                      "lineHeight": "24px"
+                    },
+                    "label-lg": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "500",
+                      "lineHeight": "20px"
+                    },
+                    "label-md": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "12px",
+                      "fontWeight": "500",
+                      "lineHeight": "16px"
+                    },
+                    "label-sm": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "11px",
+                      "fontWeight": "600",
+                      "letterSpacing": "0.04em",
+                      "lineHeight": "14px"
+                    }
+                  }
+                }
+              },
+              "name": "assets/b25d6f28ff8f4db093059b5dd01d96d0",
+              "version": "1"
+            },
+            "deviceType": "DESKTOP",
+            "generatedBy": "figaro_agent",
+            "height": "2160",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2E2M2M1YzI1YzkwMjQ3NjA4YzEwYjFjNmY2NDAxNzNkEgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM2MTIyMTk3ODc0NTk2MTMwMTQx&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/6122197874596130141/files/161f81afe6e4466cbecb7e8cf472b0d4"
+            },
+            "id": "914248705a334f26bcf2ef8044776a60",
+            "name": "projects/6122197874596130141/screens/914248705a334f26bcf2ef8044776a60",
+            "prompt": "Create a polished, production-grade Commerce Platform desktop management screen for Siam Commerce (สยาม คอมเมิร์ซ) adhering strictly to the design system and specifications:\n\n1. Identification & Routing:\n- Route identifier: admin-c34462c252aa\n- URL: /j/smart-links\n- App: admin\n- Category: การตลาด (Marketing)\n- Component: SmartLinksPage\n- View type: screen\n- Title: Smart links (Smart Links)\n- Subtitle / context description: \"ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking\"\n\n2. Layout Structure & Specifications:\n- 256px Fixed Sidebar (SideNavBar) on the left matching existing screens (Siam Commerce logo, 7 categories: สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด [ACTIVE tab with blue accent], รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน; footer links: คู่มือใช้งาน, ออกจากระบบ).\n- Compact contextual Top Header with breadcrumb (\"การตลาด / Smart Links\"), badge \"ข้อมูลตัวอย่าง / Sample data\", language toggle button \"ไทย / English\", notifications, help icon, and admin user avatar \"แอดมินผู้ดูแลระบบ Siam Commerce Hub\".\n- Main canvas background #f6f8fc, container max-w-[1240px] centered, white cards with 12px rounded corners, restrained borders #e1e7f0, primary blue #365cf5, ink #17243b, secondary text #52627a.\n- Standard typography using Noto Sans Thai / sans-serif.\n\n3. Page Header & Key Actions:\n- Page title: \"Smart Links\" (with Thai description: \"ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking\").\n- Status bar / notice with small badge \"ข้อมูลตัวอย่าง / Sample data\".\n- Primary Action button: \"+ สร้างลิงก์\" (Create Link).\n- Secondary action: Refresh button (\"รีเฟรช\") or Analytics shortcut.\n\n4. Metrics / Overview Cards (Task-focused):\n- Total Smart Links (เช่น 18 ลิงก์)\n- Active links (สถานะ Active)\n- Clicks & Conversions 30d (จำนวนคลิก & สถิติ)\n- Top Campaign / Channel (TikTok, Meta Ads, LINE OA)\n\n5. Search & Filters Bar:\n- Search input with placeholder: \"ค้นหา slug / title\" and search button/icon \"ค้นหา\" / \"ค้นหาลิงก์\". Note caption: \"เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป\".\n- Filter dropdown by Status: \"Status\" (All, \"Active\", \"Inactive\").\n- Filter by destination type (Product, Promotion, Custom).\n\n6. Data Table (Core Records):\n- Columns:\n  * \"Link\" (Title & Slug / Smart URL e.g. `siam.link/super-sale-11`, `siam.link/wagyu-promo`, with click-to-copy action)\n  * \"Web destination\" (Target web URL e.g. `shop.siamcommerce.co.th/p/wagyu-a5`) & App Deep Link routing (iOS / Android Universal Links)\n  * \"Status\" (Badges: \"Active\" [green #157347 badge] / \"Inactive\" [neutral/gray badge])\n  * \"Expires\" (Expiration date e.g. \"31 ธ.ค. 2025\" or \"ไม่มีวันหมดอายุ\")\n  * \"Analytics\" (Clicks count, CTR, Conversion rate)\n  * \"Actions\" (Dropdown or button actions: \"Edit\", \"Deactivate\", \"Delete\")\n- Include rich sample data records (marked as ข้อมูลตัวอย่าง):\n  1. Title: \"โปรเปิดตัวเนื้อสันคอวากิว A5\" | Slug: `siam.link/wagyu-a5` | Dest: `/products/SKU-BF-001` | Status: Active | Clicks: 24,890 | Expires: 30 พ.ย. 2025\n  2. Title: \"แคมเปญ 11.11 ซื้อ 1 แถม 1 วัตถุดิบเบเกอรี่\" | Slug: `siam.link/baking-1111` | Dest: `/campaign/baking-mega` | Status: Active | Clicks: 52,140 | Expires: 12 พ.ย. 2025\n  3. Title: \"คูปองส่งฟรี ยอดสั่ง 1,500 บาทขึ้นไป\" | Slug: `siam.link/freeship-1500` | Dest: `/vouchers/freeship` | Status: Active | Clicks: 14,200 | Expires: 31 ธ.ค. 2025\n  4. Title: \"Flash Sale เนยสดพรีเมียม Pure Butter\" | Slug: `siam.link/flash-butter` | Dest: `/products/SKU-PB-404` | Status: Inactive | Clicks: 8,450 | Expires: 15 ต.ค. 2025\n- Pagination controls with current page indicator.\n\n7. Interactive Create / Edit Modal (or Inline Sliding Panel):\n- Named Dialog / Sheet: \"+ สร้างลิงก์\" (Create Smart Link).\n- Fields:\n  * ชื่อลิงก์ (Title)\n  * Custom Slug (`siam.link/...`)\n  * ปลายทางเว็บ (\"Web destination\")\n  * iOS Deep Link & Android App Link fallback\n  * UTM Tracking Parameters (utm_source, utm_medium, utm_campaign)\n  * กำหนดวันหมดอายุ (\"Expires\")\n- Buttons: \"ยกเลิก\" (Cancel) & \"บันทึก\" (Save).\n\n8. CRITICAL TRANSLATION SCRIPT REQUIREMENT:\nThe exported HTML MUST include an invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` object keyed by EVERY exact source string from the user prompt:\n[\"ค้นหา\",\"Status\",\"Expires\",\"Actions\",\"Delete\",\"Analytics\",\"Smart Links\",\"Active\",\"Inactive\",\"กำลังโหลด…\",\"Link\",\"Web destination\",\"Edit\",\"Deactivate\",\"ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking\",\"ค้นหาลิงก์\",\"ค้นหา slug / title\",\"+ สร้างลิงก์\",\"ยังไม่มี smart link — กด \\\"สร้างลิงก์\\\"\",\"เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป\",\"ข้อมูลโภชนาการ\",\"คำขอคืนเงิน / คืนสินค้า\",\"จำนวนหมวดหมู่\",\"เช็คทุก\",\"ดึงราคาอัตโนมัติรายชั่วโมง หลังยืนยันคู่สินค้าและตั้งค่าระบบดึงราคา\",\"ตารางสินค้า ·\",\"เนื้อหา (bodySize)\",\"ปล่อยว่างไว้เพื่อไม่แก้ไข — ระบบจะไม่บันทึกทับด้วยค่าว่าง\",\"แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ\",\"เมื่อเงื่อนไขเริ่ม (เช่น ฝนเริ่มตก) — ทุกคนที่เข้าเว็บช่วงนั้น จะเข้า workflow (สูงสุดวันละ 1 ครั้ง/เครื่อง) แล้วกด\",\"ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging\",\"ยังอ่านสินค้าจากลิงก์นี้ไม่ได้\",\"ระบบอ่านชื่อไฟล์ได้ แต่ไม่พบรหัสสินค้าที่ตรงกันในระบบ ตัวอย่างจากชุดนี้:\",\"รูปภาพสไลด์ที่ {0} (URL)\",\"เลขทะเบียน\",\"เว้นว่าง = ใช้รหัสเดิม\",\"สัดส่วนภาพ (Aspect Ratio)\",\"หน้าโปร\",\"อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต\",\"รหัสเมนู (Cuisine ID)\",\"ข้าม\",\"Schema ไม่ใช่ JSON ที่ถูกต้อง\",\"กรุณาเลือกช่องทางชำระเงินอย่างน้อย 1 รายการ\",\"โหลดลิงก์ไม่สำเร็จ\"]\nValues must be `{\"th\": \"...\", \"en\": \"...\"}` with placeholders preserved. Do not display this script visibly.\n\nEnsure all styles follow Siam Commerce conventions: crisp border lines, clear hierarchy, rounded-lg/rounded-xl elements, subtle shadows, professional Thai typography.",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WvO3NcvtR5R6v5v782BUVHngh_eNblF9AQrYSzmgfAyAa1VgEmERikHrnv-RudSHqnnvB5m0HkVClcv5tN1jNysAlcQqP7xGrQM6-jPlxUF5vrnI3mdl4-5K2r_7HGMbQrTsxg3BVPaqKTqsEwM51pPKYRMAcxMipV0RzoDuvaQgIOmFd5P0xNqa0NE00--_c8JKC9B-evj-ufmQwCu2Cd99ZJA7uBXF68B8hEdYMhCRtm9AwoXxBmFg",
+              "name": "projects/6122197874596130141/files/a19ddcafb86348cd9c5a7fa5fe71f123"
+            },
+            "theme": {
+              "bodyFont": "NOTO_SANS",
+              "bodyFontFamily": "Noto Sans",
+              "colorMode": "LIGHT",
+              "colorVariant": "FIDELITY",
+              "customColor": "#365cf5",
+              "font": "NOTO_SANS",
+              "headlineFont": "NOTO_SANS",
+              "headlineFontFamily": "Noto Sans",
+              "labelFont": "NOTO_SANS",
+              "labelFontFamily": "Noto Sans",
+              "namedColors": {
+                "background": "#f9f9ff",
+                "error": "#ba1a1a",
+                "error_container": "#ffdad6",
+                "inverse_on_surface": "#ecf0ff",
+                "inverse_primary": "#b9c3ff",
+                "inverse_surface": "#243048",
+                "on_background": "#0e1b32",
+                "on_error": "#ffffff",
+                "on_error_container": "#93000a",
+                "on_primary": "#ffffff",
+                "on_primary_container": "#ededff",
+                "on_primary_fixed": "#001257",
+                "on_primary_fixed_variant": "#0034c0",
+                "on_secondary": "#ffffff",
+                "on_secondary_container": "#54647c",
+                "on_secondary_fixed": "#0b1c31",
+                "on_secondary_fixed_variant": "#38485e",
+                "on_surface": "#0e1b32",
+                "on_surface_variant": "#444655",
+                "on_tertiary": "#ffffff",
+                "on_tertiary_container": "#b7ffcf",
+                "on_tertiary_fixed": "#002110",
+                "on_tertiary_fixed_variant": "#00522f",
+                "outline": "#747687",
+                "outline_variant": "#c4c5d8",
+                "primary": "#0a3fdc",
+                "primary_container": "#365cf5",
+                "primary_fixed": "#dde1ff",
+                "primary_fixed_dim": "#b9c3ff",
+                "secondary": "#4f5f77",
+                "secondary_container": "#d0e1fd",
+                "secondary_fixed": "#d3e3ff",
+                "secondary_fixed_dim": "#b7c7e3",
+                "surface": "#f9f9ff",
+                "surface_bright": "#f9f9ff",
+                "surface_container": "#e8eeff",
+                "surface_container_high": "#e0e8ff",
+                "surface_container_highest": "#d7e2ff",
+                "surface_container_low": "#f1f3ff",
+                "surface_container_lowest": "#ffffff",
+                "surface_dim": "#cddaf9",
+                "surface_tint": "#214ce7",
+                "surface_variant": "#d7e2ff",
+                "tertiary": "#006139",
+                "tertiary_container": "#217b4e",
+                "tertiary_fixed": "#9ef5be",
+                "tertiary_fixed_dim": "#82d8a3"
+              },
+              "overrideNeutralColor": "#17243b",
+              "overridePrimaryColor": "#365cf5",
+              "overrideSecondaryColor": "#52627a",
+              "overrideTertiaryColor": "#157347",
+              "roundness": "ROUND_EIGHT",
+              "spacing": {
+                "gutter": "1rem",
+                "gutter-desktop": "1.5rem",
+                "margin": "1rem",
+                "margin-desktop": "1.5rem",
+                "space-lg": "1.5rem",
+                "space-md": "1rem",
+                "space-sm": "0.5rem",
+                "space-xl": "2rem",
+                "space-xs": "0.25rem"
+              },
+              "spacingScale": 2,
+              "typography": {
+                "body-lg": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "16px",
+                  "fontWeight": "400",
+                  "lineHeight": "24px"
+                },
+                "body-md": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "400",
+                  "lineHeight": "20px"
+                },
+                "body-sm": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "12px",
+                  "fontWeight": "400",
+                  "lineHeight": "18px"
+                },
+                "data-tabular": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "400",
+                  "lineHeight": "20px"
+                },
+                "display-lg": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "32px",
+                  "fontWeight": "700",
+                  "letterSpacing": "-0.02em",
+                  "lineHeight": "40px"
+                },
+                "headline-lg": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "24px",
+                  "fontWeight": "600",
+                  "letterSpacing": "-0.01em",
+                  "lineHeight": "32px"
+                },
+                "headline-md": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "20px",
+                  "fontWeight": "600",
+                  "lineHeight": "28px"
+                },
+                "headline-sm": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "16px",
+                  "fontWeight": "600",
+                  "lineHeight": "24px"
+                },
+                "label-lg": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "500",
+                  "lineHeight": "20px"
+                },
+                "label-md": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "12px",
+                  "fontWeight": "500",
+                  "lineHeight": "16px"
+                },
+                "label-sm": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "11px",
+                  "fontWeight": "600",
+                  "letterSpacing": "0.04em",
+                  "lineHeight": "14px"
+                }
+              }
+            },
+            "title": "Smart links - Siam Commerce",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้า **Smart links** (`/j/smart-links`, Route identifier: `admin-c34462c252aa`) สำหรับศูนย์จัดการระบบร้านค้า **Siam Commerce** เรียบร้อยแล้วครับ\n\n### จุดเด่นและการจัดวางโครงสร้างหน้าจอ:\n1. **โครงสร้างตามระบบ Siam Commerce**:\n   - แถบเมนูด้านซ้ายขนาด 256px พร้อม 7 หมวดหมู่งานหลัก โดยไฮไลต์หมวด **\"การตลาด\"**\n   - ส่วนหัวด้านบน (Contextual Header) แสดงเส้นทาง (`การตลาด / Smart Links`), ป้ายกำกับ `ข้อมูลตัวอย่าง / Sample data`, ตัวสลับภาษา `ไทย / English`, การแจ้งเตือน และโปรไฟล์ผู้ดูแลระบบ\n   - การจัดวางเนื้อหากลางความกว้าง ~1240px พื้นหลัง `#f6f8fc` พร้อมการ์ดสีขาวขอบมน 12px และเส้นขอบ `#e1e7f0`\n\n2. **แดชบอร์ดสรุปตัวชี้วัด (Metrics Overview)**:\n   - การ์ดสถิติแสดงจำนวน **Total Smart Links**, สถานะ **Active Links**, ยอดคลิกและการแปลงผล 30 วัน (**Clicks & Conversions**), และช่องทางแคมเปญหลัก (TikTok & Meta Ads)\n\n3. **ระบบค้นหาและตัวกรอง (Search & Filter Bar)**:\n   - ช่องค้นหา slug / title พร้อมปุ่มค้นหา และข้อความแจ้งเตือนขอบเขตการค้นหาหน้านี้ตามข้อกำหนด\n   - ตัวกรองสถานะ (All, Active, Inactive) และตัวกรองประเภทปลายทาง\n\n4. **ตารางรายการ Smart Links**:\n   - คอลัมน์ครบถ้วนตามโจทย์: **Link** (พร้อมปุ่มคัดลอก slug เช่น `siam.link/wagyu-a5`), **Web destination** & ระบบ App Deep Link (Universal Links / App Links), **Status** (`Active` / `Inactive`), **Expires**, **Analytics** (จำนวนคลิก, CTR, CVR), และ **Actions** (`Edit`, `Deactivate`, `Delete`)\n   - ระบบการแบ่งหน้า (Pagination) และคำอธิบายระบบ\n\n5. **สคริปต์แปลภาษาสองภาษา (Bilingual Translations Dictionary)**:\n   - บรรจุแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ซ่อนอยู่อย่างสมบูรณ์ พร้อม mapping ภาษาไทย-อังกฤษสำหรับทุกคำและข้อความในรายการ Copy Catalogue ตามข้อกำหนดอย่างแม่นยำ"
+    },
+    {
+      "suggestion": "เปิดโมดอลสร้าง Smart Link ใหม่ (+ สร้างลิงก์) เพื่อดูฟอร์มกรอก UTM และ Deep Link"
+    },
+    {
+      "suggestion": "ดูหน้ารายละเอียดการวิเคราะห์สถิติ (Analytics Detail) ของแคมเปญ Smart Link"
+    },
+    {
+      "suggestion": "สลับเป็นมุมมองภาษาอังกฤษ (English view)"
+    }
+  ],
+  "projectId": "6122197874596130141",
+  "sessionId": "17909795343619896791"
+}

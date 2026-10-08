@@ -1,3 +1,6 @@
+import { uiText as __uiText } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import { getCoupons } from '@josh/shared-api';
 
 export type CouponGrantTiming = 'on_order_paid' | 'on_order_delivered';
@@ -60,8 +63,8 @@ export const COUPON_GRANT_TIMING_OPTIONS: Array<{
   value: CouponGrantTiming;
   label: string;
 }> = [
-  { value: 'on_order_paid', label: 'เมื่อชำระเงินสำเร็จ' },
-  { value: 'on_order_delivered', label: 'เมื่อจัดส่งสำเร็จ' },
+  { value: 'on_order_paid', get label(){return uiText("เมื่อชำระเงินสำเร็จ");} },
+  { value: 'on_order_delivered', get label(){return uiText("เมื่อจัดส่งสำเร็จ");} },
 ];
 
 /** Chain B is a normal coupon — its discount lives in "ประเภทและส่วนลด" like any coupon.
@@ -126,10 +129,12 @@ export function formatRewardRuleSummary(
 ): string {
   const delay =
     Number(rule.delay_days ?? 0) > 0
-      ? ` · ใช้ได้หลัง ${rule.delay_days} วัน`
+      ? __uiText(" · ใช้ได้หลัง {0} วัน",{"0":rule.delay_days})
       : '';
   const limit = Number(rule.reward_per_user_limit ?? 1);
-  const limitSuffix = limit > 1 ? ` · ได้สูงสุด ${limit} ครั้ง/คน` : '';
+  const limitSuffix = limit > 1 ? __uiText(" · ได้สูงสุด {0} ครั้ง/คน",{"0":limit}) : '';
   const summary = `${describeGrantTiming(rule.grant_timing)}${delay}${limitSuffix}`;
   return couponLabel ? `${couponLabel} · ${summary}` : summary;
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Admin - พิมพ์สติกเกอร์ (Batch Sticker)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Noto Sans Thai & Latin -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim as provided -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary": "#ffffff",
+            "surface-variant": "#d7e2ff",
+            "outline": "#747687",
+            "primary-fixed": "#dde1ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-secondary-fixed-variant": "#38485e",
+            "secondary": "#4f5f77",
+            "inverse-on-surface": "#ecf0ff",
+            "on-surface": "#0e1b32",
+            "on-tertiary-container": "#ffebe4",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary-container": "#54647c",
+            "primary": "#0a3fdc",
+            "on-primary-container": "#ededff",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#cddaf9",
+            "surface-bright": "#f9f9ff",
+            "surface-container-lowest": "#ffffff",
+            "background": "#f9f9ff",
+            "surface-container-high": "#e0e8ff",
+            "tertiary": "#943500",
+            "surface-tint": "#214ce7",
+            "primary-container": "#365cf5",
+            "on-primary-fixed": "#001257",
+            "inverse-surface": "#243048",
+            "secondary-container": "#d0e1fd",
+            "on-tertiary-fixed": "#360f00",
+            "on-primary": "#ffffff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-error-container": "#93000a",
+            "on-background": "#0e1b32",
+            "tertiary-fixed-dim": "#ffb597",
+            "surface-container-low": "#f1f3ff",
+            "tertiary-container": "#bc4600",
+            "on-primary-fixed-variant": "#0034c0",
+            "error-container": "#ffdad6",
+            "outline-variant": "#c4c5d8",
+            "secondary-fixed": "#d3e3ff",
+            "error": "#ba1a1a",
+            "tertiary-fixed": "#ffdbcd",
+            "surface": "#f9f9ff",
+            "on-error": "#ffffff",
+            "surface-container": "#e8eeff",
+            "on-surface-variant": "#444655",
+            "inverse-primary": "#b9c3ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1rem",
+            "gutter": "1rem",
+            "margin": "1.5rem",
+            "gutter-compact": "0.75rem",
+            "space-sm": "0.5rem",
+            "space-xl": "1.5rem",
+            "space-md": "0.75rem",
+            "space-2xl": "2rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "numeric-data": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "table-cell": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "headline-xl": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"]
+          },
+          "fontSize": {
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "numeric-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["22px", { "lineHeight": "32px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased overflow-x-hidden">
+<!-- Side Navigation Bar (Anchored from JSON, active item: ออเดอร์และการเงิน) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between py-4 px-3 select-none">
+<div class="flex flex-col gap-5">
+<!-- Brand Logo / Header -->
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-2xl" data-icon="local_mall">local_mall</span>
+</div>
+<div>
+<h1 class="text-headline-sm font-headline-sm text-primary leading-tight">Commerce Admin</h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-none">ศูนย์จัดการระบบพาณิชย์</p>
+</div>
+</div>
+<!-- Navigation Work Areas (7 Areas) -->
+<nav class="flex flex-col gap-1">
+<!-- Item 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- Item 2: ออเดอร์และการเงิน (Active Tab for this screen) -->
+<a class="flex items-center gap-3 px-3 py-2 bg-surface-container-high text-primary font-semibold rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl text-primary" data-icon="shopping_cart" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="flex-1">ออเดอร์และการเงิน</span>
+<span class="w-1.5 h-4 bg-primary rounded-full"></span>
+</a>
+<!-- Item 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="support_agent">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- Item 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- Item 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="monitoring">monitoring</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- Item 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="hub">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer Links -->
+<div class="flex flex-col gap-2 pt-4 border-t border-outline-variant">
+<div class="px-3 py-2 bg-surface-container-low rounded-lg text-body-sm font-body-sm text-secondary flex items-center justify-between">
+<span class="text-label-sm font-label-sm font-semibold text-primary">Developer Portal</span>
+<span class="material-symbols-outlined text-base" data-icon="code">code</span>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+<span>ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-error hover:bg-error-container rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar (Anchored from JSON) -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6">
+<!-- Left: Omni Search and Breadcrumbs -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-body-md font-body-md">
+<span class="text-on-surface-variant">ออเดอร์และการเงิน</span>
+<span class="text-outline">/</span>
+<span class="text-on-surface font-semibold">/j/batch-sticker</span>
+<span class="ml-2 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm font-mono">admin-47d9ad4c0b40</span>
+</div>
+<!-- Search Input -->
+<div class="relative w-80">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-outline">
+<span class="material-symbols-outlined text-lg" data-icon="search">search</span>
+</span>
+<input class="w-full h-9 pl-9 pr-4 rounded-lg bg-surface border border-outline-variant text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" placeholder="ค้นหาออเดอร์, SKU, สติกเกอร์..." type="text"/>
+</div>
+</div>
+<!-- Right: Language Toggle, Quick Actions & Profile -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher Pill (TH / EN) -->
+<div class="flex items-center h-7 bg-[#edf2f9] p-0.5 rounded-full border border-outline-variant">
+<button class="px-2.5 py-0.5 rounded-full bg-surface-container-lowest shadow-sm text-[11px] font-semibold text-on-surface transition-all">TH</button>
+<button class="px-2.5 py-0.5 rounded-full text-[11px] font-medium text-secondary hover:text-on-surface transition-all">EN</button>
+</div>
+<!-- Icon Actions -->
+<button class="relative p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+</button>
+<!-- Vertical Divider -->
+<div class="h-5 w-px bg-outline-variant"></div>
+<!-- User Profile Badge -->
+<div class="flex items-center gap-2.5 cursor-pointer pl-1">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-label-md">
+          OP
+        </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-body-md font-body-md font-semibold text-on-surface leading-tight">สมชาย บริการค้า</span>
+<span class="text-label-sm font-label-sm text-secondary leading-none">Admin Operations</span>
+</div>
+<span class="material-symbols-outlined text-sm text-outline" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Main Canvas Content Area -->
+<main class="ml-64 pt-14 min-h-screen">
+<div class="p-6 max-w-[1360px] mx-auto space-y-5">
+<!-- Page Header: Title, Overlay Badge, Subtext, and Actions -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">พิมพ์สติกเกอร์ (Batch Sticker)</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary text-label-sm font-label-sm flex items-center gap-1 font-mono">
+<span class="material-symbols-outlined text-xs" data-icon="auto_awesome">auto_awesome</span>
+              Automated Overlay v2.4
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1">
+            เครื่องมือจัดวางสติกเกอร์โปรโมชัน โค้ดส่วนลด และพิมพ์เลเบลพัสดุสำหรับแคมเปญคำสั่งซื้อ
+          </p>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-9 px-3.5 bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-[#f6f8fc] rounded-lg text-body-md font-body-md font-medium flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-lg text-secondary" data-icon="history">history</span>
+            ประวัติแบทช์ย้อนหลัง
+          </button>
+<button class="h-9 px-3.5 bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-[#f6f8fc] rounded-lg text-body-md font-body-md font-medium flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-lg text-secondary" data-icon="print">print</span>
+            ตั้งค่าเครื่องพิมพ์สติกเกอร์
+          </button>
+</div>
+</div>
+<!-- Privacy & Security Notice Banner -->
+<div class="rounded-xl border border-[#b7dfc8] bg-[#e8f5ee] px-4 py-3 flex items-center justify-between text-[#157347]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl flex-shrink-0" data-icon="shield">shield</span>
+<div class="text-body-md font-body-md">
+<span class="font-semibold">Privacy &amp; Security Notice:</span>
+<span>รูปภาพจะถูกประมวลผลภายในเบราว์เซอร์ของคุณ ไฟล์จะไม่ถูกอัปโหลดไปยังเซิร์ฟเวอร์ (Images are processed locally in your browser. Your files are not uploaded.)</span>
+</div>
+</div>
+<div class="flex items-center gap-3 flex-shrink-0">
+<span class="px-2 py-0.5 rounded-md bg-surface-container-lowest/80 text-[11px] font-semibold tracking-wide border border-[#b7dfc8] flex items-center gap-1 font-mono">
+<span class="material-symbols-outlined text-xs" data-icon="terminal">terminal</span>
+            Local Canvas API
+          </span>
+<button class="text-[#157347] hover:opacity-75 transition-opacity" title="ปิดการแจ้งเตือน">
+<span class="material-symbols-outlined text-lg" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Lot & Status Bar -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- Status Item 1: Loaded Images -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-[#e8f5ee] text-[#157347] flex items-center justify-center font-bold">
+              ✓
+            </div>
+<div>
+<div class="text-label-sm font-label-sm text-secondary uppercase">✓ รูปภาพทั้งหมด (All images)</div>
+<div class="text-body-md font-body-md font-semibold text-on-surface">
+                24 รูปภาพโหลดเสร็จแล้ว <span class="text-secondary font-normal">— อัปโหลดสติกเกอร์เพื่อดำเนินการต่อ</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+</div>
+<!-- Status Item 2: Resolution Warning -->
+<div class="bg-[#fdf8e6] rounded-xl border border-[#fae392] px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[#b08900] text-xl" data-icon="warning">warning</span>
+<div>
+<div class="text-label-sm font-label-sm text-[#b08900] font-semibold">⚠ Resolution Alert</div>
+<div class="text-body-md font-body-md text-[#54647c] font-medium">
+                ตรวจพบความละเอียดรูปภาพที่ไม่เท่ากัน (800x800 &amp; 1080x1080)
+              </div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] bg-surface-container-lowest text-[#b08900] font-mono border border-[#fae392]">Auto-Fit</span>
+</div>
+<!-- Status Item 3: Lot Batch Identifier -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="qr_code_2">qr_code_2</span>
+<div>
+<div class="text-label-sm font-label-sm text-secondary">รหัสล็อตผลิตคำสั่งซื้อ</div>
+<div class="flex items-center gap-2">
+<span class="text-body-md font-body-md font-bold font-mono text-primary">LOT #20250328-B1</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed text-[10px] font-semibold">ข้อมูลตัวอย่าง / Sample data</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+</div>
+</div>
+<!-- Main Workspace: 2-Column Grid (Left: Config & Upload, Right: Catalog Preview) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: Sticker Upload & Placement Settings (5 cols) -->
+<div class="lg:col-span-5 space-y-5">
+<!-- Upload Sticker Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="upload_file">upload_file</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">อัปโหลดสติกเกอร์ (Upload Sticker)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary font-mono">PNG / WEBP / SVG</span>
+</div>
+<!-- Drag & Drop Zone -->
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-5 text-center bg-surface hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-12 h-12 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<p class="text-body-md font-body-md font-semibold text-on-surface mt-2.5">
+                ลากไฟล์สติกเกอร์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
+              </p>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+                (ขนาดแนะนำ 300x300px แบ็กกราวด์โปร่งใส Transparent)
+              </p>
+<div class="flex items-center justify-center gap-2.5 mt-3.5">
+<button class="h-8 px-3 rounded-lg bg-primary-container text-on-primary text-label-md font-label-md flex items-center gap-1.5 shadow-sm hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="add">add</span>
+                  เพิ่มสติกเกอร์ (Add Sticker)
+                </button>
+<button class="h-8 px-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface text-label-md font-label-md hover:bg-[#edf2f9] transition-colors">
+                  เลือกจากคลังสำเร็จรูป
+                </button>
+</div>
+</div>
+<!-- Currently Active Sticker File Row -->
+<div class="mt-4 p-3 rounded-lg border border-outline-variant bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<!-- Sticker Thumbnail -->
+<div class="w-12 h-12 rounded-lg bg-gradient-to-tr from-red-500 to-amber-500 flex items-center justify-center text-white font-bold text-xs shadow-inner uppercase tracking-wider relative overflow-hidden">
+<span class="text-[10px] font-extrabold text-center leading-tight">SALE<br/>50%</span>
+<span class="absolute top-0 right-0 w-3 h-3 bg-white/20 rounded-bl-full"></span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-body-md font-body-md font-semibold text-on-surface font-mono">badge_flash_sale_thai.png</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] bg-[#e8f5ee] text-[#157347] font-semibold border border-[#b7dfc8]">พร้อมใช้</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary font-mono">320 × 320 px · 14.8 KB</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" title="ดูตัวอย่างสติกเกอร์">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error rounded hover:bg-error-container transition-colors" title="ลบสติกเกอร์นี้">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sticker Settings Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="tune">tune</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">ตั้งค่าสติกเกอร์ (Sticker Settings)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">พิกัดโอเวอร์เลย์อัตโนมัติ</span>
+</div>
+<!-- Preset Dropdown -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5 font-medium">เทมเพลตพรีเซ็ต (Preset)</label>
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<select class="w-full h-9 pl-3 pr-8 rounded-lg border border-outline-variant bg-surface text-body-md font-body-md text-on-surface focus:ring-2 focus:ring-primary-container/20">
+<option>Flash Sale Promo Badge (C1)</option>
+<option>Brand Official Mall Stamp (B2)</option>
+<option>Pre-Order 7 Days Delivery (P4)</option>
+<option>Custom Dimension Matrix</option>
+</select>
+</div>
+<button class="h-9 px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md text-on-surface hover:bg-surface-container transition-colors">
+                  บันทึก
+                </button>
+</div>
+</div>
+<!-- Placement Selection: 3x2 Grid -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5 font-medium">ตำแหน่งการวางสติกเกอร์ (Placement)</label>
+<div class="grid grid-cols-3 gap-2">
+<!-- TL -->
+<button class="h-10 rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface flex items-center justify-center gap-1.5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="north_west">north_west</span>
+                  บนซ้าย (TL)
+                </button>
+<!-- TR [Selected] -->
+<button class="h-10 rounded-lg border-2 border-primary-container bg-surface-container-high text-primary font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-base text-primary" data-icon="north_east">north_east</span>
+                  บนขวา (TR)
+                </button>
+<!-- C -->
+<button class="h-10 rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface flex items-center justify-center gap-1.5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="filter_center_focus">filter_center_focus</span>
+                  กึ่งกลาง (C)
+                </button>
+<!-- BL -->
+<button class="h-10 rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface flex items-center justify-center gap-1.5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="south_west">south_west</span>
+                  ล่างซ้าย (BL)
+                </button>
+<!-- BR -->
+<button class="h-10 rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface flex items-center justify-center gap-1.5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="south_east">south_east</span>
+                  ล่างขวา (BR)
+                </button>
+<!-- Custom -->
+<button class="h-10 rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface flex items-center justify-center gap-1.5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="straighten">straighten</span>
+                  กำหนดเอง
+                </button>
+</div>
+</div>
+<!-- Sliders: Scale, Margin/Inset, Opacity -->
+<div class="space-y-3 pt-2">
+<!-- Scale -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-body-md font-body-md text-on-surface">ขนาดสติกเกอร์ (Scale)</span>
+<span class="text-numeric-data font-numeric-data font-bold text-primary font-mono">28%</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary-container" max="60" min="10" type="range" value="28"/>
+</div>
+<!-- Margin / Inset -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-body-md font-body-md text-on-surface">ระยะขอบ (Margin / Inset)</span>
+<span class="text-numeric-data font-numeric-data font-bold text-primary font-mono">16 px</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary-container" max="50" min="0" type="range" value="16"/>
+</div>
+<!-- Opacity -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-body-md font-body-md text-on-surface">ความทึบแสง (Opacity)</span>
+<span class="text-numeric-data font-numeric-data font-bold text-primary font-mono">100%</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary-container" max="100" min="20" type="range" value="100"/>
+</div>
+</div>
+<!-- Helper Note -->
+<div class="p-2.5 rounded-lg bg-[#edf2f9] border border-outline-variant flex items-center gap-2 text-body-sm font-body-sm text-secondary">
+<span class="material-symbols-outlined text-base text-primary" data-icon="info">info</span>
+<span>กำลังแก้ไขเริ่มต้น — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้</span>
+</div>
+<!-- Primary Action Button: Batch Sticker Print -->
+<button class="w-full h-11 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-semibold text-body-lg flex items-center justify-center gap-2 shadow-sm transition-all transform active:scale-[0.99]">
+<span class="material-symbols-outlined text-xl" data-icon="bolt">bolt</span>
+              พิมพ์สติกเกอร์ (Batch Sticker)
+            </button>
+</div>
+</div>
+<!-- RIGHT COLUMN: Catalog Product Preview Grid (7 cols) -->
+<div class="lg:col-span-7 space-y-4">
+<!-- Preview Grid Header -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="grid_view">grid_view</span>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">พรีวิวแคตตาล็อกสินค้าในล็อต</h2>
+<p class="text-body-sm font-body-sm text-secondary">ผลลัพธ์จำลองก่อนสั่งพิมพ์และเรนเดอร์ลงรูปจริง (24 รายการ)</p>
+</div>
+</div>
+<!-- View Toggles & Filters -->
+<div class="flex items-center gap-2">
+<div class="flex items-center h-8 bg-surface-container-low p-0.5 rounded-lg border border-outline-variant">
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest shadow-xs text-label-sm font-label-sm font-semibold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="apps">apps</span>
+                  กริด 3x3
+                </button>
+<button class="px-2.5 py-1 rounded text-label-sm font-label-sm text-secondary hover:text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="grid_on">grid_on</span>
+                  กริด 2x2
+                </button>
+</div>
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-label-sm font-label-sm text-on-surface flex items-center gap-1 hover:bg-surface-container">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                ตัวกรอง
+              </button>
+</div>
+</div>
+<!-- Product Preview Cards Grid (6 cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-square bg-[#edf2f9] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A minimalist Japanese ceramic teapot set with delicate cups arranged neatly on a smooth light oak table. The soft ambient daylight fills the room with clean white and calm grey tones, highlighting the porcelain texture with sharp high-key clarity in modern editorial studio light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiN2Cvn-RSWKFCS4_FYZEhdC8JVlpFRwaGMv1tGRuYCgC2ywnqtX_lG9xYzT-qyhz6VxdcBt0AGsv-rH5JWfUiOa3pZvCbzpElI1Z1ehTR0InW_56PJIbUbejr5KBl4xgRcgTYOiwAPfZruxQjyLMYKnBUQAvI0efZx1g66re7e2uITbHUM3swTw3NJtHzBz7lUBgkRjiDXQbdCFfpLXjx3TH5qu8A_48RKi7ImSZnQiLyVFRX1wYDvOwl-qaWfEKqq3HL6AwItcdn"/>
+<!-- Overlaid Sticker (Top-Right) -->
+<div class="absolute top-2 right-2 w-11 h-11 rounded-lg bg-gradient-to-tr from-red-600 to-amber-500 text-white font-extrabold text-[10px] flex items-center justify-center text-center shadow-lg transform rotate-2 leading-none border border-white/60">
+                  SALE<br/>50%
+                </div>
+<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white font-mono text-[9px]">800×800</span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-mono font-semibold text-primary">SKU-8921-TH</span>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface line-clamp-1 mt-0.5">ชุดกาน้ำชาเซรามิกมินิมอลญี่ปุ่น</h3>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/50 mt-2">
+<span class="text-numeric-data font-numeric-data font-bold text-on-surface">฿1,290</span>
+<span class="text-label-sm font-label-sm text-secondary">สต็อก: 45</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-square bg-[#edf2f9] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A premium wireless mechanical keyboard with low-profile keycaps and subtle backlight accents sitting on an executive desk mat. The scene is crisply framed with cool architectural workspace lighting, highlighting subtle metallic finishes and modern ergonomic contours." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm9Jmk6EgeOLXnZjHYw0Cxh4tYKizKKovzyWyCabwhfojVdTNh21tJh-fjd9hVeRtfZReMinRHV2pIAVTR1j2_FdoV_0bognZEf2kZSC8skkwYmdNTYdrXELaZFmzktbeZf-GGMiGWWQNVj6-h4nkF273LlEpz1VucjvCkO1cPAKK_piXjdD7_ZJmmhIS8Q6AU20zwZPe3K8316qJIf6-rqeNIAni5i_erULk3F_H-QQg2A8tulYvQOPmuc9OvvehmLtfOZdoubA4C"/>
+<!-- Overlaid Sticker (Top-Right) -->
+<div class="absolute top-2 right-2 w-11 h-11 rounded-lg bg-gradient-to-tr from-red-600 to-amber-500 text-white font-extrabold text-[10px] flex items-center justify-center text-center shadow-lg transform rotate-2 leading-none border border-white/60">
+                  SALE<br/>50%
+                </div>
+<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white font-mono text-[9px]">1080×1080</span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-mono font-semibold text-primary">SKU-4402-KB</span>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface line-clamp-1 mt-0.5">คีย์บอร์ดบลูทูธ Mechanical Wireless</h3>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/50 mt-2">
+<span class="text-numeric-data font-numeric-data font-bold text-on-surface">฿2,450</span>
+<span class="text-label-sm font-label-sm text-secondary">สต็อก: 18</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-square bg-[#edf2f9] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A modern matte finished stainless steel 316 thermal tumbler displayed with condensation droplets in an airy clean kitchen backdrop. The lighting is diffused studio softbox light emphasizing product texture, crisp blue-grey undertones and pristine commercial catalog styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtAQIR3EUgE8qfCRMLRSKHttcw93UL__T9gqTiztP_AKzfb8Ee562Cli4SXLlk9hKmTNLXYFV0QTPcdNexTAHuPCn9cHVFL13qH_EESz8lTGvvRyIJ5DX0WN0zyJOjiJbrCiTaWcDh6o55lQjRC-DxQuG3OJIc2ohDwhexyrlsIeFqsz2UnNFqqqkavYnUhNEcAFYsFgmeYVygYVIq0TYnGd57k0398eosSqFCwVLB7tFKmiODqTtOEswmjHh_NOqU_syRA1rrvvac"/>
+<!-- Overlaid Sticker (Top-Right) -->
+<div class="absolute top-2 right-2 w-11 h-11 rounded-lg bg-gradient-to-tr from-red-600 to-amber-500 text-white font-extrabold text-[10px] flex items-center justify-center text-center shadow-lg transform rotate-2 leading-none border border-white/60">
+                  SALE<br/>50%
+                </div>
+<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white font-mono text-[9px]">800×800</span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-mono font-semibold text-primary">SKU-1094-TM</span>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface line-clamp-1 mt-0.5">แก้วเก็บอุณหภูมิสเตนเลส 316</h3>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/50 mt-2">
+<span class="text-numeric-data font-numeric-data font-bold text-on-surface">฿690</span>
+<span class="text-label-sm font-label-sm text-secondary">สต็อก: 120</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-square bg-[#edf2f9] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Artisanal medium roast Doi Chang coffee beans in a kraft packaging with beans scattered artfully around a white ceramic cup. The ambient setting uses crisp natural sunlight from a loft window, offering warm earth tones balanced by a neat, clean corporate composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClvcznWqA6N2_S9ChYhaAv590VgrpvOxFsMRd-4h7-JD2NiQfTnoaP27XvM3GS496_unyu_gg1ykMq2yG-67AFzsa3XBuZj45-48CtSOh7ed-dm7jqJaHO2KfeXEGetdLfB5qifZS0LRMJjFNW765MeJFIOxSY1rv-qmAOzofUqFCMAfzZr1OpqqXyz6l389pa1D66e62JfEzDLm8RJg8e-cyFkdGI2IeK_yWUJ6dJeD4fz4Lrl1n6kK9sH4p3LeKRqWwqFMhmAEGW"/>
+<!-- Overlaid Sticker (Top-Right) -->
+<div class="absolute top-2 right-2 w-11 h-11 rounded-lg bg-gradient-to-tr from-red-600 to-amber-500 text-white font-extrabold text-[10px] flex items-center justify-center text-center shadow-lg transform rotate-2 leading-none border border-white/60">
+                  SALE<br/>50%
+                </div>
+<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white font-mono text-[9px]">1080×1080</span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-mono font-semibold text-primary">SKU-7721-CF</span>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface line-clamp-1 mt-0.5">เมล็ดกาแฟดอยช้างคั่วกลางพรีเมียม</h3>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/50 mt-2">
+<span class="text-numeric-data font-numeric-data font-bold text-on-surface">฿420</span>
+<span class="text-label-sm font-label-sm text-secondary">สต็อก: 64</span>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-square bg-[#edf2f9] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Sleek matte-black active noise cancelling over-ear headphones floating against a clean high-tech studio podium. Focused cool-blue rim lighting casts delicate highlights along the headband and plush ear cushions, evoking precision engineering and high-fidelity sound clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNQtkWgW-uPVzcq4e_a5SUL30n1wuUQcr5GzuJmlrU-elYw5cSn0KLgmtv_EZckoFIsO-D_vJ3hkZ2M8NN-jRygSF9_O2edhPB-dFTslxwNN8FYs7FG1ZbY5Boha9zzkpDWluRvj55huZSsTpWyNnK-p-azJA8ZFv3RLL9eYdM2Ct3n78ScE8LoSG-SGSW-IpIFd5KPsDmeKK5h2JN1tX0DtNz3dx4tzhqge8Q-3bXZ00xpUqEvKijpOHn3LonQQrqaK3tcAZgz0Yj"/>
+<!-- Overlaid Sticker (Top-Right) -->
+<div class="absolute top-2 right-2 w-11 h-11 rounded-lg bg-gradient-to-tr from-red-600 to-amber-500 text-white font-extrabold text-[10px] flex items-center justify-center text-center shadow-lg transform rotate-2 leading-none border border-white/60">
+                  SALE<br/>50%
+                </div>
+<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white font-mono text-[9px]">800×800</span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-mono font-semibold text-primary">SKU-9904-HP</span>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface line-clamp-1 mt-0.5">หูฟังไร้สายตัดเสียงรบกวน ANC</h3>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/50 mt-2">
+<span class="text-numeric-data font-numeric-data font-bold text-on-surface">฿3,890</span>
+<span class="text-label-sm font-label-sm text-secondary">สต็อก: 29</span>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-square bg-[#edf2f9] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A compact modern desktop air purifier with cylindrical airflow grill standing on a minimalist wooden office credenza with lush small indoor plants. Clear bright daylight gives an airy, pristine atmosphere highlighting white and silver product textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDld2WYDXx0ZZdatrfzWWpv68IwJLIC3Z8uHHbFHVwMZEHJ-SLoJlH1ZIbomL--oLnNRz2p9j1iq-q8zr_8-EmOrUhmRxKZyV3qWESxV8cnMmuKtk0ieLB6xNlElo359lWRuBI5qNMVcLp8ehLWmYy84csGze9wsdpRHlPjS8xYHgCD0U4TqNkwlJLxkiX4vb64XI7ulfeu30_1NxxY89fPKKCHFX1-dJbavOkSJjrk7ra4hdJREJmoOA9JoVK0DJFbOX0IFM7gW3FI"/>
+<!-- Overlaid Sticker (Top-Right) -->
+<div class="absolute top-2 right-2 w-11 h-11 rounded-lg bg-gradient-to-tr from-red-600 to-amber-500 text-white font-extrabold text-[10px] flex items-center justify-center text-center shadow-lg transform rotate-2 leading-none border border-white/60">
+                  SALE<br/>50%
+                </div>
+<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white font-mono text-[9px]">800×800</span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-mono font-semibold text-primary">SKU-3118-AP</span>
+<h3 class="text-body-md font-body-md font-semibold text-on-surface line-clamp-1 mt-0.5">เครื่องฟอกอากาศพกพา Desktop</h3>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/50 mt-2">
+<span class="text-numeric-data font-numeric-data font-bold text-on-surface">฿1,850</span>
+<span class="text-label-sm font-label-sm text-secondary">สต็อก: 52</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Actions & Pagination Bar -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="text-body-sm font-body-sm text-secondary">
+<span class="font-semibold text-on-surface">แสดง 1 - 6 จาก 24 รายการ</span>
+<span class="mx-1 text-outline">|</span>
+<span>shipment ไป preparing (จาก paid/payment_pending), จอง stock</span>
+</div>
+<div class="flex items-center gap-2.5">
+<button class="h-9 px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md text-on-surface hover:bg-surface-container font-medium flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-lg text-secondary" data-icon="download">download</span>
+                ดาวน์โหลดรูปภาพทั้งหมด (.ZIP)
+              </button>
+<button class="h-9 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-primary text-body-md font-body-md font-semibold flex items-center gap-1.5 shadow-sm transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="print">print</span>
+                สั่งพิมพ์เลเบลสติกเกอร์ทันที
+              </button>
+</div>
+</div>
+<!-- DOMPurify Security Note -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/80 flex items-center gap-2 text-body-sm font-body-sm text-secondary">
+<span class="material-symbols-outlined text-base text-[#b08900]" data-icon="security">security</span>
+<span>⚠ ตรวจสอบ HTML ก่อน — จะถูก sanitize ด้วย DOMPurify ก่อนแสดงในหน้าร้าน</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Required Invisible Translation Script verbatim as specified -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Batch Sticker": {"th": "พิมพ์สติกเกอร์", "en": "Batch Sticker"},
+    "Images are processed locally in your browser. Your files are not uploaded.": {"th": "รูปภาพจะถูกประมวลผลภายในเบราว์เซอร์ของคุณ ไฟล์จะไม่ถูกอัปโหลดไปยังเซิร์ฟเวอร์", "en": "Images are processed locally in your browser. Your files are not uploaded."},
+    "LOT": {"th": "ล็อต", "en": "LOT"},
+    "✓ All images:": {"th": "✓ รูปภาพทั้งหมด:", "en": "✓ All images:"},
+    "⚠ Mixed image resolutions detected": {"th": "⚠ ตรวจพบความละเอียดรูปภาพที่ไม่เท่ากัน", "en": "⚠ Mixed image resolutions detected"},
+    "images loaded — upload a sticker to continue.": {"th": "รูปภาพโหลดเสร็จแล้ว — อัปโหลดสติกเกอร์เพื่อดำเนินการต่อ", "en": "images loaded — upload a sticker to continue."},
+    "Upload Sticker": {"th": "อัปโหลดสติกเกอร์", "en": "Upload Sticker"},
+    "Add Sticker": {"th": "เพิ่มสติกเกอร์", "en": "Add Sticker"},
+    "Sticker Settings": {"th": "ตั้งค่าสติกเกอร์", "en": "Sticker Settings"},
+    "แก้ไข {0}": {"th": "แก้ไข {0}", "en": "Edit {0}"},
+    "ค้นหาประเภทร้าน...": {"th": "ค้นหาประเภทร้าน...", "en": "Search store type..."},
+    "จับคู่ SKU": {"th": "จับคู่ SKU", "en": "Match SKU"},
+    "ชุดถัดไป ({0} SKU) →": {"th": "ชุดถัดไป ({0} SKU) →", "en": "Next batch ({0} SKU) →"},
+    "ตรวจรายการ workflow": {"th": "ตรวจรายการ workflow", "en": "Inspect workflow items"},
+    "นามสกุล": {"th": "นามสกุล", "en": "Last Name"},
+    "ปุ่ม Dismiss (ไม่บังคับ)": {"th": "ปุ่ม Dismiss (ไม่บังคับ)", "en": "Dismiss button (optional)"},
+    "ฟิลด์ที่ต้องการเก็บ": {"th": "ฟิลด์ที่ต้องการเก็บ", "en": "Fields to retain"},
+    "ไม่ระบุ": {"th": "ไม่ระบุ", "en": "Unspecified"},
+    "ยังไม่ระบุเขต": {"th": "ยังไม่ระบุเขต", "en": "District not specified"},
+    "ราคาสมาชิก": {"th": "ราคาสมาชิก", "en": "Member Price"},
+    "ลองลดคะแนนขั้นต่ำ หรือเลือกพื้นที่อื่น": {"th": "ลองลดคะแนนขั้นต่ำ หรือเลือกพื้นที่อื่น", "en": "Try reducing minimum score or select another area"},
+    "ว่าง = ตามที่ขอ {0}": {"th": "ว่าง = ตามที่ขอ {0}", "en": "Empty = as requested {0}"},
+    "สั่งซื้อแทนลูกค้า": {"th": "สั่งซื้อแทนลูกค้า", "en": "Order on customer's behalf"},
+    "หัวข้อแจ้งเตือน": {"th": "หัวข้อแจ้งเตือน", "en": "Notification Title"},
+    "เขต": {"th": "เขต", "en": "District"}
+  }
+  </script>
+</body></html>

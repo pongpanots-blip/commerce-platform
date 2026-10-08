@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Admin - Shipment Detail (SHP-20250328-01)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            outline: "#747687",
+            "primary-container": "#365cf5",
+            background: "#f6f8fc",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "primary-fixed": "#dde1ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary-fixed": "#d3e3ff",
+            "on-surface": "#0e1b32",
+            "tertiary-fixed-dim": "#ffb597",
+            "surface-variant": "#d7e2ff",
+            "on-primary-fixed": "#001257",
+            tertiary: "#943500",
+            "on-error": "#ffffff",
+            "tertiary-container": "#bc4600",
+            "tertiary-fixed": "#ffdbcd",
+            "on-background": "#0e1b32",
+            "surface-container-highest": "#d7e2ff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-fixed": "#360f00",
+            "surface-container-high": "#e0e8ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-bright": "#f9f9ff",
+            "on-surface-variant": "#444655",
+            "secondary-container": "#d0e1fd",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary-container": "#54647c",
+            "on-tertiary": "#ffffff",
+            error: "#c2333f",
+            "surface-tint": "#214ce7",
+            "on-tertiary-container": "#ffebe4",
+            "surface-container": "#e8eeff",
+            secondary: "#4f5f77",
+            "on-primary-container": "#ededff",
+            "inverse-primary": "#b9c3ff",
+            surface: "#f9f9ff",
+            "surface-dim": "#cddaf9",
+            "inverse-surface": "#243048",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed": "#0b1c31",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "outline-variant": "#c4c5d8",
+            "on-secondary": "#ffffff",
+            primary: "#365cf5"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "space-2xl": "2rem",
+            "space-xl": "1.5rem",
+            "space-md": "0.75rem",
+            "gutter-compact": "0.75rem",
+            "space-xs": "0.25rem",
+            margin: "1.5rem",
+            gutter: "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1rem"
+          },
+          fontFamily: {
+            "headline-xl": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "table-cell": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "numeric-data": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          fontSize: {
+            "headline-xl": ["28px", { lineHeight: "38px", fontWeight: "700" }],
+            "headline-lg": ["22px", { lineHeight: "32px", fontWeight: "600" }],
+            "label-sm": ["11px", { lineHeight: "14px", fontWeight: "600" }],
+            "table-cell": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "body-md": ["13px", { lineHeight: "20px", fontWeight: "400" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "numeric-data": ["13px", { lineHeight: "18px", fontWeight: "500" }],
+            "body-sm": ["12px", { lineHeight: "18px", fontWeight: "400" }],
+            "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+            "headline-md": ["18px", { lineHeight: "26px", fontWeight: "600" }],
+            "body-lg": ["15px", { lineHeight: "24px", fontWeight: "400" }],
+            "label-lg": ["14px", { lineHeight: "20px", fontWeight: "500" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+  </style>
+</head>
+<body class="bg-background min-h-screen text-on-surface antialiased flex">
+<!-- SIDEBAR (Fixed 256px / w-64) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between py-4 px-3 select-none">
+<div class="flex flex-col gap-5">
+<!-- Brand Logo / Header -->
+<div class="flex items-center gap-3 px-2">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-white" style="font-size: 22px;">warehouse</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm text-primary tracking-tight leading-tight">Commerce Admin</div>
+<div class="text-[11px] text-on-surface-variant font-normal">ศูนย์จัดการระบบพาณิชย์</div>
+</div>
+</div>
+<!-- Navigation Links (7 Core Categories) -->
+<nav class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน (ACTIVE) -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md bg-surface-container-high text-primary font-semibold rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="flex-1">ออเดอร์และการเงิน</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline">monitoring</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-outline">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer / Utility -->
+<div class="flex flex-col gap-2 pt-3 border-t border-outline-variant">
+<!-- Developer Portal CTA -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container text-label-sm font-label-sm text-primary hover:bg-surface-container-high transition-colors" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px;">terminal</span>
+<span>Developer Portal</span>
+</span>
+<span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
+</a>
+<!-- Support & Logout -->
+<div class="flex flex-col gap-0.5">
+<a class="flex items-center gap-3 px-3 py-1.5 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">help</span>
+<span>ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-label-md font-label-md text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- MAIN WRAPPER (Offset by sidebar w-64) -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TOP NAVBAR (Fixed top-0 right-0 left-64 h-14) -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6">
+<!-- Left: Breadcrumb / Omnisearch Context -->
+<div class="flex items-center gap-4">
+<!-- Breadcrumb Links -->
+<nav class="flex items-center gap-1.5 text-body-md font-body-md">
+<span class="text-on-surface-variant">ออเดอร์และการเงิน</span>
+<span class="text-outline-variant">/</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">shipments</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold bg-surface-container px-2 py-0.5 rounded text-xs">SHP-20250328-01</span>
+</nav>
+<!-- Route Identifier Badge -->
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed text-[11px] font-mono font-medium border border-outline-variant/60">
+<span class="material-symbols-outlined" style="font-size: 13px;">fingerprint</span>
+<span>admin-82c83b4e8c05</span>
+</div>
+</div>
+<!-- Right: Utility Clusters, Language Switcher, Profile -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher (TH | EN) -->
+<div class="bg-[#edf2f9] p-0.5 rounded-full flex items-center border border-[#e1e7f0]" id="lang-switch-container">
+<button class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white text-[#17243b] shadow-sm transition-all duration-150" id="lang-btn-th" onclick="setLanguage('th')">
+            TH
+          </button>
+<button class="px-2.5 py-0.5 rounded-full text-[11px] font-medium text-[#52627a] hover:text-[#17243b] transition-all duration-150" id="lang-btn-en" onclick="setLanguage('en')">
+            EN
+          </button>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Action Icons (Notifications, Help) -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors relative">
+<span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">help</span>
+</button>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold flex items-center justify-center text-xs">
+            OP
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-body-sm font-semibold text-on-surface leading-tight">สมชาย บริการค้า</span>
+<span class="text-[11px] text-on-surface-variant leading-tight">Admin Operations</span>
+</div>
+<span class="material-symbols-outlined text-outline" style="font-size: 16px;">expand_more</span>
+</div>
+</div>
+</header>
+<!-- MAIN SCROLLABLE CANVAS (mt-14) -->
+<main class="mt-14 p-6 bg-background flex-1 flex flex-col items-center">
+<div class="w-full max-w-[1240px] flex flex-col gap-6">
+<!-- Back Link & Action Bar Header -->
+<div class="flex flex-col gap-3">
+<!-- Back Link -->
+<a class="inline-flex items-center gap-1.5 text-body-sm text-primary hover:text-on-primary-fixed-variant font-medium transition-colors w-fit" href="#">
+<span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
+<span data-i18n="← กลับรายการ Shipments">← กลับรายการ Shipments</span>
+</a>
+<!-- Title Row & Main Action Buttons -->
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3 flex-wrap">
+<h1 class="text-headline-lg font-headline-lg text-[#17243b]">
+<span data-i18n="Shipment">Shipment</span> <span class="font-mono text-primary font-bold">SHP-20250328-01</span>
+</h1>
+<!-- Status Badge (รอส่ง / Pending Dispatch) -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fdf8e6] text-[#b08900] border border-[#fae392]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900] animate-pulse"></span>
+<span data-i18n="รอส่ง">รอส่ง</span>
+</span>
+<!-- Sample Data Tag -->
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#edf2f9] text-[#52627a] border border-[#e1e7f0]">
+                  ข้อมูลตัวอย่าง / Sample data
+                </span>
+</div>
+<!-- Subtitle & Reference -->
+<div class="flex items-center gap-2 text-body-sm text-[#52627a]">
+<span>อ้างอิงออเดอร์ <span class="font-mono font-medium text-on-surface">ORD-20250328-001</span></span>
+<span data-i18n="· รอชำระ">· รอชำระ</span>
+<a class="inline-flex items-center gap-1 text-primary hover:underline text-xs font-medium ml-1" href="#">
+<span data-i18n="เปิด Order">เปิด Order</span>
+<span class="material-symbols-outlined" style="font-size: 13px;">launch</span>
+</a>
+</div>
+</div>
+<!-- Header Action Controls -->
+<div class="flex items-center gap-2.5">
+<!-- Refresh Button -->
+<button class="h-9 px-3 rounded-lg bg-surface-container-lowest border border-[#e1e7f0] text-[#17243b] hover:bg-[#f6f8fc] text-label-md font-label-md flex items-center gap-1.5 shadow-sm transition-all duration-150">
+<span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<!-- Print Waybill / Label -->
+<button class="h-9 px-3.5 rounded-lg bg-surface-container-lowest border border-[#e1e7f0] text-[#17243b] hover:bg-[#f6f8fc] text-label-md font-label-md flex items-center gap-2 shadow-sm transition-all duration-150">
+<span class="material-symbols-outlined text-outline" style="font-size: 16px;">print</span>
+<span>พิมพ์ใบปะหน้า / Label</span>
+</button>
+<!-- Primary Dangerous Action Button: Cancel Shipment -->
+<button class="h-9 px-4 rounded-lg border border-[#c2333f]/40 bg-[#ffffff] text-[#c2333f] hover:bg-[#faecee] active:bg-[#f8d7da] text-label-md font-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all duration-150" onclick="openCancelModal()">
+<span class="material-symbols-outlined" style="font-size: 16px;">cancel</span>
+<span data-i18n="ยกเลิก">ยกเลิก</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SUMMARY FACT CARDS ROW (4 Columns Bento Grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: วันจัดส่ง -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#e1e7f0] shadow-sm flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-size: 22px;">calendar_today</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-[#52627a] font-medium" data-i18n="วันจัดส่ง">วันจัดส่ง</span>
+<span class="text-headline-sm font-headline-sm text-[#17243b] mt-0.5">28 มี.ค. 2025</span>
+<span class="text-[11px] text-[#157347] font-medium mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 13px;">schedule</span>
+                กำหนดส่ง: วันนี้
+              </span>
+</div>
+</div>
+<!-- Card 2: ยอดรวม -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#e1e7f0] shadow-sm flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-[#fdf8e6] flex items-center justify-center text-[#b08900] shrink-0">
+<span class="material-symbols-outlined" style="font-size: 22px;">payments</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-[#52627a] font-medium" data-i18n="ยอดรวม">ยอดรวม</span>
+<span class="text-headline-sm font-headline-sm text-[#17243b] mt-0.5 font-numeric-data">฿14,850.00</span>
+<span class="text-[11px] text-[#52627a] mt-0.5">เก็บเงินปลายทาง / รอชำระ</span>
+</div>
+</div>
+<!-- Card 3: สาขา -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#e1e7f0] shadow-sm flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-size: 22px;">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-[#52627a] font-medium" data-i18n="สาขา">สาขา</span>
+<span class="text-headline-sm font-headline-sm text-[#17243b] mt-0.5 truncate" title="คลังสินค้าหลัก พระราม 9">คลังสินค้าหลัก พระราม 9</span>
+<span class="text-[11px] text-[#52627a] font-mono mt-0.5">WH-BKK-01</span>
+</div>
+</div>
+<!-- Card 4: สรุป -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#e1e7f0] shadow-sm flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface shrink-0">
+<span class="material-symbols-outlined" style="font-size: 22px;">inventory</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-[#52627a] font-medium" data-i18n="สรุป">สรุป</span>
+<span class="text-headline-sm font-headline-sm text-[#17243b] mt-0.5">4 รายการ / 21 ชิ้น</span>
+<span class="text-[11px] text-[#52627a] mt-0.5">พัสดุขนาดกลาง (กล่อง M+)</span>
+</div>
+</div>
+</div>
+<!-- MAIN DETAIL 2-COLUMN GRID (Left 60%, Right 40%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN (7 Cols ~ 58-60%) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- Customer & Recipient Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">person_pin</span>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n="ลูกค้า / ผู้รับ">ลูกค้า / ผู้รับ</h2>
+</div>
+<span class="text-xs text-[#52627a] bg-surface-container px-2 py-0.5 rounded">ปลายทางจัดส่ง</span>
+</div>
+<div class="p-5 flex flex-col gap-3.5 text-body-md">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<span class="text-[#52627a] text-label-md" data-i18n="ชื่อ">ชื่อ:</span>
+<div class="sm:col-span-2 text-[#17243b] font-medium">
+                    บจก. สยามเทรดดิ้ง มาร์เก็ต
+                    <span class="block text-body-sm text-[#52627a] font-normal mt-0.5">(ผู้ติดต่อ: คุณสมศักดิ์ วงศ์สว่าง)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<span class="text-[#52627a] text-label-md" data-i18n="โทร">โทร:</span>
+<div class="sm:col-span-2 text-[#17243b] font-mono flex items-center gap-2">
+<span>081-998-1122</span>
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs" title="คัดลอกเบอร์">
+<span class="material-symbols-outlined" style="font-size: 15px;">content_copy</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<span class="text-[#52627a] text-label-md" data-i18n="ที่อยู่">ที่อยู่:</span>
+<div class="sm:col-span-2 text-[#17243b] leading-relaxed">
+                    88/12 หมู่ 5 ถนนบางนา-ตราด แขวงบางนา เขตบางนา กรุงเทพฯ 10260
+                  </div>
+</div>
+</div>
+</div>
+<!-- Courier & Driver Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">local_shipping</span>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n="Courier">Courier</h2>
+</div>
+<span class="inline-flex items-center gap-1 text-[11px] font-medium text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  API Connected
+                </span>
+</div>
+<div class="p-5 flex flex-col gap-3.5 text-body-md">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<span class="text-[#52627a] text-label-md">ผู้ให้บริการขนส่ง:</span>
+<div class="sm:col-span-2 text-[#17243b] font-medium flex items-center gap-2">
+<span>Standard Next-Day Express</span>
+<span class="text-xs text-[#52627a] font-normal">(Flash / Kerry Direct API)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<span class="text-[#52627a] text-label-md" data-i18n="ทะเบียน">ทะเบียน:</span>
+<div class="sm:col-span-2 text-[#52627a] italic flex items-center gap-2">
+<span data-i18n="ยังไม่มีข้อมูลคนขับ">ยังไม่มีข้อมูลคนขับ</span>
+<span class="text-[11px] not-italic text-outline-variant">(รอกำหนดรถ: สำรอง 2กข-8921 กทม.)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<span class="text-[#52627a] text-label-md">สถานะการรับ:</span>
+<div class="sm:col-span-2 text-[#17243b] flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-[#edf2f9] text-[#17243b]">
+<span class="material-symbols-outlined text-[#b08900]" style="font-size: 14px;">departure_board</span>
+                      รถเข้ารับพัสดุรอบบ่าย (14:00 - 16:00 น.)
+                    </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Items in Shipment Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">format_list_bulleted</span>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]">
+<span data-i18n="สินค้า (">สินค้า (</span>4 รายการ)
+                  </h2>
+</div>
+<span class="text-xs text-[#52627a]">ตรวจนับแล้ว 100%</span>
+</div>
+<!-- Product Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-label-md font-label-md text-[#52627a] uppercase tracking-wider h-10">
+<th class="py-2.5 px-4 font-medium">SKU</th>
+<th class="py-2.5 px-4 font-medium">รายการสินค้า</th>
+<th class="py-2.5 px-4 font-medium text-right">จำนวน</th>
+<th class="py-2.5 px-4 font-medium text-right">ราคา/หน่วย</th>
+<th class="py-2.5 px-4 font-medium text-right">รวม (฿)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-md text-[#17243b]">
+<!-- Item 1 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 font-mono text-xs text-primary font-medium">THM-PR-901</td>
+<td class="py-3 px-4 font-medium">
+                        เครื่องพิมพ์ความร้อน 80 มม. (Thermal Receipt)
+                        <span class="block text-[11px] text-[#52627a] font-normal">ประกันศูนย์ไทย 1 ปี</span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data">2 ชิ้น</td>
+<td class="py-3 px-4 text-right font-numeric-data">฿3,800.00</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">฿7,600.00</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 font-mono text-xs text-primary font-medium">ROLL-DT-100</td>
+<td class="py-3 px-4 font-medium">
+                        สติกเกอร์ความร้อน 100x150 มม. (กล่อง 500 ใบ)
+                        <span class="block text-[11px] text-[#52627a] font-normal">เกรดพรีเมียม กันน้ำ</span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data">15 ม้วน</td>
+<td class="py-3 px-4 text-right font-numeric-data">฿250.00</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">฿3,750.00</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 font-mono text-xs text-primary font-medium">CSH-RJ11-04</td>
+<td class="py-3 px-4 font-medium">
+                        ลิ้นชักเก็บเงิน RJ11 4 ช่องธนบัตร 8 ช่องเหรียญ
+                        <span class="block text-[11px] text-[#52627a] font-normal">สายเชื่อมต่อมาตรฐาน</span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data">1 เครื่อง</td>
+<td class="py-3 px-4 text-right font-numeric-data">฿1,800.00</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">฿1,800.00</td>
+</tr>
+<!-- Item 4 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 font-mono text-xs text-primary font-medium">SVC-SETUP-01</td>
+<td class="py-3 px-4 font-medium">
+                        บริการลงทะเบียน &amp; ตั้งค่าเครื่องพิมพ์ระบบ POS
+                        <span class="block text-[11px] text-[#52627a] font-normal">รีโมตและทดสอบหน้างาน</span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data">3 ชม.</td>
+<td class="py-3 px-4 text-right font-numeric-data">฿566.67</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">฿1,700.00</td>
+</tr>
+</tbody>
+<tfoot>
+<tr class="bg-[#f6f8fc]/60 border-t-2 border-[#e1e7f0]">
+<td class="py-3.5 px-4 text-right font-headline-sm text-sm text-[#17243b]" colspan="4">
+<span data-i18n="ยอดรวม">ยอดรวม</span>ทั้งสิ้น (Grand Total):
+                      </td>
+<td class="py-3.5 px-4 text-right text-headline-sm font-headline-sm text-primary font-numeric-data">
+                        ฿14,850.00
+                      </td>
+</tr>
+</tfoot>
+</table>
+</div>
+<!-- Footer Note -->
+<div class="px-5 py-3 bg-[#fdfdfd] border-t border-[#e1e7f0] flex items-center justify-between text-xs text-[#52627a]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline" style="font-size: 15px;">history</span>
+<span><span data-i18n="แก้ไขล่าสุด">แก้ไขล่าสุด</span> 28 มี.ค. 2025 10:45 น. โดย OP-Admin</span>
+</div>
+<span>คัดแยกโดยคลัง Rama 9 - Station A</span>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (5 Cols ~ 40-42%) -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Timing / Analytics Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">pace</span>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n="Timing / Analytics">Timing / Analytics</h2>
+</div>
+<span class="text-xs text-[#157347] font-semibold bg-[#e8f5ee] px-2 py-0.5 rounded-full border border-[#b7dfc8]">
+                  On Track
+                </span>
+</div>
+<div class="p-5 flex flex-col gap-5">
+<!-- Vertical Step Flow -->
+<div class="relative pl-6 flex flex-col gap-5 border-l-2 border-primary/20 ml-2 my-1">
+<!-- Step 1: สร้าง (Completed) -->
+<div class="relative">
+<span class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-primary ring-4 ring-white flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-size: 11px;">check</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-semibold text-[#17243b]" data-i18n="สร้าง">สร้าง</span>
+<span class="text-xs text-[#52627a] font-numeric-data">10:45 น.</span>
+</div>
+<span class="text-body-sm text-[#52627a]">28 มี.ค. 2025 (สร้างโดยระบบ ERP)</span>
+</div>
+</div>
+<!-- Step 2: รอส่ง (Active/In progress) -->
+<div class="relative">
+<span class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-[#b08900] ring-4 ring-white animate-pulse"></span>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-semibold text-[#b08900]" data-i18n="รอส่ง">รอส่ง</span>
+<span class="text-xs text-[#b08900] font-medium bg-[#fdf8e6] px-1.5 py-0.2 rounded">กำลังเตรียมสินค้า</span>
+</div>
+<span class="text-body-sm text-[#52627a]">หยิบและแพ็กเสร็จสิ้น รอยานพาหนะเข้ารับ</span>
+</div>
+</div>
+<!-- Step 3: ออกของ (Upcoming) -->
+<div class="relative opacity-60">
+<span class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-outline-variant ring-4 ring-white"></span>
+<div class="flex flex-col">
+<span class="text-label-md font-medium text-[#17243b]" data-i18n="ออกของ (shipped)">ออกของ (shipped)</span>
+<span class="text-body-sm text-[#52627a]">ยังไม่ถึงขั้นตอน (กำหนดรับ 14:00 น.)</span>
+</div>
+</div>
+<!-- Step 4: ส่งถึง (Upcoming) -->
+<div class="relative opacity-60">
+<span class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-outline-variant ring-4 ring-white"></span>
+<div class="flex flex-col">
+<span class="text-label-md font-medium text-[#17243b]" data-i18n="ส่งถึง">ส่งถึง</span>
+<span class="text-body-sm text-[#52627a]">คาดการณ์ 29 มี.ค. 2025 (Next-day)</span>
+</div>
+</div>
+</div>
+<!-- Metrics Strip -->
+<div class="pt-4 border-t border-[#e1e7f0] grid grid-cols-3 gap-2 text-center">
+<div class="p-2 rounded-lg bg-[#f6f8fc]">
+<span class="text-[11px] text-[#52627a] block" data-i18n="เวลารอส่ง">เวลารอส่ง</span>
+<span class="text-label-md font-semibold text-[#17243b] mt-0.5 block">45 <span data-i18n="นาที)">นาที)</span></span>
+</div>
+<div class="p-2 rounded-lg bg-[#f6f8fc]">
+<span class="text-[11px] text-[#52627a] block" data-i18n="เวลาจัดส่ง">เวลาจัดส่ง</span>
+<span class="text-label-md font-semibold text-[#52627a] mt-0.5 block">- ชม.</span>
+</div>
+<div class="p-2 rounded-lg bg-[#f6f8fc]">
+<span class="text-[11px] text-[#52627a] block" data-i18n="รวม (สร้าง→จบ)">รวม (สร้าง→จบ)</span>
+<span class="text-label-md font-semibold text-[#52627a] mt-0.5 block">คำนวณปลายทาง</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Proof of Delivery Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">verified</span>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n="Proof of Delivery">Proof of Delivery</h2>
+</div>
+<span class="text-xs text-[#52627a]">Pending</span>
+</div>
+<div class="p-5 flex flex-col gap-4">
+<div class="grid grid-cols-2 gap-4 text-body-sm">
+<div class="flex flex-col">
+<span class="text-[#52627a] text-label-sm" data-i18n="ผู้รับ:">ผู้รับ:</span>
+<span class="text-[#17243b] font-medium mt-0.5">-</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[#52627a] text-label-sm" data-i18n="ลายเซ็น">ลายเซ็น</span>
+<span class="text-[#52627a] italic mt-0.5" data-i18n="ไม่มีลายเซ็น">ไม่มีลายเซ็น</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-[#52627a] text-label-sm mb-1" data-i18n="รูปถ่าย">รูปถ่าย</span>
+<div class="border border-dashed border-[#e1e7f0] bg-[#f6f8fc] rounded-lg p-4 flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-outline-variant" style="font-size: 28px;">image_not_supported</span>
+<span class="text-xs text-[#52627a] mt-1 font-medium" data-i18n="ไม่มีรูปถ่าย">ไม่มีรูปถ่าย</span>
+</div>
+</div>
+<!-- Info Notice Box -->
+<div class="p-3 bg-surface-container rounded-lg border border-primary/20 flex items-start gap-2 text-xs text-on-surface">
+<span class="material-symbols-outlined text-primary shrink-0" style="font-size: 16px;">info</span>
+<p class="leading-normal">
+<span data-i18n="ยังไม่มีหลักฐานการส่ง">ยังไม่มีหลักฐานการส่ง</span> (จะแสดงเมื่อผู้ขับนำส่งปลายทางสำเร็จ)
+                  </p>
+</div>
+</div>
+</div>
+<!-- Cancel Action Box / Flow Trigger Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-error/30 p-5 shadow-sm flex flex-col gap-3">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined" style="font-size: 20px;">warning</span>
+<h3 class="text-headline-sm font-headline-sm text-error" data-i18n="ยกเลิก">ยกเลิก</h3>
+</div>
+<p class="text-body-sm text-[#52627a] leading-relaxed">
+                เหตุผลในการขอยกเลิก shipment (กรณีสินค้ายังไม่ออกจากคลัง หรือลูกค้าเปลี่ยนใจยกเลิกออเดอร์) ระบบจะคืนสถานะสต็อกและอัปเดตใบสั่งซื้อโดยอัตโนมัติ
+              </p>
+<button class="w-full mt-1 py-2.5 px-4 rounded-lg bg-[#c2333f] hover:bg-[#a82b36] text-white font-label-md font-semibold shadow-sm transition-colors flex items-center justify-center gap-2" onclick="openCancelModal()">
+<span class="material-symbols-outlined" style="font-size: 18px;">delete_forever</span>
+<span>ยืนยันยกเลิก Shipment</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- CANCEL CONFIRMATION MODAL (Level 4 Elevation) -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#17243b]/45 backdrop-blur-[2px]" id="cancel-modal">
+<div class="bg-white rounded-xl border border-[#e1e7f0] max-w-md w-full p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in duration-150">
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-full bg-[#faecee] text-[#c2333f] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" style="font-size: 22px;">error</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n="ยกเลิก">ยกเลิก</h3>
+<p class="text-body-sm text-[#52627a] mt-1">
+            คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจัดส่ง <strong class="text-[#17243b]">SHP-20250328-01</strong>? รายการพัสดุจะถูกระงับการส่งผ่าน Courier ทันที
+          </p>
+</div>
+</div>
+<div class="flex flex-col gap-1.5 mt-1">
+<label class="text-label-sm font-semibold text-[#17243b]">ระบุเหตุผลการยกเลิก</label>
+<select class="h-9 px-3 rounded-lg border border-[#e1e7f0] text-body-md text-[#17243b] focus:border-primary focus:ring-1 focus:ring-primary">
+<option>ลูกค้าขอยกเลิกคำสั่งซื้อ</option>
+<option>ที่อยู่จัดส่งไม่ถูกต้อง / ติดต่อไม่ได้</option>
+<option>สินค้าชำรุดระหว่างรอส่งมอบ</option>
+<option>ต้องการรวมพัสดุกับออเดอร์อื่น</option>
+</select>
+</div>
+<div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#e1e7f0]">
+<button class="h-9 px-4 rounded-lg bg-white border border-[#e1e7f0] text-[#17243b] hover:bg-[#f6f8fc] text-label-md font-medium transition-colors" onclick="closeCancelModal()">
+          ปิดหน้าต่าง
+        </button>
+<button class="h-9 px-4 rounded-lg bg-[#c2333f] hover:bg-[#a82b36] text-white text-label-md font-semibold transition-colors flex items-center gap-1.5" onclick="confirmCancellation()">
+<span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+<span>ยืนยันยกเลิก</span>
+</button>
+</div>
+</div>
+</div>
+<!-- INVISIBLE TRANSLATION DICTIONARY SCRIPT TAG (Exact required strings catalogue) -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ยกเลิก": { "th": "ยกเลิก", "en": "Cancel" },
+    "ยอดรวม": { "th": "ยอดรวม", "en": "Grand Total" },
+    "ชื่อ": { "th": "ชื่อ", "en": "Name" },
+    "โทร": { "th": "โทร", "en": "Phone" },
+    "สาขา": { "th": "สาขา", "en": "Branch / Warehouse" },
+    "สรุป": { "th": "สรุป", "en": "Summary" },
+    "Shipment": { "th": "Shipment", "en": "Shipment" },
+    "ไม่พบข้อมูล": { "th": "ไม่พบข้อมูล", "en": "Data not found" },
+    "กำลังโหลด...": { "th": "กำลังโหลด...", "en": "Loading..." },
+    "ที่อยู่": { "th": "ที่อยู่", "en": "Address" },
+    "฿": { "th": "฿", "en": "THB " },
+    "วันจัดส่ง": { "th": "วันจัดส่ง", "en": "Dispatch Date" },
+    "Courier": { "th": "Courier", "en": "Courier & Carrier" },
+    "← กลับรายการ Shipments": { "th": "← กลับรายการ Shipments", "en": "← Back to Shipments" },
+    "← Shipments": { "th": "← Shipments", "en": "← Shipments" },
+    "· รอชำระ": { "th": "· รอชำระ", "en": "· Pending Payment" },
+    "เปิด Order": { "th": "เปิด Order", "en": "Open Order" },
+    "ลูกค้า / ผู้รับ": { "th": "ลูกค้า / ผู้รับ", "en": "Customer / Recipient" },
+    "Timing / Analytics": { "th": "Timing / Analytics", "en": "Timing / Analytics" },
+    "สร้าง": { "th": "สร้าง", "en": "Created" },
+    "ออกของ (shipped)": { "th": "ออกของ (shipped)", "en": "Dispatched (Shipped)" },
+    "ส่งถึง": { "th": "ส่งถึง", "en": "Delivered" },
+    "เวลารอส่ง": { "th": "เวลารอส่ง", "en": "Wait Time" },
+    "นาที)": { "th": "นาที)", "en": "mins)" },
+    "เวลาจัดส่ง": { "th": "เวลาจัดส่ง", "en": "Transit Time" },
+    "รวม (สร้าง→จบ)": { "th": "รวม (สร้าง→จบ)", "en": "Total (End-to-End)" },
+    "ทะเบียน": { "th": "ทะเบียน", "en": "Vehicle Plate" },
+    "ยังไม่มีข้อมูลคนขับ": { "th": "ยังไม่มีข้อมูลคนขับ", "en": "No driver assigned yet" },
+    "Proof of Delivery": { "th": "Proof of Delivery", "en": "Proof of Delivery" },
+    "ผู้รับ:": { "th": "ผู้รับ:", "en": "Receiver:" },
+    "รูปถ่าย": { "th": "รูปถ่าย", "en": "POD Photo" },
+    "ไม่มีรูปถ่าย": { "th": "ไม่มีรูปถ่าย", "en": "No POD Photo" },
+    "ลายเซ็น": { "th": "ลายเซ็น", "en": "Signature" },
+    "ไม่มีลายเซ็น": { "th": "ไม่มีลายเซ็น", "en": "No signature" },
+    "ยังไม่มีหลักฐานการส่ง": { "th": "ยังไม่มีหลักฐานการส่ง", "en": "No delivery proof yet" },
+    "สินค้า (": { "th": "สินค้า (", "en": "Items (" },
+    "แก้ไขล่าสุด": { "th": "แก้ไขล่าสุด", "en": "Last updated" },
+    "ครอบคลุม {0} คอลัมน์": { "th": "ครอบคลุม {0} คอลัมน์", "en": "Spanning {0} columns" },
+    "จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)": { "th": "จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)", "en": "Notification count prior to order by channel (Read-only)" },
+    "เช่น 100": { "th": "เช่น 100", "en": "e.g. 100" },
+    "ต้องมี Title และ Message": { "th": "ต้องมี Title และ Message", "en": "Title and Message required" },
+    "ในแผงขวา — เพิ่มขั้นตอนถัดไปด้วยปุ่มด้านล่าง": { "th": "ในแผงขวา — เพิ่มขั้นตอนถัดไปด้วยปุ่มด้านล่าง", "en": "In right panel — Add next steps via bottom button" },
+    "เปิดใช้งาน Campaign": { "th": "เปิดใช้งาน Campaign", "en": "Activate Campaign" },
+    "มล.": { "th": "มล.", "en": "ml." },
+    "ไม่อยู่ใน": { "th": "ไม่อยู่ใน", "en": "Not in" },
+    "ยืนยันการลบ Template นี้?": { "th": "ยืนยันการลบ Template นี้?", "en": "Confirm deletion of this template?" },
+    "รายการ/หน้า": { "th": "รายการ/หน้า", "en": "items/page" },
+    "ล้างรูปเก่าเรียบร้อย": { "th": "ล้างรูปเก่าเรียบร้อย", "en": "Previous images cleared" },
+    "เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่": { "th": "เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่", "en": "Auto-crawled sites run on schedules · Pausing stops sites after current page, progress preserved" },
+    "สำเร็จ — REF_TOKEN นี้ถูกตั้งเป็น paid แล้ว": { "th": "สำเร็จ — REF_TOKEN นี้ถูกตั้งเป็น paid แล้ว", "en": "Success — REF_TOKEN marked as paid" },
+    "เหมือน flow จริง": { "th": "เหมือน flow จริง", "en": "Matches production flow" },
+    "หมวด (รหัส)": { "th": "หมวด (รหัส)", "en": "Category (Code)" },
+    "ไม่พบ shipment": { "th": "ไม่พบ shipment", "en": "Shipment not found" },
+    "รอส่ง": { "th": "รอส่ง", "en": "Pending dispatch" },
+    "โหลดไม่สำเร็จ": { "th": "โหลดไม่สำเร็จ", "en": "Load failed" }
+  }
+  </script>
+<!-- INTERACTION JAVASCRIPT -->
+<script>
+    let currentLang = 'th';
+    const translationDictionary = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white text-[#17243b] shadow-sm transition-all duration-150";
+        btnEn.className = "px-2.5 py-0.5 rounded-full text-[11px] font-medium text-[#52627a] hover:text-[#17243b] transition-all duration-150";
+      } else {
+        btnEn.className = "px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white text-[#17243b] shadow-sm transition-all duration-150";
+        btnTh.className = "px-2.5 py-0.5 rounded-full text-[11px] font-medium text-[#52627a] hover:text-[#17243b] transition-all duration-150";
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationDictionary[key] && translationDictionary[key][lang]) {
+          el.textContent = translationDictionary[key][lang];
+        }
+      });
+    }
+
+    function openCancelModal() {
+      const modal = document.getElementById('cancel-modal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeCancelModal() {
+      const modal = document.getElementById('cancel-modal');
+      modal.classList.add('hidden');
+    }
+
+    function confirmCancellation() {
+      closeCancelModal();
+      alert('คำขอยกเลิก Shipment SHP-20250328-01 สำเร็จ');
+    }
+  </script>
+</body></html>

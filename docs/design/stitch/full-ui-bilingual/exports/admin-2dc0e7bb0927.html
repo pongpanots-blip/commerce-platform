@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>อัปโหลดรูปสินค้าหลายรายการ | Commerce Operations Hub</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary-fixed-variant": "#0034c0",
+            "on-primary-container": "#ededff",
+            "secondary-fixed": "#d3e3ff",
+            "surface-dim": "#cddaf9",
+            "tertiary-container": "#007c50",
+            "on-tertiary": "#ffffff",
+            "on-background": "#0e1b32",
+            "on-tertiary-fixed": "#002112",
+            "secondary-container": "#d0e1fd",
+            "background": "#f9f9ff",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "surface-container-low": "#f1f3ff",
+            "surface-bright": "#f9f9ff",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#e0e8ff",
+            "on-surface": "#0e1b32",
+            "surface-container-lowest": "#ffffff",
+            "on-surface-variant": "#444655",
+            "outline": "#747687",
+            "tertiary": "#00613d",
+            "primary": "#0a3fdc",
+            "surface": "#f9f9ff",
+            "on-primary-fixed": "#001257",
+            "on-tertiary-container": "#b4ffd2",
+            "inverse-surface": "#243048",
+            "inverse-on-surface": "#ecf0ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-error": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "on-secondary-fixed": "#0b1c31",
+            "error": "#ba1a1a",
+            "secondary": "#4f5f77",
+            "primary-container": "#365cf5",
+            "surface-variant": "#d7e2ff",
+            "surface-tint": "#214ce7",
+            "on-tertiary-fixed-variant": "#005233",
+            "outline-variant": "#c4c5d8",
+            "tertiary-fixed-dim": "#59de9e",
+            "on-error-container": "#93000a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-fixed": "#77fbb8",
+            "on-secondary-container": "#54647c",
+            "surface-container": "#e8eeff",
+            "primary-fixed-dim": "#b9c3ff",
+            "primary-fixed": "#dde1ff",
+            "error-container": "#ffdad6"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "display": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-lg-mobile": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"]
+          },
+          fontSize: {
+            "display": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "headline-md": ["18px", { lineHeight: "26px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "headline-lg": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "600" }],
+            "headline-lg-mobile": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }],
+            "label-lg": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "body-md": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+            "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+      color: #17243b;
+      background-color: #f6f8fc;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden selection:bg-primary-container selection:text-white">
+<!-- ========================================== -->
+<!-- SIDEBAR (256px - Desktop Drawer Anchor)    -->
+<!-- ========================================== -->
+<aside class="w-64 h-screen fixed left-0 top-0 z-30 flex flex-col bg-surface-container-lowest border-r border-outline-variant shadow-sm select-none">
+<!-- Brand / Workspace Header -->
+<div class="h-16 flex items-center justify-between px-4 border-b border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+          C
+        </div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Commerce Hub</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-surface-container text-primary uppercase">ADMIN</span>
+</div>
+<span class="font-label-sm text-[11px] text-secondary tracking-tight block">Enterprise Operations</span>
+</div>
+</div>
+</div>
+<!-- Navigation List (7 Work Areas) -->
+<div class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+<!-- 1. สินค้าและสต็อก (Active Domain & Expanded) -->
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-low text-primary font-headline-sm text-headline-sm text-left transition-colors duration-150">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-lg text-label-lg font-semibold">สินค้าและสต็อก</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="expand_more">expand_more</span>
+</button>
+<!-- Nested Sub-items -->
+<div class="ml-4 pl-3 border-l-2 border-surface-container-highest space-y-0.5 py-1 text-label-md font-label-md">
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            จัดการสินค้า / แคตตาล็อก
+          </a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            เพิ่มสินค้าใหม่
+          </a>
+<!-- Active Target Sub-item -->
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-primary-container text-white font-semibold shadow-xs" href="#">
+<span>อัปโหลดรูปสินค้าหลายรายการ</span>
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+</a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            แบรนด์
+          </a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            รอบสั่งซื้อ supplier
+          </a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            คิวข้อมูลสินค้าจาก ERP
+          </a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            ราคาสินค้า
+          </a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            ความเคลื่อนไหวสต็อก
+          </a>
+<a class="block px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            สต็อกแยกตามคลัง
+          </a>
+</div>
+</div>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="integration_instructions">integration_instructions</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</div>
+<!-- Sidebar Footer / Route Anchor -->
+<div class="p-3 border-t border-outline-variant bg-surface-container-lowest space-y-2">
+<div class="px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/60 flex items-center justify-between">
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="terminal">terminal</span>
+<span class="font-mono text-[11px] truncate" title="/j/product/bulk-image-upload">/bulk-image-upload</span>
+</div>
+<a class="text-primary hover:underline text-[11px] font-semibold flex items-center gap-0.5" href="#">
+          Dev
+          <span class="material-symbols-outlined text-[12px]" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+<div class="flex items-center justify-between px-2 pt-1 text-label-sm font-label-sm text-secondary">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="help">help</span>
+          ช่วยเหลือและคู่มือ
+        </a>
+<a class="hover:text-error transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="logout">logout</span>
+          ออก
+        </a>
+</div>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- MAIN WORKSPACE CONTAINER (Fluid Desktop)   -->
+<!-- ========================================== -->
+<div class="flex-1 flex flex-col pl-64 min-w-0 h-screen overflow-hidden">
+<!-- TOP CONTEXTUAL HEADER -->
+<header class="h-16 bg-surface-container-lowest border-b border-outline-variant z-20 flex items-center justify-between px-6 shrink-0">
+<!-- Breadcrumbs & Route Identifiers -->
+<div class="flex items-center gap-3">
+<nav class="flex items-center gap-2 text-label-md font-label-md">
+<span class="text-secondary hover:text-on-surface cursor-pointer">สินค้าและสต็อก</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">อัปโหลดรูปสินค้าหลายรายการ</span>
+</nav>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono bg-surface-container text-on-surface-variant border border-outline-variant/60">
+          admin-2dc0e7bb0927
+        </span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary border border-primary/20 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<!-- Header Trailing Utilities -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher -->
+<div class="inline-flex rounded-lg border border-outline-variant p-0.5 bg-surface-container-lowest text-label-sm font-label-sm">
+<button class="px-2.5 py-1 rounded bg-primary-container text-white font-medium shadow-xs" type="button">ไทย</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface font-normal" type="button">English</button>
+</div>
+<!-- Quick Notifications & Tooling -->
+<button class="p-2 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors relative" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<div class="h-5 w-px bg-outline-variant"></div>
+<!-- Operator User Pill -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary font-bold text-xs">
+            OP
+          </div>
+<div class="leading-tight text-left">
+<span class="block font-label-md text-label-md font-semibold text-on-surface">ทีมปฏิบัติการ Commerce Ops</span>
+<span class="block text-[11px] text-secondary">Level 2 Store Admin</span>
+</div>
+</div>
+</div>
+</header>
+<!-- WORKSPACE CANVAS (Scrollable) -->
+<main class="flex-1 overflow-y-auto px-8 py-6 space-y-6 custom-scrollbar bg-[#f6f8fc]">
+<!-- 1. PAGE TITLE & PRIMARY ACTIONS -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 border-b border-outline-variant/60">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<a class="inline-flex items-center gap-1 text-primary hover:text-on-primary-fixed-variant text-label-md font-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_back">arrow_back</span>
+<span>กลับสู่หน้าแคตตาล็อกสินค้า</span>
+</a>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">
+            อัปโหลดรูปสินค้าแบบชุด (Bulk Image Upload)
+          </h1>
+<p class="font-body-md text-body-md text-secondary mt-0.5">
+            อัปโหลดรูปภาพสินค้าจำนวนมากพร้อมกัน รองรับการจับคู่ SKU และลำดับรูปภาพอัตโนมัติผ่านชื่อไฟล์
+          </p>
+</div>
+<!-- Secondary Batch Tools -->
+<div class="flex items-center gap-2.5 self-start md:self-auto">
+<button class="h-[38px] px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container text-label-lg font-label-lg flex items-center gap-2 shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="history">history</span>
+<span>ประวัติการอัปโหลด</span>
+</button>
+<button class="h-[38px] px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-secondary hover:text-error hover:border-error/40 text-label-lg font-label-lg flex items-center gap-1.5 shadow-xs transition-colors group" title="ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกจาก S3 — แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 ภาพเสมอ" type="button">
+<span class="material-symbols-outlined text-[18px] group-hover:text-error" data-icon="delete_sweep">delete_sweep</span>
+<span>ล้างรูปเก่าที่กู้คืนไม่ได้แล้ว</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="info">info</span>
+</button>
+</div>
+</div>
+<!-- 2. UPLOAD MODE SELECTOR CARD -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+<div class="px-5 py-3.5 bg-surface-container-low/50 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="tune">tune</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">เลือกโหมดการอัปโหลด (Upload Mode)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container px-2.5 py-0.5 rounded-full">
+            การตั้งค่าการจัดเก็บ
+          </span>
+</div>
+<div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Option 1: Selected (แทนที่ตามลำดับ) -->
+<label class="relative flex flex-col p-4 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer transition-all duration-150 hover:shadow-xs">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<input checked="" class="w-4 h-4 text-primary focus:ring-primary border-outline" name="upload_mode" type="radio" value="replace"/>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">แทนที่ตามลำดับ (Sequential Replace)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-primary-container text-white">แนะนำ</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2.5 ml-7">
+              ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)
+            </p>
+<div class="mt-3 ml-7 pt-2.5 border-t border-primary/20 flex items-center gap-1.5 text-label-sm font-label-sm text-primary">
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+<span><code class="font-mono bg-white px-1.5 py-0.5 rounded border border-primary/30">JG001_2.jpg</code> จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน</span>
+</div>
+</label>
+<!-- Option 2: Append (เพิ่มต่อท้าย) -->
+<label class="relative flex flex-col p-4 rounded-xl border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low/30 cursor-pointer transition-all duration-150">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 text-primary focus:ring-primary border-outline" name="upload_mode" type="radio" value="append"/>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">เพิ่มต่อท้าย (Append Gallery)</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-secondary mt-2.5 ml-7">
+              ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วเพิ่มต่อท้ายแกลเลอรีเดิม (ไม่ลบ/ไม่แทนที่รูปเดิม)
+            </p>
+<div class="mt-3 ml-7 pt-2.5 border-t border-outline-variant/60 flex items-center gap-1.5 text-label-sm font-label-sm text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="playlist_add">playlist_add</span>
+<span>รูปทุกไฟล์ถูกเพิ่มต่อท้ายแกลเลอรีเดิมตามลำดับที่โหลดเข้ามา</span>
+</div>
+</label>
+</div>
+</section>
+<!-- 3. DRAG & DROP UPLOAD ZONE -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs p-6">
+<div class="border-2 border-dashed border-outline-variant hover:border-primary rounded-xl p-8 bg-surface-container-low/20 hover:bg-primary/5 transition-all text-center flex flex-col items-center justify-center cursor-pointer group">
+<div class="w-16 h-16 rounded-full bg-surface-container-high group-hover:bg-primary-container text-secondary group-hover:text-white flex items-center justify-center transition-all duration-200 mb-3">
+<span class="material-symbols-outlined text-[32px]" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">
+            ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่
+          </h3>
+<p class="font-body-md text-body-md text-secondary mt-1 max-w-md">
+            ลากไฟล์หรือโฟลเดอร์มาวาง หรือเลือกด้วยปุ่มด้านล่างเพื่อเริ่มกระบวนการจัดคิวอัตโนมัติ
+          </p>
+<div class="flex items-center gap-2 my-4">
+<span class="h-px w-12 bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-outline font-medium">หรือ</span>
+<span class="h-px w-12 bg-outline-variant"></span>
+</div>
+<!-- Upload Trigger Buttons -->
+<div class="flex flex-wrap items-center justify-center gap-3">
+<button class="h-[38px] px-5 rounded-lg bg-primary-container text-white font-label-lg text-label-lg font-medium hover:bg-[#2b4cd8] flex items-center gap-2 shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="upload_file">upload_file</span>
+<span>เลือกไฟล์รูปภาพเพื่ออัปโหลด</span>
+</button>
+<button class="h-[38px] px-5 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-label-lg text-label-lg font-medium hover:bg-surface-container flex items-center gap-2 shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="drive_folder_upload">drive_folder_upload</span>
+<span>เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด</span>
+</button>
+</div>
+<!-- Constraints and Current Quota Status -->
+<div class="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-label-sm font-label-sm text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-tertiary" data-icon="verified">verified</span>
+              สูงสุด 100 ไฟล์ต่อครั้ง
+            </span>
+<span>•</span>
+<span>ไฟล์ละไม่เกิน 5 MB</span>
+<span>•</span>
+<span class="font-mono uppercase text-[11px] text-on-surface-variant">jpg, jpeg, png, gif, webp</span>
+<span>•</span>
+<span class="text-primary font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+              วางไฟล์เพิ่มได้ (เหลืออีก 95 ไฟล์)
+            </span>
+</div>
+</div>
+</section>
+<!-- 4. FILE NAMING CONVENTION & SKU MATCHING GUIDE -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+<details class="group" open="">
+<summary class="px-5 py-3.5 bg-surface-container-low/50 border-b border-[#e1e7f0] flex items-center justify-between cursor-pointer select-none">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="info">info</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+                ตั้งชื่อไฟล์ตามรูปแบบ <span class="font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded">sku_ลำดับ.นามสกุล</span> — ระบบใช้ชื่อไฟล์จับคู่สินค้า
+              </h2>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-secondary">
+<span class="group-open:hidden">แสดงคำแนะนำ</span>
+<span class="hidden group-open:inline">ซ่อนคำแนะนำ</span>
+<span class="material-symbols-outlined transition-transform duration-200 group-open:rotate-180" data-icon="expand_more">expand_more</span>
+</div>
+</summary>
+<div class="p-5 space-y-4">
+<!-- Convention Mapping Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+<!-- Example 1 -->
+<div class="p-3 rounded-lg border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="font-mono font-bold text-headline-sm text-on-surface">JG001_1.jpg</div>
+<div class="text-label-sm text-secondary mt-1">ไฟล์สินค้าหลัก</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between text-label-md font-label-md">
+<span class="text-secondary">SKU: <strong class="text-on-surface font-mono">JG001</strong></span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-semibold text-[11px]">รูปที่ 1 (ภาพหลัก)</span>
+</div>
+</div>
+<!-- Example 2 -->
+<div class="p-3 rounded-lg border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="font-mono font-bold text-headline-sm text-on-surface">JG001_2.jpg</div>
+<div class="text-label-sm text-secondary mt-1">ไฟล์สินค้ารอง</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between text-label-md font-label-md">
+<span class="text-secondary">SKU: <strong class="text-on-surface font-mono">JG001</strong></span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-semibold text-[11px]">รูปที่ 2</span>
+</div>
+</div>
+<!-- Example 3 -->
+<div class="p-3 rounded-lg border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="font-mono font-bold text-headline-sm text-on-surface">JG-001_2.png</div>
+<div class="text-label-sm text-secondary mt-1">(ขีดในรหัสได้ ระบบตัดเฉพาะ _ตัวเลขท้ายสุด)</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between text-label-md font-label-md">
+<span class="text-secondary">SKU: <strong class="text-on-surface font-mono">JG-001</strong></span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-semibold text-[11px]">รูปที่ 2</span>
+</div>
+</div>
+<!-- Example 4 -->
+<div class="p-3 rounded-lg border border-error/30 bg-error/5 flex flex-col justify-between">
+<div>
+<div class="font-mono font-bold text-headline-sm text-error">JG002.webp</div>
+<div class="text-label-sm text-error/80 mt-1">— โหมดแทนที่ต้องมีลำดับเสมอ</div>
+</div>
+<div class="mt-3 pt-2 border-t border-error/20 flex items-center justify-between text-label-md font-label-md">
+<span class="text-error font-medium">ถูกข้าม</span>
+<span class="text-[11px] text-secondary font-normal">(โหมดเพิ่มต่อท้ายใส่ได้)</span>
+</div>
+</div>
+</div>
+<!-- Footnote rules -->
+<div class="p-3 rounded-lg bg-surface-container-low text-label-md font-label-md text-on-surface-variant flex flex-col md:flex-row md:items-center justify-between gap-2 border border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="check_circle">check_circle</span>
+<span>ตัวพิมพ์ใหญ่/เล็กไม่มีผล (Case-insensitive) · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งเตือนให้ทราบทันที</span>
+</div>
+<div class="text-secondary text-label-sm font-label-sm">
+                • โหมดแทนที่: ลำดับในชื่อไฟล์คือรูปที่จะถูกทับ ถ้าลำดับนั้นยังว่างระบบจะเพิ่มให้แทน
+              </div>
+</div>
+</div>
+</details>
+</section>
+<!-- 5. STAGED FILES / LIVE UPLOAD QUEUE PREVIEW TABLE -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+<!-- Queue Header Actions -->
+<div class="px-6 py-4 border-b border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">พร้อมอัปโหลด</h2>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary border border-primary/20 font-bold">
+              5 รายการ
+            </span>
+<span class="text-body-sm font-body-sm text-secondary">
+              (ผ่านการตรวจสอบ 3 รายการ · ข้อผิดพลาด 2 รายการ)
+            </span>
+</div>
+<div class="flex items-center gap-2.5">
+<button class="h-[38px] px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-secondary hover:text-error hover:border-error/30 text-label-lg font-label-lg font-medium flex items-center gap-1.5 shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="clear_all">clear_all</span>
+<span>ล้างรายการ</span>
+</button>
+<button class="h-[38px] px-5 rounded-lg bg-primary-container hover:bg-[#2b4cd8] text-white text-label-lg font-label-lg font-semibold flex items-center gap-2 shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="publish">publish</span>
+<span>อัปโหลด (3 ไฟล์ที่พร้อม)</span>
+</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#edf2f9] text-secondary font-headline-sm text-[12px] uppercase tracking-wider border-b border-[#e1e7f0]">
+<th class="py-3 px-4 w-10 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</th>
+<th class="py-3 px-3 w-16">รูป</th>
+<th class="py-3 px-4 font-semibold">ไฟล์ (File Name)</th>
+<th class="py-3 px-4 font-semibold">SKU สินค้า</th>
+<th class="py-3 px-4 font-semibold">โหมด / ลำดับรูป</th>
+<th class="py-3 px-4 font-semibold">สถานะการตรวจสอบ</th>
+<th class="py-3 px-4 text-right font-semibold">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-md font-body-md">
+<!-- Row 1: JG001_1.jpg -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="w-11 h-11 rounded-lg border border-outline-variant/60 bg-surface-container-high overflow-hidden flex items-center justify-center relative">
+<img class="w-full h-full object-cover" data-alt="Commercial studio product photography of high-end wireless headphones in matte charcoal black, centered against a crisp seamless soft light grey background, dramatic edge lighting, modern e-commerce visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASHEk58jT1YLEQOYBeY9UljFM7zW0YAPzdOa35-tyDqpRo-f8h-QRlx_Q43iDh1f7_sH_DUKHMu_3Fw0lsa2TuGsWeQ7R3Af2f4Es2w0gS6l2QdRDSxlKMcUvaa77NiE72zfe5FNy-OXGmT6QeX8OiKkTipUodY_1CVrGq_wH7leLnl6ZQXQTiVJ9KP2pc_rAJuXqcttAcA1zOeM6zQBcm5IUbCFjM9gBd2IS5ubOU9YaGgWOl5Zszk5p5K9NBAMO1kxw0pKHX0zU"/>
+<span class="absolute bottom-0 right-0 bg-on-surface/80 text-white text-[9px] font-mono px-1 rounded-tl">#1</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-mono text-on-surface font-semibold text-headline-sm">JG001_1.jpg</div>
+<div class="text-[11px] text-secondary">2.4 MB · image/jpeg</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface font-mono font-bold text-label-md">
+                    JG001
+                  </span>
+<div class="text-[11px] text-secondary mt-0.5">หูฟังไร้สาย Pro Sound</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="sync">sync</span>
+<span>แทนที่รูปที่ 1 (ภาพหลัก)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-tertiary-container/10 text-tertiary border border-tertiary-container/30">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                    พร้อมอัปโหลด
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="ลบออกจากคิว" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: JG001_2.jpg -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="w-11 h-11 rounded-lg border border-outline-variant/60 bg-surface-container-high overflow-hidden flex items-center justify-center relative">
+<img class="w-full h-full object-cover" data-alt="Angle profile view of black wireless headphones showcasing tactile volume rocker buttons and plush memory foam ear cushions, soft ambient illumination, clean commercial product aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7HNN8U7eRjBt7bIWMgwoAyzI3MTD58BgLRt2-C-D5mWgtHsTyEBILT9uLm2USRbMm-ex6QOzo5QEIOcdYOBFpAvehlTen8dtdPDi9jUGSeFW-QYSRWPPFQIvJtHCRalcS8R0WV2FO_SGSM2FsPSYYHclErP1DGHLOVHoQmPFe4wiXABXNvMs-QA4dXth3kaZZYfAIReSdES-WxS05cicqaBsHnUENRaNaccRJwoviRovI2BpzIOADBeM3gCsp-U6eMcp_Q5Nvdls"/>
+<span class="absolute bottom-0 right-0 bg-on-surface/80 text-white text-[9px] font-mono px-1 rounded-tl">#2</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-mono text-on-surface font-semibold text-headline-sm">JG001_2.jpg</div>
+<div class="text-[11px] text-secondary">1.8 MB · image/jpeg</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface font-mono font-bold text-label-md">
+                    JG001
+                  </span>
+<div class="text-[11px] text-secondary mt-0.5">หูฟังไร้สาย Pro Sound</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="sync">sync</span>
+<span>แทนที่รูปที่ 2</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-tertiary-container/10 text-tertiary border border-tertiary-container/30">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                    พร้อมอัปโหลด
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="ลบออกจากคิว" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: SKU-TH-8890_1.png -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="w-11 h-11 rounded-lg border border-outline-variant/60 bg-surface-container-high overflow-hidden flex items-center justify-center relative">
+<img class="w-full h-full object-cover" data-alt="Ergonomic aluminum laptop stand on clean wooden desk surface, contemporary minimalist workplace interior with soft morning sunlight, sharp focus e-commerce photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYAB2KMZmDMks2MjuPUcUlAcOXh1BAoPP1xRDdhIIvHrOO6suZpJ6kXmarsxYo0dLm2Zwy2PlyBRpfgrqHC_GvIGF-cdoRl5kgmsdx195xc77TI9pYWkSxIX4J1bkERFc4w1xSTyYgQiZDRa81HkBIoupPtYgTXRbCB1dSZD-Xtp5fvANXlNnzWXg4XtGde8OAIzLFt9YTAYcH8M54fNjWX-tIYoBuoAJvD1PGerfhCptIh18JbkAQgn3Acbj_9if2Ghx3Km7sr1g"/>
+<span class="absolute bottom-0 right-0 bg-on-surface/80 text-white text-[9px] font-mono px-1 rounded-tl">#1</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-mono text-on-surface font-semibold text-headline-sm">SKU-TH-8890_1.png</div>
+<div class="text-[11px] text-secondary">3.1 MB · image/png</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface font-mono font-bold text-label-md">
+                    SKU-TH-8890
+                  </span>
+<div class="text-[11px] text-secondary mt-0.5">แท่นวางแล็ปท็อปอะลูมิเนียม</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="sync">sync</span>
+<span>แทนที่รูปที่ 1 (ภาพหลัก)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-tertiary-container/10 text-tertiary border border-tertiary-container/30">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                    พร้อมอัปโหลด
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="ลบออกจากคิว" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: UNKNOWN-ITEM_1.jpg (SKU Not Found) -->
+<tr class="bg-amber-500/[0.03] hover:bg-amber-500/[0.06] transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-outline-variant bg-surface-container-low border-outline-variant cursor-not-allowed" disabled="" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="w-11 h-11 rounded-lg border border-amber-300 bg-amber-50 overflow-hidden flex items-center justify-center text-amber-600">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-mono text-on-surface font-semibold text-headline-sm">UNKNOWN-ITEM_1.jpg</div>
+<div class="text-[11px] text-secondary">940 KB · image/jpeg</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-mono font-bold text-label-md">
+                    UNKNOWN-ITEM
+                  </span>
+<div class="text-[11px] text-amber-700 mt-0.5">ไม่พบรหัสในฐานข้อมูลแคตตาล็อก</div>
+</td>
+<td class="py-3 px-4">
+<div class="text-secondary text-body-sm">
+                    แทนที่ (รูปที่ 1)
+                  </div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-amber-100 text-amber-800 border border-amber-300">
+<span class="material-symbols-outlined text-[14px]" data-icon="warning">warning</span>
+                    ไม่พบ SKU ในระบบ
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="ลบออกจากคิว" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: logo_banner.gif (Skipped file name format issue) -->
+<tr class="bg-surface-container-low/40 hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-outline-variant bg-surface-container-low border-outline-variant cursor-not-allowed" disabled="" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="w-11 h-11 rounded-lg border border-outline-variant bg-surface-container overflow-hidden flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="hide_image">hide_image</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-mono text-secondary font-semibold text-headline-sm">logo_banner.gif</div>
+<div class="text-[11px] text-secondary">420 KB · image/gif</div>
+</td>
+<td class="py-3 px-4">
+<span class="text-secondary font-mono text-body-md">—</span>
+</td>
+<td class="py-3 px-4">
+<span class="text-secondary text-body-md">—</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    ถูกข้าม (ชื่อไฟล์ไม่ระบุ SKU/ลำดับ)
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="ลบออกจากคิว" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination / Count Info -->
+<div class="px-6 py-3 bg-surface-container-low/30 border-t border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-label-md font-label-md text-secondary">
+<div>
+            แสดงทั้งหมด 5 รายการจากคิวการอัปโหลดปัจจุบัน (เหลืออีก 0 รายการ)
+          </div>
+<div class="flex items-center gap-4">
+<span class="text-[11px] text-outline">
+              * ไฟล์ที่ถูกข้ามจะไม่ถูกส่งไปยัง S3 และจะไม่ตัดโควตาการประมวลผล
+            </span>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded text-outline cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<span class="px-2 py-0.5 text-on-surface font-semibold">1 / 1</span>
+<button class="p-1 rounded text-outline cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. SYSTEM ERROR & NOTIFICATION PROTOCOL CARD -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+<div class="px-5 py-3.5 bg-surface-container-low/50 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="rule">rule</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              โปรโตคอลจัดการข้อผิดพลาดระบบ (Batch Exception Handling)
+            </h2>
+</div>
+<span class="text-[11px] text-secondary font-mono">S3 Multipart &amp; API Resiliency</span>
+</div>
+<div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Protocol 1: Network Failure -->
+<div class="p-4 rounded-lg border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-error font-headline-sm text-headline-sm font-semibold">
+<span class="material-symbols-outlined text-[20px]" data-icon="cloud_off">cloud_off</span>
+<span>อัปโหลดขัดข้องทั้งหมด</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1.5">
+                เครือข่ายหลุดหรือการเชื่อมต่อ S3 ถูกตัดขาด ระบบจะคงคิวไฟล์ไว้ในหน่วยความจำเบราว์เซอร์
+              </p>
+</div>
+<button class="mt-4 w-full h-8 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="replay">replay</span>
+<span>ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ</span>
+</button>
+</div>
+<!-- Protocol 2: File Size Exceeded -->
+<div class="p-4 rounded-lg border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-amber-700 font-headline-sm text-headline-sm font-semibold">
+<span class="material-symbols-outlined text-[20px]" data-icon="data_thresholding">data_thresholding</span>
+<span>ไฟล์ใหญ่เกินกำหนด (&gt; 5 MB)</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1.5">
+                ไฟล์ที่ขนาดเกิน 5 MB จะถูกกันออกจากคิวอัปโหลดทันที เพื่อป้องกันโหลดเกินบน CDN
+              </p>
+</div>
+<button class="mt-4 w-full h-8 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-secondary hover:text-error font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list_off">filter_list_off</span>
+<span>ลบไฟล์ที่ไม่สำเร็จออก</span>
+</button>
+</div>
+<!-- Protocol 3: Unsupported Extension -->
+<div class="p-4 rounded-lg border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 text-secondary font-headline-sm text-headline-sm font-semibold">
+<span class="material-symbols-outlined text-[20px]" data-icon="extension_off">extension_off</span>
+<span>ชนิดไฟล์ไม่รองรับ</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1.5">
+                ไฟล์นามสกุลอื่นๆ นอกเหนือจาก jpg, jpeg, png, gif, webp จะไม่ถูกประมวลผล
+              </p>
+</div>
+<button class="mt-4 w-full h-8 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_photo_alternate">add_photo_alternate</span>
+<span>อัปโหลดชุดใหม่</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Operational Bottom Padding -->
+<div class="h-6"></div>
+</main>
+</div>
+<!-- ========================================== -->
+<!-- MANDATORY TRANSLATION DATA SCRIPT          -->
+<!-- ========================================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "page_title": {
+      "th": "อัปโหลดรูปสินค้าหลายรายการ",
+      "en": "Bulk Product Image Upload"
+    },
+    "breadcrumb_inventory": {
+      "th": "สินค้าและสต็อก",
+      "en": "Inventory & Stock"
+    },
+    "breadcrumb_bulk": {
+      "th": "อัปโหลดรูปสินค้าหลายรายการ",
+      "en": "Bulk Image Upload"
+    },
+    "route_identifier": {
+      "th": "admin-2dc0e7bb0927",
+      "en": "admin-2dc0e7bb0927"
+    },
+    "mode_replace": {
+      "th": "แทนที่ตามลำดับ",
+      "en": "Sequential Replace"
+    },
+    "mode_append": {
+      "th": "เพิ่มต่อท้าย",
+      "en": "Append Gallery"
+    },
+    "dropzone_title": {
+      "th": "ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่",
+      "en": "Drag & drop image files or folders here"
+    },
+    "choose_files": {
+      "th": "เลือกไฟล์รูปภาพเพื่ออัปโหลด",
+      "en": "Choose image files"
+    },
+    "choose_folder": {
+      "th": "เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด",
+      "en": "Choose image folder"
+    },
+    "status_ready": {
+      "th": "พร้อมอัปโหลด",
+      "en": "Ready to upload"
+    },
+    "status_sku_not_found": {
+      "th": "ไม่พบ SKU ในระบบ",
+      "en": "SKU not found"
+    },
+    "status_skipped": {
+      "th": "ถูกข้าม",
+      "en": "Skipped"
+    },
+    "btn_upload": {
+      "th": "อัปโหลด",
+      "en": "Upload"
+    },
+    "btn_clear": {
+      "th": "ล้างรายการ",
+      "en": "Clear List"
+    },
+    "btn_purge_s3": {
+      "th": "ล้างรูปเก่าที่กู้คืนไม่ได้แล้ว",
+      "en": "Purge Unrecoverable S3 Images"
+    }
+  }
+  </script>
+<!-- Interactive JavaScript for UI Micro-Interactions -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toggle radio visual cues
+      const radioInputs = document.querySelectorAll('input[name="upload_mode"]');
+      radioInputs.forEach(input => {
+        input.addEventListener('change', () => {
+          radioInputs.forEach(radio => {
+            const card = radio.closest('label');
+            if (radio.checked) {
+              card.classList.add('border-primary', 'bg-primary/5');
+              card.classList.remove('border-outline-variant', 'bg-surface-container-lowest');
+            } else {
+              card.classList.remove('border-primary', 'bg-primary/5');
+              card.classList.add('border-outline-variant', 'bg-surface-container-lowest');
+            }
+          });
+        });
+      });
+
+      // Simple click behavior on table row removal
+      const deleteButtons = document.querySelectorAll('table tbody button');
+      deleteButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const row = e.target.closest('tr');
+          if (row) {
+            row.style.opacity = '0.3';
+            setTimeout(() => {
+              row.style.display = 'none';
+            }, 150);
+          }
+        });
+      });
+    });
+  </script>
+</body></html>

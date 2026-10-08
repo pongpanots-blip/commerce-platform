@@ -106,6 +106,7 @@ try {
   const page = await ctx.newPage();
 
   await page.goto(ADMIN + '/');
+  await page.getByRole('combobox', { name: /^(ภาษา|Language)$/ }).selectOption('en');
   await page.getByLabel(/email/i).fill(creds.admin.email);
   await page.getByLabel(/password/i).fill(creds.admin.password);
   await page.getByRole('button', { name: /sign in|เข้าสู่ระบบ/i }).click();
@@ -141,11 +142,12 @@ try {
     await link.click();
     await page.waitForURL((u) => u.pathname.startsWith(prefix) && u.pathname.length > prefix.length, { timeout: 10_000 }).catch(() => fail(name, 'row link did not open a detail URL'));
     await check(page, 'admin', null, name);
-    const back = page.locator('main a', { hasText: /./ }).filter({ has: page.locator('.material-symbols-outlined', { hasText: 'arrow_back' }) }).first();
+    const back = page.locator(`main a[href="${list}"]`, { hasText: /./ }).first();
     if (!(await back.count())) fail(name, 'no back link to the list');
   }
 
   await page.goto(PORTAL + '/login');
+  await page.getByRole('combobox', { name: /^(ภาษา|Language)$/ }).selectOption('en');
   await page.getByLabel(/email/i).fill(creds.partner.email);
   await page.getByLabel(/password/i).fill(creds.partner.password);
   await page.getByRole('button', { name: /sign in|log in|เข้าสู่ระบบ/i }).click();

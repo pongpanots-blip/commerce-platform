@@ -1,6 +1,8 @@
 import React from 'react';
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export interface TableColumn<T> {
   key: string;
   label: string;
@@ -51,6 +53,8 @@ export function Table<T>({
   idKey = 'id' as keyof T,
   bodyMaxHeightClassName,
 }: TableProps<T>) {
+  __useUiLocale();
+  const pageSelectId = React.useId();
 
   const safeData = Array.isArray(data) ? data : [];
   const enablePagination = typeof onPageChange === 'function';
@@ -72,7 +76,7 @@ export function Table<T>({
       <div
         className={`overflow-x-auto ${bodyMaxHeightClassName ? `${bodyMaxHeightClassName} overflow-y-auto` : ''}`}
       >
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse min-w-[540px]">
           <thead
             className={`bg-gray-50 border-b border-gray-200 text-xs font-semibold uppercase tracking-wider text-gray-500 ${bodyMaxHeightClassName ? 'sticky top-0 z-10' : ''}`}
           >
@@ -84,7 +88,7 @@ export function Table<T>({
                       type="checkbox"
                       checked={isAllSelected}
                       onChange={onSelectAll}
-                      aria-label="เลือกทั้งหมด"
+                      aria-label={__uiText("เลือกทั้งหมด")}
                       className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
                     />
                   )}
@@ -93,18 +97,19 @@ export function Table<T>({
               {(columns || []).map((col) => (
                 <th
                   key={col.key}
-                  className={`p-4 ${col.sortable ? 'cursor-pointer hover:bg-gray-100 select-none' : ''}`}
-                  onClick={() => col.sortable && onSort && onSort(col.key)}
+                  className="px-4 py-3"
+                  scope="col"
+                  aria-sort={col.sortable && sortKey === col.key ? (sortOrder === 'ASC' ? 'ascending' : 'descending') : undefined}
                 >
-                  <div className="flex items-center gap-1">
-                    {col.label}
+                  {col.sortable && onSort ? <button type="button" className="flex min-h-8 items-center gap-1 rounded-md text-left hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" onClick={() => onSort(col.key)}>
+                    {__uiText(col.label)}
                     {col.sortable && sortKey === col.key && (
                       <span className="text-primary">{sortOrder === 'ASC' ? <AiOutlineArrowUp/> : <AiOutlineArrowDown/>}</span>
                     )}
                     {col.sortable && sortKey !== col.key && (
                       <span className="text-gray-300 flex"><AiOutlineArrowUp/><AiOutlineArrowDown/></span>
                     )}
-                  </div>
+                  </button> : __uiText(col.label)}
                 </th>
               ))}
             </tr>
@@ -114,8 +119,7 @@ export function Table<T>({
             {safeData.length === 0 ? (
               <tr>
                 <td colSpan={totalColumnsCount} className="p-8 text-center text-gray-400">
-                  ไม่พบข้อมูลในระบบ
-                </td>
+                  {__uiText("ไม่พบข้อมูลในระบบ")}</td>
               </tr>
             ) : (
               safeData.map((row, rowIndex) => {
@@ -134,7 +138,7 @@ export function Table<T>({
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => onSelectRow(rowId)}
-                            aria-label={`เลือกแถว ${rowId}`}
+                            aria-label={__uiText("เลือกแถว {0}", {"0": rowId})}
                             className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
                           />
                         )}
@@ -160,17 +164,15 @@ export function Table<T>({
         <div className="bg-white px-4 py-3.5 border-t border-gray-200 flex flex-col sm:flex-row gap-3 items-center justify-between text-sm">
           <div className="text-gray-500 flex flex-wrap items-center gap-2">
             <span>
-              หน้า <span className="font-semibold text-gray-700">{safeCurrentPage}</span> จาก{' '}
-              <span className="font-semibold text-gray-700">{safeTotalPages}</span> หน้า
-            </span>
+              {__uiText("หน้า ")}<span className="font-semibold text-gray-700">{safeCurrentPage}</span> {__uiText(" จาก")}{' '}
+              <span className="font-semibold text-gray-700">{safeTotalPages}</span> {__uiText(" หน้า")}</span>
             <span className="text-gray-300">|</span>
             <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-medium">
-              ทั้งหมด {safeTotalItems.toLocaleString()} รายการ
-            </span>
+              {__uiText("ทั้งหมด ")}{safeTotalItems.toLocaleString()} {__uiText(" รายการ")}</span>
             {pageSize ? (
               <>
                 <span className="text-gray-300">|</span>
-                <span className="text-xs text-gray-500">{pageSize} รายการ/หน้า</span>
+                <span className="text-xs text-gray-500">{pageSize} {__uiText(" รายการ/หน้า")}</span>
               </>
             ) : null}
           </div>
@@ -178,14 +180,13 @@ export function Table<T>({
           <div className="flex items-center gap-3">
             {safeTotalPages > 1 && (
               <div className="flex items-center gap-1.5 text-gray-600">
-                <label htmlFor="page-select" className="text-xs font-medium">
-                  ไปที่หน้า:
-                </label>
+                <label htmlFor={pageSelectId} className="text-xs font-medium">
+                  {__uiText("ไปที่หน้า:")}</label>
                 <select
-                  id="page-select"
+                  id={pageSelectId}
                   value={safeCurrentPage}
                   onChange={(e) => onPageChange?.(Number(e.target.value))}
-                  className="bg-white border border-gray-200 rounded-lg text-sm px-2 py-1 text-gray-700 focus:outline-none focus:border-primary cursor-pointer font-medium"
+                  className="min-h-10 bg-white border border-gray-200 rounded-lg text-sm px-2 py-1 text-gray-700 focus-visible:outline-2 focus-visible:outline-primary cursor-pointer font-medium"
                 >
                   {Array.from({ length: safeTotalPages }, (_, index) => {
                     const pageNum = index + 1;
@@ -204,18 +205,16 @@ export function Table<T>({
                 type="button"
                 onClick={() => onPageChange?.(safeCurrentPage - 1)}
                 disabled={safeCurrentPage <= 1}
-                className="px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+                className="min-h-10 px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-primary"
               >
-                ก่อนหน้า
-              </button>
+                {__uiText("ก่อนหน้า")}</button>
               <button
                 type="button"
                 onClick={() => onPageChange?.(safeCurrentPage + 1)}
                 disabled={safeCurrentPage >= safeTotalPages}
-                className="px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+                className="min-h-10 px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-primary"
               >
-                ถัดไป
-              </button>
+                {__uiText("ถัดไป")}</button>
             </div>
           </div>
         </div>

@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตรวจสอบตัวตนลูกค้า - Commerce Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: '#365cf5',
+            'primary-hover': '#284cdb',
+            ink: '#17243b',
+            'secondary-text': '#52627a',
+            success: '#157347',
+            'success-bg': '#edf7f1',
+            warning: '#b08900',
+            'warning-bg': '#fef9e8',
+            error: '#c2333f',
+            'error-bg': '#fdf2f2',
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', system-ui, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-canvas text-ink flex flex-col antialiased">
+
+  <!-- Application Shell Layout -->
+  <div class="flex min-h-screen w-full">
+
+    <!-- Left Sidebar: 256px wide fixed -->
+    <aside class="w-64 bg-white border-r border-border flex flex-col flex-shrink-0 min-h-screen select-none">
+      <!-- Brand Logo / System Header -->
+      <div class="h-16 px-5 border-b border-border flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm shadow-sm">
+          CP
+        </div>
+        <div>
+          <div class="font-bold text-ink text-sm leading-tight tracking-tight">Commerce Platform</div>
+          <div class="text-[11px] text-secondary-text">ระบบจัดการศูนย์ส่งและสาขา</div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu (7 Work Areas) -->
+      <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar text-sm">
+
+        <div>
+          <div class="px-3 pb-2 text-[11px] font-semibold text-secondary-text uppercase tracking-wider">
+            พื้นที่ทำงานหลัก (7 สายงาน)
+          </div>
+          <ul class="space-y-1">
+            <!-- 1. สินค้าและสต็อก -->
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-text hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <span>สินค้าและสต็อก</span>
+              </a>
+            </li>
+
+            <!-- 2. ออเดอร์และการเงิน -->
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-text hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>ออเดอร์และการเงิน</span>
+              </a>
+            </li>
+
+            <!-- 3. ลูกค้าและบริการ (Active Area) -->
+            <li class="pt-1">
+              <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-blue-50/70 text-primary font-medium">
+                <span class="flex items-center gap-3">
+                  <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  <span>ลูกค้าและบริการ</span>
+                </span>
+                <span class="w-2 h-2 rounded-full bg-primary"></span>
+              </div>
+
+              <!-- Sublinks in Customers & Service area -->
+              <div class="ml-4 pl-4 border-l border-blue-100 my-1 space-y-1 py-1 text-xs">
+                <a href="#" class="block py-1.5 px-2 rounded text-secondary-text hover:text-ink hover:bg-slate-50 transition-colors">
+                  ลูกค้าแพลตฟอร์ม
+                </a>
+                <a href="#" class="block py-1.5 px-2 rounded text-secondary-text hover:text-ink hover:bg-slate-50 transition-colors">
+                  จัดการผู้ใช้ (All Users)
+                </a>
+                <!-- Active Kyc Queue sublink -->
+                <a href="#" class="flex items-center justify-between py-1.5 px-2 rounded bg-white text-primary font-semibold shadow-xs border border-blue-100/60">
+                  <span data-i18n="KYC — ยืนยันตัวตน">KYC — ยืนยันตัวตน</span>
+                  <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded-full">3</span>
+                </a>
+                <a href="#" class="block py-1.5 px-2 rounded text-secondary-text hover:text-ink hover:bg-slate-50 transition-colors">
+                  ติดตามลูกค้าเก่า (Win-back)
+                </a>
+                <a href="#" class="block py-1.5 px-2 rounded text-secondary-text hover:text-ink hover:bg-slate-50 transition-colors">
+                  งานบริการลูกค้า (CS Desk)
+                </a>
+                <a href="#" class="block py-1.5 px-2 rounded text-secondary-text hover:text-ink hover:bg-slate-50 transition-colors">
+                  แชตกับลูกค้า (Live chat)
+                </a>
+                <a href="#" class="block py-1.5 px-2 rounded text-secondary-text hover:text-ink hover:bg-slate-50 transition-colors">
+                  ข้อร้องเรียนและบริการ
+                </a>
+              </div>
+            </li>
+
+            <!-- 4. การตลาด -->
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-text hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                <span>การตลาด</span>
+              </a>
+            </li>
+
+            <!-- 5. รายงานและข้อมูล -->
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-text hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>รายงานและข้อมูล</span>
+              </a>
+            </li>
+
+            <!-- 6. ระบบเชื่อมต่อ -->
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-text hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span>ระบบเชื่อมต่อ</span>
+              </a>
+            </li>
+
+            <!-- 7. ตั้งค่าและทีมงาน -->
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-text hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>ตั้งค่าและทีมงาน</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer: Developer Portal info -->
+      <div class="p-3 border-t border-border bg-slate-50/50">
+        <a href="#" class="block p-2 rounded hover:bg-slate-100 transition-colors text-[11px] text-secondary-text font-mono">
+          <div class="flex items-center gap-1.5 text-slate-700 font-semibold mb-0.5">
+            <span>&lt;/&gt;</span> Developer Portal
+          </div>
+          <div>route: admin-4d388d76537e</div>
+          <div>/j/kyc (KycQueue)</div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+      <!-- Top Contextual Header -->
+      <header class="h-16 bg-white border-b border-border px-6 flex items-center justify-between flex-shrink-0 sticky top-0 z-20">
+        <!-- Search bar (explicitly searches current page) -->
+        <div class="relative w-80">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </span>
+          <input
+            type="text"
+            id="page-search-input"
+            class="w-full h-10 pl-9 pr-4 text-xs bg-slate-50 border border-border rounded-lg placeholder-slate-400 text-ink focus:outline-none focus:border-primary focus:bg-white transition-all"
+            placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+          />
+        </div>
+
+        <!-- Right Header Actions: Prototype label, Language Switcher, Staff Profile -->
+        <div class="flex items-center gap-4">
+          <!-- Prototype Data Label (Inviolable Requirement) -->
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200" id="badge-sample-data">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            <span data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+          </span>
+
+          <!-- Bilingual Toggle (ไทย / English) -->
+          <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-border text-xs font-medium" role="radiogroup" aria-label="Language Selector">
+            <button type="button" id="lang-btn-th" class="px-2.5 py-1 rounded-md bg-white text-ink shadow-xs transition-all font-semibold" onclick="setLanguage('th')">ไทย</button>
+            <button type="button" id="lang-btn-en" class="px-2.5 py-1 rounded-md text-secondary-text hover:text-ink transition-all" onclick="setLanguage('en')">English</button>
+          </div>
+
+          <!-- Staff Avatar and Name -->
+          <div class="flex items-center gap-2.5 pl-2 border-l border-border">
+            <div class="w-8 h-8 rounded-full bg-blue-100 text-primary font-bold text-xs flex items-center justify-center">
+              จน
+            </div>
+            <div class="text-xs leading-tight">
+              <div class="font-semibold text-ink">จินดา นวลอนันต์</div>
+              <div class="text-secondary-text text-[11px]">หัวหน้าทีมบริการลูกค้า (CS)</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content (Max ~1240px width centered) -->
+      <main class="flex-1 p-6 md:p-8 max-w-[1240px] w-full mx-auto">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-xs text-secondary-text mb-3" aria-label="Breadcrumb">
+          <a href="#" class="hover:text-ink transition-colors">ลูกค้าและบริการ</a>
+          <span class="text-slate-300">/</span>
+          <span class="text-ink font-medium" data-i18n="KYC — ยืนยันตัวตน">KYC — ยืนยันตัวตน</span>
+        </nav>
+
+        <!-- Page Header & Main Title -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-2xl md:text-[28px] font-bold text-ink leading-tight" data-i18n="KYC — ยืนยันตัวตน">
+                KYC — ยืนยันตัวตน
+              </h1>
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-primary border border-blue-200 font-mono">/j/kyc</span>
+            </div>
+            <p class="text-sm text-secondary-text mt-1" data-i18n="คิวคำขอยืนยันตัวตนของลูกค้าทั้งหมด">
+              คิวคำขอยืนยันตัวตนของลูกค้าทั้งหมด
+            </p>
+          </div>
+
+          <!-- Top Actions -->
+          <div class="flex items-center gap-3">
+            <button type="button" id="btn-refresh" class="h-10 px-4 inline-flex items-center gap-2 rounded-lg border border-border bg-white text-ink text-sm font-medium hover:bg-slate-50 transition-colors shadow-xs">
+              <svg class="w-4 h-4 text-secondary-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>รีเฟรชข้อมูล</span>
+            </button>
+            <a href="#" class="h-10 px-4 inline-flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              <span>เปิดระบบ CS-CRM</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Summary KPI Metric Cards (Clean, 12px corners, standard spacing) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- Total Card -->
+          <div class="bg-white border border-border rounded-xl p-4.5 shadow-xs">
+            <div class="flex items-center justify-between text-xs text-secondary-text mb-2">
+              <span class="font-medium" data-i18n="ทั้งหมด">ทั้งหมด</span>
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+            </div>
+            <div class="text-2xl font-bold text-ink">5 <span class="text-xs font-normal text-secondary-text">คำขอ</span></div>
+            <div class="text-[11px] text-secondary-text mt-1.5 flex items-center justify-between">
+              <span>นับรวมร้านค้าทุกสถานะ</span>
+              <span class="text-slate-500 font-medium">B2B &amp; SME</span>
+            </div>
+          </div>
+
+          <!-- Pending Review (Waiting) -->
+          <div class="bg-white border border-border rounded-xl p-4.5 shadow-xs">
+            <div class="flex items-center justify-between text-xs text-amber-800 mb-2">
+              <span class="font-semibold" data-i18n="มีรายการรอตรวจสอบ">มีรายการรอตรวจสอบ</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            </div>
+            <div class="text-2xl font-bold text-amber-800">2 <span class="text-xs font-normal text-amber-700">ร้านค้า</span></div>
+            <div class="text-[11px] text-amber-700 mt-1.5 flex items-center justify-between">
+              <span>คิวที่ต้องตรวจสอบเอกสาร</span>
+              <span class="px-1.5 py-0.2 rounded bg-amber-100 font-semibold text-[10px]">เร่งด่วน</span>
+            </div>
+          </div>
+
+          <!-- Approved Complete -->
+          <div class="bg-white border border-border rounded-xl p-4.5 shadow-xs">
+            <div class="flex items-center justify-between text-xs text-emerald-800 mb-2">
+              <span class="font-medium" data-i18n="ยืนยันครบทุกเอกสาร">ยืนยันครบทุกเอกสาร</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div class="text-2xl font-bold text-emerald-800">2 <span class="text-xs font-normal text-emerald-700">ร้านค้า</span></div>
+            <div class="text-[11px] text-emerald-700 mt-1.5 flex items-center justify-between">
+              <span>พร้อมเปิดวงเงิน B2B</span>
+              <span class="font-medium">40% สำเร็จ</span>
+            </div>
+          </div>
+
+          <!-- Rejected Items -->
+          <div class="bg-white border border-border rounded-xl p-4.5 shadow-xs">
+            <div class="flex items-center justify-between text-xs text-rose-800 mb-2">
+              <span class="font-medium" data-i18n="มีรายการถูกปฏิเสธ">มีรายการถูกปฏิเสธ</span>
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            </div>
+            <div class="text-2xl font-bold text-rose-800">1 <span class="text-xs font-normal text-rose-700">ร้านค้า</span></div>
+            <div class="text-[11px] text-rose-700 mt-1.5 flex items-center justify-between">
+              <span>แจ้งลูกค้านำส่งเอกสารใหม่</span>
+              <span class="text-rose-600 font-medium">รอแก้ไข</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Read-only Operational Info Banner (Explicitly required by catalogue) -->
+        <div class="bg-blue-50/70 border border-blue-200/80 rounded-xl p-4 mb-6 flex items-start gap-3.5 text-xs text-slate-700 shadow-xs">
+          <div class="p-1 rounded bg-blue-100 text-primary flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="leading-relaxed">
+            <span class="font-bold text-ink" data-i18n="หน้านี้เป็น">หน้านี้เป็น</span>
+            <span class="font-semibold text-primary" data-i18n="read-only ในเวอร์ชันแรก">read-only ในเวอร์ชันแรก</span>
+            <span data-i18n="— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก &quot;ดูเอกสาร&quot;">— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก &quot;ดูเอกสาร&quot;</span>
+          </div>
+        </div>
+
+        <!-- Main Panel: Queue Table and Controls -->
+        <div class="bg-white border border-border rounded-xl shadow-xs overflow-hidden">
+
+          <!-- Filter Bar Header -->
+          <div class="p-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30">
+            <!-- Filter Pills / Tabs -->
+            <div class="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1 md:pb-0" role="tablist">
+              <button
+                type="button"
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-border text-primary shadow-xs transition-colors"
+                data-filter="all"
+                onclick="filterQueue('all')">
+                <span data-i18n="ทั้งหมด">ทั้งหมด</span>
+                <span class="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-slate-100 text-secondary-text">5</span>
+              </button>
+
+              <button
+                type="button"
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium text-secondary-text hover:text-ink hover:bg-slate-100 transition-colors"
+                data-filter="pending"
+                onclick="filterQueue('pending')">
+                <span data-i18n="มีรายการรอตรวจสอบ">มีรายการรอตรวจสอบ</span>
+                <span class="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 font-semibold">2</span>
+              </button>
+
+              <button
+                type="button"
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium text-secondary-text hover:text-ink hover:bg-slate-100 transition-colors"
+                data-filter="approved"
+                onclick="filterQueue('approved')">
+                <span data-i18n="ยืนยันครบทุกเอกสาร">ยืนยันครบทุกเอกสาร</span>
+                <span class="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 font-semibold">2</span>
+              </button>
+
+              <button
+                type="button"
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium text-secondary-text hover:text-ink hover:bg-slate-100 transition-colors"
+                data-filter="rejected"
+                onclick="filterQueue('rejected')">
+                <span data-i18n="มีรายการถูกปฏิเสธ">มีรายการถูกปฏิเสธ</span>
+                <span class="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-800 font-semibold">1</span>
+              </button>
+            </div>
+
+            <!-- Page-search legend and item count -->
+            <div class="text-xs text-secondary-text flex items-center gap-2">
+              <span id="queue-count-label">แสดง 5 รายการล่าสุดในคิว</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-[11px] text-slate-500">อัปเดตแบบเรียลไทม์จาก KYC Service</span>
+            </div>
+          </div>
+
+          <!-- Loading State Indicator (Hidden by default, styled for completeness) -->
+          <div id="kyc-loading-state" class="hidden py-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-3"></div>
+            <p class="text-sm text-secondary-text" data-i18n="กำลังโหลดคิว KYC...">กำลังโหลดคิว KYC...</p>
+          </div>
+
+          <!-- Filtered Empty State Indicator (Hidden by default) -->
+          <div id="kyc-empty-state" class="hidden py-16 text-center">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-ink" data-i18n="ไม่พบรายการในหมวดนี้">ไม่พบรายการในหมวดนี้</h3>
+            <p class="text-xs text-secondary-text mt-1">ไม่มีคำขอ KYC ที่ตรงกับตัวกรองปัจจุบัน</p>
+          </div>
+
+          <!-- Table Container with horizontal scrolling for wide screens -->
+          <div class="overflow-x-auto custom-scrollbar" id="table-scroll-container">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-border bg-slate-50/70 text-secondary-text uppercase font-semibold tracking-wider text-[11px]">
+                  <th class="py-3 px-4 w-12 text-center">#</th>
+                  <th class="py-3 px-4 min-w-[200px]" data-i18n="ร้านค้า">ร้านค้า</th>
+                  <th class="py-3 px-4 min-w-[220px]" data-i18n="เอกสาร">เอกสาร</th>
+                  <th class="py-3 px-4 min-w-[240px]" data-i18n="สถานะเอกสารแต่ละประเภท">สถานะเอกสารแต่ละประเภท</th>
+                  <th class="py-3 px-4 min-w-[140px]" data-i18n="ส่งล่าสุด">ส่งล่าสุด</th>
+                  <th class="py-3 px-4 min-w-[140px]" data-i18n="ตัดสินล่าสุด">ตัดสินล่าสุด</th>
+                  <th class="py-3 px-4 w-28 text-center" data-i18n="ดูเอกสาร">ดูเอกสาร</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border text-ink" id="kyc-tbody">
+
+                <!-- Row 1: ร้านทรัพย์ทวีค้าส่ง (Pending Review) -->
+                <tr class="hover:bg-slate-50/80 transition-colors kyc-row" data-status="pending" data-search="ร้านทรัพย์ทวีค้าส่ง cust-88491 คุณนภกฤต มั่งมี สำโรง">
+                  <td class="py-3.5 px-4 text-center font-mono text-secondary-text">1</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-ink">ร้านทรัพย์ทวีค้าส่ง (สำโรง)</div>
+                    <div class="text-[11px] text-secondary-text flex items-center gap-1.5 mt-0.5">
+                      <span class="font-mono text-primary font-medium">CUST-88491</span>
+                      <span>•</span>
+                      <span>คุณนภกฤต มั่งมี</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">081-445-9988</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-ink">ภ.พ.20, หนังสือรับรองบริษัท</div>
+                    <div class="text-[11px] text-secondary-text">สำเนาบัตรประชาชนผู้มีอำนาจลงนาม</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">3 ไฟล์แนบ (PDF, JPG)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="space-y-1.5">
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded font-medium">ภ.พ.20 : รอตรวจสอบ</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded font-medium">หนังสือรับรอง : รอตรวจสอบ</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-ink">วันนี้ 14:15 น.</div>
+                    <div class="text-[11px] text-slate-400">14 ก.พ. 2568</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="text-slate-400 font-mono text-[11px]">- ยังไม่ตัดสิน -</div>
+                    <div class="text-[10px] text-amber-700">อยู่ในคิว CS รอตรวจ</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg border border-primary/30 text-primary bg-blue-50/50 hover:bg-primary hover:text-white transition-all text-xs font-medium shadow-xs"
+                      onclick="openDocDialog('ร้านทรัพย์ทวีค้าส่ง (สำโรง)', 'CUST-88491', ['ภ.พ.20_ฉบับจริง.pdf (รอตรวจสอบ)', 'หนังสือรับรอง_กระทรวงพาณิชย์.pdf (รอตรวจสอบ)', 'บัตรประชาชน_คุณนภกฤต.jpg (รอตรวจสอบ)'])"
+                      data-i18n="ดูเอกสาร">
+                      ดูเอกสาร
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 2: ห้างหุ้นส่วน ป.พานิชยวพร (Approved) -->
+                <tr class="hover:bg-slate-50/80 transition-colors kyc-row" data-status="approved" data-search="ห้างหุ้นส่วน ป.พานิชยวพร cust-39104 คุณปานจิต ชัยเจริญ รังสิต">
+                  <td class="py-3.5 px-4 text-center font-mono text-secondary-text">2</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-ink">ห้างหุ้นส่วน ป.พานิชยวพร</div>
+                    <div class="text-[11px] text-secondary-text flex items-center gap-1.5 mt-0.5">
+                      <span class="font-mono text-primary font-medium">CUST-39104</span>
+                      <span>•</span>
+                      <span>คุณปานจิต ชัยเจริญ</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">02-314-5500</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-ink">หนังสือรับรองนิติบุคคล, ภ.พ.20</div>
+                    <div class="text-[11px] text-secondary-text">หน้าสมุดบัญชีธนาคาร (B2B Billing)</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">3 ไฟล์แนบ (PDF)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="space-y-1.5">
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span class="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-medium">ยืนยันครบทุกเอกสาร</span>
+                      </div>
+                      <div class="text-[10px] text-secondary-text pl-3.5">รับรองลายมือชื่อตรงกับ DBD</div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-ink" data-i18n="เมื่อวาน">เมื่อวาน</div>
+                    <div class="text-[11px] text-slate-400">13 ก.พ. 2568 11:20</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-emerald-700">อนุมัติแล้ว</div>
+                    <div class="text-[10px] text-slate-400">โดย CS-CRM (จินดา)</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg border border-border text-ink bg-white hover:bg-slate-50 transition-all text-xs font-medium shadow-xs"
+                      onclick="openDocDialog('ห้างหุ้นส่วน ป.พานิชยวพร', 'CUST-39104', ['หนังสือรับรองห้างหุ้นส่วน_DBD.pdf (อนุมัติแล้ว)', 'ภพ20_สำเนาถูกต้อง.pdf (อนุมัติแล้ว)', 'BookBank_กสิกรไทย.pdf (อนุมัติแล้ว)'])"
+                      data-i18n="ดูเอกสาร">
+                      ดูเอกสาร
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 3: โชคอนันต์การค้า พระประแดง (Pending Review) -->
+                <tr class="hover:bg-slate-50/80 transition-colors kyc-row" data-status="pending" data-search="โชคอนันต์การค้า พระประแดง cust-10492 คุณอนันต์ โชติสวัสดิ์">
+                  <td class="py-3.5 px-4 text-center font-mono text-secondary-text">3</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-ink">โชคอนันต์การค้า พระประแดง</div>
+                    <div class="text-[11px] text-secondary-text flex items-center gap-1.5 mt-0.5">
+                      <span class="font-mono text-primary font-medium">CUST-10492</span>
+                      <span>•</span>
+                      <span>คุณอนันต์ โชติสวัสดิ์</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">086-778-4321</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-ink">ภ.พ.20, ทะเบียนพาณิชย์</div>
+                    <div class="text-[11px] text-secondary-text">ภาพถ่ายหน้าร้านค้าและคลังสินค้า</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">4 ไฟล์แนบ (JPG, PNG)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="space-y-1.5">
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded font-medium">ทะเบียนพาณิชย์ : รอตรวจสอบ</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span class="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-medium">ภาพถ่ายหน้าร้าน : ผ่านเกณฑ์</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-ink">12 ก.พ. 2568</div>
+                    <div class="text-[11px] text-slate-400">16:40 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="text-slate-400 font-mono text-[11px]">- อยู่ระหว่างตรวจ -</div>
+                    <div class="text-[10px] text-secondary-text">คิวตรวจสอบลำดับที่ 2</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg border border-primary/30 text-primary bg-blue-50/50 hover:bg-primary hover:text-white transition-all text-xs font-medium shadow-xs"
+                      onclick="openDocDialog('โชคอนันต์การค้า พระประแดง', 'CUST-10492', ['ทะเบียนพาณิชย์_ฉบับปรับปรุง.pdf (รอตรวจสอบ)', 'ภพ20.pdf (รอตรวจสอบ)', 'ภาพหน้าร้าน_พระประแดง.jpg (ผ่านเกณฑ์)'])"
+                      data-i18n="ดูเอกสาร">
+                      ดูเอกสาร
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 4: บจก. สยามค้าปลีก โฮลเซล (Approved) -->
+                <tr class="hover:bg-slate-50/80 transition-colors kyc-row" data-status="approved" data-search="บจก. สยามค้าปลีก โฮลเซล c1 คุณสมชัย เลิศพาณิชย์ acme">
+                  <td class="py-3.5 px-4 text-center font-mono text-secondary-text">4</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-ink">บจก. สยามค้าปลีก โฮลเซล</div>
+                    <div class="text-[11px] text-secondary-text flex items-center gap-1.5 mt-0.5">
+                      <span class="font-mono text-primary font-medium">C1</span>
+                      <span>•</span>
+                      <span>คุณสมชัย เลิศพาณิชย์</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">02-889-1122</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-ink">เอกสารสัญญาสั่งซื้อ B2B, ภ.พ.20</div>
+                    <div class="text-[11px] text-secondary-text">หนังสือมอบอำนาจกรรมการ</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">5 ไฟล์แนบ (PDF)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="space-y-1.5">
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span class="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-medium">ยืนยันครบทุกเอกสาร</span>
+                      </div>
+                      <div class="text-[10px] text-secondary-text pl-3.5">ยืนยันสถานะนิติบุคคลผ่าน e-Tax</div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-ink">10 ก.พ. 2568</div>
+                    <div class="text-[11px] text-slate-400">09:15 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-emerald-700">อนุมัติแล้ว</div>
+                    <div class="text-[10px] text-slate-400">อนุมัติวงเงิน Tier B</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg border border-border text-ink bg-white hover:bg-slate-50 transition-all text-xs font-medium shadow-xs"
+                      onclick="openDocDialog('บจก. สยามค้าปลีก โฮลเซล', 'C1', ['หนังสือบริคณห์สนธิ.pdf (อนุมัติแล้ว)', 'ภพ20_สำเนาแท้.pdf (อนุมัติแล้ว)', 'หนังสือมอบอำนาจ.pdf (อนุมัติแล้ว)'])"
+                      data-i18n="ดูเอกสาร">
+                      ดูเอกสาร
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 5: มิตรแท้ ซุปเปอร์มาร์เก็ต (Rejected) -->
+                <tr class="hover:bg-slate-50/80 transition-colors kyc-row" data-status="rejected" data-search="มิตรแท้ ซุปเปอร์มาร์เก็ต cust-65239 คุณกัลยาณี เจริญพร มีนบุรี">
+                  <td class="py-3.5 px-4 text-center font-mono text-secondary-text">5</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-ink">มิตรแท้ ซุปเปอร์มาร์เก็ต</div>
+                    <div class="text-[11px] text-secondary-text flex items-center gap-1.5 mt-0.5">
+                      <span class="font-mono text-primary font-medium">CUST-65239</span>
+                      <span>•</span>
+                      <span>คุณกัลยาณี เจริญพร</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">089-123-4567</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-ink">สำเนาบัตรประชาชน, ทะเบียนพาณิชย์</div>
+                    <div class="text-[11px] text-secondary-text">สัญญาเช่าสถานที่ประกอบการ</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">2 ไฟล์แนบ (JPG)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="space-y-1.5">
+                      <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                        <span class="text-[11px] text-rose-800 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded font-medium">มีรายการถูกปฏิเสธ</span>
+                      </div>
+                      <div class="text-[10px] text-rose-600 pl-3.5 font-medium">ภาพบัตรประชาชนเบลอ / ข้อมูลไม่ตรง</div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-ink">08 ก.พ. 2568</div>
+                    <div class="text-[11px] text-slate-400">14:02 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-secondary-text">
+                    <div class="font-medium text-rose-700">ปฏิเสธเอกสาร</div>
+                    <div class="text-[10px] text-slate-400">ส่ง SMS แจ้งลูกค้าแล้ว</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-700 bg-rose-50/50 hover:bg-rose-100 transition-all text-xs font-medium shadow-xs"
+                      onclick="openDocDialog('มิตรแท้ ซุปเปอร์มาร์เก็ต', 'CUST-65239', ['สำเนาบัตร_กัลยาณี.jpg (ปฏิเสธ: ภาพไม่ชัดเจน)', 'ทะเบียนพาณิชย์_มีนบุรี.jpg (อนุมัติแล้ว)'])"
+                      data-i18n="ดูเอกสาร">
+                      ดูเอกสาร
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Bar -->
+          <div class="p-4 border-t border-border flex items-center justify-between text-xs text-secondary-text bg-white">
+            <div>
+              <span>แสดง <span class="font-semibold text-ink" id="visible-count-text">5</span> จากทั้งหมด 5 รายการ (ค้นหาและตัวกรองมีผลเฉพาะหน้าปัจจุบัน)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" class="px-2.5 py-1 rounded border border-border text-slate-400 bg-slate-50 cursor-not-allowed" disabled>
+                ก่อนหน้า
+              </button>
+              <button type="button" class="px-2.5 py-1 rounded bg-primary text-white font-semibold shadow-xs">
+                1
+              </button>
+              <button type="button" class="px-2.5 py-1 rounded border border-border text-slate-400 bg-slate-50 cursor-not-allowed" disabled>
+                ถัดไป
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Document Viewer Modal Dialog (Named Dialog, Accessible, Trap Focus & Escape support) -->
+  <div id="doc-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bg-white rounded-xl shadow-xl border border-border max-w-lg w-full overflow-hidden animate-fade-in-up">
+      <!-- Modal Header -->
+      <div class="px-5 py-4 border-b border-border flex items-center justify-between bg-slate-50/50">
+        <div>
+          <h3 id="modal-title" class="text-base font-bold text-ink">เอกสารประกอบการยืนยันตัวตน</h3>
+          <p id="modal-subtitle" class="text-xs text-secondary-text mt-0.5">รายละเอียดไฟล์แนบ KYC</p>
+        </div>
+        <button type="button" class="text-slate-400 hover:text-ink p-1 rounded-lg hover:bg-slate-100 transition-colors" onclick="closeDocDialog()" aria-label="Close dialog">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 space-y-4">
+        <div class="bg-slate-50 p-3 rounded-lg border border-border text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-secondary-text">รหัสลูกค้า:</span>
+            <span class="font-mono font-bold text-ink" id="modal-cust-code">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-secondary-text">ชื่อร้านค้า:</span>
+            <span class="font-semibold text-ink" id="modal-cust-name">-</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold text-ink uppercase tracking-wider mb-2">รายการไฟล์เอกสารที่แนบ</h4>
+          <ul id="modal-file-list" class="space-y-2 text-xs">
+            <!-- Dynamically injected items -->
+          </ul>
+        </div>
+
+        <div class="text-[11px] text-secondary-text bg-amber-50 border border-amber-200 rounded p-2.5 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div>
+            <span>การอนุมัติหรือแก้ไขสถานะเอกสารจะถูกส่งไปประมวลผลที่ระบบ </span>
+            <span class="font-semibold text-amber-800">CS-CRM Desk</span>
+            <span> ตามสิทธิ์ของเจ้าหน้าที่</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-5 py-3 border-t border-border bg-slate-50 flex items-center justify-end gap-2">
+        <button type="button" class="px-4 py-2 rounded-lg border border-border bg-white text-xs font-medium text-ink hover:bg-slate-50 transition-colors shadow-xs" onclick="closeDocDialog()">
+          ปิดหน้าต่าง
+        </button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-primary text-xs font-medium text-white hover:bg-primary-hover transition-colors shadow-xs" onclick="alert('เปิดเอกสารในระบบจัดเก็บไฟล์เรียบร้อย'); closeDocDialog();">
+          เปิดไฟล์ต้นฉบับ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVIOLABLE EXPORT REQUIREMENT: Invisible translation JSON dictionary keyed by EVERY catalog string -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ทั้งหมด": {
+      "th": "ทั้งหมด",
+      "en": "All"
+    },
+    "เอกสาร": {
+      "th": "เอกสาร",
+      "en": "Documents"
+    },
+    "มีรายการรอตรวจสอบ": {
+      "th": "มีรายการรอตรวจสอบ",
+      "en": "Pending review"
+    },
+    "ยืนยันครบทุกเอกสาร": {
+      "th": "ยืนยันครบทุกเอกสาร",
+      "en": "All documents verified"
+    },
+    "มีรายการถูกปฏิเสธ": {
+      "th": "มีรายการถูกปฏิเสธ",
+      "en": "Rejected items"
+    },
+    "ร้านค้า": {
+      "th": "ร้านค้า",
+      "en": "Store / Customer"
+    },
+    "สถานะเอกสารแต่ละประเภท": {
+      "th": "สถานะเอกสารแต่ละประเภท",
+      "en": "Document status by type"
+    },
+    "ส่งล่าสุด": {
+      "th": "ส่งล่าสุด",
+      "en": "Latest submitted"
+    },
+    "ตัดสินล่าสุด": {
+      "th": "ตัดสินล่าสุด",
+      "en": "Latest decision"
+    },
+    "ดูเอกสาร": {
+      "th": "ดูเอกสาร",
+      "en": "View documents"
+    },
+    "KYC — ยืนยันตัวตน": {
+      "th": "KYC — ยืนยันตัวตน",
+      "en": "KYC — Identity Verification"
+    },
+    "คิวคำขอยืนยันตัวตนของลูกค้าทั้งหมด": {
+      "th": "คิวคำขอยืนยันตัวตนของลูกค้าทั้งหมด",
+      "en": "Customer identity verification queue"
+    },
+    "หน้านี้เป็น": {
+      "th": "หน้านี้เป็น",
+      "en": "This page is"
+    },
+    "read-only ในเวอร์ชันแรก": {
+      "th": "read-only ในเวอร์ชันแรก",
+      "en": "read-only in the first version"
+    },
+    "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก \"ดูเอกสาร\"": {
+      "th": "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก \"ดูเอกสาร\"",
+      "en": "— Actual approval/rejection is processed via separate CS-CRM; rows therefore have no action buttons except \"View documents\""
+    },
+    "กำลังโหลดคิว KYC...": {
+      "th": "กำลังโหลดคิว KYC...",
+      "en": "Loading KYC queue..."
+    },
+    "ไม่พบรายการในหมวดนี้": {
+      "th": "ไม่พบรายการในหมวดนี้",
+      "en": "No records found in this category"
+    },
+    "ขนาดแพ็ก": {
+      "th": "ขนาดแพ็ก",
+      "en": "Pack size"
+    },
+    "ความกว้าง (px)": {
+      "th": "ความกว้าง (px)",
+      "en": "Width (px)"
+    },
+    "จำนวนชิ้นในตะกร้า": {
+      "th": "จำนวนชิ้นในตะกร้า",
+      "en": "Items in cart"
+    },
+    "เช่น Beef Fest 11.11": {
+      "th": "เช่น Beef Fest 11.11",
+      "en": "e.g., Beef Fest 11.11"
+    },
+    "ตะกร้ายังไม่ว่าง": {
+      "th": "ตะกร้ายังไม่ว่าง",
+      "en": "Cart is not empty"
+    },
+    "บัตรเครดิต": {
+      "th": "บัตรเครดิต",
+      "en": "Credit card"
+    },
+    "เปิดรายการ": {
+      "th": "เปิดรายการ",
+      "en": "Open item"
+    },
+    "มีเนื้อหาที่แก้แล้วยังไม่บันทึก บันทึกก่อนใช้ AI ส่งตรวจ อนุมัติ หรือสร้างร่าง workflow": {
+      "th": "มีเนื้อหาที่แก้แล้วยังไม่บันทึก บันทึกก่อนใช้ AI ส่งตรวจ อนุมัติ หรือสร้างร่าง workflow",
+      "en": "Unsaved changes exist. Save before using AI review, approving, or drafting workflows."
+    },
+    "ยอดขั้นต่ำทั้งตะกร้า (บาท, ก่อน VAT)": {
+      "th": "ยอดขั้นต่ำทั้งตะกร้า (บาท, ก่อน VAT)",
+      "en": "Minimum cart total (THB, ex. VAT)"
+    },
+    "ยืนยันอนุมัติสินค้าทั้งหมด {0} รายการ?": {
+      "th": "ยืนยันอนุมัติสินค้าทั้งหมด {0} รายการ?",
+      "en": "Confirm approval for all {0} items?"
+    },
+    "รายชื่อผู้มีสิทธิ์ (": {
+      "th": "รายชื่อผู้มีสิทธิ์ (",
+      "en": "Eligible recipients ("
+    },
+    "ลิงก์ปุ่มหลัก": {
+      "th": "ลิงก์ปุ่มหลัก",
+      "en": "Primary button link"
+    },
+    "เวลามอบคูปอง": {
+      "th": "เวลามอบคูปอง",
+      "en": "Coupon issue time"
+    },
+    "สินค้า — ปิดหน้านี้ได้": {
+      "th": "สินค้า — ปิดหน้านี้ได้",
+      "en": "Products — Safe to close this page"
+    },
+    "โหลด allowlist ไม่สำเร็จ": {
+      "th": "โหลด allowlist ไม่สำเร็จ",
+      "en": "Failed to load allowlist"
+    },
+    "เมื่อวาน": {
+      "th": "เมื่อวาน",
+      "en": "Yesterday"
+    },
+    "ข้อมูลตัวอย่าง": {
+      "th": "ข้อมูลตัวอย่าง",
+      "en": "Sample data"
+    }
+  }
+  </script>
+
+  <!-- Interactive Logic: Language Toggle, Filters, Search, Modal Dialog -->
+  <script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-white text-ink shadow-xs transition-all font-semibold";
+        enBtn.className = "px-2.5 py-1 rounded-md text-secondary-text hover:text-ink transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-white text-ink shadow-xs transition-all font-semibold";
+        thBtn.className = "px-2.5 py-1 rounded-md text-secondary-text hover:text-ink transition-all";
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+
+      // Update search placeholder
+      const searchInput = document.getElementById('page-search-input');
+      if (searchInput) {
+        searchInput.placeholder = (lang === 'th')
+          ? "ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+          : "Search on this page... (current page only)";
+      }
+    }
+
+    // Tab Filtering
+    let currentFilter = 'all';
+    function filterQueue(filter) {
+      currentFilter = filter;
+      const tabs = document.querySelectorAll('.filter-tab');
+      tabs.forEach(tab => {
+        if (tab.getAttribute('data-filter') === filter) {
+          tab.className = "filter-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-border text-primary shadow-xs transition-colors";
+        } else {
+          tab.className = "filter-tab px-3 py-1.5 rounded-lg text-xs font-medium text-secondary-text hover:text-ink hover:bg-slate-100 transition-colors";
+        }
+      });
+      applySearchAndFilter();
+    }
+
+    // Search on current page input
+    document.getElementById('page-search-input').addEventListener('input', function(e) {
+      applySearchAndFilter();
+    });
+
+    function applySearchAndFilter() {
+      const query = document.getElementById('page-search-input').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.kyc-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        const searchMeta = row.getAttribute('data-search') ? row.getAttribute('data-search').toLowerCase() : '';
+
+        const matchesFilter = (currentFilter === 'all' || status === currentFilter);
+        const matchesQuery = (!query || searchMeta.includes(query) || row.textContent.toLowerCase().includes(query));
+
+        if (matchesFilter && matchesQuery) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update visible count
+      const countLabel = document.getElementById('visible-count-text');
+      if (countLabel) countLabel.textContent = visibleCount;
+
+      const headerCountLabel = document.getElementById('queue-count-label');
+      if (headerCountLabel) headerCountLabel.textContent = `แสดง ${visibleCount} รายการในคิว`;
+
+      // Handle empty state
+      const emptyState = document.getElementById('kyc-empty-state');
+      const tableScroll = document.getElementById('table-scroll-container');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        tableScroll.classList.add('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        tableScroll.classList.remove('hidden');
+      }
+    }
+
+    // Refresh button simulation
+    document.getElementById('btn-refresh').addEventListener('click', function() {
+      const btn = this;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="inline-block animate-spin">⟳</span> <span>กำลังซิงค์...</span>`;
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }, 500);
+    });
+
+    // Modal dialog controls
+    let lastActiveTrigger = null;
+    function openDocDialog(custName, custCode, files) {
+      lastActiveTrigger = document.activeElement;
+      document.getElementById('modal-cust-name').textContent = custName;
+      document.getElementById('modal-cust-code').textContent = custCode;
+
+      const list = document.getElementById('modal-file-list');
+      list.innerHTML = '';
+      files.forEach(file => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between p-2.5 rounded border border-border bg-white';
+        li.innerHTML = `
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            <span class="font-medium text-ink">${file}</span>
+          </div>
+          <span class="text-[10px] text-primary hover:underline cursor-pointer">ดูตัวอย่าง</span>
+        `;
+        list.appendChild(li);
+      });
+
+      const modal = document.getElementById('doc-modal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeDocDialog() {
+      const modal = document.getElementById('doc-modal');
+      modal.classList.add('hidden');
+      if (lastActiveTrigger) {
+        lastActiveTrigger.focus();
+      }
+    }
+
+    // Close modal on Escape
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('doc-modal');
+        if (!modal.classList.contains('hidden')) {
+          closeDocDialog();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

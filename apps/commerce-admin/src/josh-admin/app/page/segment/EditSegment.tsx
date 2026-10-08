@@ -1,3 +1,5 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
 import {
   getUserSegmentById,
   previewUserSegmentCount,
@@ -8,6 +10,7 @@ import { Input } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import AdminInsertLayout from '../../components/AdminInsertLayout';
+import { LoadError } from '../../components/LoadError';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { readReturnTo, withRestoreDraftMarker } from '../../utils/return-to';
 import SegmentRuleConfigFields from './SegmentRuleConfigFields';
@@ -21,7 +24,10 @@ import {
   validateRuleForm,
 } from './segment-rule.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EditSegment = () => {
+  __useUiLocale();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -32,6 +38,8 @@ const EditSegment = () => {
   // successful save) — never on `returnTo` itself. See return-to.ts and coupon-form-draft.helpers.ts.
   const returnDestination = returnTo ? withRestoreDraftMarker(returnTo) : ADMIN_ROUTES.segments;
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<unknown>(null);
+  const [reload, setReload] = useState(0);
   const [saving, setSaving] = useState(false);
   const [slug, setSlug] = useState('');
   const [savedRuleConfig, setSavedRuleConfig] = useState<Record<string, unknown>>({});
@@ -53,10 +61,13 @@ const EditSegment = () => {
 
   useEffect(() => {
     if (!id) return;
-
+    setLoading(true);
+    setLoadError(null);
+    let active = true;
     getUserSegmentById(id)
       .then(async (segment) => {
-        if (!segment) return;
+        if (!active) return;
+        if (!segment) { setLoadError(__uiMessage('ไม่พบกลุ่มลูกค้านี้')); return; }
         setSlug(segment.slug);
         setForm({
           name: segment.name,
@@ -80,23 +91,25 @@ const EditSegment = () => {
           try {
             await previewUserSegmentCount(id);
             const refreshed = await getUserSegmentById(id);
-            if (refreshed) {
+            if (active && refreshed) {
               setFrozenAt(refreshed.frozen_at);
               setLockedMemberCount(refreshed.member_count);
             }
           } catch {
             // ponytail: leave count as "—" on failure — nothing to retry from this page.
           } finally {
-            setFreezing(false);
+            if (active) setFreezing(false);
           }
         }
       })
-      .finally(() => setLoading(false));
-  }, [id]);
+      .catch((error: unknown) => { if (active) setLoadError(error); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [id, reload]);
 
   const handleSubmit = async () => {
     if (!id || !form.name.trim()) {
-      alert('กรุณากรอกชื่อ');
+      alert(__uiText("กรุณากรอกชื่อ"));
       return;
     }
 
@@ -135,20 +148,21 @@ const EditSegment = () => {
           ? (err as { response?: { data?: { message?: string } } }).response
               ?.data?.message
           : undefined;
-      alert(msg ?? 'เกิดข้อผิดพลาดในการบันทึก');
+      alert(msg ?? __uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
   };
 
+  if (loadError) return <LoadError title={__uiText('แก้ไขกลุ่มลูกค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoading(true); setReload(value => value + 1); }} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <AdminInsertLayout
-      title="แก้ไข User Segment"
-      subtitle={`slug: ${slug}`}
+      title={__uiText("แก้ไข User Segment")}
+      subtitle={__uiText("slug: {0}", {"0": slug})}
       backPath={returnDestination}
       saving={saving}
       onSave={handleSubmit}
@@ -160,24 +174,23 @@ const EditSegment = () => {
               {getRuleTypeLabel(form.rule_type)}
             </div>
             <div className="mt-1 text-xs text-gray-500">
-              Config ปัจจุบัน:{' '}
+              {__uiText("Config ปัจจุบัน:")}{' '}
               {summarizeRuleConfig(form.rule_type, savedRuleConfig)}
             </div>
             {locked ? (
               <>
                 <div className="mt-1 text-xs text-gray-400">
-                  ล็อกรายชื่อเมื่อ{' '}
+                  {__uiText("ล็อกรายชื่อเมื่อ")}{' '}
                   {frozenAt
-                    ? new Date(frozenAt).toLocaleString('th-TH')
+                    ? new Date(frozenAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))
                     : freezing
-                      ? 'กำลังคำนวณ...'
+                      ? __uiText("กำลังคำนวณ...")
                       : '—'}
                   {' · '}
-                  {lockedMemberCount != null ? `${lockedMemberCount.toLocaleString()} คน` : '—'}
+                  {lockedMemberCount != null ? __uiText("{0} คน", {"0": lockedMemberCount.toLocaleString()}) : '—'}
                 </div>
                 <div className="mt-1 text-xs text-gray-400">
-                  ต้องการรายชื่อใหม่? สร้าง segment ใหม่
-                </div>
+                  {__uiText("ต้องการรายชื่อใหม่? สร้าง segment ใหม่")}</div>
               </>
             ) : null}
           </div>
@@ -188,19 +201,18 @@ const EditSegment = () => {
               to={`${ADMIN_ROUTES.users}?segment=${id}`}
               className="text-xs text-blue-600 hover:underline"
             >
-              ดู Users
-            </Link>
+              {__uiText("ดู Users")}</Link>
           </div>
         </div>
       </div>
 
       <Input
-        label="ชื่อ Segment *"
+        label={__uiText("ชื่อ Segment *")}
         value={form.name}
         onChange={(event) => setForm({ ...form, name: event.target.value })}
       />
       <Input
-        label="คำอธิบาย (ไม่บังคับ)"
+        label={__uiText("คำอธิบาย (ไม่บังคับ)")}
         value={form.description}
         onChange={(event) =>
           setForm({ ...form, description: event.target.value })
@@ -209,16 +221,14 @@ const EditSegment = () => {
 
       {locked ? (
         <p className="text-xs text-gray-500">
-          เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ดูสรุปเงื่อนไขด้านบน
-        </p>
+          {__uiText("เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ดูสรุปเงื่อนไขด้านบน")}</p>
       ) : (
         // Live segment (guest/first_visit/member/staff, no definition) — rule_type itself is locked (the
         // backend only allows a live segment to switch between guest/first_visit, and never
         // to carry a definition); only its rule_config, if any, stays editable.
         <div className="space-y-2">
           <p className="text-xs text-gray-500">
-            ประเภทกลุ่ม: <strong>{getRuleTypeLabel(form.rule_type)}</strong> (ไม่สามารถเปลี่ยนได้)
-          </p>
+            {__uiText("ประเภทกลุ่ม: ")}<strong>{getRuleTypeLabel(form.rule_type)}</strong> {__uiText(" (ไม่สามารถเปลี่ยนได้)")}</p>
           <SegmentRuleConfigFields
             ruleType={form.rule_type}
             value={ruleForm}
@@ -229,10 +239,9 @@ const EditSegment = () => {
 
       <details className="rounded-lg border border-gray-100 bg-gray-50/60 p-3">
         <summary className="cursor-pointer text-sm font-medium text-gray-700">
-          ตั้งค่าขั้นสูง
-        </summary>
+          {__uiText("ตั้งค่าขั้นสูง")}</summary>
         <div className="mt-3 space-y-4">
-          <Input label="Slug (ตัวระบุ URL)" value={slug} disabled />
+          <Input label={__uiText("Slug (ตัวระบุ URL)")} value={slug} disabled />
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
               type="checkbox"
@@ -241,8 +250,7 @@ const EditSegment = () => {
                 setForm({ ...form, is_active: event.target.checked })
               }
             />
-            เปิดใช้งาน Segment นี้ (Active)
-          </label>
+            {__uiText("เปิดใช้งาน Segment นี้ (Active)")}</label>
         </div>
       </details>
     </AdminInsertLayout>

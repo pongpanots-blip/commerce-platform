@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { FaChevronCircleDown } from 'react-icons/fa';
 
 // กำหนดโครงสร้างข้อมูลสำหรับออปชันแต่ละตัวที่ต้องส่งเข้ามา
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface SelectOption {
   value: string | number;
   label: string;
@@ -71,6 +73,7 @@ export function Select({
   multiple,
   ...props
 }: SelectProps) {
+  const locale = __useUiLocale();
   const generatedId = React.useId();
   // ปุ่ม combobox คือ control ที่ผู้ใช้กดจริง — `id` ของ caller จึงต้องลงที่ปุ่ม ไม่ใช่ native select
   // ที่ sr-only+aria-hidden ไม่งั้น <label htmlFor={id}> ที่ caller เขียนเองจะชี้ไปที่ของที่กดไม่ได้
@@ -116,7 +119,7 @@ export function Select({
             label: o.label,
             disabled: o.disabled,
           })),
-    [children, data],
+    [children, data, locale],
   );
 
   // ค่าที่ถูกเลือกอยู่ — อ่านจาก props เพราะ native select ยังเป็นเจ้าของ state เหมือนเดิม
@@ -265,17 +268,19 @@ export function Select({
         onClick={() => (open ? setOpen(false) : openMenu())}
         onKeyDown={onKeyDown}
         {...buttonProps}
+        aria-invalid={error ? true : props['aria-invalid']}
+        aria-describedby={[props['aria-describedby'], (error || hint) && `${buttonId}-message`].filter(Boolean).join(' ') || undefined}
         className={`
-          flex h-10 w-full items-center rounded-lg border-2 bg-white py-2 pl-3 pr-8 text-left text-sm
+          flex h-10 w-full items-center rounded-lg border bg-white py-2 pl-3 pr-8 text-left text-sm
           transition-colors cursor-pointer focus:outline-none
           ${triggerText ? 'text-ink' : 'text-ink-muted'}
           ${error
             ? 'border-alert'
-            : 'border-primary-border hover:border-primary focus:border-primary'}
+            : 'border-gray-200 hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/10'}
           disabled:cursor-not-allowed disabled:border-surface-disabled disabled:bg-surface-disabled disabled:text-ink-disabled
         `}
       >
-        <span className="truncate">{triggerText || placeholder || ' '}</span>
+        <span className="truncate">{triggerText || (placeholder ? __uiText(placeholder) : ' ')}</span>
       </button>
 
       {/* chevron-circle ฝั่งขวา */}
@@ -308,7 +313,7 @@ export function Select({
         >
           {options.length === 0 && (
             // Figma "State=Not Found" — ponytail: ข้อความอย่างเดียว ไม่มี illustration 64px (ยังไม่มี asset)
-            <li className="py-4 text-center text-sm text-ink-secondary">No Results Found</li>
+            <li className="py-4 text-center text-sm text-ink-secondary">{__uiText("No Results Found")}</li>
           )}
           {options.map((option, i) => {
             const isSelected = selected.includes(option.value);
@@ -365,14 +370,14 @@ export function Select({
           htmlFor={buttonId}
           className="mb-1 block text-sm text-ink-secondary"
         >
-          {label}
+          {__uiText(label)}
         </label>
       )}
       {field}
       {error ? (
-        <p className="mt-1 text-sm text-alert">{error}</p>
+        <p id={`${buttonId}-message`} className="mt-1 text-sm text-alert">{__uiText(error)}</p>
       ) : (
-        hint && <p className="mt-1 text-xs text-ink-muted">{hint}</p>
+        hint && <p id={`${buttonId}-message`} className="mt-1 text-xs text-ink-muted">{__uiText(hint)}</p>
       )}
     </div>
   );

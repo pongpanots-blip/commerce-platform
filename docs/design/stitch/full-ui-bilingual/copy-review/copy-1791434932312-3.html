@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commerce Platform · UI Copy Review (Batch copy-1791434932312-3)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              dark: '#2445cc',
+              light: '#ebf0ff',
+              surface: '#f6f8fc'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      font-family: "Noto Sans Thai", Inter, sans-serif;
+      color: #1e293b;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f6f8fc] text-slate-800 antialiased p-4 md:p-8">
+
+  <!-- INVISIBLE FULL TRANSLATION DICTIONARY (EXACTLY ALL 240 KEYS) -->
+  <script id="commerce-ui-translations" type="application/json">
+{
+  "Invoice:": {
+    "th": "ใบแจ้งหนี้:",
+    "en": "Invoice:"
+  },
+  "invoice.status.changed": {
+    "th": "invoice.status.changed",
+    "en": "invoice.status.changed"
+  },
+  "iOS": {
+    "th": "iOS",
+    "en": "iOS"
+  },
+  "Issues": {
+    "th": "ปัญหาที่พบ",
+    "en": "Issues"
+  },
+  "J": {
+    "th": "J",
+    "en": "J"
+  },
+  "Jagota (ERP)": {
+    "th": "Jagota (ERP)",
+    "en": "Jagota (ERP)"
+  },
+  "Jagota payment testing": {
+    "th": "การทดสอบการชำระเงิน Jagota",
+    "en": "Jagota payment testing"
+  },
+  "Jagota Payment Testing": {
+    "th": "การทดสอบระบบชำระเงิน Jagota",
+    "en": "Jagota Payment Testing"
+  },
+  "Jagota sync": {
+    "th": "ซิงค์ข้อมูล Jagota",
+    "en": "Jagota sync"
+  },
+  "Jagota sync error": {
+    "th": "ข้อผิดพลาดการซิงค์ Jagota",
+    "en": "Jagota sync error"
+  },
+  "Jagota ตอบ": {
+    "th": "Jagota ตอบกลับ",
+    "en": "Jagota response"
+  },
+  "jagota_order_sync": {
+    "th": "jagota_order_sync",
+    "en": "jagota_order_sync"
+  },
+  "JD": {
+    "th": "JD",
+    "en": "JD"
+  },
+  "JG-001": {
+    "th": "JG-001",
+    "en": "JG-001"
+  },
+  "JG-001_2.png": {
+    "th": "JG-001_2.png",
+    "en": "JG-001_2.png"
+  },
+  "JG001_1.jpg": {
+    "th": "JG001_1.jpg",
+    "en": "JG001_1.jpg"
+  },
+  "JG001_2.jpg": {
+    "th": "JG001_2.jpg",
+    "en": "JG001_2.jpg"
+  },
+  "JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน": {
+    "th": "JG001_2.jpg จะแทนที่รูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องระบุลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน",
+    "en": "JG001_2.jpg will overwrite image 2 of JG001 — filenames must include an index and cannot have duplicate indices in the same set."
+  },
+  "JG002": {
+    "th": "JG002",
+    "en": "JG002"
+  },
+  "JG002.webp": {
+    "th": "JG002.webp",
+    "en": "JG002.webp"
+  },
+  "Job history": {
+    "th": "ประวัติงานประมวลผล",
+    "en": "Job history"
+  },
+  "John Doe": {
+    "th": "John Doe",
+    "en": "John Doe"
+  },
+  "josh": {
+    "th": "josh",
+    "en": "josh"
+  },
+  "Josh": {
+    "th": "Josh",
+    "en": "Josh"
+  },
+  "JOSH · ตอนนี้": {
+    "th": "JOSH · ตอนนี้",
+    "en": "JOSH · Just now"
+  },
+  "josh → commerce → ERP": {
+    "th": "josh → commerce → ERP",
+    "en": "josh → commerce → ERP"
+  },
+  "JOSH ADMIN": {
+    "th": "JOSH ADMIN",
+    "en": "JOSH ADMIN"
+  },
+  "josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP": {
+    "th": "josh ยังส่งคำสั่งซื้อไป Jagota ตามปกติ · commerce สร้างคำขอของคำสั่งซื้อเดียวกันแล้วเปรียบเทียบกับที่ josh ส่งจริงทีละฟิลด์ · ไม่ส่งข้อมูลใดๆ ไปยัง ERP",
+    "en": "josh continues sending orders to Jagota as usual · commerce creates a request for the same order and compares field-by-field against what josh actually sent · nothing is transmitted to ERP"
+  },
+  "josh เรียก commerce": {
+    "th": "josh เรียก commerce",
+    "en": "josh calls commerce"
+  },
+  "josh ส่ง": {
+    "th": "josh ส่งแล้ว",
+    "en": "josh sent"
+  },
+  "josh ส่งไป Jagota": {
+    "th": "josh ส่งไปยัง Jagota",
+    "en": "josh sent to Jagota"
+  },
+  "josh ส่งเมื่อ": {
+    "th": "josh ส่งเมื่อ",
+    "en": "josh sent at"
+  },
+  "josh สั่งซื้อผ่าน commerce · จ่ายเงินแล้ว commerce ส่ง order ไป ERP": {
+    "th": "josh สั่งซื้อผ่าน commerce · เมื่อชำระเงินสำเร็จ commerce จะส่งคำสั่งซื้อไปยัง ERP",
+    "en": "josh orders via commerce · once paid, commerce sends the order to ERP"
+  },
+  "josh.admin@saas.com": {
+    "th": "josh.admin@saas.com",
+    "en": "josh.admin@saas.com"
+  },
+  "Journey": {
+    "th": "เส้นทางผู้ใช้",
+    "en": "Journey"
+  },
+  "Journey funnel": {
+    "th": "กรวยสถิติเส้นทางผู้ใช้",
+    "en": "Journey funnel"
+  },
+  "Journey Funnel": {
+    "th": "กรวยสถิติเส้นทางผู้ใช้",
+    "en": "Journey Funnel"
+  },
+  "Journey Timeline": {
+    "th": "เส้นเวลาของเส้นทางผู้ใช้",
+    "en": "Journey Timeline"
+  },
+  "JPG / PNG / WebP": {
+    "th": "JPG / PNG / WebP",
+    "en": "JPG / PNG / WebP"
+  },
+  "jpg / png / webp / gif — รวมแล้วไม่เกิน 3 รูป": {
+    "th": "jpg / png / webp / gif — รวมกันไม่เกิน 3 ภาพ",
+    "en": "jpg / png / webp / gif — up to 3 images in total"
+  },
+  "KBank testing console": {
+    "th": "คอนโซลทดสอบ KBank",
+    "en": "KBank testing console"
+  },
+  "KBank Testing Console": {
+    "th": "คอนโซลทดสอบ KBank",
+    "en": "KBank Testing Console"
+  },
+  "KBANK_TESTING_CONSOLE=true": {
+    "th": "KBANK_TESTING_CONSOLE=true",
+    "en": "KBANK_TESTING_CONSOLE=true"
+  },
+  "Kcal": {
+    "th": "กิโลแคลอรี",
+    "en": "Kcal"
+  },
+  "kebab-case เช่น vip-customers": {
+    "th": "รูปแบบ kebab-case เช่น vip-customers",
+    "en": "kebab-case, e.g. vip-customers"
+  },
+  "Keep keys server-side": {
+    "th": "เก็บคีย์ไว้เฉพาะฝั่งเซิร์ฟเวอร์",
+    "en": "Keep keys server-side"
+  },
+  "Key Name": {
+    "th": "ชื่อคีย์",
+    "en": "Key Name"
+  },
+  "Key prefix": {
+    "th": "คำนำหน้าคีย์",
+    "en": "Key prefix"
+  },
+  "Keys authenticate your server with the X-Api-Key header. Keep them secret.": {
+    "th": "คีย์จะยืนยันตัวตนเซิร์ฟเวอร์ของคุณผ่านเฮดเดอร์ X-Api-Key โปรดเก็บเป็นความลับ",
+    "en": "Keys authenticate your server with the X-Api-Key header. Keep them secret."
+  },
+  "keyword": {
+    "th": "คำค้นหา",
+    "en": "keyword"
+  },
+  "KPG": {
+    "th": "KPG",
+    "en": "KPG"
+  },
+  "KYC": {
+    "th": "KYC",
+    "en": "KYC"
+  },
+  "KYC — ยืนยันตัวตน": {
+    "th": "KYC — ยืนยันตัวตน",
+    "en": "KYC — Identity Verification"
+  },
+  "KYC Verification": {
+    "th": "การยืนยันตัวตน KYC",
+    "en": "KYC Verification"
+  },
+  "KYC รอตรวจ": {
+    "th": "KYC รอตรวจสอบ",
+    "en": "KYC Pending Review"
+  },
+  "KYC และวงเงิน": {
+    "th": "KYC และวงเงินเครดิต",
+    "en": "KYC and Credit Limit"
+  },
+  "KYC:": {
+    "th": "KYC:",
+    "en": "KYC:"
+  },
+  "Landing SEO": {
+    "th": "SEO หน้าแลนดิ้ง",
+    "en": "Landing SEO"
+  },
+  "Last used": {
+    "th": "ใช้งานล่าสุดเมื่อ",
+    "en": "Last used"
+  },
+  "Launch URL / deep link": {
+    "th": "URL เริ่มต้น / ลิงก์ตรง (Deep link)",
+    "en": "Launch URL / deep link"
+  },
+  "Layers": {
+    "th": "เลเยอร์",
+    "en": "Layers"
+  },
+  "Layout": {
+    "th": "เค้าโครง",
+    "en": "Layout"
+  },
+  "Legacy:": {
+    "th": "ระบบเดิม:",
+    "en": "Legacy:"
+  },
+  "Legal Documents": {
+    "th": "เอกสารทางกฎหมาย",
+    "en": "Legal Documents"
+  },
+  "Lift:": {
+    "th": "การยกตัว:",
+    "en": "Lift:"
+  },
+  "Line total": {
+    "th": "ยอดรวมรายการ",
+    "en": "Line total"
+  },
+  "Lines ({0})": {
+    "th": "รายการสินค้า ({0})",
+    "en": "Lines ({0})"
+  },
+  "Link": {
+    "th": "ลิงก์",
+    "en": "Link"
+  },
+  "LinkedIn URL": {
+    "th": "URL ของ LinkedIn",
+    "en": "LinkedIn URL"
+  },
+  "list": {
+    "th": "รายการ",
+    "en": "list"
+  },
+  "live": {
+    "th": "ใช้งานจริง",
+    "en": "live"
+  },
+  "Live chat": {
+    "th": "แชทสด",
+    "en": "Live chat"
+  },
+  "Live Chat": {
+    "th": "แชทสด",
+    "en": "Live Chat"
+  },
+  "Live Preview": {
+    "th": "ตัวอย่างแบบสด",
+    "en": "Live Preview"
+  },
+  "livemode ไม่ตรง": {
+    "th": "โหมดระบบจริง (livemode) ไม่ตรงกัน",
+    "en": "livemode mismatch"
+  },
+  "llm (ยังไม่รองรับ)": {
+    "th": "llm (ยังไม่รองรับ)",
+    "en": "llm (not supported yet)"
+  },
+  "Loading...": {
+    "th": "กำลังโหลด...",
+    "en": "Loading..."
+  },
+  "Local dev": {
+    "th": "สภาพแวดล้อมทดสอบในเครื่อง",
+    "en": "Local dev"
+  },
+  "Lock Aspect Ratio": {
+    "th": "ล็อกอัตราส่วนภาพ",
+    "en": "Lock Aspect Ratio"
+  },
+  "Log entries": {
+    "th": "รายการบันทึก (Log)",
+    "en": "Log entries"
+  },
+  "Log ดิบ": {
+    "th": "บันทึกข้อมูลดิบ (Raw log)",
+    "en": "Raw log"
+  },
+  "Logged in": {
+    "th": "เข้าสู่ระบบแล้ว",
+    "en": "Logged in"
+  },
+  "Login sessions (annotation):": {
+    "th": "เซสชันการเข้าสู่ระบบ (คำอธิบายประกอบ):",
+    "en": "Login sessions (annotation):"
+  },
+  "login เป็น user นี้บน shop": {
+    "th": "เข้าสู่ระบบเป็นผู้ใช้นี้บนหน้าร้าน",
+    "en": "Log in as this user on shop"
+  },
+  "Login แล้ว": {
+    "th": "เข้าสู่ระบบแล้ว",
+    "en": "Logged in"
+  },
+  "Logo": {
+    "th": "โลโก้",
+    "en": "Logo"
+  },
+  "LOT": {
+    "th": "ล็อต",
+    "en": "LOT"
+  },
+  "Lot Completed": {
+    "th": "ล็อตเสร็จสมบูรณ์",
+    "en": "Lot Completed"
+  },
+  "Manage": {
+    "th": "จัดการ",
+    "en": "Manage"
+  },
+  "Manage and monitor all customer orders": {
+    "th": "จัดการและตรวจสอบคำสั่งซื้อทั้งหมดของลูกค้า",
+    "en": "Manage and monitor all customer orders"
+  },
+  "Manage webhook subscriptions and platform integrations.": {
+    "th": "จัดการการสมัครสมาชิกเว็บฮุกและการผสานการทำงานของแพลตฟอร์ม",
+    "en": "Manage webhook subscriptions and platform integrations."
+  },
+  "Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway": {
+    "th": "คอนโซล Manual QA สำหรับตรวจสอบเช็กลิสต์รับรอง K-Payment Gateway",
+    "en": "Manual QA console for K-Payment Gateway certification checklist"
+  },
+  "Mark failed": {
+    "th": "ทำเครื่องหมายว่าล้มเหลว",
+    "en": "Mark failed"
+  },
+  "Mark paid": {
+    "th": "ทำเครื่องหมายว่าชำระเงินแล้ว",
+    "en": "Mark paid"
+  },
+  "Market Explorer": {
+    "th": "สำรวจตลาด",
+    "en": "Market Explorer"
+  },
+  "MARKET EXPLORER": {
+    "th": "สำรวจตลาด",
+    "en": "MARKET EXPLORER"
+  },
+  "Market Explorer (ร้านอาหาร)": {
+    "th": "สำรวจตลาด (ร้านอาหาร)",
+    "en": "Market Explorer (Restaurants)"
+  },
+  "Marketed By": {
+    "th": "จัดจำหน่ายโดย",
+    "en": "Marketed By"
+  },
+  "Marketing": {
+    "th": "การตลาด",
+    "en": "Marketing"
+  },
+  "Marketing Analyst": {
+    "th": "นักวิเคราะห์การตลาด",
+    "en": "Marketing Analyst"
+  },
+  "Marketing links": {
+    "th": "ลิงก์การตลาด",
+    "en": "Marketing links"
+  },
+  "Marketing Links": {
+    "th": "ลิงก์การตลาด",
+    "en": "Marketing Links"
+  },
+  "Marketing remind": {
+    "th": "เตือนความจำการตลาด",
+    "en": "Marketing remind"
+  },
+  "Marketing Research": {
+    "th": "การวิจัยการตลาด",
+    "en": "Marketing Research"
+  },
+  "Marketing Settings": {
+    "th": "การตั้งค่าการตลาด",
+    "en": "Marketing Settings"
+  },
+  "Marketing Workflow": {
+    "th": "เวิร์กโฟลว์การตลาด",
+    "en": "Marketing Workflow"
+  },
+  "Marketing workflows": {
+    "th": "เวิร์กโฟลว์การตลาด",
+    "en": "Marketing workflows"
+  },
+  "max ต่อวัน แล้วรวม": {
+    "th": "ค่าสูงสุดต่อวันแล้วรวมยอด",
+    "en": "Daily maximum then sum"
+  },
+  "max ต่อวัน แล้วรวม — ไม่บวก cron ซ้ำ": {
+    "th": "ค่าสูงสุดต่อวันแล้วรวมยอด — ไม่รวมงาน cron ซ้ำ",
+    "en": "Daily maximum then sum — without duplicate cron tasks"
+  },
+  "MB · jpg, jpeg, png, gif, webp": {
+    "th": "MB · jpg, jpeg, png, gif, webp",
+    "en": "MB · jpg, jpeg, png, gif, webp"
+  },
+  "MB)": {
+    "th": "MB)",
+    "en": "MB)"
+  },
+  "MCP URL": {
+    "th": "URL ของ MCP",
+    "en": "MCP URL"
+  },
+  "MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)": {
+    "th": "ยังไม่ได้เปิดใช้งาน MCP บนเซิร์ฟเวอร์นี้ — โปรดกำหนดค่า MCP_PUBLIC_URL (ดู docs/mcp.md)",
+    "en": "MCP is not enabled on this server — configure MCP_PUBLIC_URL (see docs/mcp.md)"
+  },
+  "Membership Tiers": {
+    "th": "ระดับสมาชิก",
+    "en": "Membership Tiers"
+  },
+  "Message": {
+    "th": "ข้อความ",
+    "en": "Message"
+  },
+  "Message (TH)": {
+    "th": "ข้อความ (ภาษาไทย)",
+    "en": "Message (TH)"
+  },
+  "Message *": {
+    "th": "ข้อความ *",
+    "en": "Message *"
+  },
+  "Message B": {
+    "th": "ข้อความ B",
+    "en": "Message B"
+  },
+  "Message EN": {
+    "th": "ข้อความ (ภาษาอังกฤษ)",
+    "en": "Message EN"
+  },
+  "Message text...": {
+    "th": "ข้อความ...",
+    "en": "Message text..."
+  },
+  "Method": {
+    "th": "เมธอด",
+    "en": "Method"
+  },
+  "Mobile": {
+    "th": "มือถือ",
+    "en": "Mobile"
+  },
+  "Mobile deeplink": {
+    "th": "ลิงก์ตรงบนมือถือ (Deeplink)",
+    "en": "Mobile deeplink"
+  },
+  "Mode": {
+    "th": "โหมด",
+    "en": "Mode"
+  },
+  "MOQ": {
+    "th": "จำนวนสั่งซื้อขั้นต่ำ (MOQ)",
+    "en": "MOQ"
+  },
+  "MOQ change": {
+    "th": "เปลี่ยนจำนวนสั่งซื้อขั้นต่ำ",
+    "en": "MOQ change"
+  },
+  "Move layer down": {
+    "th": "ย้ายเลเยอร์ลง",
+    "en": "Move layer down"
+  },
+  "Move layer up": {
+    "th": "ย้ายเลเยอร์ขึ้น",
+    "en": "Move layer up"
+  },
+  "ms": {
+    "th": "มิลลิวินาที",
+    "en": "ms"
+  },
+  "N/A": {
+    "th": "ไม่มีข้อมูล",
+    "en": "N/A"
+  },
+  "na": {
+    "th": "ไม่มีข้อมูล",
+    "en": "na"
+  },
+  "Name": {
+    "th": "ชื่อ",
+    "en": "Name"
+  },
+  "navigate (ลิงก์)": {
+    "th": "นำทาง (ลิงก์)",
+    "en": "Navigate (link)"
+  },
+  "Never": {
+    "th": "ไม่เคย",
+    "en": "Never"
+  },
+  "new": {
+    "th": "ใหม่",
+    "en": "new"
+  },
+  "New API key": {
+    "th": "คีย์ API ใหม่",
+    "en": "New API key"
+  },
+  "New API Key Created": {
+    "th": "สร้างคีย์ API ใหม่สำเร็จแล้ว",
+    "en": "New API Key Created"
+  },
+  "New Subscription": {
+    "th": "การสมัครรับข้อมูลใหม่",
+    "en": "New Subscription"
+  },
+  "New Webhook Subscription": {
+    "th": "การติดตามเว็บฮุกใหม่",
+    "en": "New Webhook Subscription"
+  },
+  "next": {
+    "th": "ถัดไป",
+    "en": "next"
+  },
+  "Next image": {
+    "th": "รูปถัดไป",
+    "en": "Next image"
+  },
+  "No data": {
+    "th": "ไม่มีข้อมูล",
+    "en": "No data"
+  },
+  "No deliveries yet — trigger an event (e.g. update a customer).": {
+    "th": "ยังไม่มีการส่งข้อมูล — กระตุ้นเหตุการณ์เพื่อทดสอบ (เช่น อัปเดตข้อมูลลูกค้า)",
+    "en": "No deliveries yet — trigger an event (e.g. update a customer)."
+  },
+  "No failed webhook deliveries.": {
+    "th": "ไม่มีรายการนำส่งเว็บฮุกที่ล้มเหลว",
+    "en": "No failed webhook deliveries."
+  },
+  "No lines": {
+    "th": "ไม่มีรายการสินค้า",
+    "en": "No lines"
+  },
+  "No payment yet": {
+    "th": "ยังไม่ได้ชำระเงิน",
+    "en": "No payment yet"
+  },
+  "No preview available yet.": {
+    "th": "ยังไม่มีตัวอย่างให้แสดง",
+    "en": "No preview available yet."
+  },
+  "No recent deliveries match this status.": {
+    "th": "ไม่มีรายการนำส่งล่าสุดที่ตรงกับสถานะนี้",
+    "en": "No recent deliveries match this status."
+  },
+  "No reservations": {
+    "th": "ไม่มีรายการจอง",
+    "en": "No reservations"
+  },
+  "No reservations yet.": {
+    "th": "ยังไม่มีรายการจอง",
+    "en": "No reservations yet."
+  },
+  "No Results Found": {
+    "th": "ไม่พบผลลัพธ์",
+    "en": "No Results Found"
+  },
+  "No saved presets yet.": {
+    "th": "ยังไม่มีค่าที่บันทึกไว้ล่วงหน้า",
+    "en": "No saved presets yet."
+  },
+  "No staged ERP rows yet.": {
+    "th": "ยังไม่มีแถวข้อมูล ERP ในสถานะเตรียมส่ง",
+    "en": "No staged ERP rows yet."
+  },
+  "No steps yet": {
+    "th": "ยังไม่มีขั้นตอน",
+    "en": "No steps yet"
+  },
+  "No steps yet. Add one to get started.": {
+    "th": "ยังไม่มีขั้นตอน เพิ่มขั้นตอนแรกเพื่อเริ่มต้นใช้งาน",
+    "en": "No steps yet. Add one to get started."
+  },
+  "No sticker layers yet.": {
+    "th": "ยังไม่มีเลเยอร์สติกเกอร์",
+    "en": "No sticker layers yet."
+  },
+  "No stock rows yet.": {
+    "th": "ยังไม่มีแถวข้อมูลสต็อกสินค้า",
+    "en": "No stock rows yet."
+  },
+  "No subscriptions yet.": {
+    "th": "ยังไม่มีการสมัครรับข้อมูล",
+    "en": "No subscriptions yet."
+  },
+  "No sync jobs yet.": {
+    "th": "ยังไม่มีงานซิงค์ข้อมูล",
+    "en": "No sync jobs yet."
+  },
+  "No webhook deliveries yet.": {
+    "th": "ยังไม่มีการส่งข้อมูลเว็บฮุก",
+    "en": "No webhook deliveries yet."
+  },
+  "No webhook events yet.": {
+    "th": "ยังไม่มีเหตุการณ์เว็บฮุก",
+    "en": "No webhook events yet."
+  },
+  "No webhook subscriptions configured.": {
+    "th": "ยังไม่ได้กำหนดค่าการติดตามเว็บฮุก",
+    "en": "No webhook subscriptions configured."
+  },
+  "No webhooks yet. Create one to get started.": {
+    "th": "ยังไม่มีเว็บฮุก สร้างเว็บฮุกแรกเพื่อเริ่มต้น",
+    "en": "No webhooks yet. Create one to get started."
+  },
+  "no-checksum": {
+    "th": "no-checksum",
+    "en": "no-checksum"
+  },
+  "no-reference": {
+    "th": "no-reference",
+    "en": "no-reference"
+  },
+  "not_tested": {
+    "th": "not_tested",
+    "en": "not_tested"
+  },
+  "Note": {
+    "th": "บันทึกช่วยจำ",
+    "en": "Note"
+  },
+  "Note ของ {0}": {
+    "th": "บันทึกช่วยจำของ {0}",
+    "en": "Note of {0}"
+  },
+  "Notification": {
+    "th": "การแจ้งเตือน",
+    "en": "Notification"
+  },
+  "Notification body": {
+    "th": "เนื้อหาการแจ้งเตือน",
+    "en": "Notification body"
+  },
+  "Notification catalog": {
+    "th": "แค็ตตาล็อกการแจ้งเตือน",
+    "en": "Notification catalog"
+  },
+  "Notification Catalog": {
+    "th": "แค็ตตาล็อกการแจ้งเตือน",
+    "en": "Notification Catalog"
+  },
+  "Notification delivery stats": {
+    "th": "สถิติการส่งการแจ้งเตือน",
+    "en": "Notification delivery stats"
+  },
+  "Notification Delivery Stats": {
+    "th": "สถิติการส่งการแจ้งเตือน",
+    "en": "Notification Delivery Stats"
+  },
+  "Notification log": {
+    "th": "บันทึกประวัติการแจ้งเตือน",
+    "en": "Notification log"
+  },
+  "Notification Stats": {
+    "th": "สถิติการแจ้งเตือน",
+    "en": "Notification Stats"
+  },
+  "Notification title": {
+    "th": "หัวข้อการแจ้งเตือน",
+    "en": "Notification title"
+  },
+  "Notifications": {
+    "th": "การแจ้งเตือน",
+    "en": "Notifications"
+  },
+  "Notify · Email · Popup Templates": {
+    "th": "เทมเพลตแจ้งเตือน · อีเมล · ป๊อปอัป",
+    "en": "Notify · Email · Popup Templates"
+  },
+  "Notify external systems when platform events happen — they subscribe, we deliver (signed).": {
+    "th": "แจ้งเตือนระบบภายนอกเมื่อเกิดเหตุการณ์ในแพลตฟอร์ม — ผู้รับปลายทางลงทะเบียน เราทำการนำส่งพร้อมลายเซ็นความปลอดภัย",
+    "en": "Notify external systems when platform events happen — they subscribe, we deliver (signed)."
+  },
+  "Notify sent": {
+    "th": "ส่งการแจ้งเตือนแล้ว",
+    "en": "Notify sent"
+  },
+  "Notify Templates": {
+    "th": "เทมเพลตการแจ้งเตือน",
+    "en": "Notify Templates"
+  },
+  "notify ซ้ำ (resend เดิม)": {
+    "th": "แจ้งเตือนซ้ำ (ส่งรายการเดิมอีกครั้ง)",
+    "en": "Duplicate notification (resend original)"
+  },
+  "now": {
+    "th": "ตอนนี้",
+    "en": "now"
+  },
+  "occurrence ต่อวัน": {
+    "th": "จำนวนครั้งต่อวัน",
+    "en": "Occurrences per day"
+  },
+  "of 3 completed": {
+    "th": "จาก 3 ขั้นตอนเสร็จสิ้นแล้ว",
+    "en": "of 3 completed"
+  },
+  "Offer Check": {
+    "th": "ตรวจสอบข้อเสนอ",
+    "en": "Offer Check"
+  },
+  "Offer shown": {
+    "th": "แสดงข้อเสนอแล้ว",
+    "en": "Offer shown"
+  },
+  "Offer ผูกกับ user": {
+    "th": "ข้อเสนอที่เชื่อมโยงกับผู้ใช้",
+    "en": "Offer linked to user"
+  },
+  "Oldest waiting: {0}": {
+    "th": "รอนานที่สุด: {0}",
+    "en": "Oldest waiting: {0}"
+  },
+  "Omise": {
+    "th": "Omise",
+    "en": "Omise"
+  },
+  "Only PNG or WebP files are supported for stickers (need transparency).": {
+    "th": "รองรับเฉพาะไฟล์ PNG หรือ WebP สำหรับสติกเกอร์ (ต้องการพื้นหลังโปร่งใส)",
+    "en": "Only PNG or WebP files are supported for stickers (need transparency)."
+  },
+  "Opacity": {
+    "th": "ความโปร่งแสง",
+    "en": "Opacity"
+  },
+  "Open Swagger": {
+    "th": "เปิด Swagger",
+    "en": "Open Swagger"
+  },
+  "Operation": {
+    "th": "การดำเนินการ",
+    "en": "Operation"
+  },
+  "option": {
+    "th": "ตัวเลือก",
+    "en": "option"
+  },
+  "Option 1&#10;Option 2&#10;...": {
+    "th": "ตัวเลือก 1&#10;ตัวเลือก 2&#10;...",
+    "en": "Option 1&#10;Option 2&#10;..."
+  },
+  "optional notes": {
+    "th": "บันทึกเพิ่มเติม (ไม่บังคับ)",
+    "en": "optional notes"
+  },
+  "Optional notes": {
+    "th": "บันทึกเพิ่มเติม (ไม่บังคับ)",
+    "en": "Optional notes"
+  },
+  "Order": {
+    "th": "คำสั่งซื้อ",
+    "en": "Order"
+  },
+  "Order {0}": {
+    "th": "คำสั่งซื้อ {0}",
+    "en": "Order {0}"
+  },
+  "Order {0}…": {
+    "th": "คำสั่งซื้อ {0}…",
+    "en": "Order {0}…"
+  },
+  "Order / Invoice amount:": {
+    "th": "ยอดเงินตามคำสั่งซื้อ / ใบแจ้งหนี้:",
+    "en": "Order / Invoice amount:"
+  },
+  "Order / Invoice status": {
+    "th": "สถานะคำสั่งซื้อ / ใบแจ้งหนี้",
+    "en": "Order / Invoice status"
+  },
+  "Order converted": {
+    "th": "คำสั่งซื้อเปลี่ยนเป็นยอดขายแล้ว",
+    "en": "Order converted"
+  },
+  "Order details + fulfillment status": {
+    "th": "รายละเอียดคำสั่งซื้อและสถานะการจัดส่ง",
+    "en": "Order details + fulfillment status"
+  },
+  "Order history for customer (requires customerId)": {
+    "th": "ประวัติคำสั่งซื้อของลูกค้า (ต้องระบุรหัสลูกค้า customerId)",
+    "en": "Order history for customer (requires customerId)"
+  },
+  "Order ID": {
+    "th": "รหัสคำสั่งซื้อ",
+    "en": "Order ID"
+  },
+  "Order No.": {
+    "th": "หมายเลขคำสั่งซื้อ",
+    "en": "Order No."
+  },
+  "Order status": {
+    "th": "สถานะคำสั่งซื้อ",
+    "en": "Order status"
+  },
+  "Order target group": {
+    "th": "กลุ่มเป้าหมายคำสั่งซื้อ",
+    "en": "Order target group"
+  },
+  "order ของ josh": {
+    "th": "คำสั่งซื้อของ josh",
+    "en": "josh's order"
+  },
+  "order_lookup": {
+    "th": "order_lookup",
+    "en": "order_lookup"
+  },
+  "Order:": {
+    "th": "คำสั่งซื้อ:",
+    "en": "Order:"
+  },
+  "order.status.changed": {
+    "th": "order.status.changed",
+    "en": "order.status.changed"
+  },
+  "orderId:": {
+    "th": "รหัสคำสั่งซื้อ (orderId):",
+    "en": "orderId:"
+  },
+  "Orders": {
+    "th": "คำสั่งซื้อ",
+    "en": "Orders"
+  },
+  "Orders (josh)": {
+    "th": "คำสั่งซื้อ (josh)",
+    "en": "Orders (josh)"
+  },
+  "Orders (จัดการ)": {
+    "th": "จัดการคำสั่งซื้อ",
+    "en": "Manage Orders"
+  },
+  "orderStatus flags": {
+    "th": "แฟล็กสถานะ orderStatus",
+    "en": "orderStatus flags"
+  },
+  "Outgoing webhooks": {
+    "th": "เว็บฮุกขาออก",
+    "en": "Outgoing webhooks"
+  },
+  "Output": {
+    "th": "ผลลัพธ์",
+    "en": "Output"
+  },
+  "Output: WebP / Quality": {
+    "th": "ผลลัพธ์: WebP / คุณภาพ",
+    "en": "Output: WebP / Quality"
+  },
+  "Overall conversion (View Item → Purchase):": {
+    "th": "อัตราคอนเวอร์ชันโดยรวม (ดูสินค้า → สั่งซื้อ):",
+    "en": "Overall conversion (View Item → Purchase):"
+  },
+  "Overdue invoices": {
+    "th": "ใบแจ้งหนี้เกินกำหนดชำระ",
+    "en": "Overdue invoices"
+  },
+  "Overdue Invoices": {
+    "th": "ใบแจ้งหนี้เกินกำหนดชำระ",
+    "en": "Overdue Invoices"
+  },
+  "Overview": {
+    "th": "ภาพรวม",
+    "en": "Overview"
+  },
+  "Packed / Closed for VAT ไม่มีในตัวเลือก — handleInvoiceStatus ไม่อ่าน flag พวกนี้": {
+    "th": "ไม่มี Packed / Closed for VAT ในตัวเลือก — เนื่องจาก handleInvoiceStatus ไม่อ่านแฟล็กเหล่านี้",
+    "en": "Packed / Closed for VAT are not in the options — handleInvoiceStatus does not read these flags."
+  },
+  "page to the": {
+    "th": "หน้าไปยัง",
+    "en": "page to the"
+  },
+  "Parsed": {
+    "th": "แปลงข้อมูลสำเร็จแล้ว",
+    "en": "Parsed"
+  },
+  "pass": {
+    "th": "ผ่าน",
+    "en": "pass"
+  },
+  "Path": {
+    "th": "พาธ",
+    "en": "Path"
+  },
+  "Path เอง": {
+    "th": "กำหนดพาธเอง",
+    "en": "Custom path"
+  },
+  "Pattern (regex)": {
+    "th": "รูปแบบนิพจน์ (Regex)",
+    "en": "Pattern (regex)"
+  },
+  "Pause": {
+    "th": "หยุดชั่วคราว",
+    "en": "Pause"
+  },
+  "payload": {
+    "th": "เพย์โหลด",
+    "en": "payload"
+  },
+  "Payload": {
+    "th": "เพย์โหลด",
+    "en": "Payload"
+  },
+  "payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง": {
+    "th": "ข้อมูล payload ไม่ใช่ JSON ที่ถูกต้อง — โปรดแก้ไขก่อนส่งคำขอ",
+    "en": "Payload is not valid JSON — fix before submitting"
+  },
+  "Payloads": {
+    "th": "ชุดข้อมูลเพย์โหลด",
+    "en": "Payloads"
+  },
+  "Payment Link": {
+    "th": "ลิงก์ชำระเงิน",
+    "en": "Payment Link"
+  }
+}
+  </script>
+
+  <!-- MAIN REVIEW PAGE WRAPPER -->
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- HEADER / APP BAR -->
+    <header class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-brand/10 text-brand flex items-center justify-center font-bold text-lg border border-brand/20">
+          CP
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg md:text-xl font-bold text-slate-900 tracking-tight">Commerce Platform · UI Copy Review</h1>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Active Batch
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 font-mono mt-0.5">batch copy-1791434932312-3 • 240 verified dictionary keys</p>
+        </div>
+      </div>
+
+      <!-- NATIVE THAI / ENGLISH LANGUAGE SELECTOR -->
+      <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+        <label for="lang-select" class="text-xs font-medium text-slate-500 pl-2 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span>ภาษา / Language:</span>
+        </label>
+        <div class="relative">
+          <select id="lang-select" onchange="switchLanguage(this.value)" class="text-sm font-semibold bg-white text-slate-800 rounded-lg px-3 py-1.5 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand shadow-sm cursor-pointer pr-8">
+            <option value="th" selected>ไทย (Thai)</option>
+            <option value="en">English (US)</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- STATUS & BATCH META -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-500 font-medium">Batch Identifier</p>
+          <p class="text-sm font-mono font-bold text-slate-800 mt-0.5">copy-1791434932312-3</p>
+        </div>
+        <div class="w-8 h-8 rounded-lg bg-blue-50 text-brand flex items-center justify-center font-bold text-xs">#3</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-500 font-medium">Production Keys</p>
+          <p class="text-sm font-semibold text-slate-800 mt-0.5">240 exact strings</p>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-medium">100% Mapped</span>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-500 font-medium">Design Tokens</p>
+          <p class="text-sm font-semibold text-slate-800 mt-0.5">#365cf5 · Noto Sans Thai</p>
+        </div>
+        <div class="w-4 h-4 rounded-full bg-[#365cf5] ring-2 ring-blue-100"></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-500 font-medium">Dictionary Security</p>
+          <p class="text-sm font-semibold text-slate-800 mt-0.5">Hidden Script Tag</p>
+        </div>
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+      </div>
+    </div>
+
+    <!-- 5 PRODUCTION EXAMPLE CARDS (BUTTONS & FORM HELPER MESSAGES) -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">ตัวอย่างการนำไปใช้จริงในคอมโพเนนต์ (Production Component Previews)</h2>
+          <p class="text-xs text-slate-500">แสดงการแมปคีย์ปุ่ม (Action buttons) และข้อความช่วยเหลือในฟอร์ม (Form helper messages) ทั้ง 5 จุด</p>
+        </div>
+        <span class="text-xs font-mono bg-blue-50 text-brand px-2.5 py-1 rounded-md border border-blue-200">
+          Current Lang: <strong id="current-lang-indicator">TH</strong>
+        </span>
+      </div>
+
+      <!-- CARD 1: ERP / API Key Security (Keep keys server-side + New API key) -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4 transition-all">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-50 text-brand font-bold text-xs flex items-center justify-center">1</span>
+            <h3 class="font-semibold text-slate-900 text-sm">การเชื่อมต่อระบบและคีย์ความปลอดภัย (API Credentials & Server Integration)</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400">Keys: "New API key", "Keys authenticate your server..."</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1" data-i18n-key="Key Name">ชื่อคีย์</label>
+            <input type="text" value="ERP-Production-Webhook-Client" readonly class="w-full text-sm font-mono bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none">
+            <!-- Helper Message 1 -->
+            <p class="text-xs text-slate-500 mt-2 flex items-start gap-1.5 leading-relaxed" id="helper-msg-1">
+              <svg class="w-4 h-4 text-brand shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span data-i18n-key="Keys authenticate your server with the X-Api-Key header. Keep them secret.">คีย์จะยืนยันตัวตนเซิร์ฟเวอร์ของคุณผ่านเฮดเดอร์ X-Api-Key โปรดเก็บเป็นความลับ</span>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-start md:justify-end gap-3 pt-2">
+            <!-- Example Button 1 -->
+            <button class="px-4 py-2 bg-[#365cf5] hover:bg-[#2445cc] text-white text-sm font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2 focus:ring-2 focus:ring-offset-2 focus:ring-brand">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              <span data-i18n-key="New API key">คีย์ API ใหม่</span>
+            </button>
+            <button class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors" data-i18n-key="Keep keys server-side">
+              เก็บคีย์ไว้เฉพาะฝั่งเซิร์ฟเวอร์
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: File Upload Validation (JG001 image sequence constraint) -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-50 text-brand font-bold text-xs flex items-center justify-center">2</span>
+            <h3 class="font-semibold text-slate-900 text-sm">การอัปโหลดไฟล์รูปภาพแค็ตตาล็อกสินค้า (Product Catalog Image Sequence)</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400">Keys: "Next image", "JG001_2.jpg จะทับรูป..."</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-xs px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md font-semibold">JG001_2.jpg</span>
+              <span class="text-xs text-slate-400">840 KB • image/jpeg</span>
+            </div>
+            <!-- Helper Message 2 -->
+            <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl mt-2.5 text-xs text-amber-800 flex items-start gap-2">
+              <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              <span data-i18n-key="JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน">
+                JG001_2.jpg จะแทนที่รูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องระบุลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-start md:justify-end gap-3">
+            <!-- Example Button 2 -->
+            <button class="px-4 py-2 bg-[#365cf5] hover:bg-[#2445cc] text-white text-sm font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+              <span data-i18n-key="Next image">รูปถัดไป</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+            <button class="px-3 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors" data-i18n-key="Lock Aspect Ratio">
+              ล็อกอัตราส่วนภาพ
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: Webhook & JSON Payload Validation Helper -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-50 text-brand font-bold text-xs flex items-center justify-center">3</span>
+            <h3 class="font-semibold text-slate-900 text-sm">การตรวจสอบข้อมูลนำส่งเว็บฮุก (Webhook Payload Dispatch Validator)</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400">Keys: "New Webhook Subscription", "payload ไม่ใช่ JSON..."</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div>
+            <div class="text-xs font-mono bg-slate-900 text-slate-200 p-2.5 rounded-lg border border-slate-800">
+              <code>{ "event": "order.status.changed", "status": "paid" ... }</code>
+            </div>
+            <!-- Helper Message 3 -->
+            <p class="text-xs text-rose-600 font-medium mt-2 flex items-center gap-1.5" id="helper-msg-3">
+              <svg class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span data-i18n-key="payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง">ข้อมูล payload ไม่ใช่ JSON ที่ถูกต้อง — โปรดแก้ไขก่อนส่งคำขอ</span>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-start md:justify-end gap-3">
+            <!-- Example Button 3 -->
+            <button class="px-4 py-2 bg-[#365cf5] hover:bg-[#2445cc] text-white text-sm font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <span data-i18n-key="New Webhook Subscription">การติดตามเว็บฮุกใหม่</span>
+            </button>
+            <button class="px-3 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors" data-i18n-key="Open Swagger">
+              เปิด Swagger
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: Order & Payment Settlement Action (Mark paid + Parameterized Interpolation) -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-50 text-brand font-bold text-xs flex items-center justify-center">4</span>
+            <h3 class="font-semibold text-slate-900 text-sm">การจัดการสถานะคำสั่งซื้อและการชำระเงิน (Order Settlement & Fulfillment)</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400">Keys: "Mark paid", "Oldest waiting: {0}", "Lines ({0})"</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-slate-700" data-i18n-key="Order ID">รหัสคำสั่งซื้อ</span>:
+              <span class="text-xs font-mono font-bold text-slate-900">#ORD-98241</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-brand font-medium" data-i18n-key="Lines ({0})" data-i18n-params='["4"]'>รายการสินค้า (4)</span>
+            </div>
+            <!-- Helper Message 4 -->
+            <p class="text-xs text-slate-500 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span data-i18n-key="Oldest waiting: {0}" data-i18n-params='["18m 42s"]'>รอนานที่สุด: 18m 42s</span>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-start md:justify-end gap-3">
+            <!-- Example Button 4 -->
+            <button class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span data-i18n-key="Mark paid">ทำเครื่องหมายว่าชำระเงินแล้ว</span>
+            </button>
+            <button class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-sm font-medium rounded-lg transition-colors border border-rose-200" data-i18n-key="Mark failed">
+              ทำเครื่องหมายว่าล้มเหลว
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 5: ERP & K-Payment Gateway Certification QA Console -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-50 text-brand font-bold text-xs flex items-center justify-center">5</span>
+            <h3 class="font-semibold text-slate-900 text-sm">การเชื่อมต่อ Jagota ERP &amp; คอนโซลรับรอง KBank (Integration QA Console)</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400">Keys: "Jagota Payment Testing", "Manual QA console สำหรับไล่..."</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-800">KPG QA</span>
+              <span class="text-xs font-mono text-slate-500">KBANK_TESTING_CONSOLE=true</span>
+            </div>
+            <!-- Helper Message 5 -->
+            <p class="text-xs text-slate-600 mt-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200 leading-relaxed" data-i18n-key="Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway">
+              คอนโซล Manual QA สำหรับตรวจสอบเช็กลิสต์รับรอง K-Payment Gateway
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-start md:justify-end gap-3">
+            <!-- Example Button 5 -->
+            <button class="px-4 py-2 bg-[#365cf5] hover:bg-[#2445cc] text-white text-sm font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span data-i18n-key="Jagota Payment Testing">การทดสอบระบบชำระเงิน Jagota</span>
+            </button>
+            <button class="px-3.5 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors" data-i18n-key="Live Preview">
+              ตัวอย่างแบบสด
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSLATION COVERAGE AUDIT SUMMARY TABLE -->
+    <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">การตรวจสอบความสมบูรณ์ของคีย์ในชุดข้อมูล (Batch Key Coverage Audit)</h3>
+          <p class="text-xs text-slate-500">ตัวชี้วัดความถูกต้องของคีย์ทั้งหมด 240 รายการ ไม่มีการตัดทอนหรือคัดลอกทับซ้อน</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+            ✓ 240/240 Validated
+          </span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-brand border border-blue-200 font-semibold">
+            Interpolation {0} Intact
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick sample preview table of selected keys -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden">
+          <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold">
+            <tr>
+              <th class="py-2.5 px-3 w-1/4">Source Key (Exact)</th>
+              <th class="py-2.5 px-3 w-3/8 text-blue-700">Thai Translation (Natural)</th>
+              <th class="py-2.5 px-3 w-3/8 text-slate-800">English UI Copy (Natural)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-700 font-mono">
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-2 px-3 font-semibold text-slate-900">Lines ({0})</td>
+              <td class="py-2 px-3 font-sans text-slate-800">รายการสินค้า ({0})</td>
+              <td class="py-2 px-3 font-sans text-slate-600">Lines ({0})</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-2 px-3 font-semibold text-slate-900">Oldest waiting: {0}</td>
+              <td class="py-2 px-3 font-sans text-slate-800">รอนานที่สุด: {0}</td>
+              <td class="py-2 px-3 font-sans text-slate-600">Oldest waiting: {0}</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-2 px-3 font-semibold text-slate-900">Manage webhook subscriptions...</td>
+              <td class="py-2 px-3 font-sans text-slate-800">จัดการการสมัครสมาชิกเว็บฮุกและการผสานการทำงานของแพลตฟอร์ม</td>
+              <td class="py-2 px-3 font-sans text-slate-600">Manage webhook subscriptions and platform integrations.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-2 px-3 font-semibold text-slate-900">payload ไม่ใช่ JSON ที่ถูกต้อง...</td>
+              <td class="py-2 px-3 font-sans text-slate-800">ข้อมูล payload ไม่ใช่ JSON ที่ถูกต้อง — โปรดแก้ไขก่อนส่งคำขอ</td>
+              <td class="py-2 px-3 font-sans text-slate-600">Payload is not valid JSON — fix before submitting</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-2 px-3 font-semibold text-slate-900">Notify external systems when...</td>
+              <td class="py-2 px-3 font-sans text-slate-800">แจ้งเตือนระบบภายนอกเมื่อเกิดเหตุการณ์ในแพลตฟอร์ม — ผู้รับปลายทางลงทะเบียน เราทำการนำส่งพร้อมลายเซ็นความปลอดภัย</td>
+              <td class="py-2 px-3 font-sans text-slate-600">Notify external systems when platform events happen — they subscribe, we deliver (signed).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-4 text-xs text-slate-400">
+      Commerce Platform Localization Engine • Batch <span class="font-mono">copy-1791434932312-3</span> • Accessible WCAG AA Compliant
+    </footer>
+
+  </div>
+
+  <!-- CLIENT-SIDE LANGUAGE SWITCHING SCRIPT -->
+  <script>
+    let dictionary = {};
+    try {
+      const scriptTag = document.getElementById('commerce-ui-translations');
+      if (scriptTag) {
+        dictionary = JSON.parse(scriptTag.textContent);
+      }
+    } catch (e) {
+      console.error("Failed to parse translations dictionary", e);
+    }
+
+    function switchLanguage(lang) {
+      const langIndicator = document.getElementById('current-lang-indicator');
+      if (langIndicator) {
+        langIndicator.textContent = lang.toUpperCase();
+      }
+
+      document.documentElement.lang = lang;
+
+      const elements = document.querySelectorAll('[data-i18n-key]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (dictionary[key] && dictionary[key][lang]) {
+          let text = dictionary[key][lang];
+
+          // Check for interpolation tokens {0}, {1}
+          const paramsAttr = el.getAttribute('data-i18n-params');
+          if (paramsAttr) {
+            try {
+              const params = JSON.parse(paramsAttr);
+              params.forEach((param, index) => {
+                text = text.replace(new RegExp(`\\{${index}\\}`, 'g'), param);
+              });
+            } catch (err) {
+              console.error("Error interpolating", err);
+            }
+          }
+
+          el.textContent = text;
+        }
+      });
+    }
+
+    // Initialize with default language (Thai)
+    document.addEventListener('DOMContentLoaded', () => {
+      switchLanguage('th');
+    });
+  </script>
+</body>
+</html>

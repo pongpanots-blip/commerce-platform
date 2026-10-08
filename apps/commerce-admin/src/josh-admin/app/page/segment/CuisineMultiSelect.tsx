@@ -11,6 +11,8 @@ import {
   type CuisineGroup,
 } from './cuisine-select.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   selectedCuisineIds: string[];
   selectedParentIds: string[];
@@ -20,6 +22,7 @@ type Props = {
 /** เลือกประเภทร้านแบบหลายรายการ จัดกลุ่มตาม cuisine level 1 → level 2 — ทรงเดียวกับ
  * PromotionBrandMultiSelect/PromotionCategoryMultiSelect. ติ๊กกลุ่มแล้วลูกในกลุ่มจะติ๊กตามและ disable ไปด้วย. */
 export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onChange }: Props) {
+  __useUiLocale();
   const [groups, setGroups] = useState<CuisineGroup[]>([]);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -77,14 +80,13 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between rounded-lg border-2 border-primary-border bg-white px-3 py-2 text-sm text-ink hover:border-primary"
       >
-        <span>เลือกประเภทร้าน ({total})</span>
+        <span>{__uiText("เลือกประเภทร้าน (")}{total})</span>
         <span className="text-xs text-gray-400">{open ? '▲' : '▼'}</span>
       </button>
 
       {loadError && (
         <p className="mt-1 text-xs text-red-600">
-          โหลดข้อมูลประเภทร้านไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง
-        </p>
+          {__uiText("โหลดข้อมูลประเภทร้านไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง")}</p>
       )}
 
       {open && (
@@ -92,16 +94,16 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
           <div className="border-b border-gray-100 p-2">
             <Input
               icon={<AiOutlineSearch size={18} />}
-              placeholder="ค้นหาประเภทร้าน..."
+              placeholder={__uiText("ค้นหาประเภทร้าน...")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="max-h-64 overflow-y-auto p-2">
             {loading ? (
-              <p className="py-4 text-center text-xs text-gray-400">กำลังโหลด...</p>
+              <p className="py-4 text-center text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
             ) : filtered.length === 0 ? (
-              <p className="py-4 text-center text-xs text-gray-400">ไม่พบประเภทร้าน</p>
+              <p className="py-4 text-center text-xs text-gray-400">{__uiText("ไม่พบประเภทร้าน")}</p>
             ) : (
               <ul>
                 {filtered.map((group) => (
@@ -143,8 +145,7 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/10"
             >
-              เสร็จสิ้น
-            </button>
+              {__uiText("เสร็จสิ้น")}</button>
           </div>
         </div>
       )}
@@ -160,7 +161,7 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
               <button
                 type="button"
                 onClick={() => removeGroupChip(id)}
-                aria-label={`นำ ${byGroupId.get(id) ?? id} ออก`}
+                aria-label={__uiText("นำ {0} ออก", {"0": byGroupId.get(id) ?? id})}
                 className="ml-1 text-gray-400 hover:text-red-500"
               >
                 ×
@@ -176,7 +177,7 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
               <button
                 type="button"
                 onClick={() => removeChildChip(id)}
-                aria-label={`นำ ${byChildId.get(id) ?? id} ออก`}
+                aria-label={__uiText("นำ {0} ออก", {"0": byChildId.get(id) ?? id})}
                 className="ml-1 text-gray-400 hover:text-red-500"
               >
                 ×

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function CopyField({ label, value }: { label: string; value: string }) {
+  __useUiLocale();
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -23,7 +26,7 @@ export function CopyField({ label, value }: { label: string; value: string }) {
           onClick={() => void copy()}
           className="shrink-0 rounded-md border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
         >
-          {copied ? 'คัดลอกแล้ว' : 'คัดลอก'}
+          {copied ? __uiText("คัดลอกแล้ว") : __uiText("คัดลอก")}
         </button>
       </div>
     </div>

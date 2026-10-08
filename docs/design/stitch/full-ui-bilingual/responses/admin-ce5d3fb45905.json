@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2690",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2RjNTA2NzU5NDMzMjRmMjJiNWViYjZlZmEyZTk2NGUyEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/a3eb0a9031f341d69e4e9cadeabd2dfe"
+            },
+            "id": "fb32d74864584bdb8834ca073b49b997",
+            "name": "projects/18348214526789030153/screens/fb32d74864584bdb8834ca073b49b997",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Wbqr4Sm2bOYnGGHvEW7uwNtid7Nq0Z-na1KXlETy3PUGSSBt7vE6uO7u0RUj_2y-BsjPMDK0bKXlYyYM9RjZ1Eqv9-R3BlHe3VjxulataKN5CFPN92UdrN9sOFWiJTqrNvCufmQSUoXOoyyHwGIMbxQug7ULnpQBTaSFzvywYmutAfCdijLSKTSz-pmBFN5kOkuGI5Tb2UccvgSf7RFrhFiL9_UOq7WiIfXjQogv78-xjM1qKcNPe5cTDm",
+              "name": "projects/18348214526789030153/files/7fac33e57937417aadf863f619bd78ea"
+            },
+            "theme": {},
+            "title": "เพิ่ม Intent Rule (CreateBotIntentRule)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบหน้าจอ **\"เพิ่ม Intent Rule\"** (`CreateBotIntentRule`) สำหรับระบบ **Commerce Platform** เรียบร้อยแล้ว\n\n### รายละเอียดการออกแบบและจุดเด่นของระบบ:\n1. **โครงสร้างและงานออกแบบ (Design System & Layout):**\n   - **Canvas & Spacing:** พื้นหลังสีเทาอ่อน `#f6f8fc`, การ์ดสีขาวขอบ `#e1e7f0`, มุมโค้ง 12px, ปุ่มและช่องป้อนข้อมูลสูง 40px (ควบคุม 8px radius)\n   - **ระบบเมนู 7 สายงาน:** เมนูด้านซ้าย 256px แสดงสายงานหลักทั้ง 7 โดยเน้นที่ส่วน **\"ลูกค้าและบริการ\"** พร้อมลิสต์เมนูย่อย และเน้นสถานะอยู่ที่ **\"Intent Rules บอท\"**\n   - **Footer:** แสดง Route Identifier `admin-ce5d3fb45905` และ URL `/j/bot/intent-rules/create` อย่างชัดเจน\n   - **Header:** มีการระบุป้ายสถานะ `ข้อมูลตัวอย่าง`, ช่องค้นหาจำกัดขอบเขตในหน้าปัจจุบัน และสลับภาษา ไทย / English\n\n2. **ฟังก์ชันงาน Intent Rule และ Business Fields:**\n   - **ส่วนที่ 1: ข้อมูลพื้นฐาน & Regular Expression:** กรอกรหัส Intent Code, ชื่อ Intent, และ Pattern (Regex) พร้อมปุ่มเลือกโหลด Pattern ตัวอย่าง\n   - **ส่วนที่ 2: การตอบกลับและการส่งต่อ (Response Handler):** เลือก Action Type, กำหนด Bot Message Template และการจัดการ Fallback (เช่น เมื่อส่ง ERP ไม่สำเร็จ หรือ โหลด shipment ไม่สำเร็จ)\n   - **Regex Tester แบบ Interactive:** มีช่องจำลองข้อความแชตจากลูกค้า พร้อมทดสอบประมวลผล Pattern แบบเรียลไทม์ แสดงสถานะจับคู่สำเร็จ (Matched) และคำที่ถูกดักจับ\n   - **ขอบเขตและการตั้งค่าขั้นสูง:** กำหนดกลุ่มลูกค้าเป้าหมาย, ยอดใช้จ่ายขั้นต่ำ, ลิงก์สินค้าสำหรับ Marketing และจำนวนรายการต่อหน้า\n   - **Sticky Action Bar:** แถบคำสั่งด้านล่างยึดติดหน้าจอ พร้อมปุ่ม ยกเลิก และ บันทึก Intent Rule รวมทั้งระบบแจ้งเตือนข้อผิดพลาด/ความสำเร็จ\n\n3. **ระบบ 2 ภาษา (Bilingual Support & UI Copy Catalogue):**\n   - บรรจุ Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่ครอบคลุมทุกคำใน Exact UI copy catalogue ตามข้อกำหนด\n   - รองรับการกดสลับปุ่ม **ไทย / English** ที่มุมขวาบนเพื่อเปลี่ยนภาษาของ UI ทันทีแบบสมบูรณ์"
+    },
+    {
+      "suggestion": "ทดสอบกรอก Pattern หรือเปลี่ยนประเภท Action Type"
+    },
+    {
+      "suggestion": "ดูหน้ารายการ Intent Rules ทั้งหมด (/j/bot/intent-rules)"
+    },
+    {
+      "suggestion": "ปรับแต่งเงื่อนไขการส่งต่อข้อความไปยัง CS Desk เพิ่มเติม"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "4412442208071419222"
+}

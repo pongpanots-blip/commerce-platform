@@ -2,6 +2,8 @@ import React from 'react'
 import { BotWorkflow, FlowStep } from '@josh/shared-api'
 import styles from './StepList.module.css'
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface StepListProps {
   workflow: BotWorkflow
   selectedStepId?: string
@@ -24,13 +26,13 @@ export const StepList: React.FC<StepListProps> = ({
   onAddStep,
   onDeleteStep,
 }) => {
+  __useUiLocale();
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3>Steps ({workflow.steps?.length || 0})</h3>
+        <h3>{__uiText("Steps (")}{workflow.steps?.length || 0})</h3>
         <button className={styles.addBtn} onClick={onAddStep}>
-          + Add Step
-        </button>
+          {__uiText("+ Add Step")}</button>
       </div>
 
       <div className={styles.list}>
@@ -62,7 +64,7 @@ export const StepList: React.FC<StepListProps> = ({
             </div>
           ))
         ) : (
-          <div className={styles.empty}>No steps yet</div>
+          <div className={styles.empty}>{__uiText("No steps yet")}</div>
         )}
       </div>
     </div>

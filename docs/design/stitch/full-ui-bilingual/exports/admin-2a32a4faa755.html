@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coupons - สยาม คอมเมิร์ซ (Siam Commerce Hub)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-container": "#b7ffcf",
+            "outline": "#747687",
+            "on-primary-fixed": "#001257",
+            "background": "#f9f9ff",
+            "surface-container": "#e8eeff",
+            "surface-bright": "#f9f9ff",
+            "inverse-surface": "#243048",
+            "secondary-fixed": "#d3e3ff",
+            "inverse-primary": "#b9c3ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-container": "#217b4e",
+            "secondary": "#4f5f77",
+            "on-secondary-fixed": "#0b1c31",
+            "tertiary-fixed-dim": "#82d8a3",
+            "on-error": "#ffffff",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#444655",
+            "on-tertiary-fixed": "#002110",
+            "primary-container": "#365cf5",
+            "on-primary-container": "#ededff",
+            "surface-container-low": "#f1f3ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-background": "#0e1b32",
+            "surface-variant": "#d7e2ff",
+            "primary-fixed": "#dde1ff",
+            "on-primary": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "error-container": "#ffdad6",
+            "surface-dim": "#cddaf9",
+            "surface-tint": "#214ce7",
+            "secondary-container": "#d0e1fd",
+            "outline-variant": "#c4c5d8",
+            "primary": "#0a3fdc",
+            "on-surface": "#0e1b32",
+            "surface-container-high": "#e0e8ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "tertiary": "#006139",
+            "surface": "#f9f9ff",
+            "on-error-container": "#93000a",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed": "#9ef5be",
+            "on-secondary-fixed-variant": "#38485e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "margin": "1rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans", "sans-serif"],
+            "data-tabular": ["Noto Sans", "sans-serif"],
+            "display-lg": ["Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "body-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "data-tabular": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Modal transitions */
+    .drawer-backdrop {
+      background-color: rgba(23, 36, 59, 0.4);
+      backdrop-filter: blur(2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex text-on-surface antialiased bg-[#f6f8fc]">
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col justify-between">
+<!-- Header Branding -->
+<div>
+<div class="px-space-md py-space-lg flex items-center gap-space-sm border-b border-outline-variant/40">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-bold text-on-surface dark:text-inverse-on-surface leading-tight tracking-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-label-sm font-label-sm text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<div class="p-space-md pb-space-xs">
+<button class="w-full flex items-center justify-center gap-space-xs py-space-sm px-space-md rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-label-md hover:bg-primary transition-all duration-150 shadow-sm" onclick="openCopyModal('SUMMER26')">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+</div>
+<!-- Main Navigation Menu (7 Core categories) -->
+<nav class="px-space-sm py-space-sm space-y-0.5">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (Active Section) -->
+<div class="space-y-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low dark:bg-secondary text-primary dark:text-on-secondary font-headline-sm border-l-4 border-primary" href="#marketing">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</a>
+<!-- Sub-navigation for Marketing -->
+<div class="ml-6 pl-3 border-l border-outline-variant/50 space-y-1 pt-1">
+<a class="block px-2.5 py-1 text-label-md font-label-md text-secondary hover:text-primary transition-colors" href="#workflows">Marketing Workflows</a>
+<a class="block px-2.5 py-1 text-label-md font-label-md text-secondary hover:text-primary transition-colors" href="#smartlinks">Smart Links</a>
+<a class="block px-2.5 py-1 text-label-md font-label-md text-secondary hover:text-primary transition-colors" href="#promotion-pages">Promotion Pages</a>
+<a class="block px-2.5 py-1.5 text-label-md font-label-md font-semibold text-primary bg-primary-fixed/30 rounded-md" href="/j/coupons">Coupons</a>
+<a class="block px-2.5 py-1 text-label-md font-label-md text-secondary hover:text-primary transition-colors" href="#growth">Growth Workspace</a>
+</div>
+</div>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#reports">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#integrations">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer Nav -->
+<div class="p-space-md border-t border-outline-variant/40 space-y-1">
+<a class="flex items-center gap-space-sm px-space-md py-1.5 rounded-lg text-secondary hover:text-on-surface transition-colors" href="#help">
+<span class="material-symbols-outlined text-[18px]" data-icon="help">help</span>
+<span class="text-body-sm font-body-sm">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-1.5 rounded-lg text-secondary hover:text-error transition-colors" href="#logout">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+<span class="text-body-sm font-body-sm">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ==================== MAIN APPLICATION CONTAINER ==================== -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- Top Contextual App Bar (Fixed on top right canvas) -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center px-gutter-desktop">
+<!-- Left: Breadcrumb & Context badges -->
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center text-label-md font-label-md text-secondary gap-1.5">
+<span class="text-on-surface-variant">การตลาด</span>
+<span class="text-outline">/</span>
+<span class="font-semibold text-primary" data-key="Coupons">Coupons</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-[#f1f3ff] text-primary border border-outline-variant/50">
+          admin-2a32a4faa755
+        </span>
+<span class="hidden lg:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          ข้อมูลตัวอย่าง / Sample data
+        </span>
+</div>
+<!-- Right: Global Actions & Profile -->
+<div class="flex items-center gap-space-md">
+<!-- Language Switcher Toggle -->
+<button class="flex items-center gap-1.5 text-label-md font-label-md px-2.5 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors" id="lang-toggle-btn" onclick="toggleLanguage()">
+<span class="material-symbols-outlined text-[16px]" data-icon="language">language</span>
+<span id="current-lang-label">ไทย / English</span>
+</button>
+<!-- Notification Bell -->
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="Notifications">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="Support">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Profile Avatar & Meta -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant/60">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-bold text-label-md">
+            AD
+          </div>
+<div class="hidden sm:flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold leading-none">แอดมินผู้ดูแลระบบ</span>
+<span class="text-[11px] text-secondary leading-normal">Siam Commerce Hub</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas (max-w near 1240px) -->
+<main class="pt-20 pb-16 px-gutter-desktop w-full max-w-[1240px] mx-auto space-y-space-lg">
+<!-- Top Title & Context Action Row -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg font-bold text-[#17243b]" data-key="Coupons">Coupons</h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-md font-label-md font-medium bg-surface-container-low text-primary border border-outline-variant/40">
+<span class="mr-1" id="coupon-count">12</span> <span data-key="รายการ ·">รายการ ·</span> ข้อมูลตัวอย่าง
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="campaign">campaign</span>
+<span data-key="Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง">Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง</span>
+</p>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-2.5 flex-wrap">
+<button class="h-9 px-3.5 rounded-lg bg-white border border-[#e1e7f0] text-secondary hover:text-[#17243b] hover:bg-[#f6f8fc] text-label-md font-label-md flex items-center gap-1.5 transition-colors" onclick="refreshData()">
+<span class="material-symbols-outlined text-[18px]" data-icon="refresh">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<button class="h-9 px-3.5 rounded-lg bg-white border border-[#e1e7f0] text-secondary hover:text-primary hover:border-primary text-label-md font-label-md flex items-center gap-1.5 transition-colors" onclick="openCopyModal('SUMMER26')">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+<span data-key="คัดลอกเป็นคูปองใหม่">คัดลอกเป็นคูปองใหม่</span>
+</button>
+<button class="h-9 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2848d6] text-white font-label-md text-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all" onclick="openCopyModal()">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+<span data-key="เพิ่มคูปอง">เพิ่มคูปอง</span>
+</button>
+</div>
+</div>
+<!-- KPI Summary Row (4 Elevated Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- 1. คูปองเปิดใช้งาน -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">คูปองเปิดใช้งาน (Active)</span>
+<span class="p-1.5 rounded-lg bg-[#157347]/10 text-[#157347]">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-[#17243b] tabular-nums">8</span>
+<span class="text-label-sm font-label-sm text-[#157347] flex items-center font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> +2 สัปดาห์นี้
+            </span>
+</div>
+</div>
+<!-- 2. จำนวนการใช้งานรวม -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">จำนวนการใช้งานรวม (Redemptions)</span>
+<span class="p-1.5 rounded-lg bg-primary-fixed text-primary">
+<span class="material-symbols-outlined text-[18px]" data-icon="confirmation_number">confirmation_number</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-[#17243b] tabular-nums">4,892</span>
+<span class="text-label-sm font-label-sm text-secondary">โควตา 10,000 สิทธิ์</span>
+</div>
+</div>
+<!-- 3. ยอดขายจากคูปอง -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">ยอดขายจากคูปอง (Attributed Sales)</span>
+<span class="p-1.5 rounded-lg bg-[#365cf5]/10 text-[#365cf5]">
+<span class="material-symbols-outlined text-[18px]" data-icon="payments">payments</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-[#17243b] tabular-nums">฿1,420,800</span>
+<span class="text-label-sm font-label-sm text-[#157347] flex items-center font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 18.4% ของยอดรวม
+            </span>
+</div>
+</div>
+<!-- 4. คูปองใกล้หมดอายุ -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">คูปองใกล้หมดอายุ (Expiring Soon)</span>
+<span class="p-1.5 rounded-lg bg-[#b08900]/10 text-[#b08900]">
+<span class="material-symbols-outlined text-[18px]" data-icon="timer">timer</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-[#17243b] tabular-nums">2</span>
+<span class="text-label-sm font-label-sm text-[#b08900] font-medium">ภายใน 7 วันนี้</span>
+</div>
+</div>
+</section>
+<!-- Filter & Search Toolbar Container -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<!-- Search Input (Left dominant span) -->
+<div class="md:col-span-5 relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[20px]" data-icon="search">search</span>
+<input class="w-full h-[38px] pl-10 pr-4 text-body-md rounded-lg border border-[#e1e7f0] text-[#17243b] focus:border-[#365cf5] focus:ring-2 focus:ring-[#365cf5]/20 outline-none transition-all placeholder:text-secondary/70" id="search-input" oninput="filterCoupons()" placeholder="ค้นหาด้วยรหัสคูปอง หรือชื่อ... (ค้นหาเฉพาะในหน้านี้)" type="text"/>
+</div>
+<!-- Filter: สถานะ (Status) -->
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full h-[38px] px-3 pr-8 text-label-md rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:border-[#365cf5] focus:ring-2 focus:ring-[#365cf5]/20 outline-none cursor-pointer" id="status-filter" onchange="filterCoupons()">
+<option value="ALL">สถานะ: ทั้งหมด</option>
+<option value="ACTIVE">เปิดใช้งาน (Active)</option>
+<option value="DRAFT">ฉบับร่าง (Draft)</option>
+<option value="EXPIRED">หมดอายุ (Expired)</option>
+</select>
+</div>
+</div>
+<!-- Filter: ประเภทส่วนลด (Discount Type) -->
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full h-[38px] px-3 pr-8 text-label-md rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:border-[#365cf5] focus:ring-2 focus:ring-[#365cf5]/20 outline-none cursor-pointer" id="type-filter" onchange="filterCoupons()">
+<option value="ALL">ประเภท: ทั้งหมด</option>
+<option value="PERCENT">ลดเป็น %</option>
+<option value="BAHT">ลดเป็นบาท</option>
+<option value="SHIPPING">จัดส่งฟรี</option>
+</select>
+</div>
+</div>
+<!-- Filter: ขอบเขตส่วนลด (Discount Scope) -->
+<div class="md:col-span-3">
+<div class="relative">
+<select class="w-full h-[38px] px-3 pr-8 text-label-md rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:border-[#365cf5] focus:ring-2 focus:ring-[#365cf5]/20 outline-none cursor-pointer" id="scope-filter" onchange="filterCoupons()">
+<option value="ALL">ขอบเขต: ทุกขอบเขต</option>
+<option data-key="ทุกสินค้า" value="ALL_ITEMS">ทุกสินค้า</option>
+<option data-key="เฉพาะสินค้า" value="SELECTED_ITEMS">เฉพาะสินค้า</option>
+<option data-key="เฉพาะแบรนด์" value="SELECTED_BRANDS">เฉพาะแบรนด์</option>
+<option data-key="เฉพาะหมวดหมู่" value="SELECTED_CATEGORY">เฉพาะหมวดหมู่</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<!-- Coupon Records Table Container -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] overflow-hidden shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-secondary text-label-md font-label-md">
+<th class="py-3 px-4 w-12 text-center">#</th>
+<th class="py-3 px-4" data-key="รหัสคูปอง">รหัสคูปอง</th>
+<th class="py-3 px-4" data-key="ชื่อ">ชื่อ</th>
+<th class="py-3 px-4" data-key="ประเภทส่วนลด">ประเภทส่วนลด</th>
+<th class="py-3 px-4" data-key="มูลค่า">มูลค่า</th>
+<th class="py-3 px-4" data-key="ขอบเขตส่วนลด">ขอบเขตส่วนลด</th>
+<th class="py-3 px-4" data-key="ยอดขั้นต่ำ">ยอดขั้นต่ำ</th>
+<th class="py-3 px-4"><span data-key="เริ่ม">เริ่ม</span> - <span data-key="สิ้นสุด">สิ้นสุด</span></th>
+<th class="py-3 px-4 text-center" data-key="สถานะ">สถานะ</th>
+<th class="py-3 px-4 text-right pr-6" data-key="จัดการ">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-md" id="coupons-table-body">
+<!-- Row 1: SUMMER26 -->
+<tr class="hover:bg-[#f8fafd] transition-colors coupon-row" data-code="SUMMER26" data-scope="ALL_ITEMS" data-status="ACTIVE" data-type="PERCENT">
+<td class="py-3 px-4 text-center text-secondary text-data-tabular">1</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-mono font-bold text-primary bg-primary-fixed/40 px-2 py-0.5 rounded text-label-md">SUMMER26</span>
+<button class="text-secondary hover:text-primary p-0.5" onclick="navigator.clipboard.writeText('SUMMER26')" title="Copy Code">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<span class="text-body-sm text-secondary block" data-key="เช่น SUMMER26">เช่น SUMMER26</span>
+</td>
+<td class="py-3 px-4 font-medium text-[#17243b]">
+                  Summer Hot Sale 2024
+                </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-md text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="percent">percent</span> ลดเป็น %
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="font-bold text-[#17243b] tabular-nums">15%</span>
+<span class="text-body-sm text-secondary block">สูงสุด 300 บาท</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-[#17243b]" data-key="ทุกสินค้า">ทุกสินค้า</span>
+</td>
+<td class="py-3 px-4 tabular-nums font-medium text-[#17243b]">
+                  ฿1,000
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary whitespace-nowrap tabular-nums">
+<div>01 พ.ค. 2567</div>
+<div class="text-[11px] text-outline">31 พ.ค. 2567</div>
+</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> เปิดใช้งาน
+                  </span>
+</td>
+<td class="py-3 px-4 text-right pr-6 whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" data-key="แก้ไข" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" onclick="openCopyModal('SUMMER26')" title="คัดลอกเป็นคูปองใหม่">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_copy">file_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error rounded hover:bg-error-container/40 transition-colors" data-key="ลบ" onclick="confirmDelete('SUMMER26')" title="ลบ">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: B2BMEGA500 -->
+<tr class="hover:bg-[#f8fafd] transition-colors coupon-row" data-code="B2BMEGA500" data-scope="SELECTED_BRANDS" data-status="ACTIVE" data-type="BAHT">
+<td class="py-3 px-4 text-center text-secondary text-data-tabular">2</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-mono font-bold text-primary bg-primary-fixed/40 px-2 py-0.5 rounded text-label-md">B2BMEGA500</span>
+<button class="text-secondary hover:text-primary p-0.5" onclick="navigator.clipboard.writeText('B2BMEGA500')" title="Copy Code">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<span class="text-body-sm text-secondary block">B2B Wholesales VIP</span>
+</td>
+<td class="py-3 px-4 font-medium text-[#17243b]">
+                  B2B Corporate Discount
+                </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-md text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="toll">toll</span> ลดเป็นบาท
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="font-bold text-[#17243b] tabular-nums">฿500</span>
+</td>
+<td class="py-3 px-4 max-w-[220px]">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-[#17243b]" data-key="เฉพาะแบรนด์ที่ร่วมรายการ (Selected brands)">
+                    เฉพาะแบรนด์ที่ร่วมรายการ (Selected brands)
+                  </span>
+<p class="text-[11px] text-secondary mt-0.5 truncate" data-key="รวมยอดก่อน VAT ของ SKU ที่ร่วมรายการ (หักสินค้าที่ยกเว้น)">รวมยอดก่อน VAT ของ SKU ที่ร่วมรายการ (หักสินค้าที่ยกเว้น)</p>
+</td>
+<td class="py-3 px-4 tabular-nums font-medium text-[#17243b]">
+                  ฿5,000
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary whitespace-nowrap tabular-nums">
+<div>15 เม.ย. 2567</div>
+<div class="text-[11px] text-outline">30 มิ.ย. 2567</div>
+</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> เปิดใช้งาน
+                  </span>
+</td>
+<td class="py-3 px-4 text-right pr-6 whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" data-key="แก้ไข" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" onclick="openCopyModal('B2BMEGA500')" title="คัดลอกเป็นคูปองใหม่">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_copy">file_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error rounded hover:bg-error-container/40 transition-colors" data-key="ลบ" onclick="confirmDelete('B2BMEGA500')" title="ลบ">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: WELCOME10 -->
+<tr class="hover:bg-[#f8fafd] transition-colors coupon-row" data-code="WELCOME10" data-scope="ALL_ITEMS" data-status="ACTIVE" data-type="PERCENT">
+<td class="py-3 px-4 text-center text-secondary text-data-tabular">3</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-mono font-bold text-primary bg-primary-fixed/40 px-2 py-0.5 rounded text-label-md">WELCOME10</span>
+<button class="text-secondary hover:text-primary p-0.5" onclick="navigator.clipboard.writeText('WELCOME10')" title="Copy Code">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<span class="text-body-sm text-secondary block">New User Welcome</span>
+</td>
+<td class="py-3 px-4 font-medium text-[#17243b]">
+                  ส่วนลดต้อนรับสมาชิกใหม่
+                </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-md text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="percent">percent</span> ลดเป็น %
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="font-bold text-[#17243b] tabular-nums">10%</span>
+<span class="text-body-sm text-secondary block">สูงสุด 100 บาท</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-[#17243b]" data-key="ทุกสินค้า">ทุกสินค้า</span>
+</td>
+<td class="py-3 px-4 tabular-nums font-medium text-[#17243b]">
+                  ฿300
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary whitespace-nowrap">
+<div>01 ม.ค. 2567</div>
+<div class="text-[11px] text-primary font-medium" data-key="ไม่ตั้ง (วิ่งจนจบ)">ไม่ตั้ง (วิ่งจนจบ)</div>
+</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> เปิดใช้งาน
+                  </span>
+</td>
+<td class="py-3 px-4 text-right pr-6 whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" data-key="แก้ไข" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" onclick="openCopyModal('WELCOME10')" title="คัดลอกเป็นคูปองใหม่">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_copy">file_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error rounded hover:bg-error-container/40 transition-colors" data-key="ลบ" onclick="confirmDelete('WELCOME10')" title="ลบ">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: FLASHFLASH -->
+<tr class="hover:bg-[#f8fafd] transition-colors coupon-row" data-code="FLASHFLASH" data-scope="SELECTED_CATEGORY" data-status="EXPIRED" data-type="PERCENT">
+<td class="py-3 px-4 text-center text-secondary text-data-tabular">4</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-mono font-bold text-secondary bg-surface-container px-2 py-0.5 rounded text-label-md">FLASHFLASH</span>
+<button class="text-secondary hover:text-primary p-0.5" onclick="navigator.clipboard.writeText('FLASHFLASH')" title="Copy Code">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<span class="text-body-sm text-secondary block">Flash Midnight Deal</span>
+</td>
+<td class="py-3 px-4 font-medium text-[#17243b]">
+                  แฟลชเซลล์คืนวันศุกร์
+                </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-md text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="percent">percent</span> ลดเป็น %
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="font-bold text-[#17243b] tabular-nums">20%</span>
+<span class="text-body-sm text-secondary block">สูงสุด 500 บาท</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-[#17243b]" data-key="เฉพาะหมวดหมู่">เฉพาะหมวดหมู่</span>
+</td>
+<td class="py-3 px-4 tabular-nums font-medium text-[#17243b]">
+                  ฿1,500
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary whitespace-nowrap tabular-nums">
+<div>12 เม.ย. 2567</div>
+<div class="text-[11px] text-error font-medium">15 เม.ย. 2567</div>
+</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#c2333f]/10 text-[#c2333f]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span> หมดอายุ
+                  </span>
+</td>
+<td class="py-3 px-4 text-right pr-6 whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" data-key="แก้ไข" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" onclick="openCopyModal('FLASHFLASH')" title="คัดลอกเป็นคูปองใหม่">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_copy">file_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error rounded hover:bg-error-container/40 transition-colors" data-key="ลบ" onclick="confirmDelete('FLASHFLASH')" title="ลบ">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: DRAFT-BAKERY -->
+<tr class="hover:bg-[#f8fafd] transition-colors coupon-row" data-code="DRAFT-BAKERY" data-scope="SELECTED_ITEMS" data-status="DRAFT" data-type="PERCENT">
+<td class="py-3 px-4 text-center text-secondary text-data-tabular">5</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-mono font-bold text-secondary bg-surface-container px-2 py-0.5 rounded text-label-md">DRAFT-BAKERY</span>
+<button class="text-secondary hover:text-primary p-0.5" onclick="navigator.clipboard.writeText('DRAFT-BAKERY')" title="Copy Code">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<span class="text-body-sm text-secondary block">Bakery Fest 2024</span>
+</td>
+<td class="py-3 px-4 font-medium text-[#17243b]">
+                  เบเกอรี่สด ลดพิเศษ
+                </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-md text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="percent">percent</span> ลดเป็น %
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="font-bold text-[#17243b] tabular-nums">5%</span>
+<span class="text-body-sm text-secondary block">ไม่จำกัดยอดลด</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-[#17243b]" data-key="เฉพาะสินค้า">เฉพาะสินค้า</span>
+</td>
+<td class="py-3 px-4 tabular-nums font-medium text-[#17243b]">
+                  ฿200
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary whitespace-nowrap">
+<div>รอกำหนดเวลา</div>
+<div class="text-[11px] text-outline">-</div>
+</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#b08900]/10 text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span> ฉบับร่าง
+                  </span>
+</td>
+<td class="py-3 px-4 text-right pr-6 whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" data-key="แก้ไข" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container transition-colors" onclick="openCopyModal('DRAFT-BAKERY')" title="คัดลอกเป็นคูปองใหม่">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_copy">file_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error rounded hover:bg-error-container/40 transition-colors" data-key="ลบ" onclick="confirmDelete('DRAFT-BAKERY')" title="ลบ">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination & Footer meta -->
+<div class="p-4 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-label-md text-secondary">
+<div>
+            แสดง 1 ถึง 5 จาก <span class="font-semibold text-[#17243b]">12</span> รายการคูปอง
+          </div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded border border-[#e1e7f0] flex items-center justify-center hover:bg-[#f6f8fc] disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-[#365cf5] text-white font-semibold flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded border border-[#e1e7f0] flex items-center justify-center hover:bg-[#f6f8fc]">2</button>
+<button class="w-8 h-8 rounded border border-[#e1e7f0] flex items-center justify-center hover:bg-[#f6f8fc]">3</button>
+<button class="w-8 h-8 rounded border border-[#e1e7f0] flex items-center justify-center hover:bg-[#f6f8fc]">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Operational Guidance Banner -->
+<div class="bg-surface-container-low border border-outline-variant/60 rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5 text-[22px]" data-icon="info">info</span>
+<div class="text-body-sm font-body-sm text-[#17243b] space-y-1">
+<p class="font-semibold" data-key="คูปองนี้จะถูกปิดใช้งานทันทีหลังบันทึก ลูกค้าจะใช้ไม่ได้จนกว่าจะเปิดอีกครั้ง">
+            คูปองนี้จะถูกปิดใช้งานทันทีหลังบันทึก ลูกค้าจะใช้ไม่ได้จนกว่าจะเปิดอีกครั้ง
+          </p>
+<p class="text-secondary">
+            ระบบตรวจสอบการใช้สิทธิ์คูปองแบบ Real-time ทุกออเดอร์ หากต้องการกำหนดเงื่อนไขพิเศษ เช่น จำกัดผู้ใช้งานรายคน สามารถตั้งค่าเพิ่มเติมในส่วนลูกค้าและบริการ
+          </p>
+</div>
+</div>
+</main>
+</div>
+<!-- ==================== MODAL / SLIDE-OVER: คัดลอกหรือเพิ่มคูปอง ==================== -->
+<div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="copy-modal">
+<!-- Overlay backdrop -->
+<div class="absolute inset-0 drawer-backdrop" onclick="closeCopyModal()"></div>
+<!-- Modal Box -->
+<div class="relative w-full max-w-lg bg-white rounded-xl shadow-[0_12px_32px_-4px_rgba(23,36,59,0.14)] border border-[#e1e7f0] p-6 z-10 m-4 space-y-5 animate-in fade-in duration-200">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm font-bold text-[#17243b]" data-key="คัดลอกเป็นคูปองใหม่">คัดลอกเป็นคูปองใหม่</h3>
+<p class="text-label-sm font-label-sm text-secondary">โคลนเงื่อนไขโปรโมชั่นเดิมไปยังแคมเปญใหม่</p>
+</div>
+</div>
+<button class="text-secondary hover:text-[#17243b] p-1 rounded-lg hover:bg-[#f6f8fc]" onclick="closeCopyModal()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Form Body -->
+<form class="space-y-4" id="copy-form" onsubmit="handleFormSubmit(event)">
+<!-- Source Coupon -->
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1" data-key="คัดลอกจาก">คัดลอกจาก</label>
+<input class="w-full h-[38px] px-3 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] text-body-md cursor-not-allowed" id="modal-source-code" readonly="" type="text" value="SUMMER26"/>
+</div>
+<!-- New Coupon Code -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-[#17243b] mb-1" data-key="รหัสคูปองใหม่">รหัสคูปองใหม่</label>
+<input class="w-full h-[38px] px-3 border border-[#e1e7f0] rounded-lg font-mono uppercase text-[#17243b] text-body-md focus:border-[#365cf5] focus:ring-2 focus:ring-[#365cf5]/20 outline-none" id="new-coupon-code" placeholder="เช่น NEWSEASON" required="" type="text"/>
+<span class="text-[11px] text-secondary mt-1 block" data-key="กรุณากรอกรหัสคูปองใหม่">กรุณากรอกรหัสคูปองใหม่</span>
+</div>
+<!-- Minimum Spend & Scope in Modal -->
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1" data-key="ยอดขั้นต่ำ">ยอดขั้นต่ำ</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-secondary text-label-md">฿</span>
+<input class="w-full h-[38px] pl-7 pr-3 border border-[#e1e7f0] rounded-lg text-body-md focus:border-[#365cf5] focus:ring-2 focus:ring-[#365cf5]/20 outline-none" type="number" value="1000"/>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-secondary mb-1" data-key="ขอบเขตส่วนลด">ขอบเขตส่วนลด</label>
+<select class="w-full h-[38px] px-2.5 border border-[#e1e7f0] rounded-lg text-label-md text-[#17243b] bg-white focus:border-[#365cf5] outline-none">
+<option data-key="ทุกสินค้า" value="ALL">ทุกสินค้า</option>
+<option data-key="เฉพาะสินค้า" value="ITEMS">เฉพาะสินค้า</option>
+<option data-key="เฉพาะแบรนด์" value="BRANDS">เฉพาะแบรนด์</option>
+<option data-key="เฉพาะหมวดหมู่" value="CATEGORY">เฉพาะหมวดหมู่</option>
+</select>
+</div>
+</div>
+<!-- Warning Notice Box -->
+<div class="p-3 bg-[#e8eeff] border border-outline-variant/60 rounded-lg flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5" data-icon="info">info</span>
+<p class="text-label-sm font-label-sm text-[#17243b]" data-key="วันที่เริ่ม/สิ้นสุดจะถูกรีเซ็ตเป็นค่าเริ่มต้น แก้ไขได้ในหน้าถัดไป">
+            วันที่เริ่ม/สิ้นสุดจะถูกรีเซ็ตเป็นค่าเริ่มต้น แก้ไขได้ในหน้าถัดไป
+          </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-end gap-2.5 pt-2">
+<button class="h-9 px-4 rounded-lg border border-[#e1e7f0] text-secondary hover:text-[#17243b] hover:bg-[#f6f8fc] text-label-md font-label-md font-medium transition-colors" onclick="closeCopyModal()" type="button">
+            ยกเลิก
+          </button>
+<button class="h-9 px-5 rounded-lg bg-[#365cf5] hover:bg-[#2848d6] text-white text-label-md font-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all" type="submit">
+<span class="material-symbols-outlined text-[18px]" data-icon="check">check</span>
+<span>ยืนยันและสร้างคูปอง</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- ==================== UI TRANSLATION SCRIPT (JSON CATALOGUE) ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Coupons": { "th": "Coupons", "en": "Coupons" },
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "แก้ไข": { "th": "แก้ไข", "en": "Edit" },
+    "ลบ": { "th": "ลบ", "en": "Delete" },
+    "ชื่อ": { "th": "ชื่อ", "en": "Name" },
+    "จัดการ": { "th": "จัดการ", "en": "Actions" },
+    "เริ่ม": { "th": "เริ่ม", "en": "Starts" },
+    "สิ้นสุด": { "th": "สิ้นสุด", "en": "Ends" },
+    "มูลค่า": { "th": "มูลค่า", "en": "Value" },
+    "รหัสคูปอง": { "th": "รหัสคูปอง", "en": "Coupon Code" },
+    "เช่น SUMMER26": { "th": "เช่น SUMMER26", "en": "e.g. SUMMER26" },
+    "ประเภทส่วนลด": { "th": "ประเภทส่วนลด", "en": "Discount Type" },
+    "ยืนยันการลบคูปองนี้?": { "th": "ยืนยันการลบคูปองนี้?", "en": "Confirm deleting this coupon?" },
+    "ขอบเขตส่วนลด": { "th": "ขอบเขตส่วนลด", "en": "Discount Scope" },
+    "ยอดขั้นต่ำ": { "th": "ยอดขั้นต่ำ", "en": "Min Spend" },
+    "คัดลอกเป็นคูปองใหม่": { "th": "คัดลอกเป็นคูปองใหม่", "en": "Duplicate as New Coupon" },
+    "Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง": {
+      "th": "Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง",
+      "en": "Promotions → Manage lists & notifications in Coupon Details"
+    },
+    "เพิ่มคูปอง": { "th": "เพิ่มคูปอง", "en": "Add Coupon" },
+    "คัดลอกจาก": { "th": "คัดลอกจาก", "en": "Copy From" },
+    "วันที่เริ่ม/สิ้นสุดจะถูกรีเซ็ตเป็นค่าเริ่มต้น แก้ไขได้ในหน้าถัดไป": {
+      "th": "วันที่เริ่ม/สิ้นสุดจะถูกรีเซ็ตเป็นค่าเริ่มต้น แก้ไขได้ในหน้าถัดไป",
+      "en": "Start/end dates will reset to default. Can be adjusted next."
+    },
+    "รหัสคูปองใหม่": { "th": "รหัสคูปองใหม่", "en": "New Coupon Code" },
+    "ขนาด": { "th": "ขนาด", "en": "Size" },
+    "ค้นหาใบลดหนี้": { "th": "ค้นหาใบลดหนี้", "en": "Search Credit Notes" },
+    "คูปองนี้จะถูกปิดใช้งานทันทีหลังบันทึก ลูกค้าจะใช้ไม่ได้จนกว่าจะเปิดอีกครั้ง": {
+      "th": "คูปองนี้จะถูกปิดใช้งานทันทีหลังบันทึก ลูกค้าจะใช้ไม่ได้จนกว่าจะเปิดอีกครั้ง",
+      "en": "This coupon will be disabled immediately upon saving and hidden until re-activated."
+    },
+    "เฉพาะแบรนด์ที่ร่วมรายการ (Selected brands)": {
+      "th": "เฉพาะแบรนด์ที่ร่วมรายการ (Selected brands)",
+      "en": "Participating brands only (Selected brands)"
+    },
+    "เช่น Your order has been paid": { "th": "เช่น Your order has been paid", "en": "e.g. Your order has been paid" },
+    "ตรวจสอบรายการส่งไม่สำเร็จ": { "th": "ตรวจสอบรายการส่งไม่สำเร็จ", "en": "Review failed delivery items" },
+    "ถึงจะเห็น popup (เปิด guest จะไม่ขึ้น)": { "th": "ถึงจะเห็น popup (เปิด guest จะไม่ขึ้น)", "en": "to see popup (guest view hidden)" },
+    "บันทึกใน commerce แล้ว แต่ josh ยังไม่รับ: {0}": { "th": "บันทึกใน commerce แล้ว แต่ josh ยังไม่รับ: {0}", "en": "Saved in commerce, josh rejected: {0}" },
+    "เปิดใช้งาน Segment นี้ (Active)": { "th": "เปิดใช้งาน Segment นี้ (Active)", "en": "Activate this segment (Active)" },
+    "เพิ่ม{0}": { "th": "เพิ่ม{0}", "en": "Add {0}" },
+    "ไม่ตั้ง (วิ่งจนจบ)": { "th": "ไม่ตั้ง (วิ่งจนจบ)", "en": "No end date (Continuous)" },
+    "ย้อนกลับไม่สำเร็จ": { "th": "ย้อนกลับไม่สำเร็จ", "en": "Rollback failed" },
+    "รวมยอดก่อน VAT ของ SKU ที่ร่วมรายการ (หักสินค้าที่ยกเว้น)": {
+      "th": "รวมยอดก่อน VAT ของ SKU ที่ร่วมรายการ (หักสินค้าที่ยกเว้น)",
+      "en": "Subtotal before VAT of eligible SKUs (excluding exemptions)"
+    },
+    "รายการ ·": { "th": "รายการ ·", "en": "items ·" },
+    "ลบ {0} รายการ?": { "th": "ลบ {0} รายการ?", "en": "Delete {0} items?" },
+    "เลือกคูปองในแผงขวา": { "th": "เลือกคูปองในแผงขวา", "en": "Select coupons on right panel" },
+    "สถานะ:": { "th": "สถานะ:", "en": "Status:" },
+    "สินค้าที่ไม่รวมในเงื่อนไข": { "th": "สินค้าที่ไม่รวมในเงื่อนไข", "en": "Excluded products" },
+    "หัวเรื่องอีเมล (subject)": { "th": "หัวเรื่องอีเมล (subject)", "en": "Email subject" },
+    "อัปโหลด": { "th": "อัปโหลด", "en": "Upload" },
+    "เช็คอัตโนมัติจาก API ทุก {0} นาที ({1} {2} {3})": { "th": "เช็คอัตโนมัติจาก API ทุก {0} นาที ({1} {2} {3})", "en": "Auto API sync every {0} mins ({1} {2} {3})" },
+    "ชำระผ่าน {0}": { "th": "ชำระผ่าน {0}", "en": "Paid via {0}" },
+    "อนุมัติสินค้าไม่สำเร็จ": { "th": "อนุมัติสินค้าไม่สำเร็จ", "en": "Product approval failed" },
+    "กรุณาระบุวันที่เริ่มหรือสิ้นสุด": { "th": "กรุณาระบุวันที่เริ่มหรือสิ้นสุด", "en": "Please specify start or end date" },
+    "สูงสุด {0} ตัวอักษร": { "th": "สูงสุด {0} ตัวอักษร", "en": "Up to {0} characters" },
+    "ทุกสินค้า": { "th": "ทุกสินค้า", "en": "All Products" },
+    "เฉพาะสินค้า": { "th": "เฉพาะสินค้า", "en": "Specific Products" },
+    "เฉพาะแบรนด์": { "th": "เฉพาะแบรนด์", "en": "Specific Brands" },
+    "เฉพาะหมวดหมู่": { "th": "เฉพาะหมวดหมู่", "en": "Specific Categories" },
+    "กรุณากรอกรหัสคูปองใหม่": { "th": "กรุณากรอกรหัสคูปองใหม่", "en": "Please provide a new coupon code" }
+  }
+  </script>
+<!-- ==================== INTERACTIVE JAVASCRIPT LOGIC ==================== -->
+<script>
+    // Bilingual state management
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      document.getElementById('current-lang-label').textContent = currentLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+      // Update text nodes with data-key attribute
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (translationsData[key] && translationsData[key][currentLang]) {
+          el.textContent = translationsData[key][currentLang];
+        }
+      });
+    }
+
+    // Filter and search logic
+    function filterCoupons() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const statusFilter = document.getElementById('status-filter').value;
+      const typeFilter = document.getElementById('type-filter').value;
+      const scopeFilter = document.getElementById('scope-filter').value;
+
+      const rows = document.querySelectorAll('.coupon-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const code = row.getAttribute('data-code').toLowerCase();
+        const rowStatus = row.getAttribute('data-status');
+        const rowType = row.getAttribute('data-type');
+        const rowScope = row.getAttribute('data-scope');
+        const textContent = row.textContent.toLowerCase();
+
+        const matchSearch = !query || code.includes(query) || textContent.includes(query);
+        const matchStatus = (statusFilter === 'ALL') || (rowStatus === statusFilter);
+        const matchType = (typeFilter === 'ALL') || (rowType === typeFilter);
+        const matchScope = (scopeFilter === 'ALL') || (rowScope === scopeFilter);
+
+        if (matchSearch && matchStatus && matchType && matchScope) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('coupon-count').textContent = visibleCount;
+    }
+
+    // Modal Drawer controls
+    function openCopyModal(sourceCode = 'SUMMER26') {
+      document.getElementById('modal-source-code').value = sourceCode;
+      document.getElementById('new-coupon-code').value = sourceCode + '-COPY';
+      document.getElementById('copy-modal').classList.remove('hidden');
+    }
+
+    function closeCopyModal() {
+      document.getElementById('copy-modal').classList.add('hidden');
+    }
+
+    function confirmDelete(couponCode) {
+      const msg = translationsData["ยืนยันการลบคูปองนี้?"][currentLang] || "ยืนยันการลบคูปองนี้?";
+      if (confirm(`${msg} (${couponCode})`)) {
+        alert(`ลบคูปอง ${couponCode} สำเร็จ`);
+      }
+    }
+
+    function refreshData() {
+      const btn = event.currentTarget;
+      btn.classList.add('opacity-50');
+      setTimeout(() => {
+        btn.classList.remove('opacity-50');
+        alert('อัปเดตข้อมูลคูปองเรียบร้อยแล้ว');
+      }, 350);
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const newCode = document.getElementById('new-coupon-code').value.toUpperCase();
+      alert(`คัดลอกคูปองสำเร็จ! สร้างคูปองรหัส: ${newCode}`);
+      closeCopyModal();
+    }
+  </script>
+</body></html>

@@ -1,0 +1,32 @@
+[
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx",
+    "name": "BADGE_HINT",
+    "text": "เว้นว่าง = ระบบสร้างป้ายตามภาษาให้เอง แยกกันแต่ละภาษา"
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-core-form.helpers.ts",
+    "name": "LIMIT_VALIDATION_MESSAGE",
+    "text": "ต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป — ใส่ 0 หรือค่าติดลบไม่ได้"
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-core-form.helpers.ts",
+    "name": "COUPON_CODE_MAX_LENGTH_MESSAGE",
+    "text": "รหัสคูปองต้องไม่เกิน 8 ตัวอักษร"
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PageForm.tsx",
+    "name": "REQUIRED_FIELDS_ERROR",
+    "text": "กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง"
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PageForm.tsx",
+    "name": "DESKTOP_HINT",
+    "text": "ขนาดแนะนำ 1200×400 px (3:1) — เท่ากับแบนเนอร์หน้าแรก JPG/PNG/WebP ไม่เกิน 5MB"
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PageForm.tsx",
+    "name": "MOBILE_HINT",
+    "text": "ขนาดแนะนำ 1200×400 px (3:1) — อัตราส่วนเดียวกับ Desktop JPG/PNG/WebP ไม่เกิน 5MB"
+  }
+]

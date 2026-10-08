@@ -5,6 +5,8 @@ import {
 import { JOSH_STAFF_ROLES, joshStaffApi, JoshStaffAccount } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /**
@@ -13,6 +15,7 @@ const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
  * josh applies them (staff.access) and sends the result back — until then the row shows "รอ josh".
  */
 export function JoshStaff() {
+  __useUiLocale();
   const owned = useAsync(() => joshStaffApi.ownership(), []);
   const list = useAsync(() => joshStaffApi.list(), []);
   const [busy, setBusy] = useState<string | null>(null);
@@ -20,7 +23,7 @@ export function JoshStaff() {
   const canEdit = !!owned.data?.staff;
 
   async function run(key: string, confirmText: string, fn: () => Promise<unknown>) {
-    if (!window.confirm(`${confirmText}\n\njosh จะทำตามภายในไม่กี่วินาที (ส่งผ่าน event)`)) return;
+    if (!window.confirm(__uiText("{0}\n\njosh จะทำตามภายในไม่กี่วินาที (ส่งผ่าน event)", {"0": confirmText}))) return;
     setBusy(key);
     setError(null);
     try {
@@ -42,39 +45,38 @@ export function JoshStaff() {
   return (
     <Page>
       <PageHeader
-        title="บัญชี josh (staff)"
-        subtitle="บัญชีพนักงานที่ยังต้องใช้ใน josh — แอปฝ่ายขาย, แชต CS, หน้าที่ยังอยู่ josh · คนละบัญชีกับ commerce-admin"
-        actions={<Button icon="refresh" onClick={list.reload}>Refresh</Button>}
+        title={__uiText("บัญชี josh (staff)")}
+        subtitle={__uiText("บัญชีพนักงานที่ยังต้องใช้ใน josh — แอปฝ่ายขาย, แชต CS, หน้าที่ยังอยู่ josh · คนละบัญชีกับ commerce-admin")}
+        actions={<Button icon="refresh" onClick={list.reload}>{__uiText("Refresh")}</Button>}
       />
       {owned.data && !canEdit && (
-        <Alert tone="info" title="ยังดูได้อย่างเดียว">
-          josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ "Admin access requests"
-        </Alert>
+        <Alert tone="info" title={__uiText("ยังดูได้อย่างเดียว")}>
+          {__uiText("josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ \"Admin access requests\"")}</Alert>
       )}
       <ErrorText error={error ?? list.error} />
 
       <Panel className="overflow-hidden">
-        <PanelHead icon="badge" title="พนักงานใน josh" sub={list.data && `${rows.filter((a) => a.isActive).length} ใช้งาน · ${rows.length} ทั้งหมด`} />
+        <PanelHead icon="badge" title={__uiText("พนักงานใน josh")} sub={list.data && __uiText("{0} ใช้งาน · {1} ทั้งหมด",{'0':rows.filter((a) => a.isActive).length,'1':rows.length})} />
         {list.loading && !list.data ? (
           <Loading />
         ) : rows.length ? (
           <Table>
             <THead>
-              <TH>อีเมล</TH>
-              <TH>ชื่อ</TH>
-              <TH>สิทธิ์ใน josh</TH>
-              <TH>สถานะ</TH>
-              <TH>เข้าแอปล่าสุด</TH>
-              <TH kind="actions">จัดการ</TH>
+              <TH>{__uiText("อีเมล")}</TH>
+              <TH>{__uiText("ชื่อ")}</TH>
+              <TH>{__uiText("สิทธิ์ใน josh")}</TH>
+              <TH>{__uiText("สถานะ")}</TH>
+              <TH>{__uiText("เข้าแอปล่าสุด")}</TH>
+              <TH kind="actions">{__uiText("จัดการ")}</TH>
             </THead>
             <TBody>
               {rows.map((a) => (
                 <TR key={a.id}>
-                  <TD kind="mono">{a.email ?? '—'}{a.pending && <Chip tone="warn" className="ml-2">รอ josh</Chip>}</TD>
+                  <TD kind="mono">{a.email ?? '—'}{a.pending && <Chip tone="warn" className="ml-2">{__uiText("รอ josh")}</Chip>}</TD>
                   <TD>{a.name || '—'}</TD>
                   <TD>
                     {canEdit ? (
-                      <Select aria-label={`สิทธิ์ใน josh ของ ${a.email}`} value={a.role} disabled={!!busy} onChange={(e) => setRole(a, e.target.value)}>
+                      <Select aria-label={__uiText("สิทธิ์ใน josh ของ {0}", {"0": a.email})} value={a.role} disabled={!!busy} onChange={(e) => setRole(a, e.target.value)}>
                         {!(JOSH_STAFF_ROLES as readonly string[]).includes(a.role) && <option value={a.role} disabled>{a.role}</option>}
                         {JOSH_STAFF_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
                       </Select>
@@ -85,9 +87,9 @@ export function JoshStaff() {
                   <TD kind="actions">
                     {canEdit && (
                       <div className="flex justify-end gap-2">
-                        <Button size="sm" icon="logout" disabled={!!busy || !a.isActive} onClick={() => signOut(a)}>ออกจากระบบทุกเครื่อง</Button>
+                        <Button size="sm" icon="logout" disabled={!!busy || !a.isActive} onClick={() => signOut(a)}>{__uiText("ออกจากระบบทุกเครื่อง")}</Button>
                         <Button size="sm" variant={a.isActive ? 'danger-ghost' : 'secondary'} icon={a.isActive ? 'block' : 'check_circle'} disabled={!!busy} onClick={() => toggle(a)}>
-                          {a.isActive ? 'ปิดบัญชี' : 'เปิดบัญชี'}
+                          {a.isActive ? __uiText("ปิดบัญชี") : __uiText("เปิดบัญชี")}
                         </Button>
                       </div>
                     )}
@@ -97,7 +99,7 @@ export function JoshStaff() {
             </TBody>
           </Table>
         ) : (
-          <Empty icon="badge">ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)</Empty>
+          <Empty icon="badge">{__uiText("ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)")}</Empty>
         )}
       </Panel>
     </Page>

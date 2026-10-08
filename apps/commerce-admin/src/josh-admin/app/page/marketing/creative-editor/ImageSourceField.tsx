@@ -1,9 +1,12 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useId, useRef, useState } from 'react';
 import { uploadImage } from '@josh/shared-api';
 import { Select } from '@josh/shared-ui-web';
 import { resolveAdminAssetUrl } from '../../../lib/asset-url';
 import type { BannerOption } from './creative-editor.types';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const INPUT_CLASS =
   'w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700 focus:border-primary focus:outline-none';
 const LABEL_CLASS = 'mb-1 block text-[10px] font-medium text-gray-500';
@@ -25,6 +28,7 @@ export function ImageSourceField({
    * as a text placeholder, this is the image-picker equivalent. */
   basePreviewValue?: string;
 }) {
+  __useUiLocale();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -39,9 +43,9 @@ export function ImageSourceField({
       const response = await uploadImage(file, value);
       const url = response?.data?.data?.url;
       if (typeof url === 'string' && url) onChange(url);
-      else setError('อัปโหลดไม่สำเร็จ ลองใหม่อีกครั้ง');
+      else setError(__uiMessage("อัปโหลดไม่สำเร็จ ลองใหม่อีกครั้ง"));
     } catch {
-      setError('อัปโหลดไม่สำเร็จ ลองใหม่อีกครั้ง');
+      setError(__uiMessage("อัปโหลดไม่สำเร็จ ลองใหม่อีกครั้ง"));
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -57,8 +61,7 @@ export function ImageSourceField({
       {banners.length > 0 && (
         <>
           <label className={LABEL_CLASS} htmlFor={selectId}>
-            เลือกจากคลัง Banner
-          </label>
+            {__uiText("เลือกจากคลัง Banner")}</label>
           <Select
             id={selectId}
             className="w-full"
@@ -67,7 +70,7 @@ export function ImageSourceField({
               if (event.target.value) onChange(event.target.value);
             }}
           >
-            <option value="">— เลือกจากคลัง Banner (/admin/banner) —</option>
+            <option value="">{__uiText("— เลือกจากคลัง Banner (/admin/banner) —")}</option>
             {banners.map((banner) => (
               <option key={banner.url} value={banner.url}>
                 {banner.title}
@@ -81,7 +84,7 @@ export function ImageSourceField({
         id={urlInputId}
         type="text"
         className={`${INPUT_CLASS} font-mono`}
-        placeholder="หรือวาง URL รูปเอง https://.../banner.jpg"
+        placeholder={__uiText("หรือวาง URL รูปเอง https://.../banner.jpg")}
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -93,7 +96,7 @@ export function ImageSourceField({
           onClick={() => fileRef.current?.click()}
           className="rounded-lg border border-gray-200 px-2.5 py-1 text-[11px] text-gray-600 hover:border-primary hover:text-primary disabled:opacity-50"
         >
-          {uploading ? 'กำลังอัปโหลด...' : 'อัปโหลดจากเครื่อง'}
+          {uploading ? __uiText("กำลังอัปโหลด...") : __uiText("อัปโหลดจากเครื่อง")}
         </button>
         {value.trim() && (
           <img
@@ -107,7 +110,7 @@ export function ImageSourceField({
       <input
         ref={fileRef}
         type="file"
-        aria-label="อัปโหลดรูปจากเครื่อง"
+        aria-label={__uiText("อัปโหลดรูปจากเครื่อง")}
         accept="image/*"
         className="hidden"
         onChange={(event) => {
@@ -123,11 +126,11 @@ export function ImageSourceField({
             alt=""
             className="h-6 w-12 shrink-0 rounded border border-gray-200 object-cover opacity-70"
           />
-          <span className="text-[10px] text-gray-400">รูปต้นฉบับ (ไทย) — ยังไม่ได้แปล</span>
+          <span className="text-[10px] text-gray-400">{__uiText("รูปต้นฉบับ (ไทย) — ยังไม่ได้แปล")}</span>
         </div>
       )}
 
-      {error && <p className="text-[10px] text-red-500">{error}</p>}
+      {error && <p className="text-[10px] text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
     </div>
   );
 }

@@ -11,6 +11,8 @@ import { useCreativeI18n } from './use-creative-i18n';
 import type { BannerOption, ChannelDesign, CouponOption, CreativeElement, PopupChrome } from './creative-editor.types';
 
 /** Figma-style popup editor on an 8-column collision grid. */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function PopupCreativeEditor({
   design,
   onChange,
@@ -28,6 +30,7 @@ export function PopupCreativeEditor({
   banners: BannerOption[];
   variables: Array<{ key: string; label: string }>;
 }) {
+  __useUiLocale();
   // Legacy designs (rows, no grid) convert once on open; existing grids are reconciled
   // (orphaned items removed, elements missing an item repaired).
   useEffect(() => {
@@ -76,11 +79,11 @@ export function PopupCreativeEditor({
       {/* Left panel — palette + layers */}
       <div className="flex flex-col overflow-hidden border-r border-neutral-200 bg-neutral-50">
         <div className="border-b border-neutral-200 p-3">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Elements</p>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">{__uiText("Elements")}</p>
           <GridElementPalette onDragTypeChange={setDraggingType} />
         </div>
         <div className="flex-1 overflow-y-auto p-3">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">Layers</p>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">{__uiText("Layers")}</p>
           <LayersOutlinePanel
             design={design}
             selectedElementId={selectedElementId}
@@ -97,10 +100,10 @@ export function PopupCreativeEditor({
         <div className="mx-auto mb-3 flex w-full max-w-[720px] items-center gap-2">
           <input
             type="text"
-            aria-label="หัวข้อ popup (ไม่แสดงบน popup · ไม่บังคับ)"
+            aria-label={__uiText("หัวข้อ popup (ไม่แสดงบน popup · ไม่บังคับ)")}
             value={title}
             onChange={(event) => onTitleChange(event.target.value)}
-            placeholder="หัวข้อ (ไม่แสดงบน popup · ไม่บังคับ)"
+            placeholder={__uiText("หัวข้อ (ไม่แสดงบน popup · ไม่บังคับ)")}
             className="block flex-1 rounded-md border border-transparent bg-transparent px-2 py-1 text-center text-sm font-semibold text-neutral-700 hover:border-neutral-200 focus:border-primary focus:outline-none"
           />
           <div className="flex shrink-0 overflow-hidden rounded-md border border-neutral-200">
@@ -113,7 +116,7 @@ export function PopupCreativeEditor({
                   editorLocale === code ? 'bg-primary text-white' : 'bg-white text-neutral-500 hover:text-neutral-700'
                 }`}
               >
-                {code === 'th' ? 'ไทย' : 'EN'}
+                {code === 'th' ? __uiText("ไทย") : __uiText("EN")}
               </button>
             ))}
           </div>

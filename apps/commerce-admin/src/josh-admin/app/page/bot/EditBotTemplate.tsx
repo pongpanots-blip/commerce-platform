@@ -6,12 +6,18 @@ import BotTemplateBuilder, {
   BotTemplateFormValue,
 } from '../../components/bot/BotTemplateBuilder';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
+import { LoadError } from '../../components/LoadError';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EditBotTemplate = () => {
+  __useUiLocale();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<unknown>(null);
+  const [reload, setReload] = useState(0);
   const [schemaError, setSchemaError] = useState('');
   const [exampleError, setExampleError] = useState('');
   const [form, setForm] = useState<BotTemplateFormValue>({
@@ -24,6 +30,8 @@ const EditBotTemplate = () => {
 
   useEffect(() => {
     if (!id) return;
+    setLoading(true);
+    setLoadError(null);
     getBotTemplates()
       .then((res: any) => {
         const rows = res.data?.data ?? res.data ?? [];
@@ -36,14 +44,17 @@ const EditBotTemplate = () => {
             exampleText: JSON.stringify(row.example ?? {}, null, 2),
             active: row.active,
           });
+        } else {
+          setLoadError(__uiMessage('ไม่พบเทมเพลตบอตนี้'));
         }
       })
+      .catch((error: unknown) => setLoadError(error))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, reload]);
 
   const handleSubmit = async () => {
     if (!id || !form.name) {
-      alert('กรุณากรอกชื่อ Template');
+      alert(__uiText("กรุณากรอกชื่อ Template"));
       return;
     }
     let schema: any;
@@ -53,13 +64,13 @@ const EditBotTemplate = () => {
     try {
       schema = JSON.parse(form.schemaText);
     } catch {
-      setSchemaError('Schema ไม่ใช่ JSON ที่ถูกต้อง');
+      setSchemaError(__uiMessage("Schema ไม่ใช่ JSON ที่ถูกต้อง"));
       return;
     }
     try {
       example = JSON.parse(form.exampleText);
     } catch {
-      setExampleError('Example ไม่ใช่ JSON ที่ถูกต้อง');
+      setExampleError(__uiMessage("Example ไม่ใช่ JSON ที่ถูกต้อง"));
       return;
     }
     setSaving(true);
@@ -73,19 +84,20 @@ const EditBotTemplate = () => {
       });
       navigate(ADMIN_ROUTES.botTemplates);
     } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึก');
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
   };
 
+  if (loadError) return <LoadError title={__uiText('แก้ไขเทมเพลตบอต')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <AdminInsertLayout
-      title="แก้ไข Template"
+      title={__uiText("แก้ไข Template")}
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}
@@ -102,3 +114,5 @@ const EditBotTemplate = () => {
 };
 
 export default EditBotTemplate;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

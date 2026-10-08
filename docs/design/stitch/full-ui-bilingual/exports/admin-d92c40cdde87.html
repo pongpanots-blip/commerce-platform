@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>สยาม คอมเมิร์ซ - ค้นหาตลาดร้านอาหาร (Market Explorer)</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed": "#002110",
+            "on-secondary-fixed-variant": "#38485e",
+            "inverse-surface": "#243048",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-surface-variant": "#444655",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary": "#4f5f77",
+            "tertiary": "#006139",
+            "surface-container-highest": "#d7e2ff",
+            "surface-bright": "#f9f9ff",
+            "surface-dim": "#cddaf9",
+            "outline-variant": "#c4c5d8",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#b7ffcf",
+            "on-surface": "#0e1b32",
+            "on-primary-container": "#ededff",
+            "secondary-fixed": "#d3e3ff",
+            "inverse-primary": "#b9c3ff",
+            "error-container": "#ffdad6",
+            "tertiary-fixed": "#9ef5be",
+            "surface-variant": "#d7e2ff",
+            "surface": "#f9f9ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "secondary-container": "#d0e1fd",
+            "on-error": "#ffffff",
+            "background": "#f9f9ff",
+            "surface-container": "#e8eeff",
+            "on-secondary-fixed": "#0b1c31",
+            "tertiary-container": "#217b4e",
+            "primary": "#0a3fdc",
+            "surface-container-low": "#f1f3ff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "outline": "#747687",
+            "on-background": "#0e1b32",
+            "surface-container-high": "#e0e8ff",
+            "on-primary": "#ffffff",
+            "primary-fixed": "#dde1ff",
+            "on-error-container": "#93000a",
+            "error": "#ba1a1a",
+            "primary-container": "#365cf5",
+            "on-tertiary-fixed-variant": "#00522f",
+            "on-secondary-container": "#54647c",
+            "surface-tint": "#214ce7",
+            "on-primary-fixed": "#001257",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-lowest": "#ffffff"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "space-xl": "2rem",
+            "margin-desktop": "1.5rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-sm": "0.5rem"
+          },
+          fontFamily: {
+            "body-lg": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "display-lg": ["Noto Sans"]
+          },
+          fontSize: {
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "headline-lg": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "body-sm": ["12px", { lineHeight: "18px", fontWeight: "400" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+            "data-tabular": ["13px", { lineHeight: "20px", fontWeight: "400" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "label-lg": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }],
+            "display-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    /* Tabular nums */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #747687;
+    }
+  </style>
+</head>
+<body class="h-full overflow-hidden flex flex-col font-body-md text-on-surface">
+<!-- DICTIONARY TRANSLATIONS JSON -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "platform_title": { "th": "สยาม คอมเมิร์ซ", "en": "Siam Commerce" },
+    "platform_subtitle": { "th": "ศูนย์จัดการระบบร้านค้า", "en": "Operations Hub" },
+    "create_item_btn": { "th": "สร้างรายการใหม่", "en": "Create New Entry" },
+    "user_guide": { "th": "คู่มือใช้งาน", "en": "User Guide" },
+    "sign_out": { "th": "ออกจากระบบ", "en": "Sign Out" },
+    "nav_inventory": { "th": "สินค้าและสต็อก", "en": "Inventory & Stock" },
+    "nav_orders": { "th": "ออเดอร์และการเงิน", "en": "Orders & Finance" },
+    "nav_customers": { "th": "ลูกค้าและบริการ", "en": "Customers & Care" },
+    "nav_marketing": { "th": "การตลาด", "en": "Marketing" },
+    "nav_analytics": { "th": "รายงานและข้อมูล", "en": "Reports & Analytics" },
+    "nav_integrations": { "th": "ระบบเชื่อมต่อ", "en": "Integrations" },
+    "nav_settings": { "th": "ตั้งค่าและทีมงาน", "en": "Settings & Team" },
+    "breadcrumb_top": { "th": "การตลาด / Market Explorer (admin-d92c40cdde87)", "en": "Marketing / Market Explorer (admin-d92c40cdde87)" },
+    "read_only_badge": { "th": "ข้อมูลจาก JOSH · อ่านอย่างเดียว", "en": "Data via JOSH · Read Only" },
+    "sample_data_badge": { "th": "ข้อมูลตัวอย่าง / Sample data", "en": "Sample Data / Test Feed" },
+    "badge_market_explorer": { "th": "MARKET EXPLORER", "en": "MARKET EXPLORER" },
+    "header_title": { "th": "ค้นหาตลาดร้านอาหาร", "en": "Market Explorer - Restaurant Discovery" },
+    "header_subtitle_prefix": { "th": "ค้นหาโอกาสให้ทีมขาย", "en": "Opportunity discovery for merchant sales" },
+    "header_subtitle_body": { "th": "เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม", "en": "Filter areas & food types, inspect indicators, and dispatch qualified lists to sales." },
+    "btn_export_csv": { "th": "ส่งออกรายชื่อ CSV", "en": "Export Merchant CSV" },
+    "btn_exporting": { "th": "กำลังส่งออก…", "en": "Exporting Data…" },
+    "btn_refresh": { "th": "รีเฟรช", "en": "Refresh" },
+    "kpi_matched_label": { "th": "ร้านที่ตรงเงื่อนไข", "en": "Matching Merchants" },
+    "kpi_total_label": { "th": "ร้านในฐานข้อมูล", "en": "Total in Feed" },
+    "kpi_districts_label": { "th": "เริ่มจากพื้นที่ไหน / เขตที่พบมาก", "en": "Top Opportunity Districts" },
+    "filter_card_title": { "th": "ค้นหาร้านเป้าหมาย", "en": "Target Merchant Search" },
+    "filter_card_subtitle": { "th": "กรองจากข้อมูลที่มีจริง", "en": "Verified real-world merchant parameters" },
+    "input_name_label": { "th": "ชื่อร้าน", "en": "Restaurant Name" },
+    "input_name_ph": { "th": "ค้นหาชื่อไทยหรืออังกฤษ", "en": "Search by TH or EN name" },
+    "input_district_label": { "th": "เขต / อำเภอ", "en": "District / Area" },
+    "input_district_ph": { "th": "เช่น วัฒนา", "en": "e.g. Watthana" },
+    "input_type_label": { "th": "ประเภทร้าน", "en": "Category / Cuisine" },
+    "input_type_ph": { "th": "เช่น japanese หรือ cafe", "en": "e.g. japanese or cafe" },
+    "btn_search": { "th": "ค้นหาร้าน", "en": "Run Search" },
+    "quick_filters_label": { "th": "เลือกเร็ว:", "en": "Quick filters:" },
+    "qf_unassigned": { "th": "ยังไม่อยู่ในรายชื่อฝ่ายขาย", "en": "Not yet in sales pipeline" },
+    "qf_rating4": { "th": "คะแนน 4+ · รีวิว 50+", "en": "Rating 4.0+ · 50+ Reviews" },
+    "qf_cafe": { "th": "คาเฟ่", "en": "Café" },
+    "qf_japanese": { "th": "ร้านญี่ปุ่น", "en": "Japanese Cuisine" },
+    "accordion_toggle": { "th": "ตัวกรองเพิ่มเติม (คะแนน · รีวิว · เวลา · บริการ)", "en": "Advanced Filters (Score · Reviews · Hours · Services)" },
+    "adv_min_score": { "th": "คะแนนขั้นต่ำ", "en": "Minimum Rating" },
+    "adv_min_reviews": { "th": "รีวิวขั้นต่ำ", "en": "Minimum Reviews" },
+    "adv_peak_time": { "th": "ช่วงที่คนเยอะวันนี้", "en": "Peak Traffic Window" },
+    "adv_peak_time_hint": { "th": "เวลาไทย · ชั่วโมงเริ่มถึงก่อนสิ้นสุด (เช่น 17-20)", "en": "BKK Time · Peak hours (e.g. 17-20)" },
+    "adv_price_range": { "th": "ช่วงราคา", "en": "Price Tier" },
+    "btn_apply_filter": { "th": "ใช้ตัวกรอง", "en": "Apply Filters" },
+    "table_header_title": { "th": "ผลการค้นหาร้าน", "en": "Discovery Results" },
+    "table_header_hint": { "th": "รายชื่อร้านอาหาร · เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด", "en": "Restaurant list · Alphabetical · Click item for detailed drawer" },
+    "th_restaurant_area": { "th": "ร้าน / พื้นที่", "en": "Restaurant / Location" },
+    "th_rating_reviews": { "th": "คะแนนและรีวิว", "en": "Rating & Reviews" },
+    "th_peak_today": { "th": "คนเยอะวันนี้", "en": "Peak Today" },
+    "th_sales_status": { "th": "สถานะฝ่ายขาย", "en": "Sales Pipeline Status" },
+    "th_action": { "th": "การกระทำ", "en": "Action" },
+    "status_in_list": { "th": "มีในรายชื่อแล้ว", "en": "In Sales Pipeline" },
+    "status_not_in_list": { "th": "ยังไม่มีในรายชื่อ", "en": "Unassigned Lead" },
+    "btn_view_detail": { "th": "รายละเอียด", "en": "Inspect" },
+    "table_footnote": { "th": "คะแนน รีวิว และช่วงคนเยอะอาจมีไม่ครบทุกแห่ง · เวลาอ้างอิงกรุงเทพฯ · ตรวจสอบข้อมูลร้านก่อนติดต่อ", "en": "Ratings, reviews and peak hours are populated from live feeds · Bangkok time (UTC+7) · Verify before outreach" },
+    "drawer_title": { "th": "รายละเอียดร้านอาหาร", "en": "Merchant Deep Dive" },
+    "drawer_btn_close": { "th": "ปิดรายละเอียด", "en": "Close" },
+    "drawer_btn_map": { "th": "เปิดแผนที่", "en": "View on Map" },
+    "drawer_metric_tables": { "th": "จำนวนโต๊ะโดยประมาณ", "en": "Est. Table Capacity" },
+    "drawer_metric_tables_hint": { "th": "คำนวณจากรีวิว ไม่ใช่จำนวนที่สำรวจ", "en": "Inferred from density metrics, not on-site survey" },
+    "drawer_metric_peak": { "th": "ช่วงคนเยอะวันนี้", "en": "Peak Footprint Today" },
+    "drawer_section_services": { "th": "บริการของร้าน", "en": "Active Service Facilities" },
+    "svc_delivery": { "th": "เดลิเวอรี", "en": "Delivery Service" },
+    "svc_parking": { "th": "ที่จอดรถ", "en": "Customer Parking" },
+    "svc_credit": { "th": "รับบัตรเครดิต", "en": "Credit Card Accepted" },
+    "svc_booking": { "th": "จองโต๊ะล่วงหน้า", "en": "Table Reservations" },
+    "svc_has": { "th": "มีบริการ", "en": "Available" },
+    "svc_none": { "th": "ไม่มีบริการ", "en": "Not Available" },
+    "drawer_audit_source": { "th": "แหล่งข้อมูล: JOSH Restaurant Feed", "en": "Data Source: JOSH Restaurant Feed" },
+    "drawer_audit_date": { "th": "· ข้อมูลเพิ่มเติมล่าสุด: 24 พ.ค. 2567", "en": "· Sync Timestamp: May 24, 2024" },
+    "drawer_audit_warning": { "th": "ตรวจสอบข้อมูลก่อนเข้าพบหรือติดต่อร้าน", "en": "Review credentials prior to scheduling in-person visits" }
+  }
+  </script>
+<!-- APP SHELL CONTAINER -->
+<div class="flex h-full w-full overflow-hidden">
+<!-- 1. LEFT PERSISTENT OPERATIONAL SIDEBAR (from Shared Components JSON) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md select-none transition-colors duration-150 ease-in-out">
+<!-- Top Branding & Navigation -->
+<div class="flex flex-col gap-space-md">
+<!-- Logo Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined fill-icon" style="font-size: 22px;">storefront</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface leading-tight tracking-tight" data-i18n="platform_title">สยาม คอมเมิร์ซ</h1>
+<span class="text-label-sm font-label-sm text-secondary" data-i18n="platform_subtitle">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick CTA Button -->
+<button class="w-full h-9 flex items-center justify-center gap-2 bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-md text-label-md font-semibold transition-colors duration-150 shadow-sm" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span>
+<span data-i18n="create_item_btn">สร้างรายการใหม่</span>
+</button>
+<!-- Main Navigation Links (Strict Labels & Icons from JSON) -->
+<nav aria-label="Main Navigation" class="flex flex-col gap-1 mt-1">
+<!-- Item 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span data-i18n="nav_inventory">สินค้าและสต็อก</span>
+</a>
+<!-- Item 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">receipt_long</span>
+<span data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+</a>
+<!-- Item 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">group</span>
+<span data-i18n="nav_customers">ลูกค้าและบริการ</span>
+</a>
+<!-- Item 4: การตลาด (ACTIVE ITEM FOR THIS ROUTE) -->
+<a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150" href="#">
+<span class="material-symbols-outlined fill-icon text-primary">campaign</span>
+<span class="font-semibold text-label-md" data-i18n="nav_marketing">การตลาด</span>
+</a>
+<!-- Item 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+<span data-i18n="nav_analytics">รายงานและข้อมูล</span>
+</a>
+<!-- Item 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">hub</span>
+<span data-i18n="nav_integrations">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Nav / Footer Links -->
+<div class="flex flex-col gap-1 pt-3 border-t border-outline-variant">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">help</span>
+<span data-i18n="user_guide">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-error-container hover:text-error transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-secondary">logout</span>
+<span data-i18n="sign_out">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- 2. TOP CONTEXTUAL BAR (from Shared Components JSON) -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop transition-all duration-150 ease-in-out">
+<!-- Breadcrumb Context & System Status -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 font-headline-sm text-headline-sm text-on-surface">
+<span class="text-secondary font-normal" data-i18n="nav_marketing">การตลาด</span>
+<span class="text-outline text-sm">/</span>
+<span class="font-semibold text-on-surface" data-i18n="breadcrumb_top">Market Explorer (admin-d92c40cdde87)</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-secondary border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          /marketing/restaurants
+        </span>
+<span class="hidden xl:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-low text-secondary border border-outline-variant" data-i18n="read_only_badge">
+<span class="material-symbols-outlined" style="font-size: 14px;">database</span>
+          ข้อมูลจาก JOSH · อ่านอย่างเดียว
+        </span>
+</div>
+<!-- Right Utility Actions & Toggle -->
+<div class="flex items-center gap-4">
+<!-- Sample data badge -->
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-medium" data-i18n="sample_data_badge">
+<span class="material-symbols-outlined" style="font-size: 14px;">science</span>
+          ข้อมูลตัวอย่าง / Sample data
+        </span>
+<!-- Bilingual Switcher Toggle -->
+<button aria-label="Toggle Language" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md font-medium transition-colors" id="lang-toggle-btn" type="button">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px;">translate</span>
+<span id="lang-current-label">ไทย / EN</span>
+</button>
+<!-- Notification & Help Icons -->
+<div class="flex items-center gap-1 border-l border-outline-variant pl-3">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="Help">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<!-- Admin Profile Pill -->
+<div class="flex items-center gap-2.5 pl-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-semibold text-label-sm shadow-sm">
+            TH
+          </div>
+<div class="hidden sm:flex flex-col text-left">
+<span class="font-label-md text-label-md font-semibold text-on-surface leading-none">Ops Lead Admin</span>
+<span class="font-body-sm text-body-sm text-secondary leading-tight">Bangkok HQ</span>
+</div>
+</div>
+</div>
+</header>
+<!-- 3. MAIN WORKSPACE CANVAS -->
+<main class="ml-64 mt-16 flex-1 h-[calc(100vh-4rem)] overflow-y-auto bg-surface-container-low p-gutter-desktop">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-6 pb-12">
+<!-- HEADER SECTION -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="inline-block px-2 py-0.5 rounded text-label-sm font-label-sm font-bold tracking-wider uppercase bg-primary-container text-on-primary" data-i18n="badge_market_explorer">
+                MARKET EXPLORER
+              </span>
+<span class="text-body-sm text-secondary">Route: admin-d92c40cdde87</span>
+</div>
+<h2 class="text-headline-lg font-headline-lg font-bold text-on-surface" data-i18n="header_title">
+              ค้นหาตลาดร้านอาหาร
+            </h2>
+<p class="text-body-md font-body-md text-secondary">
+<strong class="font-medium text-on-surface" data-i18n="header_subtitle_prefix">ค้นหาโอกาสให้ทีมขาย</strong> —
+              <span data-i18n="header_subtitle_body">เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม</span>
+</p>
+</div>
+<!-- Top Actions -->
+<div class="flex items-center gap-2 self-start sm:self-center">
+<button class="h-9 px-3.5 flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md font-medium transition-colors" id="refresh-feed-btn" type="button">
+<span class="material-symbols-outlined text-secondary" id="refresh-icon" style="font-size: 18px;">refresh</span>
+<span data-i18n="btn_refresh">รีเฟรช</span>
+</button>
+<button class="h-9 px-4 flex items-center gap-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold transition-colors shadow-sm" id="export-csv-btn" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+<span data-i18n="btn_export_csv" id="export-text">ส่งออกรายชื่อ CSV</span>
+</button>
+</div>
+</div>
+<!-- 3 SUMMARY KPI CARDS (Bento/Card Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary font-medium" data-i18n="kpi_matched_label">ร้านที่ตรงเงื่อนไข</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">filter_alt</span>
+</div>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg font-bold text-on-surface tabular-nums" id="kpi-matched-count">142</span>
+<span class="text-body-sm font-body-sm text-secondary">ร้านเป้าหมาย</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-tertiary text-label-sm font-label-sm">
+<span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
+<span>พร้อมให้ฝ่ายขายเข้าติดต่อ</span>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary font-medium" data-i18n="kpi_total_label">ร้านในฐานข้อมูล</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">dataset</span>
+</div>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg font-bold text-on-surface tabular-nums">1,850</span>
+<span class="text-body-sm font-body-sm text-secondary">ร้านทั้งหมดในกรุงเทพฯ</span>
+</div>
+<div class="mt-2 text-label-sm font-label-sm text-secondary">
+              อัปเดตข้อมูลอัตโนมัติจาก JOSH Feed ทุก 4 ชม.
+            </div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary font-medium" data-i18n="kpi_districts_label">เริ่มจากพื้นที่ไหน / เขตที่พบมาก</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">location_on</span>
+</div>
+</div>
+<div class="mt-3 flex flex-wrap gap-1.5">
+<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-container text-primary font-semibold text-body-sm">
+                วัฒนา <span class="ml-1 text-label-sm text-secondary tabular-nums">(48)</span>
+</span>
+<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-container text-primary font-semibold text-body-sm">
+                คลองเตย <span class="ml-1 text-label-sm text-secondary tabular-nums">(39)</span>
+</span>
+<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-medium text-body-sm">
+                จตุจักร <span class="ml-1 text-label-sm text-secondary tabular-nums">(31)</span>
+</span>
+<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-medium text-body-sm">
+                บางรัก <span class="ml-1 text-label-sm text-secondary tabular-nums">(24)</span>
+</span>
+</div>
+<div class="mt-2 text-label-sm font-label-sm text-secondary">
+              ครอบคลุมย่านเศรษฐกิจหลัก &amp; ความหนาแน่นสูง
+            </div>
+</div>
+</div>
+<!-- 4 FILTER & SEARCH PANEL -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">search</span>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface" data-i18n="filter_card_title">ค้นหาร้านเป้าหมาย</h3>
+<span class="text-body-sm text-secondary">· <span data-i18n="filter_card_subtitle">กรองจากข้อมูลที่มีจริง</span></span>
+</div>
+<button class="text-label-md font-label-md text-secondary hover:text-primary transition-colors" id="clear-filters-btn" type="button">
+              ล้างค่าทั้งหมด
+            </button>
+</div>
+<!-- Inputs Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+<!-- Name Input -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="input_name_label" for="filter-name">ชื่อร้าน</label>
+<div class="relative">
+<input class="w-full h-[38px] px-3 pl-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" data-i18n-ph="input_name_ph" id="filter-name" placeholder="ค้นหาชื่อไทยหรืออังกฤษ" type="text"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary" style="font-size: 18px;">search</span>
+</div>
+</div>
+<!-- District Input -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="input_district_label" for="filter-district">เขต / อำเภอ</label>
+<div class="relative">
+<input class="w-full h-[38px] px-3 pl-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" data-i18n-ph="input_district_ph" id="filter-district" placeholder="เช่น วัฒนา" type="text"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary" style="font-size: 18px;">location_city</span>
+</div>
+</div>
+<!-- Cuisine/Type Input -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="input_type_label" for="filter-type">ประเภทร้าน</label>
+<div class="relative">
+<input class="w-full h-[38px] px-3 pl-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" data-i18n-ph="input_type_ph" id="filter-type" placeholder="เช่น japanese หรือ cafe" type="text"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary" style="font-size: 18px;">restaurant_menu</span>
+</div>
+</div>
+<!-- Search Button Action -->
+<div class="flex flex-col justify-end">
+<button class="w-full h-[38px] flex items-center justify-center gap-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold transition-colors shadow-sm" id="submit-search-btn" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">filter_list</span>
+<span data-i18n="btn_search">ค้นหาร้าน</span>
+</button>
+</div>
+</div>
+<!-- Quick Filters Pills -->
+<div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-outline-variant/60">
+<span class="text-label-md font-label-md font-semibold text-secondary" data-i18n="quick_filters_label">เลือกเร็ว:</span>
+<button class="quick-pill px-3 py-1 rounded-full text-label-sm font-label-sm border border-outline-variant bg-surface-container-lowest hover:border-primary text-on-surface transition-all flex items-center gap-1.5" data-filter="unassigned" type="button">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span data-i18n="qf_unassigned">ยังไม่อยู่ในรายชื่อฝ่ายขาย</span>
+</button>
+<button class="quick-pill px-3 py-1 rounded-full text-label-sm font-label-sm border border-outline-variant bg-surface-container-lowest hover:border-primary text-on-surface transition-all flex items-center gap-1.5" data-filter="rating4" type="button">
+<span class="material-symbols-outlined text-amber-500 fill-icon" style="font-size: 14px;">star</span>
+<span data-i18n="qf_rating4">คะแนน 4+ · รีวิว 50+</span>
+</button>
+<button class="quick-pill px-3 py-1 rounded-full text-label-sm font-label-sm border border-outline-variant bg-surface-container-lowest hover:border-primary text-on-surface transition-all flex items-center gap-1.5" data-filter="cafe" type="button">
+<span class="material-symbols-outlined text-secondary" style="font-size: 14px;">local_cafe</span>
+<span data-i18n="qf_cafe">คาเฟ่</span>
+</button>
+<button class="quick-pill px-3 py-1 rounded-full text-label-sm font-label-sm border border-outline-variant bg-surface-container-lowest hover:border-primary text-on-surface transition-all flex items-center gap-1.5" data-filter="japanese" type="button">
+<span class="material-symbols-outlined text-secondary" style="font-size: 14px;">ramen_dining</span>
+<span data-i18n="qf_japanese">ร้านญี่ปุ่น</span>
+</button>
+</div>
+<!-- Accordion / Collapsible: ตัวกรองเพิ่มเติม -->
+<div class="mt-3">
+<button aria-expanded="false" class="flex items-center gap-1.5 text-label-md font-label-md text-primary font-medium hover:underline py-1" id="toggle-accordion-btn" type="button">
+<span class="material-symbols-outlined transition-transform duration-200" id="accordion-arrow">expand_more</span>
+<span data-i18n="accordion_toggle">ตัวกรองเพิ่มเติม (คะแนน · รีวิว · เวลา · บริการ)</span>
+</button>
+<div class="hidden mt-3 p-4 rounded-lg bg-surface-container-low border border-outline-variant" id="advanced-filter-panel">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm font-semibold text-secondary" data-i18n="adv_min_score">คะแนนขั้นต่ำ</label>
+<select class="h-[36px] px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-sm focus:border-primary outline-none" id="adv-score">
+<option value="0">ทั้งหมด (Any)</option>
+<option value="3.5">3.5 ★ ขึ้นไป</option>
+<option selected="" value="4.0">4.0 ★ ขึ้นไป</option>
+<option value="4.5">4.5 ★ ขึ้นไป</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm font-semibold text-secondary" data-i18n="adv_min_reviews">รีวิวขั้นต่ำ</label>
+<input class="h-[36px] px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-sm focus:border-primary outline-none" id="adv-reviews" placeholder="เช่น 50" type="number" value="50"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm font-semibold text-secondary" data-i18n="adv_peak_time">ช่วงที่คนเยอะวันนี้</label>
+<input class="h-[36px] px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-sm focus:border-primary outline-none" id="adv-peak" placeholder="เช่น 17-20" type="text"/>
+<span class="text-label-sm text-secondary text-[11px]" data-i18n="adv_peak_time_hint">เวลาไทย · ชั่วโมงเริ่มถึงก่อนสิ้นสุด (เช่น 17-20)</span>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm font-semibold text-secondary" data-i18n="adv_price_range">ช่วงราคา</label>
+<input class="h-[36px] px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-sm focus:border-primary outline-none" id="adv-price" placeholder="เช่น ฿200–400" type="text"/>
+</div>
+</div>
+<div class="mt-3 flex justify-end">
+<button class="px-4 py-1.5 rounded-lg bg-on-surface text-surface-container-lowest hover:bg-secondary font-label-md text-label-md font-semibold transition-colors" data-i18n="btn_apply_filter" id="apply-adv-filters-btn" type="button">
+                  ใช้ตัวกรอง
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- 5 MAIN CONTENT: 2 COLUMNS (TABLE + DETAIL DRAWER/CARD) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT / TABLE LIST SECTION (Cols 7 or 8) -->
+<div class="lg:col-span-7 transition-all duration-200" id="table-col">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header Bar -->
+<div class="p-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low/40">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface" data-i18n="table_header_title">ผลการค้นหาร้าน</h3>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-container/10 text-primary font-bold tabular-nums" id="table-badge-count">6 รายการแสดง</span>
+</div>
+<span class="text-body-sm font-body-sm text-secondary" data-i18n="table_header_hint">
+                    รายชื่อร้านอาหาร · เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด
+                  </span>
+</div>
+<div class="text-label-sm text-secondary font-medium">
+                  Bangkok Standard Time
+                </div>
+</div>
+<!-- Data Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary text-label-sm font-label-sm border-b border-outline-variant select-none">
+<th class="py-3 px-4 font-semibold" data-i18n="th_restaurant_area">ร้าน / พื้นที่</th>
+<th class="py-3 px-3 font-semibold" data-i18n="th_rating_reviews">คะแนนและรีวิว</th>
+<th class="py-3 px-3 font-semibold" data-i18n="th_peak_today">คนเยอะวันนี้</th>
+<th class="py-3 px-3 font-semibold" data-i18n="th_sales_status">สถานะฝ่ายขาย</th>
+<th class="py-3 px-4 text-right font-semibold" data-i18n="th_action">การกระทำ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-md" id="restaurant-table-body">
+<!-- Row 1: Haru Kappo -->
+<tr class="restaurant-row hover:bg-surface-container-low/60 cursor-pointer transition-colors bg-surface-container-lowest" data-id="1">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface hover:text-primary">Haru Kappo Japanese Dining</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center gap-0.5 text-label-sm text-secondary">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                              วัฒนา (ทองหล่อ)
+                            </span>
+<span class="text-outline text-xs">·</span>
+<span class="text-label-sm text-primary font-medium">Japanese Omakase</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="flex items-center text-amber-600 font-semibold text-label-md">
+                            4.8 <span class="material-symbols-outlined fill-icon text-amber-500 ml-0.5" style="font-size: 15px;">star</span>
+</span>
+<span class="text-secondary text-body-sm tabular-nums">(142 รีวิว)</span>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap font-data-tabular text-body-sm text-secondary tabular-nums">
+                        18:00–21:30
+                      </td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_in_list">มีในรายชื่อแล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="select-row-btn px-2.5 py-1 rounded border border-outline-variant hover:border-primary hover:text-primary bg-surface-container-lowest text-label-sm font-label-md font-medium transition-colors" data-id="1">
+<span data-i18n="btn_view_detail">รายละเอียด</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Artisan Bakehouse Cafe -->
+<tr class="restaurant-row hover:bg-surface-container-low/60 cursor-pointer transition-colors bg-surface-container-lowest" data-id="2">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface hover:text-primary">Artisan Bakehouse &amp; Roastery</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center gap-0.5 text-label-sm text-secondary">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                              คลองเตย (สุขุมวิท 24)
+                            </span>
+<span class="text-outline text-xs">·</span>
+<span class="text-label-sm text-primary font-medium">Cafe &amp; Brunch</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="flex items-center text-amber-600 font-semibold text-label-md">
+                            4.6 <span class="material-symbols-outlined fill-icon text-amber-500 ml-0.5" style="font-size: 15px;">star</span>
+</span>
+<span class="text-secondary text-body-sm tabular-nums">(310 รีวิว)</span>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap font-data-tabular text-body-sm text-secondary tabular-nums">
+                        09:00–14:00
+                      </td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#b08900]/10 text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="status_not_in_list">ยังไม่มีในรายชื่อ</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="select-row-btn px-2.5 py-1 rounded border border-outline-variant hover:border-primary hover:text-primary bg-surface-container-lowest text-label-sm font-label-md font-medium transition-colors" data-id="2">
+<span data-i18n="btn_view_detail">รายละเอียด</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Racha Noodle & Grill -->
+<tr class="restaurant-row hover:bg-surface-container-low/60 cursor-pointer transition-colors bg-surface-container-lowest" data-id="3">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface hover:text-primary">ราชาบะหมี่เตาถ่าน &amp; กริลล์ (Racha Noodle)</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center gap-0.5 text-label-sm text-secondary">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                              จตุจักร (พหลโยธิน)
+                            </span>
+<span class="text-outline text-xs">·</span>
+<span class="text-label-sm text-primary font-medium">Street Food / Noodles</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="flex items-center text-amber-600 font-semibold text-label-md">
+                            4.4 <span class="material-symbols-outlined fill-icon text-amber-500 ml-0.5" style="font-size: 15px;">star</span>
+</span>
+<span class="text-secondary text-body-sm tabular-nums">(88 รีวิว)</span>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap font-data-tabular text-body-sm text-secondary tabular-nums">
+                        11:30–13:30
+                      </td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#b08900]/10 text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="status_not_in_list">ยังไม่มีในรายชื่อ</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="select-row-btn px-2.5 py-1 rounded border border-outline-variant hover:border-primary hover:text-primary bg-surface-container-lowest text-label-sm font-label-md font-medium transition-colors" data-id="3">
+<span data-i18n="btn_view_detail">รายละเอียด</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Bangkok Bistro Silom -->
+<tr class="restaurant-row hover:bg-surface-container-low/60 cursor-pointer transition-colors bg-surface-container-lowest" data-id="4">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface hover:text-primary">Bangkok Craft Bistro &amp; Wine</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center gap-0.5 text-label-sm text-secondary">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                              บางรัก (สีลม 19)
+                            </span>
+<span class="text-outline text-xs">·</span>
+<span class="text-label-sm text-primary font-medium">Bistro &amp; Bar</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="flex items-center text-amber-600 font-semibold text-label-md">
+                            4.5 <span class="material-symbols-outlined fill-icon text-amber-500 ml-0.5" style="font-size: 15px;">star</span>
+</span>
+<span class="text-secondary text-body-sm tabular-nums">(196 รีวิว)</span>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap font-data-tabular text-body-sm text-secondary tabular-nums">
+                        19:00–23:00
+                      </td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_in_list">มีในรายชื่อแล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="select-row-btn px-2.5 py-1 rounded border border-outline-variant hover:border-primary hover:text-primary bg-surface-container-lowest text-label-sm font-label-md font-medium transition-colors" data-id="4">
+<span data-i18n="btn_view_detail">รายละเอียด</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Koshitsu Izakaya -->
+<tr class="restaurant-row hover:bg-surface-container-low/60 cursor-pointer transition-colors bg-surface-container-lowest" data-id="5">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface hover:text-primary">Koshitsu Izakaya Ekamai</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center gap-0.5 text-label-sm text-secondary">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                              วัฒนา (เอกมัย 12)
+                            </span>
+<span class="text-outline text-xs">·</span>
+<span class="text-label-sm text-primary font-medium">Japanese Izakaya</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="flex items-center text-amber-600 font-semibold text-label-md">
+                            4.3 <span class="material-symbols-outlined fill-icon text-amber-500 ml-0.5" style="font-size: 15px;">star</span>
+</span>
+<span class="text-secondary text-body-sm tabular-nums">(74 รีวิว)</span>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap font-data-tabular text-body-sm text-secondary tabular-nums">
+                        18:30–22:00
+                      </td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#b08900]/10 text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="status_not_in_list">ยังไม่มีในรายชื่อ</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="select-row-btn px-2.5 py-1 rounded border border-outline-variant hover:border-primary hover:text-primary bg-surface-container-lowest text-label-sm font-label-md font-medium transition-colors" data-id="5">
+<span data-i18n="btn_view_detail">รายละเอียด</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Chao Phraya Riverside Grill -->
+<tr class="restaurant-row hover:bg-surface-container-low/60 cursor-pointer transition-colors bg-surface-container-lowest" data-id="6">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface hover:text-primary">เจ้าพระยาริมน้ำ ซีฟู้ดการ์เดน</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center gap-0.5 text-label-sm text-secondary">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                              คลองเตย (พระราม 4)
+                            </span>
+<span class="text-outline text-xs">·</span>
+<span class="text-label-sm text-primary font-medium">Thai Seafood</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="flex items-center text-amber-600 font-semibold text-label-md">
+                            4.7 <span class="material-symbols-outlined fill-icon text-amber-500 ml-0.5" style="font-size: 15px;">star</span>
+</span>
+<span class="text-secondary text-body-sm tabular-nums">(512 รีวิว)</span>
+</div>
+</td>
+<td class="py-3.5 px-3 whitespace-nowrap font-data-tabular text-body-sm text-secondary tabular-nums">
+                        17:30–21:00
+                      </td>
+<td class="py-3.5 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_in_list">มีในรายชื่อแล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="select-row-btn px-2.5 py-1 rounded border border-outline-variant hover:border-primary hover:text-primary bg-surface-container-lowest text-label-sm font-label-md font-medium transition-colors" data-id="6">
+<span data-i18n="btn_view_detail">รายละเอียด</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footnote -->
+<div class="p-3 bg-surface-container-low/30 border-t border-outline-variant flex items-center gap-2 text-label-sm font-label-sm text-secondary">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">info</span>
+<span data-i18n="table_footnote">คะแนน รีวิว และช่วงคนเยอะอาจมีไม่ครบทุกแห่ง · เวลาอ้างอิงกรุงเทพฯ · ตรวจสอบข้อมูลร้านก่อนติดต่อ</span>
+</div>
+</div>
+</div>
+<!-- RIGHT / DETAIL INSPECTOR PANEL (Cols 5) -->
+<div class="lg:col-span-5" id="inspector-col">
+<aside class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm sticky top-20 flex flex-col gap-4">
+<!-- Inspector Header -->
+<div class="flex items-start justify-between pb-3 border-b border-outline-variant">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface" data-i18n="drawer_title">รายละเอียดร้านอาหาร</h3>
+</div>
+<span class="text-body-sm text-secondary font-mono text-[11px] mt-0.5">ID: JOSH-BKK-09418</span>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="h-8 px-2.5 flex items-center gap-1 rounded border border-outline-variant hover:bg-surface-container-low text-on-surface text-label-sm font-medium transition-colors" id="open-map-btn" type="button">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">map</span>
+<span data-i18n="drawer_btn_map">เปิดแผนที่</span>
+</button>
+</div>
+</div>
+<!-- Restaurant Profile Identity -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded text-label-sm font-semibold bg-primary-container/10 text-primary" id="detail-category-badge">
+                    Japanese Omakase
+                  </span>
+<div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]" id="detail-pipeline-badge">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span id="detail-pipeline-text">มีในรายชื่อฝ่ายขายแล้ว</span>
+</div>
+</div>
+<h4 class="text-headline-md font-headline-md font-bold text-on-surface mt-1" id="detail-title">
+                  Haru Kappo Japanese Dining
+                </h4>
+<p class="text-body-sm font-body-sm text-secondary flex items-center gap-1" id="detail-address">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">location_on</span>
+                  ทองหล่อ ซอย 11 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110
+                </p>
+</div>
+<!-- Key Metrics 3-grid -->
+<div class="grid grid-cols-2 gap-3 pt-2">
+<!-- Rating / Reviews -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant flex flex-col justify-between">
+<span class="text-label-sm font-label-sm text-secondary" data-i18n="th_rating_reviews">คะแนนและรีวิว</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-headline-md font-headline-md font-bold text-on-surface" id="detail-rating">4.8</span>
+<span class="material-symbols-outlined fill-icon text-amber-500" style="font-size: 18px;">star</span>
+<span class="text-body-sm text-secondary tabular-nums" id="detail-reviews">(142 รีวิว)</span>
+</div>
+</div>
+<!-- Estimated Table Capacity -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant flex flex-col justify-between">
+<span class="text-label-sm font-label-sm text-secondary" data-i18n="drawer_metric_tables">จำนวนโต๊ะโดยประมาณ</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-headline-md font-headline-md font-bold text-on-surface tabular-nums" id="detail-tables">~18 โต๊ะ</span>
+</div>
+<span class="text-label-sm text-secondary text-[10px] leading-tight" data-i18n="drawer_metric_tables_hint">คำนวณจากรีวิว ไม่ใช่จำนวนที่สำรวจ</span>
+</div>
+</div>
+<!-- Today's Peak Hours Block -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm font-semibold text-secondary" data-i18n="drawer_metric_peak">ช่วงคนเยอะวันนี้</span>
+<span class="text-label-sm font-label-sm text-primary font-medium">08:00–23:00 · เวลาไทย</span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex-1 h-3 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="w-[20%] bg-outline-variant"></div>
+<div class="w-[45%] bg-primary-container"></div>
+<div class="w-[35%] bg-outline-variant"></div>
+</div>
+<span class="text-label-md font-semibold text-on-surface tabular-nums" id="detail-peakhours">18:00–21:30</span>
+</div>
+</div>
+<!-- Active Service Facilities Checklist -->
+<div class="flex flex-col gap-2 pt-1">
+<span class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="drawer_section_services">บริการของร้าน</span>
+<div class="grid grid-cols-2 gap-2 text-body-sm" id="services-grid">
+<!-- Delivery -->
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">two_wheeler</span>
+<span data-i18n="svc_delivery">เดลิเวอรี</span>
+</span>
+<span class="text-label-sm font-semibold text-[#157347]" id="svc-status-delivery">มีบริการ</span>
+</div>
+<!-- Parking -->
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">local_parking</span>
+<span data-i18n="svc_parking">ที่จอดรถ</span>
+</span>
+<span class="text-label-sm font-semibold text-[#157347]" id="svc-status-parking">มีบริการ</span>
+</div>
+<!-- Credit Card -->
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">credit_card</span>
+<span data-i18n="svc_credit">รับบัตรเครดิต</span>
+</span>
+<span class="text-label-sm font-semibold text-[#157347]" id="svc-status-credit">มีบริการ</span>
+</div>
+<!-- Table Reservation -->
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">table_restaurant</span>
+<span data-i18n="svc_booking">จองโต๊ะล่วงหน้า</span>
+</span>
+<span class="text-label-sm font-semibold text-[#157347]" id="svc-status-booking">มีบริการ</span>
+</div>
+</div>
+</div>
+<!-- Quick Dispatch to Sales Team Action -->
+<div class="pt-2">
+<button class="w-full h-10 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm" id="dispatch-sales-btn" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+<span id="dispatch-btn-text">ส่งต่อร้านนี้ให้ฝ่ายขาย (Assign Lead)</span>
+</button>
+</div>
+<!-- Audit & Warning Footer -->
+<div class="pt-3 border-t border-outline-variant flex flex-col gap-1 text-[11px] text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 14px;">verified</span>
+<span data-i18n="drawer_audit_source">แหล่งข้อมูล: JOSH Restaurant Feed</span>
+<span data-i18n="drawer_audit_date">· ข้อมูลเพิ่มเติมล่าสุด: 24 พ.ค. 2567</span>
+</div>
+<div class="text-[#b08900] flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 14px;">warning</span>
+<span data-i18n="drawer_audit_warning">ตรวจสอบข้อมูลก่อนเข้าพบหรือติดต่อร้าน</span>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- INTERACTIVE LOGIC: BILINGUAL ENGINE & DATA INSPECTION -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Load Dictionary
+      const dictElement = document.getElementById('commerce-ui-translations');
+      let translations = {};
+      if (dictElement) {
+        try {
+          translations = JSON.parse(dictElement.textContent);
+        } catch (e) {
+          console.error("Translation parsing error:", e);
+        }
+      }
+
+      let currentLang = 'th';
+
+      // Restaurant Data Store
+      const restaurantData = {
+        "1": {
+          id: "JOSH-BKK-09418",
+          name: "Haru Kappo Japanese Dining",
+          district: "วัฒนา (ทองหล่อ)",
+          fullAddress: "ทองหล่อ ซอย 11 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110",
+          category: "Japanese Omakase",
+          rating: "4.8",
+          reviews: 142,
+          peak: "18:00–21:30",
+          tables: "~18 โต๊ะ",
+          inSales: true,
+          services: { delivery: true, parking: true, credit: true, booking: true }
+        },
+        "2": {
+          id: "JOSH-BKK-08215",
+          name: "Artisan Bakehouse & Roastery",
+          district: "คลองเตย (สุขุมวิท 24)",
+          fullAddress: "สุขุมวิท 24 แขวงคลองตัน เขตคลองเตย กรุงเทพฯ 10110",
+          category: "Cafe & Brunch",
+          rating: "4.6",
+          reviews: 310,
+          peak: "09:00–14:00",
+          tables: "~24 โต๊ะ",
+          inSales: false,
+          services: { delivery: true, parking: false, credit: true, booking: false }
+        },
+        "3": {
+          id: "JOSH-BKK-12004",
+          name: "ราชาบะหมี่เตาถ่าน & กริลล์ (Racha Noodle)",
+          district: "จตุจักร (พหลโยธิน)",
+          fullAddress: "พหลโยธิน 32 แขวงจันทร์เกษม เขตจตุจักร กรุงเทพฯ 10900",
+          category: "Street Food / Noodles",
+          rating: "4.4",
+          reviews: 88,
+          peak: "11:30–13:30",
+          tables: "~12 โต๊ะ",
+          inSales: false,
+          services: { delivery: true, parking: false, credit: false, booking: false }
+        },
+        "4": {
+          id: "JOSH-BKK-04981",
+          name: "Bangkok Craft Bistro & Wine",
+          district: "บางรัก (สีลม 19)",
+          fullAddress: "สีลม 19 แขวงสีลม เขตบางรัก กรุงเทพฯ 10500",
+          category: "Bistro & Bar",
+          rating: "4.5",
+          reviews: 196,
+          peak: "19:00–23:00",
+          tables: "~20 โต๊ะ",
+          inSales: true,
+          services: { delivery: false, parking: true, credit: true, booking: true }
+        },
+        "5": {
+          id: "JOSH-BKK-06512",
+          name: "Koshitsu Izakaya Ekamai",
+          district: "วัฒนา (เอกมัย 12)",
+          fullAddress: "เอกมัย 12 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110",
+          category: "Japanese Izakaya",
+          rating: "4.3",
+          reviews: 74,
+          peak: "18:30–22:00",
+          tables: "~16 โต๊ะ",
+          inSales: false,
+          services: { delivery: false, parking: true, credit: true, booking: true }
+        },
+        "6": {
+          id: "JOSH-BKK-03119",
+          name: "เจ้าพระยาริมน้ำ ซีฟู้ดการ์เดน",
+          district: "คลองเตย (พระราม 4)",
+          fullAddress: "พระราม 4 แขวงพระโขนง เขตคลองเตย กรุงเทพฯ 10110",
+          category: "Thai Seafood",
+          rating: "4.7",
+          reviews: 512,
+          peak: "17:30–21:00",
+          tables: "~45 โต๊ะ",
+          inSales: true,
+          services: { delivery: true, parking: true, credit: true, booking: true }
+        }
+      };
+
+      // 2. Language Switcher Function
+      function applyTranslations(lang) {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (translations[key] && translations[key][lang]) {
+            el.textContent = translations[key][lang];
+          }
+        });
+
+        document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+          const key = el.getAttribute('data-i18n-ph');
+          if (translations[key] && translations[key][lang]) {
+            el.setAttribute('placeholder', translations[key][lang]);
+          }
+        });
+
+        const langCurrentLabel = document.getElementById('lang-current-label');
+        if (langCurrentLabel) {
+          langCurrentLabel.textContent = lang === 'th' ? 'ไทย / EN' : 'English / TH';
+        }
+      }
+
+      const langToggleBtn = document.getElementById('lang-toggle-btn');
+      if (langToggleBtn) {
+        langToggleBtn.addEventListener('click', () => {
+          currentLang = currentLang === 'th' ? 'en' : 'th';
+          applyTranslations(currentLang);
+        });
+      }
+
+      // 3. Accordion toggle
+      const accordionBtn = document.getElementById('toggle-accordion-btn');
+      const accordionPanel = document.getElementById('advanced-filter-panel');
+      const accordionArrow = document.getElementById('accordion-arrow');
+
+      if (accordionBtn && accordionPanel) {
+        accordionBtn.addEventListener('click', () => {
+          const isHidden = accordionPanel.classList.contains('hidden');
+          if (isHidden) {
+            accordionPanel.classList.remove('hidden');
+            accordionArrow.style.transform = 'rotate(180deg)';
+            accordionBtn.setAttribute('aria-expanded', 'true');
+          } else {
+            accordionPanel.classList.add('hidden');
+            accordionArrow.style.transform = 'rotate(0deg)';
+            accordionBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      // 4. Quick filter chips interaction
+      const quickPills = document.querySelectorAll('.quick-pill');
+      quickPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          const isActive = pill.classList.contains('bg-primary-container');
+          if (isActive) {
+            pill.classList.remove('bg-primary-container', 'text-on-primary', 'border-primary');
+            pill.classList.add('bg-surface-container-lowest', 'text-on-surface');
+          } else {
+            pill.classList.add('bg-primary-container', 'text-on-primary', 'border-primary');
+            pill.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+          }
+        });
+      });
+
+      // 5. Restaurant Selection & Detail Rendering
+      function showRestaurantDetail(id) {
+        const item = restaurantData[id];
+        if (!item) return;
+
+        // Update ID
+        const codeEl = document.querySelector('#inspector-col .font-mono');
+        if (codeEl) codeEl.textContent = `ID: ${item.id}`;
+
+        // Title and Category
+        document.getElementById('detail-title').textContent = item.name;
+        document.getElementById('detail-category-badge').textContent = item.category;
+        document.getElementById('detail-address').innerHTML = `<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">location_on</span> ${item.fullAddress}`;
+
+        // Rating & Reviews
+        document.getElementById('detail-rating').textContent = item.rating;
+        document.getElementById('detail-reviews').textContent = `(${item.reviews} ${currentLang === 'th' ? 'รีวิว' : 'reviews'})`;
+
+        // Tables & Peak
+        document.getElementById('detail-tables').textContent = item.tables;
+        document.getElementById('detail-peakhours').textContent = item.peak;
+
+        // Pipeline Status
+        const badgeEl = document.getElementById('detail-pipeline-badge');
+        const badgeText = document.getElementById('detail-pipeline-text');
+        const dispatchBtnText = document.getElementById('dispatch-btn-text');
+
+        if (item.inSales) {
+          badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#157347]/10 text-[#157347]';
+          badgeText.textContent = currentLang === 'th' ? 'มีในรายชื่อฝ่ายขายแล้ว' : 'In Sales Pipeline';
+          dispatchBtnText.textContent = currentLang === 'th' ? 'อัปเดตข้อมูลฝ่ายขาย (Update Lead)' : 'Update Lead in CRM';
+        } else {
+          badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#b08900]/10 text-[#b08900]';
+          badgeText.textContent = currentLang === 'th' ? 'ยังไม่มีในรายชื่อฝ่ายขาย' : 'Unassigned Lead';
+          dispatchBtnText.textContent = currentLang === 'th' ? 'ส่งต่อร้านนี้ให้ฝ่ายขาย (Assign Lead)' : 'Assign to Sales Pipeline';
+        }
+
+        // Service badges
+        const setService = (elemId, isAvailable) => {
+          const el = document.getElementById(elemId);
+          if (!el) return;
+          if (isAvailable) {
+            el.className = 'text-label-sm font-semibold text-[#157347]';
+            el.textContent = currentLang === 'th' ? 'มีบริการ' : 'Available';
+          } else {
+            el.className = 'text-label-sm font-semibold text-secondary';
+            el.textContent = currentLang === 'th' ? 'ไม่มีบริการ' : 'None';
+          }
+        };
+
+        setService('svc-status-delivery', item.services.delivery);
+        setService('svc-status-parking', item.services.parking);
+        setService('svc-status-credit', item.services.credit);
+        setService('svc-status-booking', item.services.booking);
+
+        // Highlight active row in table
+        document.querySelectorAll('.restaurant-row').forEach(row => {
+          if (row.getAttribute('data-id') === id) {
+            row.classList.add('bg-surface-container-high/60', 'border-l-4', 'border-primary');
+          } else {
+            row.classList.remove('bg-surface-container-high/60', 'border-l-4', 'border-primary');
+          }
+        });
+      }
+
+      // Attach clicks to table rows and detail buttons
+      document.querySelectorAll('.restaurant-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+          const id = row.getAttribute('data-id');
+          showRestaurantDetail(id);
+        });
+      });
+
+      document.querySelectorAll('.select-row-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          showRestaurantDetail(id);
+        });
+      });
+
+      // Initial active selection
+      showRestaurantDetail("1");
+
+      // 6. CSV Export simulated state
+      const exportBtn = document.getElementById('export-csv-btn');
+      const exportText = document.getElementById('export-text');
+      if (exportBtn && exportText) {
+        exportBtn.addEventListener('click', () => {
+          const original = exportText.textContent;
+          exportBtn.disabled = true;
+          exportBtn.classList.add('opacity-75');
+          exportText.textContent = currentLang === 'th' ? 'กำลังส่งออก…' : 'Exporting Data…';
+
+          setTimeout(() => {
+            exportBtn.disabled = false;
+            exportBtn.classList.remove('opacity-75');
+            exportText.textContent = original;
+            alert(currentLang === 'th' ? 'ส่งออกรายชื่อ CSV สำเร็จ (142 ร้าน)' : 'CSV Export Complete (142 Merchants downloaded)');
+          }, 1100);
+        });
+      }
+
+      // 7. Refresh feed simulation
+      const refreshBtn = document.getElementById('refresh-feed-btn');
+      const refreshIcon = document.getElementById('refresh-icon');
+      if (refreshBtn && refreshIcon) {
+        refreshBtn.addEventListener('click', () => {
+          refreshIcon.classList.add('animate-spin');
+          setTimeout(() => {
+            refreshIcon.classList.remove('animate-spin');
+          }, 800);
+        });
+      }
+
+      // 8. Lead dispatch action
+      const dispatchBtn = document.getElementById('dispatch-sales-btn');
+      if (dispatchBtn) {
+        dispatchBtn.addEventListener('click', () => {
+          const name = document.getElementById('detail-title').textContent;
+          alert(`บันทึกข้อมูลและส่ง ${name} ให้ฝ่ายขายสำเร็จ`);
+        });
+      }
+
+      // 9. Clear filters
+      const clearBtn = document.getElementById('clear-filters-btn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          document.getElementById('filter-name').value = '';
+          document.getElementById('filter-district').value = '';
+          document.getElementById('filter-type').value = '';
+          quickPills.forEach(p => {
+            p.classList.remove('bg-primary-container', 'text-on-primary', 'border-primary');
+            p.classList.add('bg-surface-container-lowest', 'text-on-surface');
+          });
+        });
+      }
+    });
+  </script>
+</body></html>

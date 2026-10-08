@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   getNotificationCatalog,
   updateNotificationTypeSetting,
@@ -9,20 +10,22 @@ import { Link } from 'react-router-dom';
 import AdminListHeader from '../../components/AdminListHeader';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CHANNELS: { key: NotificationDeliveryChannel; label: string }[] = [
-  { key: 'inapp', label: 'ในแอป' },
-  { key: 'push', label: 'Push' },
-  { key: 'email', label: 'อีเมล' },
+  { key: 'inapp', get label() { return __uiText("ในแอป"); } },
+  { key: 'push', get label() { return __uiText("Push"); } },
+  { key: 'email', get label() { return __uiText("อีเมล"); } },
 ];
 
 const CATEGORY_LABEL: Record<NotificationCatalogItem['category'], string> = {
-  order_update: 'คำสั่งซื้อ',
-  financial: 'การเงิน',
-  account: 'บัญชี',
-  back_in_stock: 'สินค้ากลับมามีสต๊อก',
-  order_round: 'รอบสั่งซื้อ',
-  marketing: 'การตลาด',
-  winback: 'Win-back (แอปเซลล์)',
+  get order_update(){return __uiText("คำสั่งซื้อ");},
+  get financial(){return __uiText("การเงิน");},
+  get account(){return __uiText("บัญชี");},
+  get back_in_stock(){return __uiText("สินค้ากลับมามีสต๊อก");},
+  get order_round(){return __uiText("รอบสั่งซื้อ");},
+  get marketing(){return __uiText("การตลาด");},
+  get winback(){return __uiText("Win-back (แอปเซลล์)");},
 };
 
 const CATEGORY_ORDER: NotificationCatalogItem['category'][] = [
@@ -43,6 +46,7 @@ const CATEGORY_ORDER: NotificationCatalogItem['category'][] = [
  * — แก้ข้อความไปที่หน้า Notify Templates
  */
 export default function NotificationCatalogPage() {
+  __useUiLocale();
   const [items, setItems] = useState<NotificationCatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingType, setSavingType] = useState<string | null>(null);
@@ -56,7 +60,7 @@ export default function NotificationCatalogPage() {
       setItems(response.data.data);
     } catch {
       setItems([]);
-      setError('ไม่สามารถโหลดรายการแจ้งเตือนได้');
+      setError(__uiMessage("ไม่สามารถโหลดรายการแจ้งเตือนได้"));
     } finally {
       setLoading(false);
     }
@@ -79,7 +83,7 @@ export default function NotificationCatalogPage() {
         previous.map((row) => (row.type === saved.type ? saved : row)),
       );
     } catch {
-      setError(`บันทึก "${item.label}" ไม่สำเร็จ`);
+      setError(__uiMessage("บันทึก \"{0}\" ไม่สำเร็จ", {"0": item.label}));
     } finally {
       setSavingType(null);
     }
@@ -107,7 +111,7 @@ export default function NotificationCatalogPage() {
       ? item.allowedChannels.filter((value) => value !== channel)
       : [...item.allowedChannels, channel];
     if (next.length === 0) {
-      setError('ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน');
+      setError(__uiMessage("ต้องเปิดอย่างน้อยหนึ่งช่องทาง — ถ้าต้องการหยุดส่ง ให้ปิดทั้งรายการแทน"));
       return;
     }
     void save(item, { allowedChannels: next });
@@ -125,32 +129,27 @@ export default function NotificationCatalogPage() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Notification Catalog"
-        subtitle="ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน"
+        title={__uiText("Notification Catalog")}
+        subtitle={__uiText("ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน")}
       />
 
       <div className="mb-4 rounded-xl border border-gray-100 bg-white p-4 text-sm text-gray-600">
         <p>
-          การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ
-          ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า
-          ของลูกค้าแต่ละคนอีกชั้น
-        </p>
+          {__uiText("การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น")}</p>
         <p className="mt-2">
-          แก้ข้อความที่{' '}
+          {__uiText("แก้ข้อความที่")}{' '}
           <Link className="text-primary hover:underline" to={ADMIN_ROUTES.marketingNotifyTemplates}>
-            Notify Templates
-          </Link>{' '}
-          · ดูผลการส่งที่{' '}
+            {__uiText("Notify Templates")}</Link>{' '}
+          {__uiText("· ดูผลการส่งที่")}{' '}
           <Link className="text-primary hover:underline" to={ADMIN_ROUTES.notificationStats}>
-            Notification Stats
-          </Link>
+            {__uiText("Notification Stats")}</Link>
         </p>
       </div>
 
-      {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
+      {error && <p className="mb-3 text-sm text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       {loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <div className="space-y-6">
           {grouped.map((group) => (
@@ -172,13 +171,11 @@ export default function NotificationCatalogPage() {
                         <span className="font-mono text-xs text-gray-400">{item.type}</span>
                         {item.critical && (
                           <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-700">
-                            สำคัญ
-                          </span>
+                            {__uiText("สำคัญ")}</span>
                         )}
                         {item.customised && (
                           <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-                            แก้ไขแล้ว
-                          </span>
+                            {__uiText("แก้ไขแล้ว")}</span>
                         )}
                       </div>
                       <p className="mt-1 text-xs text-gray-500">{item.trigger}</p>
@@ -214,7 +211,7 @@ export default function NotificationCatalogPage() {
                         }`}
                         onClick={() => handleToggleEnabled(item)}
                       >
-                        {item.enabled ? 'เปิดใช้งาน' : 'ปิดอยู่'}
+                        {item.enabled ? __uiText("เปิดใช้งาน") : __uiText("ปิดอยู่")}
                       </button>
                     </div>
                   </div>

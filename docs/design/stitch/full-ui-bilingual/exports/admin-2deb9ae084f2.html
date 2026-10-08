@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html class="h-full bg-[#f6f8fc]" lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>สร้างหน้าโปรโมชัน (ลองใหม่) - Siam Commerce</title>
+  <!-- Google Fonts: Noto Sans Thai & Noto Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#365cf5',
+            'primary-dark': '#2948c8',
+            ink: '#17243b',
+            'secondary-text': '#52627a',
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            success: '#157347',
+            warning: '#b08900',
+            error: '#c2333f',
+            'surface-container-low': '#f1f3ff',
+            'surface-container-lowest': '#ffffff',
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', '"Noto Sans"', 'sans-serif'],
+          },
+          borderRadius: {
+            card: '12px',
+            control: '8px',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="h-full bg-[#f6f8fc] text-[#17243b] antialiased flex flex-col font-sans selection:bg-[#365cf5] selection:text-white">
+
+  <!-- ==================== SIDEBAR (256px / w-64) ==================== -->
+  <aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-white border-r border-[#e1e7f0] flex flex-col justify-between p-4 select-none">
+    <div>
+      <!-- Brand Header -->
+      <div class="flex items-center gap-3 px-2 pb-4 border-b border-[#e1e7f0]">
+        <div class="w-10 h-10 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold shadow-sm">
+          <span class="material-symbols-outlined text-[24px]">storefront</span>
+        </div>
+        <div class="flex flex-col overflow-hidden">
+          <span class="text-[16px] font-bold text-[#17243b] leading-snug">สยาม คอมเมิร์ซ</span>
+          <span class="text-[12px] text-[#52627a]">ศูนย์จัดการระบบร้านค้า</span>
+        </div>
+      </div>
+
+      <!-- Quick Action CTA -->
+      <div class="mt-4 mb-2">
+        <button type="button" class="w-full h-10 flex items-center justify-center gap-2 px-3 rounded-[8px] bg-[#365cf5] text-white hover:bg-[#2948c8] transition-colors text-[13px] font-medium shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">add_circle</span>
+          <span>สร้างรายการใหม่</span>
+        </button>
+      </div>
+
+      <!-- Seven Standard Work Areas Navigation -->
+      <nav class="space-y-1 mt-3">
+        <!-- 1. สินค้าและสต็อก -->
+        <a href="#inventory" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px] font-medium">
+          <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+          <span>สินค้าและสต็อก</span>
+        </a>
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#orders" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px] font-medium">
+          <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+          <span>ออเดอร์และการเงิน</span>
+        </a>
+        <!-- 3. ลูกค้าและบริการ -->
+        <a href="#customers" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px] font-medium">
+          <span class="material-symbols-outlined text-[20px]">group</span>
+          <span>ลูกค้าและบริการ</span>
+        </a>
+        <!-- 4. การตลาด (ACTIVE) -->
+        <a href="#marketing" class="flex items-center gap-3 px-3 py-2 rounded-[8px] bg-[#f1f3ff] text-[#365cf5] font-semibold border-l-4 border-[#365cf5] text-[13px] transition-colors">
+          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">campaign</span>
+          <span>การตลาด</span>
+        </a>
+        <!-- 5. รายงานและข้อมูล -->
+        <a href="#reports" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px] font-medium">
+          <span class="material-symbols-outlined text-[20px]">analytics</span>
+          <span>รายงานและข้อมูล</span>
+        </a>
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#integrations" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px] font-medium">
+          <span class="material-symbols-outlined text-[20px]">hub</span>
+          <span>ระบบเชื่อมต่อ</span>
+        </a>
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#settings" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px] font-medium">
+          <span class="material-symbols-outlined text-[20px]">settings</span>
+          <span>ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="pt-3 border-t border-[#e1e7f0] space-y-1">
+      <a href="#help" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#52627a] hover:bg-[#f1f3ff] hover:text-[#17243b] transition-colors text-[13px]">
+        <span class="material-symbols-outlined text-[20px]">help_outline</span>
+        <span>คู่มือใช้งาน</span>
+      </a>
+      <a href="#logout" class="flex items-center gap-3 px-3 py-2 rounded-[8px] text-[#c2333f] hover:bg-red-50 transition-colors text-[13px]">
+        <span class="material-symbols-outlined text-[20px]">logout</span>
+        <span>ออกจากระบบ</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ==================== TOP NAVIGATION HEADER ==================== -->
+  <header class="fixed top-0 right-0 left-64 h-16 z-30 bg-white border-b border-[#e1e7f0] flex justify-between items-center px-6">
+    <!-- Breadcrumbs & Route Badge -->
+    <div class="flex items-center gap-3">
+      <nav class="flex items-center gap-2 text-[13px] font-medium">
+        <span class="text-[#52627a]">การตลาด</span>
+        <span class="text-[#e1e7f0]">/</span>
+        <a href="#promotion-pages" class="text-[#52627a] hover:text-[#365cf5] transition-colors">หน้าโปรโมชัน</a>
+        <span class="text-[#e1e7f0]">/</span>
+        <span class="text-[#365cf5] font-semibold" data-i18n="สร้างหน้าโปรโมชัน">สร้างหน้าโปรโมชัน</span>
+      </nav>
+
+      <!-- System Route Identifier Badge -->
+      <div class="hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#f6f8fc] text-[#52627a] text-[11px] font-mono border border-[#e1e7f0]">
+        <span class="material-symbols-outlined text-[13px]">terminal</span>
+        <span>admin-2deb9ae084f2</span>
+      </div>
+
+      <!-- Sample Data Indicator -->
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f1f3ff] text-[#365cf5] text-[12px] font-medium border border-[#365cf5]/20">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+        <span>ข้อมูลตัวอย่าง / Sample data</span>
+      </div>
+    </div>
+
+    <!-- Controls: Language Switcher & Admin Info -->
+    <div class="flex items-center gap-3">
+      <!-- Language Switcher toggle (Bilingual Thai / English) -->
+      <button id="lang-switch-btn" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[13px] font-medium text-[#17243b] transition-colors shadow-xs">
+        <span class="material-symbols-outlined text-[18px] text-[#365cf5]">translate</span>
+        <span id="current-lang-label">ไทย / English</span>
+      </button>
+
+      <div class="h-6 w-px bg-[#e1e7f0] mx-1"></div>
+
+      <!-- Admin Profile -->
+      <div class="flex items-center gap-2.5 pl-1">
+        <div class="w-8 h-8 rounded-full bg-[#365cf5] text-white flex items-center justify-center font-bold text-[12px] shadow-xs">
+          SC
+        </div>
+        <div class="flex flex-col text-left leading-tight hidden lg:block">
+          <span class="text-[13px] font-semibold text-[#17243b]">แอดมินการตลาด</span>
+          <span class="text-[11px] text-[#52627a]">PromotionPageEditorPage</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT (Max width near 1240px) ==================== -->
+  <main class="ml-64 pt-16 flex-1 bg-[#f6f8fc] min-h-screen pb-16">
+    <div class="max-w-[1240px] mx-auto px-6 py-8 space-y-6">
+
+      <!-- Navigation & Action Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#e1e7f0]">
+        <div class="space-y-1">
+          <div class="flex items-center gap-3">
+            <a href="#back" class="p-1 rounded-[8px] border border-[#e1e7f0] bg-white text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            </a>
+            <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-none" data-i18n="สร้างหน้าโปรโมชัน">สร้างหน้าโปรโมชัน</h1>
+            <span class="px-2.5 py-0.5 rounded-[6px] bg-[#f1f3ff] text-[#365cf5] font-semibold text-[12px]">View: create</span>
+          </div>
+          <p class="text-[14px] text-[#52627a]" data-i18n="แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish">
+            แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish
+          </p>
+        </div>
+
+        <!-- Sticky Header Action Bar -->
+        <div class="flex items-center gap-3 shrink-0">
+          <button type="button" class="h-10 px-4 rounded-[8px] border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[#52627a] text-[14px] font-medium transition-colors">
+            ยกเลิก
+          </button>
+          <button id="retry-action-btn" type="button" class="h-10 px-4 rounded-[8px] border border-amber-300 bg-amber-50 hover:bg-amber-100 text-[#b08900] text-[14px] font-semibold transition-colors flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+            <span data-i18n="ลองใหม่">ลองใหม่</span>
+          </button>
+          <button id="save-page-btn" type="button" class="h-10 px-5 rounded-[8px] bg-[#365cf5] hover:bg-[#2948c8] text-white text-[14px] font-semibold transition-colors shadow-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">check</span>
+            <span>บันทึกหน้าโปรโมชัน</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- State Banners / Feedback Alerts (Demonstrating Retry & Error states) -->
+      <div id="retry-banner" class="bg-amber-50 border border-amber-200 rounded-[12px] p-4 flex items-start justify-between gap-3 shadow-xs">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-amber-600 text-[22px] mt-0.5">sync_problem</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[14px] font-bold text-amber-900" data-i18n="โหลดข้อมูลคูปองใหม่ไม่สำเร็จ: {0}">โหลดข้อมูลคูปองใหม่ไม่สำเร็จ: Network timeout while querying promotion catalog</span>
+            </div>
+            <p class="text-[13px] text-amber-800 mt-0.5">ระบบยังไม่สามารถดึงชุดสินค้าโปรโมชันอัตโนมัติจากแคมเปญล่าสุดได้ คุณสามารถกดลองใหม่ หรือกรอกข้อมูลต่อได้</p>
+          </div>
+        </div>
+        <button type="button" onclick="document.getElementById('retry-banner').classList.add('hidden')" class="text-amber-700 hover:text-amber-900 text-[13px] font-medium px-2 py-1 rounded hover:bg-amber-100 transition-colors">
+          ปิด
+        </button>
+      </div>
+
+      <!-- Main Form Grid (2 Columns: Form Editor & Live Phone/Chat Simulator) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left Column: Form Fields (8 Cols) -->
+        <div class="lg:col-span-8 space-y-6">
+
+          <!-- Card 1: ข้อมูลพื้นฐานหน้าโปรโมชัน (Required Fields First) -->
+          <section class="bg-white rounded-[12px] border border-[#e1e7f0] p-6 shadow-xs space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#365cf5]"></span>
+                <h2 class="text-[16px] font-bold text-[#17243b]">ข้อมูลพื้นฐานและเส้นทาง URL (Required)</h2>
+              </div>
+              <span class="text-[12px] text-[#52627a]">ส่วนที่ 1/3</span>
+            </div>
+
+            <!-- Promotion Page Slug -->
+            <div class="space-y-1.5">
+              <label for="page-slug" class="block text-[13px] font-semibold text-[#17243b]">
+                URL Slug ของหน้าโปรโมชัน <span class="text-[#c2333f]">*</span>
+              </label>
+              <div class="flex rounded-[8px] shadow-xs">
+                <span class="inline-flex items-center px-3 rounded-l-[8px] border border-r-0 border-[#e1e7f0] bg-[#f6f8fc] text-[#52627a] text-[13px]">
+                  https://shop.siamcommerce.co/p/
+                </span>
+                <input type="text" id="page-slug" value="summer-flash-sale" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-[8px] border border-[#e1e7f0] focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] text-[14px] text-[#17243b]" placeholder="summer-flash-sale"/>
+              </div>
+              <p class="text-[12px] text-[#52627a]" data-i18n="ใช้ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร">
+                ใช้ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร
+              </p>
+            </div>
+
+            <!-- Page Title -->
+            <div class="space-y-1.5">
+              <label for="page-title" class="block text-[13px] font-semibold text-[#17243b]">
+                ชื่อหัวข้อหน้าโปรโมชัน (Page Title) <span class="text-[#c2333f]">*</span>
+              </label>
+              <input type="text" id="page-title" value="โปรลดดับร้อน ซัมเมอร์จัดเต็ม ส่วนลดสูงสุด 70%" class="block w-full h-10 px-3 rounded-[8px] border border-[#e1e7f0] focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] text-[14px] text-[#17243b] shadow-xs"/>
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="page-desc" class="block text-[13px] font-semibold text-[#17243b]" data-i18n="คำอธิบาย (Description)">
+                  คำอธิบาย (Description)
+                </label>
+                <span class="text-[12px] text-[#52627a]">ตัวอย่างข้อความแชท: <code class="text-[#365cf5]" data-i18n="เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔">เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔</code></span>
+              </div>
+              <textarea id="page-desc" rows="3" class="block w-full p-3 rounded-[8px] border border-[#e1e7f0] focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] text-[14px] text-[#17243b] shadow-xs" placeholder="ข้อความต้อนรับและรายละเอียดแคมเปญที่จะแสดงบนส่วนหัวของหน้า">ยินดีต้อนรับสู่แคมเปญพิเศษ Siam Mega Sale รวมดีลสินค้าอุปโภคบริโภคราคาส่งและโปรโมชันเฉพาะลูกค้าสาขา</textarea>
+            </div>
+
+            <!-- Banner Media Asset Selection -->
+            <div class="space-y-1.5 pt-2 border-t border-[#e1e7f0]">
+              <label class="block text-[13px] font-semibold text-[#17243b]">
+                แบนเนอร์ส่วนหัว (Header Banner)
+              </label>
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div class="flex-1">
+                  <input type="text" value="https://cdn.siamcommerce.co/banners/summer-super-deal.webp" class="block w-full h-10 px-3 rounded-[8px] border border-[#e1e7f0] text-[13px] text-[#52627a] font-mono shadow-xs" placeholder="วาง URL รูปภาพแบนเนอร์"/>
+                </div>
+                <button type="button" class="h-10 px-4 rounded-[8px] border border-[#e1e7f0] bg-[#f6f8fc] hover:bg-[#e1e7f0] text-[#17243b] text-[13px] font-medium transition-colors shrink-0 flex items-center justify-center gap-1.5">
+                  <span class="material-symbols-outlined text-[18px] text-[#52627a]">link</span>
+                  <span data-i18n="หรือวาง URL รูปภาพเอง">หรือวาง URL รูปภาพเอง</span>
+                </button>
+              </div>
+              <p class="text-[12px] text-[#52627a]">ขนาดแนะนำ 1200 × 400px (JPG, WebP, PNG ขนาดไม่เกิน 2MB)</p>
+            </div>
+          </section>
+
+          <!-- Card 2: สินค้าและชุดสินค้าโปรโมชัน (Promotion Product Set) -->
+          <section class="bg-white rounded-[12px] border border-[#e1e7f0] p-6 shadow-xs space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+              <div>
+                <h2 class="text-[16px] font-bold text-[#17243b]">สินค้าและราคาสินค้าในโปรโมชัน</h2>
+                <p class="text-[13px] text-[#52627a] mt-0.5">สินค้าจะถูกจัดกลุ่มและแสดงราคาโปรโมชันโดยอัตโนมัติ</p>
+              </div>
+              <button type="button" class="h-9 px-3 rounded-[8px] border border-[#365cf5] text-[#365cf5] hover:bg-[#f1f3ff] text-[13px] font-semibold transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                <span data-i18n="แก้ไข Promotion Product Set">แก้ไข Promotion Product Set</span>
+              </button>
+            </div>
+
+            <!-- Product Table -->
+            <div class="overflow-x-auto border border-[#e1e7f0] rounded-[8px]">
+              <table class="w-full text-left text-[13px]">
+                <thead class="bg-[#f6f8fc] text-[#52627a] font-semibold border-b border-[#e1e7f0]">
+                  <tr>
+                    <th class="py-2.5 px-3">SKU / ชื่อสินค้า</th>
+                    <th class="py-2.5 px-3" data-i18n="ราคากล่อง / หน่วยสั่ง (฿)">ราคากล่อง / หน่วยสั่ง (฿)</th>
+                    <th class="py-2.5 px-3">ราคาโปรโมชัน</th>
+                    <th class="py-2.5 px-3" data-i18n="เว็บที่เทียบกับ SKU นี้">เว็บที่เทียบกับ SKU นี้</th>
+                    <th class="py-2.5 px-3 text-right">สถานะ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e1e7f0] text-[#17243b]">
+                  <tr class="hover:bg-[#f9f9ff]">
+                    <td class="py-3 px-3">
+                      <div class="font-semibold text-[#17243b]">แป้งสาลี ตราดาวอเนกประสงค์ 1 กก.</div>
+                      <div class="text-[11px] text-[#52627a] font-mono">FLR-SW-101 (สารอาหาร แถวที่ 1)</div>
+                    </td>
+                    <td class="py-3 px-3 font-mono text-[#52627a]">฿38.00</td>
+                    <td class="py-3 px-3">
+                      <span class="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200" data-i18n="ราคาโปร ฿{0}">ราคาโปร ฿34.50</span>
+                    </td>
+                    <td class="py-3 px-3 text-[#52627a]">
+                      <span class="inline-flex items-center gap-1">
+                        <span>Makro PRO / Big C</span>
+                        <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                      </span>
+                    </td>
+                    <td class="py-3 px-3 text-right">
+                      <span class="inline-flex items-center gap-1 text-[12px] text-emerald-700 font-medium">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        พร้อมขาย
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-[#f9f9ff]">
+                    <td class="py-3 px-3">
+                      <div class="font-semibold text-[#17243b]">เนยสด ชนิดจืด Pure Butter 82% Fat (5 กก.)</div>
+                      <div class="text-[11px] text-[#52627a] font-mono">DAIRY-PB-404 (สารอาหาร แถวที่ 2)</div>
+                    </td>
+                    <td class="py-3 px-3 font-mono text-[#52627a]">฿1,450.00</td>
+                    <td class="py-3 px-3">
+                      <span class="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200" data-i18n="ราคาโปร ฿{0}">ราคาโปร ฿1,380.00</span>
+                    </td>
+                    <td class="py-3 px-3 text-[#52627a]">
+                      <span class="inline-flex items-center gap-1 text-amber-700" data-i18n="เราแพงกว่า">
+                        <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                        <span>เราแพงกว่า (Lotus's ฿1,350)</span>
+                      </span>
+                    </td>
+                    <td class="py-3 px-3 text-right">
+                      <span class="inline-flex items-center gap-1 text-[12px] text-emerald-700 font-medium">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        พร้อมขาย
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-[#f9f9ff]">
+                    <td class="py-3 px-3">
+                      <div class="font-semibold text-[#17243b]">น้ำมันพืชบริสุทธิ์ สำหรับทอด ตรามรกต (13.75 ลิตร)</div>
+                      <div class="text-[11px] text-[#52627a] font-mono">OIL-PLM-008 (สารอาหาร แถวที่ 3)</div>
+                    </td>
+                    <td class="py-3 px-3 font-mono text-[#52627a]">฿577.50</td>
+                    <td class="py-3 px-3">
+                      <span class="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200" data-i18n="ราคาโปร ฿{0}">ราคาโปร ฿540.00</span>
+                    </td>
+                    <td class="py-3 px-3 text-[#52627a]">
+                      <span>Tops Wholesale</span>
+                    </td>
+                    <td class="py-3 px-3 text-right">
+                      <span class="inline-flex items-center gap-1 text-[12px] text-emerald-700 font-medium">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        พร้อมขาย
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex items-center justify-between text-[13px] text-[#52627a] pt-1">
+              <span>แสดง 3 รายการจาก Product Catalog แคมเปญ</span>
+              <button type="button" class="text-[#365cf5] hover:underline font-medium" data-i18n="ดูรายการ">ดูรายการ</button>
+            </div>
+          </section>
+
+          <!-- Card 3: การตั้งค่าแคมเปญ & กลุ่มเป้าหมาย (Audience & Delivery) -->
+          <section class="bg-white rounded-[12px] border border-[#e1e7f0] p-6 shadow-xs space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#365cf5] text-[20px]">tune</span>
+                <h2 class="text-[16px] font-bold text-[#17243b]">เงื่อนไขการแสดงผลและกลุ่มเป้าหมาย (Audience Triggers)</h2>
+              </div>
+              <span class="text-[12px] text-[#52627a]" data-i18n="ขั้นตอนถัดไป (ไม่บังคับ)">ขั้นตอนถัดไป (ไม่บังคับ)</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Trigger Condition Radio / Select -->
+              <div class="p-3.5 rounded-[8px] border border-[#365cf5] bg-[#f1f3ff]/50 space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <input type="radio" id="trigger-first-visit" name="trigger_mode" checked class="text-[#365cf5] focus:ring-[#365cf5]"/>
+                  <label for="trigger-first-visit" class="text-[13px] font-bold text-[#17243b]" data-i18n="เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup">
+                    เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup
+                  </label>
+                </div>
+                <p class="text-[12px] text-[#52627a] pl-5">จะแสดง popup หรือแนะนำหน้าโปรโมชันทันทีสำหรับผู้ใช้ที่ยังไม่เคยสั่งซื้อ</p>
+              </div>
+
+              <!-- Scheduled Trigger -->
+              <div class="p-3.5 rounded-[8px] border border-[#e1e7f0] bg-white space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <input type="radio" id="trigger-scheduled" name="trigger_mode" class="text-[#365cf5] focus:ring-[#365cf5]"/>
+                  <label for="trigger-scheduled" class="text-[13px] font-semibold text-[#17243b]" data-i18n="ยิงเองตามเวลา เช่น &quot;ทุกวัน 18:00&quot; หรือ &quot;ทุกวันจันทร์ 19:00&quot; — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)">
+                    ยิงเองตามเวลา เช่น "ทุกวัน 18:00" หรือ "ทุกวันจันทร์ 19:00" — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)
+                  </label>
+                </div>
+                <div class="pl-5 flex items-center gap-2 text-[12px] text-[#52627a]">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  <span data-i18n="ทุกวัน">ทุกวัน 18:00 น.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audience Segment Match -->
+            <div class="space-y-1.5">
+              <label class="block text-[13px] font-semibold text-[#17243b]" data-i18n="อยู่ใน Segment">
+                อยู่ใน Segment
+              </label>
+              <div class="flex flex-wrap gap-2 items-center">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f1f3ff] text-[#365cf5] text-[12px] font-medium border border-[#365cf5]/20">
+                  <span class="material-symbols-outlined text-[14px]">group</span>
+                  <span>ร้านเบเกอรี่ & คาเฟ่ (B2B Active)</span>
+                  <button type="button" class="text-[#52627a] hover:text-[#c2333f]">×</button>
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f1f3ff] text-[#365cf5] text-[12px] font-medium border border-[#365cf5]/20">
+                  <span class="material-symbols-outlined text-[14px]">loyalty</span>
+                  <span>ลูกค้ารอเปิดออเดอร์ใหม่ 14 วัน</span>
+                  <button type="button" class="text-[#52627a] hover:text-[#c2333f]">×</button>
+                </span>
+                <button type="button" class="text-[12px] text-[#365cf5] hover:underline font-semibold">+ เพิ่ม Segment</button>
+              </div>
+            </div>
+
+            <!-- Branch Restriction Notice -->
+            <div class="p-3 rounded-[8px] bg-[#f6f8fc] border border-[#e1e7f0] text-[12px] text-[#52627a] flex items-start gap-2">
+              <span class="material-symbols-outlined text-[#365cf5] text-[18px]">info</span>
+              <span data-i18n="แต่ละสาขามีที่อยู่จัดส่งของตัวเอง และแสดงเฉพาะ Admin สาขา">
+                แต่ละสาขามีที่อยู่จัดส่งของตัวเอง และแสดงเฉพาะ Admin สาขา
+              </span>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Column: Live Previews (4 Cols) -->
+        <div class="lg:col-span-4 space-y-6">
+
+          <!-- Preview 1: Chat Preview Simulator (พรีวิวในแชท) -->
+          <div class="bg-white rounded-[12px] border border-[#e1e7f0] p-5 shadow-xs space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#e1e7f0]">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#365cf5] text-[20px]">chat</span>
+                <h3 class="text-[14px] font-bold text-[#17243b]" data-i18n="พรีวิวในแชท">พรีวิวในแชท</h3>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">LINE / In-app</span>
+            </div>
+
+            <!-- Chat Bubble Card -->
+            <div class="bg-[#f6f8fc] rounded-[10px] p-3.5 border border-[#e1e7f0] space-y-2.5">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-[#365cf5] text-white flex items-center justify-center text-[10px] font-bold">SC</div>
+                <span class="text-[12px] font-bold text-[#17243b]">Siam Commerce Bot</span>
+                <span class="text-[10px] text-[#52627a]">ตอนนี้</span>
+              </div>
+
+              <!-- Simulated Message -->
+              <p class="text-[13px] text-[#17243b] leading-relaxed">
+                สวัสดีคุณ สมชาย! ฝนตกแบบนี้ รับส่วนลดพิเศษทันที 70% เมื่อสั่งซื้อวัตถุดิบและแป้งทำขนมวันนี้
+              </p>
+
+              <!-- Embedded Card Preview -->
+              <div class="bg-white rounded-[8px] border border-[#e1e7f0] overflow-hidden shadow-2xs">
+                <div class="h-28 bg-[#d7e2ff] flex items-center justify-center text-[#365cf5]">
+                  <span class="material-symbols-outlined text-[36px]">photo_size_select_actual</span>
+                </div>
+                <div class="p-2.5 space-y-1">
+                  <div class="text-[12px] font-bold text-[#17243b] truncate">โปรลดดับร้อน ซัมเมอร์จัดเต็ม</div>
+                  <div class="text-[11px] text-[#52627a]">ลดสูงสุด 70% พร้อมส่งฟรีทุกสาขา</div>
+                  <div class="pt-2">
+                    <button type="button" class="w-full py-1.5 rounded-[6px] bg-[#365cf5] text-white text-[12px] font-semibold text-center" data-i18n="ปุ่ม (cta)">
+                      ดูหน้าโปรโมชัน
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="w-full py-2 rounded-[8px] border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[13px] text-[#52627a] font-medium transition-colors flex items-center justify-center gap-1.5" data-i18n="จำลองเข้าเว็บครั้งแรก">
+              <span class="material-symbols-outlined text-[16px]">devices</span>
+              <span>จำลองเข้าเว็บครั้งแรก</span>
+            </button>
+          </div>
+
+          <!-- Preview 2: Summary Stats / Order Mock (เลขออเดอร์, ยอดเงิน) -->
+          <div class="bg-white rounded-[12px] border border-[#e1e7f0] p-5 shadow-xs space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#e1e7f0]">
+              <h3 class="text-[14px] font-bold text-[#17243b]">สถิติแคมเปญล่าสุด</h3>
+              <span class="text-[11px] text-[#52627a]">อัปเดตแบบเรียลไทม์</span>
+            </div>
+
+            <div class="space-y-3 text-[13px]">
+              <div class="flex items-center justify-between">
+                <span class="text-[#52627a]" data-i18n="เลขออเดอร์">เลขออเดอร์</span>
+                <span class="font-mono font-semibold text-[#17243b]">ORD-2025-0891</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-[#52627a]" data-i18n="ยอดเงิน">ยอดเงิน</span>
+                <span class="font-mono font-bold text-emerald-700">฿32,500.00</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-[#52627a]">อัตราคอนเวอร์ชัน</span>
+                <span class="font-semibold text-[#365cf5]">6.8% (+1.4%)</span>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-[#e1e7f0]">
+              <div class="text-[11px] text-[#52627a] flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
+                <span data-i18n="บันทึกแล้ว">บันทึกแล้ว (เวอร์ชันล่าสุด draft v1.2)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="space-y-2">
+            <button type="button" class="w-full h-10 rounded-[8px] border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[#17243b] text-[13px] font-semibold transition-colors flex items-center justify-center gap-2 shadow-2xs">
+              <span class="material-symbols-outlined text-[18px] text-[#52627a]">edit</span>
+              <span data-i18n="แก้ไขหน้าโปรโมชัน">แก้ไขหน้าโปรโมชัน</span>
+            </button>
+            <div id="save-feedback" class="hidden p-3 rounded-[8px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-[13px] font-medium text-center">
+              ✓ บันทึกหน้าโปรโมชันสำเร็จเรียบร้อย
+            </div>
+            <div id="save-error-feedback" class="hidden p-3 rounded-[8px] bg-red-50 border border-red-200 text-red-800 text-[13px] font-medium text-center" data-i18n="บันทึก &quot;{0}&quot; ไม่สำเร็จ">
+              บันทึก "summer-flash-sale" ไม่สำเร็จ
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== MANDATORY INVISIBLE TRANSLATION DICTIONARY ==================== -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ลองใหม่": {
+      "th": "ลองใหม่",
+      "en": "Retry"
+    },
+    "กำลังโหลด...": {
+      "th": "กำลังโหลด...",
+      "en": "Loading..."
+    },
+    "บันทึกแล้ว": {
+      "th": "บันทึกแล้ว",
+      "en": "Saved"
+    },
+    "แก้ไขหน้าโปรโมชัน": {
+      "th": "แก้ไขหน้าโปรโมชัน",
+      "en": "Edit promotion page"
+    },
+    "สร้างหน้าโปรโมชัน": {
+      "th": "สร้างหน้าโปรโมชัน",
+      "en": "Create promotion page"
+    },
+    "แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish": {
+      "th": "แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish",
+      "en": "Banner + automatic promo items + campaign public vouchers (and voucher-restricted items) — no publish step"
+    },
+    "แก้ไข Promotion Product Set": {
+      "th": "แก้ไข Promotion Product Set",
+      "en": "Edit Promotion Product Set"
+    },
+    "ขั้นตอนถัดไป (ไม่บังคับ)": {
+      "th": "ขั้นตอนถัดไป (ไม่บังคับ)",
+      "en": "Next steps (optional)"
+    },
+    "คำอธิบาย (Description)": {
+      "th": "คำอธิบาย (Description)",
+      "en": "Description"
+    },
+    "จำลองเข้าเว็บครั้งแรก": {
+      "th": "จำลองเข้าเว็บครั้งแรก",
+      "en": "Simulate first website visit"
+    },
+    "เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔": {
+      "th": "เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔",
+      "en": "e.g. {{user_name}} It's raining, get your discount now ☔"
+    },
+    "ดูรายการ": {
+      "th": "ดูรายการ",
+      "en": "View list"
+    },
+    "แต่ละสาขามีที่อยู่จัดส่งของตัวเอง และแสดงเฉพาะ Admin สาขา": {
+      "th": "แต่ละสาขามีที่อยู่จัดส่งของตัวเอง และแสดงเฉพาะ Admin สาขา",
+      "en": "Each branch has its own delivery address and is visible only to Branch Admins"
+    },
+    "บันทึก \"{0}\" ไม่สำเร็จ": {
+      "th": "บันทึก \"{0}\" ไม่สำเร็จ",
+      "en": "Failed to save \"{0}\""
+    },
+    "ปุ่ม (cta)": {
+      "th": "ปุ่ม (cta)",
+      "en": "Button (CTA)"
+    },
+    "พรีวิวในแชท": {
+      "th": "พรีวิวในแชท",
+      "en": "Chat preview"
+    },
+    "เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup": {
+      "th": "เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup",
+      "en": "When visiting website for the first time on this device (guests allowed) — ideal for popups"
+    },
+    "ยอดเงิน": {
+      "th": "ยอดเงิน",
+      "en": "Amount"
+    },
+    "ยิงเองตามเวลา เช่น \"ทุกวัน 18:00\" หรือ \"ทุกวันจันทร์ 19:00\" — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)": {
+      "th": "ยิงเองตามเวลา เช่น \"ทุกวัน 18:00\" หรือ \"ทุกวันจันทร์ 19:00\" — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)",
+      "en": "Custom schedule trigger e.g. \"Every day 18:00\" or \"Every Monday 19:00\" — send to selected Audience (blank = all)"
+    },
+    "ราคากล่อง / หน่วยสั่ง (฿)": {
+      "th": "ราคากล่อง / หน่วยสั่ง (฿)",
+      "en": "Box price / Order unit (฿)"
+    },
+    "เราแพงกว่า": {
+      "th": "เราแพงกว่า",
+      "en": "We are higher"
+    },
+    "เลขออเดอร์": {
+      "th": "เลขออเดอร์",
+      "en": "Order number"
+    },
+    "เว็บที่เทียบกับ SKU นี้": {
+      "th": "เว็บที่เทียบกับ SKU นี้",
+      "en": "Websites compared against this SKU"
+    },
+    "สารอาหาร แถวที่ {0}": {
+      "th": "สารอาหาร แถวที่ {0}",
+      "en": "Nutritional info row {0}"
+    },
+    "หรือวาง URL รูปภาพเอง": {
+      "th": "หรือวาง URL รูปภาพเอง",
+      "en": "Or paste image URL directly"
+    },
+    "อยู่ใน Segment": {
+      "th": "อยู่ใน Segment",
+      "en": "In Segment"
+    },
+    "ทุกวัน": {
+      "th": "ทุกวัน",
+      "en": "Daily"
+    },
+    "ราคาโปร ฿{0}": {
+      "th": "ราคาโปร ฿{0}",
+      "en": "Promo price ฿{0}"
+    },
+    "โหลดข้อมูลคูปองใหม่ไม่สำเร็จ: {0}": {
+      "th": "โหลดข้อมูลคูปองใหม่ไม่สำเร็จ: {0}",
+      "en": "Failed to reload voucher data: {0}"
+    },
+    "ใช้ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร": {
+      "th": "ใช้ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร",
+      "en": "Use lowercase a-z, numbers, and - length 3–80 characters"
+    }
+  }
+  </script>
+
+  <!-- ==================== BILINGUAL LANGUAGE SWITCHER SCRIPT ==================== -->
+  <script>
+    (function initLanguageToggle() {
+      let currentLang = 'th';
+      const switchBtn = document.getElementById('lang-switch-btn');
+      const langLabel = document.getElementById('current-lang-label');
+      const dictEl = document.getElementById('commerce-ui-translations');
+      const retryBtn = document.getElementById('retry-action-btn');
+      const saveBtn = document.getElementById('save-page-btn');
+      const saveFeedback = document.getElementById('save-feedback');
+      const retryBanner = document.getElementById('retry-banner');
+
+      if (!dictEl) return;
+      let translations = {};
+      try {
+        translations = JSON.parse(dictEl.textContent || '{}');
+      } catch (e) {
+        console.error('Failed to parse commerce-ui-translations JSON', e);
+        return;
+      }
+
+      function updateLanguage(targetLang) {
+        currentLang = targetLang;
+        document.documentElement.lang = targetLang;
+
+        // Update elements with data-i18n
+        const translatableEls = document.querySelectorAll('[data-i18n]');
+        translatableEls.forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (translations[key] && translations[key][targetLang]) {
+            el.textContent = translations[key][targetLang];
+          }
+        });
+
+        // Update button text indicator
+        if (langLabel) {
+          langLabel.textContent = targetLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+        }
+      }
+
+      if (switchBtn) {
+        switchBtn.addEventListener('click', () => {
+          updateLanguage(currentLang === 'th' ? 'en' : 'th');
+        });
+      }
+
+      if (retryBtn) {
+        retryBtn.addEventListener('click', () => {
+          retryBanner.classList.remove('hidden');
+          const originalText = retryBtn.innerHTML;
+          retryBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> กำลังโหลด...';
+          setTimeout(() => {
+            retryBtn.innerHTML = originalText;
+          }, 800);
+        });
+      }
+
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+          saveFeedback.classList.remove('hidden');
+          setTimeout(() => {
+            saveFeedback.classList.add('hidden');
+          }, 3000);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

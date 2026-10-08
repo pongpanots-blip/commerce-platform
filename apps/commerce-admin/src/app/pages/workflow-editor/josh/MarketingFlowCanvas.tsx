@@ -1,3 +1,7 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
+import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ReactFlow,
@@ -74,31 +78,31 @@ const SCHEDULE_DOW_LABELS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', '�
 
 /** Shared by the trigger node subtitle and the editor's header summary. */
 export function describeMarketingSchedule(schedule: MarketingWorkflowSchedule): string {
-  if (!schedule) return 'ตลอดเวลา (ไม่จำกัดช่วงเวลา)';
+  if (!schedule) return __uiText("ตลอดเวลา (ไม่จำกัดช่วงเวลา)");
 
   const days =
     schedule.daysOfWeek && schedule.daysOfWeek.length > 0 && schedule.daysOfWeek.length < 7
-      ? [...schedule.daysOfWeek].sort().map((d) => SCHEDULE_DOW_LABELS[d] ?? d).join(',')
-      : 'ทุกวัน';
-  const time = `${schedule.startTime ?? '00:00'}-${schedule.endTime ?? '24:00'} น.`;
+      ? [...schedule.daysOfWeek].sort().map((d) => (__dateLocale() === 'th' ? SCHEDULE_DOW_LABELS : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])[d] ?? d).join(',')
+      : __uiText("ทุกวัน");
+  const time = __uiText("{0}-{1} น.",{"0":schedule.startTime ?? '00:00',"1":schedule.endTime ?? '24:00'});
   const tz = schedule.timezone && schedule.timezone !== 'Asia/Bangkok' ? ` (${schedule.timezone})` : '';
 
   const bounds: string[] = [];
   if (schedule.activeFrom) {
-    bounds.push(`ตั้งแต่ ${new Date(schedule.activeFrom).toLocaleDateString('th-TH')}`);
+    bounds.push(__uiText("ตั้งแต่ {0}",{"0":new Date(schedule.activeFrom).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}));
   }
   if (schedule.activeTo) {
-    bounds.push(`ถึง ${new Date(schedule.activeTo).toLocaleDateString('th-TH')}`);
+    bounds.push(__uiText("ถึง {0}",{"0":new Date(schedule.activeTo).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}));
   }
 
   return [`${days} ${time}${tz}`, ...bounds].join(' · ');
 }
 
 const PAGE_AFFINITY_TYPE_LABEL: Record<MarketingPageAffinityTriggerConfig['pageType'], string> = {
-  pdp: 'สินค้า',
-  category: 'หมวดหมู่',
-  cart: 'ตะกร้า',
-  path: 'Path',
+  get pdp(){return __uiText("สินค้า");},
+  get category(){return __uiText("หมวดหมู่");},
+  get cart(){return __uiText("ตะกร้า");},
+  get path(){return __uiText("Path");},
 };
 
 function describePageAffinity(config: Partial<MarketingPageAffinityTriggerConfig>): string {
@@ -106,12 +110,12 @@ function describePageAffinity(config: Partial<MarketingPageAffinityTriggerConfig
   const label = PAGE_AFFINITY_TYPE_LABEL[pageType] ?? pageType;
   const target =
     pageType === 'path'
-      ? config.path || 'ยังไม่ระบุ path'
+      ? config.path || __uiText("ยังไม่ระบุ path")
       : pageType === 'cart'
         ? ''
-        : config.entityId || 'ยังไม่ระบุ ID';
+        : config.entityId || __uiText("ยังไม่ระบุ ID");
   const targetPart = target ? ` (${target})` : '';
-  return `เข้าชม${label}${targetPart} อย่างน้อย ${config.minViews ?? '-'} ครั้ง ภายใน ${formatDurationLabel(config.windowHours, config.windowMinutes)}`;
+  return __uiText("เข้าชม{0}{1} อย่างน้อย {2} ครั้ง ภายใน {3}",{"0":label,"1":targetPart,"2":config.minViews ?? '-',"3":formatDurationLabel(config.windowHours, config.windowMinutes)});
 }
 
 function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: MarketingTriggerConfig): string {
@@ -121,13 +125,13 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
   if (triggerType === 'session_in_window') {
     const lookback =
       (triggerConfig as { lookbackMinutes?: number }).lookbackMinutes ?? 20;
-    return `คนที่ login ภายใน ${lookback} นาที (+ segment ถ้าเลือก) ในช่วง Schedule`;
+    return __uiText("คนที่ login ภายใน {0} นาที (+ segment ถ้าเลือก) ในช่วง Schedule",{"0":lookback});
   }
   if (triggerType === 'first_login') {
-    return 'เมื่อลูกค้า login ครั้งแรกบนแอป/เว็บ';
+    return __uiText("เมื่อลูกค้า login ครั้งแรกบนแอป/เว็บ");
   }
   if (triggerType === 'first_visit') {
-    return 'เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้)';
+    return __uiText("เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้)");
   }
   if (triggerType === 'custom') {
     const custom = triggerConfig as {
@@ -136,25 +140,25 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
       delayMinutes?: number;
       source?: { kind?: string; valuePath?: string; operator?: string; value?: unknown; intervalMinutes?: number };
     };
-    const label = custom.label?.trim() || 'ยังไม่ตั้งชื่อเงื่อนไข';
+    const label = custom.label?.trim() || __uiText("ยังไม่ตั้งชื่อเงื่อนไข");
     const desc = custom.description?.trim();
     const delay = Number(custom.delayMinutes) || 0;
     const audiencePart =
       delay > 0
-        ? `ทุกคนที่อยู่บนเว็บครบ ${delay} นาทีได้ action`
-        : 'ทุกคนที่เข้าเว็บช่วงเงื่อนไขได้ action';
+        ? __uiText("ทุกคนที่อยู่บนเว็บครบ {0} นาทีได้ action",{"0":delay})
+        : __uiText("ทุกคนที่เข้าเว็บช่วงเงื่อนไขได้ action");
     const sourceLine =
       custom.source?.kind === 'http'
-        ? `เช็คอัตโนมัติจาก API ทุก ${custom.source.intervalMinutes ?? 5} นาที (${custom.source.valuePath ?? '?'} ${custom.source.operator ?? '=='} ${String(custom.source.value ?? '')})`
-        : 'เปิด/ปิดเอง: Activate เมื่อเริ่มช่วง, Pause เมื่อจบ';
-    return `"${label}" — ${audiencePart} (วันละ 1 ครั้ง/เครื่อง)\n${sourceLine}${desc ? `\n${desc}` : ''}`;
+        ? __uiText("เช็คอัตโนมัติจาก API ทุก {0} นาที ({1} {2} {3})",{"0":custom.source.intervalMinutes ?? 5,"1":custom.source.valuePath ?? '?',"2":custom.source.operator ?? '==',"3":String(custom.source.value ?? '')})
+        : __uiText("เปิด/ปิดเอง: Activate เมื่อเริ่มช่วง, Pause เมื่อจบ");
+    return __uiText("\"{0}\" — {1} (วันละ 1 ครั้ง/เครื่อง)\n{2}{3}",{"0":label,"1":audiencePart,"2":sourceLine,"3":desc ? `\n${desc}` : ''});
   }
   if (triggerType === 'scheduled') {
     const cfg = triggerConfig as { time?: string; daysOfWeek?: number[] };
-    const dowLabels: Record<number, string> = { 0: 'อา', 1: 'จ', 2: 'อ', 3: 'พ', 4: 'พฤ', 5: 'ศ', 6: 'ส' };
+    const dowLabels: Record<number, string> = { 0: __uiText("อา"), 1: __uiText("จ"), 2: __uiText("อ"), 3: __uiText("พ"), 4: __uiText("พฤ"), 5: __uiText("ศ"), 6: __uiText("ส") };
     const days = cfg.daysOfWeek ?? [];
-    const dayText = days.length === 0 ? 'ทุกวัน' : days.map((d) => dowLabels[d] ?? d).join(', ');
-    return `ยิงทุก${dayText} เวลา ${cfg.time ?? '18:00'} น. — ส่ง Audience ที่เลือก (คนละ 1 ครั้ง/รอบ)`;
+    const dayText = days.length === 0 ? __uiText("ทุกวัน") : days.map((d) => dowLabels[d] ?? d).join(', ');
+    return __uiText("ยิงทุก{0} เวลา {1} น. — ส่ง Audience ที่เลือก (คนละ 1 ครั้ง/รอบ)",{"0":dayText,"1":cfg.time ?? '18:00'});
   }
   if (triggerType === 'order_milestone') {
     const cfg = triggerConfig as { metric?: string; operator?: string; value?: number };
@@ -162,11 +166,11 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
       label: cfg.metric ?? '?',
       unit: '',
     };
-    const op = cfg.operator === '>' ? 'มากกว่า' : 'ถึง/เกิน';
-    return `${meta.label} ${op} ${Number(cfg.value ?? 0).toLocaleString()} ${meta.unit} — ทำงานครั้งแรกที่เข้าเงื่อนไข (คนละ 1 ครั้ง)`;
+    const op = cfg.operator === '>' ? __uiText("มากกว่า") : __uiText("ถึง/เกิน");
+    return __uiText("{0} {1} {2} {3} — ทำงานครั้งแรกที่เข้าเงื่อนไข (คนละ 1 ครั้ง)",{"0":meta.label,"1":op,"2":Number(cfg.value ?? 0).toLocaleString(),"3":meta.unit});
   }
   const idle = triggerConfig as { idleHours?: number; idleMinutes?: number };
-  return `เริ่ม workflow เมื่อตะกร้าค้าง ${formatDurationLabel(idle.idleHours ?? 24, idle.idleMinutes ?? 0)}`;
+  return __uiText("เริ่ม workflow เมื่อตะกร้าค้าง {0}",{"0":formatDurationLabel(idle.idleHours ?? 24, idle.idleMinutes ?? 0)});
 }
 
 const TRIGGER_TITLE: Record<MarketingTriggerType, string> = {
@@ -181,9 +185,9 @@ const TRIGGER_TITLE: Record<MarketingTriggerType, string> = {
 };
 
 const ORDER_MILESTONE_METRIC_LABEL: Record<string, { label: string; unit: string }> = {
-  single_order_total: { label: 'ยอดออเดอร์ครั้งเดียว', unit: 'บาท' },
-  lifetime_spend: { label: 'ยอดสั่งซื้อสะสมทั้งหมด', unit: 'บาท' },
-  lifetime_order_count: { label: 'จำนวนออเดอร์สะสม', unit: 'ครั้ง' },
+  single_order_total: { get label(){return __uiText("ยอดออเดอร์ครั้งเดียว");}, get unit(){return __uiText("บาท");} },
+  lifetime_spend: { get label(){return __uiText("ยอดสั่งซื้อสะสมทั้งหมด");}, get unit(){return __uiText("บาท");} },
+  lifetime_order_count: { get label(){return __uiText("จำนวนออเดอร์สะสม");}, get unit(){return __uiText("ครั้ง");} },
 };
 
 function describeAudience(
@@ -195,21 +199,21 @@ function describeAudience(
   const exclude = step.excludeSegmentIds ?? [];
 
   if (include.length === 0 && exclude.length === 0) {
-    return 'ทุกคนที่เข้าเงื่อนไข trigger (ไม่กรอง segment เพิ่ม)';
+    return __uiText("ทุกคนที่เข้าเงื่อนไข trigger (ไม่กรอง segment เพิ่ม)");
   }
 
   const lines: string[] = [];
   if (include.length > 0) {
-    lines.push(`รวม: ${include.map(nameOf).join(', ')}`);
+    lines.push(__uiText("รวม: {0}",{"0":include.map(nameOf).join(', ')}));
   }
   if (exclude.length > 0) {
-    lines.push(`ไม่รวม: ${exclude.map(nameOf).join(', ')}`);
+    lines.push(__uiText("ไม่รวม: {0}",{"0":exclude.map(nameOf).join(', ')}));
   }
   return lines.join('\n');
 }
 
 function describeCondition(step: Extract<MarketingStep, { type: 'condition' }>): string {
-  return step.expression.trim() || 'ยังไม่ได้ตั้งเงื่อนไข';
+  return step.expression.trim() || __uiText("ยังไม่ได้ตั้งเงื่อนไข");
 }
 
 /**
@@ -221,9 +225,9 @@ function describeCoupon(
   couponId: string | undefined,
   coupons: Array<{ id: string; coupon_code: string; title: string }>,
 ): string {
-  if (!couponId) return 'ยังไม่ได้เลือกคูปอง';
+  if (!couponId) return __uiText("ยังไม่ได้เลือกคูปอง");
   const coupon = coupons.find((c) => c.id === couponId);
-  return coupon ? coupon.title : 'คูปองถูกลบ/ไม่พบในรายการ';
+  return coupon ? coupon.title : __uiText("คูปองถูกลบ/ไม่พบในรายการ");
 }
 
 function describeAction(
@@ -232,32 +236,32 @@ function describeAction(
 ): { title: string; subtitle: string } {
   if (step.action.kind === 'grant_coupon') {
     return {
-      title: 'แจกคูปอง (Grant Coupon)',
+      title: __uiText("แจกคูปอง (Grant Coupon)"),
       subtitle: describeCoupon(step.action.couponId, coupons),
     };
   }
   if (step.action.kind === 'show_offer') {
     if (step.action.displayOnly) {
       return {
-        title: 'แสดง Popup (โฆษณา)',
+        title: __uiText("แสดง Popup (โฆษณา)"),
         subtitle: [
-          step.action.title?.trim() || 'ไม่มีหัวข้อ',
-          `สูงสุด ${step.action.maxPerSession ?? 1} ครั้ง/session`,
+          step.action.title?.trim() || __uiText("ไม่มีหัวข้อ"),
+          __uiText("สูงสุด {0} ครั้ง/session",{"0":step.action.maxPerSession ?? 1}),
         ].join('\n'),
       };
     }
     return {
-      title: 'แสดง Offer บน Shop',
+      title: __uiText("แสดง Offer บน Shop"),
       subtitle: [
-        step.action.title?.trim() || 'ไม่มีหัวข้อกำหนดเอง',
+        step.action.title?.trim() || __uiText("ไม่มีหัวข้อกำหนดเอง"),
         describeCoupon(step.action.couponId, coupons),
       ].join('\n'),
     };
   }
-  const channels = step.action.channels?.length ? step.action.channels.join(', ') : 'ยังไม่เลือกช่องทาง';
+  const channels = step.action.channels?.length ? step.action.channels.join(', ') : __uiText("ยังไม่เลือกช่องทาง");
   return {
-    title: 'แจ้งเตือน (Notify)',
-    subtitle: `ช่องทาง: ${channels}\nTemplate: ${step.action.templateKey || 'ยังไม่ได้เลือก'}`,
+    title: __uiText("แจ้งเตือน (Notify)"),
+    subtitle: __uiText("ช่องทาง: {0}\nTemplate: {1}",{"0":channels,"1":step.action.templateKey || __uiText("ยังไม่ได้เลือก")}),
   };
 }
 
@@ -271,23 +275,23 @@ function buildNodeData(
     case 'audience':
       return {
         kind: 'audience',
-        title: 'กลุ่มเป้าหมาย (Audience)',
+        title: __uiText("กลุ่มเป้าหมาย (Audience)"),
         subtitle: describeAudience(step, segments),
         removable: false,
       };
     case 'wait':
       return {
         kind: 'wait',
-        title: 'รอ (Wait)',
-        subtitle: `หน่วงเวลา ${formatDurationLabel(step.hours, step.minutes)} ก่อนขั้นตอนถัดไป`,
+        title: __uiText("รอ (Wait)"),
+        subtitle: __uiText("หน่วงเวลา {0} ก่อนขั้นตอนถัดไป",{"0":formatDurationLabel(step.hours, step.minutes)}),
         removable: true,
         onRemove,
       };
     case 'gate':
       return {
         kind: 'gate',
-        title: 'ตรวจเงื่อนไขซ้ำ (Gate)',
-        subtitle: 'ตรวจว่าตะกร้ายังไม่ว่าง/ยังไม่ชำระเงิน (cart_still_open) ก่อนทำขั้นตอนถัดไป',
+        title: __uiText("ตรวจเงื่อนไขซ้ำ (Gate)"),
+        subtitle: __uiText("ตรวจว่าตะกร้ายังไม่ว่าง/ยังไม่ชำระเงิน (cart_still_open) ก่อนทำขั้นตอนถัดไป"),
         removable: true,
         onRemove,
       };
@@ -451,6 +455,7 @@ export function MarketingFlowCanvas({
   onConnectSteps,
   onDisconnectEdge,
 }: MarketingFlowCanvasProps) {
+  const locale = __useUiLocale();
   const [nodes, setNodes, onNodesChange] = useNodesState<MarketingFlowNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
@@ -467,10 +472,11 @@ export function MarketingFlowCanvas({
       deletable: false,
       selectable: true,
       connectable: true,
+      selected: selectedNodeId === TRIGGER_NODE_ID,
       data: {
         kind: 'trigger',
-        title: `Trigger: ${TRIGGER_TITLE[triggerType] ?? triggerType}`,
-        subtitle: `${describeTrigger(triggerType, triggerConfig)}\nช่วงเวลาทำงาน: ${describeMarketingSchedule(schedule)}`,
+        title: __uiText('Trigger: {0}', { '0': __uiText(TRIGGER_TITLE[triggerType] ?? triggerType) }),
+        subtitle: `${describeTrigger(triggerType, triggerConfig)}\n${__uiText('ช่วงเวลาทำงาน: {0}', { '0': describeMarketingSchedule(schedule) })}`,
         triggerType,
         onUpdateTriggerType,
       },
@@ -481,13 +487,14 @@ export function MarketingFlowCanvas({
       type: step.type === 'condition' ? 'marketingCondition' : 'marketingStep',
       position: positions[step.id] ?? { x: 0, y: NODE_GAP_Y * (index + 1) },
       connectable: true,
+      selected: selectedNodeId === step.id,
       data: buildNodeData(step, segments, coupons, () => onDeleteStep(step.id)),
     }));
 
     setNodes([triggerNode, ...stepNodes]);
     setEdges(buildCanvasEdges(steps));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepsContentKey, triggerType, triggerConfigKey, scheduleKey, segments, coupons, onUpdateTriggerType]);
+  }, [stepsContentKey, triggerType, triggerConfigKey, scheduleKey, segments, coupons, onUpdateTriggerType, locale]);
 
   useEffect(() => {
     setNodes((prev) =>
@@ -627,6 +634,13 @@ export function MarketingFlowCanvas({
         fitView
         fitViewOptions={{ padding: 0.3, maxZoom: 1 }}
         proOptions={{ hideAttribution: true }}
+        ariaLabelConfig={{
+          'controls.ariaLabel': __uiText('Workflow controls'),
+          'controls.zoomIn.ariaLabel': __uiText('Zoom in'),
+          'controls.zoomOut.ariaLabel': __uiText('Zoom out'),
+          'controls.fitView.ariaLabel': __uiText('Fit view'),
+          'controls.interactive.ariaLabel': __uiText('Toggle interactivity'),
+        }}
       >
         <MeasurementWatchdog />
         <Background variant={BackgroundVariant.Dots} gap={18} size={1.5} color="#d1d5db" />
@@ -637,3 +651,5 @@ export function MarketingFlowCanvas({
 }
 
 export default MarketingFlowCanvas;
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

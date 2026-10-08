@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "4946",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzhkOTEzNWMyMDZhYTRjZGJhOWM5MDRmY2Q5MDAxZjY4EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/0cc7bce04a0f47aea3d0ab515340fa34"
+            },
+            "id": "ce536ec05ad245e0abcbab15f76e7504",
+            "name": "projects/9809859018179965476/screens/ce536ec05ad245e0abcbab15f76e7504",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XQiR6I2VypWGpDZkpiW1P0T10EnvlujdNt7dXLa7HBHbfg5gda6KjbBhEhdLVjdrozlq7ytrF1qflDPxUDmDjjom1h5T-K76e1gTF5_pUQAFzJ2pKG4TvWAwL6E-6N9F-LTpSaLoDpQpyTyLLjoLByMr87ELY27QhpruQlS29ux1MN-MeXiVQJYgEpy9j39BLRWubAFzJhmeRVjGw7rkNDMKFw10_3J_TxMxd5CN8mErLSPO56Ihs5238",
+              "name": "projects/9809859018179965476/files/b6b66cd13c504d30b8854c33b66952b7"
+            },
+            "theme": {},
+            "title": "เพิ่มสินค้า (InsertProductForm - /j/product/create)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบและจัดสร้างหน้า **เพิ่มสินค้า (`/j/product/create` - InsertProductForm)** ตามมาตรฐานของ Commerce Platform เรียบร้อยแล้วครับ\n\n### สรุปรายละเอียดการออกแบบและองค์ประกอบของหน้าจอ:\n1. **เค้าโครงและโครงสร้างหลัก (Layout & Visual Language):**\n   - แถบเมนูด้านข้าง (Sidebar) กว้าง 256px แบ่งพื้นที่การทำงาน 7 กลุ่มอย่างชัดเจน พร้อมไฮไลต์เมนู **\"เพิ่มสินค้าใหม่\"** ภายใต้หมวดหมู่ **สินค้าและสต็อก**\n   - ส่วนหัวแบบ Contextual Header แสดง Breadcrumbs, รหัสเส้นทาง `admin-eaf5fc6977ae`, แบดจ์ระบุ `ข้อมูลตัวอย่าง` และปุ่มสลับภาษา ไทย / English\n   - ความกว้างเนื้อหาหลัก 1240px บนผืนผ้าใบสี `#f6f8fc` พร้อมการ์ดพื้นหลังขาว มุมโค้ง 12px และปุ่มควบคุมมาตรฐานขนาด 40px\n\n2. **ฟอร์มการสร้างสินค้า (InsertProductForm Workflows):**\n   - **ส่วนที่ 1: ข้อมูลหลักสินค้า (Global Info)** — ครอบคลุมการระบุรหัสสินค้า (SKU) พร้อมคำอธิบายข้อกำหนดตัวอักษร, การเลือกหมวดหมู่สินค้าปลายกิ่ง, การเลือกหรือเพิ่มแบรนด์ใหม่, ราคาขายต่อหน่วย (฿), หน่วยขาย และยอดสต็อกเริ่มต้น\n   - **ส่วนที่ 2: ข้อมูลภาษาไทย (Thai Translation)** — ชื่อสินค้าและคำอธิบายสินค้าอย่างย่อสำหรับ Storefront ภาษาไทย\n   - **ส่วนที่ 3: ข้อมูลภาษาอังกฤษ (English Translation)** — ชื่อและคำอธิบายภาษาอังกฤษสำหรับรองรับผู้ซื้อสากล\n   - **ส่วนที่ 4: คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)** — จัดการสล็อตภาพทั้ง 3 รูป แสดงตัวอย่างภาพหน้าตรง บาร์โค้ด และสล็อตอัปโหลด พร้อมปุ่มลบรูปภาพและการแจ้งเตือนเมื่อเกินขีดจำกัด\n   - **แถบ Action Bar ด้านล่างแบบ Sticky** — แสดงสถานะการบันทึกดราฟต์อัตโนมัติ ปุ่มยกเลิก และปุ่มหลัก `💾 บันทึกข้อมูลและประมวลผล AI` พร้อมระบบแจ้งเตือน Inline Validation เมื่อข้อมูลสำคัญไม่ครบถ้วน\n\n3. **Bilingual UI & Exact UI Copy Export:**\n   - รวมแท็กสคริปต์ `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่แมปทุกคีย์คำใน UI Copy Catalogue แบบสมบูรณ์ รองรับการแปลภาษาและการต่อยอดทางเทคนิคในระบบจริง"
+    },
+    {
+      "suggestion": "ดูหน้ารายละเอียดสินค้า (ProductDetail) หลังการสร้าง"
+    },
+    {
+      "suggestion": "ดูหน้าจัดการแบรนด์ (/j/brands) ที่เชื่อมโยงกับสินค้านี้"
+    },
+    {
+      "suggestion": "เพิ่มตัวอย่างสถานะข้อผิดพลาดขณะบันทึกข้อมูล (Error State)"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "14232947876877922594"
+}

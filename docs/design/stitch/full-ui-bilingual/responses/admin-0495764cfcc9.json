@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2384",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2M5MDZkMjhhMjA1YjQ2ZmM4Nzc2ZWNhYzk3YmIzNzVmEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/6805e34a0f1b46eebd04fe0365b9a86e"
+            },
+            "id": "b09eb94d07a74b7e9f72e6ade3a3dd38",
+            "name": "projects/18348214526789030153/screens/b09eb94d07a74b7e9f72e6ade3a3dd38",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Wbj4-TGQNnPMdU_ioRt2ncr9p4rSk1Y_c2UQSlNCXLn7z_q98p6B7EotrPbyHIZAGjsBnL7MtsHSrsK1JqpDo6dpOGpBH3vg0psF1Bd4Fm2KiTgsInO5dGFN0kinJR4Sn9lTQaDuECvtfZdLA2PVX5n04XIOEVS-shPRR9S2vl0gYcsacvrG92CpTHNw4tj64klJm9aOhxQFifI7DlcW-ZCaTiy3d-WsN4dRyPC1k2xkjdFE0AlCqhgGM",
+              "name": "projects/18348214526789030153/files/9e8558343b92452d9a0996e3ec627784"
+            },
+            "theme": {},
+            "title": "ระดับสมาชิก (Membership Tiers)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **ระดับสมาชิก (Membership Tiers)** สำหรับระบบ Commerce Platform เรียบร้อยแล้ว\n\n### สรุปรายละเอียดการออกแบบและองค์ประกอบของหน้าจอ:\n1. **โครงสร้างและ Design System ตามแนวทาง Commerce Platform**:\n   - Sidebar ความกว้าง 256px พร้อม 7 สายงานหลัก โดยเน้นหมวด **ลูกค้าและบริการ** และเมนูย่อย **ระดับสมาชิก (`/j/membership-tiers`)**\n   - Developer Portal route bar ด้านล่างแสดง `admin-0495764cfcc9`\n   - แถบหัวกระดาษบริบทพร้อมแถบค้นหาเฉพาะหน้าปัจจุบัน, ป้ายกำกับ `ข้อมูลตัวอย่าง`, ปุ่มสลับภาษา ไทย / English และข้อมูลผู้ใช้งาน CS\n   - กว้างเนื้อหาประมาณ 1240px พื้นหลัง `#f6f8fc`, การ์ดสีขาวมุมโค้ง 12px, ฟอนต์ Noto Sans Thai และโทนสีหลัก `#365cf5`\n\n2. **ฟังก์ชันการทำงานหลักของหน้าจอ (MembershipTierConfig)**:\n   - **การกระจายลูกค้าตาม Tier**: การ์ดแสดงสถิติและสัดส่วนลูกค้าทั้ง 4 ระดับ (Bronze, Silver, Gold, Platinum) ยอดใช้จ่ายสะสมขั้นต่ำ และการ์ดสถานะสำหรับรอบการคำนวณ\n   - **ตารางการกำหนดระดับสมาชิก (Membership Tiers Table)**: ตารางแสดงลำดับ, สีประจำ tier, ชื่อ, slug, ยอดใช้จ่ายขั้นต่ำ, จำนวนลูกค้าในระบบ, สถานะเปิดใช้งาน, ปุ่มเลื่อนลำดับขึ้น/ลง และปุ่มแก้ไข/ลบ\n   - **โมดอลสร้างและแก้ไข Tier (Add / Edit Tier Modal)**: รองรับฟิลด์ชื่อ, Slug, ยอดใช้จ่ายสะสมขั้นต่ำ, ตัวเลือกสีพร้อมรหัส Hex และสวิตช์เปิดใช้งาน พร้อมจัดการการตรวจสอบฟอร์ม (Validation) และสถานะกำลังบันทึก/กำลังสร้าง\n   - **กล่องยืนยันการลบ (Delete Confirmation)**: แจ้งเตือนยืนยันการลบ tier ตามข้อความระบบ\n   - **การ์ดข้อมูลนโยบาย B2B และการเชื่อมต่อระบบ**: ระบุกฎการมองเห็นราคาเฉพาะสมาชิก B2B และรอบการซิงค์ข้อมูลกับ SAP Gateway\n\n3. **ระบบ 2 ภาษา (Bilingual Support & UI Translation Export)**:\n   - ฝังแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` เก็บข้อความแปลภาษาไทย-อังกฤษครบทุกคีย์ตามข้อกำหนดของระบบ พร้อมสลับภาษาบนหน้าจอได้ทันทีด้วยปุ่ม ไทย / English ด้านบน"
+    },
+    {
+      "suggestion": "เพิ่มการตั้งค่าอัตราส่วนลดแยกตามหมวดหมู่สินค้าในแต่ละ Tier"
+    },
+    {
+      "suggestion": "ดูตัวอย่างหน้าจอเมื่อยังไม่มีข้อมูลระดับสมาชิก (Empty state)"
+    },
+    {
+      "suggestion": "เปิดแบบฟอร์มการสร้าง Tier ใหม่เพื่อทดสอบการตรวจสอบข้อมูล"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "1899945141936214105"
+}

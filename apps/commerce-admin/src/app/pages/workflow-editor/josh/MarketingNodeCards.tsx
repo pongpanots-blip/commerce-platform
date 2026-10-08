@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { memo } from 'react';
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
 import { MdOutlineClose } from './icons';
@@ -9,6 +10,8 @@ import { TriggerTypeChips } from './TriggerRuleBuilder';
  * only — `MarketingFlowCanvas` builds the `data` payload from workflow state.
  * Deliberately standalone: does NOT import from `apps/web-admin/src/app/components/bot/*`.
  */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type MarketingNodeKind = 'trigger' | 'audience' | 'wait' | 'gate' | 'action' | 'condition';
 
 export type MarketingNodeCardData = {
@@ -34,12 +37,12 @@ const KIND_ACCENT: Record<MarketingNodeKind, string> = {
 };
 
 const KIND_LABEL: Record<MarketingNodeKind, string> = {
-  trigger: 'TRIGGER',
-  audience: 'AUDIENCE',
-  wait: 'WAIT',
-  gate: 'GATE',
-  action: 'ACTION',
-  condition: 'IF / ELSE',
+  get trigger(){return __uiText("TRIGGER");},
+  get audience(){return __uiText("AUDIENCE");},
+  get wait(){return __uiText("WAIT");},
+  get gate(){return __uiText("GATE");},
+  get action(){return __uiText("ACTION");},
+  get condition(){return __uiText("IF / ELSE");},
 };
 
 /**
@@ -58,6 +61,7 @@ const TARGET_HANDLE_CLASS =
   '!z-[40] !pointer-events-auto !left-1/2 !top-0 !h-5 !w-[85%] !-translate-x-1/2 !translate-y-[-50%] !rounded-md !border !border-dashed !border-primary/40 !bg-primary/10 hover:!bg-primary/20 !cursor-crosshair';
 
 function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
+  __useUiLocale();
   const isTrigger = data.kind === 'trigger';
   return (
     <div
@@ -92,7 +96,7 @@ function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
               data.onRemove?.();
             }}
             className="relative z-10 shrink-0 rounded p-1 text-gray-300 hover:bg-gray-50 hover:text-red-500"
-            title="ลบขั้นตอนนี้"
+            title={__uiText("ลบขั้นตอนนี้")}
           >
             <MdOutlineClose size={14} />
           </button>
@@ -116,8 +120,7 @@ function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
             selected ? 'font-medium text-primary' : 'text-gray-400'
           }`}
         >
-          ลากจุดสีด้านล่าง → ปล่อยบนแถบด้านบนของการ์ดปลายทาง
-        </p>
+          {__uiText("ลากจุดสีด้านล่าง → ปล่อยบนแถบด้านบนของการ์ดปลายทาง")}</p>
       )}
       <Handle
         type="source"
@@ -131,6 +134,7 @@ function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
 
 /** Diamond (rotated-square) node for `condition` steps — Lumis-style if/else. */
 function MarketingConditionNode({ data, selected }: NodeProps<MarketingFlowNode>) {
+  __useUiLocale();
   return (
     <div className="relative flex h-[170px] w-[170px] items-center justify-center">
       <Handle type="target" position={Position.Top} isConnectable className={TARGET_HANDLE_CLASS} />
@@ -156,7 +160,7 @@ function MarketingConditionNode({ data, selected }: NodeProps<MarketingFlowNode>
             data.onRemove?.();
           }}
           className="absolute right-1 top-1 z-50 shrink-0 rounded p-1 text-gray-300 hover:bg-gray-50 hover:text-red-500"
-          title="ลบขั้นตอนนี้"
+          title={__uiText("ลบขั้นตอนนี้")}
         >
           <MdOutlineClose size={14} />
         </button>

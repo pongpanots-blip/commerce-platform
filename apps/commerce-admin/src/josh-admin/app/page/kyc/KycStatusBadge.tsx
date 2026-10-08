@@ -1,10 +1,12 @@
+// ui-metadata-migration: static labels and UI notices only
+import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import { KycDocumentStatus } from './kyc.types';
 
 const STATUS_LABEL: Record<KycDocumentStatus, string> = {
-  none: 'ยังไม่ได้ส่ง',
-  pending: 'รอตรวจสอบ',
-  approved: 'ยืนยันแล้ว',
-  rejected: 'ถูกปฏิเสธ',
+  get none(){return __uiText("ยังไม่ได้ส่ง");},
+  get pending(){return __uiText("รอตรวจสอบ");},
+  get approved(){return __uiText("ยืนยันแล้ว");},
+  get rejected(){return __uiText("ถูกปฏิเสธ");},
 };
 
 const STATUS_CLASS: Record<KycDocumentStatus, string> = {

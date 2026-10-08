@@ -3,6 +3,8 @@ import { Button, Empty, ErrorText, Loading, Page, PageHeader, Panel, PanelHead, 
 import { api, Paginated, ReservationRow, ordersApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUSES = ['', 'held', 'confirmed', 'released', 'expired', 'failed', 'reconcile'];
 
 function remainingHint(expiresAt: string | null): string | null {
@@ -14,6 +16,7 @@ function remainingHint(expiresAt: string | null): string | null {
 }
 
 export function Reservations() {
+  __useUiLocale();
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
   const pageSize = 20;
@@ -43,18 +46,18 @@ export function Reservations() {
   return (
     <Page>
       <PageHeader
-        title="Reservations"
-        subtitle="Stock holds created during checkout — held, confirmed, released, or expired."
-        actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
+        title={__uiText("Reservations")}
+        subtitle={__uiText("Stock holds created during checkout — held, confirmed, released, or expired.")}
+        actions={<Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("Refresh")}</Button>}
       />
 
       <Panel>
         <PanelHead
-          title={`${total.toLocaleString()} total`}
+          title={__uiText("{0} total", {"0": total.toLocaleString()})}
           actions={
             <Select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} className="w-48">
               {STATUSES.map((s) => (
-                <option key={s} value={s}>{s || 'all statuses'}</option>
+                <option key={s} value={s}>{s || __uiText("all statuses")}</option>
               ))}
             </Select>
           }
@@ -64,21 +67,21 @@ export function Reservations() {
         {loading && !data ? (
           <Loading />
         ) : !data?.items.length ? (
-          <Empty>No reservations yet.</Empty>
+          <Empty>{__uiText("No reservations yet.")}</Empty>
         ) : (
           <>
             <Table>
               <THead>
-                <TH>SKU</TH>
-                <TH>Qty</TH>
-                <TH>Mode</TH>
-                <TH>Status</TH>
-                <TH>External ref</TH>
-                <TH>Expires</TH>
-                <TH>Promised</TH>
-                <TH>Fail reason</TH>
-                <TH>Order</TH>
-                <TH>Actions</TH>
+                <TH>{__uiText("SKU")}</TH>
+                <TH>{__uiText("Qty")}</TH>
+                <TH>{__uiText("Mode")}</TH>
+                <TH>{__uiText("Status")}</TH>
+                <TH>{__uiText("External ref")}</TH>
+                <TH>{__uiText("Expires")}</TH>
+                <TH>{__uiText("Promised")}</TH>
+                <TH>{__uiText("Fail reason")}</TH>
+                <TH>{__uiText("Order")}</TH>
+                <TH>{__uiText("Actions")}</TH>
               </THead>
               <TBody>
                 {data.items.map((r) => {
@@ -102,10 +105,10 @@ export function Reservations() {
                           variant="ghost"
                           size="sm"
                           disabled={r.status !== 'held' || busy === r.orderId}
-                          title="Releases ALL held reservations on this order"
+                          title={__uiText("Releases ALL held reservations on this order")}
                           onClick={() => release(r.orderId)}
                         >
-                          {busy === r.orderId ? '…' : 'Release'}
+                          {busy === r.orderId ? '…' : __uiText("Release")}
                         </Button>
                       </TD>
                     </TR>

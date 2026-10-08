@@ -1,3 +1,6 @@
+import { uiText as __uiText } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import type { SegmentDefinition, UserSegmentRuleType } from '@josh/shared-api';
 import type { ResolvedSegmentUser } from './segment-user-list.helpers';
 
@@ -38,53 +41,52 @@ export const RULE_TYPE_OPTIONS: Array<{
   label: string;
   description: string;
 }> = [
-  { value: 'guest', label: 'ผู้เยี่ยมชม (Guest)', description: 'ผู้เยี่ยมชมที่ยังไม่ได้เข้าสู่ระบบ' },
-  { value: 'member', label: 'สมาชิก (Member)', description: 'ผู้ใช้ที่เข้าสู่ระบบแล้ว' },
-  { value: 'staff', label: 'พนักงาน (Staff)', description: 'พนักงานภายใน (role = staff)' },
-  { value: 'role', label: 'บทบาทผู้ใช้ (Role)', description: 'กรองตาม role ของผู้ใช้ เช่น customer, staff' },
-  { value: 'custype', label: 'ประเภทลูกค้า (Custype)', description: 'กรองตามประเภทลูกค้า (custype)' },
-  { value: 'has_company', label: 'มีข้อมูลบริษัท (Has Company)', description: 'ผู้ใช้ที่มีข้อมูลบริษัท' },
+  { value: 'guest', get label(){return uiText("ผู้เยี่ยมชม (Guest)");}, get description(){return uiText("ผู้เยี่ยมชมที่ยังไม่ได้เข้าสู่ระบบ");} },
+  { value: 'member', get label(){return uiText("สมาชิก (Member)");}, get description(){return uiText("ผู้ใช้ที่เข้าสู่ระบบแล้ว");} },
+  { value: 'staff', get label(){return uiText("พนักงาน (Staff)");}, get description(){return uiText("พนักงานภายใน (role = staff)");} },
+  { value: 'role', get label(){return uiText("บทบาทผู้ใช้ (Role)");}, get description(){return uiText("กรองตาม role ของผู้ใช้ เช่น customer, staff");} },
+  { value: 'custype', get label(){return uiText("ประเภทลูกค้า (Custype)");}, get description(){return uiText("กรองตามประเภทลูกค้า (custype)");} },
+  { value: 'has_company', get label(){return uiText("มีข้อมูลบริษัท (Has Company)");}, get description(){return uiText("ผู้ใช้ที่มีข้อมูลบริษัท");} },
   {
     value: 'min_order_count',
-    label: 'จำนวนออเดอร์ขั้นต่ำ',
-    description: 'จำนวนออเดอร์ขั้นต่ำ (เลือกช่วงวันย้อนหลังได้)',
+    get label(){return uiText("จำนวนออเดอร์ขั้นต่ำ");},
+    get description(){return uiText("จำนวนออเดอร์ขั้นต่ำ (เลือกช่วงวันย้อนหลังได้)");},
   },
   {
     value: 'no_order_days',
-    label: 'ไม่สั่งซื้อเกิน X วัน',
-    description: 'ไม่มีออเดอร์ใหม่เกินจำนวนวันที่กำหนด',
+    get label(){return uiText("ไม่สั่งซื้อเกิน X วัน");},
+    get description(){return uiText("ไม่มีออเดอร์ใหม่เกินจำนวนวันที่กำหนด");},
   },
   {
     value: 'min_order_value',
-    label: 'มูลค่าออเดอร์รวมขั้นต่ำ',
-    description: 'มูลค่าออเดอร์รวมไม่ต่ำกว่าที่กำหนด',
+    get label(){return uiText("มูลค่าออเดอร์รวมขั้นต่ำ");},
+    get description(){return uiText("มูลค่าออเดอร์รวมไม่ต่ำกว่าที่กำหนด");},
   },
   {
     value: 'max_order_value',
-    label: 'มูลค่าออเดอร์รวมไม่เกิน',
-    description: 'มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด',
+    get label(){return uiText("มูลค่าออเดอร์รวมไม่เกิน");},
+    get description(){return uiText("มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด");},
   },
   {
     value: 'first_visit',
-    label: 'เข้าเว็บครั้งแรก (First Visit)',
-    description:
-      'อุปกรณ์ที่เพิ่งเข้าเว็บครั้งแรกภายใน X ชม. (ใช้กับ Banner Targeting — guest ก็เข้าเงื่อนไขได้)',
+    get label(){return uiText("เข้าเว็บครั้งแรก (First Visit)");},
+    get description(){return uiText("อุปกรณ์ที่เพิ่งเข้าเว็บครั้งแรกภายใน X ชม. (ใช้กับ Banner Targeting — guest ก็เข้าเงื่อนไขได้)");},
   },
-  { value: 'cuisine', label: 'ประเภทร้าน (Cuisine)', description: 'กรองตามประเภทร้านที่ขาย' },
+  { value: 'cuisine', get label(){return uiText("ประเภทร้าน (Cuisine)");}, get description(){return uiText("กรองตามประเภทร้านที่ขาย");} },
   {
     value: 'cuisine_parent',
-    label: 'ประเภทร้าน (Cuisine)',
-    description: 'กรองตามกลุ่มประเภทร้าน (รูปแบบเดิม)',
+    get label(){return uiText("ประเภทร้าน (Cuisine)");},
+    get description(){return uiText("กรองตามกลุ่มประเภทร้าน (รูปแบบเดิม)");},
   },
   {
     value: 'registered_between',
-    label: 'วันที่สมัครอยู่ในช่วง (Registered Between)',
-    description: 'วันที่สมัครอยู่ในช่วงที่กำหนด',
+    get label(){return uiText("วันที่สมัครอยู่ในช่วง (Registered Between)");},
+    get description(){return uiText("วันที่สมัครอยู่ในช่วงที่กำหนด");},
   },
   {
     value: 'manual_user_list',
-    label: 'รายชื่อลูกค้า (Manual List)',
-    description: 'ระบุลูกค้าเองด้วยไฟล์ CSV หรือวางรายชื่อ',
+    get label(){return uiText("รายชื่อลูกค้า (Manual List)");},
+    get description(){return uiText("ระบุลูกค้าเองด้วยไฟล์ CSV หรือวางรายชื่อ");},
   },
 ];
 
@@ -143,7 +145,7 @@ export function canSaveManualUserList(status: ManualUsersLoadStatus): boolean {
  * deleted users) — they'll be silently dropped from `user_ids` on save unless the admin knows. */
 export function manualUsersNotFoundWarning(notFoundCount: number): string | null {
   return notFoundCount > 0
-    ? `มี ${notFoundCount} รายการที่ไม่พบผู้ใช้แล้ว — จะถูกนำออกเมื่อบันทึก`
+    ? __uiText("มี {0} รายการที่ไม่พบผู้ใช้แล้ว — จะถูกนำออกเมื่อบันทึก",{"0":notFoundCount})
     : null;
 }
 
@@ -341,37 +343,33 @@ export function summarizeRuleConfig(
     case 'has_company':
       return '—';
     case 'role':
-      return `roles: ${(config.roles as string[] | undefined)?.join(', ') ?? '-'}`;
+      return __uiText("roles: {0}",{"0":(config.roles as string[] | undefined)?.join(', ') ?? '-'});
     case 'custype':
-      return `custypes: ${(config.custypes as string[] | undefined)?.join(', ') ?? '-'}`;
+      return __uiText("custypes: {0}",{"0":(config.custypes as string[] | undefined)?.join(', ') ?? '-'});
     case 'min_order_count':
-      return `min ${config.min ?? 1}${
-        config.within_days ? ` ภายใน ${config.within_days} วัน` : ''
-      }`;
+      return __uiText("min {0}{1}",{"0":config.min ?? 1,"1":config.within_days ? __uiText(" ภายใน {0} วัน",{"0":config.within_days}) : ''});
     case 'no_order_days':
-      return `ไม่สั่งเกิน ${config.days ?? 30} วัน`;
+      return __uiText("ไม่สั่งเกิน {0} วัน",{"0":config.days ?? 30});
     case 'min_order_value':
-      return `มูลค่ารวม ≥ ${config.min_value ?? 0}${
-        config.within_days ? ` ภายใน ${config.within_days} วัน` : ''
-      }`;
+      return __uiText("มูลค่ารวม ≥ {0}{1}",{"0":config.min_value ?? 0,"1":config.within_days ? __uiText(" ภายใน {0} วัน",{"0":config.within_days}) : ''});
     case 'max_order_value':
-      return `มูลค่ารวม < ${config.max_value ?? 0}${
-        config.within_days ? ` ภายใน ${config.within_days} วัน` : ''
-      }`;
+      return __uiText("มูลค่ารวม < {0}{1}",{"0":config.max_value ?? 0,"1":config.within_days ? __uiText(" ภายใน {0} วัน",{"0":config.within_days}) : ''});
     case 'first_visit':
-      return `เพิ่งเข้าครั้งแรกภายใน ${config.withinHours ?? 24} ชม.`;
+      return __uiText("เพิ่งเข้าครั้งแรกภายใน {0} ชม.",{"0":config.withinHours ?? 24});
     case 'cuisine': {
       const cuisineCount = (config.cuisine_ids as string[] | undefined)?.length ?? 0;
       const parentCount = (config.parent_ids as string[] | undefined)?.length ?? 0;
-      return `${parentCount} กลุ่ม, ${cuisineCount} ประเภทร้าน`;
+      return __uiText("{0} กลุ่ม, {1} ประเภทร้าน",{"0":parentCount,"1":cuisineCount});
     }
     case 'cuisine_parent':
-      return `${(config.parent_ids as string[] | undefined)?.length ?? 0} กลุ่มประเภทร้าน`;
+      return __uiText("{0} กลุ่มประเภทร้าน",{"0":(config.parent_ids as string[] | undefined)?.length ?? 0});
     case 'registered_between':
       return `${config.from ?? '…'} → ${config.to ?? '…'}`;
     case 'manual_user_list':
-      return `${(config.user_ids as string[] | undefined)?.length ?? 0} คน`;
+      return __uiText("{0} คน",{"0":(config.user_ids as string[] | undefined)?.length ?? 0});
     default:
       return '—';
   }
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

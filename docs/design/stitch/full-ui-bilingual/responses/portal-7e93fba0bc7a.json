@@ -1,0 +1,203 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "designSystem": {
+              "designSystem": {
+                "displayName": "Siam Developer Commerce",
+                "styleGuidelines": "## Brand & Style\n\nThis design system embodies high-reliability enterprise commerce infrastructure, tailored specifically for Southeast Asian operations and technical integration portals. The aesthetic is strictly minimalist and corporate-modern: clean, rational, and engineered for high-density transactional data, API consoles, and merchant identity management.\n\nThe visual language establishes absolute trust, compliance rigor, and effortless developer efficiency. Visual clutter is eliminated in favor of pristine white content planes, controlled ink-level typography, and precise semantic indicators. It communicates enterprise-grade stability to CTOs, compliance leads, and developers building critical checkout or payment pipelines in bilingual Thai and English ecosystems.\n\n## Layout & Spacing\n\nLayouts adhere to an 8px modular baseline with fluid constraints.\n\n- **Breakpoints & Layout:**\n  - **Desktop (≥ 1024px):** 12-column grid system with 24px gutters. Auth pages utilize a 480px fixed-width central card or a 50/50 split viewport (Left: marketing & technical documentation metrics; Right: auth interaction card).\n  - **Tablet (768px - 1023px):** 8-column layout, 24px margins, stacked containers.\n  - **Mobile (< 768px):** 4-column layout, 16px margins, vertical full-bleed with card borders transitioning to flat edges where screen width is constrained.\n\nVertical spacing follows strict utility pairings: 8px between inputs and their explicit helper text, 16px between field groups, and 32px to 40px bounding card padding.\n\n## Elevation & Depth\n\nThis system avoids heavy drop shadows, relying primarily on crisp 1px borders combined with feather-light ambient diffusion:\n\n- **Border Architecture:** Primary containers, cards, and input panels use a crisp `1px solid #e1e7f0`.\n- **Card Ambient Elevation:** Cards resting on `#f6f8fc` apply `box-shadow: 0 1px 3px 0 rgba(23, 36, 59, 0.04), 0 4px 12px 0 rgba(23, 36, 59, 0.03)`.\n- **Dropdown & Flyout Elevation:** Modals, API key reveal popovers, and language selectors elevate above the canvas using `box-shadow: 0 8px 24px -4px rgba(23, 36, 59, 0.08), 0 2px 6px -1px rgba(23, 36, 59, 0.04)`.\n- **Focus Elevation:** Focused interactive states drop ambient shadows in favor of a 3px outer halo: `box-shadow: 0 0 0 3px rgba(54, 92, 245, 0.16)`.\n\n## Components\n\n### Form Fields & Inputs\n- **Sizing:** Fixed 40px control height (`h-10`) with `padding: 0 12px`.\n- **Default State:** Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, placeholder `#94a3b8`, border radius `8px`.\n- **Focus State:** Border color `#365cf5`, outer glow `0 0 0 3px rgba(54, 92, 245, 0.16)`.\n- **Error State:** Border color `#c2333f`, outer ring `0 0 0 3px rgba(194, 51, 63, 0.12)`.\n- **Bilingual Labels:** Rendered in `label-sm` (`#52627a`), positioned 6px above the field.\n\n### Buttons\n- **Height & Radius:** 40px uniform height (`h-10`), `8px` radius, inline-flex center alignment.\n- **Primary:** Background `#365cf5`, color `#ffffff`, weight 500. Hover: `#284cd6`. Active: `#1e3ebf`.\n- **Secondary / Outline:** Background `#ffffff`, border `1px solid #e1e7f0`, color `#17243b`. Hover: background `#f6f8fc`, border `#cbd5e1`.\n- **Ghost:** Background transparent, color `#52627a`. Hover: background `#edf1fe`, color `#365cf5`.\n\n### Enterprise Authentication Card\n- **Structure:** Width 440px–480px, background `#ffffff`, border `1px solid #e1e7f0`, border radius `12px`, padding 40px (`space-xl`).\n- **Header:** Features the organization mark, product title, and a top-right bilingual locale switch (e.g., \"TH | EN\").\n- **Divider:** 1px horizontal rule (`#e1e7f0`) with centered secondary text badge for SSO or developer credentials separation.\n\n### Status Chips & Badges\n- **Height:** 24px, 8px radius or pill-shape, horizontal padding 8px.\n- **Success:** Background `#e8f5ed`, text `#157347`.\n- **Warning:** Background `#fdf8e6`, text `#b08900`.\n- **Error:** Background `#fbebee`, text `#c2333f`.\n- **Neutral / Dev Tag:** Background `#edf1fe`, text `#365cf5` (for \"TESTMODE\", \"SANDBOX\", or \"v2.1\" indicators).\n\n### Checkboxes & Radios\n- **Size:** 16px × 16px, 4px radius (checkbox) or circular (radio), border `1px solid #cbd5e1`.\n- **Active / Checked:** Background `#365cf5`, border `#365cf5`, with white iconography. Focus rings mirror input specifications.",
+                "theme": {
+                  "bodyFont": "NOTO_SANS",
+                  "bodyFontFamily": "Noto Sans",
+                  "colorMode": "LIGHT",
+                  "colorVariant": "FIDELITY",
+                  "customColor": "#365cf5",
+                  "designMd": "---\nname: Siam Developer Commerce\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#943500'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#bc4600'\n  on-tertiary-container: '#ffebe4'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#ffdbcd'\n  tertiary-fixed-dim: '#ffb597'\n  on-tertiary-fixed: '#360f00'\n  on-tertiary-fixed-variant: '#7e2c00'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  headline-lg:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n  headline-lg-mobile:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 26px\n    fontWeight: '600'\n    lineHeight: 34px\n  headline-md:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n  headline-sm:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n  title-md:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 26px\n  body-md:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-sm:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 20px\n  label-md:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 20px\n  label-sm:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 12px\n    fontWeight: '500'\n    lineHeight: 16px\n  code-sm:\n    fontFamily: JetBrains Mono, monospace\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  gutter: 1.5rem\n  gutter-sm: 1rem\n  margin: 2rem\n  margin-mobile: 1rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2.5rem\n---\n\n## Brand & Style\n\nThis design system embodies high-reliability enterprise commerce infrastructure, tailored specifically for Southeast Asian operations and technical integration portals. The aesthetic is strictly minimalist and corporate-modern: clean, rational, and engineered for high-density transactional data, API consoles, and merchant identity management.\n\nThe visual language establishes absolute trust, compliance rigor, and effortless developer efficiency. Visual clutter is eliminated in favor of pristine white content planes, controlled ink-level typography, and precise semantic indicators. It communicates enterprise-grade stability to CTOs, compliance leads, and developers building critical checkout or payment pipelines in bilingual Thai and English ecosystems.\n\n## Colors\n\nThe palette leverages a cool, low-fatigue foundation with precise functional contrasts:\n\n- **Canvas & Surfaces:**\n  - Base Application Canvas: `#f6f8fc` (soft cool mist, providing subtle separation without gray dullness).\n  - Surface Card / Modal Plane: `#ffffff` (pure white for primary focal areas).\n  - Structural Divider / Border: `#e1e7f0` (low-contrast line architecture).\n\n- **Brand & Interaction:**\n  - Primary Action / Focus: `#365cf5` (high-clarity cobalt blue for primary CTA buttons, active links, and focused input rings).\n  - Primary Hover: `#284cd6`\n  - Primary Surface Active / Subtle: `#edf1fe`\n\n- **Typography & Content:**\n  - Primary Text / Ink: `#17243b` (deep navy ink offering authoritative contrast without absolute black harshness).\n  - Secondary Text / Meta: `#52627a` (slate mid-tone for input labels, descriptions, and timestamps).\n  - Placeholder / Disabled: `#94a3b8`.\n\n- **Semantic Statuses:**\n  - Success: `#157347` (accessible forest green for verified merchant states, webhooks, and 200 OK statuses).\n  - Warning: `#b08900` (deep amber for sandboxed environments, API deprecations, and pending verification).\n  - Error: `#c2333f` (direct crimson for failed transactions, field validation errors, and invalid API credentials).\n\n## Typography\n\nThe type system harmonizes Latin and Thai script through a unified typographic cadence. Thai text uses **Noto Sans Thai** (looped/modernized execution) paired with **Inter** for Latin strings and numerals.\n\n### Dual-Script Guidelines\n- Thai glyph ascenders and tone marks require extended line heights: all standard body sizes maintain at least a `1.5x` to `1.6x` line-height ratio to eliminate clipping on tone marks (`ไม้เอก`, `ไม้โท`, `ไม้หัก`).\n- Thai text displays naturally without artificial letter spacing (`letter-spacing: 0`). Never apply tracking or justification to Thai paragraphs.\n- Numerical values, API tokens, HTTP verbs, and parameter tables default to monospace (`JetBrains Mono`) or `Inter` tabular figures (`tnum`).\n\n## Layout & Spacing\n\nLayouts adhere to an 8px modular baseline with fluid constraints.\n\n- **Breakpoints & Layout:**\n  - **Desktop (≥ 1024px):** 12-column grid system with 24px gutters. Auth pages utilize a 480px fixed-width central card or a 50/50 split viewport (Left: marketing & technical documentation metrics; Right: auth interaction card).\n  - **Tablet (768px - 1023px):** 8-column layout, 24px margins, stacked containers.\n  - **Mobile (< 768px):** 4-column layout, 16px margins, vertical full-bleed with card borders transitioning to flat edges where screen width is constrained.\n\nVertical spacing follows strict utility pairings: 8px between inputs and their explicit helper text, 16px between field groups, and 32px to 40px bounding card padding.\n\n## Elevation & Depth\n\nThis system avoids heavy drop shadows, relying primarily on crisp 1px borders combined with feather-light ambient diffusion:\n\n- **Border Architecture:** Primary containers, cards, and input panels use a crisp `1px solid #e1e7f0`.\n- **Card Ambient Elevation:** Cards resting on `#f6f8fc` apply `box-shadow: 0 1px 3px 0 rgba(23, 36, 59, 0.04), 0 4px 12px 0 rgba(23, 36, 59, 0.03)`.\n- **Dropdown & Flyout Elevation:** Modals, API key reveal popovers, and language selectors elevate above the canvas using `box-shadow: 0 8px 24px -4px rgba(23, 36, 59, 0.08), 0 2px 6px -1px rgba(23, 36, 59, 0.04)`.\n- **Focus Elevation:** Focused interactive states drop ambient shadows in favor of a 3px outer halo: `box-shadow: 0 0 0 3px rgba(54, 92, 245, 0.16)`.\n\n## Shapes\n\nThe geometry balances soft usability with crisp enterprise precision:\n\n- **Cards & Primary Modules:** Fixed at `12px` border radius (`rounded-lg`), producing clean, professional containers that frame developer consoles and authentication frames.\n- **Form Controls & Interactive Elements:** Exactly `8px` border radius (`rounded-md`). Applies universally across buttons, single-line input fields, dropdown triggers, and badge tags.\n- **Small Indicators & Avatars:** Pills and circular avatars use full roundedness (`9999px`).\n\n## Components\n\n### Form Fields & Inputs\n- **Sizing:** Fixed 40px control height (`h-10`) with `padding: 0 12px`.\n- **Default State:** Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, placeholder `#94a3b8`, border radius `8px`.\n- **Focus State:** Border color `#365cf5`, outer glow `0 0 0 3px rgba(54, 92, 245, 0.16)`.\n- **Error State:** Border color `#c2333f`, outer ring `0 0 0 3px rgba(194, 51, 63, 0.12)`.\n- **Bilingual Labels:** Rendered in `label-sm` (`#52627a`), positioned 6px above the field.\n\n### Buttons\n- **Height & Radius:** 40px uniform height (`h-10`), `8px` radius, inline-flex center alignment.\n- **Primary:** Background `#365cf5`, color `#ffffff`, weight 500. Hover: `#284cd6`. Active: `#1e3ebf`.\n- **Secondary / Outline:** Background `#ffffff`, border `1px solid #e1e7f0`, color `#17243b`. Hover: background `#f6f8fc`, border `#cbd5e1`.\n- **Ghost:** Background transparent, color `#52627a`. Hover: background `#edf1fe`, color `#365cf5`.\n\n### Enterprise Authentication Card\n- **Structure:** Width 440px–480px, background `#ffffff`, border `1px solid #e1e7f0`, border radius `12px`, padding 40px (`space-xl`).\n- **Header:** Features the organization mark, product title, and a top-right bilingual locale switch (e.g., \"TH | EN\").\n- **Divider:** 1px horizontal rule (`#e1e7f0`) with centered secondary text badge for SSO or developer credentials separation.\n\n### Status Chips & Badges\n- **Height:** 24px, 8px radius or pill-shape, horizontal padding 8px.\n- **Success:** Background `#e8f5ed`, text `#157347`.\n- **Warning:** Background `#fdf8e6`, text `#b08900`.\n- **Error:** Background `#fbebee`, text `#c2333f`.\n- **Neutral / Dev Tag:** Background `#edf1fe`, text `#365cf5` (for \"TESTMODE\", \"SANDBOX\", or \"v2.1\" indicators).\n\n### Checkboxes & Radios\n- **Size:** 16px × 16px, 4px radius (checkbox) or circular (radio), border `1px solid #cbd5e1`.\n- **Active / Checked:** Background `#365cf5`, border `#365cf5`, with white iconography. Focus rings mirror input specifications.",
+                  "font": "INTER",
+                  "headlineFont": "INTER",
+                  "headlineFontFamily": "Inter",
+                  "labelFont": "INTER",
+                  "labelFontFamily": "Inter",
+                  "namedColors": {
+                    "background": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "error_container": "#ffdad6",
+                    "inverse_on_surface": "#ecf0ff",
+                    "inverse_primary": "#b9c3ff",
+                    "inverse_surface": "#243048",
+                    "on_background": "#0e1b32",
+                    "on_error": "#ffffff",
+                    "on_error_container": "#93000a",
+                    "on_primary": "#ffffff",
+                    "on_primary_container": "#ededff",
+                    "on_primary_fixed": "#001257",
+                    "on_primary_fixed_variant": "#0034c0",
+                    "on_secondary": "#ffffff",
+                    "on_secondary_container": "#54647c",
+                    "on_secondary_fixed": "#0b1c31",
+                    "on_secondary_fixed_variant": "#38485e",
+                    "on_surface": "#0e1b32",
+                    "on_surface_variant": "#444655",
+                    "on_tertiary": "#ffffff",
+                    "on_tertiary_container": "#ffebe4",
+                    "on_tertiary_fixed": "#360f00",
+                    "on_tertiary_fixed_variant": "#7e2c00",
+                    "outline": "#747687",
+                    "outline_variant": "#c4c5d8",
+                    "primary": "#0a3fdc",
+                    "primary_container": "#365cf5",
+                    "primary_fixed": "#dde1ff",
+                    "primary_fixed_dim": "#b9c3ff",
+                    "secondary": "#4f5f77",
+                    "secondary_container": "#d0e1fd",
+                    "secondary_fixed": "#d3e3ff",
+                    "secondary_fixed_dim": "#b7c7e3",
+                    "surface": "#f9f9ff",
+                    "surface_bright": "#f9f9ff",
+                    "surface_container": "#e8eeff",
+                    "surface_container_high": "#e0e8ff",
+                    "surface_container_highest": "#d7e2ff",
+                    "surface_container_low": "#f1f3ff",
+                    "surface_container_lowest": "#ffffff",
+                    "surface_dim": "#cddaf9",
+                    "surface_tint": "#214ce7",
+                    "surface_variant": "#d7e2ff",
+                    "tertiary": "#943500",
+                    "tertiary_container": "#bc4600",
+                    "tertiary_fixed": "#ffdbcd",
+                    "tertiary_fixed_dim": "#ffb597"
+                  },
+                  "overrideNeutralColor": "#17243b",
+                  "overridePrimaryColor": "#365cf5",
+                  "overrideSecondaryColor": "#52627a",
+                  "roundness": "ROUND_EIGHT",
+                  "spacing": {
+                    "gutter": "1.5rem",
+                    "gutter-sm": "1rem",
+                    "margin": "2rem",
+                    "margin-mobile": "1rem",
+                    "space-lg": "1.5rem",
+                    "space-md": "1rem",
+                    "space-sm": "0.5rem",
+                    "space-xl": "2.5rem",
+                    "space-xs": "0.25rem"
+                  },
+                  "spacingScale": 2,
+                  "typography": {
+                    "body-lg": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "16px",
+                      "fontWeight": "400",
+                      "lineHeight": "26px"
+                    },
+                    "body-md": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "14px",
+                      "fontWeight": "400",
+                      "lineHeight": "22px"
+                    },
+                    "body-sm": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "20px"
+                    },
+                    "code-sm": {
+                      "fontFamily": "JetBrains Mono, monospace",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "headline-lg": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "32px",
+                      "fontWeight": "600",
+                      "lineHeight": "40px"
+                    },
+                    "headline-lg-mobile": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "26px",
+                      "fontWeight": "600",
+                      "lineHeight": "34px"
+                    },
+                    "headline-md": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "24px",
+                      "fontWeight": "600",
+                      "lineHeight": "32px"
+                    },
+                    "headline-sm": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "20px",
+                      "fontWeight": "600",
+                      "lineHeight": "28px"
+                    },
+                    "label-md": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "14px",
+                      "fontWeight": "500",
+                      "lineHeight": "20px"
+                    },
+                    "label-sm": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "12px",
+                      "fontWeight": "500",
+                      "lineHeight": "16px"
+                    },
+                    "title-md": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "16px",
+                      "fontWeight": "600",
+                      "lineHeight": "24px"
+                    }
+                  }
+                }
+              },
+              "name": "assets/a146f59f56c644eeaf5a252b92447d93",
+              "version": "1"
+            },
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2048",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Y1ZWNjYWRiZGQzYTQ4MmE5YTI4OGI4ZjZiNGZlNWU5EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM0Mjk4NzI0Nzk0MjgyNTc1Mzkz&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/4298724794282575393/files/e76da7d67d4c41748a2025b4b917cb55"
+            },
+            "id": "078d2438acf04a5e8cbd44bc83f302b4",
+            "name": "projects/4298724794282575393/screens/078d2438acf04a5e8cbd44bc83f302b4",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XckK7kB36KIbvXlK78ttCwyDjPutAYL_ebFYW5jlReifuEYTtI4JH4osLdLZ_agNOuELTIGqg2jwJvzL0-nqJl1QFlBoWOTRWoFUfz3x0c6JX2Ed0bN4W3QGTz3HSYlCoPUowiPTUu9KfCSKT1cS4STW2aoY9Nl6khbUaiT3ngs-tmelsHIs7H0w24g8zjCOzaBh-U-PUX0RLy2BWnBKrKofw-GJcg166ZgNCKj7_ZkI_wz6eK6xsnDTU",
+              "name": "projects/4298724794282575393/files/209d1a9ff66c41e098fe040644b320d1"
+            },
+            "theme": {},
+            "title": "Commerce Platform - Developer Portal Login",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบหน้าจอ **Developer Portal — Login** สำหรับ **Commerce Platform** ตามข้อกำหนดระบบและดีไซน์ซิสเต็มเรียบร้อยแล้ว:\n\n### จุดเด่นและการนำไปใช้ (Design & Specifications)\n1. **Route & Layout Spec:**\n   - Route identifier: `portal-7e93fba0bc7a`, URL: `/login`, Component: `Login`, View Type: `screen`\n   - จัดวางรูปแบบ Centered Card Form (480px width) บน Light canvas `#f6f8fc` พร้อมขอบมุมการ์ด 12px และปุ่มควบคุมความสูง 40px\n   - สีหลัก Primary blue `#365cf5`, หมึกตัวอักษร `#17243b`, ข้อความรอง `#52627a`, ขอบ `#e1e7f0`\n\n2. **ระบบความปลอดภัยและการปฏิบัติการ (Developer Portal Context):**\n   - แสดงสถานะ Sandbox/Production พร้อมระบุ `ข้อมูลตัวอย่าง` ชัดเจน\n   - ป้ายกำกับมาตรฐานความปลอดภัย **PCI-DSS Level 1 & PDPA Compliant**\n   - ตัวเลือกลัดไปยังเอกสาร API Reference (`v2.4`) และ Merchant Console\n\n3. **Bilingual & Export Requirements:**\n   - รองรับตัวสลับภาษา **ไทย / English** แบบ interactive ในตัว\n   - มี `<script id=\"commerce-ui-translations\" type=\"application/json\">` ซ่อนอยู่อย่างครบถ้วนทุกคีย์ตาม UI Copy Catalogue ที่กำหนดสำหรับส่งมอบให้ทีม Frontend React (`@cp/ui`) ไปใช้งานต่อทันที"
+    },
+    {
+      "suggestion": "ดูหน้าจอ Dashboard พอร์ทัลนักพัฒนา (Status & Webhooks)"
+    },
+    {
+      "suggestion": "ดูหน้าจอจัดการ API Keys และการสร้างคีย์ใหม่"
+    },
+    {
+      "suggestion": "ปรับเปลี่ยนสถานะการแจ้งเตือน Validation Error เพิ่มเติม"
+    }
+  ],
+  "projectId": "4298724794282575393",
+  "sessionId": "14040571723024497429"
+}

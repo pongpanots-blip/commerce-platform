@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   formatBangkokDateTime,
   resolvePromotionSkus,
@@ -8,6 +9,8 @@ import React, { useEffect, useState } from 'react';
 import PromotionProductSetPicker from '../coupon/PromotionProductSetPicker';
 
 /** A legacy mechanic's own SKU (name from GET :id). */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type MechanicSku = { sku: string; name: string | null };
 
 // The coupon picker's snapshot chips are fed by coupon-shaped snapshots (SKU ids + set_updated_at)
@@ -47,6 +50,7 @@ type Resolved = { items: PromotionProductItem[]; inactive: string[] };
 
 /** The SKUs in one set's snapshot. Names / "ปิดขาย" / "ไม่พบ" come from resolving the SKUs (as the coupon chip does). */
 function SetItemsView({ skus }: { skus: string[] }) {
+  __useUiLocale();
   const [state, setState] = useState<Resolved | 'loading' | 'error'>(skus.length ? 'loading' : { items: [], inactive: [] });
   const skuKey = skus.join('|');
 
@@ -62,12 +66,12 @@ function SetItemsView({ skus }: { skus: string[] }) {
   }, [skuKey]);
 
   const title = `SKU ในชุดนี้ (${skus.length.toLocaleString('th-TH')} รายการ)`;
-  if (state === 'loading') return <p className="mt-2 text-xs text-gray-400">กำลังโหลดรายการ...</p>;
+  if (state === 'loading') return <p className="mt-2 text-xs text-gray-400">{__uiText("กำลังโหลดรายการ...")}</p>;
   if (state === 'error') {
     return (
       <>
         <SkuRows title={title} rows={skus.map((sku) => ({ sku }))} />
-        <p className="mt-1 text-xs text-red-600">โหลดชื่อสินค้าไม่สำเร็จ</p>
+        <p className="mt-1 text-xs text-red-600">{__uiText("โหลดชื่อสินค้าไม่สำเร็จ")}</p>
       </>
     );
   }
@@ -95,13 +99,14 @@ function ChangedNotice({
   useLatest: boolean;
   onUseLatestChange: (next: boolean) => void;
 }) {
+  __useUiLocale();
   const radioName = React.useId();
   const { added_skus: added, removed_skus: removed } = latest;
   return (
     <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-      <p className="font-medium">ชุดนี้ถูกแก้ไขหลังบันทึกโปร</p>
-      {added.length > 0 && <p>+ เพิ่ม: {added.join(', ')}</p>}
-      {removed.length > 0 && <p>− ลบ: {removed.join(', ')}</p>}
+      <p className="font-medium">{__uiText("ชุดนี้ถูกแก้ไขหลังบันทึกโปร")}</p>
+      {added.length > 0 && <p>{__uiText("+ เพิ่ม: ")}{added.join(', ')}</p>}
+      {removed.length > 0 && <p>{__uiText("− ลบ: ")}{removed.join(', ')}</p>}
       <div className="mt-1.5 flex flex-col gap-1">
         <label className="flex items-center gap-1.5">
           <input
@@ -110,7 +115,7 @@ function ChangedNotice({
             checked={!useLatest}
             onChange={() => onUseLatestChange(false)}
           />
-          <span>ใช้รายการเดิม (บันทึกเมื่อ {formatBangkokDateTime(snapshottedAt, 'th')})</span>
+          <span>{__uiText("ใช้รายการเดิม (บันทึกเมื่อ ")}{formatBangkokDateTime(snapshottedAt, 'th')})</span>
         </label>
         <label className="flex items-center gap-1.5">
           <input
@@ -119,7 +124,7 @@ function ChangedNotice({
             checked={useLatest}
             onChange={() => onUseLatestChange(true)}
           />
-          <span>ใช้รายการล่าสุด</span>
+          <span>{__uiText("ใช้รายการล่าสุด")}</span>
         </label>
       </div>
     </div>
@@ -137,6 +142,7 @@ function SavedSetChip({
   onUseLatestChange: (next: boolean) => void;
   onRemove: () => void;
 }) {
+  __useUiLocale();
   const [viewOpen, setViewOpen] = useState(false);
   const itemsId = React.useId();
   return (
@@ -148,11 +154,11 @@ function SavedSetChip({
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <span className="font-medium text-gray-800">{set.name}</span>
-          <span className="ml-1.5 text-gray-400">({set.item_count} รายการ)</span>
+          <span className="ml-1.5 text-gray-400">({set.item_count} {__uiText(" รายการ)")}</span>
         </div>
         <button
           type="button"
-          aria-label={`นำ ${set.name} ออก`}
+          aria-label={__uiText("นำ {0} ออก", {"0": set.name})}
           onClick={onRemove}
           className="shrink-0 text-gray-400 hover:text-red-500"
         >
@@ -160,13 +166,13 @@ function SavedSetChip({
         </button>
       </div>
       <p className="mt-1 text-gray-500">
-        บันทึกรายการเมื่อ {formatBangkokDateTime(set.snapshotted_at, 'th')}
+        {__uiText("บันทึกรายการเมื่อ ")}{formatBangkokDateTime(set.snapshotted_at, 'th')}
       </p>
       {set.set_deleted && (
-        <p className="mt-1 text-rose-600">ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้</p>
+        <p className="mt-1 text-rose-600">{__uiText("ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้")}</p>
       )}
       {set.set_inactive && (
-        <p className="mt-1 text-amber-700">ชุดต้นทางปิดใช้งาน — โปรยังใช้รายการที่บันทึกไว้</p>
+        <p className="mt-1 text-amber-700">{__uiText("ชุดต้นทางปิดใช้งาน — โปรยังใช้รายการที่บันทึกไว้")}</p>
       )}
       <button
         type="button"
@@ -175,7 +181,7 @@ function SavedSetChip({
         onClick={() => setViewOpen((prev) => !prev)}
         className="mt-1 text-blue-600 underline hover:text-blue-700"
       >
-        {viewOpen ? 'ซ่อนรายการ' : 'ดูรายการ'}
+        {viewOpen ? __uiText("ซ่อนรายการ") : __uiText("ดูรายการ")}
       </button>
       <div id={itemsId}>{viewOpen && <SetItemsView skus={set.items.map((item) => item.sku)} />}</div>
       {set.latest && !set.set_deleted && (
@@ -216,6 +222,7 @@ export default function PromotionMechanicProductSets({
   error,
   errorId,
 }: Props) {
+  __useUiLocale();
   const savedIds = new Set(savedSets.map((set) => set.id));
   const keptSavedIds = selectedIds.filter((id) => savedIds.has(id));
   const newIds = selectedIds.filter((id) => !savedIds.has(id));
@@ -242,14 +249,12 @@ export default function PromotionMechanicProductSets({
     <div className="space-y-2">
       {legacy && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-          <p className="font-medium">โปรนี้สร้างแบบเดิม — เลือก Product set เพื่อแปลง</p>
+          <p className="font-medium">{__uiText("โปรนี้สร้างแบบเดิม — เลือก Product set เพื่อแปลง")}</p>
           <p className="mt-1">
-            ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และ Campaign ได้โดยไม่ต้องเลือก Product set
-            แต่ถ้าเลือก Product set ตอนบันทึก SKU และส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก
-          </p>
+            {__uiText("ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และ Campaign ได้โดยไม่ต้องเลือก Product set แต่ถ้าเลือก Product set ตอนบันทึก SKU และส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก")}</p>
           {legacySkus.length > 0 && (
             <SkuRows
-              title={`SKU ของโปรนี้ (${legacySkus.length.toLocaleString('th-TH')} รายการ)`}
+              title={__uiText("SKU ของโปรนี้ ({0} รายการ)", {"0": legacySkus.length.toLocaleString('th-TH')})}
               rows={legacySkus}
             />
           )}
@@ -271,21 +276,20 @@ export default function PromotionMechanicProductSets({
             key={set.id}
             className="flex items-center justify-between gap-2 rounded-lg border border-dashed border-gray-300 p-2.5 text-xs text-gray-500"
           >
-            <span>จะนำ “{set.name}” ออกเมื่อกดบันทึก</span>
+            <span>{__uiText("จะนำ “")}{set.name}{__uiText("” ออกเมื่อกดบันทึก")}</span>
             <button
               type="button"
               onClick={() => onChange([...selectedIds, set.id])}
               className="shrink-0 text-blue-600 underline hover:text-blue-700"
             >
-              ยกเลิกการลบ
-            </button>
+              {__uiText("ยกเลิกการลบ")}</button>
           </div>
         ),
       )}
 
       <PromotionProductSetPicker
-        title="เลือก Product set"
-        hint="ทุก SKU ในชุดที่เลือกได้ส่วนลดเดียวกัน — ระบบคัดลอกรายการ SKU ไว้ตอนกดบันทึก"
+        title={__uiText("เลือก Product set")}
+        hint={__uiText("ทุก SKU ในชุดที่เลือกได้ส่วนลดเดียวกัน — ระบบคัดลอกรายการ SKU ไว้ตอนกดบันทึก")}
         selectedIds={newIds}
         lockedIds={keptSavedIds}
         onChange={handlePick}
@@ -297,7 +301,7 @@ export default function PromotionMechanicProductSets({
       />
       {error && (
         <p id={errorId} className="text-sm text-alert">
-          {error}
+          {(typeof error === 'string' ? __uiText(error) : error)}
         </p>
       )}
     </div>

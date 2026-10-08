@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   formatBangkokDateTime,
   getAdminAuditLogs,
@@ -10,6 +11,8 @@ import { AiOutlineDown } from 'react-icons/ai';
 import { getErrorMessage } from './error-message';
 import { actionLabel, fieldLabel, formatChange, isHiddenField } from './edit-history.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   entityType: AdminAuditEntityType;
   entityId: string;
@@ -25,6 +28,7 @@ type Props = {
  * Data: GET /admin/audit-logs — docs/admin-audit-log-api.md
  */
 export default function EditHistorySection({ entityType, entityId, refreshKey, names }: Props) {
+  __useUiLocale();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<AdminAuditLogItem[]>([]);
   const [page, setPage] = useState(0);
@@ -98,7 +102,7 @@ export default function EditHistorySection({ entityType, entityId, refreshKey, n
           onClick={toggle}
           className="flex w-full items-center justify-between text-left"
         >
-          <span>ประวัติการแก้ไข (History)</span>
+          <span>{__uiText("ประวัติการแก้ไข (History)")}</span>
           <AiOutlineDown
             size={16}
             aria-hidden="true"
@@ -113,17 +117,17 @@ export default function EditHistorySection({ entityType, entityId, refreshKey, n
           <>
             {error && (
               <div role="alert" className="rounded-lg bg-alert-soft p-3 text-sm text-alert">
-                <p>{error}</p>
+                <p>{(typeof error === 'string' ? __uiText(error) : error)}</p>
                 <div className="mt-2">
-                  <Button variant="secondary" text="ลองใหม่" onClick={retry} />
+                  <Button variant="secondary" text={__uiText("ลองใหม่")} onClick={retry} />
                 </div>
               </div>
             )}
             {!error && loading && items.length === 0 && (
-              <p className="text-sm text-ink-muted">กำลังโหลด...</p>
+              <p className="text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</p>
             )}
             {!error && !loading && items.length === 0 && (
-              <p className="text-sm text-ink-muted">ยังไม่มีประวัติการแก้ไข</p>
+              <p className="text-sm text-ink-muted">{__uiText("ยังไม่มีประวัติการแก้ไข")}</p>
             )}
 
             {items.length > 0 && (
@@ -132,7 +136,7 @@ export default function EditHistorySection({ entityType, entityId, refreshKey, n
                   <li key={entry.id} className="space-y-1.5 px-3 py-2.5">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
                       <span className="font-semibold text-ink">
-                        {entry.actor_email ?? 'ไม่ระบุผู้ใช้'}
+                        {entry.actor_email ?? __uiText("ไม่ระบุผู้ใช้")}
                       </span>
                       <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
                         {actionLabel(entry.action)}
@@ -150,7 +154,7 @@ export default function EditHistorySection({ entityType, entityId, refreshKey, n
             {!error && page < totalPages && (
               <Button
                 variant="secondary"
-                text={loading ? 'กำลังโหลด...' : 'โหลดเพิ่ม'}
+                text={loading ? __uiText("กำลังโหลด...") : __uiText("โหลดเพิ่ม")}
                 disabled={loading}
                 onClick={() => void loadMore()}
               />
@@ -163,10 +167,11 @@ export default function EditHistorySection({ entityType, entityId, refreshKey, n
 }
 
 function ChangeList({ changes, names }: { changes: AdminAuditLogItem['changes']; names?: Record<string, string> }) {
+  __useUiLocale();
   const shown = changes.filter((change) => !isHiddenField(change.field));
   // Only internal columns changed: keep the entry (someone did save) but say so instead of listing them.
   if (shown.length === 0 && changes.length > 0) {
-    return <p className="text-xs text-ink-muted">แก้ไขข้อมูลภายใน</p>;
+    return <p className="text-xs text-ink-muted">{__uiText("แก้ไขข้อมูลภายใน")}</p>;
   }
   return (
     <ul className="space-y-0.5 text-xs text-ink-secondary">

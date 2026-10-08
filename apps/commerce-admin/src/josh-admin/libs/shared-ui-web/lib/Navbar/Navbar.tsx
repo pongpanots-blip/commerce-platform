@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function getUserFromToken() {
   const token = localStorage.getItem('token');
   if (!token) return null;
@@ -31,6 +33,7 @@ type NavbarProps = {
 };
 
 export function Navbar({ onMenuClick, menuOpen, onLogout }: NavbarProps) {
+  __useUiLocale();
   const [user, setUser] = useState<{ fullName: string; email: string } | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -66,7 +69,7 @@ export function Navbar({ onMenuClick, menuOpen, onLogout }: NavbarProps) {
           <button
             type="button"
             onClick={onMenuClick}
-            aria-label={menuOpen ? 'ปิดเมนู' : 'เปิดเมนู'}
+            aria-label={menuOpen ? __uiText("ปิดเมนู") : __uiText("เปิดเมนู")}
             aria-expanded={menuOpen}
             className={`rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 ${
               menuOpen ? 'bg-gray-100 text-gray-900' : ''
@@ -90,7 +93,7 @@ export function Navbar({ onMenuClick, menuOpen, onLogout }: NavbarProps) {
           </div>
 
           <span className="hidden text-sm font-semibold text-gray-700 sm:block">
-            {user ? user.fullName : 'กำลังโหลด...'} ▾
+            {user ? user.fullName : __uiText("กำลังโหลด...")} ▾
           </span>
         </button>
 
@@ -100,7 +103,7 @@ export function Navbar({ onMenuClick, menuOpen, onLogout }: NavbarProps) {
 
             <div className="absolute right-0 z-20 mt-2 w-48 animate-in fade-in slide-in-from-top-2 rounded-xl border border-gray-200 bg-white py-1 shadow-xl duration-100">
               <div className="border-b border-gray-100 px-4 py-2 text-xs text-gray-400">
-                {user ? user.email : 'josh.admin@saas.com'}
+                {user ? user.email : __uiText("josh.admin@saas.com")}
               </div>
 
               <button
@@ -108,8 +111,7 @@ export function Navbar({ onMenuClick, menuOpen, onLogout }: NavbarProps) {
                 onClick={handleLogout}
                 className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
               >
-                ออกจากระบบ
-              </button>
+                {__uiText("ออกจากระบบ")}</button>
             </div>
           </>
         )}

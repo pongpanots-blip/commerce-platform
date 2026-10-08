@@ -1,3 +1,6 @@
+import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import { apiClient } from './api-client';
 import type { MarketingCreativeChannels } from './marketing-creative.schema';
 
@@ -98,16 +101,16 @@ export const MARKETING_EXPRESSION_FIELD_OPTIONS: Array<{
   value: MarketingExpressionField;
   label: string;
 }> = [
-  { value: 'cart.still_open', label: 'ตะกร้ายังมีของอยู่' },
-  { value: 'cart.item_count', label: 'จำนวนชิ้นในตะกร้า' },
-  { value: 'cart.total', label: 'ยอดรวมตะกร้า' },
-  { value: 'still_no_order', label: 'ยังไม่เคยสั่งซื้อ' },
-  { value: 'user.order_count', label: 'จำนวนออเดอร์ทั้งหมด' },
-  { value: 'segment.in', label: 'อยู่ใน Segment' },
-  { value: 'time.in_schedule', label: 'อยู่ในช่วงเวลาที่กำหนด' },
-  { value: 'time.hour', label: 'ชั่วโมงปัจจุบัน (0-23)' },
-  { value: 'time.dow', label: 'วันในสัปดาห์ (0=อาทิตย์)' },
-  { value: 'page.views', label: 'จำนวนการเข้าชมหน้า' },
+  { value: 'cart.still_open', get label(){return uiText("ตะกร้ายังมีของอยู่");} },
+  { value: 'cart.item_count', get label(){return uiText("จำนวนชิ้นในตะกร้า");} },
+  { value: 'cart.total', get label(){return uiText("ยอดรวมตะกร้า");} },
+  { value: 'still_no_order', get label(){return uiText("ยังไม่เคยสั่งซื้อ");} },
+  { value: 'user.order_count', get label(){return uiText("จำนวนออเดอร์ทั้งหมด");} },
+  { value: 'segment.in', get label(){return uiText("อยู่ใน Segment");} },
+  { value: 'time.in_schedule', get label(){return uiText("อยู่ในช่วงเวลาที่กำหนด");} },
+  { value: 'time.hour', get label(){return uiText("ชั่วโมงปัจจุบัน (0-23)");} },
+  { value: 'time.dow', get label(){return uiText("วันในสัปดาห์ (0=อาทิตย์)");} },
+  { value: 'page.views', get label(){return uiText("จำนวนการเข้าชมหน้า");} },
 ];
 
 export const MARKETING_EXPRESSION_OPS_BY_TYPE: Record<
@@ -115,29 +118,29 @@ export const MARKETING_EXPRESSION_OPS_BY_TYPE: Record<
   Array<{ value: MarketingExpressionOperator; label: string }>
 > = {
   boolean: [
-    { value: '==', label: 'เท่ากับ' },
-    { value: '!=', label: 'ไม่เท่ากับ' },
+    { value: '==', get label(){return uiText("เท่ากับ");} },
+    { value: '!=', get label(){return uiText("ไม่เท่ากับ");} },
   ],
   number: [
-    { value: '==', label: '=' },
-    { value: '!=', label: '≠' },
-    { value: '>', label: '>' },
-    { value: '>=', label: '≥' },
-    { value: '<', label: '<' },
-    { value: '<=', label: '≤' },
+    { value: '==', get label(){return uiText("=");} },
+    { value: '!=', get label(){return uiText("≠");} },
+    { value: '>', get label(){return uiText(">");} },
+    { value: '>=', get label(){return uiText("≥");} },
+    { value: '<', get label(){return uiText("<");} },
+    { value: '<=', get label(){return uiText("≤");} },
   ],
   segment: [
-    { value: '==', label: 'อยู่ใน' },
-    { value: '!=', label: 'ไม่อยู่ใน' },
+    { value: '==', get label(){return uiText("อยู่ใน");} },
+    { value: '!=', get label(){return uiText("ไม่อยู่ใน");} },
   ],
 };
 
 /** @deprecated Prefer the select-based builder; chips kept for backward compat. */
 export const MARKETING_EXPRESSION_CHIPS: Array<{ label: string; snippet: string }> = [
-  { label: 'ตะกร้ายังไม่ว่าง', snippet: 'cart.still_open == true' },
-  { label: 'ยอดตะกร้า ≥', snippet: 'cart.total >= ' },
-  { label: 'ยังไม่เคยสั่งซื้อ', snippet: 'still_no_order == true' },
-  { label: 'อยู่ใน segment', snippet: 'segment.in == "' },
+  { get label() { return __uiText("ตะกร้ายังไม่ว่าง"); }, snippet: 'cart.still_open == true' },
+  { get label() { return __uiText("ยอดตะกร้า ≥"); }, snippet: 'cart.total >= ' },
+  { get label() { return __uiText("ยังไม่เคยสั่งซื้อ"); }, snippet: 'still_no_order == true' },
+  { get label() { return __uiText("อยู่ใน segment"); }, snippet: 'segment.in == "' },
 ];
 
 /** Hard cap locked by the if/else amendment — activation fails above this count. */
@@ -398,17 +401,17 @@ export type MarketingTemplateVariant = {
  * (`company`), `cuisine_name` from their shop's cuisine.
  */
 export const MARKETING_TEMPLATE_VARIABLES: Array<{ key: string; label: string }> = [
-  { key: 'user_name', label: 'ชื่อลูกค้า' },
-  { key: 'user_first_name', label: 'ชื่อจริงลูกค้า' },
-  { key: 'user_last_name', label: 'นามสกุลลูกค้า' },
-  { key: 'user_email', label: 'อีเมลลูกค้า' },
-  { key: 'user_phone', label: 'เบอร์โทรลูกค้า' },
-  { key: 'user_custype', label: 'ประเภทลูกค้า (custype)' },
-  { key: 'company_name', label: 'ชื่อบริษัท/ร้าน' },
-  { key: 'company_phone', label: 'เบอร์โทรบริษัท' },
-  { key: 'company_credit_limit', label: 'วงเงินเครดิตบริษัท' },
-  { key: 'cuisine_name', label: 'ประเภทร้าน (Cuisine)' },
-  { key: 'today', label: 'วันที่วันนี้' },
+  { key: 'user_name', get label() { return __uiText("ชื่อลูกค้า"); } },
+  { key: 'user_first_name', get label() { return __uiText("ชื่อจริงลูกค้า"); } },
+  { key: 'user_last_name', get label() { return __uiText("นามสกุลลูกค้า"); } },
+  { key: 'user_email', get label() { return __uiText("อีเมลลูกค้า"); } },
+  { key: 'user_phone', get label() { return __uiText("เบอร์โทรลูกค้า"); } },
+  { key: 'user_custype', get label() { return __uiText("ประเภทลูกค้า (custype)"); } },
+  { key: 'company_name', get label() { return __uiText("ชื่อบริษัท/ร้าน"); } },
+  { key: 'company_phone', get label() { return __uiText("เบอร์โทรบริษัท"); } },
+  { key: 'company_credit_limit', get label() { return __uiText("วงเงินเครดิตบริษัท"); } },
+  { key: 'cuisine_name', get label() { return __uiText("ประเภทร้าน (Cuisine)"); } },
+  { key: 'today', get label() { return __uiText("วันที่วันนี้"); } },
 ];
 
 export type MarketingNotifyTemplate = {

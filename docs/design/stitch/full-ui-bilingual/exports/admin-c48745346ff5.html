@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot · intent rules - Commerce Platform</title>
+  <!-- Google Fonts: Noto Sans Thai & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: '#365cf5',
+            'primary-hover': '#2a4bd9',
+            ink: '#17243b',
+            secondary: '#52627a',
+            success: '#157347',
+            warning: '#b08900',
+            error: '#c2333f',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', Inter, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    /* Modal backdrop animation */
+    .modal-backdrop {
+      background: rgba(23, 36, 59, 0.45);
+      backdrop-filter: blur(2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- INVISIBLE COMMERCE UI TRANSLATIONS DICTIONARY (Required exact export specification) -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "สถานะ": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "แก้ไข": {
+      "th": "แก้ไข",
+      "en": "Edit"
+    },
+    "ลบ": {
+      "th": "ลบ",
+      "en": "Delete"
+    },
+    "จัดการ": {
+      "th": "จัดการ",
+      "en": "Actions"
+    },
+    "กำลังโหลด...": {
+      "th": "กำลังโหลด...",
+      "en": "Loading..."
+    },
+    "Active": {
+      "th": "ใช้งาน (Active)",
+      "en": "Active"
+    },
+    "ยืนยันการลบ Intent Rule นี้?": {
+      "th": "ยืนยันการลบ Intent Rule นี้?",
+      "en": "Confirm deletion of this Intent Rule?"
+    },
+    "Intent": {
+      "th": "เจตนาผู้ใช้ (Intent)",
+      "en": "Intent"
+    },
+    "Pattern (regex)": {
+      "th": "รูปแบบนิพจน์ (Regex Pattern)",
+      "en": "Pattern (regex)"
+    },
+    "Inactive": {
+      "th": "ปิดใช้งาน (Inactive)",
+      "en": "Inactive"
+    },
+    "Bot Intent Rules": {
+      "th": "กฎเจตนาบอท (Bot Intent Rules)",
+      "en": "Bot Intent Rules"
+    },
+    "เพิ่ม Intent Rule": {
+      "th": "เพิ่ม Intent Rule",
+      "en": "Add Intent Rule"
+    },
+    "ข้อความ — Privacy (privacy)": {
+      "th": "ข้อความ — นโยบายความเป็นส่วนตัว (Privacy)",
+      "en": "Message — Privacy (privacy)"
+    },
+    "ความสูง (px)": {
+      "th": "ความสูง (px)",
+      "en": "Height (px)"
+    },
+    "จำนวนแบรนด์": {
+      "th": "จำนวนแบรนด์",
+      "en": "Brand Count"
+    },
+    "เช่น J1234-S": {
+      "th": "เช่น J1234-S",
+      "en": "e.g. J1234-S"
+    },
+    "ตั้งค่าขั้นสูง": {
+      "th": "ตั้งค่าขั้นสูง",
+      "en": "Advanced Settings"
+    },
+    "บันทึก {0}: {1}? josh บันทึกจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit": {
+      "th": "บันทึก {0}: {1}? josh บันทึกจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit",
+      "en": "Save {0}: {1}? Josh performs actual save on your behalf — recorded under your email in audit."
+    },
+    "เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)": {
+      "th": "เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)",
+      "en": "Open this coupon detail page (currently inactive)"
+    },
+    "มีรอบส่งเปิด": {
+      "th": "มีรอบส่งเปิด",
+      "en": "Open delivery cycle active"
+    },
+    "ยอดเงินคืน {0}": {
+      "th": "ยอดเงินคืน {0}",
+      "en": "Refund amount {0}"
+    },
+    "รวม (นาที)": {
+      "th": "รวม (นาที)",
+      "en": "Total (minutes)"
+    },
+    "รายชื่อลูกค้า B2B · แสดง {0} รายการต่อหน้า{1}{2}{3}": {
+      "th": "รายชื่อลูกค้า B2B · แสดง {0} รายการต่อหน้า{1}{2}{3}",
+      "en": "B2B Customer List · Showing {0} items per page{1}{2}{3}"
+    },
+    "ลิงก์สำรอง (Fallback URL)": {
+      "th": "ลิงก์สำรอง (Fallback URL)",
+      "en": "Fallback URL"
+    },
+    "ส่ง": {
+      "th": "ส่ง",
+      "en": "Send"
+    },
+    "สินค้า ({0})": {
+      "th": "สินค้า ({0})",
+      "en": "Products ({0})"
+    },
+    "โหลด queue overview ไม่สำเร็จ": {
+      "th": "โหลด queue overview ไม่สำเร็จ",
+      "en": "Failed to load queue overview"
+    },
+    "กำหนดเอง": {
+      "th": "กำหนดเอง",
+      "en": "Custom"
+    }
+  }
+  </script>
+
+  <div class="flex flex-1 min-h-screen">
+
+    <!-- 256px STANDARD SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col shrink-0 select-none">
+      <!-- App Brand Logo & Switcher -->
+      <div class="h-16 px-5 flex items-center border-b border-[#e1e7f0] gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-sm">
+          CP
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-sm text-[#17243b] leading-tight">Commerce Platform</span>
+          <span class="text-xs text-[#52627a] font-normal leading-tight">ระบบจัดการศูนย์ส่งและสาขา</span>
+        </div>
+      </div>
+
+      <!-- Navigation Work Areas (7 Areas) -->
+      <div class="px-4 py-3">
+        <span class="text-[11px] font-semibold text-[#52627a] uppercase tracking-wider">พื้นที่ทำงานหลัก (7 สายงาน)</span>
+      </div>
+
+      <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+        <!-- 1. สินค้าและสต็อก -->
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-[#52627a] rounded-lg hover:bg-slate-50 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          <span data-i18n="nav.inventory">สินค้าและสต็อก</span>
+        </a>
+
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-[#52627a] rounded-lg hover:bg-slate-50 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span data-i18n="nav.orders">ออเดอร์และการเงิน</span>
+        </a>
+
+        <!-- 3. ลูกค้าและบริการ (Active Area) -->
+        <div class="pt-1 pb-1">
+          <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-semibold text-[#365cf5] bg-[#365cf5]/10 rounded-lg">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#365cf5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <span data-i18n="nav.customers">ลูกค้าและบริการ</span>
+            </div>
+            <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+          </a>
+
+          <!-- Sub items under ลูกค้าและบริการ -->
+          <div class="pl-7 pr-2 py-1.5 space-y-1">
+            <a href="#" class="block px-3 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-slate-50 transition-colors">
+              ลูกค้าแพลตฟอร์ม
+            </a>
+            <a href="#" class="block px-3 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-slate-50 transition-colors">
+              จัดการผู้ใช้ (All Users)
+            </a>
+            <a href="#" class="block px-3 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-slate-50 transition-colors">
+              KYC — ยืนยันตัวตน
+            </a>
+            <a href="#" class="block px-3 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-slate-50 transition-colors">
+              แชตกับลูกค้า (Live chat)
+            </a>
+            <!-- Active Submenu Item: Bot Intent Rules -->
+            <a href="#" class="block px-3 py-1.5 text-xs font-semibold text-[#365cf5] bg-[#365cf5]/15 rounded-md flex items-center justify-between">
+              <span>บอท &amp; Intent Rules</span>
+              <span class="text-[10px] bg-[#365cf5] text-white px-1.5 py-0.2 rounded font-mono font-normal">NLP</span>
+            </a>
+            <a href="#" class="block px-3 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-slate-50 transition-colors">
+              งานบริการลูกค้า (CS Desk)
+            </a>
+            <a href="#" class="block px-3 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-slate-50 transition-colors">
+              ข้อร้องเรียนและบริการ
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. การตลาด -->
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-[#52627a] rounded-lg hover:bg-slate-50 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+          </svg>
+          <span data-i18n="nav.marketing">การตลาด</span>
+        </a>
+
+        <!-- 5. รายงานและข้อมูล -->
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-[#52627a] rounded-lg hover:bg-slate-50 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span data-i18n="nav.reports">รายงานและข้อมูล</span>
+        </a>
+
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-[#52627a] rounded-lg hover:bg-slate-50 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <span data-i18n="nav.connections">ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-[#52627a] rounded-lg hover:bg-slate-50 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span data-i18n="nav.settings">ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+
+      <!-- Developer Portal footer anchor -->
+      <div class="p-4 border-t border-[#e1e7f0] bg-slate-50/50">
+        <a href="#" class="text-xs font-mono font-medium text-[#52627a] hover:text-[#365cf5] flex items-center gap-1.5">
+          <span class="font-bold">&lt;/&gt;</span> Developer Portal
+        </a>
+        <div class="text-[11px] font-mono text-[#52627a]/70 mt-1 truncate">
+          route: admin-c48745346ff5
+        </div>
+        <div class="text-[11px] font-mono text-[#52627a]/70 truncate">
+          /j/bot/intent-rules
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN APP CANVAS & WORKSPACE -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+      <!-- TOP CONTEXTUAL HEADER -->
+      <header class="h-16 bg-white border-b border-[#e1e7f0] px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
+        <!-- Search bar with page-specific scope -->
+        <div class="relative w-96">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="pageSearchInput"
+            placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+            class="block w-full pl-9 pr-4 py-2 border border-[#e1e7f0] rounded-lg text-sm placeholder-[#52627a]/70 focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition-all bg-[#f6f8fc]/50"
+            oninput="handleFilterTable()"
+          >
+        </div>
+
+        <!-- Right Utilities & Profile -->
+        <div class="flex items-center gap-4">
+          <!-- Prototype Data Marker (Required for platform realism) -->
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            <span data-i18n="badge.sample">ข้อมูลตัวอย่าง</span>
+          </div>
+
+          <!-- Bilingual Switcher: ไทย / English (Functional) -->
+          <div class="inline-flex items-center rounded-lg border border-[#e1e7f0] p-0.5 bg-slate-50 text-xs font-medium" role="group">
+            <button
+              type="button"
+              id="langThBtn"
+              onclick="setLanguage('th')"
+              class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm font-semibold transition-all">
+              ไทย
+            </button>
+            <button
+              type="button"
+              id="langEnBtn"
+              onclick="setLanguage('en')"
+              class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">
+              English
+            </button>
+          </div>
+
+          <!-- User session profile badge -->
+          <div class="flex items-center gap-3 pl-2 border-l border-[#e1e7f0]">
+            <div class="w-8 h-8 rounded-full bg-[#365cf5]/10 text-[#365cf5] font-semibold text-xs flex items-center justify-center border border-[#365cf5]/20">
+              จน
+            </div>
+            <div class="flex flex-col text-left">
+              <span class="text-xs font-semibold text-[#17243b]">จินดา นวลอนันต์</span>
+              <span class="text-[11px] text-[#52627a]">หัวหน้าทีมบริการลูกค้า (CS)</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT CONTAINER (1240px Centered Content Area) -->
+      <main class="flex-1 p-8 bg-[#f6f8fc]">
+        <div class="max-w-[1240px] mx-auto space-y-6">
+
+          <!-- BREADCRUMB & CONTEXT -->
+          <nav class="flex items-center gap-2 text-xs text-[#52627a]" aria-label="Breadcrumb">
+            <span data-i18n="nav.customers">ลูกค้าและบริการ</span>
+            <svg class="w-3.5 h-3.5 text-[#52627a]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="text-[#17243b] font-medium" data-i18n="Bot Intent Rules">Bot Intent Rules</span>
+          </nav>
+
+          <!-- PAGE TITLE & PRIMARY ACTIONS -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-3">
+                <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="Bot Intent Rules">
+                  Bot Intent Rules
+                </h1>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-[#365cf5]/10 text-[#365cf5] border border-[#365cf5]/20">
+                  /j/bot/intent-rules
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                  NLP Engine Online
+                </span>
+              </div>
+              <p class="text-sm text-[#52627a] mt-1" data-i18n="page.description">
+                จัดการกฎการตรวจจับเจตนาคำถามลูกค้าอัตโนมัติ สำหรับ Commerce Bot ในช่องทางแชตและข้อความ
+              </p>
+            </div>
+
+            <!-- Header Action Controls -->
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                onclick="refreshRulesData()"
+                class="inline-flex items-center gap-2 px-3.5 py-2 border border-[#e1e7f0] bg-white text-[#17243b] rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm h-10">
+                <svg id="refreshIcon" class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span data-i18n="action.refresh">รีเฟรชข้อมูล</span>
+              </button>
+
+              <!-- Primary Action (Lead with the task: Create Intent Rule) -->
+              <button
+                type="button"
+                onclick="openCreateRuleModal()"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-[#365cf5] hover:bg-[#2a4bd9] text-white rounded-lg text-sm font-semibold transition-colors shadow-sm h-10">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span data-i18n="เพิ่ม Intent Rule">เพิ่ม Intent Rule</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUMMARY KPI STATS TILES -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Metric 1: Total Rules -->
+            <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-[#52627a] uppercase" data-i18n="stat.total">กฎทั้งหมดในระบบ</span>
+                <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+              </div>
+              <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-2xl font-bold text-[#17243b]" id="statTotalCount">6</span>
+                <span class="text-xs text-[#52627a]">rules</span>
+              </div>
+              <div class="mt-2 text-xs text-[#52627a] flex items-center justify-between border-t border-slate-100 pt-2">
+                <span>ความแม่นยำ NLP</span>
+                <span class="font-medium text-emerald-600">98.4%</span>
+              </div>
+            </div>
+
+            <!-- Metric 2: Active Rules -->
+            <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-[#52627a] uppercase" data-i18n="stat.active">เปิดใช้งาน (Active)</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              </div>
+              <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-2xl font-bold text-emerald-700" id="statActiveCount">5</span>
+                <span class="text-xs text-[#52627a]">พร้อมตอบทันที</span>
+              </div>
+              <div class="mt-2 text-xs text-[#52627a] flex items-center justify-between border-t border-slate-100 pt-2">
+                <span>อัตราการตอบกลับสำเร็จ</span>
+                <span class="font-medium text-[#17243b]">87.2%</span>
+              </div>
+            </div>
+
+            <!-- Metric 3: Inactive Rules -->
+            <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-[#52627a] uppercase" data-i18n="stat.inactive">ปิดใช้งาน (Inactive)</span>
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              </div>
+              <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-2xl font-bold text-[#52627a]" id="statInactiveCount">1</span>
+                <span class="text-xs text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded font-medium">รอปรับปรุงคำ</span>
+              </div>
+              <div class="mt-2 text-xs text-[#52627a] flex items-center justify-between border-t border-slate-100 pt-2">
+                <span>ทบทวนโดยทีม CS</span>
+                <span class="font-medium text-[#52627a]">ตรวจล่าสุดเมื่อวาน</span>
+              </div>
+            </div>
+
+            <!-- Metric 4: Fallback Routing -->
+            <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-[#52627a] uppercase" data-i18n="stat.fallback">ส่งต่อ CS Desk (Fallback)</span>
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              </div>
+              <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-2xl font-bold text-amber-600">12.8%</span>
+                <span class="text-xs text-[#52627a]">ของคำถามทั้งหมด</span>
+              </div>
+              <div class="mt-2 text-xs text-[#52627a] flex items-center justify-between border-t border-slate-100 pt-2">
+                <span>เฉลี่ยเวลารอส่งต่อ</span>
+                <span class="font-medium text-[#17243b]">&lt; 15 วินาที</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BANNER / CONTEXT GUIDELINE NOTE -->
+          <div class="bg-blue-50/70 border border-blue-200/80 rounded-xl p-4 flex items-start gap-3 text-xs text-[#17243b]">
+            <svg class="w-5 h-5 text-[#365cf5] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="space-y-0.5">
+              <div class="font-semibold text-blue-900" data-i18n="guide.title">แนวทางระบบตรวจจับ Intent ของ Commerce Bot</div>
+              <div class="text-[#52627a] leading-relaxed" data-i18n="guide.desc">
+                ระบบจะประเมินรูปแบบข้อความ Regex และคำสำคัญของลูกค้าตามลำดับความสำคัญ (Priority Order) หากไม่ตรงกับ Intent ใด บอทจะนำทางไปยัง <span class="font-semibold text-blue-800" data-i18n="ลิงก์สำรอง (Fallback URL)">ลิงก์สำรอง (Fallback URL)</span> หรือส่งต่อแชตให้เจ้าหน้าที่ CS Desk โดยอัตโนมัติ
+              </div>
+            </div>
+          </div>
+
+          <!-- MAIN INTENT RULES TABLE CARD -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+
+            <!-- Table Header Filters and Toolbar -->
+            <div class="p-5 border-b border-[#e1e7f0] flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white">
+              <div class="flex items-center gap-3">
+                <!-- Status Filter Pills -->
+                <div class="inline-flex rounded-lg border border-[#e1e7f0] p-1 bg-slate-50 text-xs font-medium">
+                  <button
+                    type="button"
+                    id="filterAllBtn"
+                    onclick="filterByStatus('all')"
+                    class="px-3 py-1.5 rounded-md bg-white text-[#17243b] font-semibold shadow-sm transition-all">
+                    ทั้งหมด <span class="ml-1 text-[11px] text-[#52627a]" id="filterAllCount">(6)</span>
+                  </button>
+                  <button
+                    type="button"
+                    id="filterActiveBtn"
+                    onclick="filterByStatus('active')"
+                    class="px-3 py-1.5 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">
+                    Active <span class="ml-1 text-[11px] text-emerald-700">(5)</span>
+                  </button>
+                  <button
+                    type="button"
+                    id="filterInactiveBtn"
+                    onclick="filterByStatus('inactive')"
+                    class="px-3 py-1.5 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">
+                    Inactive <span class="ml-1 text-[11px] text-[#52627a]">(1)</span>
+                  </button>
+                </div>
+
+                <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+                <!-- Scope Search Warning (Explicit: searches current page) -->
+                <span class="text-xs text-[#52627a] hidden lg:inline" data-i18n="table.searchnotice">
+                  * การค้นหาและตัวกรองมีผลเฉพาะรายการในหน้าปัจจุบัน
+                </span>
+              </div>
+
+              <!-- Regex Tester & Action tools -->
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  onclick="openRegexTesterModal()"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#e1e7f0] text-xs font-medium rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 transition-colors">
+                  <svg class="w-3.5 h-3.5 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  <span>ทดสอบ Regex Playground</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Responsive Table Container -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm text-[#17243b] border-collapse" id="rulesTable">
+                <thead>
+                  <tr class="bg-slate-50/70 border-b border-[#e1e7f0] text-xs font-semibold text-[#52627a]">
+                    <th scope="col" class="py-3.5 px-5 w-12 text-center">#</th>
+                    <th scope="col" class="py-3.5 px-5 min-w-[200px]" data-i18n="Intent">Intent</th>
+                    <th scope="col" class="py-3.5 px-5 min-w-[300px]" data-i18n="Pattern (regex)">Pattern (regex)</th>
+                    <th scope="col" class="py-3.5 px-5 min-w-[160px]">Action Response</th>
+                    <th scope="col" class="py-3.5 px-5 min-w-[120px]" data-i18n="สถานะ">สถานะ</th>
+                    <th scope="col" class="py-3.5 px-5 w-24 text-center">Priority</th>
+                    <th scope="col" class="py-3.5 px-5 w-32 text-right" data-i18n="จัดการ">จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e1e7f0] text-sm" id="rulesTableBody">
+
+                  <!-- Row 1: ORDER_STATUS -->
+                  <tr class="hover:bg-slate-50/60 transition-colors rule-row" data-status="active" data-id="1">
+                    <td class="py-3.5 px-5 text-center text-xs font-mono text-[#52627a]">1</td>
+                    <td class="py-3.5 px-5">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-[#17243b]">check_order_status</span>
+                        <span class="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200/60 font-mono">ORDER</span>
+                      </div>
+                      <div class="text-xs text-[#52627a] mt-0.5">สอบถามสถานะคำสั่งซื้อหรือเลขพัสดุจัดส่ง</div>
+                    </td>
+                    <td class="py-3.5 px-5 font-mono text-xs">
+                      <div class="bg-slate-100/90 text-slate-800 px-2.5 py-1.5 rounded border border-slate-200 max-w-sm truncate inline-block" title="(ออเดอร์|คำสั่งซื้อ|พัสดุ|เลขแทร็ก|ติดตามพัสดุ|ord-\d+)">
+                        (ออเดอร์|คำสั่งซื้อ|พัสดุ|เลขแทร็ก|ติดตามพัสดุ|ord-\d+)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <div class="text-xs font-medium text-[#17243b] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                        <span>API Lookup: Order Tracking</span>
+                      </div>
+                      <div class="text-[11px] text-[#52627a] font-mono mt-0.5">/v1/orders/lookup</div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span data-i18n="Active">Active</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-5 text-center font-mono text-xs font-semibold text-[#17243b]">
+                      P1
+                    </td>
+                    <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onclick="openEditRuleModal('check_order_status', '(ออเดอร์|คำสั่งซื้อ|พัสดุ|เลขแทร็ก|ติดตามพัสดุ|ord-\\d+)', 'active', 1)"
+                          class="px-2.5 py-1 text-xs font-medium text-[#365cf5] hover:bg-[#365cf5]/10 rounded transition-colors" data-i18n="แก้ไข">
+                          แก้ไข
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onclick="confirmDeleteRule('check_order_status')"
+                          class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded transition-colors" data-i18n="ลบ">
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 2: B2B_PRODUCT_INQUIRY -->
+                  <tr class="hover:bg-slate-50/60 transition-colors rule-row" data-status="active" data-id="2">
+                    <td class="py-3.5 px-5 text-center text-xs font-mono text-[#52627a]">2</td>
+                    <td class="py-3.5 px-5">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-[#17243b]">catalog_inquiry</span>
+                        <span class="text-[10px] bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200/60 font-mono">PRODUCT</span>
+                      </div>
+                      <div class="text-xs text-[#52627a] mt-0.5">ขอดูแคตตาล็อกสินค้า ราคาส่งยกลัง</div>
+                    </td>
+                    <td class="py-3.5 px-5 font-mono text-xs">
+                      <div class="bg-slate-100/90 text-slate-800 px-2.5 py-1.5 rounded border border-slate-200 max-w-sm truncate inline-block" title="(ราคาส่ง|ขอแคตตาล็อก|สั่งยกลัง|สต็อกสินค้า|ราคายกลัง)">
+                        (ราคาส่ง|ขอแคตตาล็อก|สั่งยกลัง|สต็อกสินค้า|ราคายกลัง)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <div class="text-xs font-medium text-[#17243b] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                        <span>Send Card: B2B Catalog</span>
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">แนบลิงก์สินค้า wholesale</div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span data-i18n="Active">Active</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-5 text-center font-mono text-xs font-semibold text-[#17243b]">
+                      P2
+                    </td>
+                    <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onclick="openEditRuleModal('catalog_inquiry', '(ราคาส่ง|ขอแคตตาล็อก|สั่งยกลัง|สต็อกสินค้า|ราคายกลัง)', 'active', 2)"
+                          class="px-2.5 py-1 text-xs font-medium text-[#365cf5] hover:bg-[#365cf5]/10 rounded transition-colors" data-i18n="แก้ไข">
+                          แก้ไข
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onclick="confirmDeleteRule('catalog_inquiry')"
+                          class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded transition-colors" data-i18n="ลบ">
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 3: TAX_INVOICE_REQUEST -->
+                  <tr class="hover:bg-slate-50/60 transition-colors rule-row" data-status="active" data-id="3">
+                    <td class="py-3.5 px-5 text-center text-xs font-mono text-[#52627a]">3</td>
+                    <td class="py-3.5 px-5">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-[#17243b]">tax_invoice_request</span>
+                        <span class="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200/60 font-mono">FINANCE</span>
+                      </div>
+                      <div class="text-xs text-[#52627a] mt-0.5">ขอใบกำกับภาษีเต็มรูป e-Tax หรือแก้ไขบิล</div>
+                    </td>
+                    <td class="py-3.5 px-5 font-mono text-xs">
+                      <div class="bg-slate-100/90 text-slate-800 px-2.5 py-1.5 rounded border border-slate-200 max-w-sm truncate inline-block" title="(ใบกำกับภาษี|ใบกำกับ|e-tax|หัก ณ ที่จ่าย|ใบเสร็จ)">
+                        (ใบกำกับภาษี|ใบกำกับ|e-tax|หัก ณ ที่จ่าย|ใบเสร็จ)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <div class="text-xs font-medium text-[#17243b] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Form: e-Tax Portal Form</span>
+                      </div>
+                      <div class="text-[11px] text-[#52627a] font-mono mt-0.5">/checkout/tax-invoice</div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span data-i18n="Active">Active</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-5 text-center font-mono text-xs font-semibold text-[#17243b]">
+                      P3
+                    </td>
+                    <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onclick="openEditRuleModal('tax_invoice_request', '(ใบกำกับภาษี|ใบกำกับ|e-tax|หัก ณ ที่จ่าย|ใบเสร็จ)', 'active', 3)"
+                          class="px-2.5 py-1 text-xs font-medium text-[#365cf5] hover:bg-[#365cf5]/10 rounded transition-colors" data-i18n="แก้ไข">
+                          แก้ไข
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onclick="confirmDeleteRule('tax_invoice_request')"
+                          class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded transition-colors" data-i18n="ลบ">
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 4: PRIVACY_POLICY (Matching catalog: ข้อความ — Privacy (privacy)) -->
+                  <tr class="hover:bg-slate-50/60 transition-colors rule-row" data-status="active" data-id="4">
+                    <td class="py-3.5 px-5 text-center text-xs font-mono text-[#52627a]">4</td>
+                    <td class="py-3.5 px-5">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-[#17243b]">privacy_policy</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">LEGAL</span>
+                      </div>
+                      <div class="text-xs text-[#52627a] mt-0.5" data-i18n="ข้อความ — Privacy (privacy)">ข้อความ — Privacy (privacy)</div>
+                    </td>
+                    <td class="py-3.5 px-5 font-mono text-xs">
+                      <div class="bg-slate-100/90 text-slate-800 px-2.5 py-1.5 rounded border border-slate-200 max-w-sm truncate inline-block" title="(นโยบายความเป็นส่วนตัว|privacy policy|ข้อมูลส่วนบุคคล|pdpa)">
+                        (นโยบายความเป็นส่วนตัว|privacy policy|ข้อมูลส่วนบุคคล|pdpa)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <div class="text-xs font-medium text-[#17243b] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                        <span>Auto-Text: PDPA Overview</span>
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">ลิงก์ข้อกำหนดความเป็นส่วนตัว</div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span data-i18n="Active">Active</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-5 text-center font-mono text-xs font-semibold text-[#17243b]">
+                      P4
+                    </td>
+                    <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onclick="openEditRuleModal('privacy_policy', '(นโยบายความเป็นส่วนตัว|privacy policy|ข้อมูลส่วนบุคคล|pdpa)', 'active', 4)"
+                          class="px-2.5 py-1 text-xs font-medium text-[#365cf5] hover:bg-[#365cf5]/10 rounded transition-colors" data-i18n="แก้ไข">
+                          แก้ไข
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onclick="confirmDeleteRule('privacy_policy')"
+                          class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded transition-colors" data-i18n="ลบ">
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 5: HUMAN_HANDOFF -->
+                  <tr class="hover:bg-slate-50/60 transition-colors rule-row" data-status="active" data-id="5">
+                    <td class="py-3.5 px-5 text-center text-xs font-mono text-[#52627a]">5</td>
+                    <td class="py-3.5 px-5">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-[#17243b]">agent_handoff</span>
+                        <span class="text-[10px] bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200/60 font-mono">SUPPORT</span>
+                      </div>
+                      <div class="text-xs text-[#52627a] mt-0.5">ต้องการคุยกับเจ้าหน้าที่ฝ่ายขายหรือ CS จริง</div>
+                    </td>
+                    <td class="py-3.5 px-5 font-mono text-xs">
+                      <div class="bg-slate-100/90 text-slate-800 px-2.5 py-1.5 rounded border border-slate-200 max-w-sm truncate inline-block" title="(ติดต่อคน|คุยกับเจ้าหน้าที่|ติดต่อแอดมิน|พนักงาน|โทรหา|call center)">
+                        (ติดต่อคน|คุยกับเจ้าหน้าที่|ติดต่อแอดมิน|พนักงาน|โทรหา|call center)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <div class="text-xs font-medium text-[#17243b] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span>Route to CS Desk Queue</span>
+                      </div>
+                      <div class="text-[11px] text-[#52627a] font-mono mt-0.5">queue: cs_live_tier1</div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        <span data-i18n="Active">Active</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-5 text-center font-mono text-xs font-semibold text-[#17243b]">
+                      P5
+                    </td>
+                    <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onclick="openEditRuleModal('agent_handoff', '(ติดต่อคน|คุยกับเจ้าหน้าที่|ติดต่อแอดมิน|พนักงาน|โทรหา|call center)', 'active', 5)"
+                          class="px-2.5 py-1 text-xs font-medium text-[#365cf5] hover:bg-[#365cf5]/10 rounded transition-colors" data-i18n="แก้ไข">
+                          แก้ไข
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onclick="confirmDeleteRule('agent_handoff')"
+                          class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded transition-colors" data-i18n="ลบ">
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 6: PROMO_CAMPAIGN (Inactive) -->
+                  <tr class="hover:bg-slate-50/60 transition-colors rule-row" data-status="inactive" data-id="6">
+                    <td class="py-3.5 px-5 text-center text-xs font-mono text-[#52627a]">6</td>
+                    <td class="py-3.5 px-5">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold text-[#17243b]">special_discount_tier</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">MARKETING</span>
+                      </div>
+                      <div class="text-xs text-[#52627a] mt-0.5">ส่วนลดพิเศษสมาชิกค้าส่งช่วงเทศกาล (พักชั่วคราว)</div>
+                    </td>
+                    <td class="py-3.5 px-5 font-mono text-xs">
+                      <div class="bg-slate-100/90 text-slate-800 px-2.5 py-1.5 rounded border border-slate-200 max-w-sm truncate inline-block" title="(ส่วนลดพิเศษ|โค้ดลด|โปรโมชั่นวันนี้|ลดราคาพิเศษ|tier discount)">
+                        (ส่วนลดพิเศษ|โค้ดลด|โปรโมชั่นวันนี้|ลดราคาพิเศษ|tier discount)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <div class="text-xs font-medium text-[#52627a] flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                        <span>Send Voucher Promo Code</span>
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5" data-i18n="เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)">
+                        เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-[#52627a] border border-slate-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                        <span data-i18n="Inactive">Inactive</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-5 text-center font-mono text-xs font-semibold text-[#52627a]">
+                      P6
+                    </td>
+                    <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onclick="openEditRuleModal('special_discount_tier', '(ส่วนลดพิเศษ|โค้ดลด|โปรโมชั่นวันนี้|ลดราคาพิเศษ|tier discount)', 'inactive', 6)"
+                          class="px-2.5 py-1 text-xs font-medium text-[#365cf5] hover:bg-[#365cf5]/10 rounded transition-colors" data-i18n="แก้ไข">
+                          แก้ไข
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onclick="confirmDeleteRule('special_discount_tier')"
+                          class="px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded transition-colors" data-i18n="ลบ">
+                          ลบ
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty State (Hidden unless filtered or no results) -->
+            <div id="tableEmptyState" class="hidden p-12 text-center">
+              <div class="w-12 h-12 rounded-full bg-slate-100 text-[#52627a] mx-auto flex items-center justify-center mb-3">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 class="text-sm font-semibold text-[#17243b]">ไม่พบข้อมูล Intent Rule ในหน้านี้</h3>
+              <p class="text-xs text-[#52627a] mt-1 max-w-sm mx-auto">
+                โปรดตรวจสอบคำค้นหาในช่องค้นหา หรือเลือกตัวกรองสถานะอื่นเพื่อแสดงรายการ
+              </p>
+            </div>
+
+            <!-- Pagination and Page Summary (Consistent Platform Pattern) -->
+            <div class="p-4 border-t border-[#e1e7f0] bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+              <div class="flex items-center gap-1">
+                <span>แสดง</span>
+                <span class="font-semibold text-[#17243b]" id="displayedRowCount">6</span>
+                <span>จากทั้งหมด 6 รายการ (ค้นหาและตัวกรองมีผลเฉพาะหน้าปัจจุบัน)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" disabled class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-[#52627a]/50 cursor-not-allowed">
+                  ก่อนหน้า
+                </button>
+                <span class="px-3 py-1.5 rounded-lg bg-[#365cf5] text-white font-medium">1</span>
+                <button type="button" disabled class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-[#52627a]/50 cursor-not-allowed">
+                  ถัดไป
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SYSTEM INTEGRATION & ADVANCED SETTINGS CARD -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-sm">
+            <div class="flex items-center justify-between pb-4 border-b border-[#e1e7f0]">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-[#52627a]">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-base font-bold text-[#17243b]" data-i18n="ตั้งค่าขั้นสูง">ตั้งค่าขั้นสูง</h2>
+                  <p class="text-xs text-[#52627a]">กำหนดค่าเส้นทางสำรอง (Fallback) และความเข้มข้นของการจับคู่คำ</p>
+                </div>
+              </div>
+
+              <span class="inline-flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Audit Logger: Active (josh)</span>
+              </span>
+            </div>
+
+            <!-- Settings Form Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <!-- Field 1: Fallback URL -->
+              <div>
+                <label class="block text-xs font-semibold text-[#17243b] mb-1.5">
+                  <span data-i18n="ลิงก์สำรอง (Fallback URL)">ลิงก์สำรอง (Fallback URL)</span>
+                  <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="fallbackUrlInput"
+                    value="https://commerce.company.internal/cs/fallback"
+                    class="w-full px-3.5 py-2.5 border border-[#e1e7f0] rounded-lg text-sm text-[#17243b] font-mono focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] bg-slate-50/50"
+                  >
+                </div>
+                <p class="text-xs text-[#52627a] mt-1.5">
+                  เมื่อบอทไม่พบคู่ Regex ที่เข้าเกณฑ์ จะนำทางหรือส่งคำขอไปยัง URL ปลายทางนี้ทันที
+                </p>
+              </div>
+
+              <!-- Field 2: Matching Threshold & Sensitivity -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="block text-xs font-semibold text-[#17243b]">
+                    ค่าความมั่นใจขั้นต่ำของ NLP (Confidence Threshold)
+                  </label>
+                  <span class="text-xs font-mono font-medium text-[#365cf5]" id="thresholdVal">85%</span>
+                </div>
+                <input
+                  type="range"
+                  min="50"
+                  max="98"
+                  value="85"
+                  class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#365cf5]"
+                  oninput="document.getElementById('thresholdVal').innerText = this.value + '%'"
+                >
+                <div class="flex justify-between text-[11px] text-[#52627a] mt-1 font-mono">
+                  <span>50% (จับคู่กว้าง)</span>
+                  <span class="text-[#365cf5] font-semibold">แนะนำ: 85%</span>
+                  <span>98% (เข้มงวด)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sticky-style Actions / Josh Audit notification bar -->
+            <div class="mt-6 pt-4 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs bg-slate-50/60 -mx-6 -mb-6 p-4 rounded-b-xl">
+              <div class="flex items-center gap-2 text-[#52627a]">
+                <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span>josh บันทึกจริงในนามของคุณ — บันทึกอีเมล <code class="font-mono text-[#17243b] font-semibold">jinda.n@company.co.th</code> ไว้ในระบบ audit log</span>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <button
+                  type="button"
+                  onclick="resetFallbackSettings()"
+                  class="px-3.5 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] rounded-lg border border-[#e1e7f0] bg-white transition-colors">
+                  ยกเลิก
+                </button>
+                <button
+                  type="button"
+                  onclick="saveAdvancedSettings()"
+                  class="px-4 py-2 bg-[#365cf5] hover:bg-[#2a4bd9] text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>บันทึกการตั้งค่า</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL 1: ADD / EDIT INTENT RULE DIALOG (Task-based named modal) -->
+  <div id="ruleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="bg-white rounded-xl shadow-2xl border border-[#e1e7f0] w-full max-w-lg overflow-hidden transform transition-all">
+
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#365cf5]/10 text-[#365cf5] flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <div>
+            <h3 id="modalTitle" class="text-base font-bold text-[#17243b]">
+              เพิ่ม Intent Rule
+            </h3>
+            <p class="text-xs text-[#52627a]" id="modalSubtitle">กำหนดพฤติกรรมการตอบสนองอัตโนมัติของบอท</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onclick="closeRuleModal()"
+          class="text-slate-400 hover:text-[#17243b] p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Form Body -->
+      <form id="ruleForm" onsubmit="handleSaveRule(event)" class="p-6 space-y-4">
+        <input type="hidden" id="formRuleId" value="">
+
+        <!-- Intent Code Identifier -->
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            <span>รหัส Intent (Intent Identifier)</span>
+            <span class="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="formIntentName"
+            placeholder="เช่น check_order_status หรือ product_inquiry"
+            required
+            class="w-full px-3.5 py-2.5 border border-[#e1e7f0] rounded-lg text-sm text-[#17243b] font-mono focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5]"
+          >
+          <p class="text-[11px] text-[#52627a] mt-1">ใช้ตัวพิมพ์เล็กและขีดล่าง (snake_case) เพื่อเชื่อมต่อ API</p>
+        </div>
+
+        <!-- Pattern (Regex) Field -->
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            <span data-i18n="Pattern (regex)">Pattern (regex)</span>
+            <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              id="formRegexPattern"
+              placeholder="(คำหลัก1|คำหลัก2|คำถาม3)"
+              required
+              class="w-full px-3.5 py-2.5 border border-[#e1e7f0] rounded-lg text-sm text-[#17243b] font-mono focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5]"
+            >
+          </div>
+          <p class="text-[11px] text-[#52627a] mt-1">รองรับนิพจน์ Regular Expression มาตรฐาน ECMAScript</p>
+        </div>
+
+        <!-- Action / Response Mapping -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#17243b] mb-1">
+              <span>ประเภท Action</span>
+            </label>
+            <select id="formActionType" class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-xs text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] bg-white">
+              <option value="api">API Lookup (เรียก API)</option>
+              <option value="card">Send Card (ส่งการ์ดสินค้า)</option>
+              <option value="form">Form (ส่งฟอร์มข้อมูล)</option>
+              <option value="text">Auto-Text (ข้อความตอบกลับ)</option>
+              <option value="queue">Route to CS (ส่งต่อเจ้าหน้าที่)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#17243b] mb-1">
+              <span data-i18n="สถานะ">สถานะ</span>
+            </label>
+            <select id="formStatus" class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-xs text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] bg-white">
+              <option value="active">Active (เปิดใช้งาน)</option>
+              <option value="inactive">Inactive (ปิดใช้งาน)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Audit Disclaimer Note -->
+        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-[#52627a] flex items-start gap-2">
+          <svg class="w-4 h-4 text-[#365cf5] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-[11px] leading-relaxed">
+            การสร้างหรือแก้ไข Intent Rule จะถูกผูกกับสิทธิ์พนักงานของคุณ และบันทึกผ่านเซสชัน Audit อัตโนมัติ
+          </span>
+        </div>
+
+        <!-- Modal Footer Controls -->
+        <div class="pt-4 border-t border-[#e1e7f0] flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onclick="closeRuleModal()"
+            class="px-4 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] border border-[#e1e7f0] bg-white rounded-lg transition-colors">
+            ยกเลิก
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 bg-[#365cf5] hover:bg-[#2a4bd9] text-white text-xs font-semibold rounded-lg shadow-sm transition-colors">
+            บันทึก Intent Rule
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: REGEX TEST PLAYGROUND (Live Validation tool) -->
+  <div id="testRegexModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="bg-white rounded-xl shadow-2xl border border-[#e1e7f0] w-full max-w-lg overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm text-[#17243b]">ทดสอบ Regex Pattern Playground</span>
+        </div>
+        <button type="button" onclick="closeRegexTesterModal()" class="text-slate-400 hover:text-[#17243b]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">ข้อความจำลองจากลูกค้า (Test message)</label>
+          <input
+            type="text"
+            id="sampleClientMessage"
+            value="สอบถามสถานะพัสดุ ออเดอร์เมื่อวานครับ"
+            class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-xs"
+            oninput="runRegexTest()"
+          >
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">ผลการตรวจจับ Intent ที่จับคู่ได้</label>
+          <div id="regexTestResult" class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <span>ตรวจพบ Intent: <strong class="font-mono">check_order_status</strong> (ตรงกับคำว่า 'พัสดุ', 'ออเดอร์')</span>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-3 bg-slate-50 border-t border-[#e1e7f0] text-right">
+        <button type="button" onclick="closeRegexTesterModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-xs font-semibold rounded-lg text-[#17243b]">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 hidden transform transition-all duration-300">
+    <div class="bg-[#17243b] text-white px-4 py-3 rounded-lg shadow-xl text-xs flex items-center gap-3 border border-slate-700">
+      <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span id="toastMessage">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+    </div>
+  </div>
+
+  <!-- APPLICATION SCRIPTS & FUNCTIONAL BILINGUAL BEHAVIOR -->
+  <script>
+    // State
+    let currentLang = 'th';
+    let currentFilter = 'all';
+
+    // Bilingual Data Dictionary (In addition to the hidden JSON requirement)
+    const translations = {
+      th: {
+        "nav.inventory": "สินค้าและสต็อก",
+        "nav.orders": "ออเดอร์และการเงิน",
+        "nav.customers": "ลูกค้าและบริการ",
+        "nav.marketing": "การตลาด",
+        "nav.reports": "รายงานและข้อมูล",
+        "nav.connections": "ระบบเชื่อมต่อ",
+        "nav.settings": "ตั้งค่าและทีมงาน",
+        "badge.sample": "ข้อมูลตัวอย่าง",
+        "Bot Intent Rules": "Bot Intent Rules",
+        "page.description": "จัดการกฎการตรวจจับเจตนาคำถามลูกค้าอัตโนมัติ สำหรับ Commerce Bot ในช่องทางแชตและข้อความ",
+        "action.refresh": "รีเฟรชข้อมูล",
+        "เพิ่ม Intent Rule": "เพิ่ม Intent Rule",
+        "stat.total": "กฎทั้งหมดในระบบ",
+        "stat.active": "เปิดใช้งาน (Active)",
+        "stat.inactive": "ปิดใช้งาน (Inactive)",
+        "stat.fallback": "ส่งต่อ CS Desk (Fallback)",
+        "guide.title": "แนวทางระบบตรวจจับ Intent ของ Commerce Bot",
+        "guide.desc": "ระบบจะประเมินรูปแบบข้อความ Regex และคำสำคัญของลูกค้าตามลำดับความสำคัญ (Priority Order) หากไม่ตรงกับ Intent ใด บอทจะนำทางไปยัง ลิงก์สำรอง (Fallback URL) หรือส่งต่อแชตให้เจ้าหน้าที่ CS Desk โดยอัตโนมัติ",
+        "Intent": "Intent",
+        "Pattern (regex)": "Pattern (regex)",
+        "สถานะ": "สถานะ",
+        "จัดการ": "จัดการ",
+        "Active": "Active",
+        "Inactive": "Inactive",
+        "แก้ไข": "แก้ไข",
+        "ลบ": "ลบ",
+        "ตั้งค่าขั้นสูง": "ตั้งค่าขั้นสูง",
+        "ลิงก์สำรอง (Fallback URL)": "ลิงก์สำรอง (Fallback URL)",
+        "ข้อความ — Privacy (privacy)": "ข้อความ — Privacy (privacy)",
+        "เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)": "เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)",
+        "table.searchnotice": "* การค้นหาและตัวกรองมีผลเฉพาะรายการในหน้าปัจจุบัน"
+      },
+      en: {
+        "nav.inventory": "Products & Stock",
+        "nav.orders": "Orders & Finance",
+        "nav.customers": "Customers & Services",
+        "nav.marketing": "Marketing",
+        "nav.reports": "Reports & Analytics",
+        "nav.connections": "Integrations",
+        "nav.settings": "Settings & Team",
+        "badge.sample": "Sample Data",
+        "Bot Intent Rules": "Bot Intent Rules",
+        "page.description": "Configure automated customer intent detection rules for Commerce Bot across chat channels",
+        "action.refresh": "Refresh",
+        "เพิ่ม Intent Rule": "Add Intent Rule",
+        "stat.total": "Total Rules",
+        "stat.active": "Active Rules",
+        "stat.inactive": "Inactive Rules",
+        "stat.fallback": "Route to CS Desk (Fallback)",
+        "guide.title": "Commerce Bot Intent Detection Guidelines",
+        "guide.desc": "The engine evaluates regex patterns and customer keywords in priority order. If no intent matches, requests route to the Fallback URL or CS Desk queue automatically.",
+        "Intent": "Intent",
+        "Pattern (regex)": "Pattern (regex)",
+        "สถานะ": "Status",
+        "จัดการ": "Actions",
+        "Active": "Active",
+        "Inactive": "Inactive",
+        "แก้ไข": "Edit",
+        "ลบ": "Delete",
+        "ตั้งค่าขั้นสูง": "Advanced Settings",
+        "ลิงก์สำรอง (Fallback URL)": "Fallback URL",
+        "ข้อความ — Privacy (privacy)": "Message — Privacy (privacy)",
+        "เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)": "Open this coupon detail page (currently inactive)",
+        "table.searchnotice": "* Search and filters apply only to the current page view"
+      }
+    };
+
+    // Toggle Language
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('langThBtn');
+      const enBtn = document.getElementById('langEnBtn');
+
+      if (lang === 'en') {
+        enBtn.classList.add('bg-white', 'text-[#17243b]', 'shadow-sm', 'font-semibold');
+        enBtn.classList.remove('text-[#52627a]');
+        thBtn.classList.remove('bg-white', 'text-[#17243b]', 'shadow-sm', 'font-semibold');
+        thBtn.classList.add('text-[#52627a]');
+        document.documentElement.lang = 'en';
+      } else {
+        thBtn.classList.add('bg-white', 'text-[#17243b]', 'shadow-sm', 'font-semibold');
+        thBtn.classList.remove('text-[#52627a]');
+        enBtn.classList.remove('bg-white', 'text-[#17243b]', 'shadow-sm', 'font-semibold');
+        enBtn.classList.add('text-[#52627a]');
+        document.documentElement.lang = 'th';
+      }
+
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+    }
+
+    // Filter Table by Status Pill
+    function filterByStatus(status) {
+      currentFilter = status;
+      const allBtn = document.getElementById('filterAllBtn');
+      const activeBtn = document.getElementById('filterActiveBtn');
+      const inactiveBtn = document.getElementById('filterInactiveBtn');
+
+      [allBtn, activeBtn, inactiveBtn].forEach(b => {
+        b.classList.remove('bg-white', 'text-[#17243b]', 'font-semibold', 'shadow-sm');
+        b.classList.add('text-[#52627a]');
+      });
+
+      if (status === 'all') {
+        allBtn.classList.add('bg-white', 'text-[#17243b]', 'font-semibold', 'shadow-sm');
+        allBtn.classList.remove('text-[#52627a]');
+      } else if (status === 'active') {
+        activeBtn.classList.add('bg-white', 'text-[#17243b]', 'font-semibold', 'shadow-sm');
+        activeBtn.classList.remove('text-[#52627a]');
+      } else if (status === 'inactive') {
+        inactiveBtn.classList.add('bg-white', 'text-[#17243b]', 'font-semibold', 'shadow-sm');
+        inactiveBtn.classList.remove('text-[#52627a]');
+      }
+
+      applyFilters();
+    }
+
+    // Filter Table by Search Input
+    function handleFilterTable() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('pageSearchInput').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.rule-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        const text = row.innerText.toLowerCase();
+
+        const matchesStatus = (currentFilter === 'all') || (rowStatus === currentFilter);
+        const matchesQuery = !query || text.includes(query);
+
+        if (matchesStatus && matchesQuery) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('displayedRowCount').innerText = visibleCount;
+      const emptyState = document.getElementById('tableEmptyState');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    // Open Modal for Create
+    function openCreateRuleModal() {
+      document.getElementById('formRuleId').value = '';
+      document.getElementById('formIntentName').value = '';
+      document.getElementById('formRegexPattern').value = '';
+      document.getElementById('formStatus').value = 'active';
+      document.getElementById('modalTitle').innerText = currentLang === 'th' ? 'เพิ่ม Intent Rule' : 'Add Intent Rule';
+      document.getElementById('ruleModal').classList.remove('hidden');
+    }
+
+    // Open Modal for Edit
+    function openEditRuleModal(intent, pattern, status, id) {
+      document.getElementById('formRuleId').value = id;
+      document.getElementById('formIntentName').value = intent;
+      document.getElementById('formRegexPattern').value = pattern;
+      document.getElementById('formStatus').value = status;
+      document.getElementById('modalTitle').innerText = currentLang === 'th' ? 'แก้ไข Intent Rule' : 'Edit Intent Rule';
+      document.getElementById('ruleModal').classList.remove('hidden');
+    }
+
+    function closeRuleModal() {
+      document.getElementById('ruleModal').classList.add('hidden');
+    }
+
+    // Handle Form Save
+    function handleSaveRule(e) {
+      e.preventDefault();
+      const intentName = document.getElementById('formIntentName').value;
+      closeRuleModal();
+      showToast(currentLang === 'th' ? `บันทึก Intent Rule: ${intentName} สำเร็จ` : `Saved Intent Rule: ${intentName}`);
+    }
+
+    // Confirm Delete Rule
+    function confirmDeleteRule(intentName) {
+      const confirmText = currentLang === 'th'
+        ? `ยืนยันการลบ Intent Rule นี้? (${intentName})`
+        : `Confirm deletion of this Intent Rule? (${intentName})`;
+      if (confirm(confirmText)) {
+        showToast(currentLang === 'th' ? `ลบ ${intentName} สำเร็จ` : `Deleted ${intentName}`);
+      }
+    }
+
+    // Refresh simulation
+    function refreshRulesData() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLang === 'th' ? 'อัปเดตข้อมูลกฎล่าสุดแล้ว' : 'Rules data refreshed');
+      }, 500);
+    }
+
+    // Save Advanced Settings
+    function saveAdvancedSettings() {
+      const url = document.getElementById('fallbackUrlInput').value;
+      showToast(currentLang === 'th' ? `บันทึกการตั้งค่าสำรอง: ${url}` : 'Saved advanced settings');
+    }
+
+    function resetFallbackSettings() {
+      document.getElementById('fallbackUrlInput').value = 'https://commerce.company.internal/cs/fallback';
+      showToast(currentLang === 'th' ? 'คืนค่าเริ่มต้นแล้ว' : 'Reset to default');
+    }
+
+    // Regex Playground Modal
+    function openRegexTesterModal() {
+      document.getElementById('testRegexModal').classList.remove('hidden');
+      runRegexTest();
+    }
+
+    function closeRegexTesterModal() {
+      document.getElementById('testRegexModal').classList.add('hidden');
+    }
+
+    function runRegexTest() {
+      const msg = document.getElementById('sampleClientMessage').value;
+      const res = document.getElementById('regexTestResult');
+      if (msg.includes('พัสดุ') || msg.includes('ออเดอร์')) {
+        res.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-600"></span><span>ตรวจพบ Intent: <strong class="font-mono">check_order_status</strong> (คะแนนความมั่นใจ 96%)</span>';
+        res.className = 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2';
+      } else if (msg.includes('ราคา') || msg.includes('แคตตาล็อก')) {
+        res.innerHTML = '<span class="w-2 h-2 rounded-full bg-purple-600"></span><span>ตรวจพบ Intent: <strong class="font-mono">catalog_inquiry</strong> (คะแนนความมั่นใจ 92%)</span>';
+        res.className = 'p-3 rounded-lg bg-purple-50 border border-purple-200 text-xs text-purple-800 flex items-center gap-2';
+      } else {
+        res.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-600"></span><span>ไม่ตรงกับกฎใด → เข้าสู่เกณฑ์ <strong class="font-mono">Fallback URL</strong> (ส่งต่อ CS)</span>';
+        res.className = 'p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center gap-2';
+      }
+    }
+
+    // Toast helper
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Keyboard support: Escape closes modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeRuleModal();
+        closeRegexTesterModal();
+      }
+    });
+  </script>
+</body>
+</html>

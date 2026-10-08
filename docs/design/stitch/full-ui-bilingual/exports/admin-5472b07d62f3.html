@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>สร้าง Smart Link - สยาม คอมเมิร์ซ</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Noto Sans Thai and Latin -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-container": "#e8eeff",
+            "outline-variant": "#c4c5d8",
+            "on-tertiary-fixed": "#002110",
+            "surface-variant": "#d7e2ff",
+            "surface-container-low": "#f1f3ff",
+            "on-primary-fixed": "#001257",
+            "surface-dim": "#cddaf9",
+            "on-secondary": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "surface": "#f9f9ff",
+            "primary": "#0a3fdc",
+            "on-primary-fixed-variant": "#0034c0",
+            "inverse-primary": "#b9c3ff",
+            "tertiary": "#006139",
+            "surface-tint": "#214ce7",
+            "tertiary-fixed-dim": "#82d8a3",
+            "secondary-container": "#d0e1fd",
+            "on-background": "#0e1b32",
+            "tertiary-fixed": "#9ef5be",
+            "on-error": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary": "#ffffff",
+            "on-primary-container": "#ededff",
+            "surface-container-high": "#e0e8ff",
+            "surface-bright": "#f9f9ff",
+            "on-error-container": "#93000a",
+            "primary-fixed": "#dde1ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-container": "#217b4e",
+            "primary-container": "#365cf5",
+            "on-tertiary-fixed-variant": "#00522f",
+            "on-surface-variant": "#444655",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#0e1b32",
+            "error-container": "#ffdad6",
+            "secondary": "#4f5f77",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-secondary-container": "#54647c",
+            "inverse-surface": "#243048",
+            "secondary-fixed": "#d3e3ff",
+            "error": "#ba1a1a",
+            "background": "#f9f9ff",
+            "on-tertiary-container": "#b7ffcf",
+            "inverse-on-surface": "#ecf0ff",
+            "outline": "#747687"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "data-tabular": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "body-sm": ["Noto Sans"]
+          },
+          "fontSize": {
+            "data-tabular": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+            "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "body-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #747687;
+      opacity: 0.8;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(54, 92, 245, 0.15);
+      border-color: #365cf5 !important;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex selection:bg-secondary-container">
+<!-- Translation Dictionary Hook (Exact json preservation) -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ยกเลิก": {"th": "ยกเลิก", "en": "Cancel"},
+    "กำลังบันทึก…": {"th": "กำลังบันทึก…", "en": "Saving…"},
+    "บันทึก": {"th": "บันทึก", "en": "Save"},
+    "summer-sale": {"th": "summer-sale", "en": "summer-sale"},
+    "เปิดใช้งาน (Active)": {"th": "เปิดใช้งาน (Active)", "en": "Active"},
+    "โหลดข้อมูลไม่สำเร็จ": {"th": "โหลดข้อมูลไม่สำเร็จ", "en": "Failed to load data"},
+    "slug ต้องเป็น a-z, 0-9, - เท่านั้น": {"th": "slug ต้องเป็น a-z, 0-9, - เท่านั้น", "en": "Slug must contain only a-z, 0-9, and hyphens"},
+    "ต้องมี Web destination": {"th": "ต้องมี Web destination", "en": "Web destination is required"},
+    "บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL": {"th": "บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL", "en": "Save failed — Check duplicate slug or URL format"},
+    "แก้ไข Smart Link": {"th": "แก้ไข Smart Link", "en": "Edit Smart Link"},
+    "สร้าง Smart Link": {"th": "สร้าง Smart Link", "en": "Create Smart Link"},
+    "Slug (ส่วนท้ายลิงก์) *": {"th": "Slug (ส่วนท้ายลิงก์) *", "en": "Slug (Link Path) *"},
+    "ชื่อเรื่อง (Title)": {"th": "ชื่อเรื่อง (Title)", "en": "Title"},
+    "คำอธิบาย (Description)": {"th": "คำอธิบาย (Description)", "en": "Description"},
+    "ลิงก์รูปภาพ (Image URL)": {"th": "ลิงก์รูปภาพ (Image URL)", "en": "Image URL"},
+    "ปลายทางเว็บ (Web destination) *": {"th": "ปลายทางเว็บ (Web destination) *", "en": "Web Destination *"},
+    "ปลายทาง iOS (iOS destination)": {"th": "ปลายทาง iOS (iOS destination)", "en": "iOS Destination"},
+    "ปลายทาง Android (Android destination)": {"th": "ปลายทาง Android (Android destination)", "en": "Android Destination"},
+    "ลิงก์สำรอง (Fallback URL)": {"th": "ลิงก์สำรอง (Fallback URL)", "en": "Fallback URL"},
+    "วันหมดอายุ (Expires at)": {"th": "วันหมดอายุ (Expires at)", "en": "Expires At"},
+    "แสดงหน้า Landing Page": {"th": "แสดงหน้า Landing Page", "en": "Show Landing Page"},
+    "UTM & QR": {"th": "UTM & QR", "en": "UTM & QR"},
+    "Download QR (PNG)": {"th": "Download QR (PNG)", "en": "Download QR (PNG)"},
+    "Download QR (SVG)": {"th": "Download QR (SVG)", "en": "Download QR (SVG)"},
+    "เก็บต่อ": {"th": "เก็บต่อ", "en": "Keep collecting"},
+    "ขอเอกสารเพิ่ม": {"th": "ขอเอกสารเพิ่ม", "en": "Request more documents"},
+    "คำขอสินค้าตัวอย่างก่อนสั่งซื้อ": {"th": "คำขอสินค้าตัวอย่างก่อนสั่งซื้อ", "en": "Sample request before purchase"},
+    "จำนวนออเดอร์ขั้นต่ำ": {"th": "จำนวนออเดอร์ขั้นต่ำ", "en": "Minimum order quantity"},
+    "เช็คอัตโนมัติจาก URL (API ภายนอก เช่น weather API)": {"th": "เช็คอัตโนมัติจาก URL (API ภายนอก เช่น weather API)", "en": "Auto-check via URL (External API such as weather API)"},
+    "ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่มในรายชื่อ": {"th": "ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่มในรายชื่อ", "en": "Pull new segment members into audience"},
+    "ต่ำสุด": {"th": "ต่ำสุด", "en": "Minimum"},
+    "เนื้อหา (utm_content)": {"th": "เนื้อหา (utm_content)", "en": "Content (utm_content)"},
+    "พนักงาน (Staff)": {"th": "พนักงาน (Staff)", "en": "Staff"},
+    "เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้": {"th": "เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้", "en": "At period end (or auto-check via URL above) · Can use Schedule for date/time · Save as preset"},
+    "ไม่สำเร็จ (": {"th": "ไม่สำเร็จ (", "en": "Failed ("},
+    "ย้ายออเดอร์ + สาขาจาก duplicate เข้าบัญชีนี้ แล้วปิดอีเมล/เบอร์ของ duplicate": {"th": "ย้ายออเดอร์ + สาขาจาก duplicate เข้าบัญชีนี้ แล้วปิดอีเมล/เบอร์ของ duplicate", "en": "Migrate orders + branches from duplicate to this account, then deactivate duplicate"},
+    "ระบุ segment": {"th": "ระบุ segment", "en": "Specify segment"},
+    "รูปหน้าร้าน / สถานประกอบการ": {"th": "รูปหน้าร้าน / สถานประกอบการ", "en": "Storefront / Facility Photo"},
+    "เลขทะเบียนนิติบุคคล": {"th": "เลขทะเบียนนิติบุคคล", "en": "Corporate Registration Number"},
+    "เว้นว่าง = ไม่จำกัด — ลดได้ไม่ต่ำกว่าจำนวนที่ขายไปแล้ว": {"th": "เว้นว่าง = ไม่จำกัด — ลดได้ไม่ต่ำกว่าจำนวนที่ขายไปแล้ว", "en": "Leave blank = unlimited — Cannot decrease below already sold quantity"},
+    "สาขา · ที่อยู่จัดส่ง · ผู้ใช้": {"th": "สาขา · ที่อยู่จัดส่ง · ผู้ใช้", "en": "Branches · Shipping Addresses · Users"},
+    "หน้าโปร (Page)": {"th": "หน้าโปร (Page)", "en": "Promo Page"},
+    "อยากลดไม่เท่ากันในแต่ละสินค้า ให้สร้างโปรเพิ่มใน campaign เดียวกัน": {"th": "อยากลดไม่เท่ากันในแต่ละสินค้า ให้สร้างโปรเพิ่มใน campaign เดียวกัน", "en": "To apply different discounts per item, create additional promos in the same campaign"},
+    "ปุ่ม (Action)": {"th": "ปุ่ม (Action)", "en": "Button (Action)"},
+    "เฉพาะบุคคล": {"th": "เฉพาะบุคคล", "en": "Personalized"},
+    "Example ไม่ใช่ JSON ที่ถูกต้อง": {"th": "Example ไม่ใช่ JSON ที่ถูกต้อง", "en": "Example is not valid JSON"},
+    "กรุณาเลือก Promotion Product Set ที่ร่วมรายการอย่างน้อย 1 ชุด": {"th": "กรุณาเลือก Promotion Product Set ที่ร่วมรายการอย่างน้อย 1 ชุด", "en": "Please select at least 1 participating Promotion Product Set"}
+  }
+  </script>
+<!-- SideNavBar Component -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col justify-between p-space-md transition-colors duration-150 ease-in-out select-none">
+<div>
+<!-- Header / Logo -->
+<div class="flex items-center gap-space-sm mb-space-lg px-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface truncate">สยาม คอมเมิร์ซ</h1>
+<p class="text-body-sm font-body-sm text-secondary truncate">ศูนย์จัดการระบบร้านค้า</p>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full mb-space-lg flex items-center justify-center gap-space-xs bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md py-2.5 px-3 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Nav Tabs List (Active: การตลาด) -->
+<nav class="space-y-1">
+<!-- 0: สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#inventory">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 1: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#orders">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 2: ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#customers">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 3: การตลาด (ACTIVE MATCH) -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low dark:bg-secondary text-primary dark:text-on-secondary font-headline-sm border-l-4 border-primary" href="#marketing">
+<span class="material-symbols-outlined" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold text-primary">การตลาด</span>
+</a>
+<!-- 4: รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#reports">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 5: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#integrations">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 6: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container hover:text-on-surface transition-colors duration-150 ease-in-out" href="#settings">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Tabs -->
+<div class="pt-space-md border-t border-outline-variant/60 space-y-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" href="#help">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-label-md font-label-md">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-error transition-colors" href="#logout">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center px-gutter-desktop">
+<!-- Left Section: Category context & Search -->
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="alt_route">alt_route</span>
+<span class="text-headline-sm font-headline-sm font-semibold text-on-surface">การตลาด / Marketing Workflows</span>
+</div>
+<div class="relative w-64 hidden xl:block">
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-sm" data-icon="search">search</span>
+<input class="w-full pl-8 pr-3 py-1.5 text-body-sm bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface placeholder-secondary focus:bg-white focus:outline-none focus:border-primary-container" placeholder="ค้นหา Smart Link หรือแคมเปญ..." type="text"/>
+</div>
+</div>
+<!-- Right Section: Navigation Links & Actions -->
+<div class="flex items-center gap-space-md">
+<!-- Language Switcher & Sample Data Tag -->
+<div class="flex items-center gap-space-sm bg-surface-container-low py-1 px-2.5 rounded-lg border border-outline-variant/40">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="language">language</span>
+<button class="text-label-md font-label-md text-primary font-semibold hover:underline" type="button">ไทย / English</button>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-1 bg-surface-container rounded border border-outline-variant/60 text-secondary text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>ข้อมูลตัวอย่าง / Sample data</span>
+</div>
+<div class="h-5 w-px bg-outline-variant/60"></div>
+<!-- Action Icons -->
+<button class="relative p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2 pl-2">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs ring-1 ring-outline-variant">
+          SC
+        </div>
+<div class="hidden lg:block text-left">
+<p class="text-label-sm font-label-sm text-on-surface font-semibold leading-none">แอดมินผู้ดูแลระบบ Siam Commerce</p>
+<span class="text-body-sm text-secondary text-[11px]">Operations Admin</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Viewport Canvas (Fluid ~1240px container) -->
+<main class="ml-64 mt-16 flex-1 p-gutter-desktop pb-24 overflow-y-auto">
+<div class="max-w-[1240px] mx-auto">
+<!-- Breadcrumb Bar -->
+<nav class="flex items-center gap-2 text-label-md font-label-md text-secondary mb-space-md">
+<a class="hover:text-primary transition-colors" href="#marketing">การตลาด / Marketing Workflows</a>
+<span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#smart-links">ลิงก์การตลาด (Smart Links)</a>
+<span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface font-semibold">สร้าง Smart Link</span>
+</nav>
+<!-- Header & Route Context -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-space-lg mb-space-lg border-b border-outline-variant/60 gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface">สร้าง Smart Link</h1>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant text-secondary font-mono">
+              route: admin-5472b07d62f3
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1">
+            สร้างลิงก์อัจฉริยะแบบกำหนดเงื่อนไข รองรับ Deep Link สลับเส้นทางอัตโนมัติตามระบบปฏิบัติการ iOS, Android และ Web
+          </p>
+</div>
+<!-- Live Destination Link Badge Preview -->
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-xl border border-outline-variant shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="link">link</span>
+<div class="text-left font-data-tabular text-data-tabular">
+<div class="text-secondary text-[11px] leading-tight">Live Preview URL:</div>
+<a class="text-primary font-semibold hover:underline" href="https://link.siamcommerce.co/summer-sale" target="_blank">
+              https://link.siamcommerce.co/summer-sale
+            </a>
+</div>
+<button class="p-1 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded ml-1" title="คัดลอกลิงก์" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Alert State Showcase Banner (Simulated validation error banner) -->
+<div class="mb-space-lg p-space-md rounded-xl bg-error-container/40 border border-error/30 flex items-start gap-space-md text-on-error-container">
+<span class="material-symbols-outlined text-error text-xl shrink-0 mt-0.5" data-icon="error">error</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-error font-semibold">พบข้อผิดพลาดในการตรวจสอบข้อมูล</div>
+<p class="text-body-md font-body-md text-on-surface-variant mt-0.5">
+            บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL
+          </p>
+</div>
+<button class="text-secondary hover:text-on-surface text-sm p-1" onclick="this.parentElement.remove()" type="button">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Main Layout: 2-Column Responsive Form & Right Preview Bento -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Column: Primary Multi-Section Form (8 cols) -->
+<div class="lg:col-span-8 space-y-space-lg">
+<!-- 1. ข้อมูลพื้นฐานลิงก์ (Basic Information) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="info">info</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">ข้อมูลพื้นฐานลิงก์ (Basic Information)</h2>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 bg-surface-container text-secondary rounded">ส่วนที่ 1/4</span>
+</div>
+<div class="space-y-space-md">
+<!-- Slug Field -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="slug">
+                  Slug (ส่วนท้ายลิงก์) *
+                </label>
+<div class="relative flex rounded-lg shadow-sm">
+<span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-outline-variant bg-surface-container-low text-secondary text-body-sm font-mono select-none">
+                    https://link.siamcommerce.co/
+                  </span>
+<input class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-lg border border-outline-variant text-on-surface font-mono text-body-md focus:border-primary-container" id="slug" name="slug" placeholder="summer-sale" type="text" value="summer-sale"/>
+</div>
+<p class="mt-1.5 text-body-sm font-body-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="help">help</span>
+                  slug ต้องเป็น a-z, 0-9, - เท่านั้น
+                </p>
+</div>
+<!-- Title -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="title">
+                  ชื่อเรื่อง (Title)
+                </label>
+<input class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="title" name="title" placeholder="กรอกชื่อแคมเปญหรือหัวข้อลิงก์" type="text" value="โปรโมชั่นต้อนรับซัมเมอร์ Siam Mega Sale 2025"/>
+</div>
+<!-- Description -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="description">
+                  คำอธิบาย (Description)
+                </label>
+<textarea class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="description" name="description" placeholder="ระบุคำอธิบายสั้นๆ สำหรับ OpenGraph หรือการแชร์บน Social Network" rows="3">ลดกระหน่ำรับลมร้อนกับดีลพิเศษสินค้าแฟชั่นและความงาม ส่วนลดสูงสุด 70% เมื่อสั่งซื้อผ่านแอปพลิเคชัน</textarea>
+</div>
+<!-- Image URL -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="image_url">
+                  ลิงก์รูปภาพ (Image URL)
+                </label>
+<div class="relative">
+<input class="w-full pl-9 pr-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="image_url" name="image_url" placeholder="https://example.com/image.png" type="url" value="https://cdn.siamcommerce.co/assets/promo/summer-banner-og.png"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-sm" data-icon="image">image</span>
+</div>
+</div>
+<!-- Active Toggle -->
+<div class="pt-2 flex items-center">
+<label class="relative inline-flex items-center cursor-pointer select-none">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container rounded-full peer peer-focus:ring-2 peer-focus:ring-primary-container/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-outline-variant after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+<span class="ml-3 text-label-lg font-label-lg text-on-surface font-semibold">เปิดใช้งาน (Active)</span>
+</label>
+<span class="ml-2 text-body-sm text-secondary">(พร้อมเปิดรับทราฟฟิกทันทีเมื่อบันทึก)</span>
+</div>
+</div>
+</section>
+<!-- 2. ปลายทางและการทำงาน (Destinations & Platform Routing) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="alt_route">alt_route</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">ปลายทางและการทำงาน (Destinations &amp; Platform Routing)</h2>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 bg-surface-container text-secondary rounded">ส่วนที่ 2/4</span>
+</div>
+<div class="space-y-space-md">
+<!-- Web Destination (Mandatory) -->
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="block text-label-md font-label-md text-on-surface font-semibold" for="web_destination">
+                    ปลายทางเว็บ (Web destination) *
+                  </label>
+<span class="text-label-sm font-label-sm text-error font-medium">ต้องมี Web destination</span>
+</div>
+<div class="relative">
+<input class="w-full pl-9 pr-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="web_destination" name="web_destination" placeholder="https://..." type="url" value="https://www.siamcommerce.co/campaigns/summer-2025"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-sm" data-icon="language">language</span>
+</div>
+<p class="mt-1 text-body-sm text-secondary">เส้นทางเริ่มต้นสำหรับเบราว์เซอร์บนคอมพิวเตอร์และอุปกรณ์ที่ไม่มีแอพ</p>
+</div>
+<!-- iOS Destination -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="ios_destination">
+                  ปลายทาง iOS (iOS destination)
+                </label>
+<div class="relative">
+<input class="w-full pl-9 pr-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="ios_destination" name="ios_destination" placeholder="siamcommerce://promo/... หรือ iOS Universal Link" type="text" value="siamcommerce://promo/summer2025"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-sm" data-icon="phone_iphone">phone_iphone</span>
+</div>
+<p class="mt-1 text-body-sm text-secondary">รองรับ Custom URL Scheme หรือ Universal Link ของ iOS</p>
+</div>
+<!-- Android Destination -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="android_destination">
+                  ปลายทาง Android (Android destination)
+                </label>
+<div class="relative">
+<input class="w-full pl-9 pr-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="android_destination" name="android_destination" placeholder="siamcommerce://promo/... หรือ Android App Link" type="text" value="siamcommerce://promo/summer2025"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-sm" data-icon="android">android</span>
+</div>
+<p class="mt-1 text-body-sm text-secondary">Intent URL หรือ Android App Link เพื่อเปิดแอปบนโทรศัพท์แอนดรอยด์</p>
+</div>
+<!-- Fallback URL -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="fallback_url">
+                  ลิงก์สำรอง (Fallback URL)
+                </label>
+<div class="relative">
+<input class="w-full pl-9 pr-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="fallback_url" name="fallback_url" placeholder="https://www.siamcommerce.co/download-app" type="url" value="https://www.siamcommerce.co/app-install"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-sm" data-icon="history_toggle_off">history_toggle_off</span>
+</div>
+<p class="mt-1 text-body-sm text-secondary">หน้าสำรองกรณีเครื่องผู้ใช้ยังไม่ได้ติดตั้งแอปพลิเคชัน (เช่น หน้าดาวน์โหลด Store)</p>
+</div>
+</div>
+</section>
+<!-- 3. การแสดงผลและการหมดอายุ (Display & Schedule) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">การแสดงผลและการหมดอายุ (Display &amp; Schedule)</h2>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 bg-surface-container text-secondary rounded">ส่วนที่ 3/4</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md items-center">
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="expires_at">
+                  วันหมดอายุ (Expires at)
+                </label>
+<div class="relative">
+<input class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="expires_at" name="expires_at" type="datetime-local" value="2025-05-31T23:59"/>
+</div>
+<p class="mt-1 text-body-sm text-secondary">เว้นว่างหากไม่ต้องการกำหนดเวลาสิ้นสุดของแคมเปญ</p>
+</div>
+<div class="pt-2 md:pt-4">
+<label class="flex items-center gap-2 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-primary border-outline-variant" type="checkbox"/>
+<span class="text-label-md font-label-md text-on-surface font-semibold">แสดงหน้า Landing Page</span>
+</label>
+<p class="ml-6 mt-1 text-body-sm text-secondary">แสดงหน้าสรุปข้อเสนอก่อนเปิดแอปพลิเคชันเพื่อเพิ่ม Conversion</p>
+</div>
+</div>
+</section>
+<!-- 4. พารามิเตอร์การตลาดและการติดตาม (UTM & Tracking) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="monitoring">monitoring</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">UTM &amp; QR (พารามิเตอร์การตลาดและการติดตาม)</h2>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 bg-surface-container text-secondary rounded">ส่วนที่ 4/4</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="utm_source">
+                  ต้นทาง (utm_source)
+                </label>
+<input class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="utm_source" name="utm_source" placeholder="facebook, line, influencer" type="text" value="facebook_ads"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="utm_medium">
+                  สื่อ (utm_medium)
+                </label>
+<input class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="utm_medium" name="utm_medium" placeholder="cpc, banner, qr_store" type="text" value="cpc"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="utm_campaign">
+                  ชื่อแคมเปญ (utm_campaign)
+                </label>
+<input class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="utm_campaign" name="utm_campaign" placeholder="summer_sale_2025" type="text" value="summer_festival_2025"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-semibold mb-1" for="utm_content">
+                  เนื้อหา (utm_content)
+                </label>
+<input class="w-full px-3 py-2 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary-container" id="utm_content" name="utm_content" placeholder="carousel_v1, video_cta" type="text" value="carousel_beauty_v1"/>
+</div>
+</div>
+<p class="mt-3 text-body-sm text-secondary bg-surface-container-low p-2 rounded border border-outline-variant/60">
+              ค่า UTM พารามิเตอร์จะถูกส่งต่อเข้าสู่ Web Destination, Apps และ Google Analytics 4 โดยอัตโนมัติ
+            </p>
+</section>
+</div>
+<!-- Right Column: Interactive Live Preview & QR Panel (4 cols) -->
+<aside class="lg:col-span-4 space-y-space-lg sticky top-24">
+<!-- Live QR & Deep Link Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="qr_code_2">qr_code_2</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">QR Code &amp; Link</h3>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed">
+                พร้อมใช้งาน
+              </span>
+</div>
+<!-- Stylized QR Display Canvas -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex flex-col items-center justify-center border border-outline-variant/60">
+<div class="w-48 h-48 bg-white p-3 rounded-lg border border-outline-variant/80 shadow-sm flex items-center justify-center">
+<!-- SVG Vector QR Code representation -->
+<svg class="w-full h-full text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<!-- QR Corner Markers -->
+<rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="5" y="5"></rect>
+<rect height="14" rx="1" width="14" x="11" y="11"></rect>
+<rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="69" y="5"></rect>
+<rect height="14" rx="1" width="14" x="75" y="11"></rect>
+<rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="5" y="69"></rect>
+<rect height="14" rx="1" width="14" x="11" y="75"></rect>
+<!-- QR Data Matrix Dots -->
+<rect height="5" width="5" x="36" y="8"></rect>
+<rect height="5" width="5" x="46" y="8"></rect>
+<rect height="5" width="5" x="56" y="8"></rect>
+<rect height="5" width="5" x="36" y="18"></rect>
+<rect height="5" width="5" x="56" y="18"></rect>
+<rect height="5" width="5" x="36" y="28"></rect>
+<rect height="5" width="5" x="46" y="28"></rect>
+<rect height="5" width="5" x="8" y="36"></rect>
+<rect height="5" width="5" x="18" y="36"></rect>
+<rect height="5" width="5" x="28" y="36"></rect>
+<rect height="5" width="5" x="68" y="36"></rect>
+<rect height="5" width="5" x="78" y="36"></rect>
+<rect height="5" width="5" x="88" y="36"></rect>
+<!-- Center Branding Shield -->
+<circle class="fill-primary" cx="50" cy="50" r="10"></circle>
+<path d="M47 47 L53 50 L47 53 Z" fill="white"></path>
+<rect height="6" width="6" x="38" y="68"></rect>
+<rect height="6" width="6" x="48" y="78"></rect>
+<rect height="6" width="6" x="68" y="68"></rect>
+<rect height="6" width="6" x="78" y="78"></rect>
+<rect height="6" width="6" x="88" y="68"></rect>
+<rect height="6" width="6" x="68" y="88"></rect>
+<rect height="6" width="6" x="88" y="88"></rect>
+</svg>
+</div>
+<p class="mt-2 text-body-sm font-data-tabular text-secondary text-center">
+                Scan to test dynamic routing
+              </p>
+</div>
+<!-- QR Download Buttons -->
+<div class="grid grid-cols-2 gap-space-sm mt-space-md">
+<button class="flex items-center justify-center gap-1.5 py-2 px-3 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface rounded-lg text-label-md font-label-md transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+<span>Download QR (PNG)</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 py-2 px-3 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface rounded-lg text-label-md font-label-md transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+<span>Download QR (SVG)</span>
+</button>
+</div>
+</div>
+<!-- Deep Link Routing Simulation Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-lg shadow-sm">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-space-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="devices">devices</span>
+<span>Platform Routing Simulation</span>
+</h3>
+<p class="text-body-sm text-secondary mb-space-md">
+              จำลองเส้นทางที่ผู้ใช้งานจะได้รับตามระบบปฏิบัติการ
+            </p>
+<div class="space-y-space-sm text-body-sm">
+<!-- Web Routing -->
+<div class="p-2.5 rounded-lg border border-outline-variant/60 bg-surface flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary mt-0.5" data-icon="laptop_mac">laptop_mac</span>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-semibold text-on-surface">Desktop / Chrome</span>
+<span class="text-[11px] font-label-sm text-tertiary">Direct 302</span>
+</div>
+<div class="text-xs text-secondary truncate font-mono">
+                    https://www.siamcommerce.co/campaigns/summer-2025
+                  </div>
+</div>
+</div>
+<!-- iOS Routing -->
+<div class="p-2.5 rounded-lg border border-outline-variant/60 bg-surface flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary mt-0.5" data-icon="phone_iphone">phone_iphone</span>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-semibold text-on-surface">iOS Universal Link</span>
+<span class="text-[11px] font-label-sm text-primary">App Open</span>
+</div>
+<div class="text-xs text-secondary truncate font-mono">
+                    siamcommerce://promo/summer2025
+                  </div>
+</div>
+</div>
+<!-- Android Routing -->
+<div class="p-2.5 rounded-lg border border-outline-variant/60 bg-surface flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary mt-0.5" data-icon="android">android</span>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-semibold text-on-surface">Android App Link</span>
+<span class="text-[11px] font-label-sm text-primary">Intent Launch</span>
+</div>
+<div class="text-xs text-secondary truncate font-mono">
+                    siamcommerce://promo/summer2025
+                  </div>
+</div>
+</div>
+<!-- Fallback -->
+<div class="p-2.5 rounded-lg border border-outline-variant/60 bg-surface flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary mt-0.5" data-icon="store">store</span>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-semibold text-on-surface">App Not Installed</span>
+<span class="text-[11px] font-label-sm text-secondary">Fallback URL</span>
+</div>
+<div class="text-xs text-secondary truncate font-mono">
+                    https://www.siamcommerce.co/app-install
+                  </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Ops Note / Quick Hints -->
+<div class="bg-surface-container-low rounded-xl border border-outline-variant/60 p-space-md text-body-sm text-secondary">
+<div class="flex items-center gap-1.5 text-on-surface font-semibold mb-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="verified">verified</span>
+<span>Siam Operations Tip</span>
+</div>
+            การสร้าง Smart Link ช่วยให้ทีมการตลาดติดตามยอดขายจาก Influencer หรือแอดบน LINE/Facebook ได้แบบ Real-time โดยไม่สูญเสีย Attribution เมื่อผู้ใช้เปลี่ยนอุปกรณ์
+          </div>
+</aside>
+</div>
+</div>
+</main>
+<!-- Sticky Actions Bar (ยกเลิก & บันทึก with Saving State Preview) -->
+<div class="fixed bottom-0 right-0 left-64 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/80 px-gutter-desktop py-3 z-30 shadow-lg">
+<div class="max-w-[1240px] mx-auto flex items-center justify-between">
+<!-- Status Feedback State Preview -->
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 text-label-md font-label-md text-secondary" id="save-status-indicator">
+<span class="w-2.5 h-2.5 rounded-full bg-outline-variant animate-pulse"></span>
+<span>พร้อมบันทึกการเปลี่ยนแปลง (admin-5472b07d62f3)</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-sm">
+<!-- ยกเลิก (Cancel) Button -->
+<a class="px-5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-lg text-label-lg transition-colors flex items-center gap-1.5" href="#marketing">
+<span>ยกเลิก</span>
+</a>
+<!-- บันทึก (Save) Button with simulated 'กำลังบันทึก…' micro-interaction -->
+<button class="px-6 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg transition-colors shadow-sm flex items-center gap-2" id="btn-save" onclick="triggerSaveSimulation()" type="button">
+<span class="material-symbols-outlined text-base" data-icon="save">save</span>
+<span id="btn-save-text">บันทึก</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Inline Interaction for Save Simulation -->
+<script>
+    function triggerSaveSimulation() {
+      const btn = document.getElementById('btn-save');
+      const text = document.getElementById('btn-save-text');
+      const indicator = document.getElementById('save-status-indicator');
+
+      // Toggle to Saving state
+      btn.disabled = true;
+      btn.classList.add('opacity-80', 'cursor-not-allowed');
+      text.innerText = 'กำลังบันทึก…';
+      indicator.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span><span class="text-primary font-semibold">กำลังบันทึก…</span>';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.classList.remove('opacity-80', 'cursor-not-allowed');
+        text.innerText = 'บันทึก';
+        indicator.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span><span class="text-tertiary font-medium">บันทึกข้อมูลเรียบร้อยแล้ว</span>';
+      }, 1200);
+    }
+  </script>
+</body></html>

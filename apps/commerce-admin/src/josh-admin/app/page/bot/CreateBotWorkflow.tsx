@@ -5,7 +5,10 @@ import AdminInsertLayout from '../../components/AdminInsertLayout';
 import BotWorkflowForm, { BotWorkflowFormValue } from '../../components/bot/BotWorkflowForm';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CreateBotWorkflow = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [templateOptions, setTemplateOptions] = useState<{ value: string; label: string }[]>([]);
@@ -30,7 +33,7 @@ const CreateBotWorkflow = () => {
 
   const handleSubmit = async () => {
     if (!form.name || !form.triggerPattern) {
-      alert('กรุณากรอกชื่อและ Trigger Pattern');
+      alert(__uiText("กรุณากรอกชื่อและ Trigger Pattern"));
       return;
     }
     setSaving(true);
@@ -47,7 +50,7 @@ const CreateBotWorkflow = () => {
       });
       navigate(ADMIN_ROUTES.botWorkflows);
     } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึก');
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
@@ -55,8 +58,8 @@ const CreateBotWorkflow = () => {
 
   return (
     <AdminInsertLayout
-      title="เพิ่ม Workflow"
-      subtitle="กำหนด trigger, action และ response template ของ chatbot workflow"
+      title={__uiText("เพิ่ม Workflow")}
+      subtitle={__uiText("กำหนด trigger, action และ response template ของ chatbot workflow")}
       backPath={ADMIN_ROUTES.botWorkflows}
       saving={saving}
       onSave={handleSubmit}

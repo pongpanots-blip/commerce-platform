@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import {
   getAnalyticsFunnel,
@@ -9,27 +10,29 @@ import {
 import { Table, TableColumn } from '@josh/shared-ui-web';
 import AdminListHeader from '../../components/AdminListHeader';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type AudienceFilter = GetAnalyticsFunnelParams['audience'] & string;
 type PlatformFilter = AnalyticsPlatform | 'all';
 
 const AUDIENCE_OPTIONS: { value: AudienceFilter; label: string }[] = [
-  { value: 'all', label: 'ทั้งหมด' },
-  { value: 'guest', label: 'Guest' },
-  { value: 'logged_in', label: 'Logged in' },
+  { value: 'all', get label(){return __uiText("ทั้งหมด");} },
+  { value: 'guest', get label(){return __uiText("Guest");} },
+  { value: 'logged_in', get label(){return __uiText("Logged in");} },
 ];
 
 const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
-  { value: 'all', label: 'ทั้งหมด' },
-  { value: 'web', label: 'Web' },
-  { value: 'ios', label: 'iOS' },
-  { value: 'android', label: 'Android' },
+  { value: 'all', get label(){return __uiText("ทั้งหมด");} },
+  { value: 'web', get label(){return __uiText("Web");} },
+  { value: 'ios', get label(){return __uiText("iOS");} },
+  { value: 'android', get label(){return __uiText("Android");} },
 ];
 
 const STEP_LABELS: Record<AnalyticsFunnelStep, string> = {
-  view_item: 'View Item',
-  add_to_cart: 'Add to Cart',
-  begin_checkout: 'Begin Checkout',
-  purchase: 'Purchase',
+  get view_item(){return __uiText("View Item");},
+  get add_to_cart(){return __uiText("Add to Cart");},
+  get begin_checkout(){return __uiText("Begin Checkout");},
+  get purchase(){return __uiText("Purchase");},
 };
 
 type FunnelRow = {
@@ -59,6 +62,7 @@ function formatPercent(value: number | null): string {
 }
 
 export default function MarketingJourneyFunnel() {
+  __useUiLocale();
   const [from, setFrom] = useState(defaultFrom());
   const [to, setTo] = useState(defaultTo());
   const [audience, setAudience] = useState<AudienceFilter>('all');
@@ -76,7 +80,7 @@ export default function MarketingJourneyFunnel() {
     getAnalyticsFunnel({ from, to, audience, platform })
       .then(setData)
       .catch((err: { response?: { data?: { message?: string } } }) => {
-        setError(err?.response?.data?.message || 'โหลด journey funnel ไม่สำเร็จ');
+        setError(err?.response?.data?.message || __uiMessage("โหลด journey funnel ไม่สำเร็จ"));
         setData(null);
       })
       .finally(() => setLoading(false));
@@ -98,17 +102,17 @@ export default function MarketingJourneyFunnel() {
   );
 
   const columns: TableColumn<FunnelRow>[] = [
-    { key: 'label', label: 'Step' },
+    { key: 'label', label: __uiText("Step") },
     {
       key: 'session_count',
-      label: 'Sessions',
+      label: __uiText("Sessions"),
       render: (value: number) => (
         <span className="font-semibold tabular-nums text-gray-900">{value.toLocaleString()}</span>
       ),
     },
     {
       key: 'conversion_from_previous',
-      label: 'Conversion (จาก step ก่อนหน้า)',
+      label: __uiText("Conversion (จาก step ก่อนหน้า)"),
       render: (value: number | null) => (
         <span className={`tabular-nums ${value !== null ? 'text-emerald-700' : 'text-gray-400'}`}>
           {formatPercent(value)}
@@ -125,8 +129,8 @@ export default function MarketingJourneyFunnel() {
     <div className="flex flex-col gap-5 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <AdminListHeader
-          title="Journey Funnel"
-          subtitle="View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform"
+          title={__uiText("Journey Funnel")}
+          subtitle={__uiText("View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform")}
         />
         <button
           type="button"
@@ -134,13 +138,13 @@ export default function MarketingJourneyFunnel() {
           disabled={loading}
           className="rounded-md border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-gray-50 disabled:opacity-50"
         >
-          {loading ? 'กำลังโหลด...' : 'รีเฟรช'}
+          {loading ? __uiText("กำลังโหลด...") : __uiText("รีเฟรช")}
         </button>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label htmlFor={fromInputId} className="mb-1 block text-[11px] font-medium text-gray-500">จาก</label>
+          <label htmlFor={fromInputId} className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("จาก")}</label>
           <input
             id={fromInputId}
             type="date"
@@ -151,7 +155,7 @@ export default function MarketingJourneyFunnel() {
           />
         </div>
         <div>
-          <label htmlFor={toInputId} className="mb-1 block text-[11px] font-medium text-gray-500">ถึง</label>
+          <label htmlFor={toInputId} className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("ถึง")}</label>
           <input
             id={toInputId}
             type="date"
@@ -164,7 +168,7 @@ export default function MarketingJourneyFunnel() {
         </div>
 
         <div>
-          <span className="mb-1 block text-[11px] font-medium text-gray-500">Audience</span>
+          <span className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("Audience")}</span>
           <div className="flex gap-1">
             {AUDIENCE_OPTIONS.map((option) => (
               <button
@@ -184,7 +188,7 @@ export default function MarketingJourneyFunnel() {
         </div>
 
         <div>
-          <span className="mb-1 block text-[11px] font-medium text-gray-500">Platform</span>
+          <span className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("Platform")}</span>
           <div className="flex gap-1">
             {PLATFORM_OPTIONS.map((option) => (
               <button
@@ -206,12 +210,12 @@ export default function MarketingJourneyFunnel() {
 
       {error && (
         <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
-          {error}
+          {(typeof error === 'string' ? __uiText(error) : error)}
         </p>
       )}
 
       {!error && loading && !data && (
-        <p className="text-xs text-gray-400">กำลังโหลด...</p>
+        <p className="text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
       )}
 
       {!error && data && (
@@ -220,13 +224,13 @@ export default function MarketingJourneyFunnel() {
 
           <div className="flex flex-wrap items-center gap-4 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-600">
             <span>
-              Login sessions (annotation):{' '}
+              {__uiText("Login sessions (annotation):")}{' '}
               <span className="font-semibold tabular-nums text-gray-900">
                 {data.login_sessions.toLocaleString()}
               </span>
             </span>
             <span>
-              Overall conversion (View Item → Purchase):{' '}
+              {__uiText("Overall conversion (View Item → Purchase):")}{' '}
               <span className="font-semibold tabular-nums text-emerald-700">
                 {formatPercent(overallConversion)}
               </span>
@@ -234,7 +238,7 @@ export default function MarketingJourneyFunnel() {
           </div>
 
           {firstStepCount === 0 && (
-            <p className="text-xs text-gray-400">ยังไม่มีข้อมูลในช่วง / filter ที่เลือก</p>
+            <p className="text-xs text-gray-400">{__uiText("ยังไม่มีข้อมูลในช่วง / filter ที่เลือก")}</p>
           )}
         </>
       )}

@@ -4,6 +4,8 @@ import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import { Extension } from '@tiptap/core';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const INDENT_STEP_EM = 2;
 const INDENT_MAX = 3;
 
@@ -224,6 +226,7 @@ export function RichTextEditor({
   disabled?: boolean;
   ariaLabel: string;
 }) {
+  __useUiLocale();
   const editor = useEditor({
     extensions: EXTENSIONS,
     content: legacyBodyToHtml(value),
@@ -281,22 +284,22 @@ export function RichTextEditor({
         <ToolbarButton
           active={!!activeState?.bold}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          label="B"
+          label={__uiText("B")}
         />
         <ToolbarButton
           active={!!activeState?.italic}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          label="I"
+          label={__uiText("I")}
         />
         <ToolbarButton
           active={!!activeState?.underline}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          label="U"
+          label={__uiText("U")}
         />
         <ToolbarButton
           active={!!activeState?.strike}
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          label="S"
+          label={__uiText("S")}
         />
         <ToolbarButton
           active={!!activeState?.ol}
@@ -314,7 +317,7 @@ export function RichTextEditor({
           <SegmentButton
             active={false}
             onClick={() => editor.chain().focus().unsetTextAlign().run()}
-            title="จัดชิดซ้าย (ค่าปกติ)"
+            title={__uiText("จัดชิดซ้าย (ค่าปกติ)")}
           >
             <AlignIcon align="left" />
           </SegmentButton>
@@ -325,7 +328,7 @@ export function RichTextEditor({
                 ? editor.chain().focus().unsetTextAlign().run()
                 : editor.chain().focus().setTextAlign('center').run()
             }
-            title="จัดกึ่งกลาง (กดซ้ำเพื่อยกเลิก)"
+            title={__uiText("จัดกึ่งกลาง (กดซ้ำเพื่อยกเลิก)")}
           >
             <AlignIcon align="center" />
           </SegmentButton>
@@ -336,7 +339,7 @@ export function RichTextEditor({
                 ? editor.chain().focus().unsetTextAlign().run()
                 : editor.chain().focus().setTextAlign('right').run()
             }
-            title="จัดชิดขวา (กดซ้ำเพื่อยกเลิก)"
+            title={__uiText("จัดชิดขวา (กดซ้ำเพื่อยกเลิก)")}
           >
             <AlignIcon align="right" />
           </SegmentButton>
@@ -345,14 +348,14 @@ export function RichTextEditor({
           <SegmentButton
             active={false}
             onClick={() => editor.chain().focus().indent().run()}
-            title="ย่อหน้าบรรทัดแรก (Tab)"
+            title={__uiText("ย่อหน้าบรรทัดแรก (Tab)")}
           >
             <IndentIcon direction="increase" />
           </SegmentButton>
           <SegmentButton
             active={false}
             onClick={() => editor.chain().focus().outdent().run()}
-            title="ถอยย่อหน้าบรรทัดแรก (Shift+Tab / Backspace ต้นบรรทัด)"
+            title={__uiText("ถอยย่อหน้าบรรทัดแรก (Shift+Tab / Backspace ต้นบรรทัด)")}
           >
             <IndentIcon direction="decrease" />
           </SegmentButton>

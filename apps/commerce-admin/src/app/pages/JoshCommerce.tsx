@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { FormEvent, Fragment, ReactNode, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -7,13 +8,16 @@ import {
 import { joshActionsApi, JoshRow, joshCustomerApi, joshOrderApi, joshPriceApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const LIMIT = 50;
 
-const ORDER_STATUS: Record<string, string> = { payment_pending: 'รอชำระ', paid: 'ชำระแล้ว', preparing: 'กำลังเตรียม', shipped: 'จัดส่งแล้ว', delivered: 'ส่งถึงแล้ว', cancelled: 'ยกเลิก', refunded: 'คืนเงิน' };
+const ORDER_STATUS: Record<string, string> = { get payment_pending(){return __uiText("รอชำระ");}, get paid(){return __uiText("ชำระแล้ว");}, get preparing(){return __uiText("กำลังเตรียม");}, get shipped(){return __uiText("จัดส่งแล้ว");}, get delivered(){return __uiText("ส่งถึงแล้ว");}, get cancelled(){return __uiText("ยกเลิก");}, get refunded(){return __uiText("คืนเงิน");} };
 const SYNC: Record<string, [string, string]> = { sent: ['ส่งแล้ว', 'ok'], confirmed: ['ยืนยันแล้ว', 'ok'], reserved: ['จองแล้ว', 'ok'], skipped: ['ข้าม', 'muted'], pending: ['รอส่ง', 'warn'], failed: ['ส่งไม่สำเร็จ', 'danger'] };
 
 function SyncChip({ s }: { s: string | null }) {
-  if (!s) return <Chip tone="muted">ยังไม่ส่ง</Chip>;
+  __useUiLocale();
+  if (!s) return <Chip tone="muted">{__uiText("ยังไม่ส่ง")}</Chip>;
   const [label, tone] = SYNC[s] ?? [s, 'muted'];
   return <Chip tone={tone as any}>{label}</Chip>;
 }
@@ -21,12 +25,12 @@ function SyncChip({ s }: { s: string | null }) {
 /** josh orders, read-only: status, payment, and whether each reached Jagota. Orders are still created, paid and sent by josh.
  *  Stitch screen: docs/design/stitch/admin-list-table.html */
 const SYNC_TILES: { key: string; label: string; field: string; tone: 'danger' | 'warn' | 'ok' }[] = [
-  { key: 'failed', label: 'ส่ง Jagota ไม่สำเร็จ', field: 'sync_failed', tone: 'danger' },
-  { key: 'not_sent', label: 'จ่ายแล้วแต่ยังไม่ส่ง Jagota', field: 'sync_not_sent', tone: 'warn' },
-  { key: 'pending', label: 'รอส่ง Jagota', field: 'sync_pending', tone: 'warn' },
-  { key: 'sent', label: 'ส่ง Jagota แล้ว', field: 'sync_sent', tone: 'ok' },
+  { key: 'failed', get label() { return __uiText("ส่ง Jagota ไม่สำเร็จ"); }, field: 'sync_failed', tone: 'danger' },
+  { key: 'not_sent', get label() { return __uiText("จ่ายแล้วแต่ยังไม่ส่ง Jagota"); }, field: 'sync_not_sent', tone: 'warn' },
+  { key: 'pending', get label() { return __uiText("รอส่ง Jagota"); }, field: 'sync_pending', tone: 'warn' },
+  { key: 'sent', get label() { return __uiText("ส่ง Jagota แล้ว"); }, field: 'sync_sent', tone: 'ok' },
   // 'payment_missing' filters by payment, not by Jagota state.
-  { key: 'payment_missing', label: 'จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ', field: 'settled_without_payment', tone: 'warn' },
+  { key: 'payment_missing', get label() { return __uiText("จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ"); }, field: 'settled_without_payment', tone: 'warn' },
 ];
 const PAYMENT_TONE = (p: string | null | undefined) => (!p ? 'muted' : /success|paid|complete/i.test(p) ? 'ok' : /fail|cancel|expire/i.test(p) ? 'danger' : /credit/i.test(p) ? 'info' : 'warn');
 const ORDER_TONE: Record<string, 'ok' | 'warn' | 'danger' | 'info' | 'muted'> = { payment_pending: 'warn', paid: 'ok', preparing: 'info', shipped: 'info', delivered: 'ok', cancelled: 'muted', refunded: 'danger' };
@@ -44,6 +48,7 @@ function csv(rows: JoshRow[]) {
 }
 
 export function JoshOrdersPage() {
+  __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const empty = { search: '', status: '', from: '', to: '' };
@@ -66,13 +71,13 @@ export function JoshOrdersPage() {
   return (
     <Page>
       <PageHeader
-        title="Orders (josh)"
-        badge={<TitleBadge icon="visibility">อ่านอย่างเดียว · ข้อมูลจาก josh</TitleBadge>}
-        subtitle="ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง"
+        title={__uiText("Orders (josh)")}
+        badge={<TitleBadge icon="visibility">{__uiText("อ่านอย่างเดียว · ข้อมูลจาก josh")}</TitleBadge>}
+        subtitle={__uiText("ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง")}
         actions={
           <>
-            <Button icon="download" disabled={!list.data?.items.length} onClick={() => list.data && csv(list.data.items)}>Export CSV</Button>
-            <Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>
+            <Button icon="download" disabled={!list.data?.items.length} onClick={() => list.data && csv(list.data.items)}>{__uiText("Export CSV")}</Button>
+            <Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>{__uiText("Refresh")}</Button>
           </>
         }
       />
@@ -104,38 +109,37 @@ export function JoshOrdersPage() {
             className="md:col-span-5"
             value={draft.search}
             onChange={(e) => setDraft({ ...draft, search: e.target.value })}
-            placeholder="ค้นหาเลข order / รหัสลูกค้า / PO / บริษัท…"
-            aria-label="ค้นหา"
+            placeholder={__uiText("ค้นหาเลข order / รหัสลูกค้า / PO / บริษัท…")}
+            aria-label={__uiText("ค้นหา")}
           />
           <label className="md:col-span-2 flex items-center gap-1.5">
             <Icon name="calendar_today" size={15} className="text-outline shrink-0" />
-            <Input type="date" aria-label="ตั้งแต่" value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
+            <Input type="date" aria-label={__uiText("ตั้งแต่")} value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
           </label>
           <label className="md:col-span-2 flex items-center gap-1.5">
             <span className="text-outline text-xs">–</span>
-            <Input type="date" aria-label="ถึงก่อน" value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+            <Input type="date" aria-label={__uiText("ถึงก่อน")} value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
           </label>
           <div className="md:col-span-3 flex items-center justify-end gap-2">
-            <Button type="submit" variant="primary" icon="search">ค้นหา</Button>
-            <Button variant="ghost" onClick={() => { setDraft(empty); setPage(1); setF({ ...empty, sync: '' }); }}>ล้างตัวกรอง</Button>
+            <Button type="submit" variant="primary" icon="search">{__uiText("ค้นหา")}</Button>
+            <Button variant="ghost" onClick={() => { setDraft(empty); setPage(1); setF({ ...empty, sync: '' }); }}>{__uiText("ล้างตัวกรอง")}</Button>
           </div>
         </div>
         <div className="overflow-x-auto">
           <Segmented
             value={f.status}
             onChange={(v) => { setDraft({ ...draft, status: v }); apply({ status: v }); }}
-            options={[{ value: '', label: 'ทั้งหมด' }, ...Object.entries(ORDER_STATUS).map(([k, v]) => ({ value: k, label: v }))]}
+            options={[{ value: '', label: __uiText("ทั้งหมด") }, ...Object.entries(ORDER_STATUS).map(([k, v]) => ({ value: k, label: v }))]}
           />
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-secondary-container text-[11px]">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-on-surface-variant">ตัวกรองปัจจุบัน:</span>
-            {chips.length ? chips.map((c) => <FilterChip key={c.label} onRemove={c.clear}>{c.label}</FilterChip>) : <span className="text-outline">ไม่มี</span>}
+            <span className="text-on-surface-variant">{__uiText("ตัวกรองปัจจุบัน:")}</span>
+            {chips.length ? chips.map((c) => <FilterChip key={c.label} onRemove={c.clear}>{c.label}</FilterChip>) : <span className="text-outline">{__uiText("ไม่มี")}</span>}
           </div>
           {list.data && (
             <div className="text-on-surface-variant font-mono">
-              พบ <span className="font-bold text-on-surface tabular-nums">{fmt.num(list.data.total)}</span> รายการ
-              {s && <span className="ml-2 font-sans">· มูลค่าที่ชำระแล้ว {fmt.baht(s.paid_value)}</span>}
+              {__uiText("พบ ")}<span className="font-bold text-on-surface tabular-nums">{fmt.num(list.data.total)}</span> {__uiText(" รายการ")}{s && <span className="ml-2 font-sans">{__uiText("· มูลค่าที่ชำระแล้ว ")}{fmt.baht(s.paid_value)}</span>}
             </div>
           )}
         </div>
@@ -145,18 +149,18 @@ export function JoshOrdersPage() {
         {list.loading && !list.data ? (
           <Loading />
         ) : list.data && list.data.items.length === 0 ? (
-          <Empty icon="receipt_long">ไม่พบออเดอร์ตามตัวกรองนี้</Empty>
+          <Empty icon="receipt_long">{__uiText("ไม่พบออเดอร์ตามตัวกรองนี้")}</Empty>
         ) : list.data ? (
           <>
             <Table maxHeight="calc(100vh - 330px)">
               <THead>
-                <TH className="min-w-[150px]">Order No.</TH>
-                <TH className="min-w-[130px]">วันที่</TH>
-                <TH className="min-w-[240px]">บริษัท / สาขา</TH>
-                <TH right className="min-w-[110px]">ยอดรวม ฿</TH>
-                <TH>การชำระเงิน</TH>
-                <TH>สถานะออเดอร์</TH>
-                <TH className="min-w-[170px]">Jagota (ERP)</TH>
+                <TH className="min-w-[150px]">{__uiText("Order No.")}</TH>
+                <TH className="min-w-[130px]">{__uiText("วันที่")}</TH>
+                <TH className="min-w-[240px]">{__uiText("บริษัท / สาขา")}</TH>
+                <TH right className="min-w-[110px]">{__uiText("ยอดรวม ฿")}</TH>
+                <TH>{__uiText("การชำระเงิน")}</TH>
+                <TH>{__uiText("สถานะออเดอร์")}</TH>
+                <TH className="min-w-[170px]">{__uiText("Jagota (ERP)")}</TH>
                 <TH />
               </THead>
               <TBody>
@@ -166,11 +170,11 @@ export function JoshOrdersPage() {
                     <TD kind="time">{fmt.when(o.create_date)}</TD>
                     <TD><Stack2 top={o.company_name ?? '—'} bottom={[o.branch_name, o.customer_code].filter(Boolean).join(' · ')} /></TD>
                     <TD kind="money">{fmt.baht(o.total_price)}</TD>
-                    <TD><Chip tone={PAYMENT_TONE(o.payment_status)}>{o.payment_status ?? 'ไม่มีการจ่าย'}</Chip></TD>
+                    <TD><Chip tone={PAYMENT_TONE(o.payment_status)}>{o.payment_status ?? __uiText("ไม่มีการจ่าย")}</Chip></TD>
                     <TD><Chip tone={ORDER_TONE[o.status] ?? 'muted'}>{ORDER_STATUS[o.status] ?? o.status}</Chip></TD>
                     <TD>
                       <StatusDot tone={o.jagota_sync_status ? SYNC_DOT[o.jagota_sync_status] ?? 'muted' : 'muted'}>
-                        {o.jagota_sync_status ? SYNC[o.jagota_sync_status]?.[0] ?? o.jagota_sync_status : 'ยังไม่ส่ง'}
+                        {o.jagota_sync_status ? SYNC[o.jagota_sync_status]?.[0] ?? o.jagota_sync_status : __uiText("ยังไม่ส่ง")}
                         {o.doc_no && <span className="font-mono text-on-surface-variant">{o.doc_book}{o.doc_no}</span>}
                       </StatusDot>
                       {o.jagota_error && <div className="text-[10px] text-[#c2333f] truncate max-w-[220px]" title={o.jagota_error}>{o.jagota_error}</div>}
@@ -191,6 +195,7 @@ const KYC: Record<string, [string, string]> = { none: ['ไม่มีเอก
 
 /** josh business customers, read-only and masked like josh winback. */
 export function JoshCustomersPage() {
+  __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState('');
@@ -204,9 +209,9 @@ export function JoshCustomersPage() {
   return (
     <Page>
       <PageHeader
-        title="ลูกค้า / บริษัท (josh)"
-        subtitle="บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว"
-        actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>}
+        title={__uiText("ลูกค้า / บริษัท (josh)")}
+        subtitle={__uiText("บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว")}
+        actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>{__uiText("Refresh")}</Button>}
       />
       <div className="border-t border-secondary-container" />
 
@@ -214,13 +219,13 @@ export function JoshCustomersPage() {
 
       {s && (
         <div>
-          <SectionTitle note="Click to filter; click again to clear">Issues</SectionTitle>
+          <SectionTitle note={__uiText("Click to filter; click again to clear")}>{__uiText("Issues")}</SectionTitle>
           <StatGrid cols={3}>
             <StatTile
               accent
               tone={s.kyc_pending > 0 ? 'warn' : 'ok'}
               icon={s.kyc_pending > 0 ? 'hourglass_top' : 'check_circle'}
-              label="KYC รอตรวจ"
+              label={__uiText("KYC รอตรวจ")}
               value={fmt.num(s.kyc_pending)}
               selected={f.issue === 'kyc_pending'}
               onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'kyc_pending' ? '' : 'kyc_pending' }); }}
@@ -228,7 +233,7 @@ export function JoshCustomersPage() {
             <StatTile
               tone="info"
               icon="info"
-              label="ยังไม่ส่ง KYC"
+              label={__uiText("ยังไม่ส่ง KYC")}
               value={fmt.num(s.kyc_none)}
               selected={f.issue === 'kyc_none'}
               onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'kyc_none' ? '' : 'kyc_none' }); }}
@@ -237,7 +242,7 @@ export function JoshCustomersPage() {
               accent
               tone={s.credit_application_pending > 0 ? 'warn' : 'ok'}
               icon={s.credit_application_pending > 0 ? 'hourglass_top' : 'check_circle'}
-              label="ขอวงเงินค้าง"
+              label={__uiText("ขอวงเงินค้าง")}
               value={fmt.num(s.credit_application_pending)}
               selected={f.issue === 'credit_application_pending'}
               onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'credit_application_pending' ? '' : 'credit_application_pending' }); }}
@@ -246,7 +251,7 @@ export function JoshCustomersPage() {
               accent
               tone={s.over_credit > 0 ? 'danger' : 'ok'}
               icon={s.over_credit > 0 ? 'error' : 'check_circle'}
-              label="เกินวงเงิน"
+              label={__uiText("เกินวงเงิน")}
               value={fmt.num(s.over_credit)}
               selected={f.issue === 'over_credit'}
               onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'over_credit' ? '' : 'over_credit' }); }}
@@ -254,7 +259,7 @@ export function JoshCustomersPage() {
             <StatTile
               tone="warn"
               icon="warning"
-              label="ใกล้เต็มวงเงิน (≥90%)"
+              label={__uiText("ใกล้เต็มวงเงิน (≥90%)")}
               value={fmt.num(s.near_credit)}
               selected={f.issue === 'near_credit'}
               onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'near_credit' ? '' : 'near_credit' }); }}
@@ -263,14 +268,14 @@ export function JoshCustomersPage() {
               accent
               tone={s.no_erp_code > 0 ? 'danger' : 'ok'}
               icon={s.no_erp_code > 0 ? 'error' : 'check_circle'}
-              label="ไม่มีรหัสลูกค้า ERP"
+              label={__uiText("ไม่มีรหัสลูกค้า ERP")}
               value={fmt.num(s.no_erp_code)}
               selected={f.issue === 'no_erp_code'}
               onClick={() => { setPage(1); setF({ ...f, issue: f.issue === 'no_erp_code' ? '' : 'no_erp_code' }); }}
             />
           </StatGrid>
           <div className="px-4 py-2 text-xs text-on-surface-variant">
-            {s.total} บริษัท · ใช้วงเงินรวม {fmt.baht(s.credit_used_total)} / {fmt.baht(s.credit_limit_total)}
+            {s.total} {__uiText(" บริษัท · ใช้วงเงินรวม ")}{fmt.baht(s.credit_used_total)} / {fmt.baht(s.credit_limit_total)}
           </div>
         </div>
       )}
@@ -281,9 +286,9 @@ export function JoshCustomersPage() {
             className="flex-1"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ชื่อบริษัท หรือรหัสลูกค้า ERP"
+            placeholder={__uiText("ชื่อบริษัท หรือรหัสลูกค้า ERP")}
           />
-          <Button type="submit">ค้นหา</Button>
+          <Button type="submit">{__uiText("ค้นหา")}</Button>
         </form>
       </Panel>
 
@@ -294,13 +299,13 @@ export function JoshCustomersPage() {
           <Panel className="overflow-hidden">
             <Table>
               <THead>
-                  <TH>บริษัท</TH>
-                  <TH>รหัส ERP</TH>
-                  <TH>วงเงิน</TH>
-                  <TH>เครดิต</TH>
-                  <TH>สาขา / คน</TH>
-                  <TH>KYC</TH>
-                  <TH>สั่งล่าสุด</TH>
+                  <TH>{__uiText("บริษัท")}</TH>
+                  <TH>{__uiText("รหัส ERP")}</TH>
+                  <TH>{__uiText("วงเงิน")}</TH>
+                  <TH>{__uiText("เครดิต")}</TH>
+                  <TH>{__uiText("สาขา / คน")}</TH>
+                  <TH>{__uiText("KYC")}</TH>
+                  <TH>{__uiText("สั่งล่าสุด")}</TH>
                 </THead>
               <TBody>
                 {list.data.items.map((c) => {
@@ -312,12 +317,12 @@ export function JoshCustomersPage() {
                         <RowLink mono={false} to={`/reports/customers/${c.id}`} state={{ from: '/reports/customers', search: `?${searchParams.toString()}` }}>{c.name}</RowLink>
                         <div className="font-mono text-[11px] text-on-surface-variant">{c.register_number}</div>
                       </TD>
-                      <TD kind="code">{c.erp_customer_code ?? <Chip tone="warn">ไม่มี</Chip>}</TD>
+                      <TD kind="code">{c.erp_customer_code ?? <Chip tone="warn">{__uiText("ไม่มี")}</Chip>}</TD>
                       <TD kind="money">
                         {fmt.baht(c.credit_used)} / {fmt.baht(c.credit_limit)}
-                        {over && <div className="mt-1"><Chip tone="danger">เกินวงเงิน</Chip></div>}
+                        {over && <div className="mt-1"><Chip tone="danger">{__uiText("เกินวงเงิน")}</Chip></div>}
                       </TD>
-                      <TD>{c.credit_term_days ? `${c.credit_term_days} วัน` : 'เงินสด'}</TD>
+                      <TD>{c.credit_term_days ? __uiText("{0} วัน", {"0": c.credit_term_days}) : __uiText("เงินสด")}</TD>
                       <TD>{c.branch_count} / {c.user_count}</TD>
                       <TD><Chip tone={kc as any}>{kl}</Chip></TD>
                       <TD>{fmt.when(c.last_order_at)}</TD>
@@ -339,6 +344,7 @@ const rowsText = (rows: JoshRow[]) => rows.map((r) => `${fmt.baht(r.price)} (${r
 
 /** What a josh customer branch pays per unit today, layer by layer in josh's order, plus its ERP quotations. */
 export function JoshPricesPage() {
+  __useUiLocale();
   const [branchSearch, setBranchSearch] = useState('');
   const [bq, setBq] = useState('');
   const branches = useAsync(() => joshPriceApi.branches(bq), [bq]);
@@ -351,22 +357,22 @@ export function JoshPricesPage() {
   return (
     <Page>
       <PageHeader
-        title="ราคาที่ลูกค้าเห็น (josh)"
-        subtitle="เลือกสาขา → ราคาต่อหน่วยที่ josh คิดวันนี้ ทีละชั้นตามลำดับของ josh และ quotation จาก ERP · ดูอย่างเดียว"
-        actions={<Button icon="refresh" onClick={() => { branches.reload(); prices.reload(); quotes.reload(); }}>Refresh</Button>}
+        title={__uiText("ราคาที่ลูกค้าเห็น (josh)")}
+        subtitle={__uiText("เลือกสาขา → ราคาต่อหน่วยที่ josh คิดวันนี้ ทีละชั้นตามลำดับของ josh และ quotation จาก ERP · ดูอย่างเดียว")}
+        actions={<Button icon="refresh" onClick={() => { branches.reload(); prices.reload(); quotes.reload(); }}>{__uiText("Refresh")}</Button>}
       />
       <div className="border-t border-secondary-container" />
 
       <Panel>
         <form className="space-y-3 p-4">
-          <Field label="ค้นหา">
+          <Field label={__uiText("ค้นหา")}>
             <Input
               value={branchSearch}
               onChange={(e) => setBranchSearch(e.target.value)}
-              placeholder="ค้นหาบริษัท / สาขา / รหัสลูกค้า ERP"
+              placeholder={__uiText("ค้นหาบริษัท / สาขา / รหัสลูกค้า ERP")}
             />
           </Field>
-          <Button type="button" onClick={() => setBq(branchSearch.trim())}>ค้นหาสาขา</Button>
+          <Button type="button" onClick={() => setBq(branchSearch.trim())}>{__uiText("ค้นหาสาขา")}</Button>
         </form>
         {branches.error && <ErrorText error={branches.error} />}
         <div className="flex flex-wrap gap-2 p-4">
@@ -388,14 +394,14 @@ export function JoshPricesPage() {
           <Panel>
             <PanelHead title={`${branch.company_name} · ${branch.branch_name}`} sub={<span className="font-mono text-xs">{branch.erp_customer_code}</span>} />
             <form className="space-y-3 p-4">
-              <Field label="SKU">
+              <Field label={__uiText("SKU")}>
                 <Input
                   value={sku}
                   onChange={(e) => setSku(e.target.value)}
-                  placeholder="ว่าง = เฉพาะสินค้าที่มีราคาเฉพาะลูกค้า · หรือพิมพ์ SKU / ชื่อเพื่อดูสินค้าใดก็ได้"
+                  placeholder={__uiText("ว่าง = เฉพาะสินค้าที่มีราคาเฉพาะลูกค้า · หรือพิมพ์ SKU / ชื่อเพื่อดูสินค้าใดก็ได้")}
                 />
               </Field>
-              <Button type="button" variant="ghost" onClick={() => setSkuQ(sku.trim())}>แสดง</Button>
+              <Button type="button" variant="ghost" onClick={() => setSkuQ(sku.trim())}>{__uiText("แสดง")}</Button>
             </form>
             {prices.error && <ErrorText error={prices.error} />}
             {prices.loading && !prices.data ? (
@@ -403,14 +409,14 @@ export function JoshPricesPage() {
             ) : prices.data && prices.data.items.length ? (
               <Table>
                 <THead>
-                    <TH>SKU</TH>
-                    <TH>สินค้า</TH>
-                    <TH>ราคาปกติ</TH>
-                    <TH>เฉพาะบริษัท</TH>
-                    <TH>สัญญาสาขา</TH>
-                    <TH>พิเศษสาขา</TH>
-                    <TH>ขั้นบันได</TH>
-                    <TH>วันนี้ลูกค้าจ่าย</TH>
+                    <TH>{__uiText("SKU")}</TH>
+                    <TH>{__uiText("สินค้า")}</TH>
+                    <TH>{__uiText("ราคาปกติ")}</TH>
+                    <TH>{__uiText("เฉพาะบริษัท")}</TH>
+                    <TH>{__uiText("สัญญาสาขา")}</TH>
+                    <TH>{__uiText("พิเศษสาขา")}</TH>
+                    <TH>{__uiText("ขั้นบันได")}</TH>
+                    <TH>{__uiText("วันนี้ลูกค้าจ่าย")}</TH>
                   </THead>
                 <TBody>
                   {prices.data.items.map((p) => (
@@ -423,7 +429,7 @@ export function JoshPricesPage() {
                       <TD>{rowsText(p.layers.branchSpecial)}</TD>
                       <TD>{p.layers.qtyRules.map((r: JoshRow) => `${r.min_qty}${r.max_qty ? `–${r.max_qty}` : '+'}: ${fmt.baht(r.promotion_price)}`).join(', ') || (p.layers.hasActiveMechanic ? 'มีโปรโมชัน' : '—')}</TD>
                       <TD>
-                        <strong>{p.winner.price == null ? 'คำนวณที่ josh' : fmt.baht(p.winner.price)}</strong>
+                        <strong>{p.winner.price == null ? __uiText("คำนวณที่ josh") : fmt.baht(p.winner.price)}</strong>
                         <div className="text-[11px] text-on-surface-variant">{SOURCE[p.winner.source] ?? p.winner.source}</div>
                       </TD>
                     </TR>
@@ -431,24 +437,24 @@ export function JoshPricesPage() {
                 </TBody>
               </Table>
             ) : prices.data ? (
-              <Empty>ไม่มีราคาเฉพาะลูกค้าสำหรับสาขานี้ — พิมพ์ SKU เพื่อดูสินค้าอื่น</Empty>
+              <Empty>{__uiText("ไม่มีราคาเฉพาะลูกค้าสำหรับสาขานี้ — พิมพ์ SKU เพื่อดูสินค้าอื่น")}</Empty>
             ) : null}
             {prices.data && <div className="px-4 py-3 text-xs text-on-surface-variant border-t border-secondary-container">{prices.data.note}</div>}
           </Panel>
 
           <Panel>
-            <PanelHead title={`Quotation จาก ERP (${branch.erp_customer_code ?? 'ไม่มีรหัสลูกค้า'})`} />
+            <PanelHead title={__uiText("Quotation จาก ERP ({0})", {"0": branch.erp_customer_code ?? 'ไม่มีรหัสลูกค้า'})} />
             {quotes.loading && !quotes.data ? (
               <Loading />
             ) : quotes.data && quotes.data.length ? (
               <Table>
                 <THead>
-                    <TH>สินค้า</TH>
-                    <TH>ราคา</TH>
-                    <TH>หน่วย</TH>
-                    <TH>ใช้ได้</TH>
-                    <TH>สถานะ</TH>
-                    <TH>เอกสาร</TH>
+                    <TH>{__uiText("สินค้า")}</TH>
+                    <TH>{__uiText("ราคา")}</TH>
+                    <TH>{__uiText("หน่วย")}</TH>
+                    <TH>{__uiText("ใช้ได้")}</TH>
+                    <TH>{__uiText("สถานะ")}</TH>
+                    <TH>{__uiText("เอกสาร")}</TH>
                   </THead>
                 <TBody>
                   {quotes.data.map((q, i) => (
@@ -460,14 +466,14 @@ export function JoshPricesPage() {
                       <TD kind="money">{fmt.baht(q.rate)}</TD>
                       <TD>{q.unit}</TD>
                       <TD>{q.start_date ?? '…'} – {q.expiry_date ?? '…'}</TD>
-                      <TD><Chip tone={q.status === 'Y' ? 'ok' : 'muted'}>{q.status === 'Y' ? 'ใช้งาน' : q.status === 'Z' ? 'ยกเลิก' : q.status}</Chip></TD>
+                      <TD><Chip tone={q.status === 'Y' ? 'ok' : 'muted'}>{q.status === 'Y' ? __uiText("ใช้งาน") : q.status === 'Z' ? __uiText("ยกเลิก") : q.status}</Chip></TD>
                       <TD kind="code">{q.doc_book}{q.doc_no}</TD>
                     </TR>
                   ))}
                 </TBody>
               </Table>
             ) : quotes.data ? (
-              <Empty>ไม่มี quotation</Empty>
+              <Empty>{__uiText("ไม่มี quotation")}</Empty>
             ) : null}
           </Panel>
         </>

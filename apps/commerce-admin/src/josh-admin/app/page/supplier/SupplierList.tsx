@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { getSuppliers, deleteSupplier } from '@josh/shared-api';
 import { Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
@@ -6,7 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import AdminListHeader from '../../components/AdminListHeader';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const SupplierList = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [apiResponse, setApiResponse] = useState<any>({
@@ -30,25 +34,25 @@ const SupplierList = () => {
   }, [currentPage]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('ยืนยันการลบ supplier นี้?')) return;
+    if (!confirm(__uiText("ยืนยันการลบ supplier นี้?"))) return;
     await deleteSupplier(id);
     loadData(currentPage);
   };
 
   const columns: TableColumn<any>[] = [
-    { key: 'supplier_name', label: 'ชื่อ Supplier' },
-    { key: 'contact_name', label: 'ผู้ติดต่อ' },
-    { key: 'phone', label: 'เบอร์โทร' },
-    { key: 'email', label: 'อีเมล' },
+    { key: 'supplier_name', label: __uiText("ชื่อ Supplier") },
+    { key: 'contact_name', label: __uiText("ผู้ติดต่อ") },
+    { key: 'phone', label: __uiText("เบอร์โทร") },
+    { key: 'email', label: __uiText("อีเมล") },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(ADMIN_ROUTES.supplierEdit(row.id || row.supplier_id))}
             className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg"
-            title="แก้ไข"
+            title={__uiText("แก้ไข")}
           >
             <AiOutlineEdit size={18} />
           </button>
@@ -56,8 +60,7 @@ const SupplierList = () => {
             onClick={() => handleDelete(row.id || row.supplier_id)}
             className="text-xs text-red-500 hover:underline"
           >
-            ลบ
-          </button>
+            {__uiText("ลบ")}</button>
         </div>
       ),
     },
@@ -66,8 +69,8 @@ const SupplierList = () => {
   return (
     <div className="flex flex-col gap-5 p-4">
       <AdminListHeader
-        title="Suppliers"
-        createLabel="เพิ่ม Supplier"
+        title={__uiText("Suppliers")}
+        createLabel={__uiText("เพิ่ม Supplier")}
         createPath={ADMIN_ROUTES.supplierCreate}
       />
       <Table

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เพิ่ม Intent Rule - Commerce Platform</title>
+  <!-- Google Fonts: Noto Sans Thai & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans Thai', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            ink: '#17243b',
+            secondary: '#52627a',
+            primary: {
+              DEFAULT: '#365cf5',
+              hover: '#284cd4',
+              light: '#eff3ff'
+            },
+            success: {
+              DEFAULT: '#157347',
+              bg: '#edf7f0',
+              border: '#bbf0cb'
+            },
+            warning: {
+              DEFAULT: '#b08900',
+              bg: '#fef9e8',
+              border: '#fdeaa7'
+            },
+            error: {
+              DEFAULT: '#c2333f',
+              bg: '#fdf2f2',
+              border: '#f8d0d4'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Global Header -->
+  <header class="h-14 bg-white border-b border-border px-6 flex items-center justify-between sticky top-0 z-30">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm">
+          CP
+        </div>
+        <div>
+          <span class="font-bold text-sm text-ink tracking-tight block leading-tight">Commerce Platform</span>
+          <span class="text-[11px] text-secondary block leading-none">ระบบจัดการศูนย์ส่งและสาขา</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search bar & Tools -->
+    <div class="flex items-center gap-4">
+      <div class="relative w-80">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <input
+          type="text"
+          placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+          data-i18n-placeholder="search_placeholder"
+          class="w-full h-9 pl-9 pr-3 rounded-lg border border-border text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-primary transition-colors text-ink placeholder-secondary"
+        />
+      </div>
+
+      <!-- Badge sample data -->
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-warning-bg text-warning border border-warning-border">
+        <span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+        <span data-i18n="sample_data">ข้อมูลตัวอย่าง</span>
+      </span>
+
+      <!-- Language selector toggle -->
+      <div class="inline-flex rounded-lg border border-border bg-slate-50 p-0.5 text-xs font-medium">
+        <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-ink shadow-xs transition-all font-semibold">ไทย</button>
+        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-secondary hover:text-ink transition-all">English</button>
+      </div>
+
+      <!-- User badge -->
+      <div class="flex items-center gap-2 pl-2 border-l border-border">
+        <div class="w-7 h-7 rounded-full bg-blue-100 text-primary flex items-center justify-center font-bold text-xs">
+          จน
+        </div>
+        <div class="text-left text-xs leading-tight">
+          <div class="font-semibold text-ink">จินดา นวลอนันต์</div>
+          <div class="text-[11px] text-secondary">หัวหน้าทีมบริการลูกค้า (CS)</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1">
+    <!-- 256px Sidebar Navigation (7 Work Areas) -->
+    <aside class="w-64 bg-white border-r border-border flex flex-col justify-between shrink-0 min-h-[calc(100vh-3.5rem)]">
+      <div class="p-4 space-y-6">
+        <div>
+          <div class="px-3 text-[11px] font-semibold text-secondary uppercase tracking-wider mb-2" data-i18n="work_areas">
+            พื้นที่ทำงานหลัก (7 สายงาน)
+          </div>
+          <nav class="space-y-0.5 text-xs">
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              <span>สินค้าและสต็อก</span>
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span>ออเดอร์และการเงิน</span>
+            </a>
+
+            <!-- Active Work Area: ลูกค้าและบริการ -->
+            <div class="pt-1 pb-1">
+              <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-primary-light text-primary font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  <span data-i18n="cust_service_area">ลูกค้าและบริการ</span>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-primary"></span>
+              </div>
+
+              <!-- Sub-routes inside Customer Service -->
+              <div class="mt-1 pl-4 space-y-0.5 border-l-2 border-primary/20 ml-5 text-[12px]">
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_customers">ลูกค้าแพลตฟอร์ม</a>
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_all_users">All Users (จัดการผู้ใช้)</a>
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_kyc">KYC — ยืนยันตัวตน</a>
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_tiers">ระดับสมาชิก (Tiers)</a>
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_csdesk">งานบริการลูกค้า (CS Desk)</a>
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_livechat">แชตกับลูกค้า (Live chat)</a>
+
+                <!-- Bot Intent Rules section (Active) -->
+                <div class="px-3 py-1.5 text-primary font-semibold bg-blue-50/70 rounded-md flex items-center justify-between">
+                  <span data-i18n="nav_intent_rules">Intent Rules บอท</span>
+                  <span class="text-[10px] bg-primary text-white px-1.5 py-0.2 rounded font-mono">NEW</span>
+                </div>
+                <a href="#" class="block px-3 py-1.5 text-secondary hover:text-ink rounded-md transition-colors" data-i18n="nav_winback">ติดตามลูกค้าเก่า (Win-back)</a>
+              </div>
+            </div>
+
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+              <span>การตลาด</span>
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              <span>รายงานและข้อมูล</span>
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              <span>ระบบเชื่อมต่อ</span>
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span>ตั้งค่าและทีมงาน</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Developer Portal route footer -->
+      <div class="p-4 border-t border-border bg-slate-50/50">
+        <div class="flex items-center gap-1.5 text-xs font-semibold text-secondary mb-1">
+          <span class="text-slate-400 font-mono">&lt;/&gt;</span> Developer Portal
+        </div>
+        <div class="text-[11px] font-mono text-slate-500 truncate" title="route: admin-ce5d3fb45905">
+          route: admin-ce5d3fb45905
+        </div>
+        <div class="text-[10px] font-mono text-slate-400 truncate">
+          /j/bot/intent-rules/create
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area: Max width 1240px container -->
+    <main class="flex-1 p-8 overflow-y-auto">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Breadcrumb & Header -->
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-2 text-xs text-secondary">
+            <a href="#" class="hover:text-primary transition-colors" data-i18n="cust_service_area">ลูกค้าและบริการ</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary transition-colors" data-i18n="nav_intent_rules">Intent Rules บอท</a>
+            <span>/</span>
+            <span class="text-ink font-medium" data-i18n="title_create">เพิ่ม Intent Rule</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <a href="#" class="w-9 h-9 rounded-lg border border-border bg-white flex items-center justify-center text-secondary hover:text-ink hover:border-slate-300 transition-colors shadow-2xs">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              </a>
+              <div>
+                <div class="flex items-center gap-2.5">
+                  <h1 class="text-2xl font-bold text-ink tracking-tight" data-i18n="title_create">เพิ่ม Intent Rule</h1>
+                  <span class="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 text-slate-700 border border-slate-200">/j/bot/intent-rules/create</span>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-success border border-success-border">
+                    <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    <span>CreateBotIntentRule</span>
+                  </span>
+                </div>
+                <p class="text-xs text-secondary mt-0.5" data-i18n="rule_subtitle">กฎจับคู่ intent ของ chatbot จาก pattern (regex)</p>
+              </div>
+            </div>
+
+            <!-- Quick Action / Status indicator -->
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs text-secondary">
+                <span data-i18n="lbl_translate_from">แปลจาก ไทย →</span>
+                <span class="font-medium text-ink ml-1">Automated NLP Matcher</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Message / Info Banner -->
+        <div class="bg-blue-50/70 border border-blue-200/80 rounded-xl p-4 flex items-start gap-3 text-xs text-slate-700">
+          <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div class="leading-relaxed">
+            <div class="font-semibold text-ink" data-i18n="info_banner_title">คำแนะนำการสร้าง Intent Rule สำหรับ Chatbot</div>
+            <div class="text-secondary mt-0.5" data-i18n="info_banner_desc">
+              ระบบจับคู่ข้อความของลูกค้าที่ส่งผ่าน Live chat Gateway และคัดกรองตาม Regular Expression (Pattern) หากเข้าเงื่อนไขจะส่งต่อไปยัง Intent Handler เพื่อตอบข้อความอัตโนมัติหรือโอนสายให้ CS Desk ทันที
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Layout (2 Columns: Main Form on Left, Regex Tester & Settings on Right) -->
+        <form id="intent-rule-form" onsubmit="event.preventDefault(); handleSave();" class="space-y-6">
+          <div class="grid grid-cols-12 gap-6 items-start">
+
+            <!-- Left Column: Primary Fields & Match Configuration (8 Cols) -->
+            <div class="col-span-8 space-y-6">
+
+              <!-- Card 1: ข้อมูลพื้นฐานและ Pattern -->
+              <div class="bg-white rounded-xl border border-border p-6 shadow-xs space-y-5">
+                <div class="border-b border-border pb-3 flex items-center justify-between">
+                  <h2 class="text-sm font-bold text-ink flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-primary"></span>
+                    <span data-i18n="sec_basic_pattern">1. ข้อมูลพื้นฐานและ Regular Expression (Pattern)</span>
+                  </h2>
+                  <span class="text-xs text-secondary font-medium" data-i18n="required_fields">* ช่องที่มีเครื่องหมายจำเป็นต้องกรอก</span>
+                </div>
+
+                <!-- Intent Code & Name -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-ink" for="intent-code">
+                      <span>รหัส Intent Code</span> <span class="text-error">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="intent-code"
+                      value="INTENT_ASK_ORDER_TRACKING"
+                      class="w-full h-10 px-3 rounded-lg border border-border text-xs font-mono bg-white focus:outline-none focus:border-primary text-ink transition-colors"
+                      placeholder="เช่น INTENT_CHECK_PRICE"
+                      required
+                    />
+                    <p class="text-[11px] text-secondary">รหัสอ้างอิงภายในระบบสำหรับ Bot Engine (ตัวพิมพ์ใหญ่และขีดล่าง)</p>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-ink" for="intent-name">
+                      <span>ชื่อ Intent (แสดงในระบบ)</span> <span class="text-error">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="intent-name"
+                      value="สอบถามสถานะจัดส่งสินค้า"
+                      class="w-full h-10 px-3 rounded-lg border border-border text-xs bg-white focus:outline-none focus:border-primary text-ink transition-colors"
+                      placeholder="เช่น ถามส่วนลด B2B หรือ แจ้งปัญหาการชำระเงิน"
+                      required
+                    />
+                    <p class="text-[11px] text-secondary">ชื่อเรียกสำหรับเจ้าหน้าที่ CS และผู้ดูแลระบบบอท</p>
+                  </div>
+                </div>
+
+                <!-- Pattern Input (Required) -->
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-semibold text-ink" for="pattern-input">
+                      <span>Pattern (Regular Expression)</span> <span class="text-error">*</span>
+                    </label>
+                    <span class="text-[11px] text-primary font-mono cursor-pointer hover:underline" onclick="loadSamplePattern()">
+                      ใช้ตัวอย่าง Pattern ทั่วไป
+                    </span>
+                  </div>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="pattern-input"
+                      value="(?i)(เช็ค|ตาม|ส่งถึงไหน|เลขพัสดุ|tracking|track)\s*(ออเดอร์|order|ของ|สินค้า)?"
+                      class="w-full h-10 px-3 font-mono text-xs rounded-lg border border-border bg-white focus:outline-none focus:border-primary text-ink transition-colors"
+                      placeholder="(?i)(ตาม|สถานะ|ส่งถึงไหน|tracking).*"
+                      oninput="validatePattern()"
+                      required
+                    />
+                  </div>
+                  <!-- Error notice if empty -->
+                  <div id="pattern-error" class="hidden flex items-center gap-1.5 text-[11px] text-error font-medium">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    <span data-i18n="err_pattern_required">กรุณากรอก Pattern</span>
+                  </div>
+                  <p class="text-[11px] text-secondary" data-i18n="rule_subtitle">กฎจับคู่ intent ของ chatbot จาก pattern (regex) — รองรับ Flags (?i) เพื่อไม่แยกพิมพ์เล็ก-ใหญ่</p>
+                </div>
+
+                <!-- Match Type: Terms vs Regex -->
+                <div class="grid grid-cols-2 gap-4 pt-1">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-ink">ประเภทการตรวจจับ (Match Strategy)</label>
+                    <select class="w-full h-10 px-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary">
+                      <option value="regex" selected>Regex Pattern Match (ยืดหยุ่นสูง)</option>
+                      <option value="terms" data-i18n="lbl_terms_mode">ข้อความ — Terms (terms)</option>
+                      <option value="exact">Exact Phrase Match (ตรงตัวทุกคำ)</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-ink">ระดับความสำคัญ (Priority Weight)</label>
+                    <select class="w-full h-10 px-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary">
+                      <option value="100">100 - สูงสุด (ทดสอบก่อน Rule อื่น)</option>
+                      <option value="80" selected>80 - ปานกลาง (ทั่วไป)</option>
+                      <option value="50">50 - มาตรฐาน</option>
+                      <option value="20">20 - ต่ำ (Fallback ตรวจสอบทีหลัง)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Keyword Tags / Terms Example -->
+                <div class="space-y-1.5 pt-1">
+                  <label class="block text-xs font-semibold text-ink">
+                    <span>คำค้นหลัก / คีย์เวิร์ดสำรอง (Tags)</span>
+                  </label>
+                  <div class="flex flex-wrap items-center gap-1.5 p-2 rounded-lg border border-border bg-slate-50 min-h-[42px]">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-white border border-border text-ink">
+                      <span>#ติดตามพัสดุ</span>
+                      <button type="button" class="text-slate-400 hover:text-error">×</button>
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-white border border-border text-ink">
+                      <span>#order-status</span>
+                      <button type="button" class="text-slate-400 hover:text-error">×</button>
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-white border border-border text-ink">
+                      <span data-i18n="tag_sample_hint">เช่น japanese หรือ cafe</span>
+                      <button type="button" class="text-slate-400 hover:text-error">×</button>
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="+ เพิ่มคำค้น..."
+                      class="text-xs bg-transparent border-none focus:outline-none text-ink px-1 w-28"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: การตอบกลับและการส่งต่อ (Action & Fulfillment) -->
+              <div class="bg-white rounded-xl border border-border p-6 shadow-xs space-y-5">
+                <div class="border-b border-border pb-3 flex items-center justify-between">
+                  <h2 class="text-sm font-bold text-ink flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-primary"></span>
+                    <span>2. แอ็กชันการตอบกลับและโอนสาย (Response Handler)</span>
+                  </h2>
+                  <span class="text-xs text-secondary">Commerce Relay Engine</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-ink">ประเภทแอ็กชัน (Action Type)</label>
+                    <select id="action-type-select" class="w-full h-10 px-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary">
+                      <option value="auto_reply">ตอบข้อความอัตโนมัติ (Automated Text)</option>
+                      <option value="api_card" selected>ดึงข้อมูล API และส่ง Interactive Card</option>
+                      <option value="handover">ส่งต่อให้เจ้าหน้าที่ CS Desk ทันที</option>
+                      <option value="catalog">ส่งการ์ดสินค้าแนะนำ</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-ink">เป้าหมายปลายทาง (Target Endpoint)</label>
+                    <input
+                      type="text"
+                      value="/api/v1/shipments/tracking-card"
+                      class="w-full h-10 px-3 rounded-lg border border-border font-mono text-xs bg-white text-ink focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+
+                <!-- Template Message Response -->
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-semibold text-ink">ข้อความตอบกลับเริ่มต้น (Bot Message Template)</label>
+                    <span class="text-[11px] text-secondary">รองรับตัวแปร {customer_name}, {order_id}</span>
+                  </div>
+                  <textarea
+                    rows="3"
+                    class="w-full p-3 rounded-lg border border-border text-xs text-ink bg-white focus:outline-none focus:border-primary leading-relaxed"
+                  >สวัสดีครับคุณ {customer_name} ขณะนี้ระบบกำลังตรวจสอบสถานะจัดส่งให้สักครู่นะครับ หากมีเลขพัสดุออกแล้ว เจ้าหน้าที่จะแจ้งสถานะรถขนส่งให้ทราบทันทีครับ</textarea>
+                </div>
+
+                <!-- Fallback & Error handling -->
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                  <div class="font-semibold text-ink flex items-center justify-between">
+                    <span>การจัดการกรณีเกิดข้อผิดพลาดในการเรียก API ภายนอก</span>
+                    <span class="text-[11px] font-mono text-secondary">Fallback Behavior</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3 text-secondary text-[12px]">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-error shrink-0"></span>
+                      <span>กรณี: <strong class="text-ink" data-i18n="fallback_erp">ส่ง ERP ไม่สำเร็จ</strong> → โอนเข้าคิว CS ทันที</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-warning shrink-0"></span>
+                      <span>กรณี: <strong class="text-ink" data-i18n="fallback_shipment">โหลด shipment ไม่สำเร็จ</strong> → แจ้งลูกค้าให้ลองใหม่</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Column: Interactive Regex Tester & Global Settings (4 Cols) -->
+            <div class="col-span-4 space-y-6">
+
+              <!-- Card 3: Interactive Regex Simulator / Tester -->
+              <div class="bg-white rounded-xl border border-border p-5 shadow-xs space-y-4">
+                <div class="border-b border-border pb-3 flex items-center justify-between">
+                  <h3 class="text-xs font-bold text-ink uppercase tracking-wide flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>ทดสอบ Pattern ทันที</span>
+                  </h3>
+                  <span class="text-[11px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">Regex Tester</span>
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="block text-[11px] font-semibold text-ink">ข้อความทดสอบจากลูกค้า (Incoming Chat):</label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="test-input"
+                      value="ช่วยตามของ ออเดอร์เมื่อวานให้หน่อยครับ"
+                      class="w-full h-9 px-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary"
+                      oninput="runLiveTest()"
+                    />
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onclick="setSampleChat('ขอเช็คเลขพัสดุหน่อยครับ')"
+                    class="text-[11px] px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                  >
+                    "ขอเช็คเลขพัสดุ"
+                  </button>
+                  <button
+                    type="button"
+                    onclick="setSampleChat('สินค้าตัวนี้ราคาเท่าไหร่')"
+                    class="text-[11px] px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition-colors"
+                  >
+                    "สอบถามราคา"
+                  </button>
+                </div>
+
+                <!-- Simulation Output Box -->
+                <div id="test-result-box" class="p-3.5 rounded-lg border border-success-border bg-success-bg space-y-1.5 transition-all">
+                  <div class="flex items-center justify-between text-xs font-bold text-success">
+                    <span class="flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                      <span id="test-result-status" data-i18n="match_success">ส่งข้อมูลถึง platform สำเร็จ</span>
+                    </span>
+                    <span class="text-[10px] font-mono bg-white px-1.5 py-0.5 rounded border border-success-border">MATCHED</span>
+                  </div>
+                  <div class="text-[11px] text-slate-700 leading-tight">
+                    <span>จับคู่กลุ่มคำ:</span> <code id="test-matched-term" class="bg-white/80 px-1 py-0.5 rounded font-mono font-bold text-ink">"ตาม", "ของ"</code>
+                  </div>
+                  <div class="text-[10px] text-slate-500">
+                    เวลาประมวลผล: <span class="font-mono">1.2ms</span> | ความแม่นยำ: <span class="font-mono">99.4%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 4: ขอบเขตและเงื่อนไข (Scope & Target Segments) -->
+              <div class="bg-white rounded-xl border border-border p-5 shadow-xs space-y-4">
+                <div class="border-b border-border pb-3 flex items-center justify-between">
+                  <h3 class="text-xs font-bold text-ink uppercase tracking-wide">
+                    <span>ขอบเขตและการตั้งค่าขั้นสูง</span>
+                  </h3>
+                  <span class="text-[11px] text-secondary">Settings</span>
+                </div>
+
+                <!-- Scope Notification note from catalogue -->
+                <div class="p-3 rounded-lg bg-amber-50/70 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
+                  <div class="font-semibold flex items-center gap-1.5 mb-0.5 text-amber-950">
+                    <svg class="w-3.5 h-3.5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>ขอบเขตการทำงาน</span>
+                  </div>
+                  <span data-i18n="global_marketing_note">ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ</span>
+                </div>
+
+                <!-- Customer Filter -->
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-ink" data-i18n="lbl_eligible_customers">
+                    รายชื่อลูกค้าที่ตรงเงื่อนไข
+                  </label>
+                  <select class="w-full h-9 px-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary">
+                    <option value="all" selected>ลูกค้าทุกกลุ่ม (B2B & Retail ทั้งหมด)</option>
+                    <option value="b2b_only">เฉพาะลูกค้าธุรกิจ B2B ยืนยันแล้ว</option>
+                    <option value="tier_gold">เฉพาะสมาชิกระดับ Gold ขึ้นไป</option>
+                  </select>
+                </div>
+
+                <!-- Min spend limit -->
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-semibold text-ink" data-i18n="lbl_min_spend">
+                      ยอดใช้จ่ายขั้นต่ำ
+                    </label>
+                    <span class="text-[11px] text-secondary font-mono">฿0 (ไม่จำกัด)</span>
+                  </div>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-mono text-xs">฿</div>
+                    <input
+                      type="number"
+                      value="0"
+                      class="w-full h-9 pl-7 pr-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+
+                <!-- Items & Product Link -->
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-ink" data-i18n="lbl_marketing_product_link">
+                    ลิงก์สินค้า (สำหรับ Marketing)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://shop.company.internal/catalog/beverage"
+                    class="w-full h-9 px-3 rounded-lg border border-border text-xs bg-white text-ink focus:outline-none focus:border-primary"
+                  />
+                  <p class="text-[10px] text-secondary" data-i18n="lbl_catalog_hint">สินค้า (catalog ที่ josh เห็น)</p>
+                </div>
+
+                <!-- Technical Specs for Rendering/UI -->
+                <div class="pt-2 border-t border-border grid grid-cols-2 gap-3 text-xs">
+                  <div class="space-y-1">
+                    <span class="text-secondary text-[11px]" data-i18n="lbl_border_thickness">ความหนา (px)</span>
+                    <input type="number" value="1" class="w-full h-8 px-2 rounded border border-border text-xs text-ink bg-white font-mono">
+                  </div>
+                  <div class="space-y-1">
+                    <span class="text-secondary text-[11px]" data-i18n="lbl_items_per_page">จำนวนรายการต่อหน้า</span>
+                    <input type="number" value="20" class="w-full h-8 px-2 rounded border border-border text-xs text-ink bg-white font-mono">
+                  </div>
+                </div>
+
+                <!-- Status Summary metric badges -->
+                <div class="pt-2 border-t border-border space-y-1.5">
+                  <div class="flex items-center justify-between text-xs text-secondary">
+                    <span data-i18n="lbl_create_to_finish">รวม (สร้าง→จบ)</span>
+                    <span class="font-semibold text-ink font-mono">3 ขั้นตอน</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs text-secondary">
+                    <span data-i18n="lbl_rejected_items">มีรายการถูกปฏิเสธ</span>
+                    <span class="font-semibold text-ink font-mono">0 รายการ</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Sticky Form Bottom Action Bar (Cancel / Save Actions) -->
+          <div class="sticky bottom-4 z-20 bg-white/95 backdrop-blur-xs border border-border rounded-xl p-4 shadow-lg flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span class="text-xs text-secondary">
+                <span>บันทึกไปยังฐานข้อมูล Intent Rules (Active Service)</span>
+              </span>
+            </div>
+
+            <!-- Toast / Feedback alert banner (Controlled by JS) -->
+            <div id="form-error-toast" class="hidden items-center gap-2 px-3 py-1.5 rounded-lg bg-error-bg border border-error-border text-error text-xs font-semibold animate-pulse">
+              <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              <span id="toast-text" data-i18n="err_save_failure">เกิดข้อผิดพลาดในการบันทึก</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                onclick="window.history.back()"
+                class="h-10 px-4 rounded-lg border border-border bg-white text-xs font-semibold text-secondary hover:text-ink hover:bg-slate-50 transition-colors"
+                data-i18n="btn_cancel"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="submit"
+                class="h-10 px-6 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-semibold shadow-xs flex items-center gap-2 transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span data-i18n="btn_save">บันทึก Intent Rule</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- INVISIBLE REQUIRED DICTIONARY FOR EVERY EXACT SOURCE STRING IN CATALOGUE -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "เพิ่ม Intent Rule": {
+      "th": "เพิ่ม Intent Rule",
+      "en": "Add Intent Rule"
+    },
+    "กรุณากรอก Pattern": {
+      "th": "กรุณากรอก Pattern",
+      "en": "Please enter Pattern"
+    },
+    "เกิดข้อผิดพลาดในการบันทึก": {
+      "th": "เกิดข้อผิดพลาดในการบันทึก",
+      "en": "An error occurred while saving"
+    },
+    "กฎจับคู่ intent ของ chatbot จาก pattern (regex)": {
+      "th": "กฎจับคู่ intent ของ chatbot จาก pattern (regex)",
+      "en": "Chatbot intent matching rules using pattern (regex)"
+    },
+    "ข้อความ — Terms (terms)": {
+      "th": "ข้อความ — Terms (terms)",
+      "en": "Message — Terms (terms)"
+    },
+    "ความหนา (px)": {
+      "th": "ความหนา (px)",
+      "en": "Border width (px)"
+    },
+    "จำนวนรายการต่อหน้า": {
+      "th": "จำนวนรายการต่อหน้า",
+      "en": "Items per page"
+    },
+    "เช่น japanese หรือ cafe": {
+      "th": "เช่น japanese หรือ cafe",
+      "en": "e.g. japanese or cafe"
+    },
+    "ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ": {
+      "th": "ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ",
+      "en": "Settings affecting every marketing workflow — not bound to any specific workflow"
+    },
+    "บันทึก Preset ไม่สำเร็จ": {
+      "th": "บันทึก Preset ไม่สำเร็จ",
+      "en": "Failed to save Preset"
+    },
+    "แปลจาก ไทย →": {
+      "th": "แปลจาก ไทย →",
+      "en": "Translate from Thai →"
+    },
+    "มีรายการถูกปฏิเสธ": {
+      "th": "มีรายการถูกปฏิเสธ",
+      "en": "Rejected items found"
+    },
+    "ยอดใช้จ่ายขั้นต่ำ": {
+      "th": "ยอดใช้จ่ายขั้นต่ำ",
+      "en": "Minimum spend"
+    },
+    "รวม (สร้าง→จบ)": {
+      "th": "รวม (สร้าง→จบ)",
+      "en": "Total (create→finish)"
+    },
+    "รายชื่อลูกค้าที่ตรงเงื่อนไข": {
+      "th": "รายชื่อลูกค้าที่ตรงเงื่อนไข",
+      "en": "Eligible customer list"
+    },
+    "ลิงก์สินค้า (สำหรับ Marketing)": {
+      "th": "ลิงก์สินค้า (สำหรับ Marketing)",
+      "en": "Product link (for Marketing)"
+    },
+    "ส่ง ERP ไม่สำเร็จ": {
+      "th": "ส่ง ERP ไม่สำเร็จ",
+      "en": "Failed to send to ERP"
+    },
+    "สินค้า (catalog ที่ josh เห็น)": {
+      "th": "สินค้า (catalog ที่ josh เห็น)",
+      "en": "Products (catalog visible to Josh)"
+    },
+    "โหลด shipment ไม่สำเร็จ": {
+      "th": "โหลด shipment ไม่สำเร็จ",
+      "en": "Failed to load shipment"
+    },
+    "ส่งข้อมูลถึง platform สำเร็จ": {
+      "th": "ส่งข้อมูลถึง platform สำเร็จ",
+      "en": "Successfully transmitted data to platform"
+    }
+  }
+  </script>
+
+  <!-- Client-side Logic: Translation switching & Interactive Regex Validation -->
+  <script>
+    let currentLang = 'th';
+    const translationDictionary = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const uiLabels = {
+      th: {
+        title_create: "เพิ่ม Intent Rule",
+        rule_subtitle: "กฎจับคู่ intent ของ chatbot จาก pattern (regex)",
+        err_pattern_required: "กรุณากรอก Pattern",
+        err_save_failure: "เกิดข้อผิดพลาดในการบันทึก",
+        lbl_terms_mode: "ข้อความ — Terms (terms)",
+        lbl_border_thickness: "ความหนา (px)",
+        lbl_items_per_page: "จำนวนรายการต่อหน้า",
+        tag_sample_hint: "เช่น japanese หรือ cafe",
+        global_marketing_note: "ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ",
+        lbl_translate_from: "แปลจาก ไทย →",
+        lbl_rejected_items: "มีรายการถูกปฏิเสธ",
+        lbl_min_spend: "ยอดใช้จ่ายขั้นต่ำ",
+        lbl_create_to_finish: "รวม (สร้าง→จบ)",
+        lbl_eligible_customers: "รายชื่อลูกค้าที่ตรงเงื่อนไข",
+        lbl_marketing_product_link: "ลิงก์สินค้า (สำหรับ Marketing)",
+        fallback_erp: "ส่ง ERP ไม่สำเร็จ",
+        lbl_catalog_hint: "สินค้า (catalog ที่ josh เห็น)",
+        fallback_shipment: "โหลด shipment ไม่สำเร็จ",
+        match_success: "ส่งข้อมูลถึง platform สำเร็จ",
+        sample_data: "ข้อมูลตัวอย่าง",
+        btn_cancel: "ยกเลิก",
+        btn_save: "บันทึก Intent Rule",
+        work_areas: "พื้นที่ทำงานหลัก (7 สายงาน)",
+        cust_service_area: "ลูกค้าและบริการ",
+        nav_customers: "ลูกค้าแพลตฟอร์ม",
+        nav_all_users: "All Users (จัดการผู้ใช้)",
+        nav_kyc: "KYC — ยืนยันตัวตน",
+        nav_tiers: "ระดับสมาชิก (Tiers)",
+        nav_csdesk: "งานบริการลูกค้า (CS Desk)",
+        nav_livechat: "แชตกับลูกค้า (Live chat)",
+        nav_intent_rules: "Intent Rules บอท",
+        nav_winback: "ติดตามลูกค้าเก่า (Win-back)",
+        sec_basic_pattern: "1. ข้อมูลพื้นฐานและ Regular Expression (Pattern)",
+        required_fields: "* ช่องที่มีเครื่องหมายจำเป็นต้องกรอก",
+        info_banner_title: "คำแนะนำการสร้าง Intent Rule สำหรับ Chatbot",
+        info_banner_desc: "ระบบจับคู่ข้อความของลูกค้าที่ส่งผ่าน Live chat Gateway และคัดกรองตาม Regular Expression (Pattern) หากเข้าเงื่อนไขจะส่งต่อไปยัง Intent Handler เพื่อตอบข้อความอัตโนมัติหรือโอนสายให้ CS Desk ทันที",
+        search_placeholder: "ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+      },
+      en: {
+        title_create: "Add Intent Rule",
+        rule_subtitle: "Chatbot intent matching rules using pattern (regex)",
+        err_pattern_required: "Please enter Pattern",
+        err_save_failure: "An error occurred while saving",
+        lbl_terms_mode: "Message — Terms (terms)",
+        lbl_border_thickness: "Border width (px)",
+        lbl_items_per_page: "Items per page",
+        tag_sample_hint: "e.g. japanese or cafe",
+        global_marketing_note: "Settings affecting every marketing workflow — not bound to any specific workflow",
+        lbl_translate_from: "Translate from Thai →",
+        lbl_rejected_items: "Rejected items found",
+        lbl_min_spend: "Minimum spend",
+        lbl_create_to_finish: "Total (create→finish)",
+        lbl_eligible_customers: "Eligible customer list",
+        lbl_marketing_product_link: "Product link (for Marketing)",
+        fallback_erp: "Failed to send to ERP",
+        lbl_catalog_hint: "Products (catalog visible to Josh)",
+        fallback_shipment: "Failed to load shipment",
+        match_success: "Successfully transmitted data to platform",
+        sample_data: "Sample data",
+        btn_cancel: "Cancel",
+        btn_save: "Save Intent Rule",
+        work_areas: "Work Areas (7 Units)",
+        cust_service_area: "Customer Service",
+        nav_customers: "Platform Customers",
+        nav_all_users: "All Users",
+        nav_kyc: "KYC Verification",
+        nav_tiers: "Membership Tiers",
+        nav_csdesk: "CS Desk Operations",
+        nav_livechat: "Live Chat Gateway",
+        nav_intent_rules: "Bot Intent Rules",
+        nav_winback: "Win-back Customers",
+        sec_basic_pattern: "1. Basic Details & Regular Expression (Pattern)",
+        required_fields: "* Indicates required fields",
+        info_banner_title: "Chatbot Intent Rule Configuration Guidelines",
+        info_banner_desc: "The system matches incoming customer queries via Live Chat Gateway against the Regular Expression (Pattern). When matched, requests dispatch to the Intent Handler for instant automated reply or escalates to CS Desk.",
+        search_placeholder: "Search on this page... (Current page only)"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded-md bg-white text-ink shadow-xs transition-all font-semibold";
+        btnEn.className = "px-2.5 py-1 rounded-md text-secondary hover:text-ink transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-md bg-white text-ink shadow-xs transition-all font-semibold";
+        btnTh.className = "px-2.5 py-1 rounded-md text-secondary hover:text-ink transition-all";
+      }
+
+      // Update labeled elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (uiLabels[lang] && uiLabels[lang][key]) {
+          el.textContent = uiLabels[lang][key];
+        }
+      });
+
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (uiLabels[lang] && uiLabels[lang][key]) {
+          el.placeholder = uiLabels[lang][key];
+        }
+      });
+    }
+
+    function validatePattern() {
+      const patternInput = document.getElementById('pattern-input');
+      const errorDiv = document.getElementById('pattern-error');
+      if (!patternInput.value.trim()) {
+        errorDiv.classList.remove('hidden');
+        patternInput.classList.add('border-error');
+        return false;
+      } else {
+        errorDiv.classList.add('hidden');
+        patternInput.classList.remove('border-error');
+        runLiveTest();
+        return true;
+      }
+    }
+
+    function loadSamplePattern() {
+      document.getElementById('pattern-input').value = "(?i)(สอบถาม|เช็ค|ดู)?\\s*(ราคา|ใบเสนอราคา|ส่วนลด|โปรโมชั่น)\\s*(b2b|ขายส่ง)?";
+      validatePattern();
+    }
+
+    function setSampleChat(text) {
+      document.getElementById('test-input').value = text;
+      runLiveTest();
+    }
+
+    function runLiveTest() {
+      const patternVal = document.getElementById('pattern-input').value.trim();
+      const testVal = document.getElementById('test-input').value.trim();
+      const resultBox = document.getElementById('test-result-box');
+      const resultStatus = document.getElementById('test-result-status');
+      const matchedTerm = document.getElementById('test-matched-term');
+
+      if (!patternVal) return;
+
+      try {
+        // Strip inline flags like (?i) for standard JS RegExp
+        let cleanPattern = patternVal;
+        let isCaseInsensitive = true;
+        if (cleanPattern.startsWith('(?i)')) {
+          cleanPattern = cleanPattern.substring(4);
+          isCaseInsensitive = true;
+        }
+
+        const regex = new RegExp(cleanPattern, isCaseInsensitive ? 'i' : '');
+        const match = testVal.match(regex);
+
+        if (match) {
+          resultBox.className = "p-3.5 rounded-lg border border-success-border bg-success-bg space-y-1.5 transition-all";
+          resultStatus.textContent = currentLang === 'th' ? "ส่งข้อมูลถึง platform สำเร็จ" : "Successfully transmitted data to platform";
+          resultStatus.className = "text-success font-bold flex items-center gap-1.5";
+          matchedTerm.textContent = `"${match[0]}"`;
+        } else {
+          resultBox.className = "p-3.5 rounded-lg border border-warning-border bg-warning-bg space-y-1.5 transition-all";
+          resultStatus.textContent = currentLang === 'th' ? "ไม่ตรงเงื่อนไข Pattern (No Match)" : "Pattern not matched";
+          resultStatus.className = "text-warning font-bold flex items-center gap-1.5";
+          matchedTerm.textContent = "(ไม่พบคำที่ตรงกัน)";
+        }
+      } catch (err) {
+        resultBox.className = "p-3.5 rounded-lg border border-error-border bg-error-bg space-y-1.5 transition-all";
+        resultStatus.textContent = currentLang === 'th' ? "Pattern ผิดรูปแบบ (Regex Error)" : "Invalid Regex Pattern";
+        resultStatus.className = "text-error font-bold flex items-center gap-1.5";
+        matchedTerm.textContent = err.message;
+      }
+    }
+
+    function handleSave() {
+      const isValid = validatePattern();
+      const toast = document.getElementById('form-error-toast');
+      const toastText = document.getElementById('toast-text');
+
+      if (!isValid) {
+        toastText.textContent = currentLang === 'th' ? "กรุณากรอก Pattern" : "Please enter Pattern";
+        toast.classList.remove('hidden');
+        toast.classList.remove('bg-success-bg', 'text-success', 'border-success-border');
+        toast.classList.add('bg-error-bg', 'text-error', 'border-error-border');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+        return;
+      }
+
+      // Simulate save success
+      toastText.textContent = currentLang === 'th' ? "บันทึก Intent Rule สำเร็จเรียบร้อย" : "Intent Rule saved successfully";
+      toast.classList.remove('hidden', 'bg-error-bg', 'text-error', 'border-error-border', 'animate-pulse');
+      toast.classList.add('bg-success-bg', 'text-success', 'border-success-border');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+  </script>
+</body>
+</html>

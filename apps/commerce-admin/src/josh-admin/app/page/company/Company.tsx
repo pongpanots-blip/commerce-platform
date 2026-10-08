@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { getCompany } from '@josh/shared-api';
 import { Input, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useState } from 'react';
@@ -5,7 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import AdminListHeader from '../../components/AdminListHeader';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const Company = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
@@ -25,62 +29,57 @@ const Company = () => {
   };
 
   const columns: TableColumn<any>[] = [
-    { key: 'name', label: 'ชื่อบริษัท / องค์กร' },
-    { key: 'register_number', label: 'เลขทะเบียนพาณิชย์' },
+    { key: 'name', label: __uiText("ชื่อบริษัท / องค์กร") },
+    { key: 'register_number', label: __uiText("เลขทะเบียนพาณิชย์") },
     {
       key: 'credit_limit',
-      label: 'วงเงินเครดิตสูงสุด',
+      label: __uiText("วงเงินเครดิตสูงสุด"),
       render: (value: any) => (
         <span className="font-semibold">
-          {Number(value || 0).toLocaleString()} บาท
-        </span>
+          {Number(value || 0).toLocaleString()} {__uiText(" บาท")}</span>
       ),
     },
     {
       key: 'credit_used',
-      label: 'วงเงินที่ใช้ไปแล้ว',
+      label: __uiText("วงเงินที่ใช้ไปแล้ว"),
       render: (value: any) => (
         <span className="text-gray-600">
-          {Number(value || 0).toLocaleString()} บาท
-        </span>
+          {Number(value || 0).toLocaleString()} {__uiText(" บาท")}</span>
       ),
     },
     {
       key: 'credit_term_days',
-      label: 'เครดิตเทอม (วัน)',
+      label: __uiText("เครดิตเทอม (วัน)"),
       render: (value: any) => {
         const days = Number(value || 0);
         return days === 0 ? (
-          <span className="text-green-600 font-medium">เงินสด / COD</span>
+          <span className="text-green-600 font-medium">{__uiText("เงินสด / COD")}</span>
         ) : (
-          <span>{days} วัน</span>
+          <span>{days} {__uiText(" วัน")}</span>
         );
       },
     },
     {
       key: 'is_suspended',
-      label: 'สถานะการสั่งซื้อ',
+      label: __uiText("สถานะการสั่งซื้อ"),
       render: (value: any) =>
         value ? (
           <span className="px-2 py-1 text-xs font-bold bg-red-100 text-red-700 rounded-full">
-            โดนระงับสิทธิ์
-          </span>
+            {__uiText("โดนระงับสิทธิ์")}</span>
         ) : (
           <span className="px-2 py-1 text-xs font-bold bg-green-100 text-green-700 rounded-full">
-            ปกติ
-          </span>
+            {__uiText("ปกติ")}</span>
         ),
     },
     {
       key: 'id',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (id: any) => (
         <button
           onClick={() => navigate(ADMIN_ROUTES.companyEdit(id))}
           className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md font-medium transition-colors"
         >
-          แก้ไข / ส่องดูสาขา
-        </button>
+          {__uiText("แก้ไข / ส่องดูสาขา")}</button>
       ),
     },
   ];
@@ -92,16 +91,16 @@ const Company = () => {
   return (
     <div className="grid mx-auto gap-5 w-full p-4">
       <AdminListHeader
-        title="Company Management"
-        subtitle="จัดการข้อมูลเครดิตเทอม, ดูสถานะ Overdue และควบคุมสิทธิ์สั่งซื้อรายองค์กร B2B"
-        createLabel="เพิ่มบริษัทใหม่"
+        title={__uiText("Company Management")}
+        subtitle={__uiText("จัดการข้อมูลเครดิตเทอม, ดูสถานะ Overdue และควบคุมสิทธิ์สั่งซื้อรายองค์กร B2B")}
+        createLabel={__uiText("เพิ่มบริษัทใหม่")}
         createPath={ADMIN_ROUTES.companyCreate}
       />
 
       <div className="flex max-w-md items-end gap-2">
         <Input
-          label="ค้นหาบริษัท"
-          placeholder="ค้นหาชื่อ / เลขทะเบียน..."
+          label={__uiText("ค้นหาบริษัท")}
+          placeholder={__uiText("ค้นหาชื่อ / เลขทะเบียน...")}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={(e) => {
@@ -119,8 +118,7 @@ const Company = () => {
             setCurrentPage(1);
           }}
         >
-          ค้นหา
-        </button>
+          {__uiText("ค้นหา")}</button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

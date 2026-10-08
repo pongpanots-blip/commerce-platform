@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เวิร์กโฟลว์การตลาด - Siam Commerce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: {
+              DEFAULT: '#365cf5',
+              hover: '#2846c9',
+              light: '#edf1fe',
+            },
+            ink: {
+              DEFAULT: '#17243b',
+              secondary: '#52627a',
+              muted: '#7a8ba3',
+            },
+            status: {
+              success: '#157347',
+              'success-bg': '#eaf5ef',
+              warning: '#b08900',
+              'warning-bg': '#fef9e8',
+              error: '#c2333f',
+              'error-bg': '#fdecee',
+            }
+          },
+          fontFamily: {
+            thai: ['"Noto Sans Thai"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', system-ui, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f3f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cdd6e4;
+      border-radius: 3px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #9aa8be;
+    }
+  </style>
+</head>
+<body class="bg-canvas min-h-screen text-ink text-[14px] flex flex-col antialiased">
+
+  <!-- Invisible Commerce UI Translations for Platform Integration -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "รายละเอียด": {"th": "รายละเอียด", "en": "Details"},
+    "Marketing workflows": {"th": "Marketing workflows", "en": "Marketing workflows"},
+    "สถานะ": {"th": "สถานะ", "en": "Status"},
+    "เวลา": {"th": "เวลา", "en": "Time"},
+    "ผู้ใช้": {"th": "ผู้ใช้", "en": "User"},
+    "วัน": {"th": "วัน", "en": "Days"},
+    "ประเภท": {"th": "ประเภท", "en": "Type"},
+    "ดู": {"th": "ดู", "en": "View"},
+    "ล้มเหลว": {"th": "ล้มเหลว", "en": "Failed"},
+    "ข้อความ": {"th": "ข้อความ", "en": "Messages"},
+    "ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh": {
+      "th": "ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh",
+      "en": "josh automated messaging engine · Start/Pause/Edit here → synced to josh (validates & keeps revisions) · actual delivery runs on josh schedule"
+    },
+    "ช่วง": {"th": "ช่วง", "en": "Interval"},
+    "สร้าง workflow": {"th": "สร้าง workflow", "en": "Create workflow"},
+    "Workflow": {"th": "Workflow", "en": "Workflow"},
+    "เริ่มเมื่อ": {"th": "เริ่มเมื่อ", "en": "Created on"},
+    "เข้า": {"th": "เข้า", "en": "Enrolled"},
+    "กำลังไป": {"th": "กำลังไป", "en": "In progress"},
+    "ซื้อ (conversion)": {"th": "ซื้อ (conversion)", "en": "Purchased (conversion)"},
+    "รอบล่าสุด": {"th": "รอบล่าสุด", "en": "Last run"},
+    "รอบ": {"th": "รอบ", "en": "Batch / Schedule"},
+    "กราฟ": {"th": "กราฟ", "en": "Flow graph"},
+    "แก้ JSON": {"th": "แก้ JSON", "en": "Edit JSON"},
+    "หยุด": {"th": "หยุด", "en": "Pause"},
+    "เปิด": {"th": "เปิด", "en": "Active"},
+    "Enrollment": {"th": "Enrollment", "en": "Enrollment"},
+    "ส่งไม่สำเร็จล่าสุด": {"th": "ส่งไม่สำเร็จล่าสุด", "en": "Recent failed deliveries"},
+    "รอบที่รันล่าสุด": {"th": "รอบที่รันล่าสุด", "en": "Last executed run"},
+    "ขั้นตอน (steps)": {"th": "ขั้นตอน (steps)", "en": "Steps"},
+    "ยังไม่มี workflow": {"th": "ยังไม่มี workflow", "en": "No workflows found"},
+    "บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)": {
+      "th": "บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)",
+      "en": "Save workflow changes to josh? (josh preserves previous revisions)"
+    },
+    "แก้ Workflow": {"th": "แก้ Workflow", "en": "Edit Workflow"},
+    "รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก": {
+      "th": "รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก",
+      "en": "Compatible with josh format · josh validates conditions before saving"
+    },
+    "ข้อมูล Workflow (JSON)": {"th": "ข้อมูล Workflow (JSON)", "en": "Workflow Data (JSON)"},
+    "กำหนดเสร็จ {0}": {"th": "กำหนดเสร็จ {0}", "en": "Due date {0}"},
+    "ค้นจากชื่อบริษัทหรือเลขทะเบียน — คนที่ไม่ได้อยู่ในบริษัทเหล่านี้จะไม่เห็นโปรนี้เลย": {
+      "th": "ค้นจากชื่อบริษัทหรือเลขทะเบียน — คนที่ไม่ได้อยู่ในบริษัทเหล่านี้จะไม่เห็นโปรนี้เลย",
+      "en": "Search by company name or registration no. — users outside these entities won't see this promotion"
+    },
+    "งานของทีมและการรัน": {"th": "งานของทีมและการรัน", "en": "Team tasks and executions"},
+    "ชื่อบริษัท": {"th": "ชื่อบริษัท", "en": "Company name"},
+    "ดูรายละเอียด": {"th": "ดูรายละเอียด", "en": "View details"},
+    "ทุกไฟล์อ่าน SKU ไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์": {
+      "th": "ทุกไฟล์อ่าน SKU ไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์",
+      "en": "Unable to read SKU from all files — likely a file name formatting issue"
+    },
+    "ประวัติการอัปโหลด": {"th": "ประวัติการอัปโหลด", "en": "Upload history"},
+    "เพิ่มคูปอง": {"th": "เพิ่มคูปอง", "en": "Add coupon"},
+    "ไม่มีข้อมูลที่รออนุมัติ": {"th": "ไม่มีข้อมูลที่รออนุมัติ", "en": "No pending approvals"},
+    "ยังไม่มีราคา THB รวม VAT ที่ชัดเจน": {
+      "th": "ยังไม่มีราคา THB รวม VAT ที่ชัดเจน",
+      "en": "No confirmed THB price inclusive of VAT yet"
+    },
+    "ราคา: ขาย": {"th": "ราคา: ขาย", "en": "Price: Retail"},
+    "ลบแถวย่อย": {"th": "ลบแถวย่อย", "en": "Remove sub-row"},
+    "วงเงินเครดิต": {"th": "วงเงินเครดิต", "en": "Credit limit"},
+    "สร้างรายชื่ออัตโนมัติ": {"th": "สร้างรายชื่ออัตโนมัติ", "en": "Auto-generate audience list"},
+    "อ่านแล้ว {0} หน้า": {"th": "อ่านแล้ว {0} หน้า", "en": "Read {0} pages"},
+    "ทำงาน": {"th": "ทำงาน", "en": "Running"},
+    "ร่าง": {"th": "ร่าง", "en": "Draft"}
+  }
+  </script>
+
+  <div class="flex min-h-screen">
+    <!-- 256px STANDARD SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-border flex flex-col justify-between shrink-0 fixed top-0 bottom-0 left-0 z-30 select-none">
+      <div>
+        <!-- App Brand Header -->
+        <div class="h-16 px-5 flex items-center gap-3 border-b border-border">
+          <div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-[15px] leading-tight text-ink">สยาม คอมเมิร์ซ</div>
+            <div class="text-[11px] text-ink-muted">ศูนย์จัดการระบบร้านค้า</div>
+          </div>
+        </div>
+
+        <!-- Quick Primary Action -->
+        <div class="p-3">
+          <button onclick="openCreateModal()" class="w-full h-10 px-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-[13px] flex items-center justify-center gap-2 transition-colors shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span data-i18n="สร้าง workflow">สร้าง workflow</span>
+          </button>
+        </div>
+
+        <!-- 7 Work Areas Navigation -->
+        <nav class="px-3 space-y-1 text-[13px]">
+          <!-- 1. สินค้าและสต็อก -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+            <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+            <span>สินค้าและสต็อก</span>
+          </a>
+
+          <!-- 2. ออเดอร์และการเงิน -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+            <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"/>
+            </svg>
+            <span>ออเดอร์และการเงิน</span>
+          </a>
+
+          <!-- 3. ลูกค้าและบริการ -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+            <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span>ลูกค้าและบริการ</span>
+          </a>
+
+          <!-- 4. การตลาด (Active Work Area) -->
+          <div class="pt-1">
+            <a href="/marketing/workflows" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-light text-primary font-semibold transition-colors">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+              </svg>
+              <span>การตลาด</span>
+            </a>
+            <!-- Sub-navigation links under Marketing -->
+            <div class="ml-8 mt-1 space-y-1 text-[12px] border-l-2 border-primary-light pl-2">
+              <a href="/marketing/workflows" class="block py-1 text-primary font-medium hover:underline">
+                Marketing workflows
+              </a>
+              <a href="#" class="block py-1 text-ink-secondary hover:text-ink">
+                วางแผนการเติบโต
+              </a>
+              <a href="#" class="block py-1 text-ink-secondary hover:text-ink">
+                ผู้ช่วยวิเคราะห์การตลาด
+              </a>
+            </div>
+          </div>
+
+          <!-- 5. รายงานและข้อมูล -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+            <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span>รายงานและข้อมูล</span>
+          </a>
+
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+            <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>ระบบเชื่อมต่อ</span>
+          </a>
+
+          <!-- 7. ตั้งค่าและทีมงาน -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+            <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span>ตั้งค่าและทีมงาน</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="p-3 border-t border-border space-y-1 text-[13px]">
+        <div class="px-3 py-2 flex items-center justify-between text-[11px] text-ink-muted">
+          <span>Node: bkk-josh-edge-03</span>
+          <span class="inline-flex items-center gap-1.5 text-status-success font-medium">
+            <span class="w-2 h-2 rounded-full bg-status-success"></span>
+            ออนไลน์
+          </span>
+        </div>
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-ink-secondary hover:text-ink hover:bg-canvas transition-colors">
+          <svg class="w-4 h-4 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>คู่มือใช้งาน</span>
+        </a>
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-status-error hover:bg-status-error-bg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          <span>ออกจากระบบ</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN APP CONTAINER (offset by sidebar w-64 = 256px) -->
+    <div class="ml-64 flex-1 flex flex-col min-w-0">
+
+      <!-- COMPACT CONTEXTUAL TOP HEADER -->
+      <header class="h-16 bg-white border-b border-border sticky top-0 z-20 px-8 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-ink-secondary text-[13px]">การตลาด</span>
+          <span class="text-ink-muted">/</span>
+          <span class="font-bold text-[14px] text-ink" data-i18n="Marketing workflows">Marketing workflows</span>
+
+          <span class="ml-3 px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-primary border border-blue-100 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            ข้อมูลตัวอย่าง / Sample data
+          </span>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- BILINGUAL LANGUAGE SELECTOR (Working switcher) -->
+          <button id="langToggleBtn" onclick="toggleLanguage()" class="h-9 px-3 rounded-lg border border-border hover:bg-canvas text-[13px] font-medium text-ink flex items-center gap-2 transition-colors">
+            <svg class="w-4 h-4 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+            </svg>
+            <span id="currentLangLabel">ไทย / English</span>
+          </button>
+
+          <!-- Help Button -->
+          <button class="w-9 h-9 rounded-lg border border-border hover:bg-canvas flex items-center justify-center text-ink-secondary" title="ช่วยเหลือ">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </button>
+
+          <!-- Notifications -->
+          <button class="w-9 h-9 rounded-lg border border-border hover:bg-canvas flex items-center justify-center text-ink-secondary relative" title="การแจ้งเตือน">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-status-error"></span>
+          </button>
+
+          <div class="h-6 w-px bg-border"></div>
+
+          <!-- User Profile info -->
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-primary-light text-primary font-bold text-xs flex items-center justify-center">
+              SC
+            </div>
+            <div class="text-left hidden sm:block">
+              <div class="text-[13px] font-semibold text-ink leading-tight">แอดมินผู้ดูแล</div>
+              <div class="text-[11px] text-ink-muted">Siam Commerce Admin</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY (Readable max-width ~1240px) -->
+      <main class="flex-1 p-8">
+        <div class="max-w-[1240px] mx-auto space-y-6">
+
+          <!-- JOSH DAEMON STATUS BANNER -->
+          <div class="bg-white rounded-xl border border-border p-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-lg bg-blue-50 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <svg class="w-5 h-5 animate-spin" style="animation-duration: 9s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              </div>
+              <div>
+                <div class="flex items-center gap-2.5">
+                  <span class="font-bold text-[14px] text-ink">josh Daemon Engine</span>
+                  <span class="text-ink-muted text-[12px]">·</span>
+                  <span class="text-[12px] text-ink-secondary" data-i18n="ช่วง">ช่วง</span>
+                  <span class="font-mono text-[12px] text-ink bg-canvas px-1.5 py-0.5 rounded border border-border">Sync Interval: 00:05:00</span>
+                  <span class="text-[12px] text-status-success font-medium flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                    Status: HEALTHY
+                  </span>
+                </div>
+                <div class="text-[12.5px] text-ink-secondary mt-1 leading-relaxed" data-i18n="ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh">
+                  ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="openJsonModal('wf_line_welcome_2025')" class="h-9 px-3 rounded-lg border border-border bg-white hover:bg-canvas text-[13px] font-medium text-ink flex items-center gap-1.5 transition-colors shadow-sm">
+                <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                <span data-i18n="แก้ Workflow">แก้ Workflow</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- KEY METRICS ROW (White Cards, 12px corners, restrained borders) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- Metric 1: Status Summary -->
+            <div class="bg-white rounded-xl border border-border p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <div class="text-[13px] text-ink-secondary font-medium" data-i18n="สถานะ">สถานะทั้งหมด</div>
+                <div class="text-[28px] font-bold text-ink mt-1 tracking-tight flex items-baseline gap-2">
+                  <span>8</span>
+                  <span class="text-[13px] font-normal text-ink-muted">Workflows</span>
+                </div>
+                <div class="flex items-center gap-3 mt-2 text-[12px]">
+                  <span class="inline-flex items-center gap-1 text-status-success font-medium">
+                    <span class="w-2 h-2 rounded-full bg-status-success"></span>
+                    <span data-i18n="เปิด">เปิด</span> 6
+                  </span>
+                  <span class="inline-flex items-center gap-1 text-status-warning font-medium">
+                    <span class="w-2 h-2 rounded-full bg-status-warning"></span>
+                    <span data-i18n="หยุด">หยุด</span> 2
+                  </span>
+                </div>
+              </div>
+              <div class="w-12 h-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Metric 2: Enrollment Stats -->
+            <div class="bg-white rounded-xl border border-border p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <div class="text-[13px] text-ink-secondary font-medium" data-i18n="Enrollment">Enrollment รวม (30 วัน)</div>
+                <div class="text-[28px] font-bold text-ink mt-1 tracking-tight flex items-baseline gap-2">
+                  <span>148,290</span>
+                  <span class="text-[12px] font-medium text-status-success">+14.2%</span>
+                </div>
+                <div class="flex items-center gap-3 mt-2 text-[12px] text-ink-secondary">
+                  <span><span data-i18n="เข้า">เข้า</span>: <strong class="text-ink">132,150</strong></span>
+                  <span><span data-i18n="กำลังไป">กำลังไป</span>: <strong class="text-ink">16,140</strong></span>
+                </div>
+              </div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-status-success flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Metric 3: Conversion & Failures -->
+            <div class="bg-white rounded-xl border border-border p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <div class="text-[13px] text-ink-secondary font-medium" data-i18n="ซื้อ (conversion)">Conversion ซื้อสุทธิ</div>
+                <div class="text-[28px] font-bold text-ink mt-1 tracking-tight">
+                  ฿ 4,892,400
+                </div>
+                <div class="mt-2 text-[12px] text-status-error font-medium flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  </svg>
+                  <span data-i18n="ส่งไม่สำเร็จล่าสุด">ส่งไม่สำเร็จล่าสุด</span>: 14 รายการ
+                </div>
+              </div>
+              <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRIMARY TASK CONTROLS & TABLE CARD -->
+          <div class="bg-white rounded-xl border border-border shadow-sm overflow-hidden">
+            <!-- Filter Bar -->
+            <div class="p-4 border-b border-border flex flex-col md:flex-row items-center justify-between gap-4">
+              <!-- Filter Tabs -->
+              <div class="flex items-center gap-1 bg-canvas p-1 rounded-lg border border-border">
+                <button class="px-3 py-1.5 rounded-md text-[13px] font-medium bg-white text-ink shadow-xs">
+                  ทั้งหมด (8)
+                </button>
+                <button class="px-3 py-1.5 rounded-md text-[13px] font-medium text-ink-secondary hover:text-ink">
+                  ใช้งาน (6)
+                </button>
+                <button class="px-3 py-1.5 rounded-md text-[13px] font-medium text-ink-secondary hover:text-ink">
+                  หยุด (2)
+                </button>
+                <button class="px-3 py-1.5 rounded-md text-[13px] font-medium text-ink-secondary hover:text-ink">
+                  Top Campaigns
+                </button>
+              </div>
+
+              <!-- Explicit In-Page Search & Add Action -->
+              <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="relative w-full md:w-72">
+                  <input type="text" id="searchInput" oninput="filterTable()" placeholder="ค้นในหน้านี้ (ชื่อ, ID, trigger)..." class="w-full h-10 pl-9 pr-4 rounded-lg border border-border bg-canvas focus:bg-white focus:outline-none focus:border-primary text-[13px] text-ink placeholder:text-ink-muted transition-colors">
+                  <svg class="w-4 h-4 text-ink-muted absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </div>
+
+                <button onclick="openCreateModal()" class="h-10 px-4 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-[13px] flex items-center gap-2 transition-colors shrink-0 shadow-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <span data-i18n="สร้าง workflow">สร้าง workflow</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- In-page Search Disclaimer Note -->
+            <div class="px-5 py-2 bg-[#f8fafc] border-b border-border text-[12px] text-ink-secondary flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>การค้นหารองรับเฉพาะรายการในหน้านี้ตามข้อกำหนด API · ไม่รวมแคตตาล็อกระบบทั้งหมด</span>
+            </div>
+
+            <!-- WORKFLOW RECORDS TABLE -->
+            <div class="overflow-x-auto custom-scroll">
+              <table class="w-full text-left border-collapse text-[13px]" id="workflowTable">
+                <thead>
+                  <tr class="bg-canvas border-b border-border text-ink-secondary font-medium">
+                    <th class="py-3 px-4 w-12 text-center">#</th>
+                    <th class="py-3 px-4" data-i18n="Workflow">Workflow</th>
+                    <th class="py-3 px-4" data-i18n="ประเภท">ประเภท</th>
+                    <th class="py-3 px-4" data-i18n="สถานะ">สถานะ</th>
+                    <th class="py-3 px-4" data-i18n="เริ่มเมื่อ">เริ่มเมื่อ</th>
+                    <th class="py-3 px-4" data-i18n="Enrollment">Enrollment (เข้า / กำลังไป)</th>
+                    <th class="py-3 px-4" data-i18n="ซื้อ (conversion)">ซื้อ (conversion)</th>
+                    <th class="py-3 px-4" data-i18n="รอบล่าสุด">รอบล่าสุด</th>
+                    <th class="py-3 px-4 text-center" data-i18n="ขั้นตอน (steps)">ขั้นตอน (steps)</th>
+                    <th class="py-3 px-4 text-right">การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <!-- Row 1 -->
+                  <tr class="hover:bg-[#f9fbfe] transition-colors" data-wf-id="wf_line_welcome_2025">
+                    <td class="py-3.5 px-4 text-center text-ink-muted font-mono text-[12px]">1</td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">ต้อนรับสมาชิกใหม่ LINE OA</div>
+                      <div class="text-[11.5px] text-ink-muted font-mono">ID: wf_line_welcome_2025</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-emerald-50 text-status-success border border-emerald-100">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.96 2 10.84c0 2.94 1.63 5.54 4.14 7.03-.18.66-.66 2.42-.76 2.8-.13.48.17.47.36.35.15-.09 2.05-1.39 2.88-1.95.45.07.91.1 1.38.1 5.52 0 10-3.96 10-8.84S17.52 2 12 2z"/></svg>
+                        LINE Messaging
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-emerald-50 text-status-success">
+                        <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                        <span data-i18n="เปิด">เปิด</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-ink-secondary text-[12px]">
+                      12 ม.ค. 2025
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">42,850</div>
+                      <div class="text-[11px] text-ink-muted">เข้า 39,210 / ไป 3,640</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">฿ 1,240,500</div>
+                      <div class="text-[11px] text-status-success font-medium">Conv. 8.4%</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-ink text-[12px]">10 นาทีที่แล้ว</div>
+                      <div class="text-[11px] text-status-success font-medium">สำเร็จ 120 msg</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-block px-2 py-0.5 rounded bg-canvas border border-border font-semibold text-[12px] text-ink">4</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button onclick="viewWorkflowDetails('wf_line_welcome_2025')" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="ดูรายละเอียด">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </button>
+                        <button onclick="openJsonModal('wf_line_welcome_2025')" class="p-1.5 rounded hover:bg-canvas text-primary hover:text-primary-hover" title="แก้ JSON">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </button>
+                        <button onclick="toggleWorkflowStatus(this)" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="หยุด / เปิด">
+                          <svg class="w-4 h-4 text-status-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 2 -->
+                  <tr class="hover:bg-[#f9fbfe] transition-colors" data-wf-id="wf_cart_recovery_urgent">
+                    <td class="py-3.5 px-4 text-center text-ink-muted font-mono text-[12px]">2</td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">ทวงตะกร้าค้าง Abandoned Cart (30 นาที)</div>
+                      <div class="text-[11.5px] text-ink-muted font-mono">ID: wf_cart_recovery_urgent</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-blue-50 text-primary border border-blue-100">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Retention & Sales
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-emerald-50 text-status-success">
+                        <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                        <span data-i18n="เปิด">เปิด</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-ink-secondary text-[12px]">
+                      01 ก.พ. 2025
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">18,320</div>
+                      <div class="text-[11px] text-ink-muted">เข้า 15,900 / ไป 2,420</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">฿ 2,190,000</div>
+                      <div class="text-[11px] text-status-success font-medium">Conv. 14.8%</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-ink text-[12px]">2 นาทีที่แล้ว</div>
+                      <div class="text-[11px] text-status-success font-medium">สำเร็จ 89 msg</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-block px-2 py-0.5 rounded bg-canvas border border-border font-semibold text-[12px] text-ink">3</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button onclick="viewWorkflowDetails('wf_cart_recovery_urgent')" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="ดูรายละเอียด">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </button>
+                        <button onclick="openJsonModal('wf_cart_recovery_urgent')" class="p-1.5 rounded hover:bg-canvas text-primary hover:text-primary-hover" title="แก้ JSON">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </button>
+                        <button onclick="toggleWorkflowStatus(this)" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="หยุด / เปิด">
+                          <svg class="w-4 h-4 text-status-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 3 -->
+                  <tr class="hover:bg-[#f9fbfe] transition-colors" data-wf-id="wf_vip_birthday_drop">
+                    <td class="py-3.5 px-4 text-center text-ink-muted font-mono text-[12px]">3</td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">แจกโค้ดวันเกิดประจำเดือน VIP</div>
+                      <div class="text-[11.5px] text-ink-muted font-mono">ID: wf_vip_birthday_drop</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-purple-50 text-purple-700 border border-purple-100">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                        Loyalty & VIP
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-emerald-50 text-status-success">
+                        <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                        <span data-i18n="เปิด">เปิด</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-ink-secondary text-[12px]">
+                      01 ม.ค. 2025
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">6,410</div>
+                      <div class="text-[11px] text-ink-muted">เข้า 5,800 / ไป 610</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">฿ 870,200</div>
+                      <div class="text-[11px] text-status-success font-medium">Conv. 22.1%</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-ink text-[12px]">เมื่อวานนี้ 09:00</div>
+                      <div class="text-[11px] text-ink-muted">ยิงครบ batch</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-block px-2 py-0.5 rounded bg-canvas border border-border font-semibold text-[12px] text-ink">2</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button onclick="viewWorkflowDetails('wf_vip_birthday_drop')" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="ดูรายละเอียด">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </button>
+                        <button onclick="openJsonModal('wf_vip_birthday_drop')" class="p-1.5 rounded hover:bg-canvas text-primary hover:text-primary-hover" title="แก้ JSON">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </button>
+                        <button onclick="toggleWorkflowStatus(this)" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="หยุด / เปิด">
+                          <svg class="w-4 h-4 text-status-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 4: PAUSED / WITH FAILURES -->
+                  <tr class="hover:bg-[#f9fbfe] transition-colors" data-wf-id="wf_winback_sms_60d">
+                    <td class="py-3.5 px-4 text-center text-ink-muted font-mono text-[12px]">4</td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">กระตุ้นลูกค้าเงียบหาย Win-Back 60 วัน</div>
+                      <div class="text-[11.5px] text-ink-muted font-mono">ID: wf_winback_sms_60d</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-amber-50 text-status-warning border border-amber-100">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        SMS Direct
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-amber-50 text-status-warning">
+                        <span class="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
+                        <span data-i18n="หยุด">หยุด</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-ink-secondary text-[12px]">
+                      15 ธ.ค. 2024
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">11,200</div>
+                      <div class="text-[11px] text-ink-muted">เข้า 11,200 / ไป 0</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">฿ 340,100</div>
+                      <div class="text-[11px] text-ink-muted">Conv. 3.2%</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-ink text-[12px]">3 วันที่แล้ว</div>
+                      <div class="text-[11px] text-status-error font-medium">ส่งไม่สำเร็จ 14 รายการ</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-block px-2 py-0.5 rounded bg-canvas border border-border font-semibold text-[12px] text-ink">3</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button onclick="viewWorkflowDetails('wf_winback_sms_60d')" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="ดูรายละเอียด">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </button>
+                        <button onclick="openJsonModal('wf_winback_sms_60d')" class="p-1.5 rounded hover:bg-canvas text-primary hover:text-primary-hover" title="แก้ JSON">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </button>
+                        <button onclick="toggleWorkflowStatus(this)" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="หยุด / เปิด">
+                          <svg class="w-4 h-4 text-status-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Row 5 -->
+                  <tr class="hover:bg-[#f9fbfe] transition-colors" data-wf-id="wf_flash_sale_hourly">
+                    <td class="py-3.5 px-4 text-center text-ink-muted font-mono text-[12px]">5</td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">Flash Sale Countdown Notification</div>
+                      <div class="text-[11.5px] text-ink-muted font-mono">ID: wf_flash_sale_hourly</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-rose-50 text-rose-700 border border-rose-100">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Broadcasting
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-emerald-50 text-status-success">
+                        <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                        <span data-i18n="เปิด">เปิด</span>
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-ink-secondary text-[12px]">
+                      20 ก.พ. 2025
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">69,510</div>
+                      <div class="text-[11px] text-ink-muted">เข้า 60,000 / ไป 9,510</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-semibold text-ink">฿ 1,251,600</div>
+                      <div class="text-[11px] text-status-success font-medium">Conv. 6.8%</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-ink text-[12px]">1 ชั่วโมงที่แล้ว</div>
+                      <div class="text-[11px] text-ink-muted">คิวทำงานปกติ</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-block px-2 py-0.5 rounded bg-canvas border border-border font-semibold text-[12px] text-ink">1</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button onclick="viewWorkflowDetails('wf_flash_sale_hourly')" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="ดูรายละเอียด">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </button>
+                        <button onclick="openJsonModal('wf_flash_sale_hourly')" class="p-1.5 rounded hover:bg-canvas text-primary hover:text-primary-hover" title="แก้ JSON">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </button>
+                        <button onclick="toggleWorkflowStatus(this)" class="p-1.5 rounded hover:bg-canvas text-ink-secondary hover:text-ink" title="หยุด / เปิด">
+                          <svg class="w-4 h-4 text-status-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Filtered Empty State (Initially Hidden) -->
+              <div id="tableEmptyState" class="hidden p-12 text-center">
+                <div class="w-12 h-12 rounded-full bg-canvas text-ink-muted mx-auto flex items-center justify-center mb-3">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </div>
+                <div class="font-semibold text-ink" data-i18n="ยังไม่มี workflow">ยังไม่มี workflow ที่ตรงกับคำค้นหา</div>
+                <div class="text-ink-secondary text-[13px] mt-1">ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการทั้งหมด</div>
+              </div>
+            </div>
+
+            <!-- Standard Pagination Bar (API Compliance: List APIs support pagination only) -->
+            <div class="p-4 border-t border-border bg-canvas flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px] text-ink-secondary">
+              <div class="flex items-center gap-2">
+                <span>แสดง 5 จากทั้งหมด 8 เวิร์กโฟลว์</span>
+                <span class="text-ink-muted">·</span>
+                <span class="text-status-success text-[12px] font-medium flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                  josh daemon sync: กำลังเชื่อมต่อสมบูรณ์
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="h-8 px-3 rounded-md border border-border bg-white hover:bg-canvas text-ink disabled:opacity-50 disabled:pointer-events-none transition-colors" disabled>
+                  ย้อนกลับ
+                </button>
+                <span class="px-2 font-medium text-ink">หน้า 1 / 2</span>
+                <button class="h-8 px-3 rounded-md border border-border bg-white hover:bg-canvas text-ink transition-colors">
+                  ถัดไป
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOWER OPERATIONAL PANELS (Domain Specific: Segmentation Conditions & Scheduled Fire Log) -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Panel: Targeting Conditions / Segments -->
+            <div class="bg-white rounded-xl border border-border p-5 shadow-sm space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded bg-blue-50 text-primary flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  </div>
+                  <h3 class="font-bold text-[15px] text-ink">เงื่อนไข Segment เป้าหมาย</h3>
+                </div>
+                <button class="text-[12px] text-primary hover:underline font-medium">+ Add Branch</button>
+              </div>
+
+              <div class="space-y-3">
+                <div class="p-3.5 rounded-lg border border-border bg-canvas flex items-start justify-between">
+                  <div>
+                    <div class="font-semibold text-ink text-[13px]">อยู่ใน Segment: VIP Gold & Diamond Members</div>
+                    <div class="text-[12px] text-ink-muted mt-0.5">Filter: ยอดซื้อสะสม > 20,000 บาท ในรอบ 90 วัน</div>
+                  </div>
+                  <span class="text-[12px] font-medium bg-blue-50 text-primary px-2.5 py-1 rounded border border-blue-100">
+                    Match 1,420 คน
+                  </span>
+                </div>
+
+                <div class="p-3.5 rounded-lg border border-border bg-canvas flex items-start justify-between">
+                  <div>
+                    <div class="font-semibold text-ink text-[13px]">กลุ่มควบคุม: A/B Testing 10% Control Group</div>
+                    <div class="text-[12px] text-ink-muted mt-0.5">ไม่ส่งข้อความเพื่อวัดผลยอดขายสุทธิที่เพิ่มขึ้นจริง</div>
+                  </div>
+                  <span class="text-[12px] font-medium bg-white text-ink-secondary px-2.5 py-1 rounded border border-border">
+                    142 คน
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Panel: Scheduled Fire Log (josh engine audit log) -->
+            <div class="bg-white rounded-xl border border-border p-5 shadow-sm space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded bg-emerald-50 text-status-success flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                  <h3 class="font-bold text-[15px] text-ink" data-i18n="รอบที่รันล่าสุด">รอบที่รันล่าสุด (Fire log)</h3>
+                </div>
+                <span class="text-[11px] font-mono text-ink-muted">Sync: 14:00:22</span>
+              </div>
+
+              <div class="space-y-2 text-[12px] font-mono">
+                <div class="p-2.5 rounded border border-border bg-[#fafbfd] flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-ink">
+                    <span class="text-ink-muted">[14:00]</span>
+                    <span>EXEC wf_line_welcome_2025 -> 120 queue</span>
+                  </div>
+                  <span class="text-status-success font-semibold">SUCCESS (210ms)</span>
+                </div>
+
+                <div class="p-2.5 rounded border border-border bg-[#fafbfd] flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-ink">
+                    <span class="text-ink-muted">[13:55]</span>
+                    <span>EXEC wf_cart_recovery_urgent -> 89 queue</span>
+                  </div>
+                  <span class="text-status-success font-semibold">SUCCESS (185ms)</span>
+                </div>
+
+                <div class="p-2.5 rounded border border-status-error/30 bg-status-error-bg flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-status-error">
+                    <span class="text-status-error/70">[13:30]</span>
+                    <span>WARN wf_winback_sms_60d -> Gateway timeout</span>
+                  </div>
+                  <span class="text-status-error font-semibold">ล้มเหลว (14 msgs)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- NAMED DIALOG: แก้ Workflow (JSON) -->
+  <!-- Supports keyboard Escape, Cancel, Save to josh revisions -->
+  <div id="jsonModal" class="fixed inset-0 z-50 bg-ink/50 backdrop-blur-xs flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="bg-white rounded-xl border border-border shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-border flex items-center justify-between bg-canvas">
+        <div>
+          <h2 id="modalTitle" class="font-bold text-[16px] text-ink" data-i18n="แก้ Workflow">แก้ Workflow</h2>
+          <p class="text-[12px] text-ink-secondary mt-0.5" data-i18n="รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก">
+            รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก
+          </p>
+        </div>
+        <button onclick="closeJsonModal()" class="w-8 h-8 rounded-lg hover:bg-white text-ink-secondary hover:text-ink flex items-center justify-center transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+        <!-- Revisions Notice Prompt -->
+        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-[13px] text-ink flex items-start gap-2.5">
+          <svg class="w-4 h-4 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span data-i18n="บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)">
+            บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)
+          </span>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-[13px] font-semibold text-ink" data-i18n="ข้อมูล Workflow (JSON)">
+              ข้อมูล Workflow (JSON)
+            </label>
+            <span class="text-[11px] font-mono text-ink-muted">Schema v2.4 (Strict JSON)</span>
+          </div>
+          <div class="relative">
+            <textarea id="jsonEditorArea" rows="12" class="w-full font-mono text-[12.5px] leading-relaxed p-4 rounded-lg border border-border bg-[#17243b] text-emerald-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent custom-scroll select-all" spellcheck="false">{
+  "id": "wf_line_welcome_2025",
+  "name": "ต้อนรับสมาชิกใหม่ LINE OA",
+  "trigger": "member.registered",
+  "status": "ACTIVE",
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "MESSAGE",
+      "channel": "LINE",
+      "template": "tpl_welcome_coupon_v1",
+      "delay_seconds": 0
+    },
+    {
+      "step_id": 2,
+      "type": "WAIT",
+      "duration": "24h"
+    },
+    {
+      "step_id": 3,
+      "type": "CONDITION",
+      "check": "order.count > 0",
+      "on_true": "EXIT",
+      "on_false": "step_4"
+    },
+    {
+      "step_id": 4,
+      "type": "MESSAGE",
+      "channel": "LINE",
+      "template": "tpl_reminder_first_order",
+      "discount_code": "WELCOME100"
+    }
+  ]
+}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer with Cancel & Save -->
+      <div class="px-6 py-3.5 border-t border-border bg-canvas flex items-center justify-end gap-3">
+        <button onclick="closeJsonModal()" class="h-10 px-4 rounded-lg border border-border bg-white hover:bg-canvas text-ink text-[13px] font-medium transition-colors">
+          ยกเลิก (Cancel)
+        </button>
+        <button onclick="saveJsonWorkflow()" class="h-10 px-5 rounded-lg bg-primary hover:bg-primary-hover text-white text-[13px] font-medium transition-colors flex items-center gap-2 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>บันทึกไปที่ josh</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAMED DIALOG: สร้าง Workflow (Form Modal) -->
+  <div id="createModal" class="fixed inset-0 z-50 bg-ink/50 backdrop-blur-xs flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
+    <div class="bg-white rounded-xl border border-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-6 py-4 border-b border-border flex items-center justify-between bg-canvas">
+        <div>
+          <h2 class="font-bold text-[16px] text-ink" data-i18n="สร้าง workflow">สร้าง workflow ใหม่</h2>
+          <p class="text-[12px] text-ink-secondary mt-0.5">ระบุรายละเอียดเวิร์กโฟลว์ระบบส่งข้อความอัตโนมัติ</p>
+        </div>
+        <button onclick="closeCreateModal()" class="w-8 h-8 rounded-lg hover:bg-white text-ink-secondary hover:text-ink flex items-center justify-center transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-[13px] font-semibold text-ink mb-1.5">ชื่อ Workflow *</label>
+          <input type="text" id="newWfName" placeholder="เช่น แคมเปญ Flash Sale สิ้นเดือน" class="w-full h-10 px-3 rounded-lg border border-border bg-canvas focus:bg-white focus:outline-none focus:border-primary text-[13px]">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[13px] font-semibold text-ink mb-1.5" data-i18n="ประเภท">ประเภทช่องทาง</label>
+            <select id="newWfType" class="w-full h-10 px-3 rounded-lg border border-border bg-white text-[13px] focus:outline-none focus:border-primary">
+              <option value="LINE Messaging">LINE Messaging</option>
+              <option value="SMS Direct">SMS Direct</option>
+              <option value="Retention & Sales">Retention & Sales</option>
+              <option value="Loyalty & VIP">Loyalty & VIP</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[13px] font-semibold text-ink mb-1.5">Trigger เริ่มต้น</label>
+            <select class="w-full h-10 px-3 rounded-lg border border-border bg-white text-[13px] focus:outline-none focus:border-primary">
+              <option>member.registered</option>
+              <option>cart.abandoned_30m</option>
+              <option>member.birthday_month</option>
+              <option>order.completed</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[13px] font-semibold text-ink mb-1.5">สถานะเมื่อสร้างเสร็จ</label>
+          <div class="flex items-center gap-4 text-[13px]">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="initialStatus" value="ACTIVE" checked class="text-primary focus:ring-primary">
+              <span>เปิดใช้งานทันที (Active)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="initialStatus" value="PAUSED" class="text-primary focus:ring-primary">
+              <span>บันทึกเป็นแบบร่าง / หยุดไว้ก่อน (Draft)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3.5 border-t border-border bg-canvas flex items-center justify-end gap-3">
+        <button onclick="closeCreateModal()" class="h-10 px-4 rounded-lg border border-border bg-white hover:bg-canvas text-ink text-[13px] font-medium transition-colors">
+          ยกเลิก
+        </button>
+        <button onclick="submitCreateWorkflow()" class="h-10 px-5 rounded-lg bg-primary hover:bg-primary-hover text-white text-[13px] font-medium transition-colors flex items-center gap-2 shadow-sm">
+          <span>ยืนยันสร้าง Workflow</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Client-side Script -->
+  <script>
+    // BILINGUAL Engine using exact copy catalog
+    let currentLang = 'th';
+    const translationElement = document.getElementById('commerce-ui-translations');
+    let translations = {};
+    if (translationElement) {
+      try {
+        translations = JSON.parse(translationElement.textContent);
+      } catch (e) {
+        console.error('Translation JSON parse error:', e);
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = (currentLang === 'th') ? 'en' : 'th';
+      document.getElementById('currentLangLabel').textContent = (currentLang === 'th') ? 'ไทย / English' : 'English / ไทย';
+
+      // Update DOM elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][currentLang]) {
+          el.textContent = translations[key][currentLang];
+        }
+      });
+    }
+
+    // Modal Handlers
+    function openJsonModal(workflowId) {
+      const modal = document.getElementById('jsonModal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      // Auto-focus editor
+      setTimeout(() => {
+        document.getElementById('jsonEditorArea').focus();
+      }, 50);
+    }
+
+    function closeJsonModal() {
+      const modal = document.getElementById('jsonModal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function openCreateModal() {
+      const modal = document.getElementById('createModal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        document.getElementById('newWfName').focus();
+      }, 50);
+    }
+
+    function closeCreateModal() {
+      const modal = document.getElementById('createModal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function saveJsonWorkflow() {
+      // Validate strict JSON
+      const jsonText = document.getElementById('jsonEditorArea').value;
+      try {
+        JSON.parse(jsonText);
+        alert('บันทึกการแก้ไขไปยัง josh daemon สำเร็จ พร้อมบันทึก revision ใหม่');
+        closeJsonModal();
+      } catch (err) {
+        alert('JSON รูปแบบไม่ถูกต้อง: ' + err.message);
+      }
+    }
+
+    function submitCreateWorkflow() {
+      const name = document.getElementById('newWfName').value.trim();
+      if (!name) {
+        alert('กรุณาระบุชื่อ Workflow');
+        return;
+      }
+      alert('สร้าง Workflow "' + name + '" สำเร็จและส่งข้อมูลให้ josh ประมวลผลแล้ว');
+      closeCreateModal();
+    }
+
+    // In-page search filter
+    function filterTable() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#workflowTable tbody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(input)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('tableEmptyState');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function toggleWorkflowStatus(btn) {
+      const row = btn.closest('tr');
+      const statusBadge = row.querySelector('td:nth-child(4) span');
+      if (statusBadge.innerText.includes('เปิด') || statusBadge.innerText.includes('Active')) {
+        statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-amber-50 text-status-warning';
+        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-status-warning"></span><span data-i18n="หยุด">หยุด</span>';
+      } else {
+        statusBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-emerald-50 text-status-success';
+        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-status-success"></span><span data-i18n="เปิด">เปิด</span>';
+      }
+    }
+
+    function viewWorkflowDetails(id) {
+      openJsonModal(id);
+    }
+
+    // Escape Key Support for Accessible Dialogs
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeJsonModal();
+        closeCreateModal();
+      }
+    });
+  </script>
+</body>
+</html>

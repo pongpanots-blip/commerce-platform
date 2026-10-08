@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { Loading, TaskPageFrame } from '@cp/ui';
 import './josh-admin.css';
 
 const Alluser = lazy(() => import('./app/page/user/Alluser'));
@@ -100,7 +101,8 @@ export function JoshAdminApp() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="josh-tw">
-        <Suspense fallback={<div className="p-6 text-sm text-ink-muted">Loading…</div>}>
+        <TaskPageFrame>
+        <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="batch-sticker" element={<BatchSticker />} />
             <Route path="marketing-links" element={<MarketingLinksPage />} />
@@ -193,6 +195,7 @@ export function JoshAdminApp() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
+        </TaskPageFrame>
       </div>
     </QueryClientProvider>
   );

@@ -1,5 +1,7 @@
 import React from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   checked: boolean;
   onChange: (checked: boolean) => void;
@@ -8,12 +10,13 @@ type Props = {
 
 /** Green/red on-off switch for `coupons.is_active`, shown in the page header on create/edit. */
 export function CouponActiveSwitch({ checked, onChange, disabled }: Props) {
+  __useUiLocale();
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
-      aria-label="เปิดใช้งานคูปอง"
+      aria-label={__uiText("เปิดใช้งานคูปอง")}
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`inline-flex h-10 items-center gap-2 rounded-full border px-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
@@ -34,7 +37,7 @@ export function CouponActiveSwitch({ checked, onChange, disabled }: Props) {
           }`}
         />
       </span>
-      {checked ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
+      {checked ? __uiText("เปิดใช้งาน") : __uiText("ปิดใช้งาน")}
     </button>
   );
 }

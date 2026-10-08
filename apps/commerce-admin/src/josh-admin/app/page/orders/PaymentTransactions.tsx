@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   getPaymentTransactionAnalytics,
   getPaymentTransactions,
@@ -18,30 +21,32 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 
 const STATUS_OPTIONS = [
-  { value: 'all', label: 'ทุกสถานะ' },
-  { value: 'pending', label: 'รอชำระ' },
-  { value: 'success', label: 'สำเร็จ' },
-  { value: 'failed', label: 'ล้มเหลว' },
-  { value: 'cancelled', label: 'ยกเลิก' },
+  { value: 'all', get label(){return __uiText("ทุกสถานะ");} },
+  { value: 'pending', get label(){return __uiText("รอชำระ");} },
+  { value: 'success', get label(){return __uiText("สำเร็จ");} },
+  { value: 'failed', get label(){return __uiText("ล้มเหลว");} },
+  { value: 'cancelled', get label(){return __uiText("ยกเลิก");} },
 ];
 
 const METHOD_OPTIONS = [
-  { value: 'all', label: 'ทุกช่องทาง' },
-  { value: 'qr', label: 'QR / PromptPay' },
-  { value: 'credit', label: 'บัตรเครดิต' },
-  { value: 'customer_credit', label: 'เครดิตลูกค้า' },
-  { value: 'cod', label: 'เก็บเงินปลายทาง' },
+  { value: 'all', get label(){return __uiText("ทุกช่องทาง");} },
+  { value: 'qr', get label(){return __uiText("QR / PromptPay");} },
+  { value: 'credit', get label(){return __uiText("บัตรเครดิต");} },
+  { value: 'customer_credit', get label(){return __uiText("เครดิตลูกค้า");} },
+  { value: 'cod', get label(){return __uiText("เก็บเงินปลายทาง");} },
 ];
 
 const GATEWAY_OPTIONS = [
-  { value: 'all', label: 'ทุก Gateway' },
-  { value: 'omise', label: 'Omise' },
-  { value: 'stripe', label: 'Stripe' },
-  { value: 'credit_terms', label: 'Credit Terms' },
-  { value: 'cod', label: 'COD' },
+  { value: 'all', get label(){return __uiText("ทุก Gateway");} },
+  { value: 'omise', get label(){return __uiText("Omise");} },
+  { value: 'stripe', get label(){return __uiText("Stripe");} },
+  { value: 'credit_terms', get label(){return __uiText("Credit Terms");} },
+  { value: 'cod', get label(){return __uiText("COD");} },
 ];
 
 const STATUS_BADGE: Record<
@@ -49,19 +54,19 @@ const STATUS_BADGE: Record<
   { label: string; className: string }
 > = {
   pending: {
-    label: 'รอชำระ',
+    get label(){return __uiText("รอชำระ");},
     className: 'bg-amber-50 text-amber-700 border-amber-200',
   },
   success: {
-    label: 'สำเร็จ',
+    get label(){return __uiText("สำเร็จ");},
     className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   },
   failed: {
-    label: 'ล้มเหลว',
+    get label(){return __uiText("ล้มเหลว");},
     className: 'bg-red-50 text-red-700 border-red-200',
   },
   cancelled: {
-    label: 'ยกเลิก',
+    get label(){return __uiText("ยกเลิก");},
     className: 'bg-gray-100 text-gray-600 border-gray-200',
   },
 };
@@ -74,6 +79,7 @@ function formatMoney(value: number) {
 }
 
 const PaymentTransactions = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState<PaymentTransactionAnalytics | null>(
     null,
@@ -140,40 +146,40 @@ const PaymentTransactions = () => {
 
   const cardData = [
     {
-      name: 'รายการทั้งหมด',
+      name: __uiText("รายการทั้งหมด"),
       value: String(analytics?.total ?? 0),
     },
     {
-      name: 'รอชำระ',
+      name: __uiText("รอชำระ"),
       value: String(analytics?.pending ?? 0),
       textColor: 'text-amber-600',
     },
     {
-      name: 'ชำระสำเร็จ',
+      name: __uiText("ชำระสำเร็จ"),
       value: String(analytics?.success ?? 0),
       textColor: 'text-emerald-600',
     },
     {
-      name: 'ล้มเหลว',
+      name: __uiText("ล้มเหลว"),
       value: String(analytics?.failed ?? 0),
       textColor: 'text-red-500',
     },
     {
-      name: 'ยอดสำเร็จรวม',
+      name: __uiText("ยอดสำเร็จรวม"),
       value: analytics ? formatMoney(analytics.success_amount) : '-',
       textColor: 'text-primary',
     },
     {
-      name: 'รอชำระ (มูลค่า)',
+      name: __uiText("รอชำระ (มูลค่า)"),
       value: analytics ? formatMoney(analytics.pending_amount) : '-',
       textColor: 'text-orange-500',
     },
     {
-      name: 'วันนี้ (รายการ)',
+      name: __uiText("วันนี้ (รายการ)"),
       value: String(analytics?.today_count ?? 0),
     },
     {
-      name: 'วันนี้ (ยอดสำเร็จ)',
+      name: __uiText("วันนี้ (ยอดสำเร็จ)"),
       value: analytics ? formatMoney(analytics.today_success_amount) : '-',
       textColor: 'text-green-500',
     },
@@ -182,39 +188,39 @@ const PaymentTransactions = () => {
   const columns: TableColumn<PaymentTransactionItem>[] = [
     {
       key: 'created_at',
-      label: 'วันที่',
+      label: __uiText("วันที่"),
       render: (value) =>
-        new Date(String(value)).toLocaleString('th-TH', {
+        new Date(String(value)).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
           dateStyle: 'medium',
           timeStyle: 'short',
         }),
     },
     {
       key: 'order_number',
-      label: 'เลขออเดอร์',
+      label: __uiText("เลขออเดอร์"),
       render: (value) => <span className="font-mono">{String(value)}</span>,
     },
-    { key: 'customer_name', label: 'ลูกค้า' },
+    { key: 'customer_name', label: __uiText("ลูกค้า") },
     {
       key: 'amount',
-      label: 'ยอดเงิน',
+      label: __uiText("ยอดเงิน"),
       render: (value, row) => (
         <span className="font-medium">{formatMoney(Number(value))}</span>
       ),
     },
     {
       key: 'payment_method',
-      label: 'ช่องทาง',
+      label: __uiText("ช่องทาง"),
       render: (value) => <span className="uppercase text-xs">{String(value)}</span>,
     },
     {
       key: 'gateway_provider',
-      label: 'Gateway',
+      label: __uiText("Gateway"),
       render: (value) => <span className="capitalize">{String(value)}</span>,
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: PaymentTransactionItem['status']) => {
         const badge = STATUS_BADGE[value] ?? STATUS_BADGE.pending;
         return (
@@ -228,7 +234,7 @@ const PaymentTransactions = () => {
     },
     {
       key: 'gateway_charge_id',
-      label: 'Charge ID',
+      label: __uiText("Charge ID"),
       render: (value) =>
         value ? (
           <span className="font-mono text-xs text-gray-600">{String(value)}</span>
@@ -238,10 +244,10 @@ const PaymentTransactions = () => {
     },
     {
       key: 'paid_at',
-      label: 'ชำระเมื่อ',
+      label: __uiText("ชำระเมื่อ"),
       render: (value) =>
         value
-          ? new Date(String(value)).toLocaleString('th-TH', {
+          ? new Date(String(value)).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
               dateStyle: 'medium',
               timeStyle: 'short',
             })
@@ -249,12 +255,12 @@ const PaymentTransactions = () => {
     },
     {
       key: 'actions',
-      label: 'ออเดอร์',
+      label: __uiText("ออเดอร์"),
       render: (_, row) => (
         <button
           onClick={() => navigate(ADMIN_ROUTES.orderDetail(row.order_id))}
           className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-primary"
-          title="ดูออเดอร์"
+          title={__uiText("ดูออเดอร์")}
         >
           <AiOutlineEye size={18} />
         </button>
@@ -280,9 +286,9 @@ const PaymentTransactions = () => {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between gap-4">
         <div className="flex flex-col">
-          <Text bold text="Payment Transactions" size="2xl" />
+          <Text bold text={__uiText("Payment Transactions")} size="2xl" />
           <Text
-            text="บันทึกการชำระเงินจาก Omise, Stripe, เครดิตลูกค้า และ COD"
+            text={__uiText("บันทึกการชำระเงินจาก Omise, Stripe, เครดิตลูกค้า และ COD")}
             size="sm"
           />
         </div>
@@ -291,9 +297,8 @@ const PaymentTransactions = () => {
             to={ADMIN_ROUTES.orders}
             className="inline-flex items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
-            ดูออเดอร์ทั้งหมด
-          </Link>
-          <Button text="Refresh" onClick={() => void loadData()} />
+            {__uiText("ดูออเดอร์ทั้งหมด")}</Link>
+          <Button text={__uiText("Refresh")} onClick={() => void loadData()} />
         </div>
       </div>
 
@@ -302,7 +307,7 @@ const PaymentTransactions = () => {
           <CardAdmin
             key={card.name}
             name={card.name}
-            value={card.value}
+            value={analytics ? card.value : '—'}
             textColor={card.textColor}
           />
         ))}
@@ -313,7 +318,7 @@ const PaymentTransactions = () => {
           <AiOutlineFilter size={24} />
           <div className="w-48">
             <Select
-              label="สถานะ"
+              label={__uiText("สถานะ")}
               data={STATUS_OPTIONS}
               value={statusFilter}
               onChange={(e) => {
@@ -324,7 +329,7 @@ const PaymentTransactions = () => {
           </div>
           <div className="w-48">
             <Select
-              label="ช่องทางชำระเงิน"
+              label={__uiText("ช่องทางชำระเงิน")}
               data={METHOD_OPTIONS}
               value={methodFilter}
               onChange={(e) => {
@@ -335,7 +340,7 @@ const PaymentTransactions = () => {
           </div>
           <div className="w-48">
             <Select
-              label="ผู้ให้บริการชำระเงิน (Gateway)"
+              label={__uiText("ผู้ให้บริการชำระเงิน (Gateway)")}
               data={GATEWAY_OPTIONS}
               value={gatewayFilter}
               onChange={(e) => {
@@ -345,7 +350,7 @@ const PaymentTransactions = () => {
             />
           </div>
           <DateRangeInput
-            label="ช่วงวันที่ชำระเงิน"
+            label={__uiText("ช่วงวันที่ชำระเงิน")}
             startDate={startDate}
             endDate={endDate}
             onStartDateChange={(value) => {
@@ -358,7 +363,7 @@ const PaymentTransactions = () => {
             }}
           />
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-gray-500">ค้นหา</span>
+            <span className="text-xs text-gray-500">{__uiText("ค้นหา")}</span>
             <input
               type="search"
               value={search}
@@ -366,7 +371,7 @@ const PaymentTransactions = () => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="ค้นหาเลขออเดอร์ / Charge ID"
+              placeholder={__uiText("ค้นหาเลขออเดอร์ / Charge ID")}
               className="w-64 rounded-lg border border-gray-200 px-3 py-2 text-sm"
             />
           </label>
@@ -374,7 +379,7 @@ const PaymentTransactions = () => {
       </div>
 
       {loading ? (
-        <p className="py-8 text-center text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="py-8 text-center text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <Table
           columns={columns}

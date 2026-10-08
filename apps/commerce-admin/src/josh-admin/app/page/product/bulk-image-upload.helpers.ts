@@ -1,3 +1,4 @@
+import { uiText as __uiText } from '@cp/ui';
 export type BulkUploadFailReason =
   | 'invalid_filename'
   | 'sku_not_found'
@@ -130,7 +131,7 @@ export const FAIL_REASON_TH: Record<BulkUploadFailReason, string> = {
 
 /** Thai label for one `BulkUploadLogItem.status` value (`'ok'` or a BulkUploadFailReason string). */
 export function bulkUploadLogStatusLabel(status: string): string {
-  if (status === 'ok') return 'สำเร็จ';
+  if (status === 'ok') return __uiText("สำเร็จ");
   return FAIL_REASON_TH[status as BulkUploadFailReason] ?? status;
 }
 
@@ -209,3 +210,5 @@ export function matchBatchResults(
   });
   return results;
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

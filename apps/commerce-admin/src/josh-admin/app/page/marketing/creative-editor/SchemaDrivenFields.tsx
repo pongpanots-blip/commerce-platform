@@ -7,6 +7,8 @@ import type {
   InspectorFieldGroup,
 } from './creative-editor.types';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const INPUT_CLASS =
   'w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700 focus:border-primary focus:outline-none disabled:bg-gray-50 disabled:text-gray-400';
 const LABEL_CLASS = 'mb-1 block text-[10px] font-medium text-gray-500';
@@ -120,15 +122,16 @@ function ItemListControl({
   items: AccordionItem[];
   onChange: (next: AccordionItem[]) => void;
 }) {
+  __useUiLocale();
   return (
     <div className="space-y-1.5">
       {items.map((item, index) => (
         <div key={item.id ?? index} className="space-y-1 rounded border border-gray-200 p-1.5">
           <div className="flex items-center gap-1">
             <input
-              aria-label={`หัวข้อที่ ${index + 1}`}
+              aria-label={__uiText("หัวข้อที่ {0}", {"0": index + 1})}
               className={`${INPUT_CLASS} flex-1`}
-              placeholder="หัวข้อ"
+              placeholder={__uiText("หัวข้อ")}
               value={item.title ?? ''}
               onChange={(event) => {
                 const next = [...items];
@@ -138,7 +141,7 @@ function ItemListControl({
             />
             <button
               type="button"
-              aria-label={`ลบหัวข้อที่ ${index + 1}`}
+              aria-label={__uiText("ลบหัวข้อที่ {0}", {"0": index + 1})}
               className="shrink-0 px-1 text-red-400 hover:text-red-600"
               onClick={() => onChange(items.filter((_, i) => i !== index))}
             >
@@ -146,10 +149,10 @@ function ItemListControl({
             </button>
           </div>
           <textarea
-            aria-label={`รายละเอียดของหัวข้อที่ ${index + 1}`}
+            aria-label={__uiText("รายละเอียดของหัวข้อที่ {0}", {"0": index + 1})}
             rows={2}
             className={INPUT_CLASS}
-            placeholder="รายละเอียด"
+            placeholder={__uiText("รายละเอียด")}
             value={item.body ?? ''}
             onChange={(event) => {
               const next = [...items];
@@ -164,8 +167,7 @@ function ItemListControl({
         className="w-full rounded border border-dashed border-gray-300 py-1.5 text-[11px] text-gray-500 hover:bg-gray-50"
         onClick={() => onChange([...items, { id: crypto.randomUUID(), title: 'หัวข้อ', body: '' }])}
       >
-        + เพิ่มหัวข้อ
-      </button>
+        {__uiText("+ เพิ่มหัวข้อ")}</button>
     </div>
   );
 }
@@ -183,6 +185,7 @@ function ItemListTranslateControl({
   overlayItems: OverlayItem[];
   onChange: (next: OverlayItem[]) => void;
 }) {
+  __useUiLocale();
   const write = (index: number, patch: OverlayItem) => {
     const next: OverlayItem[] = Array.from(
       { length: Math.max(index + 1, baseItems.length, overlayItems.length) },
@@ -198,7 +201,7 @@ function ItemListTranslateControl({
   };
 
   if (baseItems.length === 0) {
-    return <p className="text-[10px] text-gray-400">ยังไม่มีหัวข้อในภาษาไทย</p>;
+    return <p className="text-[10px] text-gray-400">{__uiText("ยังไม่มีหัวข้อในภาษาไทย")}</p>;
   }
 
   return (
@@ -206,17 +209,17 @@ function ItemListTranslateControl({
       {baseItems.map((item, index) => (
         <div key={item.id ?? index} className="space-y-1 rounded border border-gray-200 p-1.5">
           <input
-            aria-label={`หัวข้อที่ ${index + 1}`}
+            aria-label={__uiText("หัวข้อที่ {0}", {"0": index + 1})}
             className={INPUT_CLASS}
-            placeholder={item.title || 'หัวข้อ'}
+            placeholder={item.title || __uiText("หัวข้อ")}
             value={overlayItems[index]?.title ?? ''}
             onChange={(event) => write(index, { title: event.target.value })}
           />
           <textarea
-            aria-label={`รายละเอียดของหัวข้อที่ ${index + 1}`}
+            aria-label={__uiText("รายละเอียดของหัวข้อที่ {0}", {"0": index + 1})}
             rows={2}
             className={INPUT_CLASS}
-            placeholder={item.body || 'รายละเอียด'}
+            placeholder={item.body || __uiText("รายละเอียด")}
             value={overlayItems[index]?.body ?? ''}
             onChange={(event) => write(index, { body: event.target.value })}
           />
@@ -237,13 +240,14 @@ function StringListControl({
   disabled?: boolean;
   onChange: (next: string[]) => void;
 }) {
+  __useUiLocale();
   return (
     <textarea
       id={id}
       rows={4}
       disabled={disabled}
       className={`${INPUT_CLASS} font-mono`}
-      placeholder={'SKU001\nSKU002'}
+      placeholder={__uiText("SKU001\nSKU002")}
       value={Array.isArray(value) ? (value as string[]).join('\n') : ''}
       onChange={(event) =>
         onChange(
@@ -268,6 +272,7 @@ function FieldControl({
   disabled: boolean;
   onPatch: (patch: Partial<CreativeElement>) => void;
 }) {
+  __useUiLocale();
   const id = fieldId(element, descriptor.key);
   const value = getFieldValue(element, descriptor.key);
   const emit = (next: unknown) => onPatch(setFieldValue(element, descriptor.key, next));
@@ -317,7 +322,7 @@ function FieldControl({
         >
           {(descriptor.options ?? []).map((option) => (
             <option key={String(option.value)} value={String(option.value)}>
-              {option.label}
+              {__uiText(option.label)}
             </option>
           ))}
         </Select>
@@ -361,7 +366,7 @@ function FieldControl({
           type="text"
           disabled={disabled}
           className={`${INPUT_CLASS} font-mono`}
-          placeholder="category id จากหน้า Categories"
+          placeholder={__uiText("category id จากหน้า Categories")}
           value={typeof value === 'string' ? value : ''}
           onChange={(event) => emit(event.target.value)}
         />
@@ -450,6 +455,7 @@ export function SchemaDrivenFields({
    */
   group?: InspectorFieldGroup;
 }) {
+  __useUiLocale();
   if (!isSchemaDrivenType(element.type)) return null;
   const descriptors = ELEMENT_FIELD_SCHEMA[element.type].filter(
     (descriptor) => !group || (descriptor.group ?? 'content') === group,
@@ -463,8 +469,7 @@ export function SchemaDrivenFields({
     <div className="space-y-2">
       {canTranslate && translatable.length === 0 && group !== 'style' && (
         <p className="rounded border border-gray-200 bg-gray-50 px-2 py-1 text-[10px] text-gray-500">
-          องค์ประกอบนี้ไม่มีข้อความให้แปล — ตั้งค่าได้ในโหมดภาษาไทยเท่านั้น
-        </p>
+          {__uiText("องค์ประกอบนี้ไม่มีข้อความให้แปล — ตั้งค่าได้ในโหมดภาษาไทยเท่านั้น")}</p>
       )}
       {descriptors
         .filter((descriptor) => isVisible(element, descriptor))
@@ -479,7 +484,7 @@ export function SchemaDrivenFields({
                 className={LABEL_CLASS}
                 htmlFor={descriptor.control === 'list' ? undefined : fieldId(element, descriptor.key)}
               >
-                {descriptor.label}
+                {__uiText(descriptor.label)}
               </label>
               {isTranslatableField ? (
                 <TranslateControl

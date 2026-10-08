@@ -1,7 +1,7 @@
 /**
- * Shared UI for commerce-admin and commerce-portal, ported 1:1 from the Stitch exports in
- * docs/design/stitch/*.html. Class strings are copied from those files — when a screen and this
- * file disagree, the screen wins; fix it here so every page follows.
+ * Shared workspace UI for commerce-admin and commerce-portal. The original Stitch exports
+ * remain design references; the current usability system is documented in
+ * docs/design/workspace-redesign.md and applied here across every category.
  */
 import {
   ButtonHTMLAttributes,
@@ -11,23 +11,29 @@ import {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
   createContext,
+  Children,
+  cloneElement,
+  isValidElement,
+  useEffect,
   useContext,
   useId,
+  useRef,
   useState,
 } from 'react';
-import { Link, NavLink, matchPath, useLocation } from 'react-router-dom';
+import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { ICONS } from './icons';
+import { LanguageSelector } from './i18n';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 
 // ---------------------------------------------------------------- icons
 
-/** Material Symbols Outlined glyph (font loaded in index.html). `size` in px. */
+/** Local SVG icons remain legible when external fonts are unavailable. */
 export function Icon({ name, size, className }: { name: string; size?: number; className?: string }) {
-  return (
-    <span className={cx('material-symbols-outlined', className)} style={size ? { fontSize: size } : undefined} aria-hidden="true">
-      {name}
-    </span>
-  );
+  const Glyph = ICONS[name] ?? ICONS.circle;
+  return <Glyph size={size ?? 18} className={cx('shrink-0', className)} aria-hidden="true" focusable="false" />;
 }
 
 // ---------------------------------------------------------------- tones
@@ -63,15 +69,15 @@ const TEXT: Record<Tone, string> = {
 export function toneOf(status: string | null | undefined): Tone {
   const s = (status ?? '').toLowerCase();
   if (/(fail|error|invalid|reject|dead|cancel|revoked|expired|overdue|block)/.test(s)) return 'danger';
-  if (/(pend|wait|queue|retry|hold|draft|review|partial|stale|running|processing)/.test(s)) return 'warn';
-  if (/(ok|success|succeed|paid|active|valid|applied|done|complete|confirm|deliver|ship|synced|approved|enabled|live|ready)/.test(s)) return 'ok';
+  if (/(unpaid|pend|wait|queue|retry|hold|draft|review|partial|stale|running|processing)/.test(s)) return 'warn';
   if (/(inactive|disabled|paused|archived|none|skipped)/.test(s)) return 'muted';
+  if (/(ok|success|succeed|paid|active|valid|applied|done|complete|confirm|deliver|ship|synced|approved|enabled|live|ready)/.test(s)) return 'ok';
   return 'info';
 }
 
-export function Chip({ tone = 'muted', children, className }: { tone?: Tone; children: ReactNode; className?: string }) {
+export function Chip({ tone = 'muted', children, className, statusCode }: { tone?: Tone; children: ReactNode; className?: string; statusCode?: string | null }) {
   return (
-    <span className={cx('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap', CHIP[tone], className)}>
+    <span data-status={statusCode ?? undefined} className={cx('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap', CHIP[tone], className)}>
       {children}
     </span>
   );
@@ -79,7 +85,25 @@ export function Chip({ tone = 'muted', children, className }: { tone?: Tone; chi
 
 /** A status chip whose tone comes from the status text. */
 export function StatusChip({ status }: { status: string | null | undefined }) {
-  return <Chip tone={toneOf(status)}>{status ?? '—'}</Chip>;
+  __useUiLocale();
+  return <Chip tone={toneOf(status)} statusCode={status}>{statusLabel(status)}</Chip>;
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  active: 'Active', inactive: 'Inactive', enabled: 'Enabled', disabled: 'Disabled',
+  pending: 'Pending', queued: 'Queued', running: 'Running', processing: 'Processing',
+  success: 'Success', succeeded: 'Succeeded', completed: 'Completed', complete: 'Completed',
+  failed: 'Failed', error: 'Error', cancelled: 'Cancelled', canceled: 'Cancelled',
+  draft: 'Draft', paused: 'Paused', paid: 'Paid', unpaid: 'Unpaid', shipped: 'Shipped',
+  delivered: 'Delivered', approved: 'Approved', rejected: 'Rejected', revoked: 'Revoked',
+  expired: 'Expired', reserved: 'Reserved', released: 'Released', confirmed: 'Confirmed',
+};
+
+/** Labels are translated for display; filter values and request enums stay unchanged. */
+export function statusLabel(status: string | null | undefined) {
+  if (!status) return '—';
+  const label = STATUS_LABELS[status.toLowerCase()];
+  return label ? __uiText(label) : status;
 }
 
 export function StatusDot({ tone, children }: { tone: Tone; children?: ReactNode }) {
@@ -131,7 +155,7 @@ export function Button({
       className={cx(
         'inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap',
         'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1',
-        size === 'sm' ? 'px-2 py-1 text-[11px]' : 'px-3 py-1.5 text-xs',
+        size === 'sm' ? 'min-h-8 px-2.5 py-1 text-xs' : 'min-h-10 px-3.5 py-2 text-[13px]',
         BTN[variant],
         className,
       )}
@@ -148,7 +172,7 @@ export function ButtonLink({ to, variant = 'secondary', icon, children, classNam
   return (
     <Link
       to={to}
-      className={cx('inline-flex items-center gap-1.5 rounded-lg font-medium transition-colors px-3 py-1.5 text-xs whitespace-nowrap', BTN[variant], className)}
+      className={cx('inline-flex min-h-10 items-center gap-2 rounded-lg font-medium transition-colors px-3.5 py-2 text-[13px] whitespace-nowrap', BTN[variant], className)}
     >
       {icon && <Icon name={icon} size={16} />}
       {children}
@@ -167,7 +191,7 @@ export function ArrowLink({ to, children, tone = 'primary' }: { to: string; chil
 }
 
 export const inputCls =
-  'w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60';
+  'w-full min-h-10 px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-[13px] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors disabled:opacity-60';
 
 export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cx(inputCls, className)} {...rest} />;
@@ -197,22 +221,33 @@ export function SearchInput({ className, ...rest }: InputHTMLAttributes<HTMLInpu
 
 /** Labelled form field. */
 export function Field({ label, hint, children, className }: { label: ReactNode; hint?: ReactNode; children: ReactNode; className?: string }) {
+  __useUiLocale();
+  const labelId = useId();
+  const hintId = useId();
+  const controls = Children.map(children, (child, index) => {
+    if (index !== 0 || !isValidElement<{ 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string }>(child)) return child;
+    return cloneElement(child, {
+      ...(label && !child.props['aria-label'] && !child.props['aria-labelledby'] ? { 'aria-labelledby': labelId } : {}),
+      ...(hint ? { 'aria-describedby': [child.props['aria-describedby'], hintId].filter(Boolean).join(' ') } : {}),
+    });
+  });
   return (
     <label className={cx('flex flex-col gap-1 min-w-0', className)}>
-      <span className="text-[11px] font-semibold text-on-surface-variant">{label}</span>
-      {children}
-      {hint && <span className="text-[10px] text-outline">{hint}</span>}
+      <span id={labelId} className="text-xs font-medium text-on-surface">{typeof label === 'string' ? __uiText(label) : label}</span>
+      {controls}
+      {hint && <span id={hintId} className="text-[11px] text-outline">{typeof hint === 'string' ? __uiText(hint) : hint}</span>}
     </label>
   );
 }
 
 export function Checkbox({ label, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: ReactNode }) {
+  __useUiLocale();
   const box = <input type="checkbox" className="rounded border-secondary accent-primary w-3.5 h-3.5" {...rest} />;
   if (!label) return box;
   return (
     <label className={cx('inline-flex items-center gap-1.5 text-xs text-on-surface cursor-pointer', className)}>
       {box}
-      {label}
+      {typeof label === 'string' ? __uiText(label) : label}
     </label>
   );
 }
@@ -275,11 +310,12 @@ export function Segmented<T extends string>({
 
 /** Removable active-filter chip. */
 export function FilterChip({ children, onRemove }: { children: ReactNode; onRemove?: () => void }) {
+  __useUiLocale();
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container border border-secondary-container text-on-surface text-[11px]">
       {children}
       {onRemove && (
-        <button type="button" onClick={onRemove} className="text-outline hover:text-error" aria-label="ลบตัวกรอง">
+        <button type="button" onClick={onRemove} className="text-outline hover:text-error" aria-label={__uiText("ลบตัวกรอง")}>
           <Icon name="close" size={13} />
         </button>
       )}
@@ -289,7 +325,7 @@ export function FilterChip({ children, onRemove }: { children: ReactNode; onRemo
 
 // ---------------------------------------------------------------- layout
 
-export const panelCls = 'bg-surface-container-lowest rounded-lg border border-secondary-container shadow-[0_1px_2px_rgba(0,0,0,0.03)]';
+export const panelCls = 'min-w-0 bg-surface-container-lowest rounded-xl border border-secondary-container shadow-[0_2px_5px_rgba(23,36,59,0.025)]';
 
 export function Panel({ children, className, as = 'section', onSubmit }: { children: ReactNode; className?: string; as?: 'section' | 'div' | 'form'; onSubmit?: (e: FormEvent<HTMLFormElement>) => unknown }) {
   if (as === 'form') return <form data-panel className={cx(panelCls, className)} onSubmit={onSubmit}>{children}</form>;
@@ -333,12 +369,13 @@ export function PageHeader({
   subtitle?: ReactNode;
   actions?: ReactNode;
 }) {
+  __useUiLocale();
   const derived = useNavCrumbs();
   const crumbs = crumbsProp ?? derived;
   return (
     <section className="space-y-1.5">
       {crumbs && crumbs.length > 0 && (
-        <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium" aria-label="breadcrumb">
+        <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium" aria-label={__uiText("breadcrumb")}>
           {crumbs.map((c, i) => (
             <span key={i} className="flex items-center gap-1.5">
               {i > 0 && <span className="text-outline-variant">/</span>}
@@ -350,16 +387,16 @@ export function PageHeader({
       {back && (
         <Link to={back.to} className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
           <Icon name="arrow_back" size={14} />
-          {back.label}
+          {__uiText(back.label)}
         </Link>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-0.5">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-xl font-bold tracking-tight text-on-surface font-headline">{title}</h1>
+            <h1 className="text-2xl md:text-[28px] font-semibold tracking-tight text-on-surface font-headline break-words [overflow-wrap:anywhere]">{title}</h1>
             {badge}
           </div>
-          {subtitle && <p className="text-[13px] text-on-surface-variant mt-0.5">{subtitle}</p>}
+          {subtitle && <p className="text-sm text-on-surface-variant mt-2 max-w-3xl leading-relaxed">{subtitle}</p>}
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
@@ -379,10 +416,11 @@ export function TitleBadge({ icon, children }: { icon?: string; children: ReactN
 
 /** Upper-case section heading with optional right note. */
 export function SectionTitle({ children, note }: { children: ReactNode; note?: ReactNode }) {
+  __useUiLocale();
   return (
     <div className="flex items-center justify-between mb-3">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">{children}</h2>
-      {note && <span className="text-[11px] text-outline">{note}</span>}
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">{typeof children === 'string' ? __uiText(children) : children}</h2>
+      {note && <span className="text-[11px] text-outline">{typeof note === 'string' ? __uiText(note) : note}</span>}
     </div>
   );
 }
@@ -424,6 +462,7 @@ export function FormPanel({
   onCancel?: () => void;
   extraActions?: ReactNode;
 }) {
+  __useUiLocale();
   const grid = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
     <form data-panel
@@ -445,15 +484,14 @@ export function FormPanel({
       <div className={cx('grid grid-cols-1 gap-3 p-4', grid)}>{children}</div>
       {error && (
         <div className="px-4 pb-3">
-          <Alert tone="danger">{error}</Alert>
+          <Alert tone="danger">{__uiText(error)}</Alert>
         </div>
       )}
       <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 border-t border-secondary-container bg-surface-container-low/50">
         {extraActions}
         {onCancel && (
           <Button variant="ghost" onClick={onCancel} disabled={busy}>
-            ยกเลิก
-          </Button>
+            {__uiText("ยกเลิก")}</Button>
         )}
         <Button variant="primary" type="submit" icon={busy ? 'progress_activity' : 'check'} disabled={busy}>
           {submitLabel}
@@ -470,12 +508,13 @@ export function Span({ children, className }: { children: ReactNode; className?:
 
 /** Detail facts: label above value, in a responsive grid. Values may be any node (chips, mono, links). */
 export function KeyValueGrid({ items, cols = 4 }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean }[]; cols?: 2 | 3 | 4 }) {
+  __useUiLocale();
   const grid = { 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-2 lg:grid-cols-3', 4: 'sm:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
     <dl className={cx('grid grid-cols-1 gap-x-6 gap-y-3', grid)}>
       {items.map((it, i) => (
         <div key={i} className={cx('min-w-0', it.wide && 'col-span-full')}>
-          <dt className="text-[10px] font-semibold uppercase tracking-wide text-outline">{it.label}</dt>
+          <dt className="text-[10px] font-semibold uppercase tracking-wide text-outline">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
           <dd className={cx('mt-0.5 text-xs text-on-surface break-words', it.mono && 'font-mono text-[11px]')}>{it.value ?? '—'}</dd>
         </div>
       ))}
@@ -501,6 +540,7 @@ export function DetailSection({ title, icon, actions, children }: { title: React
 
 /** A detail view as its own panel (when a page shows one record below/next to a list). */
 export function DetailPanel({ title, subtitle, status, actions, onClose, children }: { title: ReactNode; subtitle?: ReactNode; status?: ReactNode; actions?: ReactNode; onClose?: () => void; children: ReactNode }) {
+  __useUiLocale();
   return (
     <section data-panel className={cx(panelCls, 'overflow-hidden')}>
       <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-3 border-b border-secondary-container">
@@ -513,7 +553,7 @@ export function DetailPanel({ title, subtitle, status, actions, onClose, childre
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {actions}
-          {onClose && <IconButton icon="close" title="ปิด" onClick={onClose} />}
+          {onClose && <IconButton icon="close" title={__uiText("ปิด")} onClick={onClose} />}
         </div>
       </div>
       <div className="p-4 space-y-5">{children}</div>
@@ -533,6 +573,7 @@ const ALERT: Record<Tone, { box: string; icon: string }> = {
 };
 
 export function Alert({ tone = 'info', title, children, onClose, actions }: { tone?: Tone; title?: ReactNode; children?: ReactNode; onClose?: () => void; actions?: ReactNode }) {
+  __useUiLocale();
   const a = ALERT[tone];
   return (
     <div role={tone === 'danger' ? 'alert' : 'status'} className={cx('flex items-start gap-3 rounded-lg border px-4 py-3 text-xs', a.box)}>
@@ -543,7 +584,7 @@ export function Alert({ tone = 'info', title, children, onClose, actions }: { to
       </div>
       {actions}
       {onClose && (
-        <button type="button" onClick={onClose} aria-label="ปิด" className="opacity-70 hover:opacity-100">
+        <button type="button" onClick={onClose} aria-label={__uiText("ปิด")} className="opacity-70 hover:opacity-100">
           <Icon name="close" size={16} />
         </button>
       )}
@@ -553,31 +594,42 @@ export function Alert({ tone = 'info', title, children, onClose, actions }: { to
 
 /** Inline error line (load failures). Renders nothing when there is no error. */
 export function ErrorText({ error }: { error: string | null | undefined }) {
+  __useUiLocale();
   if (!error) return null;
-  return <Alert tone="danger">{error}</Alert>;
+  const known = hasUiText(error);
+  return <Alert tone="danger">
+    <p>{known ? __uiText(error) : __uiText('โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง')}</p>
+    {!known && <details className="mt-3">
+      <summary className="cursor-pointer">{__uiText('รายละเอียดข้อผิดพลาด')}</summary>
+      <p className="mt-2 break-words">{error}</p>
+    </details>}
+  </Alert>;
 }
 
 export function Empty({ children = 'ไม่มีข้อมูล', icon = 'inbox' }: { children?: ReactNode; icon?: string }) {
+  __useUiLocale();
   return (
     <div className="py-10 flex flex-col items-center gap-2 text-on-surface-variant text-xs">
       <Icon name={icon} size={28} className="text-outline-variant" />
-      <div>{children}</div>
+      <div>{typeof children === 'string' ? __uiText(children) : children}</div>
     </div>
   );
 }
 
 export function Loading({ children = 'กำลังโหลด…' }: { children?: ReactNode }) {
+  __useUiLocale();
   return (
     <div className="py-10 flex items-center justify-center gap-2 text-on-surface-variant text-xs">
       <Icon name="progress_activity" size={18} className="animate-spin text-primary" />
-      {children}
+      {typeof children === 'string' ? __uiText(children) : children}
     </div>
   );
 }
 
 /** Muted helper text. */
 export function Hint({ children, className }: { children: ReactNode; className?: string }) {
-  return <p className={cx('text-[11px] text-on-surface-variant', className)}>{children}</p>;
+  __useUiLocale();
+  return <p className={cx('text-[11px] text-on-surface-variant', className)}>{typeof children === 'string' ? __uiText(children) : children}</p>;
 }
 
 // ---------------------------------------------------------------- stats
@@ -661,7 +713,7 @@ export function Delta({ pct }: { pct: number | null | undefined }) {
 export function Table({ children, maxHeight, className }: { children: ReactNode; maxHeight?: string; className?: string }) {
   return (
     <div className={cx('overflow-x-auto', maxHeight && 'overflow-y-auto', className)} style={maxHeight ? { maxHeight } : undefined}>
-      <table className="w-full border-collapse text-left text-xs">{children}</table>
+      <table className="w-full border-collapse text-left text-[13px]">{children}</table>
     </div>
   );
 }
@@ -669,14 +721,15 @@ export function Table({ children, maxHeight, className }: { children: ReactNode;
 export function THead({ children }: { children: ReactNode }) {
   return (
     <thead className="sticky top-0 z-10 bg-surface-container-low/95 backdrop-blur-xs border-b border-secondary-container text-on-surface-variant font-semibold select-none">
-      <tr className="h-10">{children}</tr>
+      <tr className="h-11">{children}</tr>
     </thead>
   );
 }
 
 export function TH({ children, right, kind, className }: { children?: ReactNode; right?: boolean; kind?: TdKind; className?: string }) {
+  __useUiLocale();
   const alignRight = right || kind === 'num' || kind === 'money' || kind === 'actions';
-  return <th className={cx('px-3 font-semibold whitespace-nowrap', alignRight && 'text-right', className)}>{children}</th>;
+  return <th className={cx('px-3 font-semibold whitespace-nowrap', alignRight && 'text-right', className)}>{typeof children === 'string' ? __uiText(children) : children}</th>;
 }
 
 export function TBody({ children }: { children: ReactNode }) {
@@ -688,7 +741,7 @@ export function TR({ children, onClick, selected, muted, className }: { children
     <tr
       onClick={onClick}
       className={cx(
-        'h-10 transition-colors duration-100',
+        'h-12 transition-colors duration-100',
         selected ? 'bg-primary-container/30' : 'hover:bg-surface-container-low',
         muted && 'opacity-60',
         onClick && 'cursor-pointer',
@@ -715,7 +768,7 @@ const TD_CLS: Record<TdKind, string> = {
 
 export function TD({ children, kind = 'text', className, colSpan, title }: { children?: ReactNode; kind?: TdKind; className?: string; colSpan?: number; title?: string }) {
   return (
-    <td colSpan={colSpan} title={title} className={cx('px-3 py-1.5', TD_CLS[kind], className)}>
+    <td colSpan={colSpan} title={title} className={cx('px-3 py-2.5', TD_CLS[kind], className)}>
       {children}
     </td>
   );
@@ -807,6 +860,7 @@ export function Pager({
   onPageSize?: (n: number) => void;
   sizes?: number[];
 }) {
+  __useUiLocale();
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(total, page * pageSize);
@@ -814,26 +868,25 @@ export function Pager({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-secondary-container text-xs text-on-surface-variant">
       <div>
-        แสดง <span className="font-mono text-on-surface font-semibold tabular-nums">{from.toLocaleString()}–{to.toLocaleString()}</span> จาก{' '}
-        <span className="font-mono text-on-surface font-semibold tabular-nums">{total.toLocaleString()}</span> รายการ
-      </div>
+        {__uiText("แสดง ")}<span className="font-mono text-on-surface font-semibold tabular-nums">{from.toLocaleString()}–{to.toLocaleString()}</span> {__uiText(" จาก")}{' '}
+        <span className="font-mono text-on-surface font-semibold tabular-nums">{total.toLocaleString()}</span> {__uiText(" รายการ")}</div>
       <div className="flex items-center gap-4">
         {onPageSize && (
           <label className="flex items-center gap-1.5">
-            <span className="text-[11px]">แถวต่อหน้า:</span>
+            <span className="text-[11px]">{__uiText("แถวต่อหน้า:")}</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSize(Number(e.target.value))}
               className="py-1 pl-2 pr-6 bg-surface-container-low border border-secondary-container rounded text-xs font-mono text-on-surface focus:outline-none focus:border-primary"
             >
               {sizes.map((s) => (
-                <option key={s} value={s}>{s} / หน้า</option>
+                <option key={s} value={s}>{s} {__uiText(" / หน้า")}</option>
               ))}
             </select>
           </label>
         )}
         <div className="flex items-center gap-1 font-mono">
-          <button type="button" className={nav} disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label="ก่อนหน้า">
+          <button type="button" className={nav} disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label={__uiText("ก่อนหน้า")}>
             <Icon name="chevron_left" size={15} />
           </button>
           {pageList(page, pages).map((p, i) =>
@@ -854,7 +907,7 @@ export function Pager({
               </button>
             ),
           )}
-          <button type="button" className={nav} disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label="ถัดไป">
+          <button type="button" className={nav} disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label={__uiText("ถัดไป")}>
             <Icon name="chevron_right" size={15} />
           </button>
         </div>
@@ -867,12 +920,13 @@ export function Pager({
 
 /** JSON / text block with title and copy button. */
 export function CodeBlock({ title, value, maxHeight = 320 }: { title?: ReactNode; value: unknown; maxHeight?: number }) {
+  __useUiLocale();
   const text = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
   const [copied, setCopied] = useState(false);
   return (
     <div className="rounded-lg border border-secondary-container bg-surface-container-low overflow-hidden min-w-0">
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-secondary-container text-[10px] font-mono uppercase tracking-wide text-on-surface-variant">
-        <span>{title ?? 'payload'}</span>
+        <span>{title ?? __uiText("payload")}</span>
         <button
           type="button"
           className="inline-flex items-center gap-1 normal-case hover:text-primary"
@@ -884,7 +938,7 @@ export function CodeBlock({ title, value, maxHeight = 320 }: { title?: ReactNode
           }}
         >
           <Icon name={copied ? 'check' : 'content_copy'} size={13} />
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? __uiText("Copied") : __uiText("Copy")}
         </button>
       </div>
       <pre className="p-3 text-[11px] leading-relaxed font-mono text-on-surface overflow-auto whitespace-pre-wrap break-all" style={{ maxHeight }}>
@@ -896,13 +950,14 @@ export function CodeBlock({ title, value, maxHeight = 320 }: { title?: ReactNode
 
 /** Inline monospace value with a copy button (keys, URLs). */
 export function CopyValue({ value, className }: { value: string; className?: string }) {
+  __useUiLocale();
   const [copied, setCopied] = useState(false);
   return (
     <span className={cx('inline-flex items-center gap-1.5 min-w-0', className)}>
       <code className="font-mono text-[11px] bg-surface-container-low border border-secondary-container rounded px-2 py-0.5 truncate">{value}</code>
       <button
         type="button"
-        title="Copy"
+        title={__uiText("Copy")}
         className="text-outline hover:text-primary shrink-0"
         onClick={() => navigator.clipboard?.writeText(value).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1200); }).catch(() => undefined)}
       >
@@ -934,12 +989,13 @@ export function BarList({ rows, tone = 'primary' }: { rows: { label: ReactNode; 
 
 /** Vertical stacked bars (ok / error) with hover titles. */
 export function StackedBars({ bars, height = 120 }: { bars: { label: string; ok: number; err: number }[]; height?: number }) {
+  __useUiLocale();
   const max = Math.max(1, ...bars.map((b) => b.ok + b.err));
   return (
     <div>
       <div className="flex items-end gap-1" style={{ height }}>
         {bars.map((b, i) => (
-          <div key={i} className="flex-1 flex flex-col justify-end h-full min-w-[4px] group" title={`${b.label} · ok ${b.ok} · error ${b.err}`}>
+          <div key={i} className="flex-1 flex flex-col justify-end h-full min-w-[4px] group" title={__uiText("{0} · ok {1} · error {2}", {"0": b.label, "1": b.ok, "2": b.err})}>
             <div className="bg-[#c2333f] rounded-t-sm" style={{ height: `${(b.err / max) * 100}%` }} />
             <div className={cx('bg-primary group-hover:bg-primary-dim', b.err ? '' : 'rounded-t-sm')} style={{ height: `${(b.ok / max) * 100}%` }} />
           </div>
@@ -965,22 +1021,79 @@ export function NavProvider({ nav, children }: { nav: NavGroup[]; children: Reac
   return <NavContext.Provider value={nav}>{children}</NavContext.Provider>;
 }
 
+export function useNavigation() { return useContext(NavContext); }
+
 /** [group, page] for the current route, from the nav (undefined for top-level pages like Overview). */
 function useNavCrumbs(): string[] | undefined {
   const nav = useContext(NavContext);
   const { pathname } = useLocation();
-  for (const g of nav) {
-    const hit = g.links.find((l) => matchPath({ path: l.to, end: l.end ?? false }, pathname) && (l.to !== '/' || pathname === '/'));
-    if (hit) return g.group ? [g.group, hit.label] : undefined;
-  }
+  const matches = nav.flatMap(group => group.links.map(link => ({ group, link })))
+    .filter(({ link }) => matchPath({ path: link.to, end: link.end ?? false }, pathname) && (link.to !== '/' || pathname === '/'))
+    .sort((a, b) => b.link.to.length - a.link.to.length);
+  const hit = matches[0];
+  if (hit) return hit.group.group ? [__uiText(hit.group.group), __uiText(hit.link.label)] : undefined;
   return undefined;
 }
 
 export type NavItem = { to: string; label: string; end?: boolean; icon?: string; badge?: ReactNode };
 export type NavGroup = { group?: string; icon?: string; links: NavItem[] };
 
+/** Keyboard-accessible page search. Searches the permitted navigation, never business data. */
+export function CommandMenu() {
+  __useUiLocale();
+  const nav = useNavigation();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState(0);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const opener = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const resultsId = useId();
+  const results = nav.flatMap(group => group.links.map(link => ({ ...link, group: group.group })))
+    .filter(link => `${link.label} ${link.group ?? ''} ${__uiText(link.label)} ${link.group ? __uiText(link.group) : ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+  const close = () => setOpen(false);
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault(); setOpen(value => !value);
+      }
+    };
+    window.addEventListener('keydown', shortcut);
+    return () => window.removeEventListener('keydown', shortcut);
+  }, []);
+  useEffect(() => {
+    if (open) { setQuery(''); setSelected(0); dialog.current?.showModal(); input.current?.focus(); }
+    else if (dialog.current?.open) { dialog.current.close(); opener.current?.focus(); }
+  }, [open]);
+  useEffect(() => { document.getElementById(`${resultsId}-${selected}`)?.scrollIntoView({ block: 'nearest' }); }, [selected, resultsId]);
+  function visit(index: number) { if (results[index]) { navigate(results[index].to); close(); } }
+  return <>
+    <button ref={opener} type="button" onClick={() => setOpen(true)} aria-label={__uiText("ค้นหาหน้าและเมนู")} className="flex min-h-10 items-center gap-2 rounded-lg border border-secondary-container bg-surface-container-low px-3 text-sm text-on-surface-variant hover:border-primary/40">
+      <Icon name="search" size={18} /><span className="hidden sm:inline">{__uiText("ค้นหาหน้าและเมนู")}</span><kbd className="ml-4 hidden rounded border border-secondary-container bg-white px-1.5 py-0.5 text-[10px] sm:inline">{__uiText("⌘ / Ctrl K")}</kbd>
+    </button>
+    <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); close(); }} onClick={event => { if (event.target === event.currentTarget) close(); }} className="cp-command-dialog w-[calc(100%-2rem)] max-w-xl rounded-2xl border border-secondary-container bg-white p-0 shadow-2xl backdrop:bg-inverse-surface/40">
+      <div className="flex items-center justify-between px-5 pt-4"><h2 id={titleId} className="font-semibold">{__uiText("ไปยังหน้าที่ต้องการ")}</h2><IconButton icon="close" title={__uiText("ปิดการค้นหา")} onClick={close} /></div>
+      <div className="px-5 pb-4 pt-3"><input ref={input} type="search" role="combobox" aria-label={__uiText("ค้นหาเมนูทั้งหมด")} aria-expanded={open} aria-controls={resultsId} aria-autocomplete="list" aria-activedescendant={results[selected] ? `${resultsId}-${selected}` : undefined} placeholder={__uiText("เช่น สินค้า ออเดอร์ หรือคิวงาน")} className={inputCls} value={query}
+        onChange={event => { setQuery(event.target.value); setSelected(0); }} onKeyDown={event => {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setSelected(value => results.length ? (value + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length : 0); }
+          if (event.key === 'Enter') { event.preventDefault(); visit(selected); }
+        }} /></div>
+      <div id={resultsId} role="listbox" aria-label={__uiText("ผลการค้นหาเมนู")} className="max-h-[55vh] overflow-y-auto border-t border-secondary-container p-2">
+        {results.length ? results.map((item, index) => <div key={item.to} id={`${resultsId}-${index}`} role="option" aria-selected={selected === index} className={cx('rounded-lg', selected === index && 'bg-primary-container/50')}>
+          <button type="button" tabIndex={-1} onClick={() => visit(index)} className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left">
+            <span><span className="block text-sm font-medium">{__uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}</span></span><Icon name="arrow_forward" className="text-outline" />
+          </button>
+        </div>) : <Empty icon="search_off">{__uiText("ไม่พบเมนู ลองค้นหาด้วยคำอื่น")}</Empty>}
+      </div>
+      <p className="border-t border-secondary-container px-5 py-3 text-xs text-on-surface-variant">{__uiText("↑ ↓ เลือกเมนู · Enter เปิดหน้า · Esc ปิด")}</p>
+    </dialog>
+  </>;
+}
+
 /**
- * Left sidebar (240px, fixed). Groups with a title collapse; the group holding the current page
+ * Left sidebar (256px, fixed). Groups with a title collapse; the group holding the current page
  * opens by default, user toggles win. A filter box narrows links by label.
  */
 export function Sidebar({
@@ -998,27 +1111,30 @@ export function Sidebar({
   user?: { name: string; detail?: string; onSignOut?: () => void };
   footer?: ReactNode;
 }) {
+  __useUiLocale();
   const { pathname } = useLocation();
   const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => setMobileOpen(false), [pathname]);
   const navId = useId();
   const [toggled, setToggled] = useState<Record<string, boolean>>({});
   const q = query.trim().toLowerCase();
   const isCurrent = (l: NavItem) => Boolean(matchPath({ path: l.to, end: l.end ?? false }, pathname));
+  const activeDestination = nav.flatMap(group => group.links).filter(isCurrent).sort((a, b) => b.to.length - a.to.length)[0]?.to;
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
     cx(
-      'rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 transition-colors duration-150 text-[13px]',
+      'rounded-lg min-h-11 px-3 py-2.5 flex items-center gap-2.5 transition-colors duration-150 text-[13px]',
       isActive ? 'bg-primary-container text-primary font-semibold' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low',
     );
   const subLinkCls = ({ isActive }: { isActive: boolean }) =>
     cx(
-      'rounded-lg px-2 py-1.5 flex items-center gap-2 transition-colors duration-150 text-[13px]',
+      'rounded-lg min-h-10 px-3 py-2 flex items-center gap-2 transition-colors duration-150 text-[13px]',
       isActive ? 'bg-primary-container text-primary font-semibold' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low',
     );
 
   return (
-    <aside className="relative md:fixed top-0 left-0 md:h-screen w-full md:w-60 z-30 flex flex-col justify-between py-3 px-2 border-b md:border-b-0 md:border-r border-secondary-container bg-surface-container-lowest select-none">
+    <aside className="relative md:fixed top-0 left-0 md:h-screen w-full md:w-64 z-30 flex flex-col justify-between py-4 px-3 border-b md:border-b-0 md:border-r border-secondary-container bg-surface-container-lowest select-none">
       <div className="flex flex-col flex-1 min-h-0 max-h-[70vh] md:max-h-none overflow-y-auto pr-1">
         <div className="px-2.5 pt-1 pb-3 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shrink-0 shadow-sm">
@@ -1026,10 +1142,10 @@ export function Sidebar({
           </div>
           <div className="min-w-0">
             <div className="font-headline text-sm font-semibold tracking-tight text-on-surface leading-tight truncate">{brand.title}</div>
-            {brand.subtitle && <div className="text-[11px] text-on-surface-variant truncate">{brand.subtitle}</div>}
+            {brand.subtitle && <div className="text-[11px] text-on-surface-variant truncate">{__uiText(brand.subtitle)}</div>}
             {env && <div className="text-[11px] text-on-surface-variant font-mono flex items-center gap-1.5 mt-0.5">{env}</div>}
           </div>
-          <Button className="md:hidden ml-auto shrink-0" variant="ghost" icon={mobileOpen ? 'close' : 'menu'} aria-expanded={mobileOpen} aria-controls={navId} onClick={() => setMobileOpen(!mobileOpen)}>เมนู</Button>
+          <Button className="md:hidden ml-auto shrink-0" variant="ghost" icon={mobileOpen ? 'close' : 'menu'} aria-expanded={mobileOpen} aria-controls={navId} onClick={() => setMobileOpen(!mobileOpen)}>{__uiText("เมนู")}</Button>
         </div>
 
         {searchable && (
@@ -1038,9 +1154,9 @@ export function Sidebar({
               <Icon name="search" size={16} className="absolute left-2 text-outline pointer-events-none" />
               <input
                 type="search"
-                aria-label="ค้นหาเมนู"
+                aria-label={__uiText("ค้นหาเมนู")}
                 className="w-full pl-7 pr-2 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-transparent focus:border-outline-variant focus:bg-surface-container-lowest rounded-lg text-xs outline-none transition-all"
-                placeholder="ค้นหาเมนู…"
+                placeholder={__uiText("ค้นหาเมนู…")}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -1050,16 +1166,16 @@ export function Sidebar({
 
         <nav id={navId} className={cx('space-y-3', !mobileOpen && 'hidden md:block')} onClick={(event) => { if ((event.target as HTMLElement).closest('a')) setMobileOpen(false); }}>
           {nav.map((section, gi) => {
-            const links = q ? section.links.filter((l) => l.label.toLowerCase().includes(q)) : section.links;
+            const links = q ? section.links.filter((l) => `${section.group ?? ''} ${__uiText(section.group ?? '')} ${l.label} ${__uiText(l.label)}`.toLowerCase().includes(q)) : section.links;
             if (!links.length) return null;
             // Untitled group: a flat list of top-level links (portal, "Overview").
             if (!section.group) {
               return (
                 <div key={gi} className="space-y-0.5">
                   {links.map((l) => (
-                    <NavLink key={l.to} to={l.to} end={l.end} className={linkCls}>
+                    <NavLink key={l.to} to={l.to} end={l.end} aria-current={l.to === activeDestination ? 'page' : false} className={({ isActive }) => linkCls({ isActive: isActive && l.to === activeDestination })}>
                       <Icon name={l.icon ?? 'circle'} />
-                      <span className="flex-1 truncate">{l.label}</span>
+                      <span className="flex-1 truncate">{__uiText(l.label)}</span>
                       {l.badge}
                     </NavLink>
                   ))}
@@ -1073,12 +1189,13 @@ export function Sidebar({
                 <button
                   type="button"
                   aria-expanded={expanded}
+                  aria-controls={`${navId}-${gi}`}
                   onClick={() => setToggled((t) => ({ ...t, [section.group as string]: !expanded }))}
-                  className="w-full px-2.5 py-1.5 flex items-center justify-between gap-2 hover:bg-surface-container-low rounded-lg text-left transition-colors"
+                  className="w-full min-h-11 px-2.5 py-2.5 flex items-center justify-between gap-2 hover:bg-surface-container-low rounded-lg text-left transition-colors"
                 >
-                  <span className={cx('flex items-center gap-2 text-[11px] uppercase tracking-wide truncate', holdsCurrent ? 'text-primary font-semibold' : 'text-on-surface-variant font-medium')}>
+                  <span className={cx('flex min-w-0 items-center gap-2 text-[13px]', holdsCurrent ? 'text-primary font-semibold' : 'text-on-surface-variant font-medium')}>
                     {section.icon && <Icon name={section.icon} size={16} />}
-                    <span className="truncate">{section.group}</span>
+                    <span>{__uiText(section.group)}</span>
                   </span>
                   <span className="flex items-center gap-1 shrink-0">
                     <Count>{links.length}</Count>
@@ -1086,13 +1203,13 @@ export function Sidebar({
                   </span>
                 </button>
                 {expanded && (
-                  <div className="mt-0.5 space-y-0.5 pl-1.5 border-l-2 border-primary/20 ml-3">
+                  <div id={`${navId}-${gi}`} className="mt-0.5 space-y-0.5 pl-1.5 border-l-2 border-primary/20 ml-3">
                     {links.map((l) => (
-                      <NavLink key={l.to} to={l.to} end={l.end} className={subLinkCls}>
+                      <NavLink key={l.to} to={l.to} end={l.end} aria-current={l.to === activeDestination ? 'page' : false} className={({ isActive }) => subLinkCls({ isActive: isActive && l.to === activeDestination })}>
                         {({ isActive }) => (
                           <>
-                            <span className={cx('w-1.5 h-1.5 rounded-full shrink-0', isActive ? 'bg-primary' : 'bg-outline-variant')} />
-                            <span className="flex-1 truncate">{l.label}</span>
+                            <span className={cx('w-1.5 h-1.5 rounded-full shrink-0', isActive && l.to === activeDestination ? 'bg-primary' : 'bg-outline-variant')} />
+                            <span className="flex-1 truncate">{__uiText(l.label)}</span>
                             {l.badge}
                           </>
                         )}
@@ -1103,6 +1220,7 @@ export function Sidebar({
               </div>
             );
           })}
+          {q && !nav.some(group => group.links.some(link => `${group.group ?? ''} ${link.label} ${__uiText(link.label)} ${group.group ? __uiText(group.group) : ''}`.toLowerCase().includes(q))) && <p role="status" className="px-3 py-4 text-xs text-on-surface-variant">{__uiText("ไม่พบเมนู ลองใช้คำอื่น")}</p>}
         </nav>
       </div>
 
@@ -1119,7 +1237,7 @@ export function Sidebar({
                 {user.detail && <div className="text-[10px] text-on-surface-variant truncate font-mono">{user.detail}</div>}
               </div>
               {user.onSignOut && (
-                <button type="button" onClick={user.onSignOut} className="text-outline hover:text-error p-1 rounded transition-colors" title="ออกจากระบบ" aria-label="ออกจากระบบ">
+                <button type="button" onClick={user.onSignOut} className="text-outline hover:text-error p-1 rounded transition-colors" title={__uiText("ออกจากระบบ")} aria-label={__uiText("ออกจากระบบ")}>
                   <Icon name="logout" size={17} />
                 </button>
               )}
@@ -1134,7 +1252,7 @@ export function Sidebar({
 /** Slim sticky top bar to the right of the sidebar. */
 export function TopBar({ left, right }: { left?: ReactNode; right?: ReactNode }) {
   return (
-    <header className="sticky top-0 z-20 w-full bg-surface-container-lowest border-b border-secondary-container min-h-12 flex items-center">
+    <header className="sticky top-0 z-20 w-full bg-surface-container-lowest/95 border-b border-secondary-container min-h-16 flex items-center backdrop-blur-sm">
       <div className="flex flex-wrap justify-between items-center px-3 md:px-6 py-2 w-full gap-2 md:gap-4">
         <div className="flex flex-wrap items-center gap-2 md:gap-5 text-xs text-on-surface-variant min-w-0">{left}</div>
         <div className="flex flex-wrap items-center gap-2.5 min-w-0">{right}</div>
@@ -1155,12 +1273,14 @@ export function IconButton({ icon, title, onClick, dot }: { icon: string; title:
 
 /** Sidebar + top bar + scrolling main area. */
 export function AppShell({ sidebar, topbar, children }: { sidebar: ReactNode; topbar?: ReactNode; children: ReactNode }) {
+  __useUiLocale();
   return (
     <div className="min-h-screen bg-background">
       {sidebar}
-      <div className="md:ml-60 min-w-0 flex flex-col min-h-screen">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-white">{__uiText("ข้ามไปเนื้อหา")}</a>
+      <div className="md:ml-64 min-w-0 flex flex-col min-h-screen">
         {topbar}
-        <main className="flex-1 min-w-0 p-3 md:p-6">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 min-w-0 p-4 md:p-7 lg:p-8">{children}</main>
       </div>
     </div>
   );
@@ -1169,19 +1289,32 @@ export function AppShell({ sidebar, topbar, children }: { sidebar: ReactNode; to
 // ---------------------------------------------------------------- modal
 
 export function Modal({ title, onClose, children, footer, width = 480 }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; width?: number }) {
+  __useUiLocale();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  useEffect(() => {
+    const node = dialog.current;
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    node?.showModal();
+    return () => {
+      node?.close();
+      // React removes the dialog before passive cleanup, so native focus restoration
+      // cannot reliably run. Restore its connected trigger explicitly.
+      if (trigger?.isConnected) trigger.focus();
+    };
+  }, []);
   return (
-    <div className="fixed inset-0 z-50 bg-inverse-surface/40 flex items-center justify-center p-4" onClick={onClose}>
-      <div role="dialog" aria-modal="true" className={cx(panelCls, 'w-full shadow-xl')} style={{ maxWidth: width }} onClick={(e) => e.stopPropagation()}>
+    <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }} className={cx(panelCls, 'm-auto w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto p-0 shadow-xl backdrop:bg-inverse-surface/40')} style={{ maxWidth: width }}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-secondary-container">
-          <h2 className="text-sm font-semibold">{title}</h2>
-          <button type="button" onClick={onClose} aria-label="ปิด" className="text-outline hover:text-on-surface">
+          <h2 id={titleId} className="min-w-0 text-sm font-semibold break-words [overflow-wrap:anywhere]">{title}</h2>
+          <div className="flex shrink-0 items-center gap-2"><LanguageSelector />
+          <button type="button" onClick={onClose} aria-label={__uiText("ปิด")} className="text-outline hover:text-on-surface">
             <Icon name="close" size={18} />
-          </button>
+          </button></div>
         </div>
         <div className="p-4 space-y-3 text-xs">{children}</div>
         {footer && <div className="px-4 py-3 border-t border-secondary-container flex justify-end gap-2">{footer}</div>}
-      </div>
-    </div>
+    </dialog>
   );
 }
 
@@ -1193,16 +1326,17 @@ export const fmt = {
     n === null || n === undefined || n === '' ? '—' : `฿${Number(n).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })}`,
   /** "24 ต.ค. 2026 10:42" */
   when: (d: string | number | Date | null | undefined) =>
-    d ? new Date(d).toLocaleString('th-TH-u-ca-gregory', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—',
+    d ? new Date(d).toLocaleString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—',
   date: (d: string | number | Date | null | undefined) =>
-    d ? new Date(d).toLocaleDateString('th-TH-u-ca-gregory', { day: 'numeric', month: 'short', year: 'numeric' }) : '—',
+    d ? new Date(d).toLocaleDateString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—',
   /** "3 นาทีที่แล้ว" */
   ago: (d: string | number | Date | null | undefined) => {
     if (!d) return '—';
     const s = Math.round((Date.now() - new Date(d).getTime()) / 1000);
-    if (s < 60) return `${Math.max(s, 0)} วินาทีที่แล้ว`;
-    if (s < 3600) return `${Math.round(s / 60)} นาทีที่แล้ว`;
-    if (s < 86400) return `${Math.round(s / 3600)} ชม.ที่แล้ว`;
-    return `${Math.round(s / 86400)} วันที่แล้ว`;
+    if (!Number.isFinite(s)) return '—';
+    const [value, unit] = s < 60 ? [-Math.max(s, 0), 'second'] : s < 3600 ? [-Math.round(s / 60), 'minute'] : s < 86400 ? [-Math.round(s / 3600), 'hour'] : [-Math.round(s / 86400), 'day'];
+    return new Intl.RelativeTimeFormat(getUiLocale() === 'th' ? 'th-TH' : 'en-GB', { numeric: 'always' }).format(value as number, unit as Intl.RelativeTimeFormatUnit);
   },
 };
+export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
+export { TaskPageFrame } from './TaskPageFrame';

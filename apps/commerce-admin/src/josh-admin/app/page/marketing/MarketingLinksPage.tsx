@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useId, useState } from 'react';
 import {
   getMarketingDeeplink,
@@ -9,26 +10,29 @@ import AdminListHeader from '../../components/AdminListHeader';
 import { CopyField } from '../../components/CopyField';
 import { UtmBuilder, EMPTY_UTM, type UtmValues } from '../../components/UtmBuilder';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type LinkType = MarketingLinkParams['type'];
 
 const TYPE_OPTIONS: { value: LinkType; label: string; hint: string }[] = [
-  { value: 'custom', label: 'Custom (path เอง)', hint: 'เช่น /product/detail/123, /search?q=กุ้ง, / (หน้าแรก)' },
-  { value: 'product', label: 'Product', hint: 'ใส่ product inventory id' },
-  { value: 'promotion', label: 'Promotion', hint: 'ใส่ promotion id — พาไปหน้า shop + tag campaign' },
-  { value: 'cuisine', label: 'Cuisine', hint: 'ใส่ cuisine card id' },
+  { value: 'custom', get label(){return __uiText("Custom (path เอง)");}, get hint(){return __uiText("เช่น /product/detail/123, /search?q=กุ้ง, / (หน้าแรก)");} },
+  { value: 'product', get label(){return __uiText("Product");}, get hint(){return __uiText("ใส่ product inventory id");} },
+  { value: 'promotion', get label(){return __uiText("Promotion");}, get hint(){return __uiText("ใส่ promotion id — พาไปหน้า shop + tag campaign");} },
+  { value: 'cuisine', get label(){return __uiText("Cuisine");}, get hint(){return __uiText("ใส่ cuisine card id");} },
 ];
 
 const REF_LABELS: Record<LinkType, string> = {
-  custom: 'เส้นทางหน้าเว็บ (Shop path)',
-  product: 'รหัสสินค้า (Product ID)',
-  promotion: 'รหัสโปรโมชั่น (Promotion ID)',
-  cuisine: 'รหัสเมนู (Cuisine ID)',
+  get custom(){return __uiText("เส้นทางหน้าเว็บ (Shop path)");},
+  get product(){return __uiText("รหัสสินค้า (Product ID)");},
+  get promotion(){return __uiText("รหัสโปรโมชั่น (Promotion ID)");},
+  get cuisine(){return __uiText("รหัสเมนู (Cuisine ID)");},
 };
 
 const field = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm';
 const labelCls = 'text-xs font-semibold text-gray-500';
 
 export default function MarketingLinksPage() {
+  __useUiLocale();
   const [type, setType] = useState<LinkType>('custom');
   const [ref, setRef] = useState('');
   const [utm, setUtm] = useState<UtmValues>(EMPTY_UTM);
@@ -63,7 +67,7 @@ export default function MarketingLinksPage() {
 
       setResult(await getMarketingDeeplink(params));
     } catch {
-      setError('สร้างลิงก์ไม่สำเร็จ — ตรวจ path/id หรือสิทธิ์อีกครั้ง');
+      setError(__uiMessage("สร้างลิงก์ไม่สำเร็จ — ตรวจ path/id หรือสิทธิ์อีกครั้ง"));
     } finally {
       setLoading(false);
     }
@@ -74,14 +78,14 @@ export default function MarketingLinksPage() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Marketing Links"
-        subtitle="สร้างลิงก์เดียวสำหรับยิง ads — มือถือเด้งเข้าแอป (deferred deep link), desktop เปิดเว็บ, พร้อม UTM"
+        title={__uiText("Marketing Links")}
+        subtitle={__uiText("สร้างลิงก์เดียวสำหรับยิง ads — มือถือเด้งเข้าแอป (deferred deep link), desktop เปิดเว็บ, พร้อม UTM")}
       />
 
       <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-4 rounded-xl border border-gray-100 bg-white p-5">
           <div>
-            <label htmlFor={typeInputId} className={labelCls}>ปลายทาง</label>
+            <label htmlFor={typeInputId} className={labelCls}>{__uiText("ปลายทาง")}</label>
             <Select
               id={typeInputId}
               className="w-full"
@@ -120,26 +124,24 @@ export default function MarketingLinksPage() {
             disabled={disabled}
             className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
-            {loading ? 'กำลังสร้าง…' : 'สร้างลิงก์'}
+            {loading ? __uiText("กำลังสร้าง…") : __uiText("สร้างลิงก์")}
           </button>
-          {error && <p className="text-xs text-red-600">{error}</p>}
+          {error && <p className="text-xs text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
         </div>
 
         <div className="rounded-xl border border-gray-100 bg-white p-5">
-          <p className="text-sm font-semibold text-gray-700">ผลลัพธ์</p>
+          <p className="text-sm font-semibold text-gray-700">{__uiText("ผลลัพธ์")}</p>
           {!result ? (
-            <p className="mt-3 text-xs text-gray-400">กรอกปลายทางแล้วกด "สร้างลิงก์"</p>
+            <p className="mt-3 text-xs text-gray-400">{__uiText("กรอกปลายทางแล้วกด \"สร้างลิงก์\"")}</p>
           ) : (
             <div className="mt-3 grid grid-cols-1 gap-3">
-              <CopyField label="ลิงก์ Marketing (ยิง ads)" value={result.shortUrl} />
+              <CopyField label={__uiText("ลิงก์ Marketing (ยิง ads)")} value={result.shortUrl} />
               {result.webUrl !== result.shortUrl && (
-                <CopyField label="Web URL (ปลายทาง)" value={result.webUrl} />
+                <CopyField label={__uiText("Web URL (ปลายทาง)")} value={result.webUrl} />
               )}
               {result.provider === 'fallback' && (
                 <p className="text-xs text-amber-600">
-                  ยังไม่ได้ตั้งค่า ChottuLink — ลิงก์นี้เป็น web URL ตรง (ใช้ได้เลย)
-                  จะกลายเป็น short link เมื่อใส่ CHOTTULINK_API_KEY ที่ backend
-                </p>
+                  {__uiText("ยังไม่ได้ตั้งค่า ChottuLink — ลิงก์นี้เป็น web URL ตรง (ใช้ได้เลย) จะกลายเป็น short link เมื่อใส่ CHOTTULINK_API_KEY ที่ backend")}</p>
               )}
             </div>
           )}

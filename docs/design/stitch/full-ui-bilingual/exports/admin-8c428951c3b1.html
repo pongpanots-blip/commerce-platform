@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สต็อกแยกตามคลัง (Inventory per warehouse) - Commerce Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom scrollbar for data tables */
+    .table-responsive::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .table-responsive::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .table-responsive::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-[#f6f8fc] text-[#17243b]">
+
+  <!-- Invisible UI translation catalog as required -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "รายละเอียด": {"th": "รายละเอียด", "en": "Details"},
+    "Inventory per warehouse": {"th": "สต็อกแยกตามคลัง", "en": "Inventory per warehouse"},
+    "Refresh": {"th": "รีเฟรช", "en": "Refresh"},
+    "ค้นหา": {"th": "ค้นหา", "en": "Search"},
+    "SKU": {"th": "SKU", "en": "SKU"},
+    "สินค้า": {"th": "สินค้า", "en": "Product"},
+    "พร้อมขาย": {"th": "พร้อมขาย", "en": "Available to Sell"},
+    "สต็อกตาม SKU และคลัง · ERP = ยอดมาจาก ERP (ปรับใน ERP) · commerce = คลังของเรา (ปรับได้ใน commerce)": {
+      "th": "สต็อกตาม SKU และคลัง · ERP = ยอดมาจาก ERP (ปรับใน ERP) · commerce = คลังของเรา (ปรับได้ใน commerce)",
+      "en": "Stock by SKU and warehouse · ERP = Figures from ERP (adjust in ERP) · commerce = Own warehouse (adjustable in commerce)"
+    },
+    "คลัง": {"th": "คลัง", "en": "Warehouse"},
+    "ทุกคลัง": {"th": "ทุกคลัง", "en": "All Warehouses"},
+    "ค้นหา SKU หรือชื่อสินค้า": {"th": "ค้นหา SKU หรือชื่อสินค้า", "en": "Search SKU or product name"},
+    "ไม่พบสต็อก": {"th": "ไม่พบสต็อก", "en": "No stock records found"},
+    "คงเหลือ": {"th": "คงเหลือ", "en": "On Hand"},
+    "จอง": {"th": "จอง", "en": "Reserved"},
+    "เปลี่ยนล่าสุด": {"th": "เปลี่ยนล่าสุด", "en": "Last Modified"},
+    "✓ commerce": {"th": "✓ commerce", "en": "✓ commerce"},
+    "ERP": {"th": "ERP", "en": "ERP"},
+    "ก่อนหน้า": {"th": "ก่อนหน้า", "en": "Previous"},
+    "หน้า": {"th": "หน้า", "en": "Page"},
+    "รายการ)": {"th": "รายการ)", "en": "items)"},
+    "ถัดไป": {"th": "ถัดไป", "en": "Next"},
+    "— โหมดแทนที่ต้องมีลำดับเสมอ": {"th": "— โหมดแทนที่ต้องมีลำดับเสมอ", "en": "— Replacement mode requires explicit sequence"},
+    "🛑 ลบรูปนี้": {"th": "🛑 ลบรูปนี้", "en": "🛑 Remove this image"},
+    "Click the edit icon on an order to change its status": {"th": "คลิกไอคอนแก้ไขบนออเดอร์เพื่อเปลี่ยนสถานะ", "en": "Click the edit icon on an order to change its status"},
+    "Endpoint": {"th": "เอนด์พอยต์ (Endpoint)", "en": "Endpoint"},
+    "JG001": {"th": "JG001", "en": "JG001"},
+    "Notification Log": {"th": "บันทึกการแจ้งเตือน (Notification Log)", "en": "Notification Log"},
+    "Reason": {"th": "เหตุผล (Reason)", "en": "Reason"},
+    "Source": {"th": "แหล่งที่มา (Source)", "en": "Source"},
+    "Workflow ที่ enroll เยอะสุด": {"th": "Workflow ที่ enroll เยอะสุด", "en": "Most Enrolled Workflow"},
+    "กำลังโหลด…": {"th": "กำลังโหลด…", "en": "Loading…"},
+    "ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง": {"th": "ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง", "en": "Data validated, processing in background"},
+    "ค่าจัดส่ง": {"th": "ค่าจัดส่ง", "en": "Shipping Fee"},
+    "จำนวนและยอดเงินคืนของแต่ละรายการต้องมากกว่า 0": {"th": "จำนวนและยอดเงินคืนของแต่ละรายการต้องมากกว่า 0", "en": "Quantity and refund amount per item must be greater than 0"},
+    "เช่น beef-fest-1111": {"th": "เช่น beef-fest-1111", "en": "e.g. beef-fest-1111"},
+    "ตรวจสอบวงเงิน": {"th": "ตรวจสอบวงเงิน", "en": "Check Credit Limit"},
+    "เท่ากัน": {"th": "เท่ากัน", "en": "Equal"},
+    "ปรับยอด": {"th": "ปรับยอด", "en": "Adjust Stock"},
+    "พื้นที่ทำงาน": {"th": "พื้นที่ทำงาน", "en": "Workspaces"},
+    "ไม่พบคูปอง": {"th": "ไม่พบคูปอง", "en": "No coupon found"},
+    "ยังไม่มี event ในช่วงเวลานี้ — ระบบเริ่มเก็บหลัง deploy เท่านั้น": {"th": "ยังไม่มี event ในช่วงเวลานี้ — ระบบเริ่มเก็บหลัง deploy เท่านั้น", "en": "No events during this period — System starts tracking post-deployment only"},
+    "รอ (Wait)": {"th": "รอ (Wait)", "en": "Wait"},
+    "รายละเอียด (ไทย)": {"th": "รายละเอียด (ไทย)", "en": "Details (TH)"},
+    "ลูกค้าที่ซื้อ": {"th": "ลูกค้าที่ซื้อ", "en": "Purchasing Customers"},
+    "เวลารอส่ง": {"th": "เวลารอส่ง", "en": "Lead Time"},
+    "สำคัญ": {"th": "สำคัญ", "en": "Important"},
+    "เหตุผล": {"th": "เหตุผล", "en": "Reason"}
+  }
+  </script>
+
+  <div class="flex flex-1 min-h-screen">
+    <!-- 256px Sidebar for authenticated admin -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col shrink-0 select-none">
+      <!-- App Brand & Identity -->
+      <div class="h-16 px-5 border-b border-[#e1e7f0] flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-[#365cf5] text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            C
+          </div>
+          <div>
+            <div class="font-bold text-[15px] leading-tight text-[#17243b]">Commerce</div>
+            <div class="text-[12px] text-[#52627a] font-normal leading-tight">Operations Hub</div>
+          </div>
+        </div>
+        <span class="text-[11px] font-semibold bg-[#e8edff] text-[#365cf5] px-2 py-0.5 rounded tracking-wide">admin</span>
+      </div>
+
+      <!-- Navigation Work Areas (7 Thai work areas) -->
+      <nav class="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+        <!-- 1. สินค้าและสต็อก (Active Area) -->
+        <div class="rounded-lg bg-blue-50/60 p-1">
+          <div class="flex items-center justify-between px-2.5 py-2 text-[13px] font-semibold text-[#365cf5]">
+            <span class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-[#365cf5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              <span>สินค้าและสต็อก</span>
+            </span>
+            <svg class="w-4 h-4 transform rotate-180 text-[#365cf5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          <!-- Sub-items -->
+          <div class="mt-1 ml-4 pl-3 border-l-2 border-[#365cf5] space-y-1 text-[13px]">
+            <a href="#" class="block py-1.5 px-2 text-[#52627a] hover:text-[#17243b] rounded transition">รายการสินค้า</a>
+            <a href="#" class="block py-1.5 px-2 text-[#52627a] hover:text-[#17243b] rounded transition">ความเคลื่อนไหวสต็อก</a>
+            <a href="#" class="block py-1.5 px-2 text-[#52627a] hover:text-[#17243b] rounded transition">ราคาลูกค้า / ราคาสัญญา</a>
+            <!-- Active Sub-item -->
+            <a href="#" class="block py-1.5 px-2 font-semibold text-[#365cf5] bg-white rounded shadow-sm">สต็อกแยกตามคลัง</a>
+          </div>
+        </div>
+
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span>ออเดอร์และการเงิน</span>
+        </a>
+
+        <!-- 3. ลูกค้าและบริการ -->
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span>ลูกค้าและบริการ</span>
+        </a>
+
+        <!-- 4. การตลาด -->
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+          </svg>
+          <span>การตลาด</span>
+        </a>
+
+        <!-- 5. รายงานและข้อมูล -->
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span>รายงานและข้อมูล</span>
+        </a>
+
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span>ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] rounded-lg transition">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Footer: Developer Portal link & Route info -->
+      <div class="p-3 border-t border-[#e1e7f0] bg-slate-50/50 space-y-2">
+        <div class="flex items-center justify-between text-[12px] bg-white px-2.5 py-1.5 rounded border border-[#e1e7f0]">
+          <span class="text-[#52627a]">Developer Portal</span>
+          <a href="#" class="text-[#365cf5] font-medium hover:underline flex items-center gap-1">
+            API &amp; Webhook
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+        <div class="text-[11px] font-mono text-[#52627a] flex items-center justify-between px-1">
+          <span>Route: /erp/inventory-warehouse</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Ready"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Contextual Header -->
+      <header class="h-16 bg-white border-b border-[#e1e7f0] px-8 flex items-center justify-between shrink-0">
+        <!-- Breadcrumbs & Route Identifier -->
+        <div class="flex items-center gap-3 text-[13px]">
+          <span class="text-[#52627a]">สินค้าและสต็อก</span>
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="font-semibold text-[#17243b]">สต็อกแยกตามคลัง</span>
+          <span class="font-mono text-[11px] text-[#52627a] bg-slate-100 px-2 py-0.5 rounded border border-slate-200 ml-1">
+            admin-8c428951c3b1
+          </span>
+        </div>
+
+        <!-- Top Right Actions: Prototype Badge, Language Switcher, User -->
+        <div class="flex items-center gap-4">
+          <!-- Prototype Data Marker -->
+          <span class="inline-flex items-center gap-1.5 text-[12px] bg-amber-50 text-[#b08900] border border-amber-200/80 px-2.5 py-1 rounded-full font-medium">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="badge-sample-data">ข้อมูลตัวอย่าง</span>
+          </span>
+
+          <!-- Bilingual Toggle Selector (TH / EN) -->
+          <div class="flex items-center bg-[#f1f5f9] p-0.5 rounded-lg border border-[#e1e7f0] text-[13px]">
+            <button id="lang-th-btn" class="px-2.5 py-1 rounded-md font-semibold text-[#17243b] bg-white shadow-sm transition">
+              ไทย
+            </button>
+            <button id="lang-en-btn" class="px-2.5 py-1 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition">
+              English
+            </button>
+          </div>
+
+          <!-- Staff Profile -->
+          <div class="flex items-center gap-2 pl-2 border-l border-[#e1e7f0]">
+            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-semibold text-xs text-[#17243b]">
+              OP
+            </div>
+            <div class="text-[12px] leading-tight hidden md:block">
+              <div class="font-semibold text-[#17243b]">ทีมปฏิบัติการ</div>
+              <div class="text-[#52627a]">Commerce Ops</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Page Body (Centered 1240px container) -->
+      <main class="flex-1 p-8 overflow-y-auto">
+        <div class="max-w-[1240px] mx-auto space-y-6">
+
+          <!-- Page Header & Action Bar -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-3">
+                <h1 id="page-title" class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight">
+                  สต็อกแยกตามคลัง
+                </h1>
+                <span class="text-[12px] font-semibold text-[#52627a] bg-slate-100 px-2.5 py-1 rounded border border-[#e1e7f0]">
+                  Inventory per warehouse
+                </span>
+              </div>
+              <p id="page-subtitle" class="text-[13px] text-[#52627a] mt-1.5 flex items-center gap-1.5">
+                <span>สต็อกตาม SKU และคลัง · ERP = ยอดมาจาก ERP (ปรับใน ERP) · commerce = คลังของเรา (ปรับได้ใน commerce)</span>
+              </p>
+            </div>
+
+            <!-- Primary Actions -->
+            <div class="flex items-center gap-3">
+              <button id="btn-refresh" class="h-10 px-4 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#17243b] text-[13px] font-medium rounded-lg shadow-sm flex items-center gap-2 transition">
+                <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Refresh</span>
+              </button>
+              <button onclick="openAdjustModal()" class="h-10 px-4 bg-[#365cf5] hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg shadow-sm flex items-center gap-2 transition">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span id="btn-adjust-label">ปรับยอด</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter & Search Card -->
+          <div class="bg-white rounded-[12px] border border-[#e1e7f0] p-5 shadow-sm space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+              <!-- Warehouse Selector -->
+              <div class="md:col-span-3">
+                <label id="lbl-warehouse" class="block text-[13px] font-semibold text-[#17243b] mb-1.5">
+                  คลัง
+                </label>
+                <div class="relative">
+                  <select id="warehouse-filter" class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-[14px] text-[#17243b] focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] transition">
+                    <option value="ALL">ทุกคลัง</option>
+                    <option value="WH-BKK01">WH-BKK01 (คลังกลาง บางนา - commerce)</option>
+                    <option value="WH-CM02">WH-CM02 (คลังเหนือ เชียงใหม่ - commerce)</option>
+                    <option value="ERP-CENTRAL">ERP-CENTRAL (คลังใหญ่ พระราม 3 - ERP)</option>
+                    <option value="ERP-EAST">ERP-EAST (คลังบูรพา ชลบุรี - ERP)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Search by SKU or Product Name (Explicitly stated per page) -->
+              <div class="md:col-span-6">
+                <label id="lbl-search-box" class="block text-[13px] font-semibold text-[#17243b] mb-1.5">
+                  ค้นหา SKU หรือชื่อสินค้า
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input type="text" id="sku-search-input" placeholder="ค้นหา SKU หรือชื่อสินค้า (ค้นเฉพาะหน้านี้)" class="w-full h-10 pl-10 pr-4 bg-white border border-[#e1e7f0] rounded-lg text-[14px] text-[#17243b] placeholder:text-[#52627a]/70 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] transition">
+                </div>
+              </div>
+
+              <!-- Action buttons for search -->
+              <div class="md:col-span-3 flex items-center gap-2">
+                <button id="btn-submit-search" class="flex-1 h-10 px-4 bg-[#365cf5] hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition flex items-center justify-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span>ค้นหา</span>
+                </button>
+                <button id="btn-clear-search" onclick="document.getElementById('sku-search-input').value=''; filterTable();" class="h-10 px-3 bg-white border border-[#e1e7f0] text-[#52627a] hover:text-[#17243b] text-[13px] rounded-lg transition">
+                  ล้าง
+                </button>
+              </div>
+            </div>
+
+            <!-- Frontend pagination search constraint banner -->
+            <div class="flex items-center justify-between text-[12px] text-[#52627a] pt-2 border-t border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span>การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API</span>
+              </div>
+              <div>
+                <span>แสดง <strong class="text-[#17243b]">5</strong> จาก <strong class="text-[#17243b]">5</strong> รายการ (ข้อมูลตัวอย่าง)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stock Table Card -->
+          <div class="bg-white rounded-[12px] border border-[#e1e7f0] shadow-sm overflow-hidden">
+            <!-- Table Header summary bar -->
+            <div class="px-6 py-3.5 border-b border-[#e1e7f0] bg-slate-50/70 flex items-center justify-between text-[13px]">
+              <div class="font-semibold text-[#17243b] flex items-center gap-2">
+                <span>ตารางสถานะสต็อกแยกตามคลัง</span>
+                <span class="text-[11px] font-normal text-[#52627a] bg-slate-200/80 px-2 py-0.5 rounded">แบบเรียลไทม์</span>
+              </div>
+              <div class="text-[#52627a] text-[12px]">
+                ERP Sync ล่าสุด: 5 นาทีที่แล้ว
+              </div>
+            </div>
+
+            <!-- Table Responsive Wrapper -->
+            <div class="overflow-x-auto table-responsive">
+              <table class="w-full text-left text-[14px] border-collapse">
+                <thead>
+                  <tr class="border-b border-[#e1e7f0] bg-slate-50/50 text-[#52627a] text-[13px] font-medium">
+                    <th class="py-3 px-6">SKU</th>
+                    <th class="py-3 px-6">สินค้า</th>
+                    <th class="py-3 px-6">คลัง</th>
+                    <th class="py-3 px-6 text-right">คงเหลือ</th>
+                    <th class="py-3 px-6 text-right">จอง</th>
+                    <th class="py-3 px-6 text-right font-semibold text-[#17243b]">พร้อมขาย</th>
+                    <th class="py-3 px-6">แหล่งข้อมูล</th>
+                    <th class="py-3 px-6">เปลี่ยนล่าสุด</th>
+                    <th class="py-3 px-6 text-center">รายละเอียด</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="divide-y divide-[#e1e7f0]">
+                  <!-- Row 1: commerce warehouse -->
+                  <tr class="hover:bg-slate-50/60 transition group">
+                    <td class="py-4 px-6 font-mono text-[13px] font-semibold text-[#365cf5]">
+                      SKU-TH-8890
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">ข้าวหอมมะลิคัดพิเศษ 5กก.</div>
+                      <div class="text-[12px] text-[#52627a]">อาหารและเครื่องดื่ม · ข้าวสาร</div>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">WH-BKK01</div>
+                      <div class="text-[12px] text-[#52627a]">คลังกลาง บางนา</div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-medium text-[#17243b]">
+                      450
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono text-amber-700">
+                      30
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-bold text-emerald-700 bg-emerald-50/30">
+                      420
+                    </td>
+                    <td class="py-4 px-6">
+                      <span class="inline-flex items-center gap-1 text-[12px] font-medium text-[#157347] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                        <span>✓ commerce</span>
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-[13px] text-[#52627a]">
+                      10 นาทีที่แล้ว
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button onclick="showDetails('SKU-TH-8890', 'WH-BKK01', 'ข้าวหอมมะลิคัดพิเศษ 5กก.', 450, 30, 420, '✓ commerce')" class="h-8 px-3 text-[12px] font-medium text-[#365cf5] hover:bg-blue-50 border border-blue-200 rounded-lg transition">
+                        รายละเอียด
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 2: ERP warehouse -->
+                  <tr class="hover:bg-slate-50/60 transition group">
+                    <td class="py-4 px-6 font-mono text-[13px] font-semibold text-[#365cf5]">
+                      SKU-CH-4412
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">น้ำมันพืชบรรจุลัง (12 ขวด)</div>
+                      <div class="text-[12px] text-[#52627a]">วัตถุดิบและน้ำมันประกอบอาหาร</div>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">ERP-CENTRAL</div>
+                      <div class="text-[12px] text-[#52627a]">คลังใหญ่ พระราม 3</div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-medium text-[#17243b]">
+                      1,200
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono text-amber-700">
+                      150
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-bold text-emerald-700 bg-emerald-50/30">
+                      1,050
+                    </td>
+                    <td class="py-4 px-6">
+                      <span class="inline-flex items-center gap-1 text-[12px] font-medium text-[#52627a] bg-slate-100 border border-slate-300 px-2 py-0.5 rounded">
+                        <span>ERP</span>
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-[13px] text-[#52627a]">
+                      1 ชั่วโมงที่แล้ว
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button onclick="showDetails('SKU-CH-4412', 'ERP-CENTRAL', 'น้ำมันพืชบรรจุลัง (12 ขวด)', 1200, 150, 1050, 'ERP')" class="h-8 px-3 text-[12px] font-medium text-[#365cf5] hover:bg-blue-50 border border-blue-200 rounded-lg transition">
+                        รายละเอียด
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 3: commerce warehouse (Low stock warning) -->
+                  <tr class="hover:bg-slate-50/60 transition group">
+                    <td class="py-4 px-6 font-mono text-[13px] font-semibold text-[#365cf5]">
+                      SKU-MK-1102
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">นมยูเอชที รสจืด 250มล. (ลัง 36)</div>
+                      <div class="text-[12px] text-[#52627a]">เครื่องดื่มและนมพร้อมดื่ม</div>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">WH-CM02</div>
+                      <div class="text-[12px] text-[#52627a]">คลังเหนือ เชียงใหม่</div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-medium text-[#17243b]">
+                      25
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono text-amber-700">
+                      20
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-bold text-amber-700 bg-amber-50/40">
+                      5
+                    </td>
+                    <td class="py-4 px-6">
+                      <span class="inline-flex items-center gap-1 text-[12px] font-medium text-[#157347] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                        <span>✓ commerce</span>
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-[13px] text-[#52627a]">
+                      35 นาทีที่แล้ว
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button onclick="showDetails('SKU-MK-1102', 'WH-CM02', 'นมยูเอชที รสจืด 250มล. (ลัง 36)', 25, 20, 5, '✓ commerce')" class="h-8 px-3 text-[12px] font-medium text-[#365cf5] hover:bg-blue-50 border border-blue-200 rounded-lg transition">
+                        รายละเอียด
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 4: ERP warehouse (Zero available stock) -->
+                  <tr class="hover:bg-slate-50/60 transition group">
+                    <td class="py-4 px-6 font-mono text-[13px] font-semibold text-[#365cf5]">
+                      SKU-FD-7741
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">เนยชีสนำเข้าเกรดพรีเมียม 1กก.</div>
+                      <div class="text-[12px] text-[#52627a]">ผลิตภัณฑ์แช่เย็นและชีส</div>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">ERP-EAST</div>
+                      <div class="text-[12px] text-[#52627a]">คลังบูรพา ชลบุรี</div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-medium text-[#17243b]">
+                      15
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono text-red-700">
+                      15
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-bold text-red-600 bg-red-50/40">
+                      0
+                    </td>
+                    <td class="py-4 px-6">
+                      <span class="inline-flex items-center gap-1 text-[12px] font-medium text-[#52627a] bg-slate-100 border border-slate-300 px-2 py-0.5 rounded">
+                        <span>ERP</span>
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-[13px] text-[#52627a]">
+                      เมื่อวานนี้
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button onclick="showDetails('SKU-FD-7741', 'ERP-EAST', 'เนยชีสนำเข้าเกรดพรีเมียม 1กก.', 15, 15, 0, 'ERP')" class="h-8 px-3 text-[12px] font-medium text-[#365cf5] hover:bg-blue-50 border border-blue-200 rounded-lg transition">
+                        รายละเอียด
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 5: JG001 Sample code -->
+                  <tr class="hover:bg-slate-50/60 transition group">
+                    <td class="py-4 px-6 font-mono text-[13px] font-semibold text-[#365cf5]">
+                      JG001
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">ชุดเมล็ดกาแฟดอยช้าง คั่วกลาง (1กก.)</div>
+                      <div class="text-[12px] text-[#52627a]">เครื่องดื่มและคาเฟ่ · กาแฟคั่วสด</div>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-medium text-[#17243b]">WH-BKK01</div>
+                      <div class="text-[12px] text-[#52627a]">คลังกลาง บางนา</div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-medium text-[#17243b]">
+                      80
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono text-amber-700">
+                      8
+                    </td>
+                    <td class="py-4 px-6 text-right font-mono font-bold text-emerald-700 bg-emerald-50/30">
+                      72
+                    </td>
+                    <td class="py-4 px-6">
+                      <span class="inline-flex items-center gap-1 text-[12px] font-medium text-[#157347] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                        <span>✓ commerce</span>
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-[13px] text-[#52627a]">
+                      2 ชั่วโมงที่แล้ว
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button onclick="showDetails('JG001', 'WH-BKK01', 'ชุดเมล็ดกาแฟดอยช้าง คั่วกลาง (1กก.)', 80, 8, 72, '✓ commerce')" class="h-8 px-3 text-[12px] font-medium text-[#365cf5] hover:bg-blue-50 border border-blue-200 rounded-lg transition">
+                        รายละเอียด
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Filtered Empty State (Initially hidden) -->
+              <div id="table-empty-state" class="hidden py-16 px-6 text-center">
+                <div class="w-12 h-12 rounded-full bg-slate-100 text-[#52627a] flex items-center justify-center mx-auto mb-3">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                </div>
+                <h3 id="empty-title" class="text-[16px] font-semibold text-[#17243b]">ไม่พบสต็อก</h3>
+                <p id="empty-desc" class="text-[13px] text-[#52627a] mt-1 max-w-sm mx-auto">
+                  ไม่พบรายการสต็อกที่ตรงกับเงื่อนไขการค้นหาในหน้านี้ กรุณาตรวจสอบรหัส SKU หรือเลือกคลังอื่น
+                </p>
+                <button onclick="document.getElementById('sku-search-input').value=''; document.getElementById('warehouse-filter').value='ALL'; filterTable();" class="mt-4 px-4 py-2 bg-white border border-[#e1e7f0] text-[13px] font-medium text-[#17243b] hover:bg-slate-50 rounded-lg shadow-sm">
+                  ล้างตัวกรอง
+                </button>
+              </div>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="px-6 py-4 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
+              <div class="text-[#52627a]">
+                <span id="page-indicator">หน้า 1 จาก 1 (5 รายการ)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button disabled class="h-9 px-3 bg-slate-100 text-slate-400 border border-slate-200 rounded-lg font-medium cursor-not-allowed">
+                  ก่อนหน้า
+                </button>
+                <div class="flex items-center gap-1">
+                  <button class="w-9 h-9 bg-[#365cf5] text-white rounded-lg font-semibold shadow-sm">
+                    1
+                  </button>
+                </div>
+                <button disabled class="h-9 px-3 bg-slate-100 text-slate-400 border border-slate-200 rounded-lg font-medium cursor-not-allowed">
+                  ถัดไป
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informational / Reference Guidelines Card -->
+          <div class="bg-blue-50/50 border border-blue-200/70 rounded-[12px] p-4 text-[13px] text-[#17243b] flex items-start gap-3">
+            <svg class="w-5 h-5 text-[#365cf5] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="space-y-1">
+              <div class="font-semibold text-[#17243b]">ข้อกำหนดการซิงก์และการจัดการสต็อก</div>
+              <div class="text-[#52627a] text-[12px] leading-relaxed">
+                ยอดสต็อกที่มีป้ายกำกับ <strong class="text-[#157347]">✓ commerce</strong> เป็นคลังที่จัดการโดยตรงผ่านระบบ สามารถกดปุ่ม <span class="text-[#365cf5] font-medium">ปรับยอด</span> เพื่อตรวจนับหรือแก้ไขจำนวนได้ทันที สำหรับคลัง <strong class="text-slate-700">ERP</strong> ระบบจะรับค่าซิงก์จาก SAP/ERP หลักโดยอัตโนมัติ การแก้ไขต้องทำผ่านระบบต้นทาง
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Detail Dialog Modal -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+    <div class="bg-white rounded-[12px] border border-[#e1e7f0] shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/50">
+        <div>
+          <h3 class="text-[16px] font-bold text-[#17243b]">รายละเอียดสต็อก</h3>
+          <p class="text-[12px] text-[#52627a]" id="modal-sku-subtitle">SKU-TH-8890</p>
+        </div>
+        <button onclick="closeDetails()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <div class="text-[12px] text-[#52627a]">ชื่อสินค้า</div>
+          <div id="modal-product-name" class="text-[15px] font-semibold text-[#17243b] mt-0.5">
+            ข้าวหอมมะลิคัดพิเศษ 5กก.
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 p-4 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+          <div>
+            <div class="text-[12px] text-[#52627a]">คลังจัดเก็บ</div>
+            <div id="modal-warehouse" class="font-medium text-[#17243b] text-[14px] mt-0.5">WH-BKK01</div>
+          </div>
+          <div>
+            <div class="text-[12px] text-[#52627a]">แหล่งที่มา</div>
+            <div id="modal-source" class="font-medium text-[#157347] text-[14px] mt-0.5">✓ commerce</div>
+          </div>
+          <div>
+            <div class="text-[12px] text-[#52627a]">คงเหลือ (On Hand)</div>
+            <div id="modal-onhand" class="font-mono font-bold text-[#17243b] text-[16px] mt-0.5">450</div>
+          </div>
+          <div>
+            <div class="text-[12px] text-[#52627a]">ยอดจอง (Reserved)</div>
+            <div id="modal-reserved" class="font-mono font-bold text-amber-700 text-[16px] mt-0.5">30</div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between">
+          <span class="text-[13px] font-semibold text-emerald-900">พร้อมขาย (Available)</span>
+          <span id="modal-available" class="font-mono text-[18px] font-bold text-[#157347]">420</span>
+        </div>
+      </div>
+
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-[#e1e7f0] flex items-center justify-end">
+        <button onclick="closeDetails()" class="h-10 px-4 bg-white border border-[#e1e7f0] hover:bg-slate-100 text-[#17243b] text-[13px] font-medium rounded-lg shadow-sm transition">
+          ปิด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adjust Stock Dialog Modal -->
+  <div id="adjust-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+    <div class="bg-white rounded-[12px] border border-[#e1e7f0] shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/50">
+        <div>
+          <h3 class="text-[16px] font-bold text-[#17243b]">ปรับยอดสต็อก (commerce)</h3>
+          <p class="text-[12px] text-[#52627a]">เฉพาะคลังในระบบ Commerce เท่านั้น</p>
+        </div>
+        <button onclick="closeAdjustModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form onsubmit="handleAdjustSubmit(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-[13px] font-semibold text-[#17243b] mb-1.5">เลือกคลัง</label>
+          <select id="adj-warehouse" class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-[14px]">
+            <option value="WH-BKK01">WH-BKK01 (คลังกลาง บางนา)</option>
+            <option value="WH-CM02">WH-CM02 (คลังเหนือ เชียงใหม่)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[13px] font-semibold text-[#17243b] mb-1.5">SKU</label>
+          <input type="text" id="adj-sku" required value="SKU-TH-8890" class="w-full h-10 px-3 border border-[#e1e7f0] rounded-lg text-[14px] font-mono">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[13px] font-semibold text-[#17243b] mb-1.5">ประเภทการปรับ</label>
+            <select class="w-full h-10 px-3 border border-[#e1e7f0] rounded-lg text-[14px]">
+              <option value="count">ตรวจนับจริง (Count)</option>
+              <option value="damage">ชำรุด / เสียหาย (Damage)</option>
+              <option value="correction">แก้ไขยอด (Correction)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[13px] font-semibold text-[#17243b] mb-1.5">จำนวนใหม่</label>
+            <input type="number" required min="0" value="450" class="w-full h-10 px-3 border border-[#e1e7f0] rounded-lg text-[14px] font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[13px] font-semibold text-[#17243b] mb-1.5">เหตุผล (Reason)</label>
+          <input type="text" required placeholder="เช่น ตรวจนับสต็อกประจำสัปดาห์" class="w-full h-10 px-3 border border-[#e1e7f0] rounded-lg text-[14px]">
+        </div>
+
+        <div class="p-3 bg-amber-50 border border-amber-200/80 rounded-lg text-[12px] text-amber-900 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>การปรับยอดสต็อกจะมีผลกับยอด "พร้อมขาย" ทันทีในระบบ</span>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeAdjustModal()" class="h-10 px-4 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#17243b] text-[13px] font-medium rounded-lg transition">
+            ยกเลิก
+          </button>
+          <button type="submit" class="h-10 px-5 bg-[#365cf5] hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg shadow-sm transition">
+            บันทึกการปรับยอด
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-[#17243b] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 text-[13px] transition-all transform duration-200">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-message">ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง</span>
+  </div>
+
+  <script>
+    // Translation dictionary loaded from required invisible script tag
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md font-semibold text-[#17243b] bg-white shadow-sm transition";
+        enBtn.className = "px-2.5 py-1 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition";
+        document.getElementById('badge-sample-data').textContent = "ข้อมูลตัวอย่าง";
+        document.getElementById('page-title').textContent = "สต็อกแยกตามคลัง";
+        document.getElementById('btn-adjust-label').textContent = "ปรับยอด";
+        document.getElementById('lbl-warehouse').textContent = "คลัง";
+        document.getElementById('lbl-search-box').textContent = "ค้นหา SKU หรือชื่อสินค้า";
+        document.getElementById('sku-search-input').placeholder = "ค้นหา SKU หรือชื่อสินค้า (ค้นเฉพาะหน้านี้)";
+        document.getElementById('empty-title').textContent = "ไม่พบสต็อก";
+        document.getElementById('empty-desc').textContent = "ไม่พบรายการสต็อกที่ตรงกับเงื่อนไขการค้นหาในหน้านี้ กรุณาตรวจสอบรหัส SKU หรือเลือกคลังอื่น";
+        document.getElementById('page-indicator').textContent = "หน้า 1 จาก 1 (5 รายการ)";
+        document.getElementById('btn-submit-search').querySelector('span').textContent = "ค้นหา";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md font-semibold text-[#17243b] bg-white shadow-sm transition";
+        thBtn.className = "px-2.5 py-1 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition";
+        document.getElementById('badge-sample-data').textContent = "Sample data";
+        document.getElementById('page-title').textContent = "Inventory per warehouse";
+        document.getElementById('btn-adjust-label').textContent = "Adjust Stock";
+        document.getElementById('lbl-warehouse').textContent = "Warehouse";
+        document.getElementById('lbl-search-box').textContent = "Search SKU or product name";
+        document.getElementById('sku-search-input').placeholder = "Search SKU or product name (current page only)";
+        document.getElementById('empty-title').textContent = "No stock records found";
+        document.getElementById('empty-desc').textContent = "No stock records matched your query on this page. Please verify SKU or select another warehouse.";
+        document.getElementById('page-indicator').textContent = "Page 1 of 1 (5 items)";
+        document.getElementById('btn-submit-search').querySelector('span').textContent = "Search";
+      }
+    }
+
+    document.getElementById('lang-th-btn').addEventListener('click', () => setLanguage('th'));
+    document.getElementById('lang-en-btn').addEventListener('click', () => setLanguage('en'));
+
+    // Filter table records on current page
+    function filterTable() {
+      const query = document.getElementById('sku-search-input').value.toLowerCase().trim();
+      const warehouse = document.getElementById('warehouse-filter').value;
+      const rows = document.querySelectorAll('#inventory-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const matchesQuery = query === '' || text.includes(query);
+        const matchesWarehouse = warehouse === 'ALL' || text.includes(warehouse.toLowerCase());
+
+        if (matchesQuery && matchesWarehouse) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('table-empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('sku-search-input').addEventListener('input', filterTable);
+    document.getElementById('warehouse-filter').addEventListener('change', filterTable);
+    document.getElementById('btn-submit-search').addEventListener('click', filterTable);
+
+    // Refresh button feedback
+    document.getElementById('btn-refresh').addEventListener('click', function() {
+      const btn = this;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="inline-block animate-spin mr-1">↻</span> ${currentLang === 'th' ? 'กำลังโหลด…' : 'Loading…'}`;
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        showToast(currentLang === 'th' ? 'อัปเดตข้อมูลสต็อกเรียบร้อย' : 'Inventory refreshed successfully');
+      }, 500);
+    });
+
+    // Detail Modal Functions
+    function showDetails(sku, warehouse, name, onhand, reserved, available, source) {
+      document.getElementById('modal-sku-subtitle').textContent = sku;
+      document.getElementById('modal-product-name').textContent = name;
+      document.getElementById('modal-warehouse').textContent = warehouse;
+      document.getElementById('modal-source').textContent = source;
+      document.getElementById('modal-onhand').textContent = onhand.toLocaleString();
+      document.getElementById('modal-reserved').textContent = reserved.toLocaleString();
+      document.getElementById('modal-available').textContent = available.toLocaleString();
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetails() {
+      document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    // Adjust Stock Modal Functions
+    function openAdjustModal() {
+      document.getElementById('adjust-modal').classList.remove('hidden');
+    }
+
+    function closeAdjustModal() {
+      document.getElementById('adjust-modal').classList.add('hidden');
+    }
+
+    function handleAdjustSubmit(e) {
+      e.preventDefault();
+      closeAdjustModal();
+      showToast(currentLang === 'th' ? 'ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง' : 'Data validated, processing in background');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Keyboard accessibility: Escape closes open modals
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeDetails();
+        closeAdjustModal();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/marketing-creative.schema.ts",
+    "edits": 22
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/marketing-workflow.api.ts",
+    "edits": 20
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/trigger-rule.helpers.ts",
+    "edits": 16
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campain/promotion-mechanic-form.helpers.ts",
+    "edits": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-reward.helpers.ts",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kyc/kyc.types.ts",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/creative-editor/element-factory.ts",
+    "edits": 13
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/product-status.helpers.ts",
+    "edits": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-common/edit-history.helpers.ts",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/builder/segment-definition.helpers.ts",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/segment-rule.helpers.ts",
+    "edits": 30
+  }
+]

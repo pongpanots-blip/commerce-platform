@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import type { CouponDiscountScope } from '@josh/shared-api';
 import React from 'react';
 import CouponAudienceFields from './CouponAudienceFields';
@@ -15,6 +16,8 @@ import type { CouponRedemptionForm } from './coupon-redemption.helpers';
  * user_limit to '1' — both CreateCoupon and CouponDetail must use this same handler so
  * switching audience on either page behaves identically.
  */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function applyCouponAudienceChange(
   next: CouponAudienceForm,
   setAudience: (next: CouponAudienceForm) => void,
@@ -28,13 +31,14 @@ export function applyCouponAudienceChange(
 
 /** Red validation/API-error banner shared by CreateCoupon and CouponDetail — same markup on both pages. */
 export function CouponFormErrorBanner({ error }: { error: string }) {
+  __useUiLocale();
   if (!error) return null;
   return (
     <div
       role="alert"
       className="mb-4 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700"
     >
-      {error}
+      {(typeof error === 'string' ? __uiText(error) : error)}
     </div>
   );
 }
@@ -42,10 +46,10 @@ export function CouponFormErrorBanner({ error }: { error: string }) {
 /** `lockedNote` content for a chain coupon (B) — shared by CreateCoupon (picking the source)
  * and CouponDetail (already-granted chains) so the copy/markup stays in one place. */
 export function ChainLockedAudienceNote({ sourceLabel }: { sourceLabel: string }) {
+  __useUiLocale();
   return (
     <p className="text-xs text-violet-700">
-      ผู้ที่ใช้คูปอง {sourceLabel} สำเร็จ จะได้รับคูปองนี้อัตโนมัติ
-    </p>
+      {__uiText("ผู้ที่ใช้คูปอง ")}{sourceLabel} {__uiText(" สำเร็จ จะได้รับคูปองนี้อัตโนมัติ")}</p>
   );
 }
 
@@ -76,8 +80,9 @@ export function CouponAudienceSection({
   lockedNote,
   codeGenerationLocked,
 }: AudienceFormSectionProps) {
+  __useUiLocale();
   return (
-    <Section title="กลุ่มเป้าหมาย" description="เลือกว่าใครมีสิทธิ์ได้รับคูปองนี้">
+    <Section title={__uiText("กลุ่มเป้าหมาย")} description={__uiText("เลือกว่าใครมีสิทธิ์ได้รับคูปองนี้")}>
       {lockedNote ?? (
         <>
           <CouponAudienceFields
@@ -90,8 +95,7 @@ export function CouponAudienceSection({
           />
           {isNewSignupAudience(audience.mode) && (
             <p className="text-xs text-violet-700">
-              คูปองนี้จะมอบให้สมาชิกใหม่ทันทีหลังสมัคร — ลูกค้าใช้รหัสคูปองที่หน้าชำระเงิน
-            </p>
+              {__uiText("คูปองนี้จะมอบให้สมาชิกใหม่ทันทีหลังสมัคร — ลูกค้าใช้รหัสคูปองที่หน้าชำระเงิน")}</p>
           )}
         </>
       )}
@@ -116,10 +120,11 @@ export function CouponRedemptionSection({
   onDiscountScopeChange,
   disabled,
 }: RedemptionFormSectionProps) {
+  __useUiLocale();
   return (
     <Section
-      title="เงื่อนไขใช้โค้ด"
-      description="ขอบเขตส่วนลด, ยอดตะกร้าขั้นต่ำ, SKU ขั้นต่ำ และช่องทางชำระเงิน"
+      title={__uiText("เงื่อนไขใช้โค้ด")}
+      description={__uiText("ขอบเขตส่วนลด, ยอดตะกร้าขั้นต่ำ, SKU ขั้นต่ำ และช่องทางชำระเงิน")}
     >
       <CouponRedemptionRuleFields
         value={value}

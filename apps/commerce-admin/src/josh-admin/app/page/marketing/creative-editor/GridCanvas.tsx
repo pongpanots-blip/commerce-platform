@@ -8,6 +8,8 @@ import type { CreativeElement, GridItem, PopupChrome } from './creative-editor.t
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ResponsiveGrid = WidthProvider(GridLayout);
 
 export const GRID_COLS = POPUP_GRID_COLS;
@@ -87,6 +89,7 @@ export function GridCanvas({
   transformScale?: number;
   minHeightPx?: number;
 }) {
+  __useUiLocale();
   const elementById = new Map(elements.map((el) => [el.id, el]));
   const layout: Layout[] = items.map((it) => ({
     i: it.elementId,
@@ -211,7 +214,7 @@ export function GridCanvas({
                 }}
                 className="group/cell relative flex items-center justify-center overflow-hidden rounded-md border border-dashed border-neutral-300 bg-neutral-50"
               >
-                <p className="px-2 text-center text-[11px] text-neutral-400">องค์ประกอบหาย — ลบได้</p>
+                <p className="px-2 text-center text-[11px] text-neutral-400">{__uiText("องค์ประกอบหาย — ลบได้")}</p>
                 <button
                   type="button"
                   onClick={(event) => {
@@ -219,7 +222,7 @@ export function GridCanvas({
                     onRemoveElement(it.elementId);
                   }}
                   className="absolute right-1 top-1 z-10 rounded p-0.5 text-neutral-300 opacity-0 hover:text-red-500 group-hover/cell:opacity-100"
-                  title="ลบองค์ประกอบนี้"
+                  title={__uiText("ลบองค์ประกอบนี้")}
                 >
                   <MdOutlineClose size={14} />
                 </button>
@@ -262,7 +265,7 @@ export function GridCanvas({
                   onRemoveElement(it.elementId);
                 }}
                 className="absolute right-1 top-1 z-10 rounded p-0.5 text-neutral-300 opacity-0 hover:text-red-500 group-hover/cell:opacity-100"
-                title="ลบองค์ประกอบนี้"
+                title={__uiText("ลบองค์ประกอบนี้")}
               >
                 <MdOutlineClose size={14} />
               </button>
@@ -275,8 +278,7 @@ export function GridCanvas({
           style={{ marginTop: -minHeightPx, height: minHeightPx }}
           className="pointer-events-none grid place-items-center text-xs text-neutral-300"
         >
-          ลาก element จากแผงซ้ายมาวางบน grid ได้เลย
-        </div>
+          {__uiText("ลาก element จากแผงซ้ายมาวางบน grid ได้เลย")}</div>
       )}
     </div>
   );

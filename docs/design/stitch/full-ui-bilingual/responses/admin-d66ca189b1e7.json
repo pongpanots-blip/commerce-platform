@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2830",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2IyZTAyYmE2YWQzNjQ4NGI5M2MxYWVjNDNlMzc2YTA4EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/0ba06a8ae09345a8b0299831b085a7d9"
+            },
+            "id": "7f4fc42880534a35ab75e6844b3c0672",
+            "name": "projects/9809859018179965476/screens/7f4fc42880534a35ab75e6844b3c0672",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WQSDSEdPztMnaChrhz6sgmFz2EtfH46yjrlpWY8KBaRmosREMRmGceYkTmN3nM7weanJaDBFeo4-UK9iEzDN-T3WSWmy1IrJlUXfX8YAsTHgYEiXr0-nM56qY1O-alY2zSiHkxCr0NF7f3-hjAw-FgEYkUSNt6CM_Mxcd64Rw5kPlnOkzjmlF98cF8Si5lr7JTEdvQ_sIdeFP3Xw1kwJudZp6F_nr7iehVfTtYDzBXsp2MXy7XAxo0_Q",
+              "name": "projects/9809859018179965476/files/658bc276787441fa9fb940cdaaccfe50"
+            },
+            "theme": {},
+            "title": "แคตตาล็อกแพลตฟอร์ม (/products)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "### แคตตาล็อกแพลตฟอร์ม (Products — `/products`)\n**Route Identifier:** `admin-d66ca189b1e7` | **หมวด:** สินค้าและสต็อก\n\nได้ดำเนินการออกแบบและปรับปรุงหน้าจอแคตตาล็อกแพลตฟอร์มตามข้อกำหนดของ Commerce Platform อย่างครบถ้วน:\n\n1. **โครงสร้างและ Design System:**\n   - แถบเมนูด้านซ้ายขนาด 256px พร้อม 7 พื้นที่ปฏิบัติการหลัก (สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน) พร้อมลิงก์ไปยัง Developer Portal และสถานะ Route `/products`\n   - แถบ Contextual Header ด้านบนพร้อม Breadcrumb, รหัสเส้นทาง `admin-d66ca189b1e7`, ป้ายกำกับ **ข้อมูลตัวอย่าง (Sample Data)**, ตัวสลับภาษา (ไทย / English) และโปรไฟล์ทีมปฏิบัติการ\n   - เลย์เอาต์กว้าง ~1240px พื้นหลัง `#f6f8fc`, การ์ดสีขาวมุมโค้ง 12px, เส้นขอบ `#e1e7f0`, สีหลัก `#365cf5`, และฟอนต์ Noto Sans Thai\n\n2. **การทำงานของฟังก์ชันหน้าแคตตาล็อกสินค้า:**\n   - **ปุ่มหลัก:** ปุ่ม \"Refresh\" และ \"เพิ่มสินค้า\"\n   - **ตัวกรอง & ค้นหา:** ค้นหา SKU หรือชื่อสินค้า พร้อมระบุเงื่อนไขการทำงานเฉพาะหน้านี้ตามข้อกำหนด Pagination API อย่างชัดเจน และตัวกรองสถานะ พร้อมรองรับสถานะผลลัพธ์ว่าง (Empty State)\n   - **ตารางข้อมูล:** แสดง SKU (เช่น `SKU-TH-8890`, `SKU-CH-4412`, `SKU-MK-1102`, `SKU-FD-7741`, `SKU-1`), ชื่อสินค้า, สถานะ, การจัดส่ง & สต็อกแยกตามคลัง พร้อมปุ่มการจัดการ \"รายละเอียด\" และ \"แก้ไข\"\n   - **คำแนะนำ & ข้อกำหนด:** แสดงกล่องข้อกำหนดการจัดการแคตตาล็อกสินค้าและการเชื่อมโยงสต็อกที่สอดคล้องกับคลังสินค้า\n   - **Dialog การสร้างและแก้ไขสินค้า:** มีฟอร์มระบุ SKU, ชื่อสินค้า, รายละเอียด และสถานะ พร้อมการจัดการปุ่ม Cancel/Save ที่ชัดเจน รองรับการปิดด้วยปุ่ม Escape\n\n3. **ระบบภาษาและ Export Translation Dictionary:**\n   - บรรจุ Invisible Script tag `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่มี Key ตรงตามแคตตาล็อกคำที่กำหนดทั้งหมดครบถ้วน 25 รายการ พร้อมค่าแปลภาษาไทย (`th`) และอังกฤษ (`en`)\n   - ระบบสลับภาษา ไทย / English บนหน้าจอสามารถสลับข้อความ UI ได้แบบ Interactive ทันทีโดยไม่ต้องโหลดหน้าใหม่"
+    },
+    {
+      "suggestion": "เปิดดูโมดอลเพิ่มสินค้า (Add Product Dialog) เพื่อตรวจสอบฟอร์มกรอกข้อมูล"
+    },
+    {
+      "suggestion": "ทดสอบการสลับภาษา ไทย / English ในส่วนต่างๆ ของหน้าจอ"
+    },
+    {
+      "suggestion": "ทดสอบค้นหาหรือกรองสถานะสินค้าบนหน้าตาราง"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "14981352302165264406"
+}

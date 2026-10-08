@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบรนด์ (Brand Management - /j/brands)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex antialiased">
+
+  <!-- Left Sidebar (256px) -->
+  <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col flex-shrink-0 min-h-screen select-none">
+    <!-- Brand / App Header -->
+    <div class="h-16 px-5 border-b border-[#e1e7f0] flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          C
+        </div>
+        <div>
+          <div class="font-bold text-[15px] leading-tight text-[#17243b]">Commerce</div>
+          <div class="text-[11px] text-[#52627a] leading-tight">Operations Hub</div>
+        </div>
+      </div>
+      <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#eef2ff] text-[#365cf5] border border-[#dbe4ff]">ADMIN</span>
+    </div>
+
+    <!-- Navigation Menu (7 Work Areas) -->
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+      <div class="px-3 pb-2 text-[11px] font-semibold text-[#52627a] tracking-wider uppercase">
+        พื้นที่ปฏิบัติการ (7 กลุ่ม)
+      </div>
+
+      <!-- Area 1: สินค้าและสต็อก (Active Group) -->
+      <div>
+        <button class="w-full flex items-center justify-between px-3 py-2 text-[#365cf5] font-semibold rounded-lg bg-[#f0f4ff]" id="menu-group-products">
+          <div class="flex items-center gap-2.5">
+            <svg class="w-5 h-5 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+            <span data-i18n="nav.products_and_stock">สินค้าและสต็อก</span>
+          </div>
+          <svg class="w-4 h-4 text-[#365cf5] transform rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- Submenu -->
+        <div class="mt-1 pl-4 pr-1 space-y-0.5 text-[13px] border-l-2 border-[#e1e7f0] ml-5">
+          <a href="/products" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.product_list">รายการสินค้า</span>
+          </a>
+          <!-- Current Active Screen: แบรนด์ -->
+          <a href="/j/brands" class="flex items-center justify-between px-3 py-1.5 text-[#365cf5] font-semibold rounded-md bg-[#e9effd] transition-colors">
+            <span data-i18n="nav.brands">แบรนด์</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+          </a>
+          <a href="/order-periods" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.order_periods">รอบสั่งซื้อ supplier</span>
+          </a>
+          <a href="/product-master-queue" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.master_queue">คิวข้อมูลสินค้าจาก ERP</span>
+            <span class="px-1.5 py-0.2 bg-[#fff3cd] text-[#b08900] text-[10px] font-bold rounded">3</span>
+          </a>
+          <a href="/product-prices" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.product_prices">ราคาสินค้า</span>
+          </a>
+          <a href="/stock-moves" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.stock_moves">ความเคลื่อนไหวสต็อก</span>
+          </a>
+          <a href="/prices/staff" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.contract_prices">ราคาลูกค้า / ราคาสัญญา</span>
+          </a>
+          <a href="/erp/inventory-warehouse" class="flex items-center justify-between px-3 py-1.5 text-[#52627a] hover:text-[#17243b] rounded-md transition-colors">
+            <span data-i18n="nav.inventory_warehouse">สต็อกแยกตามคลัง</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Area 2: ออเดอร์และการเงิน -->
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span data-i18n="nav.orders">ออเดอร์และการเงิน</span>
+      </a>
+
+      <!-- Area 3: ลูกค้าและบริการ -->
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span data-i18n="nav.customers">ลูกค้าและบริการ</span>
+      </a>
+
+      <!-- Area 4: การตลาด -->
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+        </svg>
+        <span data-i18n="nav.marketing">การตลาด</span>
+      </a>
+
+      <!-- Area 5: รายงานและข้อมูล -->
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span data-i18n="nav.reports">รายงานและข้อมูล</span>
+      </a>
+
+      <!-- Area 6: ระบบเชื่อมต่อ -->
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        <span data-i18n="nav.connections">ระบบเชื่อมต่อ</span>
+      </a>
+
+      <!-- Area 7: ตั้งค่าและทีมงาน -->
+      <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span data-i18n="nav.settings">ตั้งค่าและทีมงาน</span>
+      </a>
+    </nav>
+
+    <!-- Bottom Portal Link & Route Info -->
+    <div class="p-3 border-t border-[#e1e7f0] space-y-2 bg-slate-50">
+      <a href="#" class="flex items-center justify-between px-3 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] rounded-md hover:bg-white transition-colors border border-transparent hover:border-[#e1e7f0]">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+          </svg>
+          <span>Developer Portal</span>
+        </div>
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+      </a>
+      <div class="px-3 py-1 text-[11px] font-mono text-[#52627a] flex items-center justify-between">
+        <span>Route: /j/brands</span>
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500" title="System normal"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Layout Area -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+    <!-- Top Contextual Header -->
+    <header class="h-16 bg-white border-b border-[#e1e7f0] px-8 flex items-center justify-between sticky top-0 z-20">
+      <!-- Breadcrumb & Route ID -->
+      <div class="flex items-center gap-3">
+        <nav class="flex items-center gap-2 text-sm text-[#52627a]">
+          <span class="hover:text-[#17243b] cursor-pointer" data-i18n="nav.products_and_stock">สินค้าและสต็อก</span>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+          <span class="font-semibold text-[#17243b]" data-i18n="page.title">แบรนด์</span>
+        </nav>
+        <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 text-slate-600 border border-slate-200">
+          admin-d07547e1822a
+        </span>
+      </div>
+
+      <!-- Right Header Actions (Sample Data Badge + Language Switcher + User) -->
+      <div class="flex items-center gap-4">
+        <!-- Sample Data Indicator -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium">
+          <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <span data-i18n="badge.sample_data">ข้อมูลตัวอย่าง</span>
+        </div>
+
+        <!-- Language Switcher (Bilingual Thai / English) -->
+        <div class="flex items-center bg-[#f0f4ff] p-0.5 rounded-lg border border-[#dbe4ff] text-xs font-medium" id="lang-switch-container">
+          <button id="btn-lang-th" class="px-2.5 py-1 rounded-md bg-[#365cf5] text-white shadow-sm transition-all" onclick="setLanguage('th')">
+            ไทย
+          </button>
+          <button id="btn-lang-en" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all" onclick="setLanguage('en')">
+            English
+          </button>
+        </div>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-[#e1e7f0]">
+          <div class="w-8 h-8 rounded-full bg-[#dbe4ff] text-[#365cf5] font-semibold flex items-center justify-center text-xs">
+            OP
+          </div>
+          <div class="text-left text-xs leading-tight hidden sm:block">
+            <div class="font-medium text-[#17243b]">ทีมปฏิบัติการ</div>
+            <div class="text-[11px] text-[#52627a]">Commerce Ops</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container (near 1240px width) -->
+    <main class="w-full max-w-[1240px] mx-auto px-8 py-7 flex-1 space-y-6">
+
+      <!-- Page Lead & Primary Action -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight" data-i18n="page.title">แบรนด์</h1>
+            <span class="px-2.5 py-0.5 text-xs font-mono font-medium rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              /j/brands
+            </span>
+            <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-200" data-i18n="copy.brand_management">
+              Brand Management
+            </span>
+          </div>
+          <p class="text-sm text-[#52627a] mt-1" data-i18n="page.subtitle">
+            จัดการแบรนด์สินค้าสำหรับแพลตฟอร์ม Commerce เชื่อมโยงรหัสแบรนด์ ERP ตรวจสอบชื่อสองภาษา และลำดับการแสดงผลบนหน้าแรก
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-3">
+          <button id="btn-refresh" class="h-10 px-4 rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] text-sm font-medium hover:bg-slate-50 flex items-center gap-2 transition-colors shadow-sm" onclick="handleRefresh()">
+            <svg class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span data-i18n="btn.refresh">รีเฟรช</span>
+          </button>
+          <button id="btn-create-brand" class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2b4cd9] text-white text-sm font-medium flex items-center gap-2 shadow-sm transition-colors" onclick="openCreateBrandModal()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span data-i18n="btn.create_brand">เพิ่มแบรนด์ใหม่</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Informational Protocol Banner -->
+      <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-4 flex items-start gap-3.5 text-xs text-[#17243b]">
+        <div class="w-5 h-5 rounded-full bg-blue-100 text-[#365cf5] flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+          i
+        </div>
+        <div class="flex-1 space-y-1">
+          <div class="font-medium text-[#17243b]">
+            <span data-i18n="info.banner_title">การจับคู่แบรนด์กับ ERP และ Storefront</span>
+            <span class="ml-2 font-mono text-[11px] bg-white px-2 py-0.5 rounded border border-blue-200 text-blue-700">SYNC_POLICY: JOSH_PRIMARY</span>
+          </div>
+          <p class="text-[#52627a] leading-relaxed" data-i18n="info.banner_desc">
+            การสร้างแบรนด์หรือแก้ไขชื่อจะมีผลกับระบบค้นหาและแคตตาล็อกสินค้าใน Storefront หากแบรนด์ใดมีสถานะ "ยังไม่มีชื่อ" ระบบจะใช้ชื่อโค้ดชั่วคราวในการแสดงผล กรุณาระบุชื่อไทยและชื่ออังกฤษให้ครบถ้วนเพื่อการจัดอันดับที่ดี
+          </p>
+        </div>
+        <div class="flex items-center gap-2 self-center">
+          <button class="px-3 py-1.5 bg-white text-xs font-medium text-[#365cf5] border border-blue-200 rounded-lg hover:bg-blue-50" data-i18n="copy.check_audit">
+            สำหรับตรวจ
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar Card -->
+      <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+
+          <!-- Search input (current page pagination API notice) -->
+          <div class="md:col-span-5">
+            <label class="block text-xs font-medium text-[#52627a] mb-1.5" data-i18n="filter.search_label">
+              ค้นหาแบรนด์ (ค้นเฉพาะในหน้านี้ตาม Pagination API)
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </span>
+              <input type="text" id="filter-keyword" placeholder="พิมพ์ชื่อไทย ชื่ออังกฤษ หรือโค้ดแบรนด์..." class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] placeholder-slate-400 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]" oninput="handleFilterChange()">
+            </div>
+          </div>
+
+          <!-- Status / Condition dropdown -->
+          <div class="md:col-span-3">
+            <label class="block text-xs font-medium text-[#52627a] mb-1.5" data-i18n="copy.condition_source">
+              แหล่งข้อมูลเงื่อนไข (เปิด/ปิดจากอะไร)
+            </label>
+            <select id="filter-condition" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] bg-white text-sm text-[#17243b] focus:outline-none focus:border-[#365cf5]" onchange="handleFilterChange()">
+              <option value="all" data-i18n="filter.all_status">ทั้งหมด (ทุกสถานะ)</option>
+              <option value="active" data-i18n="filter.active">เปิดใช้งาน (Active)</option>
+              <option value="inactive" data-i18n="filter.inactive">ปิดใช้งาน (Inactive)</option>
+              <option value="erp_synced">ซิงค์จาก ERP อัตโนมัติ</option>
+            </select>
+          </div>
+
+          <!-- Quick Toggle: แสดงเฉพาะที่ยังไม่มีชื่อ -->
+          <div class="md:col-span-4 flex items-center justify-between gap-3 pt-2 md:pt-0">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="filter-no-name" class="w-4 h-4 text-[#365cf5] rounded border-slate-300 focus:ring-[#365cf5]" onchange="handleFilterChange()">
+              <span class="text-xs font-medium text-[#17243b]" data-i18n="copy.show_unnamed_only">แสดงเฉพาะที่ยังไม่มีชื่อ</span>
+            </label>
+
+            <!-- Reset Filter Button -->
+            <button class="h-10 px-3.5 rounded-lg border border-[#e1e7f0] text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 transition-colors" onclick="resetFilters()" data-i18n="btn.clear_filters">
+              ล้างเงื่อนไข
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Filter Indicator / Status Row -->
+        <div class="mt-3 pt-3 border-t border-[#f1f5f9] flex flex-wrap items-center justify-between text-xs text-[#52627a]">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+            <span data-i18n="filter.notice">การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API</span>
+          </div>
+          <div class="font-medium text-[#17243b]">
+            <span data-i18n="table.showing">แสดง</span> <span id="record-count" class="font-bold text-[#365cf5]">5</span> <span data-i18n="table.items_from">จาก</span> 5 <span data-i18n="table.total_items">รายการ (ข้อมูลตัวอย่าง)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Data Table Card (Brand List) -->
+      <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+        <!-- Table Header Panel Info -->
+        <div class="px-6 py-4 border-b border-[#e1e7f0] flex flex-wrap items-center justify-between gap-3 bg-white">
+          <div class="flex items-center gap-3">
+            <h2 class="text-base font-bold text-[#17243b]" data-i18n="table.panel_title">ตารางรายชื่อแบรนด์และการแมปข้อมูล</h2>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eef2ff] text-[#365cf5] border border-[#dbe4ff]">
+              5 แบรนด์
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-[#52627a]">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>สถานะแคช Josh: ปกติ (อัปเดตล่าสุด 5 นาทีที่แล้ว)</span>
+          </div>
+        </div>
+
+        <!-- Table Container with Horizontal Scroll support -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse" id="brand-table">
+            <thead>
+              <tr class="bg-slate-50/80 text-[13px] font-semibold text-[#52627a] border-b border-[#e1e7f0]">
+                <th class="py-3.5 px-6 whitespace-nowrap" data-i18n="copy.code">โค้ด</th>
+                <th class="py-3.5 px-6 whitespace-nowrap" data-i18n="copy.thai_name">ชื่อไทย</th>
+                <th class="py-3.5 px-6 whitespace-nowrap" data-i18n="copy.english_name">ชื่ออังกฤษ</th>
+                <th class="py-3.5 px-6 text-center whitespace-nowrap" data-i18n="copy.home_order">ลำดับบนหน้าแรก</th>
+                <th class="py-3.5 px-6 whitespace-nowrap" data-i18n="copy.product_items">รายการสินค้า</th>
+                <th class="py-3.5 px-6 whitespace-nowrap" data-i18n="table.status">สถานะ</th>
+                <th class="py-3.5 px-6 text-right whitespace-nowrap" data-i18n="copy.manage">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#e1e7f0] text-[#17243b]" id="brand-table-body">
+
+              <!-- Row 1: ตราดอกบัวหลวง -->
+              <tr class="hover:bg-slate-50/60 transition-colors group" data-code="BR-99021" data-th="ตราดอกบัวหลวง" data-en="Lotus Heritage" data-status="active" data-hasname="true">
+                <td class="py-4 px-6 font-mono text-xs font-semibold text-[#365cf5]">
+                  <span class="bg-blue-50 px-2 py-1 rounded border border-blue-100">BR-99021</span>
+                  <div class="text-[11px] text-[#52627a] font-sans mt-0.5">SAP: BR_LOTUS_01</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-bold text-[#17243b]">ตราดอกบัวหลวง</div>
+                  <div class="text-xs text-[#52627a]">กลุ่มข้าวสารและธัญพืชคัดพิเศษ</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-medium text-[#17243b]">Lotus Heritage</div>
+                  <div class="text-xs text-[#52627a]">SLUG: lotus-heritage</div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 font-semibold text-xs text-[#17243b] border border-slate-200">
+                    1
+                  </span>
+                  <span class="block text-[10px] text-emerald-700 mt-0.5" data-i18n="copy.top_right">บนขวา</span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="text-xs font-semibold text-[#17243b]">14 รายการ</div>
+                  <a href="/products?brand=BR-99021" class="text-[11px] text-[#365cf5] hover:underline" data-i18n="copy.product_items">รายการสินค้า &rarr;</a>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-[#157347] border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    <span data-i18n="status.active">ใช้งานอยู่</span>
+                  </span>
+                  <div class="text-[10px] text-[#52627a] mt-0.5"><span data-i18n="copy.confirmed_at">ยืนยันเมื่อ</span> 2024-01-15</div>
+                </td>
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end gap-2">
+                    <button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-xs font-medium text-[#17243b] hover:bg-slate-50 transition-colors" onclick="openEditBrandModal('BR-99021', 'ตราดอกบัวหลวง', 'Lotus Heritage', 1, true)" data-i18n="copy.edit">
+                      แก้ไข
+                    </button>
+                    <button class="px-2.5 py-1.5 rounded-lg border border-red-200 bg-white text-xs font-medium text-[#c2333f] hover:bg-red-50 transition-colors" onclick="confirmDeleteBrand('BR-99021', 'ตราดอกบัวหลวง')">
+                      ลบ
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 2: Golden Harvest Chef Pro -->
+              <tr class="hover:bg-slate-50/60 transition-colors group" data-code="BR-99022" data-th="โกลเด้น ฮาร์เวสต์ เชฟ โปร" data-en="Golden Harvest Chef Pro" data-status="active" data-hasname="true">
+                <td class="py-4 px-6 font-mono text-xs font-semibold text-[#365cf5]">
+                  <span class="bg-blue-50 px-2 py-1 rounded border border-blue-100">BR-99022</span>
+                  <div class="text-[11px] text-[#52627a] font-sans mt-0.5">SAP: BR_GH_CHEF</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-bold text-[#17243b]">โกลเด้น ฮาร์เวสต์ เชฟ โปร</div>
+                  <div class="text-xs text-[#52627a]">น้ำมันพืชและวัตถุดิบประกอบอาหาร</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-medium text-[#17243b]">Golden Harvest Chef Pro</div>
+                  <div class="text-xs text-[#52627a]">SLUG: golden-harvest-chef-pro</div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 font-semibold text-xs text-[#17243b] border border-slate-200">
+                    2
+                  </span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="text-xs font-semibold text-[#17243b]">8 รายการ</div>
+                  <a href="/products?brand=BR-99022" class="text-[11px] text-[#365cf5] hover:underline" data-i18n="copy.product_items">รายการสินค้า &rarr;</a>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-[#157347] border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    <span data-i18n="status.active">ใช้งานอยู่</span>
+                  </span>
+                  <div class="text-[10px] text-[#52627a] mt-0.5"><span data-i18n="copy.confirmed_at">ยืนยันเมื่อ</span> 2024-02-10</div>
+                </td>
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end gap-2">
+                    <button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-xs font-medium text-[#17243b] hover:bg-slate-50 transition-colors" onclick="openEditBrandModal('BR-99022', 'โกลเด้น ฮาร์เวสต์ เชฟ โปร', 'Golden Harvest Chef Pro', 2, true)" data-i18n="copy.edit">
+                      แก้ไข
+                    </button>
+                    <button class="px-2.5 py-1.5 rounded-lg border border-red-200 bg-white text-xs font-medium text-[#c2333f] hover:bg-red-50 transition-colors" onclick="confirmDeleteBrand('BR-99022', 'โกลเด้น ฮาร์เวสต์ เชฟ โปร')">
+                      ลบ
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 3: Unnamed Brand (Incomplete ERP sync record) -->
+              <tr class="hover:bg-slate-50/60 transition-colors group bg-amber-50/20" data-code="BR-99088" data-th="" data-en="" data-status="inactive" data-hasname="false">
+                <td class="py-4 px-6 font-mono text-xs font-semibold text-[#b08900]">
+                  <span class="bg-amber-50 px-2 py-1 rounded border border-amber-200">BR-99088</span>
+                  <div class="text-[11px] text-[#52627a] font-sans mt-0.5">ERP Pending</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#b08900] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <span data-i18n="copy.no_name">ยังไม่มีชื่อ</span>
+                  </div>
+                  <div class="text-xs text-[#52627a] mt-0.5">นำเข้าจาก SAP เมื่อวานนี้ รอกำหนดชื่อทางการ</div>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="text-xs text-slate-400 italic" data-i18n="copy.no_name">ยังไม่มีชื่อ</span>
+                  <div class="text-[11px] text-slate-400 font-mono mt-0.5">SLUG: unassigned-99088</div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-50 font-semibold text-xs text-slate-400 border border-slate-200">
+                    -
+                  </span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="text-xs font-semibold text-[#17243b]">2 รายการ</div>
+                  <a href="/products?brand=BR-99088" class="text-[11px] text-[#365cf5] hover:underline" data-i18n="copy.product_items">รายการสินค้า &rarr;</a>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-[#b08900] border border-amber-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    <span data-i18n="status.incomplete">รอระบุชื่อ</span>
+                  </span>
+                  <div class="text-[10px] text-[#52627a] mt-0.5">Flag: DRAFT</div>
+                </td>
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end gap-2">
+                    <button class="px-3 py-1.5 rounded-lg border border-[#365cf5] bg-[#365cf5] text-white text-xs font-medium hover:bg-[#2b4cd9] transition-colors" onclick="openEditBrandModal('BR-99088', '', '', 0, false)">
+                      ใส่ชื่อแบรนด์
+                    </button>
+                    <button class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors" onclick="confirmDeleteBrand('BR-99088', 'BR-99088')">
+                      ลบ
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 4: ไทไทยออร์แกนิค -->
+              <tr class="hover:bg-slate-50/60 transition-colors group" data-code="BR-99015" data-th="ไทไทย ออร์แกนิค ฟาร์ม" data-en="Thai Organic Farm" data-status="active" data-hasname="true">
+                <td class="py-4 px-6 font-mono text-xs font-semibold text-[#365cf5]">
+                  <span class="bg-blue-50 px-2 py-1 rounded border border-blue-100">BR-99015</span>
+                  <div class="text-[11px] text-[#52627a] font-sans mt-0.5">SAP: BR_THAI_ORG</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-bold text-[#17243b]">ไทไทย ออร์แกนิค ฟาร์ม</div>
+                  <div class="text-xs text-[#52627a]">ผักผลไม้สดเกษตรอินทรีย์ มาตรฐาน GAP</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-medium text-[#17243b]">Thai Organic Farm</div>
+                  <div class="text-xs text-[#52627a]">SLUG: thai-organic-farm</div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 font-semibold text-xs text-[#17243b] border border-slate-200">
+                    3
+                  </span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="text-xs font-semibold text-[#17243b]">26 รายการ</div>
+                  <a href="/products?brand=BR-99015" class="text-[11px] text-[#365cf5] hover:underline" data-i18n="copy.product_items">รายการสินค้า &rarr;</a>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-[#157347] border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    <span data-i18n="status.active">ใช้งานอยู่</span>
+                  </span>
+                  <div class="text-[10px] text-[#52627a] mt-0.5"><span data-i18n="copy.confirmed_at">ยืนยันเมื่อ</span> 2023-11-20</div>
+                </td>
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end gap-2">
+                    <button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-xs font-medium text-[#17243b] hover:bg-slate-50 transition-colors" onclick="openEditBrandModal('BR-99015', 'ไทไทย ออร์แกนิค ฟาร์ม', 'Thai Organic Farm', 3, true)" data-i18n="copy.edit">
+                      แก้ไข
+                    </button>
+                    <button class="px-2.5 py-1.5 rounded-lg border border-red-200 bg-white text-xs font-medium text-[#c2333f] hover:bg-red-50 transition-colors" onclick="confirmDeleteBrand('BR-99015', 'ไทไทย ออร์แกนิค ฟาร์ม')">
+                      ลบ
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 5: แดรี่โกลด์ ประเทศไทย -->
+              <tr class="hover:bg-slate-50/60 transition-colors group" data-code="BR-99034" data-th="แดรี่โกลด์ ไทยแลนด์" data-en="DairyGold TH" data-status="inactive" data-hasname="true">
+                <td class="py-4 px-6 font-mono text-xs font-semibold text-slate-500">
+                  <span class="bg-slate-100 px-2 py-1 rounded border border-slate-200">BR-99034</span>
+                  <div class="text-[11px] text-[#52627a] font-sans mt-0.5">SAP: BR_DAIRY_GOLD</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-bold text-[#17243b]">แดรี่โกลด์ ไทยแลนด์</div>
+                  <div class="text-xs text-[#52627a]">นมพาสเจอร์ไรส์และผลิตภัณฑ์เนยสด</div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="font-medium text-[#17243b]">DairyGold TH</div>
+                  <div class="text-xs text-[#52627a]">SLUG: dairygold-th</div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-50 font-semibold text-xs text-slate-400 border border-slate-200">
+                    -
+                  </span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="text-xs font-semibold text-[#17243b]">6 รายการ</div>
+                  <a href="/products?brand=BR-99034" class="text-[11px] text-[#365cf5] hover:underline" data-i18n="copy.product_items">รายการสินค้า &rarr;</a>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-[#52627a] border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                    <span data-i18n="status.disabled">ปิดใช้งาน</span>
+                  </span>
+                  <div class="text-[10px] text-[#52627a] mt-0.5"><span data-i18n="copy.confirmed_at">ยืนยันเมื่อ</span> 2023-09-01</div>
+                </td>
+                <td class="py-4 px-6 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end gap-2">
+                    <button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-xs font-medium text-[#17243b] hover:bg-slate-50 transition-colors" onclick="openEditBrandModal('BR-99034', 'แดรี่โกลด์ ไทยแลนด์', 'DairyGold TH', 0, false)" data-i18n="copy.edit">
+                      แก้ไข
+                    </button>
+                    <button class="px-2.5 py-1.5 rounded-lg border border-red-200 bg-white text-xs font-medium text-[#c2333f] hover:bg-red-50 transition-colors" onclick="confirmDeleteBrand('BR-99034', 'แดรี่โกลด์ ไทยแลนด์')">
+                      ลบ
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Filtered Empty State (Initially Hidden) -->
+        <div id="table-filtered-empty" class="hidden py-12 px-6 text-center">
+          <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-[#17243b] mb-1" data-i18n="empty.title">ไม่พบแบรนด์ที่ตรงกับเงื่อนไข</h3>
+          <p class="text-xs text-[#52627a] max-w-sm mx-auto mb-4" data-i18n="empty.desc">ลองปรับคำค้นหา หรือนำตัวเลือก "แสดงเฉพาะที่ยังไม่มีชื่อ" ออกเพื่อดูรายการทั้งหมดในหน้านี้</p>
+          <button class="px-3.5 py-2 text-xs font-medium text-[#365cf5] bg-[#eef2ff] hover:bg-blue-100 rounded-lg transition-colors" onclick="resetFilters()">
+            ล้างตัวกรองทั้งหมด
+          </button>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="px-6 py-4 border-t border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+          <div class="text-xs text-[#52627a]">
+            หน้า 1 จาก 1 (แสดง <span id="pag-showing">5</span> รายการ, จำนวนหน้าสูงสุด: 1)
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-400 bg-slate-50 cursor-not-allowed">
+              ก่อนหน้า
+            </button>
+            <button class="px-3.5 py-1.5 rounded-lg border border-[#365cf5] text-xs font-semibold text-white bg-[#365cf5] shadow-sm">
+              1
+            </button>
+            <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-400 bg-slate-50 cursor-not-allowed">
+              ถัดไป
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain Operations & Logistics Guide (Grid Cards) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Card 1: ข้อกำหนดแบรนด์และสเปกสินค้า -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-md bg-blue-50 text-[#365cf5] font-bold text-xs flex items-center justify-center">1</span>
+            <h3 class="text-xs font-bold text-[#17243b]">ข้อกำหนดการจับคู่สินค้า</h3>
+          </div>
+          <p class="text-xs text-[#52627a] leading-relaxed">
+            เมื่อผูกสินค้าเข้ากับแบรนด์แล้ว ระบบจะคำนวณ <span class="font-medium text-[#17243b]" data-i18n="copy.weight_per_unit">น้ำหนักต่อหน่วย</span> และกำหนดรูปแบบการจัดส่งตามประเภทความเย็นโดยอัตโนมัติ
+          </p>
+          <div class="pt-1 text-[11px] text-[#52627a] flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span><span data-i18n="copy.delivery_time">เวลาจัดส่ง</span>: 1-2 วันทำการ</span>
+          </div>
+        </div>
+
+        <!-- Card 2: แผนภาพขั้นตอนและข้อกำหนดแคมเปญ -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-md bg-emerald-50 text-[#157347] font-bold text-xs flex items-center justify-center">2</span>
+            <h3 class="text-xs font-bold text-[#17243b]">การตั้งค่าแคมเปญร่วมกับแบรนด์</h3>
+          </div>
+          <p class="text-xs text-[#52627a] leading-relaxed" data-i18n="copy.diagram_hint">
+            คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน
+          </p>
+          <div class="text-[11px] text-[#52627a] bg-slate-50 p-2 rounded border border-slate-100" data-i18n="copy.audience_notice">
+            มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ
+          </div>
+        </div>
+
+        <!-- Card 3: การตรวจสอบความผิดพลาดและ Zendesk -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-md bg-amber-50 text-[#b08900] font-bold text-xs flex items-center justify-center">3</span>
+              <h3 class="text-xs font-bold text-[#17243b]">สถานะการเชื่อมต่อ & ซิงค์</h3>
+            </div>
+            <a href="https://zendesk.com" target="_blank" class="text-[11px] font-medium text-[#365cf5] hover:underline flex items-center gap-1" data-i18n="copy.open_zendesk">
+              เปิดใน Zendesk
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
+          <p class="text-xs text-[#52627a] leading-relaxed" data-i18n="copy.failure_diagnostic">
+            ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh
+          </p>
+          <div class="pt-1 flex items-center justify-between text-[11px]">
+            <span class="text-slate-500">คืนสินค้าอัตโนมัติ:</span>
+            <span class="font-mono text-emerald-600 font-semibold" data-i18n="copy.refund_amount">จำนวนคืน {0}</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal Dialog: Create / Edit Brand (Accessible, escape-ready, named dialog) -->
+  <div id="brand-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-[#e1e7f0] shadow-xl w-full max-w-lg overflow-hidden transform transition-all" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/70">
+        <div>
+          <h3 id="modal-title" class="text-lg font-bold text-[#17243b]" data-i18n="modal.create_title">เพิ่มแบรนด์ใหม่</h3>
+          <p class="text-xs text-[#52627a] mt-0.5">ระบุรหัสโค้ด ชื่อสองภาษา และลำดับการแสดงผลบนหน้าแรก</p>
+        </div>
+        <button onclick="closeBrandModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-[#17243b] hover:bg-slate-100 flex items-center justify-center" aria-label="Close">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Form Body -->
+      <form id="brand-form" onsubmit="handleSaveBrand(event)" class="p-6 space-y-4">
+
+        <!-- Code / ID Field -->
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            <span data-i18n="copy.code">โค้ด</span> <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="modal-code" required placeholder="เช่น BR-99050" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] placeholder-slate-400 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] font-mono">
+          <p class="text-[11px] text-[#52627a] mt-1">รหัสมาตรฐานของระบบ Commerce หรือรหัสอ้างอิงจากระบบ ERP</p>
+        </div>
+
+        <!-- Thai Name -->
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            <span data-i18n="copy.thai_name">ชื่อไทย</span> <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="modal-name-th" required placeholder="เช่น ตราดอกบัวหลวง" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] placeholder-slate-400 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]">
+        </div>
+
+        <!-- English Name -->
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            <span data-i18n="copy.english_name">ชื่ออังกฤษ</span>
+          </label>
+          <input type="text" id="modal-name-en" placeholder="เช่น Lotus Heritage" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] placeholder-slate-400 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]">
+        </div>
+
+        <!-- Display Order on Homepage -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-[#17243b] mb-1">
+              <span data-i18n="copy.home_order">ลำดับบนหน้าแรก</span>
+            </label>
+            <input type="number" id="modal-order" placeholder="เช่น 200" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-sm text-[#17243b] placeholder-slate-400 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]">
+            <p class="text-[11px] text-[#52627a] mt-1" data-i18n="copy.e_g_200">เช่น 200</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#17243b] mb-1">
+              สถานะการใช้งาน
+            </label>
+            <select id="modal-status" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] bg-white text-sm text-[#17243b] focus:outline-none focus:border-[#365cf5]">
+              <option value="active">เปิดใช้งาน (Active)</option>
+              <option value="inactive">ปิดใช้งาน (Inactive)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Modal Footer: Sticky Cancel / Save -->
+        <div class="pt-4 border-t border-[#e1e7f0] flex items-center justify-between">
+          <div>
+            <button type="button" class="text-xs text-[#52627a] hover:underline" onclick="handleFixLogin()" data-i18n="copy.fix_login">
+              แก้ล็อกอิน
+            </button>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="closeBrandModal()" class="h-10 px-4 rounded-lg border border-[#e1e7f0] text-sm font-medium text-[#52627a] hover:bg-slate-50 transition-colors" data-i18n="copy.cancel">
+              ยกเลิก
+            </button>
+            <button type="submit" class="h-10 px-5 rounded-lg bg-[#365cf5] hover:bg-[#2b4cd9] text-white text-sm font-medium transition-colors shadow-sm" data-i18n="copy.save">
+              บันทึก
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 bg-[#17243b] text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-slate-700 hidden items-center gap-2">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+    <span id="toast-message">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+    <button onclick="undoDelete()" id="toast-undo" class="hidden text-amber-300 ml-2 underline" data-i18n="copy.undo_delete">ยกเลิกการลบ</button>
+  </div>
+
+  <!-- MANDATORY EXACT TRANSLATION CATALOG SCRIPT AS SPECIFIED IN TASK -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ยกเลิก": { "th": "ยกเลิก", "en": "Cancel" },
+    "แก้ไข": { "th": "แก้ไข", "en": "Edit" },
+    "จัดการ": { "th": "จัดการ", "en": "Manage" },
+    "บันทึก": { "th": "บันทึก", "en": "Save" },
+    "โค้ด": { "th": "โค้ด", "en": "Code" },
+    "ชื่อไทย": { "th": "ชื่อไทย", "en": "Thai name" },
+    "ยังไม่มีชื่อ": { "th": "ยังไม่มีชื่อ", "en": "No name yet" },
+    "ชื่ออังกฤษ": { "th": "ชื่ออังกฤษ", "en": "English name" },
+    "Brand Management": { "th": "Brand Management", "en": "Brand Management" },
+    "แสดงเฉพาะที่ยังไม่มีชื่อ": { "th": "แสดงเฉพาะที่ยังไม่มีชื่อ", "en": "Show unnamed only" },
+    "แก้ล็อกอิน": { "th": "แก้ล็อกอิน", "en": "Fix login" },
+    "คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน": {
+      "th": "คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน",
+      "en": "Click cards in the diagram to edit details · Use the button below to add steps"
+    },
+    "จำนวนคืน {0}": { "th": "จำนวนคืน {0}", "en": "Refund amount {0}" },
+    "เช่น 200": { "th": "เช่น 200", "en": "e.g. 200" },
+    "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh": {
+      "th": "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh",
+      "en": "Is anything broken right now, and what has failed recently on both commerce and josh?"
+    },
+    "บนขวา": { "th": "บนขวา", "en": "Top right" },
+    "เปิดใน Zendesk": { "th": "เปิดใน Zendesk", "en": "Open in Zendesk" },
+    "มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ": {
+      "th": "มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ",
+      "en": "Audience target exists but no member list yet — the system will generate it automatically"
+    },
+    "ยกเลิกการลบ": { "th": "ยกเลิกการลบ", "en": "Undo delete" },
+    "ยืนยันเมื่อ": { "th": "ยืนยันเมื่อ", "en": "Confirmed at" },
+    "รายการสินค้า": { "th": "รายการสินค้า", "en": "Product items" },
+    "ลำดับบนหน้าแรก": { "th": "ลำดับบนหน้าแรก", "en": "Homepage display order" },
+    "เวลาจัดส่ง": { "th": "เวลาจัดส่ง", "en": "Delivery time" },
+    "สำหรับตรวจ": { "th": "สำหรับตรวจ", "en": "For review" },
+    "แหล่งข้อมูลเงื่อนไข (เปิด/ปิดจากอะไร)": {
+      "th": "แหล่งข้อมูลเงื่อนไข (เปิด/ปิดจากอะไร)",
+      "en": "Condition data source (driven by)"
+    },
+    "น้ำหนักต่อหน่วย": { "th": "น้ำหนักต่อหน่วย", "en": "Weight per unit" }
+  }
+  </script>
+
+  <!-- Application Interaction Logic & Bilingual Engine -->
+  <script>
+    let currentLang = 'th';
+    const translationCatalog = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const appTextMap = {
+      th: {
+        "nav.products_and_stock": "สินค้าและสต็อก",
+        "nav.product_list": "รายการสินค้า",
+        "nav.brands": "แบรนด์",
+        "nav.order_periods": "รอบสั่งซื้อ supplier",
+        "nav.master_queue": "คิวข้อมูลสินค้าจาก ERP",
+        "nav.product_prices": "ราคาสินค้า",
+        "nav.stock_moves": "ความเคลื่อนไหวสต็อก",
+        "nav.contract_prices": "ราคาลูกค้า / ราคาสัญญา",
+        "nav.inventory_warehouse": "สต็อกแยกตามคลัง",
+        "nav.orders": "ออเดอร์และการเงิน",
+        "nav.customers": "ลูกค้าและบริการ",
+        "nav.marketing": "การตลาด",
+        "nav.reports": "รายงานและข้อมูล",
+        "nav.connections": "ระบบเชื่อมต่อ",
+        "nav.settings": "ตั้งค่าและทีมงาน",
+        "page.title": "แบรนด์",
+        "page.subtitle": "จัดการแบรนด์สินค้าสำหรับแพลตฟอร์ม Commerce เชื่อมโยงรหัสแบรนด์ ERP ตรวจสอบชื่อสองภาษา และลำดับการแสดงผลบนหน้าแรก",
+        "badge.sample_data": "ข้อมูลตัวอย่าง",
+        "btn.refresh": "รีเฟรช",
+        "btn.create_brand": "เพิ่มแบรนด์ใหม่",
+        "info.banner_title": "การจับคู่แบรนด์กับ ERP และ Storefront",
+        "info.banner_desc": "การสร้างแบรนด์หรือแก้ไขชื่อจะมีผลกับระบบค้นหาและแคตตาล็อกสินค้าใน Storefront หากแบรนด์ใดมีสถานะ 'ยังไม่มีชื่อ' ระบบจะใช้ชื่อโค้ดชั่วคราวในการแสดงผล กรุณาระบุชื่อไทยและชื่ออังกฤษให้ครบถ้วนเพื่อการจัดอันดับที่ดี",
+        "filter.search_label": "ค้นหาแบรนด์ (ค้นเฉพาะในหน้านี้ตาม Pagination API)",
+        "filter.all_status": "ทั้งหมด (ทุกสถานะ)",
+        "filter.active": "เปิดใช้งาน (Active)",
+        "filter.inactive": "ปิดใช้งาน (Inactive)",
+        "filter.notice": "การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API",
+        "btn.clear_filters": "ล้างเงื่อนไข",
+        "table.panel_title": "ตารางรายชื่อแบรนด์และการแมปข้อมูล",
+        "table.status": "สถานะ",
+        "table.showing": "แสดง",
+        "table.items_from": "จาก",
+        "table.total_items": "รายการ (ข้อมูลตัวอย่าง)",
+        "status.active": "ใช้งานอยู่",
+        "status.incomplete": "รอระบุชื่อ",
+        "status.disabled": "ปิดใช้งาน",
+        "empty.title": "ไม่พบแบรนด์ที่ตรงกับเงื่อนไข",
+        "empty.desc": "ลองปรับคำค้นหา หรือนำตัวเลือก 'แสดงเฉพาะที่ยังไม่มีชื่อ' ออกเพื่อดูรายการทั้งหมดในหน้านี้",
+        "modal.create_title": "เพิ่มแบรนด์ใหม่",
+        "modal.edit_title": "แก้ไขข้อมูลแบรนด์",
+        // Direct copy catalogue mappings
+        "copy.cancel": translationCatalog["ยกเลิก"].th,
+        "copy.edit": translationCatalog["แก้ไข"].th,
+        "copy.manage": translationCatalog["จัดการ"].th,
+        "copy.save": translationCatalog["บันทึก"].th,
+        "copy.code": translationCatalog["โค้ด"].th,
+        "copy.thai_name": translationCatalog["ชื่อไทย"].th,
+        "copy.no_name": translationCatalog["ยังไม่มีชื่อ"].th,
+        "copy.english_name": translationCatalog["ชื่ออังกฤษ"].th,
+        "copy.brand_management": translationCatalog["Brand Management"].th,
+        "copy.show_unnamed_only": translationCatalog["แสดงเฉพาะที่ยังไม่มีชื่อ"].th,
+        "copy.fix_login": translationCatalog["แก้ล็อกอิน"].th,
+        "copy.diagram_hint": translationCatalog["คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน"].th,
+        "copy.refund_amount": translationCatalog["จำนวนคืน {0}"].th.replace("{0}", "฿0.00"),
+        "copy.e_g_200": translationCatalog["เช่น 200"].th,
+        "copy.failure_diagnostic": translationCatalog["ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh"].th,
+        "copy.top_right": translationCatalog["บนขวา"].th,
+        "copy.open_zendesk": translationCatalog["เปิดใน Zendesk"].th,
+        "copy.audience_notice": translationCatalog["มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ"].th,
+        "copy.undo_delete": translationCatalog["ยกเลิกการลบ"].th,
+        "copy.confirmed_at": translationCatalog["ยืนยันเมื่อ"].th,
+        "copy.product_items": translationCatalog["รายการสินค้า"].th,
+        "copy.home_order": translationCatalog["ลำดับบนหน้าแรก"].th,
+        "copy.delivery_time": translationCatalog["เวลาจัดส่ง"].th,
+        "copy.check_audit": translationCatalog["สำหรับตรวจ"].th,
+        "copy.condition_source": translationCatalog["แหล่งข้อมูลเงื่อนไข (เปิด/ปิดจากอะไร)"].th,
+        "copy.weight_per_unit": translationCatalog["น้ำหนักต่อหน่วย"].th
+      },
+      en: {
+        "nav.products_and_stock": "Products & Inventory",
+        "nav.product_list": "Product Catalog",
+        "nav.brands": "Brands",
+        "nav.order_periods": "Supplier Order Periods",
+        "nav.master_queue": "ERP Master Data Queue",
+        "nav.product_prices": "Product Prices",
+        "nav.stock_moves": "Stock Movements",
+        "nav.contract_prices": "Customer / Contract Prices",
+        "nav.inventory_warehouse": "Inventory per Warehouse",
+        "nav.orders": "Orders & Finance",
+        "nav.customers": "Customers & Service",
+        "nav.marketing": "Marketing",
+        "nav.reports": "Reports & Analytics",
+        "nav.connections": "Integrations",
+        "nav.settings": "Settings & Team",
+        "page.title": "Brands",
+        "page.subtitle": "Manage platform product brands, link ERP brand codes, verify bilingual titles, and configure homepage showcase order",
+        "badge.sample_data": "Sample data",
+        "btn.refresh": "Refresh",
+        "btn.create_brand": "New Brand",
+        "info.banner_title": "Brand Mapping with ERP and Storefront",
+        "info.banner_desc": "Brand creation or updates propagate immediately to storefront search and categories. If a brand has 'No name yet', fallback code titles are used. Please fill Thai and English names.",
+        "filter.search_label": "Search brands (Searches current page only per Pagination API)",
+        "filter.all_status": "All statuses",
+        "filter.active": "Active",
+        "filter.inactive": "Inactive",
+        "filter.notice": "Search only queries current page data per Pagination API specifications",
+        "btn.clear_filters": "Clear filters",
+        "table.panel_title": "Brand Directory and Mapping Table",
+        "table.status": "Status",
+        "table.showing": "Showing",
+        "table.items_from": "of",
+        "table.total_items": "items (Sample data)",
+        "status.active": "Active",
+        "status.incomplete": "Pending name",
+        "status.disabled": "Disabled",
+        "empty.title": "No brands found matching filter",
+        "empty.desc": "Try adjusting your search keywords or uncheck 'Show unnamed only' to view all items on this page.",
+        "modal.create_title": "Add New Brand",
+        "modal.edit_title": "Edit Brand Information",
+        // Direct copy catalogue mappings
+        "copy.cancel": translationCatalog["ยกเลิก"].en,
+        "copy.edit": translationCatalog["แก้ไข"].en,
+        "copy.manage": translationCatalog["จัดการ"].en,
+        "copy.save": translationCatalog["บันทึก"].en,
+        "copy.code": translationCatalog["โค้ด"].en,
+        "copy.thai_name": translationCatalog["ชื่อไทย"].en,
+        "copy.no_name": translationCatalog["ยังไม่มีชื่อ"].en,
+        "copy.english_name": translationCatalog["ชื่ออังกฤษ"].en,
+        "copy.brand_management": translationCatalog["Brand Management"].en,
+        "copy.show_unnamed_only": translationCatalog["แสดงเฉพาะที่ยังไม่มีชื่อ"].en,
+        "copy.fix_login": translationCatalog["แก้ล็อกอิน"].en,
+        "copy.diagram_hint": translationCatalog["คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน"].en,
+        "copy.refund_amount": translationCatalog["จำนวนคืน {0}"].en.replace("{0}", "฿0.00"),
+        "copy.e_g_200": translationCatalog["เช่น 200"].en,
+        "copy.failure_diagnostic": translationCatalog["ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh"].en,
+        "copy.top_right": translationCatalog["บนขวา"].en,
+        "copy.open_zendesk": translationCatalog["เปิดใน Zendesk"].en,
+        "copy.audience_notice": translationCatalog["มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ"].en,
+        "copy.undo_delete": translationCatalog["ยกเลิกการลบ"].en,
+        "copy.confirmed_at": translationCatalog["ยืนยันเมื่อ"].en,
+        "copy.product_items": translationCatalog["รายการสินค้า"].en,
+        "copy.home_order": translationCatalog["ลำดับบนหน้าแรก"].en,
+        "copy.delivery_time": translationCatalog["เวลาจัดส่ง"].en,
+        "copy.check_audit": translationCatalog["สำหรับตรวจ"].en,
+        "copy.condition_source": translationCatalog["แหล่งข้อมูลเงื่อนไข (เปิด/ปิดจากอะไร)"].en,
+        "copy.weight_per_unit": translationCatalog["น้ำหนักต่อหน่วย"].en
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const btnTh = document.getElementById('btn-lang-th');
+      const btnEn = document.getElementById('btn-lang-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded-md bg-[#365cf5] text-white shadow-sm transition-all";
+        btnEn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        document.documentElement.lang = "th";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-md bg-[#365cf5] text-white shadow-sm transition-all";
+        btnTh.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        document.documentElement.lang = "en";
+      }
+
+      // Update elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (appTextMap[lang] && appTextMap[lang][key]) {
+          el.textContent = appTextMap[lang][key];
+        }
+      });
+    }
+
+    // Modal Operations (Create / Edit)
+    let lastActiveElement = null;
+
+    function openCreateBrandModal() {
+      lastActiveElement = document.activeElement;
+      document.getElementById('modal-title').textContent = appTextMap[currentLang]["modal.create_title"];
+      document.getElementById('modal-code').value = '';
+      document.getElementById('modal-code').readOnly = false;
+      document.getElementById('modal-name-th').value = '';
+      document.getElementById('modal-name-en').value = '';
+      document.getElementById('modal-order').value = '';
+      document.getElementById('modal-status').value = 'active';
+
+      document.getElementById('brand-modal').classList.remove('hidden');
+      document.getElementById('modal-code').focus();
+    }
+
+    function openEditBrandModal(code, thName, enName, order, isActive) {
+      lastActiveElement = document.activeElement;
+      document.getElementById('modal-title').textContent = appTextMap[currentLang]["modal.edit_title"];
+      document.getElementById('modal-code').value = code;
+      document.getElementById('modal-code').readOnly = true;
+      document.getElementById('modal-name-th').value = thName;
+      document.getElementById('modal-name-en').value = enName;
+      document.getElementById('modal-order').value = order > 0 ? order : '';
+      document.getElementById('modal-status').value = isActive ? 'active' : 'inactive';
+
+      document.getElementById('brand-modal').classList.remove('hidden');
+      document.getElementById('modal-name-th').focus();
+    }
+
+    function closeBrandModal() {
+      document.getElementById('brand-modal').classList.add('hidden');
+      if (lastActiveElement) {
+        lastActiveElement.focus();
+      }
+    }
+
+    // Escape Key support
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !document.getElementById('brand-modal').classList.contains('hidden')) {
+        closeBrandModal();
+      }
+    });
+
+    function handleSaveBrand(e) {
+      e.preventDefault();
+      const code = document.getElementById('modal-code').value;
+      const thName = document.getElementById('modal-name-th').value;
+      closeBrandModal();
+      showToast(currentLang === 'th' ? `บันทึกข้อมูลแบรนด์ ${code} (${thName}) เรียบร้อยแล้ว` : `Brand ${code} (${thName}) saved successfully`);
+    }
+
+    function handleFixLogin() {
+      showToast(currentLang === 'th' ? "กำลังเปลี่ยนเส้นทางไปหน้าแก้ล็อกอินพนักงาน..." : "Redirecting to staff login fix portal...");
+    }
+
+    let deletedBrandRow = null;
+    function confirmDeleteBrand(code, name) {
+      if (confirm(currentLang === 'th' ? `ต้องการลบแบรนด์ "${name}" (${code}) หรือไม่?` : `Do you want to delete brand "${name}" (${code})?`)) {
+        const rows = document.querySelectorAll('#brand-table-body tr');
+        rows.forEach(r => {
+          if (r.getAttribute('data-code') === code) {
+            r.style.display = 'none';
+            deletedBrandRow = r;
+          }
+        });
+        showToast(currentLang === 'th' ? `ลบแบรนด์ ${code} เรียบร้อยแล้ว` : `Brand ${code} deleted`, true);
+        handleFilterChange();
+      }
+    }
+
+    function undoDelete() {
+      if (deletedBrandRow) {
+        deletedBrandRow.style.display = '';
+        deletedBrandRow = null;
+        document.getElementById('toast-undo').classList.add('hidden');
+        showToast(currentLang === 'th' ? "ยกเลิกการลบเรียบร้อยแล้ว" : "Deletion undone");
+        handleFilterChange();
+      }
+    }
+
+    function showToast(message, showUndo = false) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-message');
+      const undoEl = document.getElementById('toast-undo');
+
+      msgEl.textContent = message;
+      if (showUndo) {
+        undoEl.classList.remove('hidden');
+      } else {
+        undoEl.classList.add('hidden');
+      }
+
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 4000);
+    }
+
+    function handleRefresh() {
+      const btn = document.getElementById('btn-refresh');
+      btn.classList.add('opacity-50', 'pointer-events-none');
+      showToast(currentLang === 'th' ? "กำลังดึงข้อมูลแบรนด์ล่าสุดจาก Commerce API..." : "Fetching latest brand records from Commerce API...");
+      setTimeout(() => {
+        btn.classList.remove('opacity-50', 'pointer-events-none');
+      }, 700);
+    }
+
+    // Filter Logic
+    function handleFilterChange() {
+      const keyword = (document.getElementById('filter-keyword').value || '').trim().toLowerCase();
+      const condition = document.getElementById('filter-condition').value;
+      const noNameOnly = document.getElementById('filter-no-name').checked;
+
+      const rows = document.querySelectorAll('#brand-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        if (row === deletedBrandRow && row.style.display === 'none') {
+          return;
+        }
+
+        const code = (row.getAttribute('data-code') || '').toLowerCase();
+        const th = (row.getAttribute('data-th') || '').toLowerCase();
+        const en = (row.getAttribute('data-en') || '').toLowerCase();
+        const status = row.getAttribute('data-status');
+        const hasName = row.getAttribute('data-hasname') === 'true';
+
+        let matchesSearch = !keyword || code.includes(keyword) || th.includes(keyword) || en.includes(keyword);
+        let matchesCondition = condition === 'all' || (condition === 'active' && status === 'active') || (condition === 'inactive' && status === 'inactive') || condition === 'erp_synced';
+        let matchesNoName = !noNameOnly || !hasName;
+
+        if (matchesSearch && matchesCondition && matchesNoName) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update counters
+      document.getElementById('record-count').textContent = visibleCount;
+      document.getElementById('pag-showing').textContent = visibleCount;
+
+      const emptyState = document.getElementById('table-filtered-empty');
+      const tableBody = document.getElementById('brand-table');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        tableBody.classList.add('opacity-30');
+      } else {
+        emptyState.classList.add('hidden');
+        tableBody.classList.remove('opacity-30');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-keyword').value = '';
+      document.getElementById('filter-condition').value = 'all';
+      document.getElementById('filter-no-name').checked = false;
+      handleFilterChange();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+    "edits": 17
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/Integrations.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+    "edits": 7
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx",
+    "edits": 16
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshStaff.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketingAnalyst.tsx",
+    "edits": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/StaffPrices.tsx",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/shared.tsx",
+    "edits": 10
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+    "edits": 10
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+    "edits": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx",
+    "edits": 8
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx",
+    "edits": 10
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/CustomerDetail.tsx",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/ProductDetail.tsx",
+    "edits": 5
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+    "edits": 5
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+    "edits": 4
+  }
+]

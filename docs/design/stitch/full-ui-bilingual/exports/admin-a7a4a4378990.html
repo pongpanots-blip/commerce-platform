@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ตั้งค่าการตลาด (Marketing Settings) - Siam Commerce Admin</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline": "#747687",
+            "surface-container-highest": "#d7e2ff",
+            "surface-variant": "#d7e2ff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "on-primary-fixed-variant": "#0034c0",
+            "background": "#f9f9ff",
+            "tertiary": "#006139",
+            "tertiary-container": "#217b4e",
+            "surface-container": "#e8eeff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-error-container": "#93000a",
+            "surface-tint": "#214ce7",
+            "surface": "#f9f9ff",
+            "surface-container-high": "#e0e8ff",
+            "on-secondary-container": "#54647c",
+            "primary-fixed": "#dde1ff",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-background": "#0e1b32",
+            "primary-container": "#365cf5",
+            "primary": "#0a3fdc",
+            "surface-container-low": "#f1f3ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "secondary-container": "#d0e1fd",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-tertiary-container": "#b7ffcf",
+            "on-tertiary-fixed": "#002110",
+            "tertiary-fixed": "#9ef5be",
+            "surface-bright": "#f9f9ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-primary-fixed": "#001257",
+            "inverse-surface": "#243048",
+            "on-tertiary-fixed-variant": "#00522f",
+            "on-surface-variant": "#444655",
+            "on-primary-container": "#ededff",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#d3e3ff",
+            "inverse-primary": "#b9c3ff",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#0e1b32",
+            "surface-dim": "#cddaf9",
+            "on-secondary": "#ffffff",
+            "secondary": "#4f5f77",
+            "outline-variant": "#c4c5d8",
+            "surface-container-lowest": "#ffffff",
+            "on-error": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "1.5rem",
+            "space-md": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans", "sans-serif"],
+            "display-lg": ["Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans", "sans-serif"],
+            "data-tabular": ["Noto Sans", "monospace"],
+            "label-md": ["Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      color: #17243B;
+      background-color: #F6F8FC;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      font-size: 20px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full min-h-screen overflow-x-hidden flex antialiased">
+<!-- ========================================== -->
+<!-- SIDE NAVIGATION (Shared Component: SideNavBar) -->
+<!-- ========================================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md select-none transition-colors duration-150 ease-in-out">
+<!-- Brand Header -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center gap-3 px-space-sm py-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[22px]">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-bold text-on-surface leading-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-label-md font-label-md text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-2 bg-surface-container-low hover:bg-surface-container text-primary font-headline-sm text-label-md py-2 px-3 rounded-lg border border-outline-variant transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Nav Links List (7 work areas with 'การตลาด' active) -->
+<nav class="flex flex-col gap-1 mt-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-label-lg transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-label-lg transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-label-lg transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (ACTIVE MATCH) -->
+<a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm text-label-lg border-l-4 border-primary" href="#marketing">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-label-lg transition-colors duration-150" href="#analytics">
+<span class="material-symbols-outlined">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-label-lg transition-colors duration-150" href="#integrations">
+<span class="material-symbols-outlined">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-label-lg transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="border-t border-outline-variant pt-3 flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm transition-colors duration-150" href="#help">
+<span class="material-symbols-outlined">help</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm transition-colors duration-150" href="#logout">
+<span class="material-symbols-outlined">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+<div class="px-space-md py-1 text-[11px] text-outline font-data-tabular">
+        v2.41.0-prod · TH-BKK-01
+      </div>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- MAIN WORKSPACE CONTAINER -->
+<!-- ========================================== -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen bg-[#f6f8fc]">
+<!-- TOP NAVIGATION (Shared Component: TopNavBar) -->
+<header class="sticky top-0 right-0 h-16 bg-surface-container-lowest border-b border-outline-variant z-30 flex items-center justify-between px-gutter-desktop transition-all duration-150 ease-in-out">
+<!-- Left Breadcrumb & Context Tags -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">campaign</span>
+<span class="text-headline-sm font-headline-sm font-semibold text-on-surface">การตลาด / Marketing Settings</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-[#f1f3ff] text-primary border border-outline-variant/60" title="System Route Identifier">
+          admin-a7a4a4378990
+        </span>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8eeff] text-[#0a3fdc]" data-i18n="ข้อมูลตัวอย่าง / Sample data">
+          ข้อมูลตัวอย่าง / Sample data
+        </span>
+</div>
+<!-- Right Actions & Switcher -->
+<div class="flex items-center gap-4">
+<!-- Interactive Language Toggle (Vanilla JS) -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container-low text-label-md font-label-md text-on-surface transition-colors shadow-sm" id="lang-toggle-btn" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">translate</span>
+<span class="font-semibold" id="current-lang-text">ไทย / English</span>
+</button>
+<div class="h-6 w-px bg-outline-variant"></div>
+<!-- Notification & Help Icons -->
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="การแจ้งเตือน" type="button">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="ช่วยเหลือ" type="button">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<!-- Admin Profile -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary text-label-sm font-bold">
+            SC
+          </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface leading-tight">Admin Siam Commerce</span>
+<span class="text-[11px] text-secondary font-label-sm">แอดมินผู้ดูแลระบบ Siam Commerce</span>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTENT CANVAS -->
+<main class="flex-1 p-space-lg max-w-[1240px] w-full mx-auto pb-28">
+<!-- 1. Header Section -->
+<section class="mb-space-lg">
+<a class="inline-flex items-center gap-1 text-label-md font-label-md text-primary hover:text-on-primary-fixed-variant transition-colors mb-2 group" href="#workflows">
+<span class="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span data-i18n="← Marketing Workflows">← Marketing Workflows</span>
+</a>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-[#17243B]" data-i18n="Marketing Settings">ตั้งค่าการตลาด</h1>
+<p class="text-body-md font-body-md text-secondary mt-0.5" data-i18n="ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ">
+              ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ
+            </p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-[#17243B] text-label-md font-label-md hover:bg-[#F6F8FC] hover:border-primary transition-colors shadow-sm" type="button">
+              ยกเลิก
+            </button>
+<button class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-primary-container hover:bg-[#2848D6] text-on-primary font-headline-sm text-label-lg transition-colors shadow-sm" id="header-save-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span data-i18n="บันทึก">บันทึก</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 2. Card 1: Global Frequency Cap -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 mb-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div class="flex items-start justify-between pb-4 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">speed</span>
+<h2 class="text-headline-md font-headline-md text-[#17243B]" data-i18n="Global Frequency Cap">Global Frequency Cap</h2>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1 max-w-3xl" data-i18n="จำกัดจำนวนข้อความ marketing (notify + show_offer รวมกัน) ที่ผู้ใช้ 1 คนจะได้รับต่อวัน — นับรวมทุก workflow ไม่ใช่แค่ cooldown ของแคมเปญเดียว">
+              จำกัดจำนวนข้อความ marketing (notify + show_offer รวมกัน) ที่ผู้ใช้ 1 คนจะได้รับต่อวัน — นับรวมทุก workflow ไม่ใช่แค่ cooldown ของแคมเปญเดียว
+            </p>
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded text-label-sm font-label-sm bg-surface-container-low text-primary border border-outline-variant font-mono" data-i18n="หน้า · เพดาน">
+            หน้า · เพดาน
+          </span>
+</div>
+<div class="mt-6 flex flex-col gap-6">
+<!-- Toggle Row -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-[#f9f9ff] border border-[#e1e7f0]">
+<div class="flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-primary border-[#c4c5d8]" id="enable-freq-cap" type="checkbox"/>
+<label class="text-label-lg font-label-lg font-semibold text-[#17243B] cursor-pointer" data-i18n="เปิดใช้ Global Frequency Cap" for="enable-freq-cap">
+                เปิดใช้ Global Frequency Cap
+              </label>
+</div>
+<span class="text-label-sm font-label-sm px-2.5 py-0.5 rounded-full bg-[#157347]/10 text-[#157347]">
+              สถานะ: เปิดใช้งาน
+            </span>
+</div>
+<!-- Input Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md font-medium text-[#17243B] mb-1.5" data-i18n="จำนวนข้อความสูงสุดต่อคนต่อวัน" for="max-messages-input">
+                จำนวนข้อความสูงสุดต่อคนต่อวัน
+              </label>
+<div class="relative rounded-lg shadow-sm">
+<input class="block w-full h-[38px] rounded-lg border-[#e1e7f0] text-[#17243B] focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md pl-3 pr-24 font-data-tabular" id="max-messages-input" max="20" min="1" type="number" value="3"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-body-sm text-secondary">
+                  ข้อความ / วัน
+                </div>
+</div>
+<p class="text-[12px] text-secondary mt-1">
+                ระบบจะตัดสิทธิ์ข้อความลำดับที่ 4 เป็นต้นไปโดยอัตโนมัติ และบันทึกลง log ว่า "จำกัดตามเพดานรวม"
+              </p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant flex items-center justify-between">
+<div>
+<span class="block text-[11px] text-secondary font-label-sm" data-i18n="จำนวนแจ้ง">จำนวนแจ้ง</span>
+<span class="text-headline-sm font-headline-sm text-primary">14,290 ครั้ง</span>
+</div>
+<span class="text-[11px] text-secondary">ใน 24 ชม. ที่ผ่านมา</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Card 2: Template Variable Fallbacks -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 mb-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-[#e1e7f0] gap-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">data_object</span>
+<h2 class="text-headline-md font-headline-md text-[#17243B]" data-i18n="Template Variable Fallbacks">Template Variable Fallbacks</h2>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1">
+<span data-i18n="ข้อความสำรองที่ใช้แทน เช่น">ข้อความสำรองที่ใช้แทน เช่น</span>
+<code class="px-1.5 py-0.5 rounded bg-surface-container text-primary font-mono text-[12px]" data-i18n="{{user_name}}">{{user_name}}</code>
+<span data-i18n="เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)">เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)</span>
+</p>
+</div>
+<!-- Secondary Sample JSON Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container-low text-label-md font-label-md text-secondary hover:text-on-surface transition-colors" id="btn-sample-json" type="button">
+<span class="material-symbols-outlined text-[18px]">code</span>
+<span data-i18n="ข้อมูลตัวอย่าง (Example JSON)">ข้อมูลตัวอย่าง (Example JSON)</span>
+</button>
+</div>
+<!-- Variables Table -->
+<div class="mt-6 border border-[#e1e7f0] rounded-lg overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-[#e1e7f0] text-secondary text-[12px] font-label-md">
+<th class="py-3 px-4 w-1/4">ตัวแปรระบบ (System Variable)</th>
+<th class="py-3 px-4 w-1/3">
+<span data-i18n="ค่าที่ต้องการ">ค่าที่ต้องการ</span> (Fallback Value)
+                </th>
+<th class="py-3 px-4">คำอธิบายการแสดงผล</th>
+<th class="py-3 px-4 text-right">สถานะ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-md">
+<!-- Variable 1: {{user_name}} -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3 px-4">
+<span class="inline-block px-2 py-1 rounded bg-[#f1f3ff] text-primary font-mono text-[13px] border border-outline-variant/50" data-i18n="{{user_name}}">
+                    {{user_name}}
+                  </span>
+</td>
+<td class="py-3 px-4">
+<input class="w-full h-[36px] rounded-lg border-[#e1e7f0] text-[#17243B] focus:border-primary focus:ring-1 focus:ring-primary text-body-md px-3 font-normal" data-var="user_name" type="text" value="ผู้เยี่ยมชม (Guest)"/>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+                  สำหรับลูกค้าที่กดสั่งซื้อแบบไม่ลงทะเบียน หรือไม่มีชื่อผู้รับ
+                </td>
+<td class="py-3 px-4 text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#157347]/10 text-[#157347]">
+                    พร้อมใช้งาน
+                  </span>
+</td>
+</tr>
+<!-- Variable 2: {{company_name}} -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3 px-4">
+<span class="inline-block px-2 py-1 rounded bg-[#f1f3ff] text-primary font-mono text-[13px] border border-outline-variant/50">
+                    {{company_name}}
+                  </span>
+</td>
+<td class="py-3 px-4">
+<input class="w-full h-[36px] rounded-lg border-[#e1e7f0] text-[#17243B] focus:border-primary focus:ring-1 focus:ring-primary text-body-md px-3 font-normal" data-var="company_name" type="text" value="ร้านค้าสมาชิก"/>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+                  สำหรับบัญชีประเภทบุคคลธรรมดาที่ไม่มีข้อมูลนิติบุคคล
+                </td>
+<td class="py-3 px-4 text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#157347]/10 text-[#157347]">
+                    พร้อมใช้งาน
+                  </span>
+</td>
+</tr>
+<!-- Variable 3: {{discount_amount}} -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3 px-4">
+<span class="inline-block px-2 py-1 rounded bg-[#f1f3ff] text-primary font-mono text-[13px] border border-outline-variant/50">
+                    {{discount_amount}}
+                  </span>
+</td>
+<td class="py-3 px-4">
+<input class="w-full h-[36px] rounded-lg border-[#e1e7f0] text-[#17243B] focus:border-primary focus:ring-1 focus:ring-primary text-body-md px-3 font-normal" data-var="discount_amount" type="text" value="ส่วนลดพิเศษ"/>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+                  ใช้แทนเมื่อคูปองหรือโปรโมชันไม่ได้กำหนดจำนวนเงินชัดเจน
+                </td>
+<td class="py-3 px-4 text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#157347]/10 text-[#157347]">
+                    พร้อมใช้งาน
+                  </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-3 flex items-center justify-between text-body-sm text-secondary">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">info</span>
+<span>ระบบรองรับการแทรกตัวแปรรองซ้อนได้สูงสุด 3 ระดับ</span>
+</div>
+<button class="text-primary hover:underline font-label-md inline-flex items-center gap-1" data-i18n="ชุดถัดไป →" type="button">
+            ชุดถัดไป →
+          </button>
+</div>
+</section>
+<!-- 4. Card 3: Global Audience Exclusions & Marketing Rules -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 mb-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div class="flex items-center justify-between pb-4 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">rule</span>
+<h2 class="text-headline-md font-headline-md text-[#17243B]">เกณฑ์คัดกรองผู้ชมและเงื่อนไขส่วนกลาง (Audience Exclusions)</h2>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1">
+              กำหนดเกณฑ์ตัดกลุ่มลูกค้าที่ไม่ต้องการให้รับแคมเปญอัตโนมัติ เพื่อป้องกันการรบกวนและลดต้นทุน SMS/LINE
+            </p>
+</div>
+</div>
+<!-- Filter Rule Summary Banner -->
+<div class="mt-4 p-4 rounded-lg bg-[#F8FAFD] border border-[#e1e7f0] flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-1.5 font-semibold text-label-md text-[#17243B]">
+<span class="material-symbols-outlined text-primary text-[18px]">filter_alt</span>
+<span data-i18n="สรุปเงื่อนไข:">สรุปเงื่อนไข:</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm bg-surface-container text-on-surface">
+<span class="font-medium" data-i18n="ลูกค้าใกล้หาย">ลูกค้าใกล้หาย</span>
+<span class="text-secondary font-mono">(churn-risk)</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm bg-surface-container text-on-surface">
+<span class="font-medium" data-i18n="ผู้เยี่ยมชม (Guest)">ผู้เยี่ยมชม (Guest)</span>
+<span class="text-secondary font-mono">(no-auth)</span>
+</span>
+<div class="flex items-center gap-2 ml-auto text-body-sm text-secondary">
+<span data-i18n="มูลค่ารวมขั้นต่ำ (บาท)">มูลค่ารวมขั้นต่ำ (บาท)</span>:
+            <span class="font-semibold text-[#17243B] font-data-tabular">฿500.00</span>
+<span class="mx-1">·</span>
+<span data-i18n="ไม่สั่งซื้อเกิน (วัน)">ไม่สั่งซื้อเกิน (วัน)</span>:
+            <span class="font-semibold text-[#17243B] font-data-tabular">90 วัน</span>
+</div>
+</div>
+<!-- Operational Context Banner -->
+<div class="mt-4 p-3.5 rounded-lg bg-[#fff8e1] border border-[#ffe082] text-body-sm text-[#795548] flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[#f57f17] text-[20px] shrink-0 mt-0.5">verified_user</span>
+<div class="flex-1">
+<p class="font-medium text-[#5d4037]" data-i18n='— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก "ดูเอกสาร"'>
+              — การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก "ดูเอกสาร"
+            </p>
+<p class="mt-1 text-[12px] text-[#795548]" data-i18n="ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused">
+              ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused
+            </p>
+</div>
+</div>
+<!-- Audit Rules Table -->
+<div class="mt-5 border border-[#e1e7f0] rounded-lg overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-[#e1e7f0] text-secondary text-[12px] font-label-md">
+<th class="py-3 px-4 w-12 text-center">#</th>
+<th class="py-3 px-4">ชื่อแผนคัดกรอง (Exclusion Rule)</th>
+<th class="py-3 px-4">ประเภทเงื่อนไข</th>
+<th class="py-3 px-4">สถานะการทำงาน</th>
+<th class="py-3 px-4 text-right">เอกสาร</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-md">
+<tr class="hover:bg-[#F8FAFD]">
+<td class="py-3 px-4 text-center font-data-tabular text-secondary">01</td>
+<td class="py-3 px-4 font-medium text-[#17243B]">
+                  สกัดบัญชีที่ระงับชั่วคราว (Account Suspension)
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary">
+<span>ประเภทเงื่อนไข (Match Type) แถวที่ 1: Blacklist</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#B08900]/10 text-[#B08900]" data-i18n="รอตรวจสอบ">
+                    รอตรวจสอบ
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-primary hover:text-on-primary-fixed-variant text-label-md font-label-md" type="button">
+                    ดูเอกสาร
+                  </button>
+</td>
+</tr>
+<tr class="hover:bg-[#F8FAFD]">
+<td class="py-3 px-4 text-center font-data-tabular text-secondary">02</td>
+<td class="py-3 px-4 font-medium text-[#17243B]">
+                  ลูกค้าที่ไม่ได้เปิดอ่านอีเมลเกิน 180 วัน
+                </td>
+<td class="py-3 px-4 text-body-sm text-secondary">
+<span>ประเภทเงื่อนไข (Match Type) แถวที่ 2: Inactive Window</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#C2333F]/10 text-[#C2333F]" data-i18n="ไม่ผ่านเงื่อนไข audience / filter">
+                    ไม่ผ่านเงื่อนไข audience / filter
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-primary hover:text-on-primary-fixed-variant text-label-md font-label-md" type="button">
+                    ดูเอกสาร
+                  </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- ========================================== -->
+<!-- STICKY FOOTER SAVE BAR -->
+<!-- ========================================== -->
+<div class="fixed bottom-0 right-0 left-64 bg-surface-container-lowest border-t border-outline-variant py-3 px-gutter-desktop shadow-lg z-30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="w-2.5 h-2.5 rounded-full bg-[#157347]"></span>
+<span class="text-body-sm text-secondary font-label-md">
+          การแก้ไขทั้งหมดมีผลต่อระบบทุกช่องทาง (LINE, SMS, In-app) ทันทีหลังกดบันทึก
+        </span>
+</div>
+<div class="flex items-center gap-3">
+<span class="hidden text-body-sm font-label-md text-primary flex items-center gap-1.5" id="save-status-indicator">
+<span class="material-symbols-outlined text-[18px] animate-spin">sync</span>
+<span data-i18n="กำลังบันทึก...">กำลังบันทึก...</span>
+</span>
+<button class="px-4 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-[#17243B] text-label-md font-label-md hover:bg-[#F6F8FC] hover:border-primary transition-colors" id="discard-bottom-btn" type="button">
+          ยกเลิกการเปลี่ยนแปลง
+        </button>
+<button class="inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-primary-container hover:bg-[#2848D6] text-on-primary font-headline-sm text-label-lg transition-all shadow-sm" id="save-bottom-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span data-i18n="บันทึก">บันทึก</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- CRITICAL REQUIREMENT: INVISIBLE TRANSLATION JSON CATALOGUE -->
+<!-- ============================================================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "บันทึก": {
+      "th": "บันทึก",
+      "en": "Save"
+    },
+    "กำลังโหลด...": {
+      "th": "กำลังโหลด...",
+      "en": "Loading..."
+    },
+    "กำลังบันทึก...": {
+      "th": "กำลังบันทึก...",
+      "en": "Saving..."
+    },
+    "Marketing Settings": {
+      "th": "ตั้งค่าการตลาด",
+      "en": "Marketing Settings"
+    },
+    "← Marketing Workflows": {
+      "th": "← Marketing Workflows",
+      "en": "← Marketing Workflows"
+    },
+    "ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ": {
+      "th": "ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ",
+      "en": "Global settings affecting all marketing workflows — not bound to any specific workflow"
+    },
+    "Global Frequency Cap": {
+      "th": "Global Frequency Cap",
+      "en": "Global Frequency Cap"
+    },
+    "จำกัดจำนวนข้อความ marketing (notify + show_offer รวมกัน) ที่ผู้ใช้ 1 คนจะได้รับต่อวัน — นับรวมทุก workflow ไม่ใช่แค่ cooldown ของแคมเปญเดียว": {
+      "th": "จำกัดจำนวนข้อความ marketing (notify + show_offer รวมกัน) ที่ผู้ใช้ 1 คนจะได้รับต่อวัน — นับรวมทุก workflow ไม่ใช่แค่ cooldown ของแคมเปญเดียว",
+      "en": "Limit total marketing messages (notify + show_offer combined) a user receives per day across all workflows, not just a single campaign cooldown"
+    },
+    "เปิดใช้ Global Frequency Cap": {
+      "th": "เปิดใช้ Global Frequency Cap",
+      "en": "Enable Global Frequency Cap"
+    },
+    "จำนวนข้อความสูงสุดต่อคนต่อวัน": {
+      "th": "จำนวนข้อความสูงสุดต่อคนต่อวัน",
+      "en": "Maximum messages per user per day"
+    },
+    "Template Variable Fallbacks": {
+      "th": "Template Variable Fallbacks",
+      "en": "Template Variable Fallbacks"
+    },
+    "ข้อความสำรองที่ใช้แทน เช่น": {
+      "th": "ข้อความสำรองที่ใช้แทน เช่น",
+      "en": "Fallback text used when variables like"
+    },
+    "{{user_name}}": {
+      "th": "{{user_name}}",
+      "en": "{{user_name}}"
+    },
+    "เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)": {
+      "th": "เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)",
+      "en": "have no actual value (e.g. guest checkout or missing corporate info)"
+    },
+    "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก \"ดูเอกสาร\"": {
+      "th": "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก \"ดูเอกสาร\"",
+      "en": "— Actual approval/rejection is processed through separate CS-CRM; rows therefore have no action buttons except 'View Document'"
+    },
+    "ข้อมูลตัวอย่าง (Example JSON)": {
+      "th": "ข้อมูลตัวอย่าง (Example JSON)",
+      "en": "Sample Data (Example JSON)"
+    },
+    "ค่าที่ต้องการ": {
+      "th": "ค่าที่ต้องการ",
+      "en": "Fallback Value"
+    },
+    "จำนวนแจ้ง": {
+      "th": "จำนวนแจ้ง",
+      "en": "Trigger Count"
+    },
+    "ชุดถัดไป →": {
+      "th": "ชุดถัดไป →",
+      "en": "Next Batch →"
+    },
+    "ดาวน์โหลด": {
+      "th": "ดาวน์โหลด",
+      "en": "Download"
+    },
+    "ตัวหนา": {
+      "th": "ตัวหนา",
+      "en": "Bold"
+    },
+    "น้ำหนักต่อหน่วยไม่คงที่ ราคาจริงคิดตามน้ำหนักที่ส่ง": {
+      "th": "น้ำหนักต่อหน่วยไม่คงที่ ราคาจริงคิดตามน้ำหนักที่ส่ง",
+      "en": "Weight per unit is variable; actual price calculated based on dispatched weight"
+    },
+    "ประเภทเงื่อนไข (Match Type) แถวที่ {0}": {
+      "th": "ประเภทเงื่อนไข (Match Type) แถวที่ {0}",
+      "en": "Condition Type (Match Type) Row {0}"
+    },
+    "ผู้เยี่ยมชม (Guest)": {
+      "th": "ผู้เยี่ยมชม (Guest)",
+      "en": "Visitor (Guest)"
+    },
+    "มูลค่ารวมขั้นต่ำ (บาท)": {
+      "th": "มูลค่ารวมขั้นต่ำ (บาท)",
+      "en": "Minimum Total Amount (THB)"
+    },
+    "ไม่สั่งซื้อเกิน (วัน)": {
+      "th": "ไม่สั่งซื้อเกิน (วัน)",
+      "en": "Inactivity Period Exceeds (Days)"
+    },
+    "ยังไม่มีรายชื่อ — เลือกโหมดกลุ่มเป้าหมายด้านบนก่อน": {
+      "th": "ยังไม่มีรายชื่อ — เลือกโหมดกลุ่มเป้าหมายด้านบนก่อน",
+      "en": "No contacts yet — please select target audience mode above"
+    },
+    "ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused": {
+      "th": "ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused",
+      "en": "System will not auto-duplicate; administrators must inspect workflows and link drafts bearing this plan's marker in draft / paused state"
+    },
+    "รูปภาพ (": {
+      "th": "รูปภาพ (",
+      "en": "Image ("
+    },
+    "ลูกค้าใกล้หาย": {
+      "th": "ลูกค้าใกล้หาย",
+      "en": "Churn Risk"
+    },
+    "วิดีโอ (ใส่ URL)": {
+      "th": "วิดีโอ (ใส่ URL)",
+      "en": "Video (Enter URL)"
+    },
+    "สรุปเงื่อนไข:": {
+      "th": "สรุปเงื่อนไข:",
+      "en": "Condition Summary:"
+    },
+    "หน้า · เพดาน": {
+      "th": "หน้า · เพดาน",
+      "en": "Page · Ceiling"
+    },
+    "โหลดหรือบันทึกคำขอราคาไม่สำเร็จ": {
+      "th": "โหลดหรือบันทึกคำขอราคาไม่สำเร็จ",
+      "en": "Failed to load or save price quote request"
+    },
+    "รอตรวจสอบ": {
+      "th": "รอตรวจสอบ",
+      "en": "In Review"
+    },
+    "ไม่ผ่านเงื่อนไข audience / filter": {
+      "th": "ไม่ผ่านเงื่อนไข audience / filter",
+      "en": "Disqualified by audience / filter rules"
+    },
+    "เรียก fetch ไม่สำเร็จ": {
+      "th": "เรียก fetch ไม่สำเร็จ",
+      "en": "Fetch call unsuccessful"
+    },
+    "กรุณาระบุมูลค่าส่วนลดให้ถูกต้อง": {
+      "th": "กรุณาระบุมูลค่าส่วนลดให้ถูกต้อง",
+      "en": "Please specify a valid discount amount"
+    },
+    "ข้อมูลตัวอย่าง / Sample data": {
+      "th": "ข้อมูลตัวอย่าง / Sample data",
+      "en": "Sample Data / Preview Mode"
+    }
+  }
+  </script>
+<!-- ========================================== -->
+<!-- INTERACTIVE LOGIC & DYNAMIC I18N SCRIPT -->
+<!-- ========================================== -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Load Translations
+      const translationsRaw = document.getElementById('commerce-ui-translations').textContent;
+      let translations = {};
+      try {
+        translations = JSON.parse(translationsRaw);
+      } catch (err) {
+        console.error('Failed to parse commerce translations JSON', err);
+      }
+
+      let currentLang = 'th';
+
+      const langToggleBtn = document.getElementById('lang-toggle-btn');
+      const currentLangText = document.getElementById('current-lang-text');
+
+      function applyTranslations(lang) {
+        const translatableElements = document.querySelectorAll('[data-i18n]');
+        translatableElements.forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (translations[key] && translations[key][lang]) {
+            el.textContent = translations[key][lang];
+          }
+        });
+
+        // Also update button text
+        currentLangText.textContent = lang === 'th' ? 'ไทย / English' : 'English / ไทย';
+      }
+
+      langToggleBtn.addEventListener('click', () => {
+        currentLang = currentLang === 'th' ? 'en' : 'th';
+        applyTranslations(currentLang);
+      });
+
+      // 2. Save Buttons Feedback Simulation
+      const headerSaveBtn = document.getElementById('header-save-btn');
+      const footerSaveBtn = document.getElementById('save-bottom-btn');
+      const statusIndicator = document.getElementById('save-status-indicator');
+
+      function simulateSave() {
+        // Show saving state
+        statusIndicator.classList.remove('hidden');
+        headerSaveBtn.disabled = true;
+        footerSaveBtn.disabled = true;
+        headerSaveBtn.classList.add('opacity-75');
+        footerSaveBtn.classList.add('opacity-75');
+
+        setTimeout(() => {
+          statusIndicator.classList.add('hidden');
+          headerSaveBtn.disabled = false;
+          footerSaveBtn.disabled = false;
+          headerSaveBtn.classList.remove('opacity-75');
+          footerSaveBtn.classList.remove('opacity-75');
+
+          // Toast or visual notification
+          alert(currentLang === 'th' ? 'บันทึกการตั้งค่าการตลาดเรียบร้อยแล้ว' : 'Marketing settings saved successfully');
+        }, 800);
+      }
+
+      headerSaveBtn.addEventListener('click', simulateSave);
+      footerSaveBtn.addEventListener('click', simulateSave);
+
+      // 3. Sample JSON Modal / Dialog
+      const sampleJsonBtn = document.getElementById('btn-sample-json');
+      sampleJsonBtn.addEventListener('click', () => {
+        const samplePayload = {
+          frequency_cap: {
+            enabled: document.getElementById('enable-freq-cap').checked,
+            max_daily_per_user: parseInt(document.getElementById('max-messages-input').value, 10)
+          },
+          variable_fallbacks: {
+            user_name: "ผู้เยี่ยมชม (Guest)",
+            company_name: "ร้านค้าสมาชิก",
+            discount_amount: "ส่วนลดพิเศษ"
+          },
+          exclusion_rules: ["churn-risk", "guest", "inactive_180d"]
+        };
+
+        alert("Sample Config JSON:\n\n" + JSON.stringify(samplePayload, null, 2));
+      });
+    });
+  </script>
+</body></html>

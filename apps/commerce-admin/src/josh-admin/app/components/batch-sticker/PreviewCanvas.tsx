@@ -10,6 +10,8 @@ import type { BatchImage, StickerLayer, StickerTransform } from '../../types/bat
  * actual "object-fit: contain" bounds so a mixed-aspect-ratio lot never
  * shifts the preview panel's own size.
  */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function PreviewCanvas({
   image,
   layers,
@@ -23,6 +25,7 @@ export function PreviewCanvas({
   onSelectLayer: (layerId: string | null) => void;
   onCommitTransform: (layerId: string, transform: StickerTransform) => void;
 }) {
+  __useUiLocale();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [imageUrl, setImageUrl] = useState('');
@@ -50,8 +53,7 @@ export function PreviewCanvas({
   if (!image) {
     return (
       <div className="flex h-[500px] items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-sm text-gray-400">
-        No preview available yet.
-      </div>
+        {__uiText("No preview available yet.")}</div>
     );
   }
 

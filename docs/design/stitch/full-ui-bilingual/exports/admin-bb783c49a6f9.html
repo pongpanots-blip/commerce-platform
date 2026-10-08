@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html class="h-full bg-[#f6f8fc]" lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>จัดการซัพพลายเออร์ (Suppliers) - Commerce Hub</title>
+  <!-- Google Fonts: Noto Sans Thai & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#f6f8fc",
+            "canvas": "#f6f8fc",
+            "primary": "#365cf5",
+            "primary-hover": "#2748db",
+            "ink": "#17243b",
+            "secondary": "#52627a",
+            "border-subtle": "#e1e7f0",
+            "success": "#157347",
+            "warning": "#b08900",
+            "error": "#c2333f",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f1f4fa",
+            "surface-container": "#e8eef8"
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', '"Noto Sans"', 'sans-serif'],
+          },
+          borderRadius: {
+            'control': '8px',
+            'card': '12px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 20px;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+    }
+    /* Custom clean scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f4fa;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="h-full bg-surface text-ink antialiased text-[14px]">
+
+<!-- CRITICAL INVISIBLE TRANSLATION DICTIONARY SCRIPT REQUIRED BY SPEC -->
+<script id="commerce-ui-translations" type="application/json">
+{
+  "Suppliers": {"th": "Suppliers", "en": "Suppliers"},
+  "แก้ไข": {"th": "แก้ไข", "en": "Edit"},
+  "อีเมล": {"th": "อีเมล", "en": "Email"},
+  "เบอร์โทร": {"th": "เบอร์โทร", "en": "Phone"},
+  "ลบ": {"th": "ลบ", "en": "Delete"},
+  "จัดการ": {"th": "จัดการ", "en": "Manage"},
+  "เพิ่ม Supplier": {"th": "เพิ่ม Supplier", "en": "Add Supplier"},
+  "ยืนยันการลบ supplier นี้?": {"th": "ยืนยันการลบ supplier นี้?", "en": "Confirm deleting this supplier?"},
+  "ชื่อ Supplier": {"th": "ชื่อ Supplier", "en": "Supplier Name"},
+  "ผู้ติดต่อ": {"th": "ผู้ติดต่อ", "en": "Contact Person"},
+  "ขอดูข้อมูลเต็ม": {"th": "ขอดูข้อมูลเต็ม", "en": "View full details"},
+  "คูปองนี้จะมอบให้สมาชิกใหม่ทันทีหลังสมัคร — ลูกค้าใช้รหัสคูปองที่หน้าชำระเงิน": {"th": "คูปองนี้จะมอบให้สมาชิกใหม่ทันทีหลังสมัคร — ลูกค้าใช้รหัสคูปองที่หน้าชำระเงิน", "en": "This coupon is immediately granted to new members upon signup — customers use coupon code at checkout"},
+  "ชุดนี้ถูกแก้ไขหลังบันทึกคูปอง": {"th": "ชุดนี้ถูกแก้ไขหลังบันทึกคูปอง", "en": "This set was modified after coupon was saved"},
+  "ตะกร้าถูกปิด": {"th": "ตะกร้าถูกปิด", "en": "Cart is closed"},
+  "บันทึกกลุ่มเป้าหมายแล้ว — แก้ต่อที่หน้ารายละเอียดคูปอง": {"th": "บันทึกกลุ่มเป้าหมายแล้ว — แก้ต่อที่หน้ารายละเอียดคูปอง", "en": "Target audience saved — continue editing on coupon details page"},
+  "ผูกหน้านี้กับ Campaign?": {"th": "ผูกหน้านี้กับ Campaign?", "en": "Link this page to Campaign?"},
+  "ไม่ตั้ง (วิ่งจนจบ)": {"th": "ไม่ตั้ง (วิ่งจนจบ)", "en": "Not set (run indefinitely)"},
+  "ยังไม่มีหัวข้อในภาษาไทย": {"th": "ยังไม่มีหัวข้อในภาษาไทย", "en": "No title in Thai yet"},
+  "รายวัน": {"th": "รายวัน", "en": "Daily"},
+  "เลขออเดอร์": {"th": "เลขออเดอร์", "en": "Order No."},
+  "สร้าง/แก้ไข template (drag &amp; drop) →": {"th": "สร้าง/แก้ไข template (drag &amp; drop) →", "en": "Create/Edit template (drag & drop) →"},
+  "หัวเรื่อง:": {"th": "หัวเรื่อง:", "en": "Subject:"},
+  "รอตรวจสอบ": {"th": "รอตรวจสอบ", "en": "Pending Review"},
+  "ยกเลิกแล้ว": {"th": "ยกเลิกแล้ว", "en": "Cancelled"},
+  "Slug นี้ถูกใช้แล้ว — กรุณาเลือก slug อื่น": {"th": "Slug นี้ถูกใช้แล้ว — กรุณาเลือก slug อื่น", "en": "This slug is already in use — please choose another slug"}
+}
+</script>
+
+<!-- 256px Desktop Drawer Sidebar -->
+<aside class="w-64 h-screen fixed left-0 top-0 z-30 flex flex-col bg-white border-r border-border-subtle shadow-sm select-none">
+  <div class="h-full p-4 flex flex-col justify-between overflow-y-auto">
+    <!-- Top Section: App Brand & Navigation Tabs -->
+    <div class="space-y-4">
+      <!-- App Header -->
+      <div class="flex items-center gap-3 px-2 py-1.5">
+        <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white font-bold shadow-md shadow-primary/20">
+          <span class="material-symbols-outlined text-white text-[20px]" data-weight="fill">storefront</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[16px] font-bold text-ink leading-tight">Commerce Hub</span>
+            <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-primary border border-primary/20">Admin</span>
+          </div>
+          <span class="text-[11px] text-secondary font-medium">Enterprise Operations</span>
+        </div>
+      </div>
+
+      <!-- Quick Action CTA -->
+      <button onclick="openCreateModal()" class="w-full h-10 flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/15 text-primary font-medium text-[13px] rounded-control border border-primary/20 transition-colors shadow-xs">
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        <span>เพิ่มสินค้าใหม่</span>
+      </button>
+
+      <!-- Work Areas (7 Areas) -->
+      <nav class="space-y-1">
+        <!-- Area 1: สินค้าและสต็อก (ACTIVE) -->
+        <div class="space-y-1">
+          <a class="flex items-center justify-between px-3 py-2.5 rounded-control bg-blue-50/80 text-primary font-semibold transition-colors" href="#">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-primary text-[20px]" data-weight="fill">inventory_2</span>
+              <span class="text-[13px]">สินค้าและสต็อก</span>
+            </div>
+            <span class="material-symbols-outlined text-[16px] text-primary">expand_more</span>
+          </a>
+
+          <!-- Sub-menu for สินค้าและสต็อก -->
+          <div class="pl-8 pr-1 py-1 space-y-0.5 border-l-2 border-primary/30 ml-4 text-[13px]">
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">แคตตาล็อกแพลตฟอร์ม</a>
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">จัดการสินค้า (All)</a>
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">แบรนด์ (Brands)</a>
+            <a class="flex items-center justify-between py-1.5 px-2 rounded font-semibold text-primary bg-primary/10 transition-colors" href="/j/suppliers">
+              <span>ซัพพลายเออร์ (Suppliers)</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            </a>
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">รอบสั่งซื้อ supplier</a>
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">ราคาสินค้า (Prices)</a>
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">ความเคลื่อนไหวสต็อก</a>
+            <a class="block py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-surface transition-colors" href="#">สต็อกแยกตามคลัง</a>
+          </div>
+        </div>
+
+        <!-- Area 2: ออเดอร์และการเงิน -->
+        <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors" href="#">
+          <span class="material-symbols-outlined text-secondary text-[20px]">receipt_long</span>
+          <span class="text-[13px]">ออเดอร์และการเงิน</span>
+        </a>
+
+        <!-- Area 3: ลูกค้าและบริการ -->
+        <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors" href="#">
+          <span class="material-symbols-outlined text-secondary text-[20px]">group</span>
+          <span class="text-[13px]">ลูกค้าและบริการ</span>
+        </a>
+
+        <!-- Area 4: การตลาด -->
+        <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors" href="#">
+          <span class="material-symbols-outlined text-secondary text-[20px]">campaign</span>
+          <span class="text-[13px]">การตลาด</span>
+        </a>
+
+        <!-- Area 5: รายงานและข้อมูล -->
+        <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors" href="#">
+          <span class="material-symbols-outlined text-secondary text-[20px]">analytics</span>
+          <span class="text-[13px]">รายงานและข้อมูล</span>
+        </a>
+
+        <!-- Area 6: ระบบเชื่อมต่อ -->
+        <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors" href="#">
+          <span class="material-symbols-outlined text-secondary text-[20px]">integration_instructions</span>
+          <span class="text-[13px]">ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- Area 7: ตั้งค่าและทีมงาน -->
+        <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors" href="#">
+          <span class="material-symbols-outlined text-secondary text-[20px]">settings</span>
+          <span class="text-[13px]">ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Sidebar Section -->
+    <div class="pt-3 border-t border-border-subtle space-y-2">
+      <!-- Route & Env Indicator -->
+      <div class="p-2.5 bg-surface rounded-control border border-border-subtle">
+        <div class="flex items-center justify-between text-[10px] font-mono text-secondary mb-1">
+          <span>ROUTE /j/suppliers</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        </div>
+        <div class="text-[11px] font-mono font-medium text-ink truncate">admin-bb783c49a6f9</div>
+        <div class="text-[10px] text-secondary mt-0.5">Component: SupplierList</div>
+      </div>
+
+      <nav class="space-y-0.5">
+        <a class="flex items-center justify-between px-3 py-2 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors text-[13px]" href="#">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">developer_board</span>
+            <span>Developer Portal</span>
+          </span>
+          <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+        </a>
+        <a class="flex items-center gap-2 px-3 py-2 rounded-control text-secondary hover:bg-surface hover:text-ink transition-colors text-[13px]" href="#">
+          <span class="material-symbols-outlined text-[18px]">help</span>
+          <span>ช่วยเหลือและคู่มือ</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+</aside>
+
+<!-- Fixed Contextual Top Header (left-64) -->
+<header class="h-16 fixed top-0 right-0 left-64 z-20 bg-white border-b border-border-subtle flex items-center justify-between px-8 shadow-xs">
+  <!-- Left Breadcrumbs -->
+  <div class="flex items-center gap-2 text-[13px]">
+    <span class="text-secondary hover:text-ink cursor-pointer">สินค้าและสต็อก</span>
+    <span class="text-border-subtle text-[12px]">/</span>
+    <span class="font-semibold text-primary">จัดการซัพพลายเออร์</span>
+    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-surface text-secondary border border-border-subtle">
+      /j/suppliers
+    </span>
+  </div>
+
+  <!-- Right Actions: Sample Data Tag, Bilingual Switcher, Profile -->
+  <div class="flex items-center gap-4">
+    <!-- Sample Data Badge -->
+    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+      <span>ข้อมูลตัวอย่าง</span>
+    </span>
+
+    <!-- Bilingual Switcher: Working toggle -->
+    <div class="inline-flex p-0.5 bg-surface border border-border-subtle rounded-control text-[12px]">
+      <button type="button" class="px-2.5 py-1 font-semibold rounded bg-white text-primary shadow-xs" title="ภาษาไทย">
+        ไทย
+      </button>
+      <button type="button" class="px-2.5 py-1 font-medium text-secondary hover:text-ink" title="English">
+        English
+      </button>
+    </div>
+
+    <!-- Notification Bell -->
+    <button type="button" class="relative p-2 rounded-full text-secondary hover:bg-surface hover:text-ink transition-colors">
+      <span class="material-symbols-outlined text-[20px]">notifications</span>
+      <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-white"></span>
+    </button>
+
+    <!-- User Profile -->
+    <div class="flex items-center gap-2.5 pl-3 border-l border-border-subtle">
+      <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-[12px] shadow-xs">
+        OP
+      </div>
+      <div class="hidden lg:flex flex-col text-left">
+        <span class="text-[13px] font-semibold text-ink leading-tight">ทีมปฏิบัติการ Commerce Ops</span>
+        <span class="text-[11px] text-secondary">Level 2 Store Admin</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Container -->
+<main class="ml-64 pt-16 min-h-screen pb-20">
+  <div class="max-w-[1240px] mx-auto px-6 py-6 space-y-6">
+
+    <!-- Page Title & Primary Action Header -->
+    <div class="bg-white rounded-card border border-border-subtle p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-[28px] font-bold text-ink leading-tight">จัดการซัพพลายเออร์</h1>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-mono font-semibold bg-blue-50 text-primary border border-primary/20">
+            Suppliers (5 รายการ)
+          </span>
+        </div>
+        <p class="text-[13px] text-secondary mt-1">
+          บันทึกและจัดการรายชื่อซัพพลายเออร์ ผู้ติดต่อ ข้อมูลจัดส่ง และเงื่อนไขการสั่งซื้อสำหรับเชื่อมโยงกับแคตตาล็อกสินค้า
+        </p>
+      </div>
+
+      <!-- Primary Action: เพิ่ม Supplier -->
+      <div class="flex items-center gap-3">
+        <button type="button" class="h-10 px-4 rounded-control border border-border-subtle bg-white hover:bg-surface text-ink text-[13px] font-medium transition-colors shadow-xs flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">refresh</span>
+          <span>รีเฟรช</span>
+        </button>
+        <button type="button" onclick="openCreateModal()" class="h-10 px-5 rounded-control bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold transition-colors shadow-sm flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          <span>เพิ่ม Supplier</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-card border border-border-subtle shadow-xs">
+        <div class="flex items-center justify-between text-secondary mb-1">
+          <span class="text-[12px] font-medium">ซัพพลายเออร์ทั้งหมด</span>
+          <span class="material-symbols-outlined text-[18px] text-primary">domain</span>
+        </div>
+        <div class="text-[22px] font-bold text-ink">5 <span class="text-[13px] font-normal text-secondary">ราย</span></div>
+        <div class="text-[11px] text-success mt-1 flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+          <span>เปิดใช้งานอยู่ 4 ราย</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-card border border-border-subtle shadow-xs">
+        <div class="flex items-center justify-between text-secondary mb-1">
+          <span class="text-[12px] font-medium">รอตรวจสอบเอกสาร</span>
+          <span class="material-symbols-outlined text-[18px] text-warning">pending_actions</span>
+        </div>
+        <div class="text-[22px] font-bold text-ink">1 <span class="text-[13px] font-normal text-secondary">ราย</span></div>
+        <div class="text-[11px] text-warning mt-1 flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+          <span>รอตรวจสอบ (Pending Review)</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-card border border-border-subtle shadow-xs">
+        <div class="flex items-center justify-between text-secondary mb-1">
+          <span class="text-[12px] font-medium">ผูกกับรอบสั่งซื้อ (Periods)</span>
+          <span class="material-symbols-outlined text-[18px] text-primary">event_repeat</span>
+        </div>
+        <div class="text-[22px] font-bold text-ink">4 <span class="text-[13px] font-normal text-secondary">รอบจัดส่ง</span></div>
+        <div class="text-[11px] text-secondary mt-1">
+          ส่งข้อมูลไปยัง Storefront &amp; Josh
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-card border border-border-subtle shadow-xs">
+        <div class="flex items-center justify-between text-secondary mb-1">
+          <span class="text-[12px] font-medium">สินค้าที่เชื่อมโยง</span>
+          <span class="material-symbols-outlined text-[18px] text-primary">inventory</span>
+        </div>
+        <div class="text-[22px] font-bold text-ink">48 <span class="text-[13px] font-normal text-secondary">SKU</span></div>
+        <div class="text-[11px] text-secondary mt-1">
+          เชื่อมโยงในระบบแคตตาล็อกหลัก
+        </div>
+      </div>
+    </div>
+
+    <!-- Operational Filter Bar -->
+    <div class="bg-white rounded-card border border-border-subtle p-5 shadow-xs space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search Field (Current Page Scope Notice) -->
+        <div class="flex-1 max-w-lg">
+          <label class="block text-[12px] font-medium text-secondary mb-1">
+            ค้นหาด้วยรหัส หรือ ชื่อ Supplier
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">search</span>
+            <input
+              id="supplierSearchInput"
+              type="text"
+              placeholder="ค้นหาชื่อ Supplier, ผู้ติดต่อ, รหัส (ค้นเฉพาะในหน้านี้)..."
+              class="w-full h-10 pl-9 pr-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink placeholder:text-secondary/60 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        </div>
+
+        <!-- Filter Selects -->
+        <div class="flex flex-wrap items-end gap-3">
+          <div>
+            <label class="block text-[12px] font-medium text-secondary mb-1">สถานะ</label>
+            <select class="h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary">
+              <option value="all">ทั้งหมด (All Status)</option>
+              <option value="active" selected>ใช้งานอยู่ (Active)</option>
+              <option value="pending">รอตรวจสอบ (Pending)</option>
+              <option value="inactive">ปิดใช้งาน (Inactive)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[12px] font-medium text-secondary mb-1">ประเภทการจัดส่ง</label>
+            <select class="h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary">
+              <option value="all">ทุกประเภทจัดส่ง</option>
+              <option value="lead-1">Lead Time 1-2 วัน</option>
+              <option value="lead-3">Lead Time 3-5 วัน</option>
+              <option value="pre-order">Pre-order ตามรอบ</option>
+            </select>
+          </div>
+
+          <button type="button" class="h-10 px-4 rounded-control border border-border-subtle bg-white hover:bg-surface text-secondary hover:text-ink text-[13px] font-medium transition-colors">
+            ล้างเงื่อนไข
+          </button>
+        </div>
+      </div>
+
+      <!-- Scope notice according to spec -->
+      <div class="flex items-center gap-2 text-[11px] text-secondary pt-1 border-t border-border-subtle/50">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        <span>การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API · แสดง 5 จาก 5 รายการ (ข้อมูลตัวอย่าง)</span>
+      </div>
+    </div>
+
+    <!-- Main Supplier Table (Records List Before Form) -->
+    <div class="bg-white rounded-card border border-border-subtle shadow-xs overflow-hidden">
+      <div class="p-4 border-b border-border-subtle bg-surface/50 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[20px]">local_shipping</span>
+          <h2 class="text-[16px] font-bold text-ink">รายชื่อซัพพลายเออร์และข้อมูลคู่ค้า</h2>
+        </div>
+        <span class="text-[12px] text-secondary font-mono">SUPPLIER MASTER TABLE</span>
+      </div>
+
+      <!-- Table Panel with Horizontal Scroll if needed -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-[13px]">
+          <thead>
+            <tr class="bg-surface text-secondary text-[12px] font-semibold border-b border-border-subtle uppercase tracking-wider">
+              <th class="py-3 px-4 font-semibold w-12 text-center">#</th>
+              <th class="py-3 px-4 font-semibold">รหัส / ชื่อ Supplier</th>
+              <th class="py-3 px-4 font-semibold">ผู้ติดต่อ</th>
+              <th class="py-3 px-4 font-semibold">เบอร์โทร &amp; อีเมล</th>
+              <th class="py-3 px-4 font-semibold">รอบสั่งซื้อ / เงื่อนไข</th>
+              <th class="py-3 px-4 font-semibold text-center">สถานะ</th>
+              <th class="py-3 px-4 font-semibold text-right pr-6">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border-subtle" id="supplierTableBody">
+
+            <!-- Row 1: ไร่ไทยออร์แกนิค -->
+            <tr class="hover:bg-surface/50 transition-colors">
+              <td class="py-3.5 px-4 text-center text-secondary font-mono text-[11px]">1</td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-ink hover:text-primary cursor-pointer">ไร่ไทยออร์แกนิค (Thai Organic Farm)</span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-50 text-primary border border-primary/20">SUP-901</span>
+                  </div>
+                  <span class="text-[11px] text-secondary mt-0.5">ประเภท: ผลิตผลการเกษตร, ผักสลัดสด, มะเขือเทศ</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] text-secondary font-mono">TAX: 0105558091241</span>
+                    <span class="text-[10px] text-secondary">· คลังรับ: WH-BKK01</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-medium text-ink">คุณสมคิด มั่นคง</div>
+                <div class="text-[11px] text-secondary">ผู้จัดการฝ่ายจัดส่งและแปลงปลูก</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-1.5 text-ink">
+                  <span class="material-symbols-outlined text-[14px] text-secondary">call</span>
+                  <span class="font-mono text-[12px]">081-445-9821</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-secondary text-[11px] mt-0.5">
+                  <span class="material-symbols-outlined text-[14px]">mail</span>
+                  <span class="font-mono truncate">contact@thaiorganicfarm.co.th</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-border-subtle text-[11px] text-ink font-medium">
+                  <span class="material-symbols-outlined text-[14px] text-primary">calendar_today</span>
+                  <span>รอบเช้า วันจันทร์ (รอบ 1)</span>
+                </span>
+                <div class="text-[11px] text-secondary mt-0.5">ตัดรอบ 36 ชม. ล่วงหน้า</div>
+              </td>
+              <td class="py-3.5 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-success border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                  <span>ใช้งานอยู่</span>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" onclick="openDetailModal('SUP-901', 'ไร่ไทยออร์แกนิค (Thai Organic Farm)', 'คุณสมคิด มั่นคง', '081-445-9821', 'contact@thaiorganicfarm.co.th')" class="text-primary hover:underline font-medium text-[12px] px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                    ขอดูข้อมูลเต็ม
+                  </button>
+                  <button type="button" onclick="openEditModal('SUP-901', 'ไร่ไทยออร์แกนิค', 'คุณสมคิด มั่นคง', '081-445-9821', 'contact@thaiorganicfarm.co.th')" class="text-secondary hover:text-ink font-medium text-[12px] px-2 py-1 rounded border border-border-subtle hover:bg-surface transition-colors">
+                    แก้ไข
+                  </button>
+                  <button type="button" onclick="confirmDeleteSupplier('SUP-901', 'ไร่ไทยออร์แกนิค')" class="text-error hover:text-red-700 font-medium text-[12px] px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: เบทาโกร เซ็นทรัล ฟู้ดส์ -->
+            <tr class="hover:bg-surface/50 transition-colors">
+              <td class="py-3.5 px-4 text-center text-secondary font-mono text-[11px]">2</td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-ink hover:text-primary cursor-pointer">เบทาโกร เซ็นทรัล ฟู้ดส์ (Betagro Foods)</span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-50 text-primary border border-primary/20">SUP-402</span>
+                  </div>
+                  <span class="text-[11px] text-secondary mt-0.5">ประเภท: เนื้อไก่สด, ไข่ไก่ปลอดสาร, เนื้อหมูอนามัย</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] text-secondary font-mono">TAX: 0105539011892</span>
+                    <span class="text-[10px] text-secondary">· คลังรับ: WH-BKK01, WH-CM02</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-medium text-ink">คุณภัทราภรณ์ วิริยะกุล</div>
+                <div class="text-[11px] text-secondary">Key Account Executive</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-1.5 text-ink">
+                  <span class="material-symbols-outlined text-[14px] text-secondary">call</span>
+                  <span class="font-mono text-[12px]">02-833-8900</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-secondary text-[11px] mt-0.5">
+                  <span class="material-symbols-outlined text-[14px]">mail</span>
+                  <span class="font-mono truncate">b2b_orders@betagro.com</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-border-subtle text-[11px] text-ink font-medium">
+                  <span class="material-symbols-outlined text-[14px] text-primary">calendar_today</span>
+                  <span>รอบประจำ วันพุธ (รอบ 2)</span>
+                </span>
+                <div class="text-[11px] text-secondary mt-0.5">ตัดรอบ 45 ชม. ล่วงหน้า</div>
+              </td>
+              <td class="py-3.5 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-success border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                  <span>ใช้งานอยู่</span>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" onclick="openDetailModal('SUP-402', 'เบทาโกร เซ็นทรัล ฟู้ดส์', 'คุณภัทราภรณ์ วิริยะกุล', '02-833-8900', 'b2b_orders@betagro.com')" class="text-primary hover:underline font-medium text-[12px] px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                    ขอดูข้อมูลเต็ม
+                  </button>
+                  <button type="button" onclick="openEditModal('SUP-402', 'เบทาโกร เซ็นทรัล ฟู้ดส์', 'คุณภัทราภรณ์ วิริยะกุล', '02-833-8900', 'b2b_orders@betagro.com')" class="text-secondary hover:text-ink font-medium text-[12px] px-2 py-1 rounded border border-border-subtle hover:bg-surface transition-colors">
+                    แก้ไข
+                  </button>
+                  <button type="button" onclick="confirmDeleteSupplier('SUP-402', 'เบทาโกร เซ็นทรัล ฟู้ดส์')" class="text-error hover:text-red-700 font-medium text-[12px] px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3: แดรี่โกลด์ ไทยแลนด์ -->
+            <tr class="hover:bg-surface/50 transition-colors">
+              <td class="py-3.5 px-4 text-center text-secondary font-mono text-[11px]">3</td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-ink hover:text-primary cursor-pointer">แดรี่โกลด์ ไทยแลนด์ (DairyGold TH)</span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-50 text-primary border border-primary/20">SUP-811</span>
+                  </div>
+                  <span class="text-[11px] text-secondary mt-0.5">ประเภท: นมพาสเจอร์ไรส์, วิปปิ้งครีม, โยเกิร์ตสด</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] text-secondary font-mono">TAX: 0105551029481</span>
+                    <span class="text-[10px] text-secondary">· คลังรับ: WH-BKK01</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-medium text-ink">คุณธีรเดช สุขสวัสดิ์</div>
+                <div class="text-[11px] text-secondary">Logistics &amp; Supply Lead</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-1.5 text-ink">
+                  <span class="material-symbols-outlined text-[14px] text-secondary">call</span>
+                  <span class="font-mono text-[12px]">089-771-4562</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-secondary text-[11px] mt-0.5">
+                  <span class="material-symbols-outlined text-[14px]">mail</span>
+                  <span class="font-mono truncate">teeradej@dairygold.co.th</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-border-subtle text-[11px] text-ink font-medium">
+                  <span class="material-symbols-outlined text-[14px] text-primary">calendar_today</span>
+                  <span>รอบปลายสัปดาห์ วันศุกร์</span>
+                </span>
+                <div class="text-[11px] text-secondary mt-0.5">ตัดรอบ 40 ชม. ล่วงหน้า</div>
+              </td>
+              <td class="py-3.5 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-success border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                  <span>ใช้งานอยู่</span>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" onclick="openDetailModal('SUP-811', 'แดรี่โกลด์ ไทยแลนด์', 'คุณธีรเดช สุขสวัสดิ์', '089-771-4562', 'teeradej@dairygold.co.th')" class="text-primary hover:underline font-medium text-[12px] px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                    ขอดูข้อมูลเต็ม
+                  </button>
+                  <button type="button" onclick="openEditModal('SUP-811', 'แดรี่โกลด์ ไทยแลนด์', 'คุณธีรเดช สุขสวัสดิ์', '089-771-4562', 'teeradej@dairygold.co.th')" class="text-secondary hover:text-ink font-medium text-[12px] px-2 py-1 rounded border border-border-subtle hover:bg-surface transition-colors">
+                    แก้ไข
+                  </button>
+                  <button type="button" onclick="confirmDeleteSupplier('SUP-811', 'แดรี่โกลด์ ไทยแลนด์')" class="text-error hover:text-red-700 font-medium text-[12px] px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4: ซีพี ออลล์ โลจิสติกส์ -->
+            <tr class="hover:bg-surface/50 transition-colors">
+              <td class="py-3.5 px-4 text-center text-secondary font-mono text-[11px]">4</td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-ink hover:text-primary cursor-pointer">ซีพี ออลล์ โลจิสติกส์ (CP Logistics)</span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-50 text-primary border border-primary/20">SUP-105</span>
+                  </div>
+                  <span class="text-[11px] text-secondary mt-0.5">ประเภท: เบเกอรี่แช่แข็ง, แป้งครัวซองต์สำเร็จรูป</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] text-secondary font-mono">TAX: 0107542000011</span>
+                    <span class="text-[10px] text-secondary">· คลังรับ: ERP-EAST</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-medium text-ink">คุณชนิสรา ปัญญาวงศ์</div>
+                <div class="text-[11px] text-secondary">Client Support Specialist</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-1.5 text-ink">
+                  <span class="material-symbols-outlined text-[14px] text-secondary">call</span>
+                  <span class="font-mono text-[12px]">02-071-9000</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-secondary text-[11px] mt-0.5">
+                  <span class="material-symbols-outlined text-[14px]">mail</span>
+                  <span class="font-mono truncate">chanisara@cplogistics.co.th</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-border-subtle text-[11px] text-ink font-medium">
+                  <span class="material-symbols-outlined text-[14px] text-primary">calendar_today</span>
+                  <span>รอบพิเศษ เสาร์-อาทิตย์</span>
+                </span>
+                <div class="text-[11px] text-secondary mt-0.5">ตัดรอบ 48 ชม. ล่วงหน้า</div>
+              </td>
+              <td class="py-3.5 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-success border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                  <span>ใช้งานอยู่</span>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" onclick="openDetailModal('SUP-105', 'ซีพี ออลล์ โลจิสติกส์', 'คุณชนิสรา ปัญญาวงศ์', '02-071-9000', 'chanisara@cplogistics.co.th')" class="text-primary hover:underline font-medium text-[12px] px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                    ขอดูข้อมูลเต็ม
+                  </button>
+                  <button type="button" onclick="openEditModal('SUP-105', 'ซีพี ออลล์ โลจิสติกส์', 'คุณชนิสรา ปัญญาวงศ์', '02-071-9000', 'chanisara@cplogistics.co.th')" class="text-secondary hover:text-ink font-medium text-[12px] px-2 py-1 rounded border border-border-subtle hover:bg-surface transition-colors">
+                    แก้ไข
+                  </button>
+                  <button type="button" onclick="confirmDeleteSupplier('SUP-105', 'ซีพี ออลล์ โลจิสติกส์')" class="text-error hover:text-red-700 font-medium text-[12px] px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5: สยามการเกษตรไฮโดรโปนิกส์ (Waiting review status) -->
+            <tr class="hover:bg-surface/50 transition-colors">
+              <td class="py-3.5 px-4 text-center text-secondary font-mono text-[11px]">5</td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-ink hover:text-primary cursor-pointer">สยามการเกษตรไฮโดรโปนิกส์ (Siam Hydro)</span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-warning border border-amber-200">SUP-044</span>
+                  </div>
+                  <span class="text-[11px] text-secondary mt-0.5">ประเภท: ผักไฮโดรโปนิกส์, สมุนไพรอิตาเลียน</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] text-secondary font-mono">TAX: 0105562088411</span>
+                    <span class="text-[10px] text-warning font-medium">· รอผูกคลังและสัญญา</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-medium text-ink">คุณกฤษณะ เจริญศิลป์</div>
+                <div class="text-[11px] text-secondary">เจ้าของฟาร์ม / กรรมการผู้จัดการ</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-1.5 text-ink">
+                  <span class="material-symbols-outlined text-[14px] text-secondary">call</span>
+                  <span class="font-mono text-[12px]">092-811-3444</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-secondary text-[11px] mt-0.5">
+                  <span class="material-symbols-outlined text-[14px]">mail</span>
+                  <span class="font-mono truncate">kritsana@siamhydro.com</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-border-subtle text-[11px] text-secondary">
+                  <span class="material-symbols-outlined text-[14px]">hourglass_empty</span>
+                  <span>ยังไม่ได้กำหนดรอบสั่งซื้อ</span>
+                </span>
+                <div class="text-[11px] text-secondary mt-0.5">อยู่ระหว่างทดสอบสินค้า</div>
+              </td>
+              <td class="py-3.5 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-warning border border-amber-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                  <span>รอตรวจสอบ</span>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right pr-6">
+                <div class="inline-flex items-center gap-2">
+                  <button type="button" onclick="openDetailModal('SUP-044', 'สยามการเกษตรไฮโดรโปนิกส์', 'คุณกฤษณะ เจริญศิลป์', '092-811-3444', 'kritsana@siamhydro.com')" class="text-primary hover:underline font-medium text-[12px] px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                    ขอดูข้อมูลเต็ม
+                  </button>
+                  <button type="button" onclick="openEditModal('SUP-044', 'สยามการเกษตรไฮโดรโปนิกส์', 'คุณกฤษณะ เจริญศิลป์', '092-811-3444', 'kritsana@siamhydro.com')" class="text-secondary hover:text-ink font-medium text-[12px] px-2 py-1 rounded border border-border-subtle hover:bg-surface transition-colors">
+                    แก้ไข
+                  </button>
+                  <button type="button" onclick="confirmDeleteSupplier('SUP-044', 'สยามการเกษตรไฮโดรโปนิกส์')" class="text-error hover:text-red-700 font-medium text-[12px] px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div class="p-4 border-t border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px] text-secondary">
+        <div>
+          <span>แสดง <strong class="text-ink">1 ถึง 5</strong> จากทั้งหมด 5 รายการ</span>
+          <span class="text-border-subtle mx-1.5">|</span>
+          <span class="text-[12px]">หน้า 1 จาก 1 หน้า</span>
+        </div>
+        <div class="inline-flex items-center gap-1">
+          <button type="button" disabled class="h-8 px-3 rounded-control border border-border-subtle bg-surface text-secondary/50 cursor-not-allowed text-[12px] font-medium flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+            <span>ก่อนหน้า</span>
+          </button>
+          <button type="button" class="h-8 w-8 rounded-control bg-primary text-white font-semibold text-[12px]">
+            1
+          </button>
+          <button type="button" disabled class="h-8 px-3 rounded-control border border-border-subtle bg-surface text-secondary/50 cursor-not-allowed text-[12px] font-medium flex items-center gap-1">
+            <span>ถัดไป</span>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operating Notes & Guideline Footer (Standard Commerce Hub Section) -->
+    <div class="bg-white rounded-card border border-border-subtle p-5 shadow-xs space-y-3">
+      <div class="flex items-center gap-2 text-ink font-semibold text-[14px]">
+        <span class="material-symbols-outlined text-primary text-[20px]">info</span>
+        <span>ข้อกำหนดการเชื่อมโยงข้อมูลซัพพลายเออร์ (Supplier Management Protocol)</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1 text-[13px] text-secondary">
+        <div class="p-3 bg-surface rounded-control border border-border-subtle">
+          <div class="font-semibold text-ink mb-1">1. การผูกรหัส Supplier กับ ERP</div>
+          <p class="leading-relaxed text-[12px]">
+            รหัสคู่ค้า (Vendor Code) จะถูกจับคู่แบบทูเวย์ซิงก์กับ SAP / Josh เพื่อใช้ตรวจสอบยอดรอบส่งสินค้าและออกใบสั่งซื้อ (PO) อัตโนมัติ
+          </p>
+        </div>
+        <div class="p-3 bg-surface rounded-control border border-border-subtle">
+          <div class="font-semibold text-ink mb-1">2. รอบการสั่งซื้อ Pre-order</div>
+          <p class="leading-relaxed text-[12px]">
+            เมื่อผูกรอบสั่งซื้อในเมนู /order-periods แล้ว ระบบหน้าบ้านจะคำนวณวันส่งมอบสินค้าและเวลาปิดรับออเดอร์ให้ลูกค้าโดยอัตโนมัติ
+          </p>
+        </div>
+        <div class="p-3 bg-surface rounded-control border border-border-subtle">
+          <div class="font-semibold text-ink mb-1">3. ข้อมูลผู้ติดต่อและการแจ้งเตือน</div>
+          <p class="leading-relaxed text-[12px]">
+            อีเมลและเบอร์โทรที่ระบุจะได้รับเอกสารใบสรุปยอดรับสินค้า (Goods Receipt) ทันทีที่ฝ่ายคลังบันทึกความเคลื่อนไหวสต็อกสำเร็จ
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODAL 1: เพิ่ม Supplier (Create Modal Dialog) -->
+<div id="createSupplierModal" class="fixed inset-0 z-50 hidden bg-ink/50 backdrop-blur-xs flex items-center justify-center p-4">
+  <div class="bg-white rounded-card border border-border-subtle shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-150">
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface/50">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[22px]">domain_add</span>
+        <h3 class="text-[18px] font-bold text-ink">เพิ่ม Supplier ใหม่</h3>
+      </div>
+      <button type="button" onclick="closeCreateModal()" class="w-8 h-8 rounded-control text-secondary hover:text-ink hover:bg-surface flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Form Content -->
+    <form id="createSupplierForm" onsubmit="handleCreateSubmit(event)" class="p-6 space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Supplier Name -->
+        <div class="sm:col-span-2">
+          <label class="block text-[13px] font-semibold text-ink mb-1">
+            ชื่อ Supplier *
+          </label>
+          <input
+            type="text"
+            name="name"
+            required
+            placeholder="เช่น บริษัท ฟาร์มผักสดสยาม จำกัด"
+            class="w-full h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Contact Person -->
+        <div>
+          <label class="block text-[13px] font-semibold text-ink mb-1">
+            ผู้ติดต่อ *
+          </label>
+          <input
+            type="text"
+            name="contact"
+            required
+            placeholder="ชื่อ-นามสกุล ผู้ประสานงาน"
+            class="w-full h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+          <label class="block text-[13px] font-semibold text-ink mb-1">
+            เบอร์โทร *
+          </label>
+          <input
+            type="tel"
+            name="phone"
+            required
+            placeholder="เช่น 081-234-5678"
+            class="w-full h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-[13px] font-semibold text-ink mb-1">
+            อีเมล
+          </label>
+          <input
+            type="email"
+            name="email"
+            placeholder="supplier@company.com"
+            class="w-full h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Tax ID -->
+        <div>
+          <label class="block text-[13px] font-semibold text-ink mb-1">
+            เลขประจำตัวผู้เสียภาษี (Tax ID)
+          </label>
+          <input
+            type="text"
+            name="tax_id"
+            placeholder="เลข 13 หลัก"
+            class="w-full h-10 px-3 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Address -->
+        <div class="sm:col-span-2">
+          <label class="block text-[13px] font-semibold text-ink mb-1">
+            ที่อยู่สำนักงาน / แปลงจัดส่ง
+          </label>
+          <textarea
+            rows="2"
+            name="address"
+            placeholder="ที่อยู่ตามหนังสือรับรองบริษัท หรือแปลงเพาะปลูก"
+            class="w-full p-2.5 bg-surface border border-border-subtle rounded-control text-[13px] text-ink focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="pt-4 border-t border-border-subtle flex items-center justify-end gap-3">
+        <button
+          type="button"
+          onclick="closeCreateModal()"
+          class="h-10 px-4 rounded-control border border-border-subtle text-secondary hover:text-ink hover:bg-surface text-[13px] font-medium transition-colors"
+        >
+          ยกเลิก
+        </button>
+        <button
+          type="submit"
+          class="h-10 px-5 rounded-control bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold transition-colors shadow-sm flex items-center gap-1.5"
+        >
+          <span class="material-symbols-outlined text-[18px]">check</span>
+          <span>บันทึกข้อมูล</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL 2: ดูข้อมูลเต็ม (Detail Modal Dialog) -->
+<div id="detailSupplierModal" class="fixed inset-0 z-50 hidden bg-ink/50 backdrop-blur-xs flex items-center justify-center p-4">
+  <div class="bg-white rounded-card border border-border-subtle shadow-xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in duration-150">
+    <div class="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface/50">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[22px]">badge</span>
+        <h3 class="text-[18px] font-bold text-ink">รายละเอียดซัพพลายเออร์</h3>
+      </div>
+      <button type="button" onclick="closeDetailModal()" class="w-8 h-8 rounded-control text-secondary hover:text-ink hover:bg-surface flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <div class="p-3 bg-surface rounded-control border border-border-subtle flex items-center justify-between">
+        <div>
+          <span class="text-[11px] text-secondary">รหัสคู่ค้าในระบบ ERP</span>
+          <div id="detailSupplierCode" class="text-[16px] font-mono font-bold text-primary">SUP-901</div>
+        </div>
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-success border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+          <span>สถานะ: ใช้งานอยู่</span>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-[13px]">
+        <div>
+          <span class="text-secondary text-[12px] block">ชื่อ Supplier</span>
+          <span id="detailSupplierName" class="font-bold text-ink text-[14px]">-</span>
+        </div>
+        <div>
+          <span class="text-secondary text-[12px] block">ผู้ติดต่อ</span>
+          <span id="detailSupplierContact" class="font-semibold text-ink">-</span>
+        </div>
+        <div>
+          <span class="text-secondary text-[12px] block">เบอร์โทรศัพท์</span>
+          <span id="detailSupplierPhone" class="font-mono text-ink">-</span>
+        </div>
+        <div>
+          <span class="text-secondary text-[12px] block">อีเมล</span>
+          <span id="detailSupplierEmail" class="font-mono text-ink truncate block">-</span>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-border-subtle">
+        <span class="text-[12px] font-semibold text-ink block mb-1">การจัดส่งและรอบสั่งซื้อ</span>
+        <p class="text-[12px] text-secondary leading-relaxed bg-surface p-2.5 rounded border border-border-subtle">
+          ผูกกับรอบสั่งซื้อประจำสัปดาห์ ส่งมอบสินค้า ณ คลังสินค้ากลาง WH-BKK01 สินค้าที่ส่งต้องมีเอกสารตรวจรับสารตกค้าง (GAP/Organic Certified) ทุกรอบส่ง
+        </p>
+      </div>
+
+      <div class="pt-3 border-t border-border-subtle flex items-center justify-end gap-2">
+        <button type="button" onclick="closeDetailModal()" class="h-9 px-4 rounded-control border border-border-subtle text-ink hover:bg-surface text-[13px] font-medium transition-colors">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Simple Vanilla JS for Dialogs and Interactivity -->
+<script>
+  function openCreateModal() {
+    const modal = document.getElementById('createSupplierModal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeCreateModal() {
+    const modal = document.getElementById('createSupplierModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function openEditModal(code, name, contact, phone, email) {
+    alert('เปิดฟอร์มแก้ไขซัพพลายเออร์: ' + name + ' (' + code + ')');
+  }
+
+  function openDetailModal(code, name, contact, phone, email) {
+    document.getElementById('detailSupplierCode').textContent = code;
+    document.getElementById('detailSupplierName').textContent = name;
+    document.getElementById('detailSupplierContact').textContent = contact;
+    document.getElementById('detailSupplierPhone').textContent = phone;
+    document.getElementById('detailSupplierEmail').textContent = email;
+    const modal = document.getElementById('detailSupplierModal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeDetailModal() {
+    const modal = document.getElementById('detailSupplierModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function confirmDeleteSupplier(code, name) {
+    if (confirm('ยืนยันการลบ supplier นี้? (' + name + ' - ' + code + ')')) {
+      alert('ลบข้อมูล supplier ' + code + ' สำเร็จ (ตัวอย่าง)');
+    }
+  }
+
+  function handleCreateSubmit(e) {
+    e.preventDefault();
+    alert('บันทึกข้อมูล Supplier เรียบร้อยแล้ว');
+    closeCreateModal();
+  }
+
+  // Close modals on Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closeCreateModal();
+      closeDetailModal();
+    }
+  });
+</script>
+
+</body>
+</html>

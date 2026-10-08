@@ -1,0 +1,336 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "designSystem": {
+              "designSystem": {
+                "displayName": "Siam Enterprise Operations",
+                "styleGuidelines": "## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+                "theme": {
+                  "bodyFont": "NOTO_SANS",
+                  "bodyFontFamily": "Noto Sans",
+                  "colorMode": "LIGHT",
+                  "colorVariant": "FIDELITY",
+                  "customColor": "#365cf5",
+                  "designMd": "---\nname: Siam Enterprise Operations\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#943500'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#bc4600'\n  on-tertiary-container: '#ffebe4'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#ffdbcd'\n  tertiary-fixed-dim: '#ffb597'\n  on-tertiary-fixed: '#360f00'\n  on-tertiary-fixed-variant: '#7e2c00'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  display:\n    fontFamily: Noto Sans\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n  headline-page:\n    fontFamily: Noto Sans\n    fontSize: 28px\n    fontWeight: '600'\n    lineHeight: 36px\n  headline-page-mobile:\n    fontFamily: Noto Sans\n    fontSize: 22px\n    fontWeight: '600'\n    lineHeight: 30px\n  headline-card:\n    fontFamily: Noto Sans\n    fontSize: 18px\n    fontWeight: '600'\n    lineHeight: 26px\n  subheading:\n    fontFamily: Noto Sans\n    fontSize: 16px\n    fontWeight: '500'\n    lineHeight: 24px\n  body-default:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-medium:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 22px\n  label-default:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n  label-caption:\n    fontFamily: Noto Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  code-table:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  gutter: 1rem\n  gutter-desktop: 1.5rem\n  margin: 1rem\n  margin-desktop: 2rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n---\n\n## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Colors\n\nThe palette establishes high semantic contrast designed for daylight data-entry environments and detailed dashboard monitoring:\n\n- **Canvas & Surface**: Backing canvas defaults to `#f6f8fc`. Elevated containers, data tables, and card shells use pure `#ffffff`.\n- **Primary Accent**: `#365cf5` acts as the primary interactive anchor for primary actions, selected navigation items, focused state rings, and critical progress indications.\n- **Ink & Typography Hierarchy**: Primary ink sits at `#17243b`, delivering crisp optical contrast against white backdrops. Secondary labels, supporting metadata, and table column headers map to `#52627a`. Muted hints and disabled states leverage `#94a3b8`.\n- **Structural Lines**: Container division, table cell borders, and form inputs employ `#e1e7f0`. Hover strokes on inputs step to `#cbd5e1`.\n- **Semantic Feedback**:\n  - Success (Fulfilled, Paid, Connected): `#157347` (surface tint `#eaf5ef`)\n  - Warning (Pending, Low Stock, Requires Review): `#b08900` (surface tint `#fef9e7`)\n  - Error (Cancelled, Gateway Failure, Discrepancy): `#c2333f` (surface tint `#faeaeb`)\n\n## Typography\n\nTypography is standardized on `Noto Sans` (with comprehensive support for the Thai loopless and looped scripts via Noto Sans Thai). The baseline line heights are intentionally calibrated with an extra 2px to 4px clearance relative to standard Latin typesets to ensure Thai vowel markers, tone marks, and descenders do not clip or blur during dense information display.\n\nPage titles anchor screens at 28px (`headline-page`). Operational tables and forms run primarily on 14px (`body-default` and `body-medium`) with secondary metadata, form labels, and badge indicators set to 13px (`label-default`). Numeric columns, order IDs, tracking codes, and monetary currencies align using tabular numeric figures (`tnum`).\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Shapes\n\nThe interface balances soft container geometry with sharper functional controls:\n\n- **Cards & Data Panels**: Border radius is strictly 12px (`0.75rem`), providing clear modular separation between discrete operational modules.\n- **Controls & Form Elements**: Input fields, buttons, dropdown toggles, and search filters use an 8px (`0.5rem`) radius.\n- **Status Pills & Chips**: Retain a pill radius of 9999px for rapid scannability in order statuses.\n- **Internal Table Cells & Nested Rows**: Corner radiuses are maintained at 0px inside data grids, reserving rounded corners exclusively for outer perimeter table containers.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+                  "font": "NOTO_SANS",
+                  "headlineFont": "NOTO_SANS",
+                  "headlineFontFamily": "Noto Sans",
+                  "labelFont": "NOTO_SANS",
+                  "labelFontFamily": "Noto Sans",
+                  "namedColors": {
+                    "background": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "error_container": "#ffdad6",
+                    "inverse_on_surface": "#ecf0ff",
+                    "inverse_primary": "#b9c3ff",
+                    "inverse_surface": "#243048",
+                    "on_background": "#0e1b32",
+                    "on_error": "#ffffff",
+                    "on_error_container": "#93000a",
+                    "on_primary": "#ffffff",
+                    "on_primary_container": "#ededff",
+                    "on_primary_fixed": "#001257",
+                    "on_primary_fixed_variant": "#0034c0",
+                    "on_secondary": "#ffffff",
+                    "on_secondary_container": "#54647c",
+                    "on_secondary_fixed": "#0b1c31",
+                    "on_secondary_fixed_variant": "#38485e",
+                    "on_surface": "#0e1b32",
+                    "on_surface_variant": "#444655",
+                    "on_tertiary": "#ffffff",
+                    "on_tertiary_container": "#ffebe4",
+                    "on_tertiary_fixed": "#360f00",
+                    "on_tertiary_fixed_variant": "#7e2c00",
+                    "outline": "#747687",
+                    "outline_variant": "#c4c5d8",
+                    "primary": "#0a3fdc",
+                    "primary_container": "#365cf5",
+                    "primary_fixed": "#dde1ff",
+                    "primary_fixed_dim": "#b9c3ff",
+                    "secondary": "#4f5f77",
+                    "secondary_container": "#d0e1fd",
+                    "secondary_fixed": "#d3e3ff",
+                    "secondary_fixed_dim": "#b7c7e3",
+                    "surface": "#f9f9ff",
+                    "surface_bright": "#f9f9ff",
+                    "surface_container": "#e8eeff",
+                    "surface_container_high": "#e0e8ff",
+                    "surface_container_highest": "#d7e2ff",
+                    "surface_container_low": "#f1f3ff",
+                    "surface_container_lowest": "#ffffff",
+                    "surface_dim": "#cddaf9",
+                    "surface_tint": "#214ce7",
+                    "surface_variant": "#d7e2ff",
+                    "tertiary": "#943500",
+                    "tertiary_container": "#bc4600",
+                    "tertiary_fixed": "#ffdbcd",
+                    "tertiary_fixed_dim": "#ffb597"
+                  },
+                  "overrideNeutralColor": "#17243b",
+                  "overridePrimaryColor": "#365cf5",
+                  "overrideSecondaryColor": "#52627a",
+                  "roundness": "ROUND_FOUR",
+                  "spacing": {
+                    "gutter": "1rem",
+                    "gutter-desktop": "1.5rem",
+                    "margin": "1rem",
+                    "margin-desktop": "2rem",
+                    "space-lg": "1.5rem",
+                    "space-md": "1rem",
+                    "space-sm": "0.5rem",
+                    "space-xl": "2rem",
+                    "space-xs": "0.25rem"
+                  },
+                  "spacingScale": 2,
+                  "typography": {
+                    "body-default": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "400",
+                      "lineHeight": "22px"
+                    },
+                    "body-medium": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "500",
+                      "lineHeight": "22px"
+                    },
+                    "code-table": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "display": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "32px",
+                      "fontWeight": "600",
+                      "lineHeight": "40px"
+                    },
+                    "headline-card": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "18px",
+                      "fontWeight": "600",
+                      "lineHeight": "26px"
+                    },
+                    "headline-page": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "28px",
+                      "fontWeight": "600",
+                      "lineHeight": "36px"
+                    },
+                    "headline-page-mobile": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "22px",
+                      "fontWeight": "600",
+                      "lineHeight": "30px"
+                    },
+                    "label-caption": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "12px",
+                      "fontWeight": "400",
+                      "lineHeight": "16px"
+                    },
+                    "label-default": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "500",
+                      "lineHeight": "18px"
+                    },
+                    "subheading": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "16px",
+                      "fontWeight": "500",
+                      "lineHeight": "24px"
+                    }
+                  }
+                }
+              },
+              "name": "assets/f82a75c9d0f54b0a89448b88e894b80a",
+              "version": "1"
+            },
+            "deviceType": "DESKTOP",
+            "generatedBy": "figaro_agent",
+            "height": "3238",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzg5ZDRkNTE4ZmE4ZTQ4MmVhODUzZDZlNjdjZmRiMGQ2EgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/223cdcb1db084641b57a05dc6377f3e3"
+            },
+            "id": "5dd5594df4d649b8933f07ff59a9323d",
+            "name": "projects/18348214526789030153/screens/5dd5594df4d649b8933f07ff59a9323d",
+            "prompt": "Design the desktop admin screen for Commerce Platform:\nRoute identifier: admin-0218795b490b\nURL: /josh/kyc\nApp: admin\nCategory: ลูกค้าและบริการ (Customer & Services)\nComponent: JoshBackoffice\nView type: screen\nTitle: ข้อมูลคำขอ KYC (KYC Request Details)\n\nVisual Language & Specifications:\n- Canvas background: #f6f8fc, crisp white cards with 12px corners (border #e1e7f0), primary blue #365cf5, ink #17243b, secondary text #52627a.\n- Success #157347, warning #b08900, error #c2333f.\n- Typography: Noto Sans Thai, 14px body, 13px labels, 28px page title.\n- Layout: 256px sidebar (SideNavBar component with 7 work areas: สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ [active], การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน), sticky compact TopNavBar (search, ข้อมูลตัวอย่าง badge, TH | EN toggle, user avatar จินดา นวลอนันต์ หัวหน้าทีมบริการลูกค้า CS). Main container ~1240px centered content width.\n- Breadcrumb: หน้าหลัก > ลูกค้าและบริการ > ข้อมูลคำขอ KYC (/josh/kyc)\n- Subheader banner / status badge: \"อ่านอย่างเดียว · ข้อมูลจาก josh\", \"สั่ง josh ได้ · ตามสิทธิ์ใน josh\", \"แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh () · เบอร์ อีเมล ชื่อคน ถูกปิดบัง\"\n- Route badge: route: admin-0218795b490b | URL: /josh/kyc | Component: JoshBackoffice\n\nDetailed screen content for KYC Request Details (/josh/kyc):\n1. Page Header:\n   - Title: ข้อมูลคำขอ KYC\n   - Badges: `อ่านอย่างเดียว · ข้อมูลจาก josh`, `ข้อมูลตัวอย่าง`\n   - Actions: Refresh button (\"Refresh\"), External link to Josh Web-admin (\"เปิดใน josh web-admin\")\n   - Subtext: \"ตรวจสอบข้อมูลการยืนยันตัวตนลูกค้า B2B/SME ที่ซิงค์จากระบบ Josh Backoffice · เบอร์ อีเมล ชื่อคน ถูกปิดบัง ตามนโยบายความปลอดภัย\"\n\n2. Summary / Status metrics bar (4 cards):\n   - รหัสคำขอ (Request ID): KYC-JOSH-2025-0891 (สถานะ: รอการตรวจสอบ / Pending Review)\n   - ข้อมูลนิติบุคคล: บจก. สยามค้าปลีก โฮลเซล (Tax ID: 0105558901234)\n   - วงเงินเครดิตที่ขอ: ฿1,500,000 (เทอม 30 วัน)\n   - ระดับสมาชิก / Tier: B2B Tier A (Enterprise)\n\n3. Main content grid (Left 2-col info & documents, Right side summary & Josh actions):\n   Left Column:\n   - Section 1: ข้อมูลบริษัทและผู้มีอำนาจลงนาม (Company & Authorized Signer Info)\n     - ชื่อบริษัท / ร้าน: บจก. สยามค้าปลีก โฮลเซล\n     - เลขทะเบียนนิติบุคคล (13 หลัก): 0105558901234 (ตรวจสอบ DBD แล้ว)\n     - ประเภทธุรกิจ: ค้าส่ง / ห้างค้าปลีก (Wholesale)\n     - ผู้มีอำนาจลงนาม: นายสม*** เลิศ*** (ถูกปิดบัง)\n     - เบอร์โทรศัพท์: 081-***-9988 (ถูกปิดบัง)\n     - อีเมลติดต่อ: b***g@siamtrading.co.th (ถูกปิดบัง)\n     - ที่อยู่จดทะเบียน: 88/12 อาคารเจริญสุข ทาวเวอร์ ถนนสุขุมวิท เขตวัฒนา กทม. 10110\n   - Section 2: เอกสารแนบและการตรวจสอบ (Submitted Documents & KYC Verification)\n     - เอกสาร ภ.พ.20: ตรวจสอบผ่าน (Verified) - ดูไฟล์ PDF\n     - หนังสือรับรองบริษัท (ไม่เกิน 3 เดือน): ตรวจสอบผ่าน - ดูไฟล์ PDF\n     - สำเนาบัตรประชาชนกรรมการผู้มีอำนาจ: รอตรวจสอบภาพถ่ายบัตร - ดูรูปภาพ\n     - ภาพถ่ายหน้าร้าน / คลังสินค้า: ผ่านเกณฑ์ (2 สาขาหลัก)\n   - Section 3: ประวัติและบันทึกการซิงค์จาก Josh (Audit & Sync History)\n     - ตารางบันทึกการส่งข้อมูลระหว่างระบบ Josh Backoffice และ Commerce Engine\n\n   Right Column:\n   - Card 1: สิทธิและการดำเนินการ (Josh Actions & Permissions)\n     - Banner: \"สั่ง josh ได้ · ตามสิทธิ์ใน josh\"\n     - \"แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh () · เบอร์ อีเมล ชื่อคน ถูกปิดบัง\"\n     - ปุ่มการกระทำ: \"อนุมัติ KYC (ส่งคำสั่งไป josh)\", \"ขอเอกสารเพิ่มเติม\", \"ปฏิเสธคำขอ\"\n   - Card 2: ข้อกำหนดและเงื่อนไข B2B\n     - เครดิตเทอมที่แนะนำ: 30 วัน (Net 30)\n     - วงเงินอนุมัติเริ่มต้น: ฿1,000,000 - ฿1,500,000\n   - Card 3: ข้อมูลระบบ (System Metadata)\n     - Synced at: วันนี้ 11:20 น. (v1.4 Josh API Gateway)\n     - Trace ID: josh-req-91820491\n\nTechnical & Export Requirement:\nMust include an invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` with JSON dictionary containing all required strings from the copy catalogue with \"th\" and \"en\" translations:\n[\"ล้างตัวกรอง\",\"Refresh\",\"ค้นหา\",\"ทั้งหมด\",\"สั่ง josh ได้ · ตามสิทธิ์ใน josh\",\"อ่านอย่างเดียว · ข้อมูลจาก josh\",\"แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (\",\") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง\",\"ค้นหา…\",\"พบ\",\"รายการ\",\"จัดการ\",\"ไม่มีรายการ\",\"ขอบเขตส่วนลด\",\"คัดลอกเป็นคูปองใหม่\",\"จำกัดช่องทางชำระเงินที่ใช้คูปองได้\",\"ชื่อแบรนด์\",\"ซ่อนรายชื่อ\",\"ตั้งเวลาไว้\",\"นำ {0} ออก\",\"ประเภท Template (Type)\",\"ผู้ใช้ที่สมัครสำเร็จจะได้สิทธิ์ทันที — ไม่ต้องอัปโหลดรายชื่อ\",\"มีคู่แล้ว\",\"ไม่ระบุการเก็บรักษา\",\"ยังไม่มีแคมเปญ\",\"ระบบจะตรวจว่าลูกค้ายังอยู่ใน segment ตอนใช้คูปอง\",\"รูปแบบการแสดงรูปพื้นหลัง\",\"ลิงก์ทดลอง\",\"วันจัดส่ง (ไม่บังคับ)\",\"สร้างคูปองไม่สำเร็จ — ไม่พบรหัสคูปองจากระบบ\",\"ใส่ userId เพื่อดูประวัติการแจ้งเตือน\",\"โหลดรายการไม่สำเร็จ ลองใหม่อีกครั้ง\",\"หมดอายุ\",\"เคย enroll workflow นี้อยู่แล้ว (cooldown)\",\"{0} กลุ่ม, {1} ประเภทร้าน\",\"ระบุ % ระหว่าง 0 ถึง 100\"]\n\nMake it completely finished, highly aesthetic, consistent with screens 2, 4, 5, 6, 7, 17 in the project, and fully functional with bilingual switcher.",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UiXgD8x13o9u0DyJGXWTVADwOQMkqdybTLo1FTRkTOTHxmbQ0RTIlDrOpq7CDAeJ7OL19kFYtjKzqrR2ljLS9uODje4AjSzMMbVqp1pfSi1jjQXy11_jWdnc77k_Vthn9oggfFWabDrHqizjPJiR9kd-jOSNn77_M8R_LBVzuuqa22xOkAW_PyTKbmPiPS5uGj-AU_cOcVc3sgklodBKWXh-G4Y2zrvxtnDZAIS1xA_6T3ahzn0dqHGWM",
+              "name": "projects/18348214526789030153/files/22eeda198317434eae16e17e175a7caf"
+            },
+            "theme": {
+              "bodyFont": "NOTO_SANS",
+              "bodyFontFamily": "Noto Sans",
+              "colorMode": "LIGHT",
+              "colorVariant": "FIDELITY",
+              "customColor": "#365cf5",
+              "font": "NOTO_SANS",
+              "headlineFont": "NOTO_SANS",
+              "headlineFontFamily": "Noto Sans",
+              "labelFont": "NOTO_SANS",
+              "labelFontFamily": "Noto Sans",
+              "namedColors": {
+                "background": "#f9f9ff",
+                "error": "#ba1a1a",
+                "error_container": "#ffdad6",
+                "inverse_on_surface": "#ecf0ff",
+                "inverse_primary": "#b9c3ff",
+                "inverse_surface": "#243048",
+                "on_background": "#0e1b32",
+                "on_error": "#ffffff",
+                "on_error_container": "#93000a",
+                "on_primary": "#ffffff",
+                "on_primary_container": "#ededff",
+                "on_primary_fixed": "#001257",
+                "on_primary_fixed_variant": "#0034c0",
+                "on_secondary": "#ffffff",
+                "on_secondary_container": "#54647c",
+                "on_secondary_fixed": "#0b1c31",
+                "on_secondary_fixed_variant": "#38485e",
+                "on_surface": "#0e1b32",
+                "on_surface_variant": "#444655",
+                "on_tertiary": "#ffffff",
+                "on_tertiary_container": "#ffebe4",
+                "on_tertiary_fixed": "#360f00",
+                "on_tertiary_fixed_variant": "#7e2c00",
+                "outline": "#747687",
+                "outline_variant": "#c4c5d8",
+                "primary": "#0a3fdc",
+                "primary_container": "#365cf5",
+                "primary_fixed": "#dde1ff",
+                "primary_fixed_dim": "#b9c3ff",
+                "secondary": "#4f5f77",
+                "secondary_container": "#d0e1fd",
+                "secondary_fixed": "#d3e3ff",
+                "secondary_fixed_dim": "#b7c7e3",
+                "surface": "#f9f9ff",
+                "surface_bright": "#f9f9ff",
+                "surface_container": "#e8eeff",
+                "surface_container_high": "#e0e8ff",
+                "surface_container_highest": "#d7e2ff",
+                "surface_container_low": "#f1f3ff",
+                "surface_container_lowest": "#ffffff",
+                "surface_dim": "#cddaf9",
+                "surface_tint": "#214ce7",
+                "surface_variant": "#d7e2ff",
+                "tertiary": "#943500",
+                "tertiary_container": "#bc4600",
+                "tertiary_fixed": "#ffdbcd",
+                "tertiary_fixed_dim": "#ffb597"
+              },
+              "overrideNeutralColor": "#17243b",
+              "overridePrimaryColor": "#365cf5",
+              "overrideSecondaryColor": "#52627a",
+              "roundness": "ROUND_FOUR",
+              "spacing": {
+                "gutter": "1rem",
+                "gutter-desktop": "1.5rem",
+                "margin": "1rem",
+                "margin-desktop": "2rem",
+                "space-lg": "1.5rem",
+                "space-md": "1rem",
+                "space-sm": "0.5rem",
+                "space-xl": "2rem",
+                "space-xs": "0.25rem"
+              },
+              "spacingScale": 2,
+              "typography": {
+                "body-default": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "400",
+                  "lineHeight": "22px"
+                },
+                "body-medium": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "500",
+                  "lineHeight": "22px"
+                },
+                "code-table": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "400",
+                  "lineHeight": "18px"
+                },
+                "display": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "32px",
+                  "fontWeight": "600",
+                  "lineHeight": "40px"
+                },
+                "headline-card": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "18px",
+                  "fontWeight": "600",
+                  "lineHeight": "26px"
+                },
+                "headline-page": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "28px",
+                  "fontWeight": "600",
+                  "lineHeight": "36px"
+                },
+                "headline-page-mobile": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "22px",
+                  "fontWeight": "600",
+                  "lineHeight": "30px"
+                },
+                "label-caption": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "12px",
+                  "fontWeight": "400",
+                  "lineHeight": "16px"
+                },
+                "label-default": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "500",
+                  "lineHeight": "18px"
+                },
+                "subheading": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "16px",
+                  "fontWeight": "500",
+                  "lineHeight": "24px"
+                }
+              }
+            },
+            "title": "ข้อมูลคำขอ KYC (JoshBackoffice)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **ข้อมูลคำขอ KYC** (`/josh/kyc`, Component: `JoshBackoffice`, Route identifier: `admin-0218795b490b`) สำหรับระบบ Commerce Platform เรียบร้อยแล้วครับ\n\n### จุดเด่นและการจัดวางการออกแบบ (Design Highlights)\n1. **โครงสร้างและระบบภาพ (Visual System)**:\n   - สอดคล้องกับมาตรฐานของระบบ Commerce Platform และหน้าอื่นๆ ในโปรเจกต์ (Sidebar 256px พร้อม 7 พื้นที่การทำงาน โดยเน้นหมวด *ลูกค้าและบริการ*, Top Navigation บันทึกสถานะผู้ใช้และภาษา ไทย / English พร้อมป้ายกำกับ `ข้อมูลตัวอย่าง`)\n   - ใช้โทนสีมาตรฐาน (Primary Blue `#365cf5`, Light Canvas `#f6f8fc`, การ์ดสีขาวตัดขอบมน 12px `#e1e7f0`)\n2. **การจัดการข้อมูลคำขอ KYC ที่ซิงค์จาก Josh**:\n   - แสดงแถบสถานะระบุชัดเจน: `อ่านอย่างเดียว · ข้อมูลจาก josh` พร้อมระบุข้อกำหนด `แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh () · เบอร์ อีเมล ชื่อคน ถูกปิดบัง`\n   - แถบสรุปดัชนีสำคัญ 4 รายการ: รหัสคำขอ, ข้อมูลนิติบุคคล, วงเงินเครดิตที่ขอรับการประเมิน, และระดับสมาชิก B2B\n   - **คอลัมน์ซ้าย**: รายละเอียดบริษัทและผู้มีอำนาจลงนาม (พร้อมการ Mask ข้อมูล PDPA), รายการเอกสารแนบและสถานะการตรวจสอบ (ภ.พ.20, หนังสือรับรองบริษัท, บัตรประชาชน, ภาพถ่ายสถานประกอบการ), และประวัติการบันทึก Audit Sync\n   - **คอลัมน์ขวา**: ส่วนการกระทำตามสิทธิ์ `สั่ง josh ได้ · ตามสิทธิ์ใน josh` (อนุมัติ KYC ส่งคำสั่งไป josh, ขอเอกสารเพิ่ม, ปฏิเสธคำขอ), เกณฑ์เครดิตเทอม B2B, และ Metadata ของระบบ (Trace ID, Gateway sync time)\n3. **การรองรับระบบสองภาษาและ Export Requirement**:\n   - บรรจุ Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่มีคู่คำแปลครบถ้วนตาม copy catalogue ทั้งภาษาไทยและภาษาอังกฤษตรงตามข้อกำหนดทุกประการ"
+    },
+    {
+      "suggestion": "ดูหน้าคำขอ KYC รายการอื่นในคิว"
+    },
+    {
+      "suggestion": "จำลองสถานะการอนุมัติสำเร็จ หรือ ขอเอกสารเพิ่มเติม"
+    },
+    {
+      "suggestion": "สลับไปยังหน้าจัดการผู้ใช้ B2B / จัดการบริษัท"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "2263124737418926603"
+}

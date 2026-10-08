@@ -3,7 +3,10 @@ import { Button, Chip, Empty, ErrorText, Field, FormPanel, Input, Loading, Page,
 import { api, EVENT_TYPES, WebhookDelivery, WebhookSubscription } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function Subscriptions() {
+  __useUiLocale();
   const subs = useAsync(() => api.get<WebhookSubscription[]>('/webhook-subscriptions'));
   const deliveries = useAsync(() => api.get<WebhookDelivery[]>('/webhook-subscriptions/deliveries'));
   const [form, setForm] = useState({ name: '', targetUrl: '', secret: '', description: '' });
@@ -18,7 +21,7 @@ export function Subscriptions() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!events.length) {
-      setFormError('Choose at least one event to subscribe to.');
+      setFormError(__uiMessage("Choose at least one event to subscribe to."));
       return;
     }
     setSubmitting(true);
@@ -49,29 +52,29 @@ export function Subscriptions() {
   return (
     <Page>
       <PageHeader
-        title="Outgoing webhooks"
-        subtitle="Notify external systems when platform events happen — they subscribe, we deliver (signed)."
-        actions={<Button icon="refresh" variant="secondary" onClick={reloadAll}>Refresh</Button>}
+        title={__uiText("Outgoing webhooks")}
+        subtitle={__uiText("Notify external systems when platform events happen — they subscribe, we deliver (signed).")}
+        actions={<Button icon="refresh" variant="secondary" onClick={reloadAll}>{__uiText("Refresh")}</Button>}
       />
 
       <FormPanel
-        title="New subscription"
+        title={__uiText("New subscription")}
         icon="mail"
         cols={2}
         error={formError}
-        submitLabel="Create subscription"
+        submitLabel={__uiText("Create subscription")}
         busy={submitting}
         onSubmit={submit}
       >
-        <Field label="Name">
+        <Field label={__uiText("Name")}>
           <Input
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="e.g. Our e-commerce store"
+            placeholder={__uiText("e.g. Our e-commerce store")}
           />
         </Field>
-        <Field label="Target URL">
+        <Field label={__uiText("Target URL")}>
           <Input
             required
             value={form.targetUrl}
@@ -79,22 +82,22 @@ export function Subscriptions() {
             placeholder="https://shop.example.com/hooks/platform"
           />
         </Field>
-        <Field label="Signing secret">
+        <Field label={__uiText("Signing secret")}>
           <Input
             value={form.secret}
             onChange={(e) => setForm({ ...form, secret: e.target.value })}
-            placeholder="we HMAC-sign each delivery"
+            placeholder={__uiText("we HMAC-sign each delivery")}
           />
         </Field>
-        <Field label="Description">
+        <Field label={__uiText("Description")}>
           <Input
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="optional notes"
+            placeholder={__uiText("optional notes")}
           />
         </Field>
         <Span>
-          <div className="text-xs font-medium text-on-surface-variant mb-2">Events to send</div>
+          <div className="text-xs font-medium text-on-surface-variant mb-2">{__uiText("Events to send")}</div>
           <div className="flex flex-wrap gap-2">
             {EVENT_TYPES.map((evt) => (
               <TogglePill key={evt} on={events.includes(evt)} onClick={() => toggle(evt)}>
@@ -106,19 +109,19 @@ export function Subscriptions() {
       </FormPanel>
 
       <Panel>
-        <PanelHead title="Subscriptions" />
+        <PanelHead title={__uiText("Subscriptions")} />
         {subs.loading && !subs.data ? (
           <Loading />
         ) : !subs.data?.length ? (
-          <Empty>No subscriptions yet.</Empty>
+          <Empty>{__uiText("No subscriptions yet.")}</Empty>
         ) : (
           <Table>
             <THead>
-              <TH>Name</TH>
-              <TH>Target URL</TH>
-              <TH>Events</TH>
-              <TH>Secret</TH>
-              <TH>Status</TH>
+              <TH>{__uiText("Name")}</TH>
+              <TH>{__uiText("Target URL")}</TH>
+              <TH>{__uiText("Events")}</TH>
+              <TH>{__uiText("Secret")}</TH>
+              <TH>{__uiText("Status")}</TH>
             </THead>
             <TBody>
               {subs.data.map((s) => (
@@ -132,7 +135,7 @@ export function Subscriptions() {
                       ))}
                     </div>
                   </TD>
-                  <TD>{s.secret ? <Chip tone="muted">set</Chip> : '—'}</TD>
+                  <TD>{s.secret ? <Chip tone="muted">{__uiText("set")}</Chip> : '—'}</TD>
                   <TD><StatusChip status={s.active ? 'active' : 'disabled'} /></TD>
                 </TR>
               ))}
@@ -142,20 +145,20 @@ export function Subscriptions() {
       </Panel>
 
       <Panel>
-        <PanelHead title="Delivery log" actions={<Button variant="ghost" size="sm" onClick={deliveries.reload}>Reload</Button>} />
+        <PanelHead title={__uiText("Delivery log")} actions={<Button variant="ghost" size="sm" onClick={deliveries.reload}>{__uiText("Reload")}</Button>} />
         {deliveries.loading && !deliveries.data ? (
           <Loading />
         ) : !deliveries.data?.length ? (
-          <Empty>No deliveries yet — trigger an event (e.g. update a customer).</Empty>
+          <Empty>{__uiText("No deliveries yet — trigger an event (e.g. update a customer).")}</Empty>
         ) : (
           <Table>
             <THead>
-              <TH>When</TH>
-              <TH>Event</TH>
-              <TH>Target</TH>
-              <TH>Status</TH>
-              <TH>HTTP</TH>
-              <TH right>Tries</TH>
+              <TH>{__uiText("When")}</TH>
+              <TH>{__uiText("Event")}</TH>
+              <TH>{__uiText("Target")}</TH>
+              <TH>{__uiText("Status")}</TH>
+              <TH>{__uiText("HTTP")}</TH>
+              <TH right>{__uiText("Tries")}</TH>
             </THead>
             <TBody>
               {deliveries.data.map((d) => (

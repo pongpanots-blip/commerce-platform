@@ -1,12 +1,16 @@
+// ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useState } from 'react';
 import { Button, Empty, ErrorText, Hint, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Select, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
 import { inventoryOverviewApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const OWNER = { erp: 'ERP', commerce: 'commerce (คลังเรา)' } as const;
 
 /** Stock by SKU and warehouse code, who owns each warehouse's stock, and the last ledger movement. */
 export function InventoryPerWarehouse() {
+  __useUiLocale();
   const [warehouse, setWarehouse] = useState('');
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
@@ -20,9 +24,9 @@ export function InventoryPerWarehouse() {
   return (
     <Page>
       <PageHeader
-        title="Inventory per warehouse"
-        subtitle="สต็อกตาม SKU และคลัง · ERP = ยอดมาจาก ERP (ปรับใน ERP) · commerce = คลังของเรา (ปรับได้ใน commerce)"
-        actions={<Button icon="refresh" onClick={data.reload}>Refresh</Button>}
+        title={__uiText("Inventory per warehouse")}
+        subtitle={__uiText("สต็อกตาม SKU และคลัง · ERP = ยอดมาจาก ERP (ปรับใน ERP) · commerce = คลังของเรา (ปรับได้ใน commerce)")}
+        actions={<Button icon="refresh" onClick={data.reload}>{__uiText("Refresh")}</Button>}
       />
 
       <ErrorText error={data.error} />
@@ -34,7 +38,7 @@ export function InventoryPerWarehouse() {
               key={w.code}
               label={`${w.code} · ${OWNER[w.stockSource] ?? w.stockSource}`}
               value={fmt.num(w.onHand)}
-              foot={`${w.name} · ${fmt.num(w.skus)} SKU · จอง ${fmt.num(w.reserved)}`}
+              foot={__uiText("{0} · {1} SKU · จอง {2}",{'0':w.name,'1':fmt.num(w.skus),'2':fmt.num(w.reserved)})}
               onClick={() => pick(warehouse === w.code ? '' : w.code)}
               selected={warehouse === w.code}
             />
@@ -43,39 +47,39 @@ export function InventoryPerWarehouse() {
       )}
 
       <Panel>
-        <PanelHead title="รายละเอียด" />
+        <PanelHead title={__uiText("รายละเอียด")} />
         <form className="px-4 py-3 border-b border-secondary-container flex flex-wrap items-end gap-3" onSubmit={submit}>
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[11px] font-semibold text-on-surface-variant mb-1">คลัง</label>
+            <label className="block text-[11px] font-semibold text-on-surface-variant mb-1">{__uiText("คลัง")}</label>
             <Select value={warehouse} onChange={(e) => pick(e.target.value)}>
-              <option value="">ทุกคลัง</option>
+              <option value="">{__uiText("ทุกคลัง")}</option>
               {(data.data?.warehouses ?? []).map((w) => (
                 <option key={w.code} value={w.code}>{w.code} — {w.name}</option>
               ))}
             </Select>
           </div>
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[11px] font-semibold text-on-surface-variant mb-1">ค้นหา SKU หรือชื่อสินค้า</label>
+            <label className="block text-[11px] font-semibold text-on-surface-variant mb-1">{__uiText("ค้นหา SKU หรือชื่อสินค้า")}</label>
             <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
-          <Button type="submit">ค้นหา</Button>
+          <Button type="submit">{__uiText("ค้นหา")}</Button>
         </form>
 
         {data.loading && !data.data?.items.length ? (
           <Loading />
         ) : !data.data?.items.length ? (
-          <Empty>ไม่พบสต็อก</Empty>
+          <Empty>{__uiText("ไม่พบสต็อก")}</Empty>
         ) : (
           <>
             <Table>
               <THead>
-                <TH>SKU</TH>
-                <TH>สินค้า</TH>
-                <TH>คลัง</TH>
-                <TH right>คงเหลือ</TH>
-                <TH right>จอง</TH>
-                <TH right>พร้อมขาย</TH>
-                <TH>เปลี่ยนล่าสุด</TH>
+                <TH>{__uiText("SKU")}</TH>
+                <TH>{__uiText("สินค้า")}</TH>
+                <TH>{__uiText("คลัง")}</TH>
+                <TH right>{__uiText("คงเหลือ")}</TH>
+                <TH right>{__uiText("จอง")}</TH>
+                <TH right>{__uiText("พร้อมขาย")}</TH>
+                <TH>{__uiText("เปลี่ยนล่าสุด")}</TH>
               </THead>
               <TBody>
                 {data.data.items.map((r) => (
@@ -86,9 +90,9 @@ export function InventoryPerWarehouse() {
                       <span className="font-mono">{r.warehouseCode}</span>
                       <div className="text-[10px] font-medium mt-0.5">
                         {r.stockSource === 'commerce' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">✓ commerce</span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">{__uiText("✓ commerce")}</span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">ERP</span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">{__uiText("ERP")}</span>
                         )}
                       </div>
                     </TD>
@@ -118,9 +122,9 @@ export function InventoryPerWarehouse() {
 
             {maxPage > 1 && (
               <div className="flex items-center justify-center gap-3 py-3 border-t border-secondary-container">
-                <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>ก่อนหน้า</Button>
-                <Hint>หน้า {page} / {maxPage} ({fmt.num(data.data?.total ?? 0)} รายการ)</Hint>
-                <Button size="sm" variant="secondary" disabled={page >= maxPage} onClick={() => setPage(page + 1)}>ถัดไป</Button>
+                <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>{__uiText("ก่อนหน้า")}</Button>
+                <Hint>{__uiText("หน้า ")}{page} / {maxPage} ({fmt.num(data.data?.total ?? 0)} {__uiText(" รายการ)")}</Hint>
+                <Button size="sm" variant="secondary" disabled={page >= maxPage} onClick={() => setPage(page + 1)}>{__uiText("ถัดไป")}</Button>
               </div>
             )}
           </>

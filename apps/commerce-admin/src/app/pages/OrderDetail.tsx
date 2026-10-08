@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -7,10 +8,13 @@ import {
 import { ordersApi, OrderFull } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const money = (currency: string, v: string | number | null | undefined) => (v === null || v === undefined ? '—' : `${currency} ${fmt.num(v)}`);
 
 /** One commerce order: checkout / payment / hold actions plus lines, fulfillments, reservations and payment. */
 export function OrderDetail() {
+  __useUiLocale();
   const { id = '' } = useParams();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,39 +44,39 @@ export function OrderDetail() {
     <Page>
       <PageHeader
         back={{ to: '/orders', label: 'Orders' }}
-        title={o ? o.code ?? `Order ${o.id.slice(0, 8)}…` : 'Order'}
+        title={o ? o.code ?? __uiText("Order {0}…", {"0": o.id.slice(0, 8)}) : __uiText("Order")}
         badge={o && <StatusChip status={o.status} />}
-        subtitle="Checkout, payment and inventory holds for this order."
+        subtitle={__uiText("Checkout, payment and inventory holds for this order.")}
         actions={
           o && (
             <>
               {o.status === 'draft' && (
                 <Button variant="primary" icon="shopping_cart_checkout" disabled={!!busy} onClick={() => run('checkout', 'Checked out', () => ordersApi.checkout(o.id))}>
-                  {busy === 'checkout' ? '…' : 'Checkout'}
+                  {busy === 'checkout' ? '…' : __uiText("Checkout")}
                 </Button>
               )}
               {o.status === 'pending_payment' && d?.payment?.status === 'pending' && (
                 <>
                   <Button variant="primary" icon="paid" disabled={!!busy} onClick={() => run('pay', 'Marked paid', () => ordersApi.pay(d.payment!.id))}>
-                    {busy === 'pay' ? '…' : 'Mark paid'}
+                    {busy === 'pay' ? '…' : __uiText("Mark paid")}
                   </Button>
                   <Button variant="danger-ghost" icon="money_off" disabled={!!busy} onClick={() => run('fail', 'Marked failed', () => ordersApi.failPay(d.payment!.id))}>
-                    {busy === 'fail' ? '…' : 'Mark failed'}
+                    {busy === 'fail' ? '…' : __uiText("Mark failed")}
                   </Button>
                 </>
               )}
               {held && (
                 <Button icon="lock_open" disabled={!!busy} onClick={() => run('release', 'Holds released', () => ordersApi.releaseReservations(o.id))}>
-                  {busy === 'release' ? '…' : 'Release holds'}
+                  {busy === 'release' ? '…' : __uiText("Release holds")}
                 </Button>
               )}
-              <Button icon="refresh" onClick={detail.reload}>Refresh</Button>
+              <Button icon="refresh" onClick={detail.reload}>{__uiText("Refresh")}</Button>
             </>
           )
         }
       />
 
-      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{msg}</Alert>}
+      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
       <ErrorText error={error || detail.error} />
 
       {detail.loading && !d ? (
@@ -94,14 +98,14 @@ export function OrderDetail() {
 
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-4">
             <Panel className="p-4 space-y-5">
-              <DetailSection title={`Lines (${d.lines.length})`} icon="receipt_long">
+              <DetailSection title={__uiText("Lines ({0})", {"0": d.lines.length})} icon="receipt_long">
                 {d.lines.length ? (
                   <Table>
                     <THead>
-                      <TH>Product</TH>
-                      <TH right>Qty</TH>
-                      <TH right>Unit price</TH>
-                      <TH right>Line total</TH>
+                      <TH>{__uiText("Product")}</TH>
+                      <TH right>{__uiText("Qty")}</TH>
+                      <TH right>{__uiText("Unit price")}</TH>
+                      <TH right>{__uiText("Line total")}</TH>
                     </THead>
                     <TBody>
                       {d.lines.map((l) => (
@@ -115,21 +119,21 @@ export function OrderDetail() {
                     </TBody>
                   </Table>
                 ) : (
-                  <Empty>No lines</Empty>
+                  <Empty>{__uiText("No lines")}</Empty>
                 )}
               </DetailSection>
 
-              <DetailSection title={`Reservations (${d.reservations.length})`} icon="inventory">
+              <DetailSection title={__uiText("Reservations ({0})", {"0": d.reservations.length})} icon="inventory">
                 {d.reservations.length ? (
                   <Table>
                     <THead>
-                      <TH>SKU</TH>
-                      <TH right>Qty</TH>
-                      <TH>Status</TH>
-                      <TH>External ref</TH>
-                      <TH>Expires</TH>
-                      <TH>Promised</TH>
-                      <TH>Fail reason</TH>
+                      <TH>{__uiText("SKU")}</TH>
+                      <TH right>{__uiText("Qty")}</TH>
+                      <TH>{__uiText("Status")}</TH>
+                      <TH>{__uiText("External ref")}</TH>
+                      <TH>{__uiText("Expires")}</TH>
+                      <TH>{__uiText("Promised")}</TH>
+                      <TH>{__uiText("Fail reason")}</TH>
                     </THead>
                     <TBody>
                       {d.reservations.map((r) => (
@@ -146,14 +150,14 @@ export function OrderDetail() {
                     </TBody>
                   </Table>
                 ) : (
-                  <Empty>No reservations</Empty>
+                  <Empty>{__uiText("No reservations")}</Empty>
                 )}
               </DetailSection>
             </Panel>
 
             <div className="space-y-4">
               <Panel className="p-4">
-                <DetailSection title="Payment" icon="payments">
+                <DetailSection title={__uiText("Payment")} icon="payments">
                   {d.payment ? (
                     <KeyValueGrid
                       cols={2}
@@ -164,18 +168,18 @@ export function OrderDetail() {
                       ]}
                     />
                   ) : (
-                    <Empty icon="payments">No payment yet</Empty>
+                    <Empty icon="payments">{__uiText("No payment yet")}</Empty>
                   )}
                 </DetailSection>
               </Panel>
               <Panel className="p-4">
-                <DetailSection title={`Fulfillments (${d.fulfillments.length})`} icon="local_shipping">
+                <DetailSection title={__uiText("Fulfillments ({0})", {"0": d.fulfillments.length})} icon="local_shipping">
                   {d.fulfillments.length ? (
                     <Table>
                       <THead>
-                        <TH>Source</TH>
-                        <TH>Mode</TH>
-                        <TH>Status</TH>
+                        <TH>{__uiText("Source")}</TH>
+                        <TH>{__uiText("Mode")}</TH>
+                        <TH>{__uiText("Status")}</TH>
                       </THead>
                       <TBody>
                         {d.fulfillments.map((f) => (
@@ -188,7 +192,7 @@ export function OrderDetail() {
                       </TBody>
                     </Table>
                   ) : (
-                    <Empty icon="local_shipping">No fulfillments</Empty>
+                    <Empty icon="local_shipping">{__uiText("No fulfillments")}</Empty>
                   )}
                 </DetailSection>
               </Panel>

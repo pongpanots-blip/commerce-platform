@@ -3,6 +3,8 @@ import { Button, Field, FormPanel, Input, Select, Textarea } from '@cp/ui';
 import { JOSH_STAFF_ROLES, joshActionsApi } from '../../lib/api';
 
 /** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts) — approving a request may still give platform_admin (josh's rule). */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ADMIN_ROLES = [...JOSH_STAFF_ROLES, 'platform_admin'];
 const CREDIT_OPEN = ['PENDING', 'REVIEW', 'REQUEST_DOC'];
 type Row = Record<string, unknown>;
@@ -12,13 +14,14 @@ export const ACTION_VIEWS = new Set(['credit_terms', 'admin_access', 'coupons', 
 const SUPPLIER_FIELDS: [string, string][] = [['supplier_name', 'ชื่อ'], ['contact_name', 'ผู้ติดต่อ'], ['phone', 'โทร'], ['email', 'อีเมล'], ['address', 'ที่อยู่']];
 const DOC_CATEGORIES = ['backend', 'webshop', 'landing', 'api', 'mobileapp'];
 const DOC_MAX_BYTES = 90_000;
-const confirmJosh = (text: string) => window.confirm(`${text}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`);
+const confirmJosh = (text: string) => window.confirm(__uiText("{0}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)", {"0": text}));
 
 /**
  * The one button per row that asks josh to act, with a confirm step. josh decides with its own rules
  * (platform_admin for admin access) and answers in Thai; that answer is shown as is.
  */
 export function RowAction({ view, row, onDone }: { view: string; row: Row; onDone: (msg: string) => void }) {
+  __useUiLocale();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
@@ -26,7 +29,7 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
   const set = (k: string, v: string) => setForm({ ...form, [k]: v });
 
   async function run(confirmText: string, fn: () => Promise<unknown>, done: string) {
-    if (!window.confirm(`${confirmText}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`)) return;
+    if (!window.confirm(__uiText("{0}\n\nคำสั่งนี้จะให้ josh ทำจริง (ในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)", {"0": confirmText}))) return;
     setBusy(true); setErr('');
     try { await fn(); setOpen(false); setForm({}); onDone(done); } catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }
@@ -41,8 +44,7 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
         disabled={busy}
         onClick={() => run(`ลบเอกสาร "${row.title}"?`, () => joshActionsApi.removeDoc(String(row.id)), `ลบ "${row.title}" แล้ว`)}
       >
-        ลบ
-      </Button>
+        {__uiText("ลบ")}</Button>
     );
   }
 
@@ -55,7 +57,7 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
         disabled={busy}
         onClick={() => run(`${active ? 'ปิด' : 'เปิด'}คูปอง ${row.coupon_code}?`, () => joshActionsApi.setCouponActive(String(row.id), !active), `${active ? 'ปิด' : 'เปิด'}คูปอง ${row.coupon_code} แล้ว`)}
       >
-        {active ? 'ปิดคูปอง' : 'เปิดคูปอง'}
+        {active ? __uiText("ปิดคูปอง") : __uiText("เปิดคูปอง")}
       </Button>
     );
   }
@@ -63,19 +65,19 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
   const pending = view === 'admin_access' ? row.status === 'pending' : CREDIT_OPEN.includes(String(row.status));
   if (!pending) return null;
 
-  if (!open) return <Button size="sm" onClick={() => setOpen(true)}>พิจารณา</Button>;
+  if (!open) return <Button size="sm" onClick={() => setOpen(true)}>{__uiText("พิจารณา")}</Button>;
 
   if (view === 'admin_access') {
     return (
       <FormPanel
-        title="กำหนดสิทธิ์"
+        title={__uiText("กำหนดสิทธิ์")}
         icon="security"
         cols={1}
         error={err}
         busy={busy}
         onSubmit={() => run(`อนุมัติ ${row.email} เป็น ${form.role}?`, () => joshActionsApi.approveAccess(String(row.id), form.role), `อนุมัติ ${row.email} แล้ว`)}
         onCancel={() => setOpen(false)}
-        submitLabel="อนุมัติ"
+        submitLabel={__uiText("อนุมัติ")}
         extraActions={
           <Button
             size="sm"
@@ -83,17 +85,16 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
             disabled={busy}
             onClick={() => run(`ไม่อนุมัติ ${row.email}?`, () => joshActionsApi.rejectAccess(String(row.id), form.reason ?? ''), `ไม่อนุมัติ ${row.email} แล้ว`)}
           >
-            ไม่อนุมัติ
-          </Button>
+            {__uiText("ไม่อนุมัติ")}</Button>
         }
       >
-        <Field label="ให้สิทธิ์">
+        <Field label={__uiText("ให้สิทธิ์")}>
           <Select value={form.role ?? ''} onChange={(e) => set('role', e.target.value)}>
-            <option value="">— เลือก role —</option>
+            <option value="">{__uiText("— เลือก role —")}</option>
             {ADMIN_ROLES.map((r) => <option key={r}>{r}</option>)}
           </Select>
         </Field>
-        <Field label="เหตุผลที่ไม่อนุมัติ">
+        <Field label={__uiText("เหตุผลที่ไม่อนุมัติ")}>
           <Input value={form.reason ?? ''} onChange={(e) => set('reason', e.target.value)} />
         </Field>
       </FormPanel>
@@ -102,7 +103,7 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
 
   return (
     <FormPanel
-      title="ตรวจสอบวงเงิน"
+      title={__uiText("ตรวจสอบวงเงิน")}
       icon="request_quote"
       cols={2}
       error={err}
@@ -115,31 +116,31 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
           ...(form.reason ? { reject_reason: form.reason } : {}), ...(form.remark ? { accounting_remark: form.remark } : {}),
         }),
         `บันทึกผลของ ${row.company_name} แล้ว`)}>
-      <Field label="ผล">
+      <Field label={__uiText("ผล")}>
         <Select value={form.status ?? ''} onChange={(e) => set('status', e.target.value)}>
-          <option value="">— เลือก —</option>
-          <option value="APPROVED">อนุมัติ</option>
-          <option value="REJECTED">ไม่อนุมัติ</option>
-          <option value="REQUEST_DOC">ขอเอกสารเพิ่ม</option>
-          <option value="REVIEW">กำลังตรวจ</option>
+          <option value="">{__uiText("— เลือก —")}</option>
+          <option value="APPROVED">{__uiText("อนุมัติ")}</option>
+          <option value="REJECTED">{__uiText("ไม่อนุมัติ")}</option>
+          <option value="REQUEST_DOC">{__uiText("ขอเอกสารเพิ่ม")}</option>
+          <option value="REVIEW">{__uiText("กำลังตรวจ")}</option>
         </Select>
       </Field>
       {form.status === 'APPROVED' && (
         <>
-          <Field label="วงเงินที่อนุมัติ" hint={`ว่าง = ตามที่ขอ ${String(row.requested_credit_limit ?? '')}`}>
+          <Field label={__uiText("วงเงินที่อนุมัติ")} hint={__uiText("ว่าง = ตามที่ขอ {0}", {"0": String(row.requested_credit_limit ?? '')})}>
             <Input type="number" min="0" value={form.limit ?? ''} onChange={(e) => set('limit', e.target.value)} />
           </Field>
-          <Field label="เครดิต (วัน)" hint={`ว่าง = ตามที่ขอ ${String(row.requested_term_days ?? '')}`}>
+          <Field label={__uiText("เครดิต (วัน)")} hint={__uiText("ว่าง = ตามที่ขอ {0}", {"0": String(row.requested_term_days ?? '')})}>
             <Input type="number" min="0" value={form.days ?? ''} onChange={(e) => set('days', e.target.value)} />
           </Field>
         </>
       )}
       {form.status === 'REJECTED' && (
-        <Field label="เหตุผล">
+        <Field label={__uiText("เหตุผล")}>
           <Input value={form.reason ?? ''} onChange={(e) => set('reason', e.target.value)} />
         </Field>
       )}
-      <Field label="หมายเหตุบัญชี">
+      <Field label={__uiText("หมายเหตุบัญชี")}>
         <Input value={form.remark ?? ''} onChange={(e) => set('remark', e.target.value)} />
       </Field>
     </FormPanel>
@@ -148,6 +149,7 @@ export function RowAction({ view, row, onDone }: { view: string; row: Row; onDon
 
 /** Edit / delete one supplier. Phone and email show masked here — fill them only to change them. */
 function SupplierAction({ row, onDone }: { row: Row; onDone: (msg: string) => void }) {
+  __useUiLocale();
   const [form, setForm] = useState<Record<string, string> | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
@@ -162,8 +164,8 @@ function SupplierAction({ row, onDone }: { row: Row; onDone: (msg: string) => vo
   if (!form) {
     return (
       <div className="flex gap-1">
-        <Button size="sm" variant="ghost" onClick={() => setForm({ supplier_name: String(row.supplier_name ?? ''), contact_name: '', phone: '', email: '', address: String(row.address ?? '') })}>แก้</Button>
-        <Button size="sm" variant="danger-ghost" disabled={busy} onClick={() => go(`ลบ supplier "${row.supplier_name}"?`, () => joshActionsApi.removeSupplier(id), `ลบ ${row.supplier_name} แล้ว`)}>ลบ</Button>
+        <Button size="sm" variant="ghost" onClick={() => setForm({ supplier_name: String(row.supplier_name ?? ''), contact_name: '', phone: '', email: '', address: String(row.address ?? '') })}>{__uiText("แก้")}</Button>
+        <Button size="sm" variant="danger-ghost" disabled={busy} onClick={() => go(`ลบ supplier "${row.supplier_name}"?`, () => joshActionsApi.removeSupplier(id), `ลบ ${row.supplier_name} แล้ว`)}>{__uiText("ลบ")}</Button>
       </div>
     );
   }
@@ -172,7 +174,7 @@ function SupplierAction({ row, onDone }: { row: Row; onDone: (msg: string) => vo
 
   return (
     <FormPanel
-      title={`แก้ supplier`}
+      title={__uiText("แก้ supplier")}
       icon="edit"
       cols={1}
       error={err}
@@ -186,10 +188,11 @@ function SupplierAction({ row, onDone }: { row: Row; onDone: (msg: string) => vo
 }
 
 function SupplierFields({ form, setForm, masked }: { form: Record<string, string>; setForm: (f: Record<string, string>) => void; masked?: boolean }) {
+  __useUiLocale();
   return (
     <>
       {SUPPLIER_FIELDS.map(([k, label]) => (
-        <Field key={k} label={label} hint={masked && k !== 'supplier_name' && k !== 'address' ? ' (ว่าง = คงเดิม)' : undefined}>
+        <Field key={k} label={label} hint={masked && k !== 'supplier_name' && k !== 'address' ? __uiText(" (ว่าง = คงเดิม)") : undefined}>
           <Input
             type={k === 'email' ? 'email' : 'text'}
             value={form[k] ?? ''}
@@ -203,6 +206,7 @@ function SupplierFields({ form, setForm, masked }: { form: Record<string, string
 
 /** The "add" form above a list that has one: new supplier, or upload a markdown doc. */
 export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: string) => void }) {
+  __useUiLocale();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<Record<string, string>>({ category: DOC_CATEGORIES[0] });
   const [file, setFile] = useState<File | null>(null);
@@ -214,7 +218,7 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
   if (!open) {
     return (
       <Button size="sm" onClick={() => setOpen(true)}>
-        {view === 'suppliers' ? 'เพิ่ม supplier' : 'อัปโหลดเอกสาร (.md)'}
+        {view === 'suppliers' ? __uiText("เพิ่ม supplier") : __uiText("อัปโหลดเอกสาร (.md)")}
       </Button>
     );
   }
@@ -248,7 +252,7 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
 
   return (
     <FormPanel
-      title={view === 'suppliers' ? 'เพิ่ม supplier' : 'อัปโหลดเอกสาร'}
+      title={view === 'suppliers' ? __uiText("เพิ่ม supplier") : __uiText("อัปโหลดเอกสาร")}
       icon={view === 'suppliers' ? 'add_circle' : 'upload_file'}
       cols={1}
       error={err}
@@ -260,15 +264,15 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
         <SupplierFields form={form} setForm={setForm} />
       ) : (
         <>
-          <Field label="หมวด">
+          <Field label={__uiText("หมวด")}>
             <Select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
               {DOC_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </Select>
           </Field>
-          <Field label="ชื่อ" hint="ว่าง = จากชื่อไฟล์">
+          <Field label={__uiText("ชื่อ")} hint={__uiText("ว่าง = จากชื่อไฟล์")}>
             <Input value={form.title ?? ''} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           </Field>
-          <Field label="ไฟล์ .md">
+          <Field label={__uiText("ไฟล์ .md")}>
             <Input type="file" accept=".md,text/markdown" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
           </Field>
         </>

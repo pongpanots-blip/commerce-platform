@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายละเอียดลูกค้า — Commerce Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Modal backdrop transitions */
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#f6f8fc] text-[#17243b] antialiased">
+
+  <!-- Sidebar: 256px wide, fixed on desktop -->
+  <aside class="w-64 min-w-[256px] max-w-[256px] bg-white border-r border-[#e1e7f0] flex flex-col justify-between shrink-0 min-h-screen select-none">
+    <div>
+      <!-- Platform Brand Logo / Header -->
+      <div class="h-16 px-5 border-b border-[#e1e7f0] flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5] text-white flex items-center justify-center font-bold text-base shadow-sm shrink-0">
+          CP
+        </div>
+        <div class="leading-tight overflow-hidden">
+          <h1 class="font-bold text-sm text-[#17243b] truncate">Commerce Platform</h1>
+          <p class="text-xs text-[#52627a] truncate" data-i18n="platformSubtitle">ระบบจัดการศูนย์ส่งและสาขา</p>
+        </div>
+      </div>
+
+      <!-- Navigation Work Areas (7 Areas) -->
+      <div class="p-3">
+        <div class="px-3 pt-3 pb-2 text-[11px] font-semibold text-[#52627a] tracking-wider uppercase" data-i18n="workAreaLabel">
+          พื้นที่ทำงานหลัก (7 สายงาน)
+        </div>
+        <nav class="space-y-1 text-sm font-medium">
+          <!-- 1. สินค้าและสต็อก -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+            <svg class="w-4 h-4 text-[#52627a] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span data-i18n="navStock">สินค้าและสต็อก</span>
+          </a>
+
+          <!-- 2. ออเดอร์และการเงิน -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+            <svg class="w-4 h-4 text-[#52627a] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span data-i18n="navOrders">ออเดอร์และการเงิน</span>
+          </a>
+
+          <!-- 3. ลูกค้าและบริการ (Active Area) -->
+          <div class="pt-1">
+            <a href="/customers" class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#ebf0fe] text-[#365cf5] font-semibold transition-colors">
+              <div class="flex items-center gap-3 truncate">
+                <svg class="w-4 h-4 text-[#365cf5] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span data-i18n="navCustomers">ลูกค้าและบริการ</span>
+              </div>
+              <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+            </a>
+
+            <!-- Submenu -->
+            <div class="mt-1 ml-4 pl-3 border-l-2 border-[#365cf5] space-y-1 text-[13px]">
+              <a href="/customers" class="block py-1.5 px-2 rounded font-medium text-[#365cf5] bg-[#f6f8fc]" data-i18n="submenuPlatformCustomers">ลูกค้าแพลตฟอร์ม</a>
+              <a href="#" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc]" data-i18n="submenuWinback">ติดตามลูกค้าเก่า (Win-back)</a>
+              <a href="#" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc]" data-i18n="submenuCsDesk">งานบริการลูกค้า (CS Desk)</a>
+              <a href="#" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc]" data-i18n="submenuLiveChat">แชตกับลูกค้า (Live chat)</a>
+              <a href="#" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc]" data-i18n="submenuComplaints">ข้อร้องเรียนและบริการ</a>
+            </div>
+          </div>
+
+          <!-- 4. การตลาด -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+            <svg class="w-4 h-4 text-[#52627a] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+            </svg>
+            <span data-i18n="navMarketing">การตลาด</span>
+          </a>
+
+          <!-- 5. รายงานและข้อมูล -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+            <svg class="w-4 h-4 text-[#52627a] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span data-i18n="navReports">รายงานและข้อมูล</span>
+          </a>
+
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+            <svg class="w-4 h-4 text-[#52627a] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+            <span data-i18n="navConnections">ระบบเชื่อมต่อ</span>
+          </a>
+
+          <!-- 7. ตั้งค่าและทีมงาน -->
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] transition-colors">
+            <svg class="w-4 h-4 text-[#52627a] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span data-i18n="navSettings">ตั้งค่าและทีมงาน</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Developer Portal / Route Info in sidebar footer -->
+    <div class="p-4 border-t border-[#e1e7f0] bg-[#fafbfd]">
+      <div class="flex items-center gap-2 text-xs font-semibold text-[#52627a] mb-1">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+        <span>Developer Portal</span>
+      </div>
+      <div class="text-[11px] font-mono text-[#52627a] truncate">
+        route: admin-bfbfc7ae5183<br>
+        /customers/:id (CustomerDetail)
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Top Contextual Header -->
+    <header class="h-16 px-8 bg-white border-b border-[#e1e7f0] flex items-center justify-between gap-4 sticky top-0 z-20">
+      <!-- Search Input -->
+      <div class="relative w-96 max-w-full">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#52627a]">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
+        <input
+          type="text"
+          id="pageSearchInput"
+          placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+          class="w-full pl-9 pr-4 py-2 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg text-sm placeholder-[#52627a] text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:bg-white transition-all"
+        />
+      </div>
+
+      <!-- Right Header Controls: Sample Data Badge, Language Toggle, Operator Profile -->
+      <div class="flex items-center gap-3">
+        <!-- Sample data badge -->
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fef9c3] border border-[#fef08a] text-xs font-medium text-[#854d0e]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#eab308]"></span>
+          <span data-i18n="sampleDataBadge">ข้อมูลตัวอย่าง</span>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="flex items-center bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-0.5 text-xs font-semibold">
+          <button id="langThBtn" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs transition-all">ไทย</button>
+          <button id="langEnBtn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">English</button>
+        </div>
+
+        <!-- Operator User Info -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-[#e1e7f0]">
+          <div class="w-8 h-8 rounded-full bg-[#ebf0fe] text-[#365cf5] font-bold text-xs flex items-center justify-center shrink-0">
+            จน
+          </div>
+          <div class="leading-tight hidden sm:block">
+            <div class="text-xs font-bold text-[#17243b]">จินดา นวลอนันต์</div>
+            <div class="text-[11px] text-[#52627a]">หัวหน้าทีมบริการลูกค้า (CS)</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 p-8 overflow-y-auto">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Breadcrumb & Page Header -->
+        <div>
+          <nav class="flex items-center gap-2 text-xs text-[#52627a] mb-2">
+            <a href="/customers" class="hover:text-[#365cf5] transition-colors" data-i18n="breadcrumbCustomerService">ลูกค้าและบริการ</a>
+            <span>/</span>
+            <a href="/customers" class="hover:text-[#365cf5] transition-colors" data-i18n="breadcrumbPlatformCustomers">ลูกค้าแพลตฟอร์ม</a>
+            <span>/</span>
+            <span class="text-[#17243b] font-medium" data-i18n="breadcrumbDetail">รายละเอียดลูกค้า</span>
+          </nav>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <a href="/customers" class="w-9 h-9 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f6f8fc] flex items-center justify-center text-[#52627a] hover:text-[#17243b] transition-colors shrink-0 shadow-2xs" title="ย้อนกลับ">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </a>
+              <div>
+                <div class="flex items-center gap-3">
+                  <h2 class="text-2xl lg:text-[28px] font-bold text-[#17243b] tracking-tight" data-i18n="pageTitle">รายละเอียดลูกค้า</h2>
+                  <span id="headerCustomerCodeBadge" class="font-mono text-xs font-semibold px-2.5 py-1 rounded-md bg-[#ebf0fe] text-[#365cf5] border border-[#d6e2fe]">
+                    CUST-88491
+                  </span>
+                  <span id="headerStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef3c7] text-[#92400e] border border-[#fde68a]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#f59e0b]"></span>
+                    <span id="headerStatusText" data-i18n="statusPendingBranch">รอกำหนดสาขา</span>
+                  </span>
+                </div>
+                <p class="text-sm text-[#52627a] mt-0.5" id="customerSubtitleDesc">
+                  <span data-i18n="customerHeaderType">ลูกค้ารูปแบบบริษัท (B2B)</span> • <span data-i18n="customerHeaderArea">โซนภาคกลางและปริมณฑล</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center gap-3 shrink-0">
+              <button
+                id="btnRefresh"
+                onclick="handleRefresh()"
+                class="inline-flex items-center justify-center gap-2 px-4 h-10 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[#17243b] text-sm font-semibold transition-all shadow-2xs active:scale-[0.98]">
+                <svg id="refreshIcon" class="w-4 h-4 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span data-i18n="actionRefresh">รีเฟรช</span>
+              </button>
+
+              <button
+                id="btnOpenEditModal"
+                onclick="openEditDialog()"
+                class="inline-flex items-center justify-center gap-2 px-4 h-10 rounded-lg bg-[#365cf5] hover:bg-[#2a4cd4] text-white text-sm font-semibold transition-all shadow-sm active:scale-[0.98]">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <span data-i18n="actionEditCustomer">แก้ไขลูกค้า</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success Toast Notification (Dismissable) -->
+        <div id="toastSuccess" class="hidden rounded-xl bg-[#ecfdf5] border border-[#a7f3d0] p-4 text-[#065f46] flex items-center justify-between shadow-2xs transition-all">
+          <div class="flex items-center gap-3 text-sm font-medium">
+            <svg class="w-5 h-5 text-[#10b981] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 1118 0z" />
+            </svg>
+            <span id="toastMsg" data-i18n="msgSavedCustomerSuccess">บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว</span>
+          </div>
+          <button onclick="dismissToast()" class="text-[#047857] hover:text-[#065f46] p-1 rounded-md" title="ปิด">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Summary KPI Metrics Cards (3 Cards) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Card 1: Customer ID -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-2xs">
+            <div class="flex items-center justify-between text-xs text-[#52627a] font-medium">
+              <span data-i18n="labelCustomerIdCard">Customer ID</span>
+              <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span id="metricCustomerCode" class="text-2xl font-bold font-mono text-[#17243b]">CUST-88491</span>
+            </div>
+            <div class="mt-2 text-xs text-[#52627a] flex items-center gap-1.5 truncate">
+              <span data-i18n="labelCustomerStatus">สถานะ</span>:
+              <span id="metricStatusText" class="font-medium text-[#b45309]" data-i18n="statusWaiting">รอคิว</span>
+              <span>•</span>
+              <span data-i18n="subtextVerifiedAccount">บัญชีธุรกิจยืนยันแล้ว</span>
+            </div>
+          </div>
+
+          <!-- Card 2: จำนวนออเดอร์ -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-2xs">
+            <div class="flex items-center justify-between text-xs text-[#52627a] font-medium">
+              <span data-i18n="metricOrderCountLabel">จำนวนออเดอร์</span>
+              <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span id="metricOrderCount" class="text-2xl font-bold text-[#17243b]">3</span>
+              <span class="text-xs text-[#52627a]" data-i18n="unitOrders">รายการ</span>
+            </div>
+            <div class="mt-2 text-xs text-[#52627a]">
+              <span data-i18n="metricLatestOrderDate">ออเดอร์ล่าสุด 14 ก.พ. 2568</span>
+            </div>
+          </div>
+
+          <!-- Card 3: มูลค่าออเดอร์ที่แสดง -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-2xs">
+            <div class="flex items-center justify-between text-xs text-[#52627a] font-medium">
+              <span data-i18n="metricTotalValueLabel">มูลค่าออเดอร์ที่แสดง</span>
+              <span class="w-2 h-2 rounded-full bg-[#f59e0b]"></span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span id="metricTotalValue" class="text-2xl font-bold font-mono text-[#17243b]">฿142,500.00</span>
+            </div>
+            <div class="mt-2 text-xs text-[#52627a] truncate">
+              <span data-i18n="subtextCreditLimit">วงเงินเครดิต ฿500,000 (คงเหลือ 71.5%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Detail Grid: 2 Columns (Fact sheet on left, Orders list on right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- Left Column (5 cols): ข้อมูลลูกค้า (Customer Info Fact Sheet) -->
+          <div class="lg:col-span-5 space-y-6">
+            <div class="bg-white rounded-xl border border-[#e1e7f0] overflow-hidden shadow-2xs">
+              <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-[#ebf0fe] text-[#365cf5] flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <h3 class="font-bold text-base text-[#17243b]" data-i18n="cardTitleCustomerInfo">ข้อมูลลูกค้า</h3>
+                </div>
+                <button
+                  onclick="openEditDialog()"
+                  class="text-xs font-semibold text-[#365cf5] hover:text-[#2a4cd4] inline-flex items-center gap-1">
+                  <span data-i18n="actionEditInline">แก้ไข</span>
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Fact Details List -->
+              <div class="p-6 space-y-4 text-sm divide-y divide-[#f1f5f9]">
+
+                <!-- รหัสลูกค้า / Customer ID -->
+                <div class="pt-1 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldCustomerCode">รหัสลูกค้า</span>
+                  <span id="factCustomerCode" class="font-mono font-semibold text-xs text-[#17243b] text-right">CUST-88491</span>
+                </div>
+
+                <!-- ชื่อลูกค้า -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldCustomerName">ชื่อลูกค้า</span>
+                  <div class="text-right">
+                    <div id="factCustomerName" class="font-bold text-[#17243b]">ร้านทรัพย์ทวีค้าส่ง (สำโรง)</div>
+                    <div class="text-xs text-[#52627a] mt-0.5" id="factContactPerson">ผู้ติดต่อ: คุณธนกฤต มั่งมี</div>
+                  </div>
+                </div>
+
+                <!-- อีเมล -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldEmail">อีเมล</span>
+                  <a id="factEmail" href="mailto:contact@subtawee.co.th" class="font-mono text-xs text-[#365cf5] hover:underline text-right break-all">
+                    contact@subtawee.co.th
+                  </a>
+                </div>
+
+                <!-- เบอร์โทร -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldPhone">เบอร์โทร</span>
+                  <span id="factPhone" class="font-mono text-xs font-medium text-[#17243b] text-right">081-445-9988</span>
+                </div>
+
+                <!-- สถานะ -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldStatus">สถานะ</span>
+                  <div class="text-right">
+                    <span id="factStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fef3c7] text-[#92400e]">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#f59e0b]"></span>
+                      <span id="factStatusText" data-i18n="statusWaiting">รอคิว</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- ชื่อสาขา -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldBranchName">ชื่อสาขา</span>
+                  <span id="factBranchName" class="font-medium text-xs text-[#17243b] text-right">คลังบางนา กม.18 (รอผูกสาขา)</span>
+                </div>
+
+                <!-- ประเภทบัญชี / เครดิต -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldCustomerType">ประเภท / วงเงิน</span>
+                  <div class="text-right">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-xs" data-i18n="badgeCompany">บริษัท</span>
+                    <div class="text-xs text-[#52627a] mt-1" data-i18n="creditTermText">เครดิต 30 วัน (วงเงิน ฿500,000)</div>
+                  </div>
+                </div>
+
+                <!-- ที่อยู่จัดส่งหลัก -->
+                <div class="pt-3 flex items-start justify-between gap-4">
+                  <span class="text-xs font-medium text-[#52627a] shrink-0" data-i18n="fieldDeliveryAddress">ที่อยู่จัดส่ง</span>
+                  <p class="text-xs text-[#52627a] text-right max-w-[240px] leading-relaxed">
+                    88/12 หมู่ 4 ถนนสุขุมวิท ตำบลเทพารักษ์ อำเภอเมืองสมุทรปราการ จ.สมุทรปราการ 10270
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Context Helper Note -->
+            <div class="rounded-xl border border-[#dbeafe] bg-[#eff6ff] p-4 text-xs text-[#1e40af] flex items-start gap-3 shadow-2xs">
+              <svg class="w-4 h-4 text-[#3b82f6] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div class="space-y-1">
+                <div class="font-semibold" data-i18n="tipDistributionTitle">คำแนะนำการกระจายสินค้า:</div>
+                <div class="text-[#3b82f6] leading-relaxed" data-i18n="tipDistributionText">
+                  ลูกค้ารายนี้ยังไม่ถูกกำหนดสาขาจัดส่งหลักอย่างเป็นทางการ — เจ้าหน้าที่สามารถผูกสาขาผ่านหน้าจอตั้งค่าทีมงานเพื่อเริ่มจัดส่งตามรอบปกติ
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column (7 cols): ออเดอร์ของลูกค้า (Customer Orders Section) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="bg-white rounded-xl border border-[#e1e7f0] overflow-hidden shadow-2xs">
+              <!-- Section Header -->
+              <div class="px-6 py-4 border-b border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-[#ebf0fe] text-[#365cf5] flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base text-[#17243b]" data-i18n="sectionOrdersTitle">ออเดอร์ของลูกค้า</h3>
+                  </div>
+                </div>
+                <div class="text-xs text-[#52627a]">
+                  <span data-i18n="ordersSummaryCount">แสดง 3 รายการล่าสุด</span> (<span data-i18n="labelSampleDataParen">ข้อมูลตัวอย่าง</span>)
+                </div>
+              </div>
+
+              <!-- Orders Table (Scrollable within container) -->
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse" id="ordersTable">
+                  <thead>
+                    <tr class="border-b border-[#e1e7f0] bg-[#fafbfd] text-xs font-semibold text-[#52627a]">
+                      <th class="py-3 px-5" data-i18n="thOrderCode">รหัสออเดอร์</th>
+                      <th class="py-3 px-4" data-i18n="thOrderStatus">สถานะ</th>
+                      <th class="py-3 px-4 text-right" data-i18n="thOrderTotal">ยอดรวม</th>
+                      <th class="py-3 px-5 text-right" data-i18n="thOrderCreatedAt">สร้างเมื่อ</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-[#f1f5f9] text-xs">
+                    <!-- Row 1 -->
+                    <tr class="hover:bg-[#f8fafc] transition-colors">
+                      <td class="py-3 px-5">
+                        <a href="/orders/ORD-2025-0891" class="font-mono font-semibold text-[#365cf5] hover:underline flex items-center gap-1.5">
+                          ORD-2025-0891
+                          <svg class="w-3 h-3 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                        <div class="text-[11px] text-[#52627a] mt-0.5">น้ำดื่มบริสุทธิ์ 600ml (450 แพ็ค)</div>
+                      </td>
+                      <td class="py-3 px-4">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#ecfdf5] text-[#065f46]">
+                          <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
+                          <span data-i18n="orderStatusCompleted">สำเร็จแล้ว</span>
+                        </span>
+                      </td>
+                      <td class="py-3 px-4 text-right font-mono font-medium text-[#17243b]">
+                        ฿54,200.00
+                      </td>
+                      <td class="py-3 px-5 text-right text-[#52627a] font-mono">
+                        14 ก.พ. 2568 11:20
+                      </td>
+                    </tr>
+
+                    <!-- Row 2 -->
+                    <tr class="hover:bg-[#f8fafc] transition-colors">
+                      <td class="py-3 px-5">
+                        <a href="/orders/ORD-2025-0742" class="font-mono font-semibold text-[#365cf5] hover:underline flex items-center gap-1.5">
+                          ORD-2025-0742
+                          <svg class="w-3 h-3 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                        <div class="text-[11px] text-[#52627a] mt-0.5">ข้าวเกรียบกุ้งกรอบคัดพิเศษ (80 ลัง)</div>
+                      </td>
+                      <td class="py-3 px-4">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#eff6ff] text-[#1e40af]">
+                          <span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span>
+                          <span data-i18n="orderStatusDelivered">กำลังจัดส่ง</span>
+                        </span>
+                      </td>
+                      <td class="py-3 px-4 text-right font-mono font-medium text-[#17243b]">
+                        ฿48,300.00
+                      </td>
+                      <td class="py-3 px-5 text-right text-[#52627a] font-mono">
+                        28 ม.ค. 2568 15:45
+                      </td>
+                    </tr>
+
+                    <!-- Row 3 -->
+                    <tr class="hover:bg-[#f8fafc] transition-colors">
+                      <td class="py-3 px-5">
+                        <a href="/orders/ORD-2025-0610" class="font-mono font-semibold text-[#365cf5] hover:underline flex items-center gap-1.5">
+                          ORD-2025-0610
+                          <svg class="w-3 h-3 text-[#52627a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                        <div class="text-[11px] text-[#52627a] mt-0.5">สินค้าอุปโภคบริโภคคละชุด A (120 ลัง)</div>
+                      </td>
+                      <td class="py-3 px-4">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#ecfdf5] text-[#065f46]">
+                          <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
+                          <span data-i18n="orderStatusCompleted">สำเร็จแล้ว</span>
+                        </span>
+                      </td>
+                      <td class="py-3 px-4 text-right font-mono font-medium text-[#17243b]">
+                        ฿40,000.00
+                      </td>
+                      <td class="py-3 px-5 text-right text-[#52627a] font-mono">
+                        12 ม.ค. 2568 09:15
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Orders Table Footer -->
+              <div class="p-4 border-t border-[#e1e7f0] bg-[#fafbfd] flex items-center justify-between text-xs text-[#52627a]">
+                <div data-i18n="orderTableFootnote">แสดงเฉพาะออเดอร์ที่เชื่อมต่อกับรหัสลูกค้านี้ (อิงระบบบัญชีศูนย์กลาง)</div>
+                <a href="/orders?customer_id=CUST-88491" class="font-semibold text-[#365cf5] hover:underline inline-flex items-center gap-1" data-i18n="actionViewAllCustomerOrders">
+                  ดูออเดอร์ทั้งหมดในระบบ
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Empty State Simulation Card (for demonstration & completeness) -->
+            <div id="emptyOrdersBox" class="hidden bg-white rounded-xl border border-dashed border-[#cbd5e1] p-8 text-center">
+              <div class="w-12 h-12 mx-auto rounded-full bg-[#f1f5f9] flex items-center justify-center text-[#94a3b8] mb-3">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+              </div>
+              <h4 class="text-sm font-bold text-[#17243b]" data-i18n="emptyOrdersTitle">ยังไม่มีออเดอร์ของลูกค้านี้</h4>
+              <p class="text-xs text-[#52627a] mt-1" data-i18n="emptyOrdersDesc">เมื่อมีออเดอร์ที่สั่งซื้อจากลูกค้ารายนี้ ประวัติรายการจะแสดงที่นี่โดยอัตโนมัติ</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Customer Modal Dialog (Creation / Editing named dialog with keyboard Trap, Escape support, Inline Errors, Cancel/Save) -->
+  <div id="editCustomerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 modal-backdrop" onclick="closeEditDialog()"></div>
+
+    <!-- Dialog Card -->
+    <div class="relative bg-white rounded-2xl border border-[#e1e7f0] shadow-xl w-full max-w-lg overflow-hidden transform transition-all z-10 animate-in fade-in zoom-in-95 duration-150">
+
+      <!-- Dialog Header -->
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-white">
+        <div>
+          <h3 id="dialogTitle" class="text-lg font-bold text-[#17243b]" data-i18n="dialogEditTitle">แก้ไขลูกค้า</h3>
+          <p class="text-xs text-[#52627a] mt-0.5" data-i18n="dialogEditSubtitle">ปรับปรุงข้อมูลการติดต่อและสถานะลูกค้าในแพลตฟอร์ม</p>
+        </div>
+        <button
+          id="btnDialogCloseX"
+          onclick="closeEditDialog()"
+          class="w-8 h-8 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-[#f6f8fc] flex items-center justify-center transition-colors"
+          title="ปิดรายละเอียด (Escape)">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Dialog Form Body -->
+      <form id="editCustomerForm" onsubmit="handleSaveCustomer(event)" class="p-6 space-y-4">
+
+        <!-- Field 1: Customer ID (Read-only) -->
+        <div>
+          <label class="block text-xs font-semibold text-[#52627a] mb-1.5" data-i18n="formLabelCustomerCode">
+            รหัสลูกค้า (Customer ID)
+          </label>
+          <input
+            type="text"
+            id="formCustomerId"
+            value="CUST-88491"
+            readonly
+            class="w-full h-10 px-3 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg text-sm font-mono text-[#52627a] cursor-not-allowed select-none"
+          />
+        </div>
+
+        <!-- Field 2: ชื่อลูกค้า (Customer Name) -->
+        <div>
+          <label for="formCustomerName" class="block text-xs font-semibold text-[#17243b] mb-1.5">
+            <span data-i18n="formLabelCustomerName">ชื่อลูกค้า</span> <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="formCustomerName"
+            value="ร้านทรัพย์ทวีค้าส่ง (สำโรง)"
+            required
+            class="w-full h-10 px-3 bg-white border border-[#cbd5e1] rounded-lg text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:border-transparent transition-all"
+          />
+          <p id="errorCustomerName" class="hidden text-xs text-red-600 mt-1 font-medium" data-i18n="errCustomerNameRequired">กรุณากรอกชื่อลูกค้า</p>
+        </div>
+
+        <!-- Field 3: อีเมล (Email) -->
+        <div>
+          <label for="formEmail" class="block text-xs font-semibold text-[#17243b] mb-1.5">
+            <span data-i18n="formLabelEmail">อีเมล</span> <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            id="formEmail"
+            value="contact@subtawee.co.th"
+            required
+            class="w-full h-10 px-3 bg-white border border-[#cbd5e1] rounded-lg text-sm font-mono text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:border-transparent transition-all"
+          />
+          <p id="errorEmail" class="hidden text-xs text-red-600 mt-1 font-medium" data-i18n="errEmailInvalid">รูปแบบอีเมลไม่ถูกต้อง</p>
+        </div>
+
+        <!-- Field 4: เบอร์โทร (Phone) -->
+        <div>
+          <label for="formPhone" class="block text-xs font-semibold text-[#17243b] mb-1.5">
+            <span data-i18n="formLabelPhone">เบอร์โทร</span> <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="tel"
+            id="formPhone"
+            value="081-445-9988"
+            required
+            class="w-full h-10 px-3 bg-white border border-[#cbd5e1] rounded-lg text-sm font-mono text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:border-transparent transition-all"
+          />
+          <p id="errorPhone" class="hidden text-xs text-red-600 mt-1 font-medium" data-i18n="errPhoneRequired">กรุณากรอกเบอร์โทรติดต่อ</p>
+        </div>
+
+        <!-- Field 5: ชื่อสาขา (Branch Name) -->
+        <div>
+          <label for="formBranchName" class="block text-xs font-semibold text-[#17243b] mb-1.5" data-i18n="formLabelBranchName">
+            ชื่อสาขา
+          </label>
+          <input
+            type="text"
+            id="formBranchName"
+            value="คลังบางนา กม.18 (รอผูกสาขา)"
+            class="w-full h-10 px-3 bg-white border border-[#cbd5e1] rounded-lg text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:border-transparent transition-all"
+          />
+        </div>
+
+        <!-- Field 6: สถานะ (Status selector) -->
+        <div>
+          <label for="formStatus" class="block text-xs font-semibold text-[#17243b] mb-1.5" data-i18n="formLabelStatus">
+            สถานะ
+          </label>
+          <select
+            id="formStatus"
+            class="w-full h-10 px-3 bg-white border border-[#cbd5e1] rounded-lg text-sm text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:border-transparent transition-all">
+            <option value="pending" selected data-i18n="optStatusPending">รอคิว (รอกำหนดสาขา)</option>
+            <option value="active" data-i18n="optStatusActive">เปิดใช้งานปกติ</option>
+            <option value="suspended" data-i18n="optStatusSuspended">ระงับชั่วคราว</option>
+          </select>
+        </div>
+
+        <!-- Dialog Footer Actions (Sticky Cancel/Save) -->
+        <div class="pt-4 border-t border-[#e1e7f0] flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onclick="closeEditDialog()"
+            class="px-4 h-10 rounded-lg bg-white border border-[#cbd5e1] hover:bg-[#f6f8fc] text-[#52627a] hover:text-[#17243b] text-sm font-semibold transition-all">
+            <span data-i18n="actionCloseDetail">ปิดรายละเอียด</span>
+          </button>
+          <button
+            type="submit"
+            id="btnSaveCustomer"
+            class="px-5 h-10 rounded-lg bg-[#365cf5] hover:bg-[#2a4cd4] text-white text-sm font-semibold transition-all shadow-sm flex items-center gap-2">
+            <span data-i18n="actionSaveCustomer">บันทึกการแก้ไข</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- REQUIRED INVISIBLE JSON TRANSLATIONS SCRIPT -->
+  <!-- Keyed by EVERY exact source string from the catalogue -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "รีเฟรช": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "สถานะ": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว": {
+      "th": "บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว",
+      "en": "Customer updated successfully"
+    },
+    "ลูกค้าแพลตฟอร์ม": {
+      "th": "ลูกค้าแพลตฟอร์ม",
+      "en": "Platform Customers"
+    },
+    "รายละเอียดลูกค้า": {
+      "th": "รายละเอียดลูกค้า",
+      "en": "Customer Detail"
+    },
+    "แก้ไขลูกค้า": {
+      "th": "แก้ไขลูกค้า",
+      "en": "Edit Customer"
+    },
+    "ข้อมูลลูกค้า": {
+      "th": "ข้อมูลลูกค้า",
+      "en": "Customer Info"
+    },
+    "ชื่อลูกค้า": {
+      "th": "ชื่อลูกค้า",
+      "en": "Customer Name"
+    },
+    "รหัสลูกค้า": {
+      "th": "รหัสลูกค้า",
+      "en": "Customer Code"
+    },
+    "อีเมล": {
+      "th": "อีเมล",
+      "en": "Email"
+    },
+    "เบอร์โทร": {
+      "th": "เบอร์โทร",
+      "en": "Phone"
+    },
+    "Customer ID": {
+      "th": "Customer ID",
+      "en": "Customer ID"
+    },
+    "จำนวนออเดอร์": {
+      "th": "จำนวนออเดอร์",
+      "en": "Order Count"
+    },
+    "มูลค่าออเดอร์ที่แสดง": {
+      "th": "มูลค่าออเดอร์ที่แสดง",
+      "en": "Displayed Orders Value"
+    },
+    "ออเดอร์ของลูกค้า": {
+      "th": "ออเดอร์ของลูกค้า",
+      "en": "Customer Orders"
+    },
+    "รหัสออเดอร์": {
+      "th": "รหัสออเดอร์",
+      "en": "Order Code"
+    },
+    "ยอดรวม": {
+      "th": "ยอดรวม",
+      "en": "Total"
+    },
+    "สร้างเมื่อ": {
+      "th": "สร้างเมื่อ",
+      "en": "Created At"
+    },
+    "ยังไม่มีออเดอร์ของลูกค้านี้": {
+      "th": "ยังไม่มีออเดอร์ของลูกค้านี้",
+      "en": "No orders for this customer yet"
+    },
+    "เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ": {
+      "th": "เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ",
+      "en": "An error occurred while uploading the video"
+    },
+    "ค้นหาชื่อชุดสินค้า...": {
+      "th": "ค้นหาชื่อชุดสินค้า...",
+      "en": "Search product set name..."
+    },
+    "จัดกึ่งกลาง (กดซ้ำเพื่อยกเลิก)": {
+      "th": "จัดกึ่งกลาง (กดซ้ำเพื่อยกเลิก)",
+      "en": "Align center (press again to cancel)"
+    },
+    "ชื่อสาขา": {
+      "th": "ชื่อสาขา",
+      "en": "Branch Name"
+    },
+    "ตรวจเงื่อนไขซ้ำ (Gate)": {
+      "th": "ตรวจเงื่อนไขซ้ำ (Gate)",
+      "en": "Re-evaluate condition (Gate)"
+    },
+    "นับเฉพาะสินค้าที่เข้าเงื่อนไข": {
+      "th": "นับเฉพาะสินค้าที่เข้าเงื่อนไข",
+      "en": "Count only matching items"
+    },
+    "ปิดรายละเอียด": {
+      "th": "ปิดรายละเอียด",
+      "en": "Close Detail"
+    },
+    "เพิ่มแหล่งฟรี": {
+      "th": "เพิ่มแหล่งฟรี",
+      "en": "Add free source"
+    },
+    "ไม่มีสินค้า": {
+      "th": "ไม่มีสินค้า",
+      "en": "No products"
+    },
+    "ยังไม่มีเหตุการณ์ของบริษัทนี้": {
+      "th": "ยังไม่มีเหตุการณ์ของบริษัทนี้",
+      "en": "No events recorded for this company yet"
+    },
+    "ราคาโปร (ต่อหน่วย)": {
+      "th": "ราคาโปร (ต่อหน่วย)",
+      "en": "Promo Price (per unit)"
+    },
+    "ล็อกอิน {0}": {
+      "th": "ล็อกอิน {0}",
+      "en": "Login {0}"
+    },
+    "วันเวลาเป้าหมาย": {
+      "th": "วันเวลาเป้าหมาย",
+      "en": "Target Date & Time"
+    },
+    "ส่วนลดสูงสุด (บาท)": {
+      "th": "ส่วนลดสูงสุด (บาท)",
+      "en": "Max Discount (THB)"
+    },
+    "หัวข้อ (ไม่บังคับ)": {
+      "th": "หัวข้อ (ไม่บังคับ)",
+      "en": "Topic (optional)"
+    },
+    "ส่ง event ซ้ำ": {
+      "th": "ส่ง event ซ้ำ",
+      "en": "Resend event"
+    }
+  }
+  </script>
+
+  <!-- Interactive JavaScript logic -->
+  <script>
+    // State
+    let currentLang = 'th';
+    let previousActiveElement = null;
+
+    // Additional localized dictionaries for complete UI
+    const uiTranslations = {
+      th: {
+        platformSubtitle: "ระบบจัดการศูนย์ส่งและสาขา",
+        workAreaLabel: "พื้นที่ทำงานหลัก (7 สายงาน)",
+        navStock: "สินค้าและสต็อก",
+        navOrders: "ออเดอร์และการเงิน",
+        navCustomers: "ลูกค้าและบริการ",
+        submenuPlatformCustomers: "ลูกค้าแพลตฟอร์ม",
+        submenuWinback: "ติดตามลูกค้าเก่า (Win-back)",
+        submenuCsDesk: "งานบริการลูกค้า (CS Desk)",
+        submenuLiveChat: "แชตกับลูกค้า (Live chat)",
+        submenuComplaints: "ข้อร้องเรียนและบริการ",
+        navMarketing: "การตลาด",
+        navReports: "รายงานและข้อมูล",
+        navConnections: "ระบบเชื่อมต่อ",
+        navSettings: "ตั้งค่าและทีมงาน",
+        sampleDataBadge: "ข้อมูลตัวอย่าง",
+        breadcrumbCustomerService: "ลูกค้าและบริการ",
+        breadcrumbPlatformCustomers: "ลูกค้าแพลตฟอร์ม",
+        breadcrumbDetail: "รายละเอียดลูกค้า",
+        pageTitle: "รายละเอียดลูกค้า",
+        statusPendingBranch: "รอกำหนดสาขา",
+        customerHeaderType: "ลูกค้ารูปแบบบริษัท (B2B)",
+        customerHeaderArea: "โซนภาคกลางและปริมณฑล",
+        actionRefresh: "รีเฟรช",
+        actionEditCustomer: "แก้ไขลูกค้า",
+        msgSavedCustomerSuccess: "บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว",
+        labelCustomerIdCard: "Customer ID",
+        labelCustomerStatus: "สถานะ",
+        statusWaiting: "รอคิว",
+        statusActive: "เปิดใช้งานปกติ",
+        statusSuspended: "ระงับชั่วคราว",
+        subtextVerifiedAccount: "บัญชีธุรกิจยืนยันแล้ว",
+        metricOrderCountLabel: "จำนวนออเดอร์",
+        unitOrders: "รายการ",
+        metricLatestOrderDate: "ออเดอร์ล่าสุด 14 ก.พ. 2568",
+        metricTotalValueLabel: "มูลค่าออเดอร์ที่แสดง",
+        subtextCreditLimit: "วงเงินเครดิต ฿500,000 (คงเหลือ 71.5%)",
+        cardTitleCustomerInfo: "ข้อมูลลูกค้า",
+        actionEditInline: "แก้ไข",
+        fieldCustomerCode: "รหัสลูกค้า",
+        fieldCustomerName: "ชื่อลูกค้า",
+        fieldEmail: "อีเมล",
+        fieldPhone: "เบอร์โทร",
+        fieldStatus: "สถานะ",
+        fieldBranchName: "ชื่อสาขา",
+        fieldCustomerType: "ประเภท / วงเงิน",
+        badgeCompany: "บริษัท",
+        creditTermText: "เครดิต 30 วัน (วงเงิน ฿500,000)",
+        fieldDeliveryAddress: "ที่อยู่จัดส่ง",
+        tipDistributionTitle: "คำแนะนำการกระจายสินค้า:",
+        tipDistributionText: "ลูกค้ารายนี้ยังไม่ถูกกำหนดสาขาจัดส่งหลักอย่างเป็นทางการ — เจ้าหน้าที่สามารถผูกสาขาผ่านหน้าจอตั้งค่าทีมงานเพื่อเริ่มจัดส่งตามรอบปกติ",
+        sectionOrdersTitle: "ออเดอร์ของลูกค้า",
+        ordersSummaryCount: "แสดง 3 รายการล่าสุด",
+        labelSampleDataParen: "ข้อมูลตัวอย่าง",
+        thOrderCode: "รหัสออเดอร์",
+        thOrderStatus: "สถานะ",
+        thOrderTotal: "ยอดรวม",
+        thOrderCreatedAt: "สร้างเมื่อ",
+        orderStatusCompleted: "สำเร็จแล้ว",
+        orderStatusDelivered: "กำลังจัดส่ง",
+        orderTableFootnote: "แสดงเฉพาะออเดอร์ที่เชื่อมต่อกับรหัสลูกค้านี้ (อิงระบบบัญชีศูนย์กลาง)",
+        actionViewAllCustomerOrders: "ดูออเดอร์ทั้งหมดในระบบ",
+        emptyOrdersTitle: "ยังไม่มีออเดอร์ของลูกค้านี้",
+        emptyOrdersDesc: "เมื่อมีออเดอร์ที่สั่งซื้อจากลูกค้ารายนี้ ประวัติรายการจะแสดงที่นี่โดยอัตโนมัติ",
+        dialogEditTitle: "แก้ไขลูกค้า",
+        dialogEditSubtitle: "ปรับปรุงข้อมูลการติดต่อและสถานะลูกค้าในแพลตฟอร์ม",
+        formLabelCustomerCode: "รหัสลูกค้า (Customer ID)",
+        formLabelCustomerName: "ชื่อลูกค้า",
+        formLabelEmail: "อีเมล",
+        formLabelPhone: "เบอร์โทร",
+        formLabelBranchName: "ชื่อสาขา",
+        formLabelStatus: "สถานะ",
+        optStatusPending: "รอคิว (รอกำหนดสาขา)",
+        optStatusActive: "เปิดใช้งานปกติ",
+        optStatusSuspended: "ระงับชั่วคราว",
+        actionCloseDetail: "ปิดรายละเอียด",
+        actionSaveCustomer: "บันทึกการแก้ไข",
+        errCustomerNameRequired: "กรุณากรอกชื่อลูกค้า",
+        errEmailInvalid: "รูปแบบอีเมลไม่ถูกต้อง",
+        errPhoneRequired: "กรุณากรอกเบอร์โทรติดต่อ",
+        searchPlaceholder: "ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)"
+      },
+      en: {
+        platformSubtitle: "Hub & Branch Management",
+        workAreaLabel: "Main Work Areas (7 Areas)",
+        navStock: "Products & Stock",
+        navOrders: "Orders & Finance",
+        navCustomers: "Customers & Service",
+        submenuPlatformCustomers: "Platform Customers",
+        submenuWinback: "Win-back Customers",
+        submenuCsDesk: "CS Desk",
+        submenuLiveChat: "Live chat",
+        submenuComplaints: "Complaints & Service",
+        navMarketing: "Marketing",
+        navReports: "Reports & Data",
+        navConnections: "Connections",
+        navSettings: "Settings & Team",
+        sampleDataBadge: "Sample Data",
+        breadcrumbCustomerService: "Customers & Service",
+        breadcrumbPlatformCustomers: "Platform Customers",
+        breadcrumbDetail: "Customer Detail",
+        pageTitle: "Customer Detail",
+        statusPendingBranch: "Pending Branch",
+        customerHeaderType: "Corporate Customer (B2B)",
+        customerHeaderArea: "Central Region & Metro",
+        actionRefresh: "Refresh",
+        actionEditCustomer: "Edit Customer",
+        msgSavedCustomerSuccess: "Customer updated successfully",
+        labelCustomerIdCard: "Customer ID",
+        labelCustomerStatus: "Status",
+        statusWaiting: "In Queue",
+        statusActive: "Active",
+        statusSuspended: "Suspended",
+        subtextVerifiedAccount: "Verified Corporate Account",
+        metricOrderCountLabel: "Order Count",
+        unitOrders: "orders",
+        metricLatestOrderDate: "Latest order Feb 14, 2025",
+        metricTotalValueLabel: "Displayed Orders Value",
+        subtextCreditLimit: "Credit Limit ฿500,000 (Remaining 71.5%)",
+        cardTitleCustomerInfo: "Customer Info",
+        actionEditInline: "Edit",
+        fieldCustomerCode: "Customer Code",
+        fieldCustomerName: "Customer Name",
+        fieldEmail: "Email",
+        fieldPhone: "Phone",
+        fieldStatus: "Status",
+        fieldBranchName: "Branch Name",
+        fieldCustomerType: "Type / Credit",
+        badgeCompany: "Company",
+        creditTermText: "Credit 30 Days (Limit ฿500,000)",
+        fieldDeliveryAddress: "Delivery Address",
+        tipDistributionTitle: "Distribution Tip:",
+        tipDistributionText: "This customer has not been officially assigned to a fulfillment branch yet — operators can map branches under Team Settings to commence deliveries.",
+        sectionOrdersTitle: "Customer Orders",
+        ordersSummaryCount: "Showing 3 recent orders",
+        labelSampleDataParen: "Sample data",
+        thOrderCode: "Order Code",
+        thOrderStatus: "Status",
+        thOrderTotal: "Total",
+        thOrderCreatedAt: "Created At",
+        orderStatusCompleted: "Completed",
+        orderStatusDelivered: "Out for delivery",
+        orderTableFootnote: "Showing only orders linked to this customer code (central accounting sync)",
+        actionViewAllCustomerOrders: "View all orders in system",
+        emptyOrdersTitle: "No orders for this customer yet",
+        emptyOrdersDesc: "Orders placed by this customer will automatically appear in this history.",
+        dialogEditTitle: "Edit Customer",
+        dialogEditSubtitle: "Update contact information and customer status on platform",
+        formLabelCustomerCode: "Customer ID",
+        formLabelCustomerName: "Customer Name",
+        formLabelEmail: "Email",
+        formLabelPhone: "Phone",
+        formLabelBranchName: "Branch Name",
+        formLabelStatus: "Status",
+        optStatusPending: "In Queue (Pending branch)",
+        optStatusActive: "Active",
+        optStatusSuspended: "Suspended",
+        actionCloseDetail: "Close Detail",
+        actionSaveCustomer: "Save Changes",
+        errCustomerNameRequired: "Please enter customer name",
+        errEmailInvalid: "Invalid email address format",
+        errPhoneRequired: "Please enter contact phone number",
+        searchPlaceholder: "Search on this page... (current page only)"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('langThBtn');
+      const enBtn = document.getElementById('langEnBtn');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        enBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] font-normal transition-all";
+        document.documentElement.lang = 'th';
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        thBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] font-normal transition-all";
+        document.documentElement.lang = 'en';
+      }
+
+      // Update elements with data-i18n attribute
+      const elements = document.querySelectorAll('[data-i18n]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (uiTranslations[lang] && uiTranslations[lang][key]) {
+          el.textContent = uiTranslations[lang][key];
+        }
+      });
+
+      // Update placeholder
+      const searchInput = document.getElementById('pageSearchInput');
+      if (searchInput && uiTranslations[lang]) {
+        searchInput.placeholder = uiTranslations[lang].searchPlaceholder;
+      }
+    }
+
+    // Refresh action with animation
+    function handleRefresh() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLang === 'th' ? "รีเฟรชข้อมูลลูกค้าและออเดอร์ล่าสุดแล้ว" : "Customer and orders data refreshed");
+      }, 600);
+    }
+
+    // Toast helpers
+    function showToast(msg) {
+      const toast = document.getElementById('toastSuccess');
+      const msgEl = document.getElementById('toastMsg');
+      if (msg) msgEl.textContent = msg;
+      toast.classList.remove('hidden');
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('toastSuccess');
+      toast.classList.add('hidden');
+    }
+
+    // Modal dialog controls
+    function openEditDialog() {
+      previousActiveElement = document.activeElement;
+      const modal = document.getElementById('editCustomerModal');
+      modal.classList.remove('hidden');
+
+      // Sync form with current values
+      document.getElementById('formCustomerName').value = document.getElementById('factCustomerName').textContent.trim();
+      document.getElementById('formEmail').value = document.getElementById('factEmail').textContent.trim();
+      document.getElementById('formPhone').value = document.getElementById('factPhone').textContent.trim();
+
+      const currentBranch = document.getElementById('factBranchName').textContent.trim();
+      document.getElementById('formBranchName').value = currentBranch;
+
+      // Focus first interactive input
+      setTimeout(() => {
+        document.getElementById('formCustomerName').focus();
+      }, 50);
+
+      // Add Escape key handler
+      document.addEventListener('keydown', handleDialogKeydown);
+    }
+
+    function closeEditDialog() {
+      const modal = document.getElementById('editCustomerModal');
+      modal.classList.add('hidden');
+      document.removeEventListener('keydown', handleDialogKeydown);
+
+      // Return focus to trigger
+      if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
+        previousActiveElement.focus();
+      }
+    }
+
+    function handleDialogKeydown(e) {
+      if (e.key === 'Escape') {
+        closeEditDialog();
+      }
+      // Simple focus trap
+      if (e.key === 'Tab') {
+        const modal = document.getElementById('editCustomerModal');
+        const focusable = modal.querySelectorAll('input:not([readonly]), select, button');
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      }
+    }
+
+    // Form save handling
+    function handleSaveCustomer(e) {
+      e.preventDefault();
+
+      const nameVal = document.getElementById('formCustomerName').value.trim();
+      const emailVal = document.getElementById('formEmail').value.trim();
+      const phoneVal = document.getElementById('formPhone').value.trim();
+      const branchVal = document.getElementById('formBranchName').value.trim();
+      const statusVal = document.getElementById('formStatus').value;
+
+      // Validate
+      let isValid = true;
+      if (!nameVal) {
+        document.getElementById('errorCustomerName').classList.remove('hidden');
+        isValid = false;
+      } else {
+        document.getElementById('errorCustomerName').classList.add('hidden');
+      }
+
+      if (!emailVal || !emailVal.includes('@')) {
+        document.getElementById('errorEmail').classList.remove('hidden');
+        isValid = false;
+      } else {
+        document.getElementById('errorEmail').classList.add('hidden');
+      }
+
+      if (!phoneVal) {
+        document.getElementById('errorPhone').classList.remove('hidden');
+        isValid = false;
+      } else {
+        document.getElementById('errorPhone').classList.add('hidden');
+      }
+
+      if (!isValid) return;
+
+      // Apply changes to fact sheet
+      document.getElementById('factCustomerName').textContent = nameVal;
+      document.getElementById('factEmail').textContent = emailVal;
+      document.getElementById('factEmail').href = 'mailto:' + emailVal;
+      document.getElementById('factPhone').textContent = phoneVal;
+      document.getElementById('factBranchName').textContent = branchVal || (currentLang === 'th' ? "ไม่ได้ระบุ" : "Not specified");
+
+      // Update status badges if changed
+      if (statusVal === 'active') {
+        updateStatusToActive();
+      } else if (statusVal === 'suspended') {
+        updateStatusToSuspended();
+      } else {
+        updateStatusToPending();
+      }
+
+      closeEditDialog();
+      showToast(uiTranslations[currentLang].msgSavedCustomerSuccess);
+    }
+
+    function updateStatusToActive() {
+      const headerText = document.getElementById('headerStatusText');
+      const headerBadge = document.getElementById('headerStatusBadge');
+      const factText = document.getElementById('factStatusText');
+      const factBadge = document.getElementById('factStatusBadge');
+      const metricText = document.getElementById('metricStatusText');
+
+      const txt = currentLang === 'th' ? "เปิดใช้งานปกติ" : "Active";
+      headerText.textContent = txt;
+      factText.textContent = txt;
+      metricText.textContent = txt;
+      metricText.className = "font-medium text-[#157347]";
+
+      headerBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0]";
+      factBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ecfdf5] text-[#065f46]";
+    }
+
+    function updateStatusToPending() {
+      const headerText = document.getElementById('headerStatusText');
+      const headerBadge = document.getElementById('headerStatusBadge');
+      const factText = document.getElementById('factStatusText');
+      const factBadge = document.getElementById('factStatusBadge');
+      const metricText = document.getElementById('metricStatusText');
+
+      const txt = currentLang === 'th' ? "รอกำหนดสาขา" : "Pending Branch";
+      const txtWaiting = currentLang === 'th' ? "รอคิว" : "In Queue";
+      headerText.textContent = txt;
+      factText.textContent = txtWaiting;
+      metricText.textContent = txtWaiting;
+      metricText.className = "font-medium text-[#b45309]";
+
+      headerBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef3c7] text-[#92400e] border border-[#fde68a]";
+      factBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fef3c7] text-[#92400e]";
+    }
+
+    function updateStatusToSuspended() {
+      const headerText = document.getElementById('headerStatusText');
+      const headerBadge = document.getElementById('headerStatusBadge');
+      const factText = document.getElementById('factStatusText');
+      const factBadge = document.getElementById('factStatusBadge');
+      const metricText = document.getElementById('metricStatusText');
+
+      const txt = currentLang === 'th' ? "ระงับชั่วคราว" : "Suspended";
+      headerText.textContent = txt;
+      factText.textContent = txt;
+      metricText.textContent = txt;
+      metricText.className = "font-medium text-[#c2333f]";
+
+      headerBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef2f2] text-[#991b1b] border border-[#fecaca]";
+      factBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fef2f2] text-[#991b1b]";
+    }
+
+    // Page search input interaction (searches current page table rows)
+    document.getElementById('pageSearchInput').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#ordersTable tbody tr');
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(query)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      const emptyBox = document.getElementById('emptyOrdersBox');
+      const ordersTable = document.getElementById('ordersTable');
+      if (visibleCount === 0 && query !== '') {
+        emptyBox.classList.remove('hidden');
+      } else {
+        emptyBox.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

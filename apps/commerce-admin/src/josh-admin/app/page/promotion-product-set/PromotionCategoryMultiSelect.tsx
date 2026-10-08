@@ -10,6 +10,8 @@ import {
   toggleCategoryId,
 } from './promotion-product-set.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function labelOf(row: CategoryRow): string {
   const name = row.category_name_en || row.category_id_uuid;
   return row.cat_code ? `${name} (${row.cat_code})` : name;
@@ -76,6 +78,7 @@ function CategoryNode({
 
 /** เลือกหมวดหมู่แบบหลายรายการ (dropdown ทับ tree) — ติ๊กแม่ครอบลูกทั้งกิ่ง, ค้นหาได้ทุกชั้น */
 export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Props) {
+  __useUiLocale();
   const [open, setOpen] = useState(false);
   const rootRef = useCloseOnOutsideClick<HTMLDivElement>(open, setOpen);
   const [search, setSearch] = useState('');
@@ -106,7 +109,7 @@ export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Pr
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between rounded-lg border-2 border-primary-border bg-white px-3 py-2 text-sm text-ink hover:border-primary"
       >
-        <span>เลือกหมวดหมู่ ({selectedIds.length})</span>
+        <span>{__uiText("เลือกหมวดหมู่ (")}{selectedIds.length})</span>
         <span className="text-xs text-gray-400">{open ? '▲' : '▼'}</span>
       </button>
 
@@ -115,7 +118,7 @@ export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Pr
           <div className="border-b border-gray-100 p-2">
             <Input
               icon={<AiOutlineSearch size={18} />}
-              placeholder="ค้นหาหมวดหมู่ทุกชั้น..."
+              placeholder={__uiText("ค้นหาหมวดหมู่ทุกชั้น...")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -123,7 +126,7 @@ export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Pr
           <div className="max-h-64 overflow-y-auto p-2">
             {search.trim() ? (
               searchResults.length === 0 ? (
-                <p className="py-4 text-center text-xs text-gray-400">ไม่พบหมวดที่ตรงกับคำค้น</p>
+                <p className="py-4 text-center text-xs text-gray-400">{__uiText("ไม่พบหมวดที่ตรงกับคำค้น")}</p>
               ) : (
                 <ul>
                   {searchResults.map((row) => (
@@ -140,7 +143,7 @@ export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Pr
                 </ul>
               )
             ) : roots.length === 0 ? (
-              <p className="py-4 text-center text-xs text-gray-400">ไม่พบหมวดหมู่</p>
+              <p className="py-4 text-center text-xs text-gray-400">{__uiText("ไม่พบหมวดหมู่")}</p>
             ) : (
               <ul>
                 {roots.map((row) => (
@@ -163,8 +166,7 @@ export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Pr
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/10"
             >
-              เสร็จสิ้น
-            </button>
+              {__uiText("เสร็จสิ้น")}</button>
           </div>
         </div>
       )}

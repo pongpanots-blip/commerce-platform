@@ -6,6 +6,8 @@ import {
 } from 'react-icons/md';
 import type { CreativeElement } from './creative-editor.types';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export const GRID_DND_MIME = 'application/x-creative-element';
 
 const ICONS: Record<CreativeElement['type'], React.ReactNode> = {
@@ -56,6 +58,7 @@ export function GridElementPalette({
   /** Shown under the tiles while `disabled`, explaining what to do instead. */
   disabledHint?: string;
 }) {
+  __useUiLocale();
   return (
     <div>
       <div
@@ -85,7 +88,7 @@ export function GridElementPalette({
               disabled
                 ? disabledHint ?? label
                 : onAdd
-                  ? `${label} — ลากไปวางบน grid หรือคลิกเพื่อเพิ่มท้ายหน้า`
+                  ? __uiText("{0} — ลากไปวางบน grid หรือคลิกเพื่อเพิ่มท้ายหน้า", {"0": label})
                   : label
             }
             className={`flex flex-col items-center gap-1 rounded-md border border-neutral-200 bg-white p-2 text-neutral-500 ${

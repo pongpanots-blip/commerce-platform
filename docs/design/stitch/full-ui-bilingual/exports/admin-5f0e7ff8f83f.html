@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Journey Funnel - สยาม คอมเมิร์ซ</title>
+<!-- Google Fonts: Noto Sans Thai and Latin -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-container": "#365cf5",
+            "on-secondary-fixed": "#0b1c31",
+            "tertiary": "#006139",
+            "surface-dim": "#cddaf9",
+            "on-surface-variant": "#444655",
+            "on-primary-container": "#ededff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "surface-tint": "#214ce7",
+            "on-tertiary-fixed": "#002110",
+            "on-error": "#ffffff",
+            "primary-fixed": "#dde1ff",
+            "outline": "#747687",
+            "on-primary-fixed": "#001257",
+            "tertiary-container": "#217b4e",
+            "inverse-surface": "#243048",
+            "surface-container-highest": "#d7e2ff",
+            "secondary-container": "#d0e1fd",
+            "error-container": "#ffdad6",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "background": "#f9f9ff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "secondary-fixed": "#d3e3ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-error-container": "#93000a",
+            "on-background": "#0e1b32",
+            "secondary": "#4f5f77",
+            "on-primary-fixed-variant": "#0034c0",
+            "inverse-primary": "#b9c3ff",
+            "on-primary": "#ffffff",
+            "surface-bright": "#f9f9ff",
+            "surface": "#f9f9ff",
+            "tertiary-fixed": "#9ef5be",
+            "on-surface": "#0e1b32",
+            "on-secondary-container": "#54647c",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary": "#0a3fdc",
+            "error": "#ba1a1a",
+            "surface-container": "#e8eeff",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-container-high": "#e0e8ff",
+            "on-tertiary-container": "#b7ffcf",
+            "on-tertiary": "#ffffff",
+            "surface-variant": "#d7e2ff",
+            "outline-variant": "#c4c5d8"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "1.5rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "label-lg": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "body-md": ["Noto Sans"]
+          },
+          "fontSize": {
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- INVISIBLE CRITICAL TRANSLATION SCHEMA SCRIPT -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "รีเฟรช": { "th": "รีเฟรช", "en": "Refresh" },
+    "ทั้งหมด": { "th": "ทั้งหมด", "en": "All" },
+    "Platform": { "th": "Platform", "en": "Platform" },
+    "ถึง": { "th": "ถึง", "en": "To" },
+    "จาก": { "th": "จาก", "en": "From" },
+    "Sessions": { "th": "Sessions", "en": "Sessions" },
+    "กำลังโหลด...": { "th": "กำลังโหลด...", "en": "Loading..." },
+    "Audience": { "th": "Audience", "en": "Audience" },
+    "Journey Funnel": { "th": "Journey Funnel", "en": "Journey Funnel" },
+    "Guest": { "th": "Guest", "en": "Guest" },
+    "Logged in": { "th": "Logged in", "en": "Logged in" },
+    "Web": { "th": "Web", "en": "Web" },
+    "iOS": { "th": "iOS", "en": "iOS" },
+    "Android": { "th": "Android", "en": "Android" },
+    "Step": { "th": "Step", "en": "Step" },
+    "Conversion (จาก step ก่อนหน้า)": { "th": "Conversion (จาก step ก่อนหน้า)", "en": "Conversion (from previous step)" },
+    "View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform": {
+      "th": "View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform",
+      "en": "View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion by audience / platform"
+    },
+    "Login sessions (annotation):": { "th": "Login sessions (annotation):", "en": "Login sessions (annotation):" },
+    "Overall conversion (View Item → Purchase):": { "th": "Overall conversion (View Item → Purchase):", "en": "Overall conversion (View Item → Purchase):" },
+    "ยังไม่มีข้อมูลในช่วง / filter ที่เลือก": { "th": "ยังไม่มีข้อมูลในช่วง / filter ที่เลือก", "en": "No data found for selected period / filter" },
+    "แก้ข้อความที่": { "th": "แก้ข้อความที่", "en": "Edit text at" },
+    "คอลัมน์ · ~": { "th": "คอลัมน์ · ~", "en": "Column · ~" },
+    "แจ้งล่าสุด": { "th": "แจ้งล่าสุด", "en": "Last notification" },
+    "ซ่อนองค์ประกอบนี้บน {0}": { "th": "ซ่อนองค์ประกอบนี้บน {0}", "en": "Hide this component on {0}" },
+    "ทดลองดึง": { "th": "ทดลองดึง", "en": "Test pull" },
+    "ปลายทาง iOS (iOS destination)": { "th": "ปลายทาง iOS (iOS destination)", "en": "iOS destination" },
+    "ไฟล์ใหญ่เกินไป! ขนาดต้องไม่เกิน {0}MB": { "th": "ไฟล์ใหญ่เกินไป! ขนาดต้องไม่เกิน {0}MB", "en": "File too large! Max size {0}MB" },
+    "ยอดสั่งซื้อสะสมทั้งหมด": { "th": "ยอดสั่งซื้อสะสมทั้งหมด", "en": "Cumulative Gross Sales" },
+    "ระบบจะมอบสิทธิ์คูปองให้": { "th": "ระบบจะมอบสิทธิ์คูปองให้", "en": "System will assign coupon voucher" },
+    "ลบไม่สำเร็จ ลองใหม่อีกครั้ง": { "th": "ลบไม่สำเร็จ ลองใหม่อีกครั้ง", "en": "Deletion failed. Please retry" },
+    "เว้นว่าง = ใช้รหัสเดิม": { "th": "เว้นว่าง = ใช้รหัสเดิม", "en": "Leave blank = Use previous code" },
+    "แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร": { "th": "แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร", "en": "Filter only campaigns without promotion page" },
+    "ออกเมื่อสำเร็จ": { "th": "ออกเมื่อสำเร็จ", "en": "Exit on completion" },
+    "เคย enroll workflow นี้อยู่แล้ว (cooldown)": { "th": "เคย enroll workflow นี้อยู่แล้ว (cooldown)", "en": "Already enrolled in workflow (cooldown)" },
+    "สลับรูปไม่สำเร็จ": { "th": "สลับรูปไม่สำเร็จ", "en": "Image reorder failed" },
+    "โหลด journey funnel ไม่สำเร็จ": { "th": "โหลด journey funnel ไม่สำเร็จ", "en": "Failed to load journey funnel" }
+  }
+  </script>
+<!-- 1. PERSISTENT OPERATIONAL SIDEBAR (SideNavBar per JSON Blueprint) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md shadow-none select-none">
+<div class="flex flex-col gap-space-md">
+<!-- Header / Logo -->
+<div class="flex items-center gap-space-sm px-space-xs py-space-xs">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md font-bold shadow-sm">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface truncate">สยาม คอมเมิร์ซ</span>
+<span class="text-body-sm font-body-sm text-secondary truncate">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full h-9 rounded-lg bg-primary hover:bg-[#2848D6] text-on-primary text-label-md font-label-md flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Nav Items -->
+<nav class="flex flex-col gap-1 mt-1">
+<!-- 0: สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 1: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 2: ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 3: การตลาด (ACTIVE MATCH - Journey Funnel Screen) -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150" href="#marketing">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</a>
+<!-- 4: รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#analytics">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 5: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#hub">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 6: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="border-t border-outline-variant pt-space-sm flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#help">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="text-label-md font-label-md">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-error hover:bg-error-container/40 transition-colors" href="#logout">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- 2. TOP CONTEXTUAL NAV BAR (TopNavBar per JSON Blueprint) -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-gutter-desktop">
+<!-- Breadcrumbs & Route Badge -->
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1.5 text-secondary text-label-md font-label-md">
+<span>การตลาด</span>
+<span class="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+<span class="text-on-surface font-semibold" data-i18n="Journey Funnel">Journey Funnel</span>
+</div>
+<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-container-high text-secondary border border-outline-variant">
+        admin-5f0e7ff8f83f
+      </span>
+<span class="text-[11px] font-label-sm px-2 py-0.5 rounded bg-[#e8eeff] text-[#0a3fdc] border border-[#d0e1fd] flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0a3fdc]"></span>
+<span>ข้อมูลตัวอย่าง / Sample data</span>
+</span>
+</div>
+<!-- Navigation Controls & Admin Profile -->
+<div class="flex items-center gap-space-md">
+<!-- Bilingual Toggle Pill -->
+<div class="inline-flex items-center p-0.5 rounded-lg bg-surface-container-low border border-outline-variant text-label-sm">
+<button class="px-2.5 py-1 rounded-md bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all" id="lang-btn-th" onclick="setLanguage('th')">ไทย</button>
+<button class="px-2.5 py-1 rounded-md text-secondary hover:text-on-surface transition-all" id="lang-btn-en" onclick="setLanguage('en')">English</button>
+</div>
+<!-- Action Buttons -->
+<button class="h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-label-md font-label-md flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+<span>นำเข้าข้อมูล</span>
+</button>
+<div class="h-5 w-[1px] bg-outline-variant"></div>
+<!-- Icon notifications & Help -->
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors relative" title="แจ้งเตือน">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<!-- Admin User Avatar & Identity -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-semibold text-xs border border-white shadow-sm">
+          SC
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md text-on-surface font-semibold leading-tight">แอดมินการตลาด</span>
+<span class="text-[10px] text-secondary">Siam Commerce SuperAdmin</span>
+</div>
+</div>
+</div>
+</header>
+<!-- 3. FLUID MAIN VIEWPORT CANVAS (Offset for 256px sidebar and 64px header) -->
+<main class="ml-64 pt-16 min-h-screen p-gutter-desktop custom-scroll">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-space-lg">
+<!-- SIMULATED ERROR ALERT (Edge Case Container - toggleable) -->
+<div class="hidden rounded-xl border border-error/30 bg-[#FFF5F5] p-space-md flex items-start justify-between" id="error-banner">
+<div class="flex items-start gap-space-sm text-error">
+<span class="material-symbols-outlined text-[22px] mt-0.5">error</span>
+<div>
+<h4 class="text-headline-sm font-headline-sm font-semibold" data-i18n="โหลด journey funnel ไม่สำเร็จ">โหลด journey funnel ไม่สำเร็จ</h4>
+<p class="text-body-sm text-secondary mt-0.5">ไม่สามารถเชื่อมต่อฐานข้อมูลคลังอีเวนต์ชั่วคราว กรุณาตรวจสอบการตั้งค่า Data Connector หรือกดรีเฟรชอีกครั้ง</p>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface" onclick="toggleErrorBanner(false)">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- PAGE TITLE & CONTROLS SECTION -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-headline-lg font-headline-lg text-on-surface font-bold tracking-tight" data-i18n="Journey Funnel">Journey Funnel</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#E8F8F0] text-[#157347] border border-[#BDE7D0]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1"></span>
+              Live Pipeline
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1" data-i18n="View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform">
+            View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform
+          </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-9 px-4 rounded-lg bg-surface-container-lowest border border-outline-variant hover:border-primary text-on-surface hover:text-primary text-label-md font-label-md flex items-center gap-1.5 transition-all shadow-xs" id="refresh-btn" onclick="triggerRefresh()">
+<span class="material-symbols-outlined text-[18px]" id="refresh-icon">refresh</span>
+<span data-i18n="รีเฟรช">รีเฟรช</span>
+</button>
+<button class="h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-secondary hover:text-on-surface text-label-md font-label-md flex items-center gap-1" onclick="toggleErrorSimulation()" title="จำลองสถานะโหลด Error">
+<span class="material-symbols-outlined text-[16px]">bug_report</span>
+<span class="text-xs">Edge cases</span>
+</button>
+</div>
+</div>
+<!-- FILTER TOOLBAR (Date range, Audience, Platform) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-md shadow-xs">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md items-end">
+<!-- Date Range: From -->
+<div class="md:col-span-3 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span data-i18n="จาก">จาก</span>
+</label>
+<input class="h-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md font-data-tabular px-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-full" type="date" value="2025-05-01"/>
+</div>
+<!-- Date Range: To -->
+<div class="md:col-span-3 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">event</span>
+<span data-i18n="ถึง">ถึง</span>
+</label>
+<input class="h-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md font-data-tabular px-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-full" type="date" value="2025-05-31"/>
+</div>
+<!-- Audience Filter -->
+<div class="md:col-span-3 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person_search</span>
+<span data-i18n="Audience">Audience</span>
+</label>
+<div class="relative">
+<select class="h-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md px-3 pr-8 w-full appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="audience-select" onchange="applyFilters()">
+<option data-i18n="ทั้งหมด" value="all">ทั้งหมด</option>
+<option data-i18n="Guest" value="guest">Guest</option>
+<option data-i18n="Logged in" value="logged_in">Logged in</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-[18px] text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Platform Filter -->
+<div class="md:col-span-3 flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">devices</span>
+<span data-i18n="Platform">Platform</span>
+</label>
+<div class="relative">
+<select class="h-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md px-3 pr-8 w-full appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="platform-select" onchange="applyFilters()">
+<option data-i18n="ทั้งหมด" value="all">ทั้งหมด</option>
+<option data-i18n="Web" value="web">Web</option>
+<option data-i18n="iOS" value="ios">iOS</option>
+<option data-i18n="Android" value="android">Android</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-[18px] text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- KPI METRIC CARDS / ANNOTATION BANNER -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Card 1: Overall Conversion -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-md flex flex-col justify-between shadow-xs relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-primary-container/10 pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md font-medium text-secondary" data-i18n="Overall conversion (View Item → Purchase):">Overall conversion (View Item → Purchase):</span>
+<span class="material-symbols-outlined text-[18px] text-primary">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-display-lg font-display-lg text-primary font-bold">3.42%</span>
+<span class="text-body-sm font-label-md text-[#157347] font-semibold flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +0.48% vs prev
+              </span>
+</div>
+</div>
+<div class="border-t border-outline-variant/60 pt-2.5 mt-3 flex items-center justify-between text-body-sm text-secondary">
+<span>Completed orders: <strong class="text-on-surface font-data-tabular">2,388</strong> รายการ</span>
+<span class="text-[11px] px-1.5 py-0.5 rounded bg-surface-container-low text-secondary">Benchmark: 2.8%</span>
+</div>
+</div>
+<!-- Card 2: Login sessions annotation -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-md flex flex-col justify-between shadow-xs">
+<div>
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md font-medium text-secondary" data-i18n="Login sessions (annotation):">Login sessions (annotation):</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
+</div>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-headline-lg font-headline-lg text-on-surface font-bold font-data-tabular">42,850</span>
+<span class="text-label-md text-secondary font-medium">(61.4% <span data-i18n="Logged in">Logged in</span>)</span>
+</div>
+</div>
+<!-- Distribution bar -->
+<div class="mt-3">
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden flex">
+<div class="bg-primary-container h-full" style="width: 61.4%" title="Logged in 61.4%"></div>
+<div class="bg-outline-variant h-full" style="width: 38.6%" title="Guest 38.6%"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-secondary mt-1.5 font-label-sm">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span data-i18n="Logged in">Logged in</span>: 42,850
+              </span>
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span data-i18n="Guest">Guest</span>: 26,970 (38.6%)
+              </span>
+</div>
+</div>
+</div>
+<!-- Card 3: Total Sessions Analyzed -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-md flex flex-col justify-between shadow-xs">
+<div>
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md font-medium text-secondary">Total Analyzed</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">query_stats</span>
+</div>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-headline-lg font-headline-lg text-on-surface font-bold font-data-tabular">69,820</span>
+<span class="text-label-md text-secondary" data-i18n="Sessions">Sessions</span>
+</div>
+</div>
+<div class="border-t border-outline-variant/60 pt-2.5 mt-3 flex items-center justify-between text-body-sm text-secondary">
+<span>Overall dropoff: <strong class="text-error font-data-tabular">96.58%</strong></span>
+<span class="text-[11px] text-[#157347] font-semibold bg-[#E8F8F0] px-1.5 py-0.5 rounded">99.8% Data accuracy</span>
+</div>
+</div>
+</div>
+<!-- FUNNEL VISUAL STEP CONVERSION FLOW (Bento Progress Visualization) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-md shadow-xs">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">filter_alt</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-bold">Funnel Velocity &amp; Dropoff Pipeline</h3>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">4 Critical Conversion Milestones</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+<!-- Step 1 -->
+<div class="p-3.5 rounded-lg border border-outline-variant bg-[#F8FAFD] flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between text-secondary text-label-sm mb-1">
+<span class="font-bold text-primary">STEP 1</span>
+<span class="font-data-tabular text-on-surface font-semibold">100.0%</span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">View Item</h4>
+<p class="text-[11px] text-secondary mt-0.5">เปิดดูหน้ารายละเอียดสินค้า</p>
+<div class="mt-3 flex items-baseline gap-1">
+<span class="text-headline-lg font-headline-lg font-bold text-on-surface font-data-tabular">69,820</span>
+<span class="text-body-sm text-secondary" data-i18n="Sessions">Sessions</span>
+</div>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="p-3.5 rounded-lg border border-outline-variant bg-[#F8FAFD] flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between text-secondary text-label-sm mb-1">
+<span class="font-bold text-primary">STEP 2</span>
+<span class="font-data-tabular text-[#157347] font-semibold">28.5% conv</span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Add to Cart</h4>
+<p class="text-[11px] text-secondary mt-0.5">กดใส่ตะกร้าสินค้าสำเร็จ</p>
+<div class="mt-3 flex items-baseline gap-1">
+<span class="text-headline-lg font-headline-lg font-bold text-on-surface font-data-tabular">19,900</span>
+<span class="text-body-sm text-secondary" data-i18n="Sessions">Sessions</span>
+</div>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 28.5%"></div>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="p-3.5 rounded-lg border border-outline-variant bg-[#F8FAFD] flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between text-secondary text-label-sm mb-1">
+<span class="font-bold text-primary">STEP 3</span>
+<span class="font-data-tabular text-[#157347] font-semibold">45.2% conv</span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Begin Checkout</h4>
+<p class="text-[11px] text-secondary mt-0.5">เริ่มเข้าสู่กระบวนการชำระเงิน</p>
+<div class="mt-3 flex items-baseline gap-1">
+<span class="text-headline-lg font-headline-lg font-bold text-on-surface font-data-tabular">8,995</span>
+<span class="text-body-sm text-secondary" data-i18n="Sessions">Sessions</span>
+</div>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 12.88%"></div>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="p-3.5 rounded-lg border border-outline-variant bg-[#F8FAFD] flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between text-secondary text-label-sm mb-1">
+<span class="font-bold text-[#157347]">STEP 4 (FINAL)</span>
+<span class="font-data-tabular text-[#157347] font-semibold">26.5% conv</span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Purchase</h4>
+<p class="text-[11px] text-secondary mt-0.5">คำสั่งซื้อและชำระเงินเสร็จสิ้น</p>
+<div class="mt-3 flex items-baseline gap-1">
+<span class="text-headline-lg font-headline-lg font-bold text-[#157347] font-data-tabular">2,388</span>
+<span class="text-body-sm text-secondary" data-i18n="Sessions">Sessions</span>
+</div>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-[#157347] h-full rounded-full" style="width: 3.42%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. TASK-BASED JOURNEY FUNNEL STAGES TABLE -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-xs">
+<div class="p-space-md border-b border-outline-variant flex items-center justify-between">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-bold">ตารางการวิเคราะห์ขั้นตอน Funnel (Step-by-Step Breakdown)</h3>
+<p class="text-body-sm text-secondary mt-0.5">แจกแจงจำนวนเซสชัน อัตราแปลงสภาพ และจุดหลุดของลูกค้าในแต่ละจังหวะของเจอร์นีย์</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm text-secondary">Export:</span>
+<button class="h-8 px-2.5 rounded border border-outline-variant text-label-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">CSV</button>
+<button class="h-8 px-2.5 rounded border border-outline-variant text-label-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">Excel</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-outline-variant text-[#52627A] text-label-md font-label-md">
+<th class="py-3 px-space-md font-semibold" data-i18n="Step">Step</th>
+<th class="py-3 px-space-md font-semibold text-right" data-i18n="Sessions">Sessions</th>
+<th class="py-3 px-space-md font-semibold text-right" data-i18n="Conversion (จาก step ก่อนหน้า)">Conversion (จาก step ก่อนหน้า)</th>
+<th class="py-3 px-space-md font-semibold text-right">Dropoff / อัตราหลุด</th>
+<th class="py-3 px-space-md font-semibold text-right">Average Time to Next Step</th>
+<th class="py-3 px-space-md font-semibold text-center">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/70 text-on-surface text-body-md" id="funnel-table-body">
+<!-- Row 1: View Item -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">1</span>
+<div>
+<div class="font-semibold text-on-surface">View Item</div>
+<div class="text-body-sm text-secondary">การเข้าชมหน้าแคตตาล็อกและสินค้า</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular font-medium">69,820</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">
+<span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-surface-container-low text-primary">100.0% (Base)</span>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular text-secondary">-</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">2 นาที 14 วินาที</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F8F0] text-[#157347]">Healthy</span>
+</td>
+</tr>
+<!-- Row 2: Add to Cart -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">2</span>
+<div>
+<div class="font-semibold text-on-surface">Add to Cart</div>
+<div class="text-body-sm text-secondary">เพิ่มสินค้าเข้าตะกร้าช็อปปิ้ง</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular font-medium">19,900</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">
+<div class="font-semibold text-on-surface">28.50%</div>
+<div class="text-[11px] text-secondary">จาก 69,820 ราย</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular text-error">
+<span class="font-semibold">71.50%</span>
+<div class="text-[11px] text-secondary">(หลุด 49,920 เซสชัน)</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">4 นาที 32 วินาที</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFF9E6] text-[#B08900]">Monitor</span>
+</td>
+</tr>
+<!-- Row 3: Begin Checkout -->
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">3</span>
+<div>
+<div class="font-semibold text-on-surface">Begin Checkout</div>
+<div class="text-body-sm text-secondary">เริ่มขั้นตอนใส่ที่อยู่จัดส่งและชำระเงิน</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular font-medium">8,995</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">
+<div class="font-semibold text-on-surface">45.20%</div>
+<div class="text-[11px] text-secondary">จาก 19,900 ราย</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular text-error">
+<span class="font-semibold">54.80%</span>
+<div class="text-[11px] text-secondary">(หลุด 10,905 เซสชัน)</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">1 นาที 48 วินาที</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F8F0] text-[#157347]">Strong</span>
+</td>
+</tr>
+<!-- Row 4: Purchase -->
+<tr class="hover:bg-[#F8FAFD] transition-colors bg-[#FAFBFD]">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-[#157347]/15 text-[#157347] flex items-center justify-center font-bold text-xs">4</span>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Purchase</span>
+<span class="material-symbols-outlined text-[16px] text-[#157347]">check_circle</span>
+</div>
+<div class="text-body-sm text-secondary">ชำระเงินสำเร็จเสร็จสมบูรณ์</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular font-bold text-[#157347]">2,388</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">
+<div class="font-bold text-[#157347]">26.55%</div>
+<div class="text-[11px] text-secondary">จาก 8,995 ราย</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular text-error">
+<span class="font-semibold">73.45%</span>
+<div class="text-[11px] text-secondary">(หลุด 6,607 เซสชัน)</div>
+</td>
+<td class="py-3.5 px-space-md text-right font-data-tabular">- (End of Funnel)</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F8F0] text-[#157347]">Optimal</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Filter Empty State (Hidden by default, shown when filters yield 0 results) -->
+<div class="hidden p-space-xl flex-col items-center justify-center text-center" id="empty-state-view">
+<div class="w-14 h-14 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-3">
+<span class="material-symbols-outlined text-[32px]">filter_list_off</span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-semibold" data-i18n="ยังไม่มีข้อมูลในช่วง / filter ที่เลือก">ยังไม่มีข้อมูลในช่วง / filter ที่เลือก</h4>
+<p class="text-body-sm text-secondary max-w-md mt-1">ลองปรับเปลี่ยนเงื่อนไขตัวกรอง เช่น ขยายช่วงวันที่ หรือเลือก Audience และ Platform ทั้งหมด</p>
+<button class="mt-4 h-9 px-4 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-[#2848D6] transition-colors" onclick="resetFilters()">
+            ล้างตัวกรองทั้งหมด
+          </button>
+</div>
+</section>
+<!-- 5. SEGMENT COMPARISON MATRIX (Guest vs Logged In across Web, iOS, Android) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-space-md shadow-xs">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-bold">Segment Breakdown Comparison</h3>
+<p class="text-body-sm text-secondary mt-0.5">เปรียบเทียบอัตรา Conversion ระหว่าง Guest vs Logged In ในแต่ละ Platform</p>
+</div>
+<span class="text-label-sm font-label-sm px-2.5 py-1 rounded bg-surface-container-low text-secondary border border-outline-variant">
+            Cross-segment matrix
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Web Platform -->
+<div class="rounded-xl border border-outline-variant p-space-md bg-surface-bright flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">language</span>
+<span class="font-bold text-on-surface font-headline-sm" data-i18n="Web">Web</span>
+</div>
+<span class="text-label-sm font-data-tabular text-secondary">38,400 Sessions</span>
+</div>
+<div class="mt-3 space-y-3">
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-secondary" data-i18n="Logged in">Logged in</span>
+<span class="font-data-tabular font-bold text-primary">4.12%</span>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 78%"></div>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-data-tabular">22,300 sessions · 918 orders</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-secondary" data-i18n="Guest">Guest</span>
+<span class="font-data-tabular font-bold text-secondary">2.04%</span>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden">
+<div class="bg-outline-variant h-full rounded-full" style="width: 42%"></div>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-data-tabular">16,100 sessions · 328 orders</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-2.5 border-t border-outline-variant text-[11px] text-secondary flex justify-between">
+<span>Delta: <strong class="text-[#157347]">+2.08%</strong> for Logged-in</span>
+<span>Checkout drop: 58.2%</span>
+</div>
+</div>
+<!-- iOS Platform -->
+<div class="rounded-xl border border-outline-variant p-space-md bg-surface-bright flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">phone_iphone</span>
+<span class="font-bold text-on-surface font-headline-sm" data-i18n="iOS">iOS</span>
+</div>
+<span class="text-label-sm font-data-tabular text-secondary">19,520 Sessions</span>
+</div>
+<div class="mt-3 space-y-3">
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-secondary" data-i18n="Logged in">Logged in</span>
+<span class="font-data-tabular font-bold text-[#157347]">5.48%</span>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden">
+<div class="bg-[#157347] h-full rounded-full" style="width: 89%"></div>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-data-tabular">13,200 sessions · 723 orders</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-secondary" data-i18n="Guest">Guest</span>
+<span class="font-data-tabular font-bold text-secondary">3.15%</span>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden">
+<div class="bg-outline-variant h-full rounded-full" style="width: 52%"></div>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-data-tabular">6,320 sessions · 199 orders</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-2.5 border-t border-outline-variant text-[11px] text-secondary flex justify-between">
+<span>Delta: <strong class="text-[#157347]">+2.33%</strong> for Logged-in</span>
+<span>Checkout drop: 44.1%</span>
+</div>
+</div>
+<!-- Android Platform -->
+<div class="rounded-xl border border-outline-variant p-space-md bg-surface-bright flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant pb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">android</span>
+<span class="font-bold text-on-surface font-headline-sm" data-i18n="Android">Android</span>
+</div>
+<span class="text-label-sm font-data-tabular text-secondary">11,900 Sessions</span>
+</div>
+<div class="mt-3 space-y-3">
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-secondary" data-i18n="Logged in">Logged in</span>
+<span class="font-data-tabular font-bold text-primary">2.98%</span>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 62%"></div>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-data-tabular">7,350 sessions · 219 orders</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-secondary" data-i18n="Guest">Guest</span>
+<span class="font-data-tabular font-bold text-secondary">1.82%</span>
+</div>
+<div class="w-full bg-[#E1E7F0] h-2 rounded-full overflow-hidden">
+<div class="bg-outline-variant h-full rounded-full" style="width: 38%"></div>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-data-tabular">4,550 sessions · 83 orders</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-2.5 border-t border-outline-variant text-[11px] text-secondary flex justify-between">
+<span>Delta: <strong class="text-[#157347]">+1.16%</strong> for Logged-in</span>
+<span>Checkout drop: 62.4%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- OPERATIONAL NOTES & TECHNICAL METADATA FOOTER -->
+<footer class="pt-2 pb-8 flex flex-col md:flex-row items-center justify-between text-body-sm text-secondary border-t border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span>Engine: Spark Real-time Aggregator v4.12 · Session timeout: 30m inactivity</span>
+</div>
+<div class="mt-2 md:mt-0 flex items-center gap-4 text-xs font-mono">
+<span>Route: /j/marketing/journey-funnel</span>
+<span>Commit: e7ff8f83f</span>
+<span>Siam Commerce Admin Engine</span>
+</div>
+</footer>
+</div>
+</main>
+<!-- INTERACTIVE VANILLA JAVASCRIPT FOR BILINGUAL TOGGLE & STATE MANAGEMENT -->
+<script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update toggle buttons styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded-md bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all";
+        btnEn.className = "px-2.5 py-1 rounded-md text-secondary hover:text-on-surface transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-md bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all";
+        btnTh.className = "px-2.5 py-1 rounded-md text-secondary hover:text-on-surface transition-all";
+      }
+
+      // Translate all DOM elements annotated with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+    }
+
+    function triggerRefresh() {
+      const refreshBtn = document.getElementById('refresh-btn');
+      const refreshIcon = document.getElementById('refresh-icon');
+      const loadingText = translations['กำลังโหลด...'][currentLang];
+      const normalText = translations['รีเฟรช'][currentLang];
+
+      refreshIcon.classList.add('animate-spin');
+      const textSpan = refreshBtn.querySelector('[data-i18n]');
+      if (textSpan) textSpan.textContent = loadingText;
+
+      setTimeout(() => {
+        refreshIcon.classList.remove('animate-spin');
+        if (textSpan) textSpan.textContent = normalText;
+      }, 700);
+    }
+
+    function toggleErrorSimulation() {
+      const errorBanner = document.getElementById('error-banner');
+      errorBanner.classList.toggle('hidden');
+    }
+
+    function toggleErrorBanner(show) {
+      const errorBanner = document.getElementById('error-banner');
+      if (show) errorBanner.classList.remove('hidden');
+      else errorBanner.classList.add('hidden');
+    }
+
+    function applyFilters() {
+      const audienceVal = document.getElementById('audience-select').value;
+      const platformVal = document.getElementById('platform-select').value;
+      const tableBody = document.getElementById('funnel-table-body');
+      const emptyState = document.getElementById('empty-state-view');
+
+      // If user sets impossible combination for simulation demonstration
+      if (audienceVal === 'guest' && platformVal === 'android') {
+        tableBody.parentElement.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        tableBody.parentElement.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('audience-select').value = 'all';
+      document.getElementById('platform-select').value = 'all';
+      applyFilters();
+    }
+  </script>
+</body></html>

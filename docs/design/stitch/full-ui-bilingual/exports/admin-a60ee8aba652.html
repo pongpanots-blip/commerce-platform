@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>จัดการออเดอร์ (Manage Orders) - Commerce Operations</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Noto Sans & Noto Sans Thai -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed": "#360f00",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#cddaf9",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "primary-container": "#365cf5",
+            "surface-container-high": "#e0e8ff",
+            "outline": "#747687",
+            "secondary-fixed": "#d3e3ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "tertiary-fixed": "#ffdbcd",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary-container": "#54647c",
+            "on-tertiary-container": "#ffebe4",
+            "on-primary": "#ffffff",
+            "tertiary-container": "#bc4600",
+            "on-surface": "#0e1b32",
+            "on-secondary-fixed": "#0b1c31",
+            "on-error": "#ffffff",
+            "on-surface-variant": "#444655",
+            "inverse-surface": "#243048",
+            "tertiary": "#943500",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-bright": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "background": "#f9f9ff",
+            "surface-container-highest": "#d7e2ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface": "#f9f9ff",
+            "secondary": "#4f5f77",
+            "surface-tint": "#214ce7",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-background": "#0e1b32",
+            "outline-variant": "#c4c5d8",
+            "surface-variant": "#d7e2ff",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed": "#001257",
+            "inverse-primary": "#b9c3ff",
+            "secondary-container": "#d0e1fd",
+            "surface-container-low": "#f1f3ff",
+            "primary-fixed": "#dde1ff",
+            "surface-container": "#e8eeff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "primary": "#0a3fdc",
+            "on-primary-container": "#ededff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "1.5rem",
+            "space-2xl": "2rem",
+            "gutter-compact": "0.75rem",
+            "space-sm": "0.5rem",
+            "margin": "1.5rem",
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "label-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "table-cell": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "numeric-data": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-xl": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"]
+          },
+          "fontSize": {
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "numeric-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "headline-lg": ["22px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex">
+<!-- SIDEBAR (Fixed 256px - JSON SideNavBar & Style Spec) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between py-4 px-3 select-none">
+<div class="flex flex-col space-y-4">
+<!-- Brand Logo & Header -->
+<div class="flex items-center space-x-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-xl">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm text-primary tracking-tight leading-snug">Commerce Admin</span>
+<span class="text-label-sm font-label-sm text-secondary">ศูนย์จัดการระบบพาณิชย์</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">inventory_2</span>
+<span class="text-label-lg font-label-lg">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน [ACTIVE SECTION] -->
+<div class="flex flex-col space-y-1">
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container-high text-primary font-semibold rounded-lg transition-colors duration-150" href="#">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-lg">shopping_cart</span>
+<span class="text-label-lg font-label-lg font-semibold">ออเดอร์และการเงิน</span>
+</div>
+<span class="material-symbols-outlined text-sm">expand_less</span>
+</a>
+<!-- Nested Child Nav Items -->
+<div class="flex flex-col pl-9 pr-1 py-1 space-y-1">
+<a class="px-2.5 py-1.5 text-body-md font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 flex items-center justify-between" href="#">
+<span>All Orders</span>
+<span class="text-label-sm font-label-sm text-outline">ออเดอร์ทั้งหมด</span>
+</a>
+<a class="px-2.5 py-1.5 text-body-md font-body-md bg-primary-container text-on-primary font-medium rounded-lg transition-colors duration-150 flex items-center justify-between shadow-sm" href="/j/order">
+<div class="flex items-center space-x-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest inline-block"></span>
+<span>จัดการออเดอร์</span>
+</div>
+<span class="text-label-sm font-label-sm text-surface-container-high">/j/order</span>
+</a>
+<a class="px-2.5 py-1.5 text-body-md font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 flex items-center justify-between" href="#">
+<span>Order Import</span>
+<span class="text-label-sm font-label-sm text-outline">นำเข้าออเดอร์</span>
+</a>
+<a class="px-2.5 py-1.5 text-body-md font-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 flex items-center justify-between" href="#">
+<span>Payment Transactions</span>
+</a>
+</div>
+</div>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">support_agent</span>
+<span class="text-label-lg font-label-lg">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">campaign</span>
+<span class="text-label-lg font-label-lg">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">monitoring</span>
+<span class="text-label-lg font-label-lg">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">hub</span>
+<span class="text-label-lg font-label-lg">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span class="text-label-lg font-label-lg">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer & CTA -->
+<div class="flex flex-col space-y-2 pt-3 border-t border-outline-variant">
+<div class="px-2">
+<a class="w-full inline-flex items-center justify-center space-x-2 py-1.5 px-3 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-lg text-label-md font-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-base">code</span>
+<span>Developer Portal</span>
+</a>
+</div>
+<div class="flex flex-col space-y-0.5">
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">help</span>
+<span class="text-label-md font-label-md">ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-error hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- TOP APP BAR (Fixed top-0 right-0 left-64 h-14 - JSON TopNavBar) -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6">
+<!-- Left Navigation / Breadcrumbs & Search -->
+<div class="flex items-center space-x-4 flex-1 max-w-xl">
+<!-- Breadcrumb Link Cluster -->
+<div class="flex items-center space-x-2 text-label-md font-label-md text-on-surface-variant shrink-0">
+<span class="hover:text-on-surface cursor-pointer">ออเดอร์และการเงิน</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">จัดการออเดอร์</span>
+<span class="px-2 py-0.5 bg-surface-container text-on-surface font-numeric-data text-label-sm font-label-sm rounded border border-outline-variant">/j/order</span>
+</div>
+<!-- Global Omni Search -->
+<div class="relative w-full max-w-xs ml-2">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-lg">search</span>
+</span>
+<input class="w-full h-8 pl-8 pr-3 text-body-md font-body-md bg-surface-container-low border border-outline-variant rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container" placeholder="ค้นหาเลขที่ออเดอร์, SKU, ผู้ซื้อ..." type="text"/>
+</div>
+</div>
+<!-- Right Trailing Profile & Actions Cluster -->
+<div class="flex items-center space-x-4">
+<!-- Route Badge Identifier -->
+<div class="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 bg-surface-container rounded-full text-label-sm font-label-sm text-on-surface-variant border border-outline-variant font-mono">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>admin-a60ee8aba652</span>
+</div>
+<!-- Bilingual Language Switcher (Thai / English) -->
+<div class="flex items-center bg-surface-container p-0.5 rounded-full border border-outline-variant">
+<button class="px-2.5 py-0.5 bg-surface-container-lowest text-on-surface rounded-full text-label-sm font-label-sm shadow-xs font-semibold">ไทย</button>
+<button class="px-2.5 py-0.5 text-on-surface-variant hover:text-on-surface rounded-full text-label-sm font-label-sm">English</button>
+</div>
+<!-- Trailing Action Icons -->
+<div class="flex items-center space-x-1 text-on-surface-variant">
+<button class="p-1.5 rounded-lg hover:bg-surface-container hover:text-on-surface relative transition-colors duration-150" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container hover:text-on-surface transition-colors duration-150" title="ช่วยเหลือ">
+<span class="material-symbols-outlined text-xl">help</span>
+</button>
+</div>
+<div class="h-5 w-px bg-outline-variant"></div>
+<!-- Admin Profile Somchai -->
+<div class="flex items-center space-x-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-semibold text-label-md shadow-xs">
+          OP
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md text-on-surface leading-tight font-semibold">สมชาย บริการค้า</span>
+<span class="text-label-sm font-label-sm text-secondary leading-tight">ผู้ดูแลระบบคลัง</span>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS (Offset by sidebar 256px and top bar 56px) -->
+<main class="ml-64 mt-14 flex-1 min-h-[calc(100vh-56px)] bg-[#f6f8fc] p-6">
+<div class="max-w-[1240px] mx-auto flex flex-col space-y-5">
+<!-- SECTION 1: PAGE HEADER & ACTION CONTROLS -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<div>
+<div class="flex items-center space-x-3">
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">จัดการออเดอร์</h1>
+<!-- Operational Badge -->
+<span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-primary border border-primary-fixed">
+<span class="material-symbols-outlined text-sm">verified</span>
+<span>ข้อมูลตัวอย่าง (Sample data)</span>
+</span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1">
+            Manage and monitor all customer orders · จัดการและติดตามสถานะคำสั่งซื้อของลูกค้า
+          </p>
+</div>
+<!-- Action Bar: Export, Import, Refresh -->
+<div class="flex items-center space-x-2.5">
+<button class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-surface-container-lowest border border-outline-variant hover:border-outline text-on-surface rounded-lg text-label-md font-label-md transition-colors shadow-xs">
+<span class="material-symbols-outlined text-base">download</span>
+<span>export CSV</span>
+</button>
+<a class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-surface-container-lowest border border-outline-variant hover:border-outline text-on-surface rounded-lg text-label-md font-label-md transition-colors shadow-xs" href="#">
+<span class="material-symbols-outlined text-base">upload_file</span>
+<span>Order Import (นำเข้าออเดอร์)</span>
+</a>
+<button class="inline-flex items-center space-x-1.5 px-3 py-2 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container text-on-surface rounded-lg text-label-md font-label-md transition-colors shadow-xs" title="รีเฟรชข้อมูล">
+<span class="material-symbols-outlined text-base">refresh</span>
+<span>รีเฟรช</span>
+</button>
+</div>
+</div>
+<!-- HELPER INSTRUCTION BANNER -->
+<div class="flex items-center justify-between px-4 py-2.5 bg-surface-container-low border border-primary-fixed rounded-xl text-body-md font-body-md text-on-surface shadow-xs">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-primary text-xl">info</span>
+<span>
+<strong>คำแนะนำการจัดการ:</strong> Click the edit icon on an order to change its status (คลิกไอคอนแก้ไขบนรายการออเดอร์เพื่อเปลี่ยนสถานะ)
+          </span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant">
+          ความปลอดภัย: ปิดการทำงานแบบกลุ่มที่ยังไม่ได้ยืนยันตัวตน
+        </span>
+</div>
+<!-- SECTION 2: WORKFLOW STATUS FILTER TABS -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-1.5 shadow-xs flex flex-wrap items-center gap-1">
+<!-- 1. คำสั่งซื้อทั้งหมด [ACTIVE] -->
+<button class="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg bg-primary-container text-on-primary font-medium text-label-md font-label-md shadow-xs">
+<span>คำสั่งซื้อทั้งหมด (All Orders)</span>
+<span class="px-2 py-0.2 bg-white/20 text-white rounded-full text-label-sm font-numeric-data">240</span>
+</button>
+<!-- 2. รอชำระเงิน -->
+<button class="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors">
+<span>รอชำระเงิน</span>
+<span class="px-1.5 py-0.2 bg-surface-container rounded-full text-label-sm font-numeric-data text-secondary">18</span>
+</button>
+<!-- 3. กำลังเตรียม -->
+<button class="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors">
+<span>กำลังเตรียม</span>
+<span class="px-1.5 py-0.2 bg-surface-container rounded-full text-label-sm font-numeric-data text-secondary">32</span>
+</button>
+<!-- 4. กำลังจัดส่ง -->
+<button class="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors">
+<span>กำลังจัดส่ง</span>
+<span class="px-1.5 py-0.2 bg-surface-container rounded-full text-label-sm font-numeric-data text-secondary">45</span>
+</button>
+<!-- 5. ชำระแล้ว -->
+<button class="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors">
+<span>ชำระแล้ว</span>
+<span class="px-1.5 py-0.2 bg-surface-container rounded-full text-label-sm font-numeric-data text-secondary">112</span>
+</button>
+<!-- 6. เสร็จสิ้น -->
+<button class="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors">
+<span>เสร็จสิ้น</span>
+<span class="px-1.5 py-0.2 bg-surface-container rounded-full text-label-sm font-numeric-data text-secondary">130</span>
+</button>
+<!-- 7. ยกเลิก / คืนเงิน -->
+<button class="flex items-center space-x-2 px-3 py-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-label-md font-label-md transition-colors">
+<span>ยกเลิก / คืนเงิน</span>
+<span class="px-1.5 py-0.2 bg-surface-container rounded-full text-label-sm font-numeric-data text-secondary">15</span>
+</button>
+</div>
+<!-- SECTION 3: FILTER & SEARCH BAR -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-xs">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+<!-- Filter 1: In-page Quick Search -->
+<div class="lg:col-span-2">
+<label class="block text-label-sm font-label-sm text-secondary mb-1">ค้นหาเองในเว็บนี้</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-base">search</span>
+</span>
+<input class="w-full h-9 pl-8 pr-3 text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container" placeholder="ค้นหาเองในเว็บนี้ (ค้นหาเฉพาะหน้านี้)" type="text"/>
+</div>
+</div>
+<!-- Filter 2: Date Range -->
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1">ช่วงวันที่สั่งซื้อ</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+</span>
+<input class="w-full h-9 pl-8 pr-2 text-body-sm font-body-sm bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface cursor-pointer" readonly="" type="text" value="1 มี.ค. 2025 - 28 มี.ค. 2025"/>
+</div>
+</div>
+<!-- Filter 3: Branch / Warehouse -->
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1">สาขาที่จัดส่ง</label>
+<select class="w-full h-9 px-3 text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:border-primary-container">
+<option value="">ทั้งหมด (ทุกสาขา)</option>
+<option value="bangna">คลังสินค้าบางนา</option>
+<option value="rama9">สาขาพระราม 9</option>
+</select>
+</div>
+<!-- Filter 4: Delivery Slot & Reset -->
+<div class="flex items-center space-x-2">
+<div class="flex-1">
+<label class="block text-label-sm font-label-sm text-secondary mb-1">รอบเวลาจัดส่ง</label>
+<select class="w-full h-9 px-2 text-body-sm font-body-sm bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:border-primary-container">
+<option value="">ทั้งหมด</option>
+<option value="morning">รอบเช้า 09:00 - 12:00</option>
+<option value="afternoon">รอบบ่าย 13:00 - 17:00</option>
+</select>
+</div>
+<div class="pt-5">
+<button class="h-9 px-3 text-label-sm font-label-sm text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg border border-outline-variant flex items-center space-x-1 whitespace-nowrap transition-colors" title="รีเซ็ตตัวกรอง">
+<span class="material-symbols-outlined text-base">filter_alt_off</span>
+<span>ล้างตัวกรอง (0)</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 4: ORDERS DATA TABLE -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xs overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-secondary text-label-md font-label-md uppercase tracking-wider h-10">
+<th class="py-2.5 px-4">เลขที่ออเดอร์</th>
+<th class="py-2.5 px-4">วันที่สั่งซื้อ</th>
+<th class="py-2.5 px-4">ชื่อลูกค้า</th>
+<th class="py-2.5 px-4">สาขาที่จัดส่ง</th>
+<th class="py-2.5 px-4">รอบเวลาจัดส่ง</th>
+<th class="py-2.5 px-4 text-right">ยอดรวม</th>
+<th class="py-2.5 px-4 text-center">สถานะออเดอร์</th>
+<th class="py-2.5 px-4 text-right">เครื่องมือ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60 text-body-md font-body-md text-on-surface">
+<!-- ROW 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-14">
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline font-semibold flex items-center space-x-1" href="/orders/ORD-20250328-001">
+<span>ORD-20250328-001</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm font-numeric-data">
+                  28 มี.ค. 2025 <span class="text-outline">10:45 น.</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">
+                  บจก. สยามเทรดดิ้ง มาร์เก็ต
+                </td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-outline">warehouse</span>
+<span>คลังสินค้าบางนา</span>
+</span>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-numeric-data">
+                    รอบบ่าย 13:00 - 17:00
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿14,850.00
+                </td>
+<td class="py-3 px-4 text-center">
+<!-- Status: รอชำระเงิน (Pending) -->
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fdf8e6] text-[#b08900] border border-[#fae392]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900] mr-1.5"></span>
+                    รอชำระเงิน
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center space-x-1.5">
+<a class="px-2.5 py-1 text-label-sm font-label-sm text-primary hover:bg-surface-container rounded-lg border border-primary/20 transition-colors" href="/orders/ORD-20250328-001">
+                      ดูรายละเอียด
+                    </a>
+<button class="p-1 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')" title="แก้ไขสถานะ">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-14">
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline font-semibold flex items-center space-x-1" href="/orders/ORD-20250328-002">
+<span>ORD-20250328-002</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm font-numeric-data">
+                  28 มี.ค. 2025 <span class="text-outline">09:20 น.</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">
+                  คุณ กานต์พิชชา วัฒนเวคิน
+                </td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-outline">warehouse</span>
+<span>คลังสินค้าบางนา</span>
+</span>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-numeric-data">
+                    รอบเช้า 09:00 - 12:00
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿3,290.00
+                </td>
+<td class="py-3 px-4 text-center">
+<!-- Status: กำลังเตรียม (Preparing) -->
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-primary border border-primary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                    กำลังเตรียม
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center space-x-1.5">
+<a class="px-2.5 py-1 text-label-sm font-label-sm text-primary hover:bg-surface-container rounded-lg border border-primary/20 transition-colors" href="/orders/ORD-20250328-002">
+                      ดูรายละเอียด
+                    </a>
+<button class="p-1 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')" title="แก้ไขสถานะ">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-14">
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline font-semibold flex items-center space-x-1" href="/orders/ORD-20250328-003">
+<span>ORD-20250328-003</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm font-numeric-data">
+                  28 มี.ค. 2025 <span class="text-outline">08:15 น.</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">
+                  หจก. เอเซีย คอมพาวด์
+                </td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-outline">store</span>
+<span>สาขาพระราม 9</span>
+</span>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-numeric-data">
+                    รอบบ่าย 13:00 - 17:00
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿48,500.00
+                </td>
+<td class="py-3 px-4 text-center">
+<!-- Status: กำลังจัดส่ง (Shipping) -->
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-blue-50 text-blue-700 border border-blue-200">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600 mr-1.5"></span>
+                    กำลังจัดส่ง
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center space-x-1.5">
+<a class="px-2.5 py-1 text-label-sm font-label-sm text-primary hover:bg-surface-container rounded-lg border border-primary/20 transition-colors" href="/orders/ORD-20250328-003">
+                      ดูรายละเอียด
+                    </a>
+<button class="p-1 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')" title="แก้ไขสถานะ">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-14">
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline font-semibold flex items-center space-x-1" href="/orders/ORD-20250327-015">
+<span>ORD-20250327-015</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm font-numeric-data">
+                  27 มี.ค. 2025 <span class="text-outline">16:30 น.</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">
+                  บริษัท ไทยโฮมมาร์ท 1999 จำกัด
+                </td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-outline">warehouse</span>
+<span>คลังสินค้าบางนา</span>
+</span>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-numeric-data">
+                    รอบเช้า 09:00 - 12:00
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿105,400.00
+                </td>
+<td class="py-3 px-4 text-center">
+<!-- Status: ชำระแล้ว (Paid) -->
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-purple-50 text-purple-700 border border-purple-200">
+<span class="w-1.5 h-1.5 rounded-full bg-purple-600 mr-1.5"></span>
+                    ชำระแล้ว
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center space-x-1.5">
+<a class="px-2.5 py-1 text-label-sm font-label-sm text-primary hover:bg-surface-container rounded-lg border border-primary/20 transition-colors" href="/orders/ORD-20250327-015">
+                      ดูรายละเอียด
+                    </a>
+<button class="p-1 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')" title="แก้ไขสถานะ">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-14">
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline font-semibold flex items-center space-x-1" href="/orders/ORD-20250327-014">
+<span>ORD-20250327-014</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm font-numeric-data">
+                  27 มี.ค. 2025 <span class="text-outline">14:10 น.</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">
+                  คุณ พรเทพ สิทธิชัย
+                </td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-outline">store</span>
+<span>สาขาพระราม 9</span>
+</span>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-numeric-data">
+                    รอบบ่าย 13:00 - 17:00
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿1,800.00
+                </td>
+<td class="py-3 px-4 text-center">
+<!-- Status: เสร็จสิ้น (Completed) -->
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1.5"></span>
+                    เสร็จสิ้น
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center space-x-1.5">
+<a class="px-2.5 py-1 text-label-sm font-label-sm text-primary hover:bg-surface-container rounded-lg border border-primary/20 transition-colors" href="/orders/ORD-20250327-014">
+                      ดูรายละเอียด
+                    </a>
+<button class="p-1 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')" title="แก้ไขสถานะ">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 6 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-14">
+<td class="py-3 px-4 font-numeric-data">
+<a class="text-primary hover:underline font-semibold flex items-center space-x-1" href="/orders/ORD-20250327-010">
+<span>ORD-20250327-010</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm font-numeric-data">
+                  27 มี.ค. 2025 <span class="text-outline">11:05 น.</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">
+                  ร้านเจริญรุ่งเรืองการค้า
+                </td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-outline">warehouse</span>
+<span>คลังสินค้าบางนา</span>
+</span>
+</td>
+<td class="py-3 px-4 text-secondary text-body-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-numeric-data">
+                    รอบเช้า 09:00 - 12:00
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿2,450.00
+                </td>
+<td class="py-3 px-4 text-center">
+<!-- Status: ยกเลิก / คืนเงิน (Cancelled) -->
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#faecee] text-[#c2333f] border border-[#f1b3b8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f] mr-1.5"></span>
+                    ยกเลิก / คืนเงิน
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center space-x-1.5">
+<a class="px-2.5 py-1 text-label-sm font-label-sm text-primary hover:bg-surface-container rounded-lg border border-primary/20 transition-colors" href="/orders/ORD-20250327-010">
+                      ดูรายละเอียด
+                    </a>
+<button class="p-1 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')" title="แก้ไขสถานะ">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- SECTION 6: PAGINATION & META FOOTER -->
+<div class="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-surface-container-low border-t border-outline-variant gap-3">
+<div class="text-body-sm font-body-sm text-secondary flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-base text-outline">query_builder</span>
+<span>แสดง 1 - 6 จาก 240 รายการ · ใช้เวลาประมาณ 0.04 วินาที</span>
+</div>
+<!-- Pagination Controls -->
+<div class="flex items-center space-x-1">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant text-secondary hover:text-on-surface rounded-lg text-label-sm font-label-sm disabled:opacity-50" disabled="">
+              ก่อนหน้า
+            </button>
+<button class="px-3 py-1.5 bg-primary-container text-on-primary rounded-lg text-label-sm font-label-sm font-semibold shadow-xs">
+              1
+            </button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container rounded-lg text-label-sm font-label-sm">
+              2
+            </button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container rounded-lg text-label-sm font-label-sm">
+              3
+            </button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container rounded-lg text-label-sm font-label-sm">
+              ถัดไป
+            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- SECTION 5: QUICK STATUS EDIT MODAL (Cleanly previewed and functional) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs transition-opacity" id="edit-modal">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-xl w-full max-w-lg mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<!-- Dialog Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant bg-surface-container-low">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">edit_note</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">แก้ไขสถานะ (Edit Order Status)</h3>
+<p class="text-label-sm font-label-sm text-secondary font-mono">ออเดอร์: ORD-20250328-001</p>
+</div>
+</div>
+<button class="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" onclick="document.getElementById('edit-modal').classList.add('hidden')">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Dialog Body -->
+<div class="p-6 flex flex-col space-y-4">
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1.5">สถานะปัจจุบัน (Current Status)</label>
+<div class="px-3 py-2 bg-surface-container rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface flex items-center justify-between">
+<span class="inline-flex items-center">
+<span class="w-2 h-2 rounded-full bg-[#b08900] mr-2"></span>
+              รอชำระเงิน (Pending Payment)
+            </span>
+<span class="text-label-sm font-label-sm text-outline">ยอด ฿14,850.00</span>
+</div>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1.5">เลือกสถานะใหม่ (Select New Status)</label>
+<select class="w-full h-10 px-3 text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container">
+<option selected="" value="pending">รอชำระเงิน (Pending)</option>
+<option value="preparing">กำลังเตรียม (Preparing)</option>
+<option value="shipping">กำลังจัดส่ง (Shipping)</option>
+<option value="paid">ชำระแล้ว (Paid)</option>
+<option value="completed">เสร็จสิ้น (Completed)</option>
+<option value="cancelled">ยกเลิก / คืนเงิน (Cancelled / Refunded)</option>
+</select>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1.5">บันทึกช่วยจำการเปลี่ยนสถานะ (Note / Reason)</label>
+<textarea class="w-full p-2.5 text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container" placeholder="ระบุเหตุผลหรือเลขอ้างอิงการจัดส่ง/การชำระเงิน..." rows="3"></textarea>
+</div>
+</div>
+<!-- Dialog Actions -->
+<div class="flex items-center justify-end space-x-3 px-6 py-3.5 bg-surface-container-low border-t border-outline-variant">
+<button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container text-on-surface rounded-lg text-label-md font-label-md transition-colors" onclick="document.getElementById('edit-modal').classList.add('hidden')">
+          ยกเลิก (Cancel)
+        </button>
+<button class="px-4 py-2 bg-primary-container hover:bg-primary text-on-primary rounded-lg text-label-md font-label-md font-semibold transition-colors shadow-xs" onclick="document.getElementById('edit-modal').classList.add('hidden')">
+          บันทึกการเปลี่ยนแปลง (Save Changes)
+        </button>
+</div>
+</div>
+</div>
+<!-- SECTION 7: CRITICAL APPLICATION TRANSLATIONS JSON DATA -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "ชื่อลูกค้า": { "th": "ชื่อลูกค้า", "en": "Customer Name" },
+    "ยอดรวม": { "th": "ยอดรวม", "en": "Total" },
+    "สถานะออเดอร์": { "th": "สถานะออเดอร์", "en": "Order Status" },
+    "กำลังโหลด...": { "th": "กำลังโหลด...", "en": "Loading..." },
+    "All Orders": { "th": "ออเดอร์ทั้งหมด", "en": "All Orders" },
+    "Order Import": { "th": "นำเข้าออเดอร์", "en": "Order Import" },
+    "Payment Transactions": { "th": "ธุรกรรมการชำระเงิน", "en": "Payment Transactions" },
+    "ชำระแล้ว": { "th": "ชำระแล้ว", "en": "Paid" },
+    "฿": { "th": "฿", "en": "THB" },
+    "คำสั่งซื้อทั้งหมด": { "th": "คำสั่งซื้อทั้งหมด", "en": "All Orders" },
+    "รอชำระเงิน": { "th": "รอชำระเงิน", "en": "Pending Payment" },
+    "กำลังเตรียม": { "th": "กำลังเตรียม", "en": "Processing" },
+    "กำลังจัดส่ง": { "th": "กำลังจัดส่ง", "en": "In Transit" },
+    "เสร็จสิ้น": { "th": "เสร็จสิ้น", "en": "Completed" },
+    "ยกเลิก / คืนเงิน": { "th": "ยกเลิก / คืนเงิน", "en": "Cancelled / Refunded" },
+    "เลขที่ออเดอร์": { "th": "เลขที่ออเดอร์", "en": "Order ID" },
+    "สาขาที่จัดส่ง": { "th": "สาขาที่จัดส่ง", "en": "Fulfillment Branch" },
+    "วันที่สั่งซื้อ": { "th": "วันที่สั่งซื้อ", "en": "Order Date" },
+    "รอบเวลาจัดส่ง": { "th": "รอบเวลาจัดส่ง", "en": "Delivery Slot" },
+    "เครื่องมือ": { "th": "เครื่องมือ", "en": "Actions" },
+    "ดูรายละเอียด": { "th": "ดูรายละเอียด", "en": "View Details" },
+    "แก้ไขสถานะ": { "th": "แก้ไขสถานะ", "en": "Edit Status" },
+    "Manage and monitor all customer orders": { "th": "จัดการและติดตามคำสั่งซื้อของลูกค้าทั้งหมด", "en": "Manage and monitor all customer orders" },
+    "Click the edit icon on an order to change its status": { "th": "คลิกไอคอนแก้ไขบนรายการออเดอร์เพื่อเปลี่ยนสถานะ", "en": "Click the edit icon on an order to change its status" },
+    "ช่วงวันที่สั่งซื้อ": { "th": "ช่วงวันที่สั่งซื้อ", "en": "Order Date Range" },
+    "export CSV": { "th": "ส่งออก CSV", "en": "Export CSV" },
+    "แก้ไขได้ที่เมนู Promotion Mechanic เท่านั้น": { "th": "แก้ไขได้ที่เมนู Promotion Mechanic เท่านั้น", "en": "Editable only in Promotion Mechanic menu" },
+    "ค้นหาเองในเว็บนี้": { "th": "ค้นหาเองในเว็บนี้", "en": "Search on this page" },
+    "จำนวน SKU": { "th": "จำนวน SKU", "en": "SKU Count" },
+    "เช่น /product/detail/123, /search?q=กุ้ง, / (หน้าแรก)": { "th": "เช่น /product/detail/123, /search?q=กุ้ง, / (หน้าแรก)", "en": "e.g. /product/detail/123, /search?q=shrimp, / (Home)" },
+    "ต้องตั้งกลุ่มเป้าหมายเป็น \"ทุกคน (Public)\" ก่อน จึงเปิดใช้อัตโนมัติได้": { "th": "ต้องตั้งกลุ่มเป้าหมายเป็น \"ทุกคน (Public)\" ก่อน จึงเปิดใช้อัตโนมัติได้", "en": "Target audience must be set to \"Everyone (Public)\" before auto-activation." },
+    "เนื้อหาไทย (ต้นฉบับ) แก้ที่ช่องด้านบน — ค่า EN นี้แทนที่เฉพาะช่องที่กรอก ช่องว่าง = ใช้ค่าไทยแทน": { "th": "เนื้อหาไทย (ต้นฉบับ) แก้ที่ช่องด้านบน — ค่า EN นี้แทนที่เฉพาะช่องที่กรอก ช่องว่าง = ใช้ค่าไทยแทน", "en": "Thai content (original) editable in upper fields — EN values override filled fields only. Empty = use Thai." },
+    "เปิดงาน Winback ของฝ่ายขาย": { "th": "เปิดงาน Winback ของฝ่ายขาย", "en": "Open Sales Winback Tasks" },
+    "ภาษาที่แก้ไข (push/in-app)": { "th": "ภาษาที่แก้ไข (push/in-app)", "en": "Edited language (push/in-app)" },
+    "ไม่สำเร็จทั้งหมด — 0 จาก": { "th": "ไม่สำเร็จทั้งหมด — 0 จาก", "en": "All failed — 0 of" },
+    "ยืนยันการลบ Product Set นี้?": { "th": "ยืนยันการลบ Product Set นี้?", "en": "Confirm deletion of this Product Set?" },
+    "รายการ · ใช้เวลาประมาณ": { "th": "รายการ · ใช้เวลาประมาณ", "en": "items · estimated time" },
+    "ล้างตัวกรอง (": { "th": "ล้างตัวกรอง (", "en": "Clear filters (" },
+    "เว็บคู่แข่ง": { "th": "เว็บคู่แข่ง", "en": "Competitor websites" },
+    "สาเหตุที่ไม่ถึงผู้ใช้": { "th": "สาเหตุที่ไม่ถึงผู้ใช้", "en": "Reason undelivered to user" },
+    "เหตุผลที่ไม่อนุมัติ": { "th": "เหตุผลที่ไม่อนุมัติ", "en": "Rejection reason" },
+    "ทำงาน": { "th": "ทำงาน", "en": "Active / Running" }
+  }
+  </script>
+</body></html>

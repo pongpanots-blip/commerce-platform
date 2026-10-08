@@ -1,0 +1,161 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+    "functions": [
+      "categoryLabel"
+    ],
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingFlowCanvas.tsx",
+    "functions": [
+      "describeMarketingSchedule",
+      "describePageAffinity",
+      "describeTrigger",
+      "describeAudience",
+      "describeCondition",
+      "describeCoupon",
+      "describeAction",
+      "buildNodeData"
+    ],
+    "changes": 51
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingStepSidePanel.tsx",
+    "functions": [
+      "stepLabel"
+    ],
+    "changes": 9
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEditor.tsx",
+    "functions": [
+      "formatLift"
+    ],
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+    "functions": [
+      "explainSkipReason"
+    ],
+    "changes": 10
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx",
+    "functions": [
+      "formatStatus"
+    ],
+    "changes": 7
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/trigger-rule.helpers.ts",
+    "functions": [
+      "formatDurationLabel"
+    ],
+    "changes": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/campaign.helpers.ts",
+    "functions": [
+      "couponKindLabel"
+    ],
+    "changes": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campain/promotion-mechanic-form.helpers.ts",
+    "functions": [
+      "summarizeMechanicValue",
+      "summarizeLegacyItems",
+      "summarizeMechanicRow"
+    ],
+    "changes": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/category/category-form.tsx",
+    "functions": [
+      "levelLabel"
+    ],
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-audience.helpers.ts",
+    "functions": [
+      "describeCouponAudience"
+    ],
+    "changes": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-redemption.helpers.ts",
+    "functions": [
+      "describeRedemptionRules"
+    ],
+    "changes": 11
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-reward.helpers.ts",
+    "functions": [
+      "formatRewardRuleSummary"
+    ],
+    "changes": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+    "functions": [
+      "invoiceStateLabel"
+    ],
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+    "functions": [
+      "ageLabel"
+    ],
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
+    "functions": [
+      "formatStatus"
+    ],
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/bulk-image-upload.helpers.ts",
+    "functions": [
+      "bulkUploadLogStatusLabel"
+    ],
+    "changes": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/product-status.helpers.ts",
+    "functions": [
+      "productStatusBadge"
+    ],
+    "changes": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-common/edit-history.helpers.ts",
+    "functions": [
+      "formatKnownField",
+      "formatChangeValue"
+    ],
+    "changes": 4
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/builder/segment-definition.helpers.ts",
+    "functions": [
+      "formatLeafValue",
+      "describeDefinition"
+    ],
+    "changes": 5
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/segment-rule.helpers.ts",
+    "functions": [
+      "manualUsersNotFoundWarning",
+      "summarizeRuleConfig"
+    ],
+    "changes": 11
+  }
+]

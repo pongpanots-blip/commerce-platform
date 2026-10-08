@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>แพลตฟอร์มปลายทาง (Webhook Platforms) - Thai Ops Cockpit</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed-dim": "#ffb597",
+            "tertiary": "#943500",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#0b1c31",
+            "secondary-fixed": "#d3e3ff",
+            "secondary-container": "#d0e1fd",
+            "on-tertiary-fixed": "#360f00",
+            "on-primary-container": "#ededff",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-dim": "#cddaf9",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-tertiary": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "surface-container-high": "#e0e8ff",
+            "primary-fixed": "#dde1ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-container-highest": "#d7e2ff",
+            "inverse-primary": "#b9c3ff",
+            "on-surface-variant": "#444655",
+            "secondary": "#4f5f77",
+            "on-surface": "#0e1b32",
+            "surface": "#f9f9ff",
+            "on-background": "#0e1b32",
+            "error": "#ba1a1a",
+            "on-tertiary-container": "#ffebe4",
+            "inverse-surface": "#243048",
+            "outline": "#747687",
+            "primary": "#0a3fdc",
+            "on-primary": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "background": "#f9f9ff",
+            "tertiary-container": "#bc4600",
+            "surface-tint": "#214ce7",
+            "primary-container": "#365cf5",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-bright": "#f9f9ff",
+            "outline-variant": "#c4c5d8",
+            "on-primary-fixed": "#001257",
+            "surface-container": "#e8eeff",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-variant": "#d7e2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-2xl": "2.5rem",
+            "space-xl": "2rem",
+            "margin": "2rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "body-sm": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans Thai, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-lg": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-md": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "body-md": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans Thai, sans-serif\""],
+            "body-lg": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""]
+          },
+          "fontSize": {
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #0e1b32;
+      font-family: "Noto Sans Thai", "Noto Sans", Inter, sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .badge-sample {
+      background-color: #f1f3ff;
+      color: #0a3fdc;
+      border: 1px solid #c4c5d8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ================= SIDEBAR (Shared Component: SideNavBar) ================= -->
+<!-- Active Tab: "ระบบเชื่อมต่อ" (index 5) as mapped to this integrations view -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-none flex flex-col justify-between p-3 select-none">
+<div class="flex flex-col">
+<!-- Sidebar Header / Brand -->
+<div class="flex items-center gap-3 px-3 py-3.5 mb-3 border-b border-outline-variant/40">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-headline-sm shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-white">hub</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface truncate tracking-tight">Thai Ops Cockpit</span>
+<span class="text-body-sm font-body-sm text-secondary truncate">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#products">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#orders">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#customers">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#marketing">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#reports">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container dark:bg-surface-container-high text-primary dark:text-inverse-primary font-medium border-l-[3px] border-primary dark:border-inverse-primary transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#integrations">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
+<span class="text-label-md font-label-md font-semibold">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Status Footer -->
+<div class="px-3 py-3 border-t border-outline-variant/30 flex items-center justify-between text-secondary">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="text-code-sm font-code-sm">API: operational</span>
+</div>
+<span class="text-code-sm font-code-sm bg-surface-container px-2 py-0.5 rounded text-on-surface">v3.42</span>
+</div>
+</aside>
+<!-- ================= MAIN CONTENT WRAPPER ================= -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- ================= TOP NAVIGATION BAR (Shared Component: TopNavBar) ================= -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-6">
+<!-- Breadcrumb Navigation -->
+<div class="flex items-center gap-3 text-body-md font-body-md">
+<span class="text-secondary dark:text-secondary-fixed-dim">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary dark:text-inverse-primary font-medium" data-i18n="Webhook Platforms">แพลตฟอร์มปลายทาง (Webhook Platforms)</span>
+<!-- Sample Data Indicator Badge -->
+<span class="badge-sample ml-2 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1.5" title="โหมดข้อมูลตัวอย่างสำหรับการทดสอบระบบ">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<!-- Trailing Controls & User Info -->
+<div class="flex items-center gap-3">
+<!-- Interactive Bilingual Selector Button -->
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant/80 text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors duration-150 flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-none" id="langToggleBtn" onclick="toggleLanguage()" title="คลิกเพื่อสลับภาษา / Toggle language">
+<span class="material-symbols-outlined text-secondary text-[18px]">translate</span>
+<span class="font-semibold text-primary" id="langDisplayLabel">ไทย / EN</span>
+</button>
+<!-- Notification Trigger -->
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer active:scale-95 relative" title="การแจ้งเตือน">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<!-- Help Icon -->
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer active:scale-95" title="คู่มือการใช้งาน">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant/50">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed font-bold flex items-center justify-center text-label-sm shadow-none">
+            SP
+          </div>
+<div class="hidden lg:flex flex-col text-left">
+<span class="text-label-md font-label-md text-on-surface font-medium leading-tight">Admin Supaporn</span>
+<span class="text-[11px] text-secondary leading-tight">Head of Tech Ops</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ================= STAGE VIEW CANVAS ================= -->
+<main class="flex-1 p-8 max-w-[1280px] w-full mx-auto">
+<!-- Header Section: Title, Route info & Top Actions -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-outline-variant/30 mb-6">
+<div>
+<div class="flex items-center gap-2.5 mb-1.5 flex-wrap">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight" data-i18n="Webhook Platforms">แพลตฟอร์มปลายทาง</h1>
+<span class="font-code-sm text-code-sm bg-surface-container-low text-secondary px-2.5 py-1 rounded border border-outline-variant/50">
+              admin-3e6e1579857e
+            </span>
+<span class="text-label-sm font-label-sm bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              REST &amp; Webhook Hub
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary" data-i18n="Manage webhook subscriptions and platform integrations.">
+            จัดการการรับส่ง Webhook และการเชื่อมต่อแพลตฟอร์มปลายทาง
+          </p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Refresh Action -->
+<button class="h-10 px-4 rounded-lg bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-2 transition-colors cursor-pointer active:scale-95 shadow-none" onclick="handleRefresh()">
+<span class="material-symbols-outlined text-[18px]" id="refreshIcon">refresh</span>
+<span data-i18n="Refresh">Refresh</span>
+</button>
+<!-- New Subscription Primary Button -->
+<button class="h-10 px-4 rounded-lg bg-primary-container hover:bg-primary text-white font-label-md text-label-md flex items-center gap-2 transition-colors cursor-pointer active:scale-95 shadow-sm" onclick="openNewModal()">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span data-i18n="New Subscription">+ New Subscription</span>
+</button>
+</div>
+</section>
+<!-- Operational Metrics Bento Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<!-- Metric 1: Total Active -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">Active Subscriptions</span>
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface" id="statActiveCount">4</span>
+<span class="text-body-sm font-body-sm text-secondary">/ 5 รายการ</span>
+</div>
+<div class="mt-2 flex items-center gap-1.5 text-[12px] text-secondary font-medium">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>เชื่อมต่อสำเร็จ (ข้อมูลตัวอย่าง)</span>
+</div>
+</div>
+<!-- Metric 2: Delivery Success Rate -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">Success Rate</span>
+<span class="material-symbols-outlined text-emerald-600 text-[20px]">task_alt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface">99.4%</span>
+<span class="text-body-sm font-body-sm text-emerald-600 font-semibold">+0.2%</span>
+</div>
+<div class="mt-2 text-[12px] text-secondary">
+            ประมวลผล 48,290 ทรานแซกชัน
+          </div>
+</div>
+<!-- Metric 3: Average Latency -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">Average Latency</span>
+<span class="material-symbols-outlined text-primary text-[20px]">speed</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface font-code-sm">142ms</span>
+<span class="text-body-sm font-body-sm text-emerald-600 font-semibold">ปกติ (&lt;300ms)</span>
+</div>
+<div class="mt-2 text-[12px] text-secondary">
+            เฉลี่ยรอบ 24 ชั่วโมงล่าสุด
+          </div>
+</div>
+<!-- Metric 4: Failed Retries -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary">Failed Retries</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">published_with_changes</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface font-code-sm">0</span>
+<span class="text-body-sm font-body-sm text-emerald-600 font-medium">ไม่มีข้อผิดพลาดคั่งค้าง</span>
+</div>
+<div class="mt-2 text-[12px] text-secondary">
+            Dead Letter Queue ปลอดโปร่ง
+          </div>
+</div>
+</section>
+<!-- ================= PRIMARY SECTION: ACTIVE SUBSCRIPTIONS TABLE ================= -->
+<section class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl overflow-hidden shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<!-- Table Control Toolbar -->
+<div class="p-4 border-b border-outline-variant/40 flex flex-col sm:flex-row items-center justify-between gap-3 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="Active Subscriptions">Active Subscriptions</h2>
+<span class="bg-surface-container text-primary font-semibold text-label-sm px-2.5 py-0.5 rounded-full" id="tableRowCountBadge">5</span>
+</div>
+<div class="flex items-center gap-2.5 w-full sm:w-auto">
+<!-- Search Filter Bar -->
+<div class="relative flex-1 sm:w-72">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-8 bg-surface border border-outline-variant rounded-lg text-body-sm font-body-sm focus:border-primary focus:ring-0 text-on-surface placeholder:text-secondary/60" id="filterInput" onkeyup="handleFilter()" placeholder="ค้นหา ชื่อ หรือ Target URL..." type="text"/>
+<span class="absolute right-2.5 top-2 text-[11px] font-code-sm text-secondary bg-surface-container px-1 rounded">⌘K</span>
+</div>
+<button class="h-9 px-3 border border-outline-variant rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low text-label-sm flex items-center gap-1.5 cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+<span>ตัวกรอง</span>
+</button>
+</div>
+</div>
+<!-- Enterprise Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="subscriptionsTable">
+<thead>
+<tr class="h-11 bg-[#f8fafc] text-secondary text-label-sm font-label-sm uppercase tracking-wider border-b border-outline-variant/50">
+<th class="px-5 py-3" data-i18n="Status">Status</th>
+<th class="px-5 py-3" data-i18n="Name">Name</th>
+<th class="px-5 py-3" data-i18n="Target URL">Target URL</th>
+<th class="px-5 py-3 text-center" data-i18n="Events">Events</th>
+<th class="px-5 py-3" data-i18n="Description">Description</th>
+<th class="px-5 py-3" data-i18n="Created">Created</th>
+<th class="px-5 py-3 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 text-body-sm font-body-sm" id="tableBody">
+<!-- ROW 1: SAP ERP Order Sync -->
+<tr class="hover:bg-slate-50/80 transition-colors duration-100 group" data-id="sub-1">
+<td class="px-5 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span class="status-text">Active</span>
+</span>
+</td>
+<td class="px-5 py-3.5 font-medium text-on-surface whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-primary">SAP ERP Order Sync</span>
+<span class="badge-sample text-[11px] px-1.5 py-0.2 rounded font-normal">ตัวอย่าง</span>
+</div>
+</td>
+<td class="px-5 py-3.5 font-code-sm text-code-sm text-secondary">
+<div class="flex items-center gap-1.5 max-w-xs truncate" title="https://api.erp.partner-th.com/v1/orders/webhook">
+<span class="material-symbols-outlined text-secondary text-[16px]">link</span>
+<span class="truncate">https://api.erp.partner-th.com/v1/orders/webhook</span>
+</div>
+</td>
+<td class="px-5 py-3.5 text-center whitespace-nowrap">
+<span class="inline-block bg-surface-container text-primary font-medium text-xs px-2.5 py-0.5 rounded-full border border-outline-variant/40">
+                    8 <span data-i18n="events">events</span>
+</span>
+</td>
+<td class="px-5 py-3.5 text-secondary max-w-[220px] truncate" title="Enterprise Core Order Ingestion Stream">
+                  Enterprise Core Order Ingestion Stream
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-secondary font-code-sm text-code-sm">
+                  12 ม.ค. 2025
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-xs font-medium rounded text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="Details" onclick="showDetailsModal('SAP ERP Order Sync', 'https://api.erp.partner-th.com/v1/orders/webhook', 'Active', '8 events', 'Enterprise Core Order Ingestion Stream', '12 ม.ค. 2025')">Details</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors" data-i18n="Disable" onclick="toggleRowStatus(this)">Disable</button>
+<button class="p-1 text-secondary hover:text-red-600 rounded hover:bg-red-50 transition-colors" onclick="confirmDeleteSubscription('SAP ERP Order Sync')" title="ลบการเชื่อมต่อ">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2: TikTok Shop Order & Inventory Bridge -->
+<tr class="hover:bg-slate-50/80 transition-colors duration-100 group" data-id="sub-2">
+<td class="px-5 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span class="status-text">Active</span>
+</span>
+</td>
+<td class="px-5 py-3.5 font-medium text-on-surface whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-primary">TikTok Shop Order &amp; Inventory Bridge</span>
+<span class="badge-sample text-[11px] px-1.5 py-0.2 rounded font-normal">ตัวอย่าง</span>
+</div>
+</td>
+<td class="px-5 py-3.5 font-code-sm text-code-sm text-secondary">
+<div class="flex items-center gap-1.5 max-w-xs truncate" title="https://sync.tiktok-channel.internal/webhook/stream">
+<span class="material-symbols-outlined text-secondary text-[16px]">link</span>
+<span class="truncate">https://sync.tiktok-channel.internal/webhook/stream</span>
+</div>
+</td>
+<td class="px-5 py-3.5 text-center whitespace-nowrap">
+<span class="inline-block bg-surface-container text-primary font-medium text-xs px-2.5 py-0.5 rounded-full border border-outline-variant/40">
+                    5 <span data-i18n="events">events</span>
+</span>
+</td>
+<td class="px-5 py-3.5 text-secondary max-w-[220px] truncate" title="Live Flash Sale Stock Real-time Lock">
+                  Live Flash Sale Stock Real-time Lock
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-secondary font-code-sm text-code-sm">
+                  03 ก.พ. 2025
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-xs font-medium rounded text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="Details" onclick="showDetailsModal('TikTok Shop Order &amp; Inventory Bridge', 'https://sync.tiktok-channel.internal/webhook/stream', 'Active', '5 events', 'Live Flash Sale Stock Real-time Lock', '03 ก.พ. 2025')">Details</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors" data-i18n="Disable" onclick="toggleRowStatus(this)">Disable</button>
+<button class="p-1 text-secondary hover:text-red-600 rounded hover:bg-red-50 transition-colors" onclick="confirmDeleteSubscription('TikTok Shop Order &amp; Inventory Bridge')" title="ลบการเชื่อมต่อ">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Shopee Fulfilled Hub -->
+<tr class="hover:bg-slate-50/80 transition-colors duration-100 group" data-id="sub-3">
+<td class="px-5 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span class="status-text">Active</span>
+</span>
+</td>
+<td class="px-5 py-3.5 font-medium text-on-surface whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-primary">Shopee Fulfilled Hub</span>
+<span class="badge-sample text-[11px] px-1.5 py-0.2 rounded font-normal">ตัวอย่าง</span>
+</div>
+</td>
+<td class="px-5 py-3.5 font-code-sm text-code-sm text-secondary">
+<div class="flex items-center gap-1.5 max-w-xs truncate" title="https://wms-gateway.shopee-ops.th/inbound">
+<span class="material-symbols-outlined text-secondary text-[16px]">link</span>
+<span class="truncate">https://wms-gateway.shopee-ops.th/inbound</span>
+</div>
+</td>
+<td class="px-5 py-3.5 text-center whitespace-nowrap">
+<span class="inline-block bg-surface-container text-primary font-medium text-xs px-2.5 py-0.5 rounded-full border border-outline-variant/40">
+                    12 <span data-i18n="events">events</span>
+</span>
+</td>
+<td class="px-5 py-3.5 text-secondary max-w-[220px] truncate" title="Bangkok 3PL Fulfillment dispatch webhook">
+                  Bangkok 3PL Fulfillment dispatch webhook
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-secondary font-code-sm text-code-sm">
+                  15 ก.พ. 2025
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-xs font-medium rounded text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="Details" onclick="showDetailsModal('Shopee Fulfilled Hub', 'https://wms-gateway.shopee-ops.th/inbound', 'Active', '12 events', 'Bangkok 3PL Fulfillment dispatch webhook', '15 ก.พ. 2025')">Details</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors" data-i18n="Disable" onclick="toggleRowStatus(this)">Disable</button>
+<button class="p-1 text-secondary hover:text-red-600 rounded hover:bg-red-50 transition-colors" onclick="confirmDeleteSubscription('Shopee Fulfilled Hub')" title="ลบการเชื่อมต่อ">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4: Central CRM Customer Stream -->
+<tr class="hover:bg-slate-50/80 transition-colors duration-100 group opacity-85" data-id="sub-4">
+<td class="px-5 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#fef9e7] text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span class="status-text">Disabled</span>
+</span>
+</td>
+<td class="px-5 py-3.5 font-medium text-on-surface whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-secondary">Central CRM Customer Stream</span>
+<span class="badge-sample text-[11px] px-1.5 py-0.2 rounded font-normal">ตัวอย่าง</span>
+</div>
+</td>
+<td class="px-5 py-3.5 font-code-sm text-code-sm text-secondary">
+<div class="flex items-center gap-1.5 max-w-xs truncate" title="https://crm-api.central-retail.co.th/events/customer">
+<span class="material-symbols-outlined text-secondary text-[16px]">link</span>
+<span class="truncate">https://crm-api.central-retail.co.th/events/customer</span>
+</div>
+</td>
+<td class="px-5 py-3.5 text-center whitespace-nowrap">
+<span class="inline-block bg-slate-100 text-secondary font-medium text-xs px-2.5 py-0.5 rounded-full border border-outline-variant/40">
+                    3 <span data-i18n="events">events</span>
+</span>
+</td>
+<td class="px-5 py-3.5 text-secondary max-w-[220px] truncate" title="Omnichannel The 1 Card points sync">
+                  Omnichannel The 1 Card points sync
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-secondary font-code-sm text-code-sm">
+                  20 ก.พ. 2025
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-xs font-medium rounded text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="Details" onclick="showDetailsModal('Central CRM Customer Stream', 'https://crm-api.central-retail.co.th/events/customer', 'Disabled', '3 events', 'Omnichannel The 1 Card points sync', '20 ก.พ. 2025')">Details</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors" data-i18n="Enable" onclick="toggleRowStatus(this)">Enable</button>
+<button class="p-1 text-secondary hover:text-red-600 rounded hover:bg-red-50 transition-colors" onclick="confirmDeleteSubscription('Central CRM Customer Stream')" title="ลบการเชื่อมต่อ">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 5: Flash Express Courier Dispatch -->
+<tr class="hover:bg-slate-50/80 transition-colors duration-100 group" data-id="sub-5">
+<td class="px-5 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span class="status-text">Active</span>
+</span>
+</td>
+<td class="px-5 py-3.5 font-medium text-on-surface whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-primary">Flash Express Courier Dispatch</span>
+<span class="badge-sample text-[11px] px-1.5 py-0.2 rounded font-normal">ตัวอย่าง</span>
+</div>
+</td>
+<td class="px-5 py-3.5 font-code-sm text-code-sm text-secondary">
+<div class="flex items-center gap-1.5 max-w-xs truncate" title="https://webhook.flashexpress.co.th/api/v2/tracking">
+<span class="material-symbols-outlined text-secondary text-[16px]">link</span>
+<span class="truncate">https://webhook.flashexpress.co.th/api/v2/tracking</span>
+</div>
+</td>
+<td class="px-5 py-3.5 text-center whitespace-nowrap">
+<span class="inline-block bg-surface-container text-primary font-medium text-xs px-2.5 py-0.5 rounded-full border border-outline-variant/40">
+                    4 <span data-i18n="events">events</span>
+</span>
+</td>
+<td class="px-5 py-3.5 text-secondary max-w-[220px] truncate" title="Automated airway bill generation &amp; rider call">
+                  Automated airway bill generation &amp; rider call
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-secondary font-code-sm text-code-sm">
+                  01 มี.ค. 2025
+                </td>
+<td class="px-5 py-3.5 whitespace-nowrap text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-xs font-medium rounded text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="Details" onclick="showDetailsModal('Flash Express Courier Dispatch', 'https://webhook.flashexpress.co.th/api/v2/tracking', 'Active', '4 events', 'Automated airway bill generation &amp; rider call', '01 มี.ค. 2025')">Details</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors" data-i18n="Disable" onclick="toggleRowStatus(this)">Disable</button>
+<button class="p-1 text-secondary hover:text-red-600 rounded hover:bg-red-50 transition-colors" onclick="confirmDeleteSubscription('Flash Express Courier Dispatch')" title="ลบการเชื่อมต่อ">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty State (Conditional) -->
+<div class="hidden p-12 text-center" id="tableEmptyState">
+<div class="w-12 h-12 rounded-full bg-surface-container mx-auto flex items-center justify-center text-secondary mb-3">
+<span class="material-symbols-outlined text-[24px]">cloud_off</span>
+</div>
+<p class="text-body-md font-body-md text-secondary" data-i18n="No webhook subscriptions configured.">
+            No webhook subscriptions configured.
+          </p>
+</div>
+<!-- Table Footer Pagination / Context -->
+<div class="px-5 py-3.5 bg-slate-50 border-t border-outline-variant/30 flex items-center justify-between text-body-sm text-secondary">
+<div class="flex items-center gap-2">
+<span>แสดง 5 จากทั้งหมด 5 รายการปลายทาง</span>
+<span class="text-outline-variant">•</span>
+<span class="text-emerald-700 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">format_image_left</span>
+              SSL Verified &amp; HMAC-SHA256 Encrypted
+            </span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-secondary">Latency SLA: &lt; 250ms</span>
+</div>
+</div>
+</section>
+<!-- Advanced Technical Insights Sub-section -->
+<section class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-5">
+<div class="flex items-center gap-2 text-primary font-medium text-headline-sm mb-2">
+<span class="material-symbols-outlined text-[20px]">security</span>
+<h3 class="text-body-md font-semibold text-on-surface">HMAC Webhook Security</h3>
+</div>
+<p class="text-body-sm text-secondary leading-relaxed">
+            ทุกแพ็กเก็ตส่งออกมีลายเซ็นดิจิทัล <code class="font-code-sm bg-surface-container px-1 py-0.5 rounded text-primary">X-Hub-Signature-256</code> ป้องกันการปลอมแปลงข้อมูลออเดอร์
+          </p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-5">
+<div class="flex items-center gap-2 text-primary font-medium text-headline-sm mb-2">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+<h3 class="text-body-md font-semibold text-on-surface">Exponential Retry</h3>
+</div>
+<p class="text-body-sm text-secondary leading-relaxed">
+            ระบบส่งซ้ำอัตโนมัติ 5 ครั้ง หากปลายทางตอบกลับ Status Code 5xx หรือเครือข่ายขัดข้อง พร้อมบันทึกล็อกทุกรอบ
+          </p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-5">
+<div class="flex items-center gap-2 text-primary font-medium text-headline-sm mb-2">
+<span class="material-symbols-outlined text-[20px]">database</span>
+<h3 class="text-body-md font-semibold text-on-surface">Event Replay Log</h3>
+</div>
+<p class="text-body-sm text-secondary leading-relaxed">
+            สามารถเรียกดูประวัติ Payload ย้อนหลังได้ 90 วันเพื่อการตรวจสอบ (Audit Log) และกด Re-dispatch ด้วยคำสั่งเดียว
+          </p>
+</div>
+</section>
+</main>
+</div>
+<!-- ================= MODAL: NEW WEBHOOK SUBSCRIPTION ================= -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" id="newSubModal">
+<!-- Backdrop Scrim -->
+<div class="absolute inset-0 bg-[#0e1b32]/40 backdrop-blur-[2px] transition-opacity" onclick="closeNewModal()"></div>
+<!-- Modal Dialog Card (Level 4 Elevation) -->
+<div class="relative bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-2xl max-w-lg w-full overflow-hidden transition-all transform scale-100">
+<!-- Modal Header -->
+<div class="p-6 border-b border-outline-variant/40 flex items-start justify-between">
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface tracking-tight" data-i18n="New Webhook Subscription">New Webhook Subscription</h2>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n="Configure a new webhook to receive platform events.">Configure a new webhook to receive platform events.</p>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors" onclick="closeNewModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Form -->
+<form class="p-6 space-y-4" id="newSubForm" onsubmit="handleCreateSubscription(event)">
+<!-- Field 1: Name -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5" data-i18n="Subscription name">Subscription name</label>
+<input class="w-full h-10 px-3.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md focus:border-primary focus:ring-0 text-on-surface placeholder:text-secondary/50" data-i18n-placeholder="e.g., Production Webhook" id="subNameInput" placeholder="e.g., Production Webhook" required="" type="text"/>
+</div>
+<!-- Field 2: Target URL -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5" data-i18n="Target URL">Target URL</label>
+<input class="w-full h-10 px-3.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md focus:border-primary focus:ring-0 text-on-surface placeholder:text-secondary/50" data-i18n-placeholder="HTTPS endpoint to receive webhooks" id="subUrlInput" placeholder="HTTPS endpoint to receive webhooks" required="" type="url"/>
+<p class="text-[11px] text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-emerald-600">lock</span>
+            ต้องเป็น URL มาตรฐาน HTTPS เพื่อความปลอดภัย
+          </p>
+</div>
+<!-- Field 3: Description -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5" data-i18n="What is this webhook for?">What is this webhook for?</label>
+<textarea class="w-full p-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md focus:border-primary focus:ring-0 text-on-surface placeholder:text-secondary/50" data-i18n-placeholder="Optional notes" id="subDescInput" placeholder="Optional notes" rows="2"></textarea>
+</div>
+<!-- Field 4: Event Types Multiselect -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-2" data-i18n="Event Types">Event Types</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40">
+<label class="flex items-center gap-2 cursor-pointer text-body-sm text-on-surface hover:text-primary">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-0" name="events" type="checkbox" value="order.created"/>
+<span class="font-code-sm text-code-sm">order.created</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer text-body-sm text-on-surface hover:text-primary">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-0" name="events" type="checkbox" value="order.paid"/>
+<span class="font-code-sm text-code-sm">order.paid</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer text-body-sm text-on-surface hover:text-primary">
+<input class="rounded border-outline-variant text-primary focus:ring-0" name="events" type="checkbox" value="inventory.updated"/>
+<span class="font-code-sm text-code-sm">inventory.updated</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer text-body-sm text-on-surface hover:text-primary">
+<input class="rounded border-outline-variant text-primary focus:ring-0" name="events" type="checkbox" value="customer.registered"/>
+<span class="font-code-sm text-code-sm">customer.registered</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer text-body-sm text-on-surface hover:text-primary sm:col-span-2">
+<input class="rounded border-outline-variant text-primary focus:ring-0" name="events" type="checkbox" value="product.price_changed"/>
+<span class="font-code-sm text-code-sm">product.price_changed</span>
+</label>
+</div>
+</div>
+<!-- Modal Actions -->
+<div class="pt-4 border-t border-outline-variant/30 flex items-center justify-end gap-3">
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors" onclick="closeNewModal()" type="button">
+            Cancel
+          </button>
+<button class="h-10 px-6 rounded-lg bg-primary-container hover:bg-primary text-white font-label-md text-label-md shadow-sm transition-colors cursor-pointer" data-i18n="Create" type="submit">
+            Create
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- ================= MODAL: CONFIRM DELETE ================= -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" id="deleteModal">
+<div class="absolute inset-0 bg-[#0e1b32]/40 backdrop-blur-[2px]" onclick="closeDeleteModal()"></div>
+<div class="relative bg-surface-container-lowest rounded-xl border border-outline-variant/80 shadow-2xl max-w-md w-full p-6 text-center">
+<div class="w-12 h-12 rounded-full bg-red-100 text-red-600 mx-auto flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[26px]">warning</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2" data-i18n="Delete this subscription?">
+        Delete this subscription?
+      </h3>
+<p class="text-body-sm text-secondary mb-6 leading-relaxed">
+        คุณต้องการลบการเชื่อมต่อ <span class="font-bold text-on-surface" id="targetDeleteName"></span> หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้ และแพลตฟอร์มปลายทางจะไม่ได้รับข้อมูลเหตุการณ์อีกต่อไป
+      </p>
+<div class="flex items-center justify-center gap-3">
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors" onclick="closeDeleteModal()">
+          ยกเลิก
+        </button>
+<button class="h-10 px-5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-label-md text-label-md transition-colors shadow-sm" data-i18n="Delete" onclick="executeDelete()">
+          Delete
+        </button>
+</div>
+</div>
+</div>
+<!-- ================= MODAL: SUBSCRIPTION DETAILS (SLIDE-OVER / INSPECT) ================= -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-end" id="detailsModal">
+<div class="absolute inset-0 bg-[#0e1b32]/35 backdrop-blur-[1px]" onclick="closeDetailsModal()"></div>
+<div class="relative bg-surface-container-lowest w-full max-w-[540px] h-full shadow-2xl flex flex-col justify-between border-l border-outline-variant z-10 animate-in slide-in-from-right duration-200">
+<!-- Drawer Header -->
+<div class="p-6 border-b border-outline-variant/40 flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">data_object</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface font-bold" id="inspectTitle">Subscription Info</h2>
+<span class="inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800" id="inspectStatus">Active</span>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface p-1.5 rounded-lg hover:bg-surface-container transition-colors" onclick="closeDetailsModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<div>
+<label class="text-label-sm font-label-sm text-secondary uppercase tracking-wider block mb-1">Target Endpoint</label>
+<div class="p-3 bg-surface-container-low rounded-lg font-code-sm text-code-sm text-on-surface break-all border border-outline-variant/40" id="inspectUrl">
+            https://api.example.com
+          </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface rounded-lg border border-outline-variant/40">
+<span class="text-label-sm text-secondary block">Events Registered</span>
+<span class="text-headline-sm font-bold text-on-surface mt-1 block" id="inspectEvents">8 events</span>
+</div>
+<div class="p-4 bg-surface rounded-lg border border-outline-variant/40">
+<span class="text-label-sm text-secondary block">Date Configured</span>
+<span class="text-body-md font-medium text-on-surface mt-1 block" id="inspectCreated">12 ม.ค. 2025</span>
+</div>
+</div>
+<div>
+<label class="text-label-sm font-label-sm text-secondary uppercase tracking-wider block mb-1">Description / Purpose</label>
+<p class="text-body-md text-on-surface bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/40" id="inspectDescription">
+            Enterprise Core Order Ingestion Stream
+          </p>
+</div>
+<!-- Sample Mock Payload JSON -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<label class="text-label-sm font-label-sm text-secondary uppercase tracking-wider">Sample Dispatched JSON (order.created)</label>
+<span class="font-code-sm text-[11px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">HTTP 200 OK</span>
+</div>
+<pre class="bg-slate-900 text-slate-100 font-code-sm text-[12px] p-4 rounded-lg overflow-x-auto leading-relaxed">{
+  "event": "order.created",
+  "event_id": "evt_99184a20f",
+  "timestamp": "2025-03-01T14:30:22.180Z",
+  "data": {
+    "order_id": "TH-ORD-88231",
+    "channel": "TIKTOK_SHOP",
+    "currency": "THB",
+    "net_amount": 1490.00,
+    "payment_status": "PAID"
+  }
+}</pre>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="p-4 border-t border-outline-variant/40 bg-surface flex items-center justify-between">
+<button class="h-9 px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-xs hover:bg-surface-container-low transition-colors flex items-center gap-1.5" onclick="testWebhookPing()">
+<span class="material-symbols-outlined text-[16px]">send</span>
+<span>Send Test Ping</span>
+</button>
+<button class="h-9 px-4 rounded-lg bg-primary-container hover:bg-primary text-white font-label-md text-xs transition-colors" onclick="closeDetailsModal()">
+          ปิดหน้าต่าง
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Notification Overlay -->
+<div class="fixed bottom-6 right-6 z-50 hidden bg-on-surface text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-2.5 text-body-sm font-body-sm animate-bounce" id="toast">
+<span class="material-symbols-outlined text-emerald-400 text-[20px]" id="toastIcon">check_circle</span>
+<span id="toastMessage">การดำเนินการสำเร็จ</span>
+</div>
+<!-- ================= CRITICAL EXPORT TRANSLATION CATALOGUE SCRIPT ================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Created": {
+      "th": "วันที่สร้าง",
+      "en": "Created"
+    },
+    "Name": {
+      "th": "ชื่อการเชื่อมต่อ",
+      "en": "Name"
+    },
+    "Target URL": {
+      "th": "Target URL (ปลายทาง)",
+      "en": "Target URL"
+    },
+    "Description": {
+      "th": "คำอธิบาย",
+      "en": "Description"
+    },
+    "Events": {
+      "th": "เหตุการณ์",
+      "en": "Events"
+    },
+    "Delete this subscription?": {
+      "th": "ลบการเชื่อมต่อนี้หรือไม่?",
+      "en": "Delete this subscription?"
+    },
+    "Webhook Platforms": {
+      "th": "แพลตฟอร์มปลายทาง",
+      "en": "Webhook Platforms"
+    },
+    "Manage webhook subscriptions and platform integrations.": {
+      "th": "จัดการการรับส่ง Webhook และการเชื่อมต่อแพลตฟอร์มปลายทาง",
+      "en": "Manage webhook subscriptions and platform integrations."
+    },
+    "New Webhook Subscription": {
+      "th": "เพิ่มการเชื่อมต่อ Webhook ใหม่",
+      "en": "New Webhook Subscription"
+    },
+    "Configure a new webhook to receive platform events.": {
+      "th": "กำหนดค่า Webhook ใหม่เพื่อรับข้อมูลและเหตุการณ์จากระบบ",
+      "en": "Configure a new webhook to receive platform events."
+    },
+    "Create": {
+      "th": "สร้างการเชื่อมต่อ",
+      "en": "Create"
+    },
+    "e.g., Production Webhook": {
+      "th": "เช่น Production Order Webhook",
+      "en": "e.g., Production Webhook"
+    },
+    "Subscription name": {
+      "th": "ชื่อการเชื่อมต่อ (Subscription Name)",
+      "en": "Subscription name"
+    },
+    "HTTPS endpoint to receive webhooks": {
+      "th": "URL ปลายทาง HTTPS เพื่อรับ Webhook",
+      "en": "HTTPS endpoint to receive webhooks"
+    },
+    "Optional notes": {
+      "th": "บันทึกเพิ่มเติม (ไม่บังคับ)",
+      "en": "Optional notes"
+    },
+    "What is this webhook for?": {
+      "th": "Webhook นี้ใช้สำหรับอะไร? (คำอธิบาย)",
+      "en": "What is this webhook for?"
+    },
+    "Event Types": {
+      "th": "ประเภทของเหตุการณ์ (Event Types)",
+      "en": "Event Types"
+    },
+    "New Subscription": {
+      "th": "+ เพิ่มการเชื่อมต่อใหม่",
+      "en": "+ New Subscription"
+    },
+    "Active Subscriptions": {
+      "th": "การเชื่อมต่อที่เปิดใช้งานอยู่",
+      "en": "Active Subscriptions"
+    },
+    "No webhook subscriptions configured.": {
+      "th": "ไม่พบการเชื่อมต่อ Webhook ในระบบ",
+      "en": "No webhook subscriptions configured."
+    },
+    "events": {
+      "th": "เหตุการณ์",
+      "en": "events"
+    },
+    "Disable": {
+      "th": "ปิดใช้งาน",
+      "en": "Disable"
+    },
+    "Enable": {
+      "th": "เปิดใช้งาน",
+      "en": "Enable"
+    },
+    "Delete": {
+      "th": "ลบ",
+      "en": "Delete"
+    },
+    "Details": {
+      "th": "รายละเอียด",
+      "en": "Details"
+    },
+    "เก็บเมื่อ": {
+      "th": "เก็บเมื่อ",
+      "en": "Saved on"
+    },
+    "ค้นหา ชื่อ, email, custcode, เบอร์โทร, company...": {
+      "th": "ค้นหา ชื่อ, email, custcode, เบอร์โทร, company...",
+      "en": "Search name, email, custcode, phone, company..."
+    },
+    "จ": {
+      "th": "จ",
+      "en": "Mon"
+    },
+    "ชื่อไฟล์เท่านั้น": {
+      "th": "ชื่อไฟล์เท่านั้น",
+      "en": "File name only"
+    },
+    "ตรง ({0} วัน)": {
+      "th": "ตรง ({0} วัน)",
+      "en": "Match ({0} days)"
+    },
+    "แทนที่รูปที่ {0}": {
+      "th": "แทนที่รูปที่ {0}",
+      "en": "Replace image {0}"
+    },
+    "ปิด Dry run = รันจริงบน enrollment แบบ": {
+      "th": "ปิด Dry run = รันจริงบน enrollment แบบ",
+      "en": "Disable Dry run = live execution on enrollment"
+    },
+    "เพิ่มเว็บคู่แข่ง": {
+      "th": "เพิ่มเว็บคู่แข่ง",
+      "en": "Add competitor site"
+    },
+    "ไม่มีรายการที่ยังไม่จ่าย": {
+      "th": "ไม่มีรายการที่ยังไม่จ่าย",
+      "en": "No unpaid transactions"
+    },
+    "ยังไม่มีสาขาในบริษัทนี้": {
+      "th": "ยังไม่มีสาขาในบริษัทนี้",
+      "en": "No branches in this company yet"
+    },
+    "ราคาตามลูกค้า": {
+      "th": "ราคาตามลูกค้า",
+      "en": "Customer-specific pricing"
+    },
+    "ลบล็อกอินของ {0}?": {
+      "th": "ลบล็อกอินของ {0}?",
+      "en": "Delete login of {0}?"
+    },
+    "วันที่ส่งคำขอ": {
+      "th": "วันที่ส่งคำขอ",
+      "en": "Request date"
+    },
+    "ส่วนประกอบ": {
+      "th": "ส่วนประกอบ",
+      "en": "Components"
+    },
+    "หลังผูกกับ “": {
+      "th": "หลังผูกกับ “",
+      "en": "After linking with “"
+    },
+    "โจทย์ research": {
+      "th": "โจทย์ research",
+      "en": "Research problem statement"
+    }
+  }
+  </script>
+<!-- ================= BILINGUAL TOGGLE & INTERACTIVE LOGIC ================= -->
+<script>
+    let currentLang = 'th'; // Starts in Thai as requested
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      document.getElementById('langDisplayLabel').textContent = currentLang === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+      applyTranslations();
+      showToast(`เปลี่ยนภาษาเป็น: ${currentLang === 'th' ? 'ภาษาไทย' : 'English'}`);
+    }
+
+    function applyTranslations() {
+      // Elements with data-i18n attribute
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][currentLang]) {
+          el.textContent = translations[key][currentLang];
+        }
+      });
+
+      // Inputs with placeholder translation
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[key] && translations[key][currentLang]) {
+          el.setAttribute('placeholder', translations[key][currentLang]);
+        }
+      });
+    }
+
+    // Modal Handlers
+    function openNewModal() {
+      document.getElementById('newSubModal').classList.remove('hidden');
+    }
+
+    function closeNewModal() {
+      document.getElementById('newSubModal').classList.add('hidden');
+      document.getElementById('newSubForm').reset();
+    }
+
+    let itemToDelete = null;
+
+    function confirmDeleteSubscription(name) {
+      itemToDelete = name;
+      document.getElementById('targetDeleteName').textContent = name;
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.add('hidden');
+      itemToDelete = null;
+    }
+
+    function executeDelete() {
+      if (itemToDelete) {
+        // Delete matched row
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(r => {
+          if (r.innerText.includes(itemToDelete)) {
+            r.remove();
+          }
+        });
+        updateCounts();
+        closeDeleteModal();
+        showToast(`ลบการเชื่อมต่อ "${itemToDelete}" เรียบร้อยแล้ว`);
+      }
+    }
+
+    // Toggle row active / disable state
+    function toggleRowStatus(btn) {
+      const row = btn.closest('tr');
+      const badge = row.querySelector('.status-text');
+      const pill = badge.parentElement;
+      const isCurrentlyActive = badge.textContent.trim() === 'Active';
+
+      if (isCurrentlyActive) {
+        badge.textContent = 'Disabled';
+        pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#fef9e7] text-[#b08900]';
+        pill.querySelector('span').className = 'w-1.5 h-1.5 rounded-full bg-[#b08900]';
+        btn.textContent = currentLang === 'th' ? 'เปิดใช้งาน' : 'Enable';
+        btn.className = 'px-2.5 py-1 text-xs font-medium rounded text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors';
+        showToast('เปลี่ยนสถานะเป็น: ปิดใช้งาน (Disabled)');
+      } else {
+        badge.textContent = 'Active';
+        pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]';
+        pill.querySelector('span').className = 'w-1.5 h-1.5 rounded-full bg-[#157347]';
+        btn.textContent = currentLang === 'th' ? 'ปิดใช้งาน' : 'Disable';
+        btn.className = 'px-2.5 py-1 text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors';
+        showToast('เปลี่ยนสถานะเป็น: เปิดใช้งาน (Active)');
+      }
+      updateCounts();
+    }
+
+    // Details Slide-over
+    function showDetailsModal(name, url, status, events, desc, created) {
+      document.getElementById('inspectTitle').textContent = name;
+      document.getElementById('inspectUrl').textContent = url;
+      document.getElementById('inspectEvents').textContent = events;
+      document.getElementById('inspectDescription').textContent = desc;
+      document.getElementById('inspectCreated').textContent = created;
+      const statusBadge = document.getElementById('inspectStatus');
+      statusBadge.textContent = status;
+      if (status === 'Active') {
+        statusBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+      } else {
+        statusBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+      }
+      document.getElementById('detailsModal').classList.remove('hidden');
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+    }
+
+    function testWebhookPing() {
+      showToast('ส่ง Ping ทดสอบไปยังปลายทางสำเร็จ (200 OK - 88ms)');
+    }
+
+    // Create Subscription Form Submit
+    function handleCreateSubscription(e) {
+      e.preventDefault();
+      const name = document.getElementById('subNameInput').value;
+      const url = document.getElementById('subUrlInput').value;
+      const desc = document.getElementById('subDescInput').value || 'User created webhook';
+
+      const checkedBoxes = document.querySelectorAll('input[name="events"]:checked');
+      const eventsCount = checkedBoxes.length;
+
+      const tbody = document.getElementById('tableBody');
+      const newRow = document.createElement('tr');
+      newRow.className = 'hover:bg-slate-50/80 transition-colors duration-100 group';
+      newRow.innerHTML = `
+        <td class="px-5 py-3.5 whitespace-nowrap">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+            <span class="status-text">Active</span>
+          </span>
+        </td>
+        <td class="px-5 py-3.5 font-medium text-on-surface whitespace-nowrap">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-primary">${escapeHtml(name)}</span>
+            <span class="badge-sample text-[11px] px-1.5 py-0.2 rounded font-normal">ตัวอย่าง</span>
+          </div>
+        </td>
+        <td class="px-5 py-3.5 font-code-sm text-code-sm text-secondary">
+          <div class="flex items-center gap-1.5 max-w-xs truncate" title="${escapeHtml(url)}">
+            <span class="material-symbols-outlined text-secondary text-[16px]">link</span>
+            <span class="truncate">${escapeHtml(url)}</span>
+          </div>
+        </td>
+        <td class="px-5 py-3.5 text-center whitespace-nowrap">
+          <span class="inline-block bg-surface-container text-primary font-medium text-xs px-2.5 py-0.5 rounded-full border border-outline-variant/40">
+            ${eventsCount} <span data-i18n="events">events</span>
+          </span>
+        </td>
+        <td class="px-5 py-3.5 text-secondary max-w-[220px] truncate" title="${escapeHtml(desc)}">
+          ${escapeHtml(desc)}
+        </td>
+        <td class="px-5 py-3.5 whitespace-nowrap text-secondary font-code-sm text-code-sm">
+          วันนี้
+        </td>
+        <td class="px-5 py-3.5 whitespace-nowrap text-right">
+          <div class="inline-flex items-center gap-1.5">
+            <button onclick="showDetailsModal('${escapeHtml(name)}', '${escapeHtml(url)}', 'Active', '${eventsCount} events', '${escapeHtml(desc)}', 'วันนี้')" class="px-2.5 py-1 text-xs font-medium rounded text-secondary hover:text-on-surface hover:bg-surface-container transition-colors">Details</button>
+            <button onclick="toggleRowStatus(this)" class="px-2.5 py-1 text-xs font-medium rounded text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">Disable</button>
+            <button onclick="confirmDeleteSubscription('${escapeHtml(name)}')" class="p-1 text-secondary hover:text-red-600 rounded hover:bg-red-50 transition-colors" title="ลบการเชื่อมต่อ">
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </td>
+      `;
+
+      tbody.insertBefore(newRow, tbody.firstChild);
+      closeNewModal();
+      updateCounts();
+      applyTranslations();
+      showToast(`สร้าง Webhook "${name}" เรียบร้อยแล้ว`);
+    }
+
+    // Refresh Action
+    function handleRefresh() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast('อัปเดตข้อมูลสถานะ Webhook ล่าสุดสำเร็จ');
+      }, 700);
+    }
+
+    // Filter Table Search
+    function handleFilter() {
+      const val = document.getElementById('filterInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#tableBody tr');
+      let visible = 0;
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(val)) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      document.getElementById('tableRowCountBadge').textContent = visible;
+      document.getElementById('tableEmptyState').classList.toggle('hidden', visible > 0);
+    }
+
+    function updateCounts() {
+      const rows = document.querySelectorAll('#tableBody tr');
+      document.getElementById('tableRowCountBadge').textContent = rows.length;
+      let active = 0;
+      rows.forEach(r => {
+        const badge = r.querySelector('.status-text');
+        if (badge && badge.textContent.trim() === 'Active') {
+          active++;
+        }
+      });
+      document.getElementById('statActiveCount').textContent = active;
+      document.getElementById('tableEmptyState').classList.toggle('hidden', rows.length > 0);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Initialize bilingual state on load
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTranslations();
+    });
+  </script>
+</body></html>

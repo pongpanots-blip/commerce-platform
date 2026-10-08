@@ -22214,5 +22214,297 @@
   "บริษัทและข้อมูลติดต่อของลูกค้าที่ฉันดูแล": {
     "th": "บริษัทและข้อมูลติดต่อของลูกค้าที่ฉันดูแล",
     "en": "Companies and contact details of my assigned customers"
+  },
+  "จัดการหมวดหมู่": {
+    "th": "หมวดหมู่",
+    "en": "Categories"
+  },
+  "สร้างหมวดหมู่": {
+    "th": "สร้างหมวดหมู่",
+    "en": "Create category"
+  },
+  "สร้างหมวดหมู่สินค้า": {
+    "th": "สร้างหมวดหมู่สินค้า",
+    "en": "Create a category"
+  },
+  "เลือกหมวดแม่แล้วตั้งชื่อ/ไอคอน — ชั้นและรหัสคำนวณจากหมวดแม่ให้อัตโนมัติ": {
+    "th": "เลือกหมวดแม่แล้วตั้งชื่อ/ไอคอน — ชั้นและรหัสคำนวณจากหมวดแม่ให้อัตโนมัติ",
+    "en": "Pick a parent, then set the name and icon. Level and code follow the parent."
+  },
+  "กรุณาเลือกหมวดแม่": {
+    "th": "กรุณาเลือกหมวดแม่",
+    "en": "Choose a parent category"
+  },
+  "กรุณากรอกชื่อหมวดหมู่ (EN)": {
+    "th": "กรุณากรอกชื่อหมวดหมู่ (EN)",
+    "en": "Enter the category name (EN)"
+  },
+  "หมวดแม่ *": {
+    "th": "หมวดแม่ *",
+    "en": "Parent category *"
+  },
+  "เลือกได้ถึง Level 2 — หมวดใหม่จะไปเป็นชั้นถัดไปใต้หมวดที่เลือก (Level 3 คือชั้นลึกสุด จึงเป็นหมวดแม่ไม่ได้)": {
+    "th": "เลือกได้ถึง Level 2 — หมวดใหม่จะไปเป็นชั้นถัดไปใต้หมวดที่เลือก (Level 3 คือชั้นลึกสุด จึงเป็นหมวดแม่ไม่ได้)",
+    "en": "You can pick up to level 2. The new category is the next level under it. Level 3 is the deepest, so it cannot be a parent."
+  },
+  "— เลือกหมวดแม่ —": {
+    "th": "— เลือกหมวดแม่ —",
+    "en": "— Choose a parent —"
+  },
+  "หมวดใหม่จะเป็น:": {
+    "th": "หมวดใหม่จะเป็น:",
+    "en": "New category will be:"
+  },
+  "ลำดับจะต่อท้ายหมวดย่อยที่มีอยู่ของ {0} — จัดลำดับใหม่ได้ที่หน้ารายการ": {
+    "th": "ลำดับจะต่อท้ายหมวดย่อยที่มีอยู่ของ {0} — จัดลำดับใหม่ได้ที่หน้ารายการ",
+    "en": "It is appended after the existing children of {0}. Reorder it from the list."
+  },
+  "ชื่อหมวดหมู่ (EN) *": {
+    "th": "ชื่อหมวดหมู่ (EN) *",
+    "en": "Category name (EN) *"
+  },
+  "ชื่อหมวดหมู่ (TH)": {
+    "th": "ชื่อหมวดหมู่ (TH)",
+    "en": "Category name (TH)"
+  },
+  "ว่างไว้ = fallback ไปชื่อ EN": {
+    "th": "ว่างไว้ = fallback ไปชื่อ EN",
+    "en": "Leave blank to fall back to the English name"
+  },
+  "เช่น BAKERY": {
+    "th": "เช่น BAKERY",
+    "en": "e.g. BAKERY"
+  },
+  "เช่น เบเกอรี่": {
+    "th": "เช่น เบเกอรี่",
+    "en": "e.g. bakery"
+  },
+  "ไอคอน / รูปหมวดหมู่": {
+    "th": "ไอคอน / รูปหมวดหมู่",
+    "en": "Category icon"
+  },
+  "แสดงบนหน้าแรก": {
+    "th": "แสดงบนหน้าแรก",
+    "en": "Show on homepage"
+  },
+  "แถวไอคอนหน้าแรกอ่านเฉพาะหมวด Level 1 — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวด Level 1": {
+    "th": "แถวไอคอนหน้าแรกอ่านเฉพาะหมวด Level 1 — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวด Level 1",
+    "en": "The homepage icon row reads level 1 only, so this appears only when creating a level 1 category."
+  },
+  "แก้ไขหมวดหมู่สินค้า": {
+    "th": "แก้ไขหมวดหมู่สินค้า",
+    "en": "Edit category"
+  },
+  "แก้ชื่อ ไอคอน ลำดับ และการแสดงผลบนหน้าแรก — ตำแหน่งในโครงสร้างมาจาก seed ย้ายที่นี่ไม่ได้": {
+    "th": "แก้ชื่อ ไอคอน ลำดับ และการแสดงผลบนหน้าแรก — ตำแหน่งในโครงสร้างมาจาก seed ย้ายที่นี่ไม่ได้",
+    "en": "Edit the name, icon, order, and homepage visibility. Position in the tree comes from the seed and cannot be moved here."
+  },
+  "รูปแบบ Sort Options JSON ไม่ถูกต้อง": {
+    "th": "รูปแบบ Sort Options JSON ไม่ถูกต้อง",
+    "en": "Sort options JSON is invalid"
+  },
+  "Category ID:": {
+    "th": "Category ID:",
+    "en": "Category ID:"
+  },
+  "ดูใน shop": {
+    "th": "ดูใน shop",
+    "en": "View in shop"
+  },
+  "ตำแหน่งในโครงสร้าง:": {
+    "th": "ตำแหน่งในโครงสร้าง:",
+    "en": "Place in the tree:"
+  },
+  "รหัส {0}": {
+    "th": "รหัส {0}",
+    "en": "Code {0}"
+  },
+  "ชื่อนี้เป็นส่วนหนึ่งของ path — เปลี่ยนแล้ว path ของหมวดลูกทั้งกิ่งจะถูกเขียนใหม่ให้อัตโนมัติ": {
+    "th": "ชื่อนี้เป็นส่วนหนึ่งของ path — เปลี่ยนแล้ว path ของหมวดลูกทั้งกิ่งจะถูกเขียนใหม่ให้อัตโนมัติ",
+    "en": "This name is part of the path. Changing it rewrites the path of every child."
+  },
+  "ชื่อที่ลูกค้าเห็นเมื่อใช้ภาษาไทย — ว่างไว้จะ fallback ไปใช้ชื่อ EN": {
+    "th": "ชื่อที่ลูกค้าเห็นเมื่อใช้ภาษาไทย — ว่างไว้จะ fallback ไปใช้ชื่อ EN",
+    "en": "The name customers see in Thai. Blank falls back to English."
+  },
+  "เช่น ORGANIC BREAD": {
+    "th": "เช่น ORGANIC BREAD",
+    "en": "e.g. ORGANIC BREAD"
+  },
+  "เช่น ขนมปังออร์แกนิก": {
+    "th": "เช่น ขนมปังออร์แกนิก",
+    "en": "e.g. organic bread"
+  },
+  "ลำดับการแสดงผล (Sort order)": {
+    "th": "ลำดับการแสดงผล (Sort order)",
+    "en": "Display order"
+  },
+  "ตัวเลขน้อยมาก่อน — เรียงกันเฉพาะในกลุ่มหมวดพี่น้องเดียวกัน": {
+    "th": "ตัวเลขน้อยมาก่อน — เรียงกันเฉพาะในกลุ่มหมวดพี่น้องเดียวกัน",
+    "en": "Lower numbers come first, among siblings only."
+  },
+  "หมวด All อยู่ลำดับ 0 เสมอ": {
+    "th": "หมวด All อยู่ลำดับ 0 เสมอ",
+    "en": "The All category stays at order 0."
+  },
+  "ค่าเรียงเริ่มต้นของหน้ารายการสินค้า (Default sort key)": {
+    "th": "ค่าเรียงเริ่มต้นของหน้ารายการสินค้า (Default sort key)",
+    "en": "Default product sort key"
+  },
+  "ต้องตรงกับ key ใน Sort options ด้านล่าง — เว้นว่างได้ถ้าไม่ต้องการบังคับ": {
+    "th": "ต้องตรงกับ key ใน Sort options ด้านล่าง — เว้นว่างได้ถ้าไม่ต้องการบังคับ",
+    "en": "Must match a key in the sort options below. Leave blank to leave it unset."
+  },
+  "เช่น a1, grade_3": {
+    "th": "เช่น a1, grade_3",
+    "en": "e.g. a1, grade_3"
+  },
+  "ตัวเลือกการเรียงเฉพาะหมวดนี้ (Sort options — JSON)": {
+    "th": "ตัวเลือกการเรียงเฉพาะหมวดนี้ (Sort options — JSON)",
+    "en": "Sort options for this category (JSON)"
+  },
+  "รูปแบบ [{\"key\":\"a1\",\"label\":\"A1\",\"order\":1}] · order น้อยแสดงก่อน": {
+    "th": "รูปแบบ [{\"key\":\"a1\",\"label\":\"A1\",\"order\":1}] · order น้อยแสดงก่อน",
+    "en": "Format [{\"key\":\"a1\",\"label\":\"A1\",\"order\":1}]. A lower order is shown first."
+  },
+  "แถวไอคอนหน้าแรกดึงเฉพาะหมวด Level 1 — ติ๊กที่ Level อื่นจะยังไม่มีผล": {
+    "th": "แถวไอคอนหน้าแรกดึงเฉพาะหมวด Level 1 — ติ๊กที่ Level อื่นจะยังไม่มีผล",
+    "en": "The homepage icon row uses level 1 only. The checkbox has no effect on other levels."
+  },
+  "ปิดแล้วหมวดจะหายจากหน้าร้านและตัวเลือกกรอง แต่สินค้ายังอยู่": {
+    "th": "ปิดแล้วหมวดจะหายจากหน้าร้านและตัวเลือกกรอง แต่สินค้ายังอยู่",
+    "en": "When off, the category leaves the shop and filters. Products stay."
+  },
+  "หน้าแรกของ shop แสดงหมวด Level 1 ทั้งชั้น — ลากเรียงลำดับและติ๊กเลือกว่าหมวดไหนขึ้นหน้าแรกได้ที่นี่": {
+    "th": "หน้าแรกของ shop แสดงหมวด Level 1 ทั้งชั้น — ลากเรียงลำดับและติ๊กเลือกว่าหมวดไหนขึ้นหน้าแรกได้ที่นี่",
+    "en": "The shop homepage shows every level 1 category. Drag to reorder and choose which appear on the homepage."
+  },
+  "แก้ไขชื่อ / รูป / การแสดงผล": {
+    "th": "แก้ไขชื่อ / รูป / การแสดงผล",
+    "en": "Edit name, image, and visibility"
+  },
+  "ค้นหาทุกชั้น — ชื่อ EN / TH / path / รหัส / วาง id มาเลยก็ได้": {
+    "th": "ค้นหาทุกชั้น — ชื่อ EN / TH / path / รหัส / วาง id มาเลยก็ได้",
+    "en": "Search every level — EN / TH name, path, code, or paste an id"
+  },
+  "ผลค้นหา {0} หมวด — ล้างคำค้นเพื่อจัดลำดับ / เปิด-ปิดแสดงบนหน้าแรก": {
+    "th": "ผลค้นหา {0} หมวด — ล้างคำค้นเพื่อจัดลำดับ / เปิด-ปิดแสดงบนหน้าแรก",
+    "en": "{0} matches. Clear the search to reorder or toggle the homepage."
+  },
+  "Level {0}": {
+    "th": "Level {0}",
+    "en": "Level {0}"
+  },
+  "ใต้ {0}": {
+    "th": "ใต้ {0}",
+    "en": "under {0}"
+  },
+  "ไปที่กลุ่มนี้": {
+    "th": "ไปที่กลุ่มนี้",
+    "en": "Open this group"
+  },
+  "เปิดกลุ่มที่จัดลำดับหมวดนี้ได้": {
+    "th": "เปิดกลุ่มที่จัดลำดับหมวดนี้ได้",
+    "en": "Open the group where this category is ordered"
+  },
+  "← ย้อนกลับ": {
+    "th": "← ย้อนกลับ",
+    "en": "← Back"
+  },
+  "ย้อนขึ้นหนึ่งชั้น": {
+    "th": "ย้อนขึ้นหนึ่งชั้น",
+    "en": "Up one level"
+  },
+  "Home category (Level 1)": {
+    "th": "หมวดหน้าแรก (Level 1)",
+    "en": "Home category (level 1)"
+  },
+  "Division ทั้งหมด": {
+    "th": "Division ทั้งหมด",
+    "en": "All divisions"
+  },
+  "Level 1 ทั้งหมด {0} หมวด · ติ๊กแสดงบนหน้าแรก {1} หมวด — ลากเรียงได้ทั้งชั้น ข้าม Division": {
+    "th": "Level 1 ทั้งหมด {0} หมวด · ติ๊กแสดงบนหน้าแรก {1} หมวด — ลากเรียงได้ทั้งชั้น ข้าม Division",
+    "en": "All {0} level 1 categories · {1} shown on the homepage. Drag to reorder across divisions."
+  },
+  "Division ชั้นบนสุด {0} หมวด — ลำดับของ Division มาจาก seed จัดที่นี่ไม่ได้": {
+    "th": "Division ชั้นบนสุด {0} หมวด — ลำดับของ Division มาจาก seed จัดที่นี่ไม่ได้",
+    "en": "{0} top-level divisions. Their order comes from the seed and cannot be changed here."
+  },
+  "หมวด Level 1 {0} หมวดใต้ {1} — ลำดับของชั้นนี้จัดรวมทั้งชั้นที่ Home category": {
+    "th": "หมวด Level 1 {0} หมวดใต้ {1} — ลำดับของชั้นนี้จัดรวมทั้งชั้นที่ Home category",
+    "en": "{0} level 1 categories under {1}. Order this level from Home category."
+  },
+  "หมวดย่อย {0} หมวด — ลากเพื่อจัดลำดับ แล้วกดบันทึก": {
+    "th": "หมวดย่อย {0} หมวด — ลากเพื่อจัดลำดับ แล้วกดบันทึก",
+    "en": "{0} subcategories. Drag to reorder, then save."
+  },
+  "หน้าแรกยังซ่อนหมวดที่ไม่มีสินค้า active ให้อีกชั้นหนึ่ง — ติ๊กแล้วอาจยังไม่ขึ้น ถ้าหมวดนั้นยังไม่มีสินค้า": {
+    "th": "หน้าแรกยังซ่อนหมวดที่ไม่มีสินค้า active ให้อีกชั้นหนึ่ง — ติ๊กแล้วอาจยังไม่ขึ้น ถ้าหมวดนั้นยังไม่มีสินค้า",
+    "en": "The homepage also hides categories with no active products. A ticked category may stay hidden until it has products."
+  },
+  "ไปจัดลำดับที่ Home category →": {
+    "th": "ไปจัดลำดับที่ Home category →",
+    "en": "Reorder on Home category →"
+  },
+  "บันทึกลำดับ": {
+    "th": "บันทึกลำดับ",
+    "en": "Save order"
+  },
+  "ลำดับตรงกับที่บันทึกไว้": {
+    "th": "ลำดับตรงกับที่บันทึกไว้",
+    "en": "Order matches what is saved"
+  },
+  "บันทึกการแสดงบนหน้าแรกไม่สำเร็จ": {
+    "th": "บันทึกการแสดงบนหน้าแรกไม่สำเร็จ",
+    "en": "Could not save the homepage setting"
+  },
+  "บันทึกลำดับไม่สำเร็จ": {
+    "th": "บันทึกลำดับไม่สำเร็จ",
+    "en": "Could not save the order"
+  },
+  "ยังไม่มีหมวด Level 1": {
+    "th": "ยังไม่มีหมวด Level 1",
+    "en": "No level 1 categories yet"
+  },
+  "หมวดนี้ไม่มีหมวดย่อย — เป็นหมวดปลายกิ่งที่สินค้าผูกอยู่": {
+    "th": "หมวดนี้ไม่มีหมวดย่อย — เป็นหมวดปลายกิ่งที่สินค้าผูกอยู่",
+    "en": "No subcategories. Products attach to this leaf."
+  },
+  "ชื่อหมวดหมู่": {
+    "th": "ชื่อหมวดหมู่",
+    "en": "Category name"
+  },
+  "ลากเพื่อจัดลำดับ": {
+    "th": "ลากเพื่อจัดลำดับ",
+    "en": "Drag to reorder"
+  },
+  "ชั้นนี้จัดลำดับที่นี่ไม่ได้": {
+    "th": "ชั้นนี้จัดลำดับที่นี่ไม่ได้",
+    "en": "This level cannot be reordered here"
+  },
+  "เปิดดูหมวดย่อย {0} หมวด": {
+    "th": "เปิดดูหมวดย่อย {0} หมวด",
+    "en": "Open {0} subcategories"
+  },
+  "ไม่มีหมวดย่อย": {
+    "th": "ไม่มีหมวดย่อย",
+    "en": "No subcategories"
+  },
+  "{0} หมวดย่อย": {
+    "th": "{0} หมวดย่อย",
+    "en": "{0} subcategories"
+  },
+  "ไม่มีหมวดแม่": {
+    "th": "ไม่มีหมวดแม่",
+    "en": "No parent"
+  },
+  " · ปิดใช้งาน": {
+    "th": " · ปิดใช้งาน",
+    "en": " · inactive"
+  },
+  "ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของ shop": {
+    "th": "ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของ shop",
+    "en": "Tick to show this category on the shop homepage icon row"
   }
 }

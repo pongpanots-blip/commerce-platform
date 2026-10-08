@@ -7,6 +7,9 @@ import './josh-admin.css';
 const Alluser = lazy(() => import('./app/page/user/Alluser'));
 const BatchSticker = lazy(() => import('./app/page/batch-sticker/BatchSticker'));
 const BrandList = lazy(() => import('./app/page/brand/BrandList'));
+const CategoryList = lazy(() => import('./app/page/category/CategoryList'));
+const CreateCategory = lazy(() => import('./app/page/category/CreateCategory'));
+const EditCategory = lazy(() => import('./app/page/category/EditCategory'));
 const KbankTestingConsole = lazy(() => import('./app/page/kbank/KbankTestingConsole'));
 const InvoicesOverdue = lazy(() => import('./app/page/CS/InvoicesOverdue'));
 const CreditTermsAdmin = lazy(() => import('./app/page/CS/CreditTermsAdmin'));
@@ -130,6 +133,9 @@ export function JoshAdminApp() {
             <Route path="allusers/:userId" element={<UserDetail />} />
             <Route path="membership-tiers" element={<MembershipTierConfig />} />
             <Route path="brands" element={<BrandList />} />
+            <Route path="categories" element={<CategoryList />} />
+            <Route path="categories/create" element={<CreateCategory />} />
+            <Route path="categories/edit/:id" element={<EditCategory />} />
             <Route path="kbank/testing-console" element={<KbankTestingConsole />} />
             <Route path="invoices" element={<InvoicesOverdue />} />
             <Route path="credit-notes" element={<CreditNotesAdmin />} />

@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, ErrorText, Field, Icon, Input, LanguageSelector } from '@cp/ui';
 import { auth } from '../../lib/api';
+import { landingFor } from '../../lib/landing';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -18,8 +19,8 @@ export function Register() {
     setSubmitting(true);
     setError(null);
     try {
-      await auth.register(email, password); // registers then auto-logs-in
-      navigate('/');
+      const role = await auth.register(email, password); // registers then auto-logs-in
+      navigate(landingFor(role), { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

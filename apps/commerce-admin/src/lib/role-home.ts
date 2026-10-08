@@ -1,8 +1,16 @@
-/** Shared homes for commerce staff. Independent of the parallel landing module. */
+/**
+ * Shared homes for commerce staff (also the post-login landing in landing.ts). Each is a page in the role's
+ * own sidebar whose first API calls the platform allows for that role.
+ */
 export const ROLE_HOME: Readonly<Record<string, string>> = {
-  admin: '/', merchandising: '/products', business_analyst: '/reports/sales', cs: '/cs',
-  graphic: '/j/product/bulk-image-upload', marketing: '/marketing/growth',
-  sale: '/reports/sales', sales_manager: '/reports/sales',
+  admin: '/', // Dashboard (admin-only)
+  merchandising: '/products', // GET /products
+  business_analyst: '/reports/sales', // GET /reports/sales (read-only role)
+  cs: '/cs', // CS desk — no API call on load; tabs use the josh relay /cs-admin/*
+  graphic: '/j/product/bulk-image-upload', // relay /product/images*
+  marketing: '/marketing/growth', // GET /growth/*
+  sale: '/reports/sales', // own sales, scoped to the caller's reps
+  sales_manager: '/reports/sales', // team sales
 };
 
 export function normalizeRole(role: string | null | undefined): string {

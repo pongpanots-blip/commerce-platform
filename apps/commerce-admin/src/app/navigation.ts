@@ -221,7 +221,10 @@ const LABELS: Record<string, string> = {
   '/j/erp/webhook-simulator': 'ทดสอบเหตุการณ์ ERP ของร้านค้า',
 };
 
-/** Destination permissions from the staff-role policy; omitted destinations are admin-only. */
+/**
+ * Destination permissions from the staff-role policy; omitted destinations are admin-only.
+ * Also decides post-login landing pages and deep links (src/lib/landing.ts).
+ */
 export const ROLE_ACCESS: Record<string, readonly string[]> = {
   "/reports/winback/opportunities": ["sales_manager", "business_analyst"],
   "/reports/winback/my": ["sale"],

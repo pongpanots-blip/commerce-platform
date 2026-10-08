@@ -14,11 +14,17 @@ describe('StaffAccountsService', () => {
     create: (r: Partial<Row>) => ({ id: `u-${rows.length + 1}`, createdAt: new Date(), ...r }),
     save: jest.fn(async (r: Row) => { rows = [...rows.filter((x) => x.id !== r.id), r]; return r; }),
   };
-  const svc = new StaffAccountsService(users as never, audit as never);
+  const sessions = {
+    revokeAllForUser: jest.fn(async () => undefined),
+    issueSession: jest.fn(async () => ({ accessToken: 'a', role: 'admin', mustChangePassword: false, refreshToken: 'r', expiresIn: 900, refreshExpiresIn: 2592000 })),
+  };
+  const svc = new StaffAccountsService(users as never, audit as never, sessions as never);
   const me = { userId: 'u-admin', email: 'boss@jagota.co.th' };
 
   beforeEach(() => {
     audit.insert.mockClear();
+    sessions.revokeAllForUser.mockClear();
+    sessions.issueSession.mockClear();
     rows = [
       { id: 'u-admin', email: 'boss@jagota.co.th', name: 'Boss', role: 'admin', status: 'active', passwordHash: bcrypt.hashSync('old-password-1', 4), createdAt: new Date() },
       { id: 'u-dev', email: 'dev@partner.test', name: null, role: 'developer', status: 'active', passwordHash: null, createdAt: new Date() },
@@ -67,8 +73,23 @@ describe('StaffAccountsService', () => {
     await expect(svc.changeOwnPassword(me, temporaryPassword, temporaryPassword)).rejects.toThrow('must differ');
     await expect(svc.changeOwnPassword(me, 'wrong', 'a-long-new-password')).rejects.toBeInstanceOf(UnauthorizedException);
     await expect(svc.changeOwnPassword(me, temporaryPassword, 'short')).rejects.toBeInstanceOf(BadRequestException);
-    await expect(svc.changeOwnPassword(me, temporaryPassword, 'a-long-new-password')).resolves.toEqual({ changed: true });
+    expect(sessions.revokeAllForUser).toHaveBeenCalledWith('u-admin', 'password_reset');
+    await expect(svc.changeOwnPassword(me, temporaryPassword, 'a-long-new-password')).resolves.toMatchObject({ changed: true, accessToken: 'a', refreshToken: 'r' });
+    // other sign-ins end; this one continues with the fresh session in the response
+    expect(sessions.revokeAllForUser).toHaveBeenLastCalledWith('u-admin', 'password_changed');
+    expect(sessions.issueSession).toHaveBeenCalledWith(expect.objectContaining({ id: 'u-admin' }), 'staff');
     expect(await bcrypt.compare('a-long-new-password', rows.find((r) => r.id === 'u-admin')!.passwordHash!)).toBe(true);
     expect(rows.find((r) => r.id === 'u-admin')!.mustChangePassword).toBe(false);
+  });
+
+  it('disabling or a role change ends the account\'s sign-ins; a rename does not', async () => {
+    rows.push({ id: 'u-m', email: 'mer@jagota.co.th', name: null, role: 'merchandising', status: 'active', passwordHash: null, createdAt: new Date() });
+    await svc.update('u-m', { name: 'Mer' }, me);
+    expect(sessions.revokeAllForUser).not.toHaveBeenCalled();
+    await svc.update('u-m', { role: 'graphic' }, me);
+    expect(sessions.revokeAllForUser).toHaveBeenLastCalledWith('u-m', 'role_changed');
+    await svc.update('u-m', { status: 'disabled' }, me);
+    expect(sessions.revokeAllForUser).toHaveBeenLastCalledWith('u-m', 'disabled');
+    expect(sessions.revokeAllForUser).toHaveBeenCalledTimes(2);
   });
 });

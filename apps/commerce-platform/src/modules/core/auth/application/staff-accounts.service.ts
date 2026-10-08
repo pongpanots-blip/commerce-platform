@@ -6,6 +6,7 @@ import { In, Repository } from 'typeorm';
 import { AuditLog } from '../../audit/infrastructure/audit-log.entity';
 import { User } from '../../user/infrastructure/user.entity';
 import { STAFF_ROLES, StaffRole, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { RefreshTokenService } from './refresh-token.service';
 
 export type StaffStatus = 'active' | 'disabled';
 export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: StaffStatus; mustChangePassword: boolean; createdAt: Date }
@@ -20,12 +21,14 @@ const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.nam
  * New accounts and resets get a random temporary password, returned once and never stored or logged,
  * and must change it at first sign-in (the guard lets nothing else through until they do).
  * An admin cannot lock themselves out, and the last active admin cannot be removed or demoted.
+ * Disabling, a role change and a password reset end every sign-in of the account (its refresh tokens).
  */
 @Injectable()
 export class StaffAccountsService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
     @InjectRepository(AuditLog) private readonly audit: Repository<AuditLog>,
+    private readonly sessions: RefreshTokenService,
   ) {}
 
   async list(): Promise<StaffAccount[]> {
@@ -63,6 +66,8 @@ export class StaffAccountsService {
     if (changes.role) user.role = changes.role;
     if (changes.status) user.status = changes.status;
     const saved = await this.users.save(user);
+    if (saved.status !== 'active' && before.status === 'active') await this.sessions.revokeAllForUser(id, 'disabled');
+    else if (normalizeStaffRole(saved.role) !== before.role) await this.sessions.revokeAllForUser(id, 'role_changed');
     await this.log(actor, 'staff.update', id, before, view(saved));
     return view(saved);
   }
@@ -73,10 +78,12 @@ export class StaffAccountsService {
     user.passwordHash = await bcrypt.hash(password, 10);
     user.mustChangePassword = true;
     await this.users.save(user);
+    await this.sessions.revokeAllForUser(id, 'password_reset');
     await this.log(actor, 'staff.reset_password', id, null, { email: user.email });
     return { temporaryPassword: password };
   }
 
+  /** Ends every other sign-in of the account; this one carries on with the new session in the response. */
   async changeOwnPassword(actor: StaffActor, current: string, next: string) {
     if (next.length < MIN_PASSWORD) throw new BadRequestException(`new password: at least ${MIN_PASSWORD} characters`);
     const user = await this.staff(actor.userId);
@@ -84,9 +91,10 @@ export class StaffAccountsService {
     if (await bcrypt.compare(next, user.passwordHash)) throw new BadRequestException('new password must differ from the current one');
     user.passwordHash = await bcrypt.hash(next, 10);
     user.mustChangePassword = false;
-    await this.users.save(user);
+    const saved = await this.users.save(user);
+    await this.sessions.revokeAllForUser(user.id, 'password_changed');
     await this.log(actor, 'staff.change_own_password', user.id, null, null);
-    return { changed: true };
+    return { changed: true, ...(await this.sessions.issueSession(saved, 'staff')) };
   }
 
   private async staff(id: string): Promise<User> {

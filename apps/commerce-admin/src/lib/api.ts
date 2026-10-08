@@ -1,9 +1,7 @@
-import { normalizeRole } from './role-home';
-// Thin fetch wrapper for the Commerce Platform API.
-// Base URL is configurable; dev defaults to the platform's local port (3100), production builds to
-// same-origin /api (nginx on commerce.joshapp.io routes /api to the platform).
-const env = (import.meta as unknown as { env: Record<string, string | boolean> }).env;
-const BASE = (env?.VITE_COMMERCE_API as string) || (env?.DEV ? 'http://localhost:3100/api' : '/api');
+// Thin fetch wrapper for the Commerce Platform API. Base URL, staff session and token refresh: ./auth.
+import { authedFetch, BASE, session } from './auth';
+
+export { authedFetch, logout, restoreSession, session } from './auth';
 
 export interface Paginated<T> {
   items: T[];
@@ -12,58 +10,21 @@ export interface Paginated<T> {
   pageSize: number;
 }
 
-// Staff session. sessionStorage: gone when the tab closes; the token itself
-// expires after 12h (platform JwtModule). Wrapped — storage can throw.
-const TOKEN_KEY = 'cp_admin_token';
-export const session = {
-  get(): string | null {
-    try { return sessionStorage.getItem(TOKEN_KEY); } catch { return null; }
-  },
-  set(token: string) {
-    try { sessionStorage.setItem(TOKEN_KEY, token); } catch { /* private mode: stays in memory for this load */ }
-  },
-  clear() {
-    try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
-  },
-  /** Who is signed in, for display only — read from the JWT payload, not verified (the API verifies). */
-  claims(): { sub?: string; email?: string; role?: string } | null {
-    const token = this.get();
-    try {
-      const part = token?.split('.')[1];
-      if (!part) return null;
-      const claims = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
-      return { ...claims, role: normalizeRole(claims.role) };
-    } catch {
-      return null;
-    }
-  },
-};
+export interface LoginSession { accessToken: string; refreshToken?: string; role: string; mustChangePassword?: boolean }
 
 export async function login(email: string, password: string): Promise<{ role: string }> {
-  const res = await request<{ accessToken: string; role: string }>('/admin/auth/login', {
+  const res = await request<LoginSession>('/admin/auth/login', {
     method: 'POST', body: JSON.stringify({ email, password }),
   });
-  session.set(res.accessToken);
+  session.set(res.accessToken, res.refreshToken);
   return { role: res.role };
 }
 
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = session.get();
-  const res = await fetch(`${BASE}${path}`, {
-    ...init,
-    headers: {
-      // FormData sets its own multipart boundary.
-      ...(init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  });
+  // A 401 is refreshed once and retried in authedFetch; one that survives it has already ended the session.
+  const res = await authedFetch(path, init, init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }); // FormData sets its own multipart boundary
   const text = await res.text();
   const body = text ? JSON.parse(text) : null;
-  if (res.status === 401 && path !== '/admin/auth/login') {
-    // Expired or missing session — back to the login screen.
-    session.clear();
-    window.dispatchEvent(new Event('cp-session-expired'));
-  }
   if (res.status === 403 && body?.error?.code === 'PASSWORD_CHANGE_REQUIRED') {
     // a password someone else set — the app shows the change-password screen until it is changed
     window.dispatchEvent(new Event('cp-password-change-required'));
@@ -296,7 +257,9 @@ export const staffApi = {
   update: (id: string, data: Partial<Pick<StaffAccount, 'name' | 'role' | 'status'>>) => api.patch<StaffAccount>(`/admin/staff/${id}`, data),
   resetPassword: (id: string) => api.post<{ temporaryPassword: string }>(`/admin/staff/${id}/reset-password`, {}),
   me: () => api.get<{ userId: string; email: string; role: StaffRole; mustChangePassword?: boolean }>('/admin/auth/me'),
-  changeOwnPassword: (currentPassword: string, newPassword: string) => api.post<{ changed: boolean }>('/admin/auth/password', { currentPassword, newPassword }),
+  // the platform ends every other sign-in of the account and hands this one a fresh pair
+  changeOwnPassword: (currentPassword: string, newPassword: string) => api.post<{ changed: boolean } & Partial<LoginSession>>('/admin/auth/password', { currentPassword, newPassword })
+    .then((res) => { if (res.accessToken && res.refreshToken) session.set(res.accessToken, res.refreshToken); return { changed: res.changed }; }),
 };
 
 // josh staff accounts (sales app, CS chat, josh-only pages) — written by commerce once it owns staff (stage 6).
@@ -572,8 +535,7 @@ export const reportsApi = {
 
 /** GET a file with the staff token and save it (a plain <a href> can't send the Authorization header). */
 export async function downloadFile(path: string, filename: string) {
-  const token = session.get();
-  const res = await fetch(`${BASE}${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  const res = await authedFetch(path);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const url = URL.createObjectURL(await res.blob());
   const a = Object.assign(document.createElement('a'), { href: url, download: filename });

@@ -1,12 +1,13 @@
-import { homeForRole } from '../lib/role-home';
 import { SalesAssignment } from './pages/SalesAssignment';
 import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { Workspace } from './pages/Workspace';
-import { AdminStats, api, reportsApi, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
+import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
+import { initialAuthState } from '../lib/auth';
+import { landingFor, loginPathFor, redirectParam, resolvePostLoginPath } from '../lib/landing';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { StaffAccounts } from './pages/StaffAccounts';
@@ -96,9 +97,24 @@ function AdminTopBar({ role }: { role?: string }) {
   />;
 }
 
+/** /login while signed in: on to the deep link if this role may open it, else the role's home. */
+function LoginRedirect({ role }: { role?: string }) {
+  const [params] = useSearchParams();
+  return <Navigate to={resolvePostLoginPath(role, params.get('redirect'))} replace />;
+}
+
+const here = () => window.location.pathname + window.location.search + window.location.hash;
+
 export function App() {
   useUiLocale();
-  const [signedIn, setSignedIn] = useState(() => Boolean(session.get()));
+  // 'checking' = a refresh token but no fresh access token: refresh silently before showing anything
+  const [auth, setAuth] = useState(initialAuthState);
+  const signedIn = auth === 'in';
+  useEffect(() => {
+    if (auth === 'checking') restoreSession().then((ok) => setAuth(ok ? 'in' : 'out'));
+    // signed out: the URL becomes /login, remembering where you were (?redirect=)
+    if (auth === 'out' && here() !== loginPathFor(here())) window.history.replaceState(null, '', loginPathFor(here()));
+  }, [auth]);
   // null = not checked yet; the API refuses everything else while true, so the app waits for the change
   const [mustChangePassword, setMustChangePassword] = useState<boolean | null>(null);
   useEffect(() => {
@@ -111,20 +127,28 @@ export function App() {
     return () => window.removeEventListener('cp-password-change-required', required);
   }, []);
   useEffect(() => {
-    const expired = () => setSignedIn(false);
+    const expired = () => setAuth('out');
     window.addEventListener('cp-session-expired', expired);
     return () => window.removeEventListener('cp-session-expired', expired);
   }, []);
 
-  if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
+  if (auth === 'checking') return <div className="min-h-screen bg-background flex items-center justify-center"><Loading /></div>;
+  if (!signedIn) {
+    return <Login onSignedIn={(role) => {
+      // the router mounts after this, at the deep link (if allowed) or the role's home
+      window.history.replaceState(null, '', resolvePostLoginPath(role, redirectParam(window.location.search)));
+      setAuth('in');
+    }} />;
+  }
 
   const claims = session.claims();
   const role = claims?.role;
   const nav = navFor(role);
 
-  function signOut() {
-    session.clear();
-    setSignedIn(false);
+  async function signOut() {
+    await logout();
+    window.history.replaceState(null, '', '/login');
+    setAuth('out');
   }
 
   if (mustChangePassword === null) return null;
@@ -146,7 +170,8 @@ export function App() {
         topbar={<AdminTopBar role={role} />}
       >
           <Routes>
-            <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={homeForRole(role)} replace />} />
+            <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={landingFor(role)} replace />} />
+            <Route path="/login" element={<LoginRedirect role={role} />} />
             <Route path="/workspaces/:workspaceId" element={<Workspace />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />

@@ -1,9 +1,10 @@
-import { Body, Controller, ForbiddenException, Get, HttpCode, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 import { PortalAuthService } from '../application/portal-auth.service';
 import { MIN_PASSWORD, StaffAccountsService } from '../application/staff-accounts.service';
-import { AllowPendingPassword, AllowReadOnlyWrite, AnyStaff, Public, STAFF_ROLES, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { AllowPendingPassword, AllowReadOnlyWrite, AnyStaff, Public } from '../../../../shared-kernel/presentation/auth.decorators';
 import { StaffPrincipal } from './staff-auth.guard';
+import { clientMeta, RefreshTokenDto } from './refresh-token.dto';
 
 class StaffLoginDto {
   @IsEmail() email!: string;
@@ -20,16 +21,28 @@ class ChangePasswordDto {
 export class StaffAuthController {
   constructor(private readonly auth: PortalAuthService, private readonly accounts: StaffAccountsService) {}
 
+  /** `{ accessToken, role, mustChangePassword, refreshToken, expiresIn, refreshExpiresIn }` — a non-staff account is 403. */
   @Public()
   @Post('login')
   @HttpCode(200)
-  async login(@Body() dto: StaffLoginDto) {
-    const result = await this.auth.login(dto.email, dto.password);
-    const session = { ...result, role: normalizeStaffRole(result.role) };
-    if (!STAFF_ROLES.includes(session.role as never)) {
-      throw new ForbiddenException('not a commerce-admin account');
-    }
-    return session;
+  login(@Body() dto: StaffLoginDto, @Req() req: Parameters<typeof clientMeta>[0]) {
+    return this.auth.login(dto.email, dto.password, 'staff', clientMeta(req));
+  }
+
+  /** Trade a staff refresh token for a new pair (the old one is spent). No access token needed — it may have expired. */
+  @Public()
+  @Post('refresh')
+  @HttpCode(200)
+  refresh(@Body() dto: RefreshTokenDto, @Req() req: Parameters<typeof clientMeta>[0]) {
+    return this.auth.refresh(dto.refreshToken, 'staff', clientMeta(req));
+  }
+
+  /** Ends this sign-in (the refresh token's family). Always `{ ok: true }`. */
+  @Public()
+  @Post('logout')
+  @HttpCode(200)
+  logout(@Body() dto: RefreshTokenDto) {
+    return this.auth.logout(dto.refreshToken, 'staff');
   }
 
   @AnyStaff()

@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'check = network + login only · import = import scopes then parity · parity = parity only'
+        description: 'check = network + login only · import = import scopes then parity · parity = parity only · status = read-only report of scraping/research activity on commerce'
         type: choice
-        options: [check, import, parity]
+        options: [check, import, parity, status]
         default: check
       scopes:
         description: 'import scopes, in order'
@@ -44,6 +44,7 @@ jobs:
       JOSH_DB: ${{ inputs.josh_db }}
     steps:
       - name: Network — commerce EC2 → josh DB 5432
+        if: inputs.action != 'status'
         run: |
           set -u
           if timeout 5 bash -c "</dev/tcp/$JOSH_HOST/5432" 2>/dev/null; then echo "tcp $JOSH_HOST:5432 OPEN from runner host"
@@ -60,6 +61,7 @@ jobs:
           echo "id=$C" >> "$GITHUB_OUTPUT"
 
       - name: Write one-off env file (masked)
+        if: inputs.action != 'status'
         env:
           RO_PW: ${{ secrets.JOSH_RO_PG_PASSWORD }}
         run: |
@@ -74,6 +76,7 @@ jobs:
           echo "env file ready"
 
       - name: Login check (read-only, inside platform container)
+        if: inputs.action != 'status'
         run: |
           set -euo pipefail
           docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node -e '
@@ -100,12 +103,31 @@ jobs:
           done
 
       - name: competitor-parity
-        if: inputs.action != 'check'
+        if: inputs.action == 'import' || inputs.action == 'parity'
         run: |
           set -euo pipefail
           docker exec -i ${{ steps.c.outputs.id }} node src/cli/competitor-parity.js | tee "$RUNNER_TEMP/parity.json"
           echo '### competitor-parity' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"; cut -c1-4000 "$RUNNER_TEMP/parity.json" >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Status (read-only) — scraping / research activity on commerce
+        if: inputs.action == 'status'
+        run: |
+          set -euo pipefail
+          docker exec -i ${{ steps.c.outputs.id }} node -e '
+            require("reflect-metadata");
+            const { AppDataSource } = require("./src/data-source");
+            (async () => {
+              const db = await AppDataSource.initialize();
+              const q = async (label, sql) => { try { console.log(label, JSON.stringify(await db.query(sql))); } catch (e) { console.log(label, "ERR", e.message); } };
+              await q("automation_setting:", "SELECT value, updated_at FROM settings WHERE scope = $$marketing$$ AND key = $$competitor_scraping$$");
+              await q("scraping_sources:", "SELECT to_jsonb(s) - $$config$$ - $$progress$$ AS s FROM scraping_sources s");
+              await q("scraped_items_recent:", "SELECT count(*)::int AS n FROM (SELECT to_jsonb(i) j FROM scraped_items i) t WHERE COALESCE(j->>$$updated_at$$, j->>$$updatedAt$$)::timestamptz > now() - interval $$90 minutes$$");
+              await q("research_runs_by_status:", "SELECT j->>$$status$$ AS status, count(*)::int AS n, max(COALESCE(j->>$$updated_at$$, j->>$$updatedAt$$)) AS last_update FROM (SELECT to_jsonb(r) j FROM marketing_research_runs r) t GROUP BY 1");
+              await db.destroy();
+            })().catch((e) => { console.error(e.message); process.exit(1); });'
+          echo "platform log lines (last 90m) mentioning scrap/research:"
+          docker logs --since 90m ${{ steps.c.outputs.id }} 2>&1 | grep -iE "scrap|research" | grep -viE "password|secret|token|postgres://" | tail -25 | cut -c1-300 || true
 
       - name: Remove env file
         if: always()

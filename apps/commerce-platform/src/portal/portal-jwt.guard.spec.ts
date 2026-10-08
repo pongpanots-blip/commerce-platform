@@ -12,9 +12,10 @@ function ctxWithHeader(header?: string) {
   } as never;
 }
 
-function makeGuard() {
+function makeGuard(account: { id: string; status: string } | null = { id: 'u1', status: 'active' }) {
   const jwt = new JwtService({ secret: TEST_SECRET, signOptions: { expiresIn: '12h' } });
-  return { guard: new PortalJwtGuard(jwt), jwt };
+  const users = { findOne: jest.fn(async () => account) };
+  return { guard: new PortalJwtGuard(jwt, users as never), jwt, users };
 }
 
 describe('PortalJwtGuard', () => {
@@ -55,5 +56,27 @@ describe('PortalJwtGuard', () => {
 
     await expect(guard.canActivate(ctxWithHeader(`Bearer ${token}`))).rejects.toThrow('portal auth unavailable');
     expect(verifySpy).not.toHaveBeenCalled();
+  });
+
+  it('re-checks the account on every request: one lookup by id; disabled or removed → 401', async () => {
+    const ok = makeGuard();
+    const token = await ok.jwt.signAsync({ sub: 'u1', email: 'dev@example.com', role: 'developer' });
+    await expect(ok.guard.canActivate(ctxWithHeader(`Bearer ${token}`))).resolves.toBe(true);
+    expect(ok.users.findOne).toHaveBeenCalledWith({ where: { id: 'u1' }, select: { id: true, status: true } });
+
+    const disabled = makeGuard({ id: 'u1', status: 'disabled' });
+    await expect(disabled.guard.canActivate(ctxWithHeader(`Bearer ${token}`))).rejects.toThrow('account disabled or removed');
+    const removed = makeGuard(null);
+    await expect(removed.guard.canActivate(ctxWithHeader(`Bearer ${token}`))).rejects.toThrow(UnauthorizedException);
+    const noSub = makeGuard();
+    const anonymous = await noSub.jwt.signAsync({ email: 'dev@example.com' });
+    await expect(noSub.guard.canActivate(ctxWithHeader(`Bearer ${anonymous}`))).rejects.toThrow(UnauthorizedException);
+    expect(noSub.users.findOne).not.toHaveBeenCalled();
+  });
+
+  it('an invalid token never reaches the database', async () => {
+    const { guard, users } = makeGuard();
+    await expect(guard.canActivate(ctxWithHeader('Bearer nope'))).rejects.toThrow('invalid or expired token');
+    expect(users.findOne).not.toHaveBeenCalled();
   });
 });

@@ -88,7 +88,7 @@ describe('commerce-admin sign-in gate', () => {
     expect(window.location.pathname).toBe('/account/password');
     act(() => root.unmount());
     container.remove();
-    await render('/workspaces/connections'); // now Settings › Advanced: nothing there for merchandising
+    await render('/workspaces/connections'); // now More settings: nothing there for merchandising
     expect(window.location.pathname).toBe('/home');
   });
 
@@ -97,7 +97,7 @@ describe('commerce-admin sign-in gate', () => {
     await render('/account/password');
     const groups = [...container.querySelectorAll('aside nav button[aria-expanded]')].map((b) => b.textContent);
     expect(groups.some((t) => t?.includes('สินค้าและสต็อก'))).toBe(true);
-    expect(groups.some((t) => t?.includes('ตั้งค่าขั้นสูง'))).toBe(false);
+    expect(groups.some((t) => t?.includes('ตั้งค่าเพิ่มเติม'))).toBe(false);
     const current = container.querySelector('aside a[aria-current="page"]');
     expect(current?.getAttribute('href')).toBe('/account/password');
     expect(current?.getAttribute('title')).toBe('เปลี่ยนรหัสผ่านของคุณ');

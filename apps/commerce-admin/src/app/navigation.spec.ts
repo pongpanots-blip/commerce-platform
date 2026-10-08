@@ -30,14 +30,30 @@ describe('sidebar per role', () => {
     expect(linksOf('admin').slice(2).sort()).toEqual(NAV_ENTRIES.map((e) => e.to).sort());
   });
 
-  it('a few task sections; each shows at most 10 items before "show more" (Advanced is folded)', () => {
+  it('a few task sections, all of them shown to admin', () => {
     const groups = navFor('admin').filter((g) => g.group);
     expect(groups.map((g) => g.group)).toEqual(SECTIONS.map((s) => s.title));
     expect(groups.length).toBeLessThanOrEqual(7);
-    for (const g of groups.filter((g) => g.group !== titleOf('advanced'))) expect(g.links.filter((l) => !l.more).length, g.group).toBeLessThanOrEqual(10);
   });
 
-  it('Settings › Advanced only where a role has ops pages (admin, marketing)', () => {
+  it.each(STAFF_ROLES)('%s: every section, More settings included, shows at most 10 items before "show more"', (role) => {
+    for (const g of navFor(role).filter((g) => g.group)) expect(g.links.filter((l) => !l.more).length, `${role} › ${g.group}`).toBeLessThanOrEqual(10);
+  });
+
+  it('More settings: connections, failed deliveries, sync jobs and logs first; test tools, marketing tools and store data copies after "show more"', () => {
+    const advanced = navFor('admin').find((g) => g.group === titleOf('advanced'))!;
+    expect(advanced.links.filter((l) => !l.more).map((l) => l.to)).toEqual([
+      '/integrations', '/erp/webhook-dead-letter', '/sync-jobs', '/webhooks', '/subscriptions',
+      '/erp/inbound-log', '/erp-ingest', '/josh-api-logs', '/erp/josh-logs', '/erp/webhook-platforms',
+    ]);
+    expect(advanced.links.filter((l) => l.more)).toHaveLength(30);
+    expect(advanced.links.findIndex((l) => l.more)).toBe(10); // main items first, then the "show more" ones
+    for (const to of ['/erp/simulator', '/j/kbank/testing-console', '/erp-stock', '/josh/kyc', '/josh/internal_docs']) expect(advanced.links.find((l) => l.to === to)!.more, to).toBe(true);
+    // marketing has only "more" items there, so it sees its 9 unfolded (still at most 10)
+    expect(navFor('marketing').find((g) => g.group === titleOf('advanced'))!.links.map((l) => !!l.more)).toEqual(Array(9).fill(false));
+  });
+
+  it('More settings only where a role has ops pages (admin, marketing)', () => {
     const withAdvanced = STAFF_ROLES.filter((role) => navFor(role).some((g) => g.group === titleOf('advanced')));
     expect(withAdvanced).toEqual(['admin', 'marketing']);
     expect(navFor('marketing').find((g) => g.group === titleOf('advanced'))!.links.every((l) => ROLE_ACCESS[l.to]?.includes('marketing'))).toBe(true);
@@ -72,10 +88,10 @@ describe('old menu → new menu', () => {
   });
 
   it('far fewer links on screen than the old workspaces', () => {
-    const visible = (role: string) => navFor(role).flatMap((g) => g.group === titleOf('advanced') ? [] : g.links.filter((l) => !l.more)).length;
+    const visible = (role: string) => navFor(role).flatMap((g) => g.links.filter((l) => !l.more)).length;
     const old = (role: string) => legacyNavFor(role).flatMap((g) => g.links).length;
     for (const role of STAFF_ROLES) expect(visible(role), role).toBeLessThan(old(role));
-    expect(visible('admin')).toBeLessThanOrEqual(61);
+    expect(visible('admin')).toBeLessThanOrEqual(64);
   });
 
   it.each(STAFF_ROLES)('%s: old /workspaces/:id links go to a page of the replacing section it may open, else its home', (role) => {
@@ -134,7 +150,7 @@ describe('copy (TH + EN)', () => {
     ...SECTIONS.flatMap((s) => [s.title, s.description]),
     ...NAV_ENTRIES.flatMap((e) => [e.label, e.description, ...Object.values(e.roleLabels ?? {})]),
     HOME.label, HOME.description!, DASHBOARD.label, DASHBOARD.description!,
-    'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น', 'ตอนนี้อยู่ที่', 'หลังบ้านของทีม', 'หน้าหลัก',
+    'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น', 'ตอนนี้อยู่ที่', 'ระบบหลังบ้าน', 'สำหรับทีมงาน', 'หน้าหลัก',
   ];
 
   it('menu copy is named by task: no internal module or system names, in either language', () => {
@@ -142,6 +158,17 @@ describe('copy (TH + EN)', () => {
     for (const key of new Set(keys)) {
       for (const text of [key, catalogue[key]?.th ?? '', catalogue[key]?.en ?? '']) expect(text, key).not.toMatch(jargon);
     }
+  });
+
+  it('Thai menu copy has no code names a new hire would not know: no SKU / KYC / API / B2B / push, and ERP only in brackets after a Thai name', () => {
+    const jargon = /SKU|KYC|\bAPI\b|B2B|\bpush\b|(?<!\()ERP|ERP(?!\))/i;
+    for (const key of new Set(keys)) {
+      for (const text of [key, catalogue[key]?.th ?? '']) expect(text, key).not.toMatch(jargon);
+      expect(catalogue[key]?.en ?? '', key).not.toMatch(/SKU|KYC/);
+    }
+    expect('ข้อมูลที่รับจากระบบหลัก (ERP)').not.toMatch(jargon);
+    expect('ข้อมูลที่รับจาก ERP').toMatch(jargon);
+    expect('สินค้าตาม SKU').toMatch(jargon);
   });
 
   it('every section, menu label, description and heading exists in both languages', () => {

@@ -1,13 +1,20 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
+import { extname } from 'path';
 import { DataSource, EntityManager } from 'typeorm';
+import { putMediaObject } from '../../../shared-kernel/infrastructure/media-s3';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
 import { BrandSnapshot, CategoryTreeSnapshot } from './category-tree.events';
-import { CATEGORY_COLUMNS, CategoryRow, normalizeSortOptions, presentCategory, toCatCode, toTitleCase, toTitleCasePath } from './category-rules';
+import { ALL_CATEGORY_ID, CATEGORY_COLUMNS, CategoryRow, isAllCategory, level1NumberedIds, normalizeSortOptions, presentCategory, toCatCode, toTitleCase, toTitleCasePath } from './category-rules';
 import type { CreateCategoryDto, UpdateBrandDto, UpdateCategoryDto } from './product-categories.dto';
 
 export const ownsCategories = () => process.env.COMMERCE_OWNS_CATEGORIES === 'true';
+
+/** Same limits as product image upload (stage 4e): 5 MB, jpg / png / gif / webp. Multer allows 6 MB so this check can answer. */
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const IMAGE_EXT = /\.(jpe?g|png|gif|webp)$/i;
+export interface CategoryImageFile { originalname: string; buffer: Buffer; mimetype: string; size: number }
 
 /** Same SQL as josh's rebuildSubtree: level / code / path / path_code of a category and all its descendants from sort + names. */
 const REBUILD_SUBTREE = `WITH RECURSIVE seed AS (
@@ -97,8 +104,9 @@ export class ProductCategoriesService {
            show_on_homepage = $7, default_sort_key = $8, sort_options = $9, updated_at = now() WHERE id = $1`,
         [id, next.category_name_en, next.category_name_th, next.category_image, next.sort, next.is_active, next.show_on_homepage,
           next.default_sort_key, JSON.stringify(next.sort_options ?? [])]);
-      // Position in the tree changed → path / code / level of the whole branch.
-      if (next.category_name_en !== before.category_name_en || (dto.sort_order !== undefined && dto.sort_order !== before.sort)) {
+      // All is parentless and level 1. The shared rebuild would turn it into a level-0 row whose code is its sort.
+      if (isAllCategory(id)) await this.pinAllCategory(m);
+      else if (next.category_name_en !== before.category_name_en || (dto.sort_order !== undefined && dto.sort_order !== before.sort)) {
         await m.query(REBUILD_SUBTREE, [id]);
       }
       return { status: true, statusCode: 200, message: 'อัปเดตสำเร็จ', data: presentCategory((await this.find(m, id))!) };
@@ -108,9 +116,11 @@ export class ProductCategoriesService {
   /** The whole level-1 row (it is one global order on the shop's home page) — josh's reorderLevel1Categories. */
   async reorderLevel1(orderedIds: string[]) {
     return this.write(async (m) => {
-      const rows: Array<{ id: string }> = await m.query(`SELECT id FROM product_categories WHERE level = 1`);
-      this.assertExactSet(rows.map((r) => r.id), orderedIds, 'หมวด Level 1', 'ไม่ใช่หมวด Level 1', 'orderedIds ต้องมีครบทุกหมวด Level 1 พอดี');
-      await this.resort(m, orderedIds);
+      const rows: Array<{ id: string }> = await m.query(`SELECT id FROM product_categories WHERE level = 1 AND id <> $1`, [ALL_CATEGORY_ID]);
+      const numbered = level1NumberedIds(orderedIds);
+      this.assertExactSet(rows.map((r) => r.id), numbered, 'หมวด Level 1', 'ไม่ใช่หมวด Level 1', 'orderedIds ต้องมีครบทุกหมวด Level 1 พอดี');
+      await this.resort(m, numbered);
+      await this.pinAllCategory(m);
       return { status: true, statusCode: 200, message: 'จัดลำดับสำเร็จ' };
     });
   }
@@ -118,18 +128,20 @@ export class ProductCategoriesService {
   /** All children of one parent (level 2+) — josh's reorderChildren. */
   async reorderChildren(parentId: string, orderedIds: string[]) {
     return this.write(async (m) => {
-      const siblings: Array<{ id: string; level: number | null }> = await m.query(`SELECT id, level FROM product_categories WHERE parent_id = $1`, [parentId]);
+      const siblings: Array<{ id: string; level: number | null }> = await m.query(`SELECT id, level FROM product_categories WHERE parent_id = $1 AND id <> $2`, [parentId, ALL_CATEGORY_ID]);
       if (!siblings.length) throw new BadRequestException(`หมวด ${parentId} ไม่มีหมวดย่อยให้จัดลำดับ`);
       if (siblings.some((r) => r.level === 1)) {
         throw new BadRequestException('หมวด Level 1 เรียงทั้งชั้นเป็นลำดับเดียว — ใช้ PUT /product-category/level1-order แทน');
       }
-      this.assertExactSet(siblings.map((r) => r.id), orderedIds, 'หมวดย่อย', 'ไม่ใช่หมวดย่อยของหมวดนี้', 'orderedIds ต้องมีครบทุกหมวดย่อยของหมวดนี้พอดี');
-      await this.resort(m, orderedIds);
+      const numbered = level1NumberedIds(orderedIds);
+      this.assertExactSet(siblings.map((r) => r.id), numbered, 'หมวดย่อย', 'ไม่ใช่หมวดย่อยของหมวดนี้', 'orderedIds ต้องมีครบทุกหมวดย่อยของหมวดนี้พอดี');
+      await this.resort(m, numbered);
       return { status: true, statusCode: 200, message: 'จัดลำดับสำเร็จ' };
     });
   }
 
   async remove(id: string) {
+    if (isAllCategory(id)) throw new ConflictException('หมวด All ลบไม่ได้');
     return this.write(async (m) => {
       const [, n] = await m.query(`DELETE FROM product_categories WHERE id = $1`, [id]);
       if (!n) throw new NotFoundException('Category not found');
@@ -152,10 +164,32 @@ export class ProductCategoriesService {
     });
   }
 
+  /** Sort starts at 1. All keeps sort 0, so it stays first at level 1 (and is never a sibling at levels 2–3). */
   private async resort(m: EntityManager, orderedIds: string[]) {
-    await m.query(SET_SORT, [orderedIds, orderedIds.map((_, i) => i + 1)]);
-    await m.query(PARK_BRANCH_CODES, [orderedIds]);
-    for (const id of orderedIds) await m.query(REBUILD_SUBTREE, [id]);
+    const numbered = level1NumberedIds(orderedIds);
+    if (!numbered.length) return;
+    await m.query(SET_SORT, [numbered, numbered.map((_, i) => i + 1)]);
+    await m.query(PARK_BRANCH_CODES, [numbered]);
+    for (const id of numbered) await m.query(REBUILD_SUBTREE, [id]);
+  }
+
+  /** Image only. The edit page PATCHes category_image with the returned URL. */
+  async uploadImage(file?: CategoryImageFile) {
+    this.assertOwned();
+    if (!file?.buffer?.length) throw new BadRequestException('ไม่มีไฟล์รูป');
+    if (file.size > MAX_IMAGE_BYTES) throw new BadRequestException(`${file.originalname}: ใหญ่เกิน 5 MB`);
+    if (!IMAGE_EXT.test(file.originalname ?? '')) throw new BadRequestException(`${file.originalname}: รองรับ jpg / png / gif / webp`);
+    const key = `uploads/categories/images-${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname).toLowerCase()}`;
+    const url = await putMediaObject(key, file.buffer, file.mimetype || 'application/octet-stream');
+    return { status: true, statusCode: 200, message: 'สำเร็จ', data: { url, filename: file.originalname } };
+  }
+
+  private async pinAllCategory(m: EntityManager) {
+    await m.query(
+      `UPDATE product_categories SET parent_id = NULL, category_code = 'ALL', cat_code = 'ALL', category_path = category_name_en,
+         category_path_code = 'ALL', level = 1, sort = 0, is_all_category = true, updated_at = now() WHERE id = $1`,
+      [ALL_CATEGORY_ID],
+    );
   }
 
   /** Run a category change and publish the resulting tree in the same transaction. */
@@ -165,7 +199,11 @@ export class ProductCategoriesService {
       // One writer at a time: sort numbers and codes are read, then written.
       await m.query(`SELECT pg_advisory_xact_lock(hashtext('product_categories'))`);
       const result = await fn(m);
-      const rows = await m.query(`SELECT ${CATEGORY_COLUMNS.join(', ')} FROM product_categories ORDER BY level, sort, id`);
+      // is_all_category stays off CATEGORY_COLUMNS: other josh rows are null, commerce defaults false, and parity would fail the whole tree.
+      const rows = await m.query(
+        `SELECT ${CATEGORY_COLUMNS.join(', ')}, (id = $1) AS is_all_category FROM product_categories ORDER BY level, sort, id`,
+        [ALL_CATEGORY_ID],
+      );
       await this.events.publish(new CategoryTreeSnapshot({ rows, version: new Date().toISOString() }), m);
       return result;
     });

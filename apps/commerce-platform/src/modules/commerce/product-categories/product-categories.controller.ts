@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Param, ParseUUIDPipe, Patch, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Put, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { StaffRequest, StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { CreateCategoryDto, OrderedIdsDto, UpdateBrandDto, UpdateCategoryDto } from './product-categories.dto';
-import { ProductCategoriesService } from './product-categories.service';
+import { CategoryImageFile, ProductCategoriesService } from './product-categories.service';
 
 /** josh's category write routes on commerce (stage 4c) — admin and MER (stage 6). Reads stay on josh. */
 @Controller('product-category')
@@ -10,6 +11,12 @@ export class ProductCategoriesController {
   constructor(private readonly categories: ProductCategoriesService) {}
 
   @Post() create(@Body() dto: CreateCategoryDto) { return this.categories.create(dto); }
+
+  /** Category icon. Field `file`. The edit page then PATCHes `category_image` with the returned URL. */
+  @Post('image')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 6 * 1024 * 1024 } }))
+  upload(@UploadedFile() file?: CategoryImageFile) { return this.categories.uploadImage(file); }
 
   @Put('level1-order') reorderLevel1(@Body() dto: OrderedIdsDto) { return this.categories.reorderLevel1(dto.orderedIds); }
 

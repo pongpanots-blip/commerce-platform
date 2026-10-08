@@ -81,6 +81,7 @@ const ORIGINAL_NAV: NavGroup[] = [
       { to: '/j/product/bulk-image-upload', label: 'Bulk image upload', end: true },
       { to: '/j/suppliers', label: 'Suppliers', end: false },
       { to: '/j/brands', label: 'แบรนด์', end: false },
+      { to: '/j/categories', label: 'จัดการหมวดหมู่', end: false },
       { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
       { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
       { to: '/j/company', label: 'บริษัท', end: false },
@@ -359,6 +360,9 @@ const ROLE_ACCESS: Record<string, readonly string[]> = {
     "merchandising",
     "graphic"
   ],
+  "/j/categories": [
+    "merchandising"
+  ],
   "/j/cs/sample-requests": [
     "cs"
   ],
@@ -449,7 +453,7 @@ function category(item: NavItem, group = ''): WorkspaceId {
   if (p.startsWith('/marketing/') || group.startsWith('Marketing') ||
       ['/josh/coupons', '/josh/campaigns', '/josh/segments'].includes(p)) return 'marketing';
   if (p === '/erp/inventory-warehouse' || p === '/erp-stock' || p === '/prices/staff' || p.startsWith('/product') || p === '/stock-moves' || p === '/order-periods' ||
-      ['/j/allproducts', '/j/suppliers', '/j/brands', '/josh/suppliers', '/j/price-requests', '/j/active-offers'].includes(p) || p.startsWith('/j/product/')) return 'catalog';
+      ['/j/allproducts', '/j/suppliers', '/j/brands', '/j/categories', '/josh/suppliers', '/j/price-requests', '/j/active-offers'].includes(p) || p.startsWith('/j/product/') || p.startsWith('/j/categories/')) return 'catalog';
   if (p.startsWith('/j/erp/')) return 'connections';
   if (p === '/orders' || p === '/reservations' || p === '/j/cs/delivery-schedule' || group.startsWith('Order') ||
       ['/josh/shipments', '/josh/payments', '/josh/credit_notes', '/josh/credit_backs', '/josh/invoices', '/josh/credit_terms'].includes(p)) return 'orders';

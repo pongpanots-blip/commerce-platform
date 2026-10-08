@@ -7,7 +7,7 @@ import { aiRequestSchema, createSchema, parse, planListSchema, taskSchema, updat
 import type { GrowthPlanInput, GrowthTask } from '@cp/growth';
 
 @Controller('growth')
-@StaffRoles('marketing')
+@StaffRoles('marketing', 'business_analyst')
 export class GrowthController {
   constructor(private readonly plans: GrowthService, private readonly data: GrowthDataService) {}
   @Get('readiness') readiness() { return this.plans.readiness(); }
@@ -45,6 +45,6 @@ export class GrowthController {
     const b = parse(taskSchema, body); return this.plans.tasks(id, b.version, b.tasks as GrowthTask[], r.staff);
   }
   @Get('results/:id') results(@Param('id', ParseUUIDPipe) id: string, @Req() r: StaffRequest) { return this.data.results(id, r.staff); }
-  @Get('timeline/:companyId') @StaffRoles('admin')
+  @Get('timeline/:companyId') @StaffRoles('business_analyst')
   timeline(@Param('companyId', ParseUUIDPipe) id: string, @Req() r: StaffRequest) { return this.data.timeline(id, r.staff); }
 }

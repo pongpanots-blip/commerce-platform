@@ -6682,5 +6682,53 @@
   "บันทึกชุดนี้แล้ว · จับคู่เพิ่ม {0} คู่": {
     "th": "บันทึกชุดนี้แล้ว · จับคู่เพิ่ม {0} คู่",
     "en": "Batch saved · {0} new matches"
+  },
+  "Admin — ทุกเมนู": {
+    "th": "ผู้ดูแลระบบ — ทุกเมนู",
+    "en": "Admin — all menus"
+  },
+  "Marketing — รายงานการตลาดและแคมเปญ": {
+    "th": "การตลาด — รายงานการตลาดและแคมเปญ",
+    "en": "Marketing — marketing reports and campaigns"
+  },
+  "Merchandise — สินค้า สต็อก ราคา โปรโมชัน รอบสั่ง": {
+    "th": "จัดซื้อและสินค้า — สินค้า สต็อก ราคา โปรโมชัน และรอบสั่งซื้อ",
+    "en": "Merchandise — products, stock, prices, promotions and order periods"
+  },
+  "CS — order, shipment, งาน CS": {
+    "th": "บริการลูกค้า — ออเดอร์ การจัดส่ง และงานบริการ",
+    "en": "Customer service — orders, shipments and customer support"
+  },
+  "Sales manager — รายงานร้าน, winback, มอบหมายพนักงานขาย": {
+    "th": "ผู้จัดการฝ่ายขาย — รายงานร้าน ติดตามลูกค้า และมอบหมายพนักงานขาย",
+    "en": "Sales manager — shop reports, customer follow-up and sales assignments"
+  },
+  "Business analyst — อ่านรายงาน สต็อก ออเดอร์ ราคาคู่แข่ง": {
+    "th": "นักวิเคราะห์ธุรกิจ — อ่านรายงาน สต็อก ออเดอร์ และราคาคู่แข่ง",
+    "en": "Business analyst — read reports, stock, orders and competitor prices"
+  },
+  "Graphic — รูปและเนื้อหาสินค้า": {
+    "th": "กราฟิก — รูปภาพและเนื้อหาสินค้า",
+    "en": "Graphic — product images and content"
+  },
+  "Merchandise": {
+    "th": "จัดซื้อและสินค้า",
+    "en": "Merchandise"
+  },
+  "Sale": {
+    "th": "ฝ่ายขาย",
+    "en": "Sale"
+  },
+  "Sale manager": {
+    "th": "ผู้จัดการฝ่ายขาย",
+    "en": "Sales manager"
+  },
+  "Admin": {
+    "th": "ผู้ดูแลระบบ",
+    "en": "Admin"
+  },
+  "Dev": {
+    "th": "นักพัฒนา",
+    "en": "Developer"
   }
 }

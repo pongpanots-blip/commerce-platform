@@ -13,7 +13,12 @@ const ADMIN: StaffRole[] = [];
  * may call here besides admin. Stage 6: MER (`merchandising`) gets the product / category / brand / supplier areas,
  * CS the order / shipment / CS-desk / credit areas; customer PII, KYC, staff access and payment testing stay admin.
  */
-const AREAS: { path: RegExp; roles: StaffRole[] }[] = [
+const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
+  // graphic: read products and categories, and the image paths commerce-admin uploads through. First path+method match wins.
+  { path: /^\/product\/images(\/|$)/, roles: [...MER, 'graphic'] },
+  { path: /^\/upload\/image(\/|$)/, roles: [...MER, 'graphic'] },
+  { path: /^\/product\//, roles: [...MER, 'graphic'], methods: ['GET'] },
+  { path: /^\/(product-category|brands)(\/|$)/, roles: [...MER, 'graphic'], methods: ['GET'] },
   { path: /^\/(product\/|admin\/promotion-product-sets)/, roles: MER },
   { path: /^\/promotion-pages/, roles: M },
   { path: /^\/coupon(\/|$)/, roles: M },
@@ -23,7 +28,6 @@ const AREAS: { path: RegExp; roles: StaffRole[] }[] = [
   { path: /^\/(banner|popup-definitions)$/, roles: M },
   { path: /^\/(product-category|brands|cuisine)(\/|$)/, roles: MER },
   { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink)(\/|$)/, roles: M },
-  { path: /^\/upload\/image(\/|$)/, roles: MER },
   { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, roles: ADMIN },
   { path: /^\/(orders|shipments)(\/|$)/, roles: CS },
   { path: /^\/payment\/kbank\/testing(\/|$)/, roles: ADMIN },
@@ -55,7 +59,7 @@ export interface AdminCallBody {
  * a josh 4xx comes back as the same error here. Admin; marketing / MER / CS for their areas (AREAS).
  */
 @Controller('josh/admin-call')
-@StaffRoles('marketing', 'merchandising', 'cs')
+@StaffRoles('marketing', 'merchandising', 'cs', 'graphic')
 export class JoshAdminCallController {
   constructor(private readonly josh: JoshActions) {}
 
@@ -81,7 +85,7 @@ export async function joshAdminCall(josh: JoshActions, actor: { userId: string; 
   const method = String(b?.method ?? '').toUpperCase();
   const path = String(b?.path ?? '');
   if (!METHODS.includes(method) || !path.startsWith('/') || path.includes('..') || path.length > 300) throw new BadRequestException('method and a josh path (/coupon, …) required');
-  const area = AREAS.find((a) => a.path.test(path));
+  const area = AREAS.find((a) => a.path.test(path) && (!a.methods || a.methods.includes(method)));
   if (!area) throw new ForbiddenException(`${path} is not a josh admin route commerce drives`);
   if (actor.role !== 'admin' && !area.roles.includes(actor.role as StaffRole)) throw new ForbiddenException('admin only');
   const files = (b.files ?? []).slice(0, 10);

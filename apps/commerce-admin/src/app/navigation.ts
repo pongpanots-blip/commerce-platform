@@ -216,7 +216,229 @@ const LABELS: Record<string, string> = {
   '/j/erp/webhook-simulator': 'ทดสอบเหตุการณ์ ERP ของร้านค้า',
 };
 
-const ADMIN_ONLY = new Set(['/settings/staff', '/settings/josh-staff']);
+/** Destination permissions from the staff-role policy; omitted destinations are admin-only. */
+const ROLE_ACCESS: Record<string, readonly string[]> = {
+  "/reports/sales": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/reports/products": [
+    "marketing",
+    "merchandising"
+  ],
+  "/reports/orders": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/reports/customers": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/reports/prices": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/prices/staff": [
+    "merchandising"
+  ],
+  "/reports/traffic": [
+    "marketing"
+  ],
+  "/reports/health": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/reports/order-targetgroup": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/reports/winback": [
+    "sales_manager",
+    "business_analyst"
+  ],
+  "/marketing/analyst": [
+    "marketing"
+  ],
+  "/marketing/growth": [
+    "marketing",
+    "business_analyst"
+  ],
+  "/marketing/growth/plans": [
+    "marketing"
+  ],
+  "/marketing/research": [
+    "marketing"
+  ],
+  "/marketing/restaurants": [
+    "marketing"
+  ],
+  "/marketing/workflows": [
+    "marketing"
+  ],
+  "/j/coupons": [
+    "marketing"
+  ],
+  "/j/promotion-product-sets": [
+    "marketing",
+    "merchandising"
+  ],
+  "/j/promotions-mechanic": [
+    "marketing",
+    "merchandising"
+  ],
+  "/j/promotion-pages": [
+    "marketing"
+  ],
+  "/j/promotions/campaigns": [
+    "marketing"
+  ],
+  "/j/segments": [
+    "marketing"
+  ],
+  "/j/marketing/push-campaigns": [
+    "marketing"
+  ],
+  "/j/cs/notification-catalog": [
+    "marketing"
+  ],
+  "/j/cs/notification-log": [
+    "marketing"
+  ],
+  "/j/cs/notification-stats": [
+    "marketing"
+  ],
+  "/j/cs/product-notify-funnel": [
+    "marketing"
+  ],
+  "/j/marketing/competitor-prices": [
+    "marketing",
+    "business_analyst"
+  ],
+  "/j/marketing/scraping-sources": [
+    "marketing"
+  ],
+  "/j/marketing/scraped-catalog": [
+    "marketing"
+  ],
+  "/cs": [
+    "cs"
+  ],
+  "/j/bot/intent-rules": [
+    "marketing"
+  ],
+  "/j/bot/workflows": [
+    "marketing"
+  ],
+  "/j/bot/templates": [
+    "marketing"
+  ],
+  "/j/allproducts": [
+    "marketing",
+    "merchandising",
+    "graphic"
+  ],
+  "/j/product/create": [
+    "marketing",
+    "merchandising"
+  ],
+  "/j/product/video-upload": [
+    "marketing",
+    "merchandising"
+  ],
+  "/j/product/bulk-image-upload": [
+    "marketing",
+    "merchandising",
+    "graphic"
+  ],
+  "/j/suppliers": [
+    "marketing",
+    "merchandising"
+  ],
+  "/j/brands": [
+    "marketing",
+    "merchandising",
+    "graphic"
+  ],
+  "/j/cs/sample-requests": [
+    "cs"
+  ],
+  "/j/cs/delivery-schedule": [
+    "cs"
+  ],
+  "/j/cs/cart-move-categories": [
+    "cs"
+  ],
+  "/j/order": [
+    "cs"
+  ],
+  "/j/shipments": [
+    "cs"
+  ],
+  "/j/credit-notes": [
+    "cs"
+  ],
+  "/j/credit-backs": [
+    "cs"
+  ],
+  "/j/marketing/notify-templates": [
+    "marketing"
+  ],
+  "/j/smart-links": [
+    "marketing"
+  ],
+  "/j/marketing-links": [
+    "marketing"
+  ],
+  "/j/marketing/welcome-lead-email": [
+    "marketing"
+  ],
+  "/j/marketing/settings": [
+    "marketing"
+  ],
+  "/j/marketing/queue": [
+    "marketing"
+  ],
+  "/j/marketing/journey-funnel": [
+    "marketing"
+  ],
+  "/j/marketing/offers-check": [
+    "marketing"
+  ],
+  "/ai/connectors": [
+    "marketing"
+  ],
+  "/erp/inventory-warehouse": [
+    "merchandising",
+    "business_analyst"
+  ],
+  "/products": [
+    "merchandising",
+    "graphic"
+  ],
+  "/stock-moves": [
+    "merchandising"
+  ],
+  "/product-prices": [
+    "merchandising"
+  ],
+  "/product-master-queue": [
+    "merchandising"
+  ],
+  "/order-periods": [
+    "merchandising"
+  ],
+  "/orders": [
+    "business_analyst"
+  ],
+  "/account/password": [
+    "marketing",
+    "merchandising",
+    "cs",
+    "sales_manager",
+    "business_analyst",
+    "graphic"
+  ]
+};
 
 function category(item: NavItem, group = ''): WorkspaceId {
   const p = item.to;
@@ -297,13 +519,13 @@ export function navFor(role?: string): NavGroup[] {
   const grouped = new Map<WorkspaceId, NavItem[]>(WORKSPACES.map(w => [w.id, []]));
   const seen = new Set<string>();
   for (const group of ORIGINAL_NAV) for (const item of group.links) {
-    if (item.to === '/' || seen.has(item.to) || (role !== 'admin' && ADMIN_ONLY.has(item.to))) continue;
+    if (item.to === '/' || seen.has(item.to) || (role !== 'admin' && !ROLE_ACCESS[item.to]?.includes(role ?? ''))) continue;
     seen.add(item.to);
     grouped.get(category(item, group.group))!.push({ ...item, label: LABELS[item.to] ?? item.label });
   }
   return [
-    { links: [{ to: '/', label: 'ภาพรวม', end: true, icon: 'space_dashboard' }] },
-    ...WORKSPACES.map(w => ({
+    ...(role === 'admin' ? [{ links: [{ to: '/', label: 'ภาพรวม', end: true, icon: 'space_dashboard' }] }] : []),
+    ...WORKSPACES.filter(w => grouped.get(w.id)!.length > 0).map(w => ({
       group: w.title, icon: w.icon,
       links: [{ to: `/workspaces/${w.id}`, label: `ภาพรวม${w.title}`, end: true, icon: w.icon }, ...grouped.get(w.id)!],
     })),

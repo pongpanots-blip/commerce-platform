@@ -13,7 +13,7 @@ const files = (max: number) => FilesInterceptor('images', max, { limits: { fileS
 
 /** Product galleries owned by commerce (stage 4e) — admin and MER (stage 6). */
 @Controller('product-images')
-@StaffRoles('merchandising')
+@StaffRoles('merchandising', 'graphic')
 export class ProductImagesController {
   constructor(private readonly images: ProductImagesService) {}
 

@@ -37,7 +37,9 @@ describe('JoshStaffAccessService', () => {
   });
 
   it('refuses a role josh does not give from here (platform_admin), the commerce service account and unknown staff', async () => {
-    await expect(setup(staffRow()).svc.set(ID, { role: 'platform_admin' }, actor)).rejects.toBeInstanceOf(BadRequestException);
+    for (const role of ['platform_admin', 'business_analyst', 'graphic', 'sales_manager', 'sale_manager']) {
+      await expect(setup(staffRow()).svc.set(ID, { role }, actor)).rejects.toBeInstanceOf(BadRequestException);
+    }
     await expect(setup(staffRow({ email: COMMERCE_SERVICE_ACCOUNT })).svc.set(ID, { isActive: false }, actor)).rejects.toBeInstanceOf(BadRequestException);
     await expect(setup(undefined).svc.set(ID, { isActive: false }, actor)).rejects.toBeInstanceOf(NotFoundException);
   });

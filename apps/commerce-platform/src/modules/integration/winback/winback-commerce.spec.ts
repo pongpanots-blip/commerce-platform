@@ -105,5 +105,22 @@ describe('winback in commerce', () => {
       await mirror.run(); // josh has not caught up yet: nothing is published twice
       expect(bus.publish).not.toHaveBeenCalled();
     });
+
+    it('copies winback_app_record too, and skips it (no error) while one side has not migrated it', async () => {
+      delete process.env.WINBACK_OWNER;
+      const commerce = side({ a: 'h1' });
+      const josh = side({ a: 'h1' });
+      const result = await new WinbackMirror(commerce.ds as never, { configured: true, run: (fn: (ds: unknown) => unknown) => fn(josh.ds), query: josh.m.query } as never, { publish: jest.fn() } as never).run();
+      expect(result.map((r) => r.table)).toContain('winback_app_record');
+
+      const notMigrated = side({ a: 'h1' });
+      const plain = notMigrated.m.query.getMockImplementation()!;
+      notMigrated.m.query.mockImplementation(async (sql: string, params?: unknown[]) =>
+        sql.startsWith('SELECT column_name') && params?.[0] === 'winback_app_record' ? [] : plain(sql, params));
+      const replica = { configured: true, run: (fn: (ds: unknown) => unknown) => fn(notMigrated.ds), query: notMigrated.m.query };
+      const skipped = await new WinbackMirror(side({ a: 'h1' }).ds as never, replica as never, { publish: jest.fn() } as never).run();
+      expect(skipped.map((r) => r.table)).not.toContain('winback_app_record');
+      expect(skipped).toHaveLength(6);
+    });
   });
 });

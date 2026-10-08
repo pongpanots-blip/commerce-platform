@@ -1,6 +1,6 @@
 {
-  "expectedKeys": 5378,
-  "translatedKeys": 5378,
+  "expectedKeys": 5386,
+  "translatedKeys": 5386,
   "missingKeys": [],
   "stitchExports": [
     "copy-review/copy-1791434932312-3.html",
@@ -1422,5 +1422,19 @@
     "📦 1. ข้อมูลหลักสินค้า (Global Info)",
     "📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)"
   ],
-  "rejected": []
+  "rejected": [],
+  "postMergeStaffRoleLabels": [
+    "Admin — ทุกเมนู",
+    "Marketing — รายงานการตลาดและแคมเปญ",
+    "Merchandise — สินค้า สต็อก ราคา โปรโมชัน รอบสั่ง",
+    "CS — order, shipment, งาน CS",
+    "Sales manager — รายงานร้าน, winback, มอบหมายพนักงานขาย",
+    "Business analyst — อ่านรายงาน สต็อก ออเดอร์ ราคาคู่แข่ง",
+    "Graphic — รูปและเนื้อหาสินค้า",
+    "Merchandise",
+    "Sale",
+    "Sale manager",
+    "Admin",
+    "Dev"
+  ]
 }

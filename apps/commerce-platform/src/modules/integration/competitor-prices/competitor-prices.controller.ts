@@ -7,7 +7,7 @@ import { CaptureCompetitorPriceDto, CompetitorOverviewQueryDto, ConfirmCompetito
 
 /** Same routes and `{ status, data, message }` envelope as josh's /api/competitor-prices. */
 @Controller('competitor-prices')
-@StaffRoles('marketing')
+@StaffRoles('marketing', 'business_analyst')
 export class CompetitorPricesController {
   constructor(private readonly service: CompetitorPricesService, private readonly review: CompetitorReviewService) {}
   private async result<T>(action: () => Promise<T>) {

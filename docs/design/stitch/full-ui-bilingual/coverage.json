@@ -4,10 +4,10 @@
   "freshStitchRouteDesigns": 170,
   "sharedStitchPatternRoutes": 5,
   "routesWithoutStitchReference": 0,
-  "activeTranslationCatalogueKeys": 5378,
-  "catalogueKeysTranslated": 5378,
+  "activeTranslationCatalogueKeys": 5386,
+  "catalogueKeysTranslated": 5386,
   "catalogueKeysRemaining": 0,
-  "dictionaryEntries": 5519,
+  "dictionaryEntries": 5531,
   "freshGenerationPaused": true,
   "freshGenerationBlocker": "Stitch explicitly rejected remaining fresh generation with Resource has been exhausted. Five implemented routes reuse documented existing Stitch patterns; they are not separate fresh exports.",
   "routes": [

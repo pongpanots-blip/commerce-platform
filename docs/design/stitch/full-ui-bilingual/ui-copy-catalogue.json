@@ -129324,7 +129324,9 @@
         "file": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
         "kind": "runtime-ui-key"
       }
-    ]
+    ],
+    "retired": true,
+    "reason": "Replaced by the current upstream staff-role labels during master integration"
   },
   {
     "text": "marketing — รายงานและการตลาด",
@@ -129341,7 +129343,9 @@
         "file": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
         "kind": "runtime-ui-key"
       }
-    ]
+    ],
+    "retired": true,
+    "reason": "Replaced by the current upstream staff-role labels during master integration"
   },
   {
     "text": "MER — สินค้า ราคา หมวด แบรนด์ supplier",
@@ -129358,7 +129362,9 @@
         "file": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
         "kind": "runtime-ui-key"
       }
-    ]
+    ],
+    "retired": true,
+    "reason": "Replaced by the current upstream staff-role labels during master integration"
   },
   {
     "text": "CS — order shipment งาน CS credit note",
@@ -129375,7 +129381,9 @@
         "file": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
         "kind": "runtime-ui-key"
       }
-    ]
+    ],
+    "retired": true,
+    "reason": "Replaced by the current upstream staff-role labels during master integration"
   },
   {
     "text": "ส่งไม่สำเร็จ {0} · กำลังส่ง {1}",
@@ -136262,6 +136270,150 @@
       {
         "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
         "kind": "runtime-ui-key"
+      }
+    ]
+  },
+  {
+    "text": "Admin — ทุกเมนู",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Marketing — รายงานการตลาดและแคมเปญ",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Merchandise — สินค้า สต็อก ราคา โปรโมชัน รอบสั่ง",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "CS — order, shipment, งาน CS",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Sales manager — รายงานร้าน, winback, มอบหมายพนักงานขาย",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Business analyst — อ่านรายงาน สต็อก ออเดอร์ ราคาคู่แข่ง",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Graphic — รูปและเนื้อหาสินค้า",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Merchandise",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Sale",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Sale manager",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Admin",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
+      }
+    ]
+  },
+  {
+    "text": "Dev",
+    "kinds": [
+      "staff-role-label"
+    ],
+    "occurrences": [
+      {
+        "file": "apps/commerce-admin/src/lib/api.ts",
+        "kind": "staff-role-label"
       }
     ]
   }

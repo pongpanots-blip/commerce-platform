@@ -8,9 +8,9 @@ class AssignSalesDto {
   @ValidateIf((_, v) => v !== null) @IsOptional() @IsUUID() sales_user_id?: string | null;
 }
 
-/** josh CS-admin's PATCH /cs-admin/sales-assignment (admin only), here — commerce-admin's hosted CS page calls the same path. */
+/** josh CS-admin's PATCH /cs-admin/sales-assignment, here. Admin and the commerce sales_manager role (josh's person stays `manager`). */
 @Controller('cs-admin')
-@StaffRoles('admin')
+@StaffRoles('sales_manager')
 export class SalesRepsController {
   constructor(private readonly reps: SalesRepsService) {}
 

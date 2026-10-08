@@ -9,6 +9,12 @@ services:
   platform:
     image: ${ECR_REGISTRY}/commerce-platform:${PLATFORM_TAG:-latest}
     restart: unless-stopped
+    # Cutover flags (COMMERCE_OWNS_*, CRON_*, *_SOURCE, CUSTOMER_METRICS_TO_JOSH, WINBACK_OWNER,
+    # STOCK_ORDER_WAREHOUSE_CODE, S3_MEDIA_BUCKET, MEDIA_BASE_URL, AWS_REGION): repo variable PLATFORM_FLAGS,
+    # written by deploy-ecr.yml / ops-platform.yml. Keys under `environment:` win over this file, so a cutover
+    # flag with an empty default must not be added here — it would wipe the flags file.
+    env_file:
+      - ./platform-flags.env
     ports:
       - '3100:3100'
     # Resolve joshapp.io to josh private IP so JOSH_API_URL=https://joshapp.io/api
@@ -53,6 +59,10 @@ services:
       CRON_MARKETING_RESEARCH_ENABLED: ${CRON_MARKETING_RESEARCH_ENABLED:-true}
       RESEARCH_FREE_WORKER_ENABLED: ${RESEARCH_FREE_WORKER_ENABLED:-true}
       SCRAPING_CRON_DISABLED: ${SCRAPING_CRON_DISABLED:-}
+      # Secrets PLATFORM_FLAGS refuses. Unset = galleries / activity photos 503, external intake 401.
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      WINBACK_INTAKE_KEY: ${WINBACK_INTAKE_KEY:-}
 
     depends_on:
       - redis

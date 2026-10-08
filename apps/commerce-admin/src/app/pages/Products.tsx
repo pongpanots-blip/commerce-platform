@@ -1,6 +1,6 @@
 // ui-metadata-migration: static labels and UI notices only
 import { StatusChip, RowLink } from '@cp/ui';
-import { Product } from '../../lib/api';
+import { Product, session } from '../../lib/api';
 import { ResourcePage, Column, Field } from '../components/ResourcePage';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -27,6 +27,7 @@ export function Products() {
       columns={columns}
       fields={fields}
       createLabel={__uiText("เพิ่มสินค้า")}
+      readOnly={session.claims()?.role === 'graphic'}
       searchText={row => `${row.sku} ${row.name}`}
       searchPlaceholder="ค้นหา SKU หรือชื่อสินค้า…"
     />

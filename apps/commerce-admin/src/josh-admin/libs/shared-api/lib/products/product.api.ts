@@ -1,7 +1,8 @@
 import { Product } from '@josh/shared-models';
 import { apiClient, viaCommerceAction } from '../api-client/api-client';
 import { ownership } from '../api-client/commerce-client';
-import { request } from '../../../../../lib/api';
+import { productImagesApi, request, session } from '../../../../../lib/api';
+import { galleryWithout, graphicImageCalls, skuImageName } from './graphic-image-save';
 import type {
   FilterGroup,
   ListingAvailability,
@@ -165,6 +166,43 @@ const imageEdit = (id: string, images: File[], removed: string) => {
   return apiClient.patch<any>(`/product/${id}`, form, { headers: { 'Content-Type': 'multipart/form-data' } });
 };
 
+const axiosError = (e: unknown) => {
+  const message = e instanceof Error ? e.message : String(e);
+  return Object.assign(new Error(message), { isAxiosError: true, response: { status: (e as { status?: number }).status ?? 400, data: { message } } });
+};
+
+/** Graphic cannot PATCH /product/:id. Adds use the image routes; a delete needs commerce's gallery. */
+async function saveGraphicImages(id: string, sku: string, images: File[], removed: string) {
+  const removing = removed !== '[]';
+  const owned = !!(await ownership()).productImages;
+  const calls = graphicImageCalls(owned, sku, images.length, removing);
+  if (removing && !calls.some((call) => call.op === 'set')) throw axiosError(new Error('ลบรูปได้เมื่อ commerce ดูแลแกลเลอรี'));
+  try {
+    for (const call of calls) {
+      if (call.op === 'upload') await productImagesApi.upload(sku, images);
+      else if (call.op === 'set') {
+        const gallery = await productImagesApi.get(sku);
+        const product = await apiClient.get<any>(`/product/${id}`);
+        const ids = new Set<string>(JSON.parse(removed));
+        const sources = ((product.data?.media ?? []) as { product_media_id?: string; source?: string }[])
+          .filter((item) => item.product_media_id && ids.has(item.product_media_id))
+          .map((item) => item.source ?? '');
+        const next = galleryWithout(gallery.images, sources);
+        if (sources.length && next.length === gallery.images.length) throw new Error('ลบรูปไม่สำเร็จ');
+        await productImagesApi.set(sku, next);
+      } else {
+        const form = new FormData();
+        form.append('mode', 'append');
+        images.forEach((file, index) => form.append('images', new File([file], skuImageName(sku, index, file.name), { type: file.type })));
+        await apiClient.post('/product/images/bulk-upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      }
+    }
+  } catch (e) {
+    if ((e as { isAxiosError?: boolean }).isAxiosError) throw e;
+    throw axiosError(e);
+  }
+}
+
 export const createProduct = async (data: FormData): Promise<any> => {
   const { fields, images } = splitProductForm(data);
   const created = await viaCommerceAction<{ product_inventory_id?: string }>('/josh/products', { product: fields });
@@ -172,11 +210,24 @@ export const createProduct = async (data: FormData): Promise<any> => {
   return { data: created, status: 200 };
 };
 
+const GRAPHIC_DROP = ['buying_price', 'low_stock_threshold', 'reorder_quantity', 'selling_unit_price', 'product_status', 'original_price', 'ordering_price', 'product_inventory_quantity', 'promotion_rules'];
+
 export const updateProduct = async (id: string, data: FormData): Promise<any> => {
   const { fields, images, removed } = splitProductForm(data);
+  const sku = fields.product_inventory_sku;
   delete fields.product_inventory_sku; // identity from the ERP — read-only in commerce's form
+  const graphic = session.claims()?.role === 'graphic';
+  if (graphic) for (const key of GRAPHIC_DROP) delete fields[key];
+  if (graphic && (images.length || removed !== '[]')) {
+    if (!sku) throw axiosError(new Error('graphic image save needs a SKU'));
+    // Refuse before the content write, so a blocked image delete does not leave a half-saved product.
+    if (removed !== '[]' && !(await ownership()).productImages) throw axiosError(new Error('ลบรูปได้เมื่อ commerce ดูแลแกลเลอรี'));
+  }
   if (Object.keys(fields).length) await viaCommerceAction(`/josh/products/${id}/update`, { fields });
-  if (images.length || removed !== '[]') await imageEdit(id, images, removed);
+  if (images.length || removed !== '[]') {
+    if (graphic) await saveGraphicImages(id, sku ?? '', images, removed);
+    else await imageEdit(id, images, removed);
+  }
   return { data: { statusCode: 200 }, status: 200 };
 };
 

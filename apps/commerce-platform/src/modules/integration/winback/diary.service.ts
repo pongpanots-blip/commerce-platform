@@ -5,6 +5,7 @@ import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackActivity } from './entities/winback-activity.entity';
 import { WinbackHealth } from './winback.enums';
 import { buildWorklist } from './worklist.helpers';
+import { assignAccountSequences, assignDailySequences } from './analytics.helpers';
 
 @Injectable()
 export class DiaryService {
@@ -131,7 +132,38 @@ export class DiaryService {
       take: 200,
     });
 
-    return this.withAccounts(rows);
+    const [withAccounts, sequences] = await Promise.all([this.withAccounts(rows), this.sequences(rows)]);
+    return withAccounts.map((r) => ({
+      ...r,
+      visit_n: sequences.account.get(r.id) ?? null,
+      daily_k: sequences.daily.get(r.id) ?? null,
+    }));
+  }
+
+  /**
+   * `visit_n` = the activity's place among its account's done activities ("ครั้งที่ N"), `daily_k` = among the
+   * rep's done activities that day ("วันนี้ #K") — the same numbering as `/team-activity-feed`. Null for
+   * activities not done yet.
+   */
+  private async sequences(rows: WinbackActivity[]) {
+    const done = rows.filter((r) => r.status === 'done');
+    if (!done.length) return { account: new Map<string, number>(), daily: new Map<string, number>() };
+    const times = done.map((r) => new Date(r.activity_at).getTime());
+    const dayFrom = new Date(Math.min(...times));
+    dayFrom.setHours(0, 0, 0, 0);
+    const dayTo = new Date(Math.max(...times));
+    dayTo.setHours(23, 59, 59, 999);
+    const select: (keyof WinbackActivity)[] = ['id', 'account_id', 'sales_user_id', 'activity_at'];
+    const [accountHistory, dayHistory] = await Promise.all([
+      this.activities.find({ where: { account_id: In([...new Set(done.map((r) => r.account_id))]), status: 'done' }, select }),
+      this.activities.find({
+        where: { sales_user_id: In([...new Set(done.map((r) => r.sales_user_id))]), status: 'done', activity_at: Between(dayFrom, dayTo) },
+        select,
+      }),
+    ]);
+    const dayKey = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return { account: assignAccountSequences(accountHistory), daily: assignDailySequences(dayHistory, dayKey) };
   }
 
   /**

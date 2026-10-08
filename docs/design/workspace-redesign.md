@@ -4,7 +4,7 @@ The Admin and Portal share a calmer visual system: neutral surfaces, blue action
 
 ## Work by category
 
-All 114 original navigation destinations are retained. The Admin groups them by what the person is doing, rather than by backend ownership:
+All 114 original navigation destinations are retained for Admin; the current staff-role policy filters them for other staff. The Admin groups them by what the person is doing, rather than by backend ownership:
 
 | Category | Everyday workflow |
 | --- | --- |
@@ -16,7 +16,7 @@ All 114 original navigation destinations are retained. The Admin groups them by 
 | ระบบเชื่อมต่อ | Connections, queues, inbound data and failed deliveries |
 | ตั้งค่าและทีมงาน | Staff access and account settings |
 
-Each category has an overview at `/workspaces/:workspaceId`, with frequent tasks, a short workflow guide and searchable task sections. Every permitted destination appears once in its task directory. `navigation.ts` is the source of truth for categorization; existing destination URLs and server permissions remain in place. The two staff-administration routes are still shown only to administrators. Price requests/offers belong to catalog work; the ERP webhook simulator belongs to connections.
+Each category has an overview at `/workspaces/:workspaceId`, with frequent tasks, a short workflow guide and searchable task sections. Every permitted destination appears once in its task directory. `navigation.ts` is the source of truth for categorization; existing destination URLs and server permissions remain in place. The two staff-administration routes are still shown only to administrators. Marketing, Merchandising, CS, Sales manager, Business analyst and Graphic retain the latest master permissions. Non-admin accounts land in a permitted category; restricted top-bar feeds and read-only creation controls are hidden. Price requests/offers belong to catalog work; the ERP webhook simulator belongs to connections.
 
 ## Shared interaction rules
 
@@ -59,6 +59,6 @@ This cloud environment also keeps `bash /workspace/.commerce-cloud/ui-check.sh`,
 
 Verified on 2026-10-08: both app type checks and builds passed. The browser runner completed 162 page visits with no JavaScript or page-overflow failures, including all 114 original destinations and real local CRUD. It recorded 35 external/backend endpoints returning 503; their live data and remote workflows remain unverified. Stock mutation was not exercised because the mock warehouses are ERP-owned. Builds retain large-chunk warnings.
 
-The [full UI/bilingual report](stitch/full-ui-bilingual/README.md) adds all 175 route surfaces, including detail/create/edit views. It records 170 fresh Stitch designs and five shared-pattern decisions, 5,378 active translated copy keys, 350 route/language visits, a 178-visit English review, ten final focused visits in both languages, seven bilingual regression checks, and phone checks on three lists and five dialogs. The full route audit recorded 39 unavailable endpoints and blocked operational API writes after authentication. Unknown source diagnostics remain in closed error details; record names and written business content retain their original language.
+The [full UI/bilingual report](stitch/full-ui-bilingual/README.md) adds all 175 route surfaces, including detail/create/edit views. It records 170 fresh Stitch designs and five shared-pattern decisions, 5,386 active translated copy keys, 350 route/language visits, a 178-visit English review, ten final focused visits in both languages, seven bilingual regression checks, and phone checks on three lists and five dialogs. The full route audit recorded 39 unavailable endpoints and blocked operational API writes after authentication. Unknown source diagnostics remain in closed error details; record names and written business content retain their original language.
 
 Fonts: Noto Sans Thai Variable from `@fontsource-variable/noto-sans-thai` 5.3.0, with its SIL Open Font License retained in `libs/ui/fonts/LICENSE.txt`.

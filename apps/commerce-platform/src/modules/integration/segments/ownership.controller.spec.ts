@@ -14,6 +14,6 @@ describe('GET /api/ownership', () => {
     expect(new OwnershipController().get()).toEqual({ segments: true, salesReps: true, prices: false, productContent: false, categories: false, productMaster: false, productImages: false, promotions: false, ordering: false, staff: false });
   });
   it('every staff role may read it (the pages of marketing / MER / CS pick their write route from it)', () => {
-    expect(new Reflector().get(STAFF_ROLES_KEY, OwnershipController)).toEqual(['marketing', 'merchandising', 'cs']);
+    expect(new Reflector().get(STAFF_ROLES_KEY, OwnershipController)).toEqual(['marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic']);
   });
 });

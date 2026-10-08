@@ -29,13 +29,14 @@ interface Props<T> {
   columns: Column<T>[];
   fields: Field[];
   createLabel: string;
+  readOnly?: boolean;
   searchText: (row: T) => string;
   searchPlaceholder: string;
 }
 
 export function ResourcePage<T extends { id: string; status: string }>(props: Props<T>) {
   __useUiLocale();
-  const { title, subtitle, endpoint, columns, fields, createLabel } = props;
+  const { title, subtitle, endpoint, columns, fields, createLabel, readOnly } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [creating, setCreating] = useState(false);
@@ -78,11 +79,11 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
       <PageHeader
         title={title}
         subtitle={subtitle}
-        actions={<><Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("รีเฟรช")}</Button><Button variant="primary" icon="add" onClick={() => { setCreating(true); setCreated(null); }}>{createLabel}</Button></>}
+        actions={<><Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("รีเฟรช")}</Button>{!readOnly && <Button variant="primary" icon="add" onClick={() => { setCreating(true); setCreated(null); }}>{createLabel}</Button>}</>}
       />
 
       {created && <Alert tone="ok" onClose={() => setCreated(null)} actions={<ButtonLink to={`${endpoint}/${created}`}>{__uiText("ดูรายการที่เพิ่ม")}</ButtonLink>}>{__uiText("เพิ่มรายการเรียบร้อยแล้ว")}</Alert>}
-      {creating && <Modal title={createLabel} onClose={() => { if (!submitting) setCreating(false); }} width={640}><FormPanel
+      {!readOnly && creating && <Modal title={createLabel} onClose={() => { if (!submitting) setCreating(false); }} width={640}><FormPanel
         title={__uiText("ข้อมูลรายการใหม่")}
         icon="add_circle"
         cols={2}
@@ -121,7 +122,7 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
         {loading && !data ? (
           <Loading />
         ) : error && !data ? null : !data?.items.length ? (
-          <Empty>{__uiText("ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “")}{createLabel}{__uiText("” ด้านบน")}</Empty>
+          <Empty>{readOnly ? __uiText("ยังไม่มีรายการ") : <>{__uiText("ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “")}{createLabel}{__uiText("” ด้านบน")}</>}</Empty>
         ) : (
           <>
             {filter.visible.length ? <Table>

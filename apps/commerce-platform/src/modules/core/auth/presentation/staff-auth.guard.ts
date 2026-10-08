@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ALLOW_PENDING_PASSWORD_KEY, IS_PUBLIC_KEY, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { ALLOW_PENDING_PASSWORD_KEY, ALLOW_READ_ONLY_WRITE_KEY, ANY_STAFF_KEY, IS_PUBLIC_KEY, READ_ONLY_STAFF_ROLES, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { User } from '../../user/infrastructure/user.entity';
 
 export interface StaffPrincipal {
@@ -64,9 +64,15 @@ export class StaffAuthGuard implements CanActivate {
       throw new ForbiddenException({ message: 'change your password first', code: 'PASSWORD_CHANGE_REQUIRED' });
     }
 
+    const anyStaff = this.reflector.getAllAndOverride<boolean>(ANY_STAFF_KEY, targets);
     const allowed = new Set<string>(['admin', ...(this.reflector.getAllAndOverride<StaffRole[]>(STAFF_ROLES_KEY, targets) ?? [])]);
-    if (!allowed.has(account.role)) {
+    if (!anyStaff && !allowed.has(account.role)) {
       throw new ForbiddenException('this account cannot use this part of commerce-admin');
+    }
+    const method = String(request.method ?? 'GET').toUpperCase();
+    if ((READ_ONLY_STAFF_ROLES as readonly string[]).includes(account.role) && method !== 'GET' && method !== 'HEAD'
+      && !this.reflector.getAllAndOverride<boolean>(ALLOW_READ_ONLY_WRITE_KEY, targets)) {
+      throw new ForbiddenException('this account is read-only');
     }
     request.staff = { userId: account.id, email: account.email, role: account.role, mustChangePassword: account.mustChangePassword } as StaffPrincipal;
     return true;

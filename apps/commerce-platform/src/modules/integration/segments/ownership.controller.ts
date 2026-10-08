@@ -14,10 +14,10 @@ import { ownsOrdering } from '../../commerce/ordering/ordering.service';
 /**
  * Which josh features commerce owns right now (any signed-in staff). commerce-admin's hosted josh pages read it
  * to send writes to commerce or to josh — so switching ownership is an env change, not a UI deploy.
- * Open to every staff role (stage 6): without it a marketing / MER / CS page falls back to josh's routes, which josh refuses once owned.
+ * Open to every staff role: without it a non-admin page falls back to josh's routes, which josh refuses once owned.
  */
 @Controller('ownership')
-@StaffRoles('marketing', 'merchandising', 'cs')
+@StaffRoles('marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic')
 export class OwnershipController {
   @Get() get() { return { segments: ownsSegments(), salesReps: ownsSalesReps(), prices: ownsPrices(), productContent: ownsProductContent(), categories: ownsCategories(), productMaster: ownsProductMaster(), productImages: ownsProductImages(), promotions: ownsPromotions(), ordering: ownsOrdering(), staff: ownsStaff() }; }
 }

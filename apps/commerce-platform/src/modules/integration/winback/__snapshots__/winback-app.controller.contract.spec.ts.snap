@@ -1,0 +1,242 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) convert 1`] = `
+{
+  "data": {
+    "customerCode": "TMP-1",
+    "lifecycle": "tmp",
+    "opportunityId": "00000000-0000-4000-8000-000000000001",
+    "stage": "prospect",
+    "winbackAccountId": "acc-1",
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) opportunities list 1`] = `
+{
+  "data": {
+    "counts": {
+      "nearWarehouse": 0,
+      "needsEnrich": 3,
+      "recommended": 1,
+    },
+    "items": [
+      {
+        "convertedToWinback": false,
+        "deliveryCostRatio": null,
+        "deliveryEfficiencyScore": null,
+        "deliveryReasons": [],
+        "district": "วัฒนา",
+        "enrichmentStatus": "enriched",
+        "estimatedDeliveryCost": null,
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "ร้านวัฒนา",
+        "premiumFitReasons": [],
+        "premiumFitScore": null,
+        "premiumSignals": [
+          "Google 4.6 (320 รีวิว)",
+        ],
+        "priorityReason": null,
+        "provinceCode": "TH-10",
+        "provinceName": "กรุงเทพมหานคร",
+        "restaurantSegment": "japanese_premium",
+        "revenuePotentialScore": null,
+        "roadDistanceKm": null,
+        "salesPriorityScore": 81,
+        "spendMax": 800,
+        "spendMin": 400,
+        "winbackAccountId": null,
+      },
+    ],
+    "pagination": {
+      "limit": 20,
+      "page": 1,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) products 1`] = `
+{
+  "data": [
+    {
+      "brandName": null,
+      "categoryName": "เนื้อ",
+      "id": "00000000-0000-4000-8000-000000000001",
+      "imageUrl": null,
+      "name": "ริบอาย",
+      "nameEn": "Ribeye",
+      "sku": "RIB20",
+      "units": [
+        {
+          "id": "selling",
+          "label": "KG",
+          "unitPrice": 912.5,
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) quote 1`] = `
+{
+  "data": {
+    "accountId": "acc-1",
+    "accountName": "ร้าน A",
+    "contentVersion": 1,
+    "createdAt": "2026-10-08T00:00:00.000Z",
+    "events": [
+      {
+        "actorId": "sales-1",
+        "at": "2026-10-08T00:00:00.000Z",
+        "label": "สร้างใบเสนอราคา",
+        "version": 1,
+      },
+    ],
+    "followUpAt": null,
+    "id": "00000000-0000-4000-8000-000000000001",
+    "lines": [
+      {
+        "productId": "p",
+        "productName": "ริบอาย",
+        "quantity": 2,
+        "sku": "RIB20",
+        "unitId": "selling",
+        "unitLabel": "KG",
+        "unitPrice": 912.5,
+      },
+    ],
+    "note": "",
+    "salesUserId": "sales-1",
+    "status": "draft",
+    "statusAt": "draft",
+    "terms": null,
+    "updatedAt": "2026-10-08T00:00:00.000Z",
+    "validUntil": "2026-10-31",
+    "version": 1,
+    "versions": [],
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) revenue signal + revenue context 1`] = `
+{
+  "data": {
+    "avgMonthlyRevenue": 180000,
+    "customerCode": "GNA1",
+    "delayRatio": 11.9,
+    "displayName": "ร้าน A",
+    "id": "acc-1",
+    "inactiveDays": 214,
+    "lastOrderAt": "2026-03-08T00:00:00.000Z",
+    "medianReorderIntervalDays": 18,
+    "note": "โทรแล้ว",
+    "outcome": "follow_up",
+    "priority": 91,
+    "province": null,
+    "reason": null,
+    "reasons": [
+      "ไม่ได้สั่ง 214 วัน",
+    ],
+    "recommendedAction": "visit",
+    "signalType": "reactivate",
+    "snoozedUntil": null,
+    "status": "completed",
+    "winnable": true,
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) revenue signal + revenue context 2`] = `
+{
+  "data": {
+    "customerState": "dormant",
+    "daysSinceLastOrder": 214,
+    "delayRatio": 11.9,
+    "historicalMonthlyRevenue": 180000,
+    "lastOrderAt": "2026-03-08T00:00:00.000Z",
+    "medianReorderIntervalDays": 18,
+    "recommendedAction": "visit",
+    "revenueAtRisk": 180000,
+    "topProducts": [],
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) work plan + saved places + empty plan 1`] = `
+{
+  "data": {
+    "accountId": "00000000-0000-4000-8000-000000000001",
+    "blocker": "",
+    "completed": [
+      "contact",
+    ],
+    "dueAt": null,
+    "nextAction": "follow_up",
+    "note": "",
+    "preparationComplete": false,
+    "updatedAt": null,
+  },
+}
+`;
+
+exports[`WinbackAppController contract route table 1`] = `
+[
+  "GET /winback/opportunities → listOpportunities",
+  "GET /winback/opportunities/provinces → opportunityProvinces",
+  "GET /winback/opportunities/:id → opportunity",
+  "POST /winback/opportunities/:id/convert → convertOpportunity",
+  "GET /winback/signals → listSignals",
+  "POST /winback/signals/:id/complete → completeSignal",
+  "POST /winback/signals/:id/snooze → snoozeSignal",
+  "POST /winback/signals/:id/dismiss → dismissSignal",
+  "GET /winback/account/:id/revenue-context → revenueContext",
+  "GET /winback/products → products",
+  "GET /winback/activities/:activityId/plan → appointmentPlan",
+  "PUT /winback/activities/:activityId/plan → saveAppointmentPlan",
+  "GET /winback/activities/:activityId/completion → visitCompletion",
+  "PUT /winback/activities/:activityId/completion → saveVisitCompletion",
+  "GET /winback/activities/:activityId/start-evidence → startEvidence",
+  "PUT /winback/activities/:activityId/start-evidence → saveStartEvidence",
+  "GET /winback/account/:id/joint-visits → jointVisits",
+  "PUT /winback/activities/:activityId/joint-visit → saveJointVisit",
+  "GET /winback/activity-drafts/:key → activityDraft",
+  "PUT /winback/activity-drafts/:key → saveActivityDraft",
+  "DELETE /winback/activity-drafts/:key → deleteActivityDraft",
+  "GET /winback/coaching-tasks → coachingTasks",
+  "POST /winback/coaching-tasks → createCoachingTask",
+  "PATCH /winback/coaching-tasks/:id → updateCoachingTask",
+  "GET /winback/teams → teams",
+  "POST /winback/teams → createTeam",
+  "PUT /winback/teams/:id → updateTeam",
+  "DELETE /winback/teams/:id → deleteTeam",
+  "GET /winback/work-plans → workPlans",
+  "GET /winback/account/:id/work-plan → workPlan",
+  "PUT /winback/account/:id/work-plan → saveWorkPlan",
+  "GET /winback/saved-places → savedPlaces",
+  "PUT /winback/saved-places/:placeId → savePlace",
+  "DELETE /winback/saved-places/:placeId → unsavePlace",
+  "GET /winback/discovery-query → discoveryQuery",
+  "PUT /winback/discovery-query → saveDiscoveryQuery",
+  "GET /winback/sync/sources → syncSources",
+  "GET /winback/sync/runs → syncRuns",
+  "GET /winback/quotes → quotes",
+  "POST /winback/quotes → createQuote",
+  "GET /winback/quotes/:id → quote",
+  "PUT /winback/quotes/:id → reviseQuote",
+  "POST /winback/quotes/:id/status → moveQuote",
+  "POST /winback/quotes/:id/follow-up → followUpQuote",
+  "GET /winback/quotes/:id/dispatches → quoteDispatches",
+  "POST /winback/quotes/:id/dispatches → recordQuoteDispatch",
+  "GET /winback/quote-terms → quoteTerms",
+  "PUT /winback/quote-terms → saveQuoteTerms",
+  "GET /winback/daily-reports → dailyReports",
+  "GET /winback/daily-reports/:salesUserId/:day → dailyReport",
+  "PUT /winback/daily-reports/:salesUserId/:day → saveDailyReport",
+  "POST /winback/daily-reports/:salesUserId/:day/submit → submitDailyReport",
+  "POST /winback/daily-reports/:salesUserId/:day/review → reviewDailyReport",
+  "GET /winback/invoices → invoices",
+]
+`;

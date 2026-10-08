@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
-import { api, Customer, Product, OrderRow, Paginated } from '../../lib/api';
+import { api, Customer, Product, OrderRow, Paginated, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { CurrentPageFilters, useCurrentPageFilter } from '../components/CurrentPageFilters';
 
@@ -77,6 +77,7 @@ export function Orders() {
 
 
   const total = data?.total ?? 0;
+  const readOnly = session.claims()?.role === 'business_analyst';
   const filter = useCurrentPageFilter(data?.items ?? [], row => `${row.code ?? ''} ${row.id}`, row => row.status);
 
   return (
@@ -84,10 +85,10 @@ export function Orders() {
       <PageHeader
         title={__uiText("ออเดอร์แพลตฟอร์ม")}
         subtitle={__uiText("ดูสถานะและยอดคำสั่งซื้อ เปิดรายละเอียดเพื่อติดตามการชำระเงินและการจองสินค้า")}
-        actions={<><Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("รีเฟรช")}</Button><Button icon="add" variant="primary" onClick={() => setCreating(true)}>{__uiText("สร้างออเดอร์")}</Button></>}
+        actions={<><Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("รีเฟรช")}</Button>{!readOnly && <Button icon="add" variant="primary" onClick={() => setCreating(true)}>{__uiText("สร้างออเดอร์")}</Button>}</>}
       />
 
-      {creating && <Modal title={__uiText("สร้างออเดอร์")} onClose={() => { if (!submitting) setCreating(false); }} width={850}><FormPanel
+      {!readOnly && creating && <Modal title={__uiText("สร้างออเดอร์")} onClose={() => { if (!submitting) setCreating(false); }} width={850}><FormPanel
         title={__uiText("ลูกค้าและรายการสินค้า")}
         description={__uiText("เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย")}
         icon="add_circle"
@@ -142,7 +143,7 @@ export function Orders() {
         {loading && !data ? (
           <Loading />
         ) : error && !data ? null : !data?.items.length ? (
-          <Empty>{__uiText("ยังไม่มีออเดอร์ เริ่มต้นด้วยปุ่ม “สร้างออเดอร์” ด้านบน")}</Empty>
+          <Empty>{__uiText(readOnly ? "ยังไม่มีออเดอร์" : "ยังไม่มีออเดอร์ เริ่มต้นด้วยปุ่ม “สร้างออเดอร์” ด้านบน")}</Empty>
         ) : (
           <>
             {filter.visible.length ? <Table>

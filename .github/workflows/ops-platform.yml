@@ -1,0 +1,176 @@
+name: Ops platform (cutover flags / subscription / scripts)
+
+# Ops for the josh → commerce cutovers, on the commerce EC2 runner, inside the running platform container.
+#   status        read-only: platform flags, josh subscription event types, migrations, warehouses
+#   apply-flags   repo variable PLATFORM_FLAGS → docker/platform-flags.env, recreate platform (no rebuild)
+#   subscription  add / remove event types on the josh webhook subscription (target = joshapp.io / josh IP)
+#   script        run ops/scripts/<script>.cjs in the platform container (staff login + read-only josh URL in env)
+#   create-ops-staff  create / reset the ops staff account (password = secret COMMERCE_OPS_STAFF_PASSWORD)
+# Never prints a secret: every value from secrets is masked and only reaches the container through an env file.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        options: [status, apply-flags, subscription, script, create-ops-staff]
+        default: status
+      add:
+        description: 'subscription: event types to add (comma separated)'
+        type: string
+        default: ''
+      remove:
+        description: 'subscription: event types to remove (comma separated)'
+        type: string
+        default: ''
+      script:
+        description: 'script: name in ops/scripts (without .cjs)'
+        type: string
+        default: ''
+      args:
+        description: 'script: arguments (one string, passed as SCRIPT_ARGS)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ops-platform
+  cancel-in-progress: false
+
+env:
+  OPS_STAFF_EMAIL: ops-cutover@joshapp.io
+  JOSH_HOST: 172.31.32.200
+  JOSH_DB: josh
+
+jobs:
+  run:
+    runs-on: [self-hosted, linux, commerce-platform]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: ops
+
+      - name: Platform container
+        id: c
+        run: |
+          set -euo pipefail
+          C=$(docker ps -q --filter label=com.docker.compose.service=platform | head -1)
+          [ -n "$C" ] || { echo "::error::platform container not running"; exit 1; }
+          echo "container: $(docker inspect -f '{{.Name}} {{.Config.Image}} started={{.State.StartedAt}}' "$C")"
+          echo "id=$C" >> "$GITHUB_OUTPUT"
+
+      - name: Env file (masked)
+        env:
+          RO_PW: ${{ secrets.JOSH_RO_PG_PASSWORD }}
+          STAFF_PW: ${{ secrets.COMMERCE_OPS_STAFF_PASSWORD }}
+          SCRIPT_ARGS: ${{ inputs.args }}
+          ADD: ${{ inputs.add }}
+          REMOVE: ${{ inputs.remove }}
+        run: |
+          set -euo pipefail
+          [ -n "$RO_PW" ] && echo "::add-mask::$RO_PW"
+          [ -n "$STAFF_PW" ] && echo "::add-mask::$STAFF_PW"
+          umask 077
+          F="$RUNNER_TEMP/ops.env"
+          {
+            [ -n "$RO_PW" ] && printf 'JOSH_DATABASE_URL=postgres://commerce_ro:%s@%s:5432/%s\n' "$RO_PW" "$JOSH_HOST" "$JOSH_DB"
+            printf 'OPS_STAFF_EMAIL=%s\n' "$OPS_STAFF_EMAIL"
+            [ -n "$STAFF_PW" ] && printf 'OPS_STAFF_PASSWORD=%s\n' "$STAFF_PW"
+            printf 'SCRIPT_ARGS=%s\n' "$(printf %s "$SCRIPT_ARGS" | tr -d '\n')"
+            printf 'SUB_ADD=%s\n' "$(printf %s "$ADD" | tr -d '\n ')"
+            printf 'SUB_REMOVE=%s\n' "$(printf %s "$REMOVE" | tr -d '\n ')"
+          } > "$F"
+
+      - name: apply-flags
+        if: inputs.action == 'apply-flags'
+        env:
+          PLATFORM_FLAGS: ${{ vars.PLATFORM_FLAGS }}
+          DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
+        run: |
+          set -euo pipefail
+          cd "$DEPLOY_DIR/docker"
+          grep -q 'platform-flags.env' docker-compose.prod.yml || { echo "::error::compose on the box has no env_file yet — run deploy-ecr once"; exit 1; }
+          printf '%s\n' "$PLATFORM_FLAGS" | grep -E '^[A-Z][A-Z0-9_]*=[^ ]*$' > platform-flags.env.new || true
+          if grep -Eiq '(SECRET|PASSWORD|TOKEN|_KEY|DATABASE_URL)=' platform-flags.env.new; then echo "::error::PLATFORM_FLAGS must not carry secrets"; exit 1; fi
+          echo "flags:"; cat platform-flags.env.new
+          mv platform-flags.env.new platform-flags.env
+          docker compose -f docker-compose.prod.yml up -d --no-deps platform
+          for i in $(seq 1 60); do
+            if curl -fsS -o /dev/null http://127.0.0.1:3100/api; then echo "platform up (GET /api 200) after ${i}x2s"; break; fi
+            sleep 2; [ "$i" = 60 ] && { echo "::error::platform not healthy"; docker compose -f docker-compose.prod.yml logs --tail 50 platform | grep -viE 'password|secret|token'; exit 1; }
+          done
+
+      - name: status (read-only)
+        if: always() && steps.c.outputs.id != ''
+        run: |
+          set -euo pipefail
+          C=$(docker ps -q --filter label=com.docker.compose.service=platform | head -1)
+          docker exec -i "$C" node - <<'JS'
+          require('reflect-metadata');
+          const { AppDataSource } = require('./src/data-source');
+          const e = process.env;
+          const keys = Object.keys(e).filter((k) => /^(COMMERCE_OWNS|CRON_|WINBACK_|CUSTOMER_METRICS|RESEARCH_FREE|SCRAPING_CRON|STOCK_|JAGOTA_GATEWAY_ENABLED)|_SOURCE$/.test(k) && !/SECRET|PASSWORD|TOKEN|KEY/.test(k)).sort();
+          console.log('platform env:', JSON.stringify(Object.fromEntries(keys.map((k) => [k, e[k]]))), 'JOSH_DATABASE_URL set:', Boolean(e.JOSH_DATABASE_URL));
+          (async () => {
+            const db = await AppDataSource.initialize();
+            const q = async (label, sql) => { try { console.log(label, JSON.stringify(await db.query(sql))); } catch (err) { console.log(label, 'ERR', err.message); } };
+            await q('subscriptions:', `SELECT id, name, regexp_replace(target_url, '//[^/@]*@', '//') AS target_url, active, event_types FROM webhook_subscriptions ORDER BY created_at`);
+            await q('migrations (last 12):', `SELECT name FROM migrations ORDER BY id DESC LIMIT 12`);
+            await q('warehouses:', `SELECT to_jsonb(w) - 'created_at' - 'updated_at' - 'deleted_at' AS w FROM warehouses w`);
+            await q('dead letters 24h:', `SELECT count(*)::int AS n FROM webhook_deliveries WHERE status IN ('dead','dead_letter','failed') AND created_at > now() - interval '24 hours'`);
+            await db.destroy();
+          })().catch((err) => { console.error(err.message); process.exit(1); });
+          JS
+
+      - name: subscription
+        if: inputs.action == 'subscription'
+        run: |
+          set -euo pipefail
+          docker exec -i --env-file "$RUNNER_TEMP/ops.env" ${{ steps.c.outputs.id }} node - <<'JS'
+          require('reflect-metadata');
+          const { AppDataSource } = require('./src/data-source');
+          const list = (s) => (s || '').split(',').map((x) => x.trim()).filter(Boolean);
+          const add = list(process.env.SUB_ADD), remove = list(process.env.SUB_REMOVE);
+          const ok = /^[a-z_]+(\.[a-z_]+)+$/;
+          for (const t of [...add, ...remove]) if (!ok.test(t)) { console.error('bad event type', t); process.exit(1); }
+          if (remove.some((t) => t.startsWith('ordering') || t.includes('order_period') || t.includes('logistics'))) { console.error('ordering types not allowed (4f skipped)'); process.exit(1); }
+          (async () => {
+            const db = await AppDataSource.initialize();
+            await db.transaction(async (m) => {
+              const subs = await m.query(`SELECT id, name, target_url, event_types FROM webhook_subscriptions WHERE active AND (target_url ILIKE '%joshapp.io%' OR target_url LIKE '%172.31.40.34%') FOR UPDATE`);
+              if (subs.length !== 1) throw new Error(`expected exactly 1 active josh subscription, found ${subs.length}`);
+              const s = subs[0];
+              const before = s.event_types;
+              if (before.includes('*')) throw new Error('josh subscription is ["*"] — not editing');
+              const after = [...new Set([...before.filter((t) => !remove.includes(t)), ...add])];
+              await m.query(`UPDATE webhook_subscriptions SET event_types = $2::jsonb, updated_at = now() WHERE id = $1`, [s.id, JSON.stringify(after)]);
+              console.log(JSON.stringify({ subscription: s.name, added: add.filter((t) => !before.includes(t)), removed: remove.filter((t) => before.includes(t)), before, after }));
+            });
+            await db.destroy();
+          })().catch((err) => { console.error(err.message); process.exit(1); });
+          JS
+
+      - name: script
+        if: inputs.action == 'script'
+        env:
+          SCRIPT: ${{ inputs.script }}
+        run: |
+          set -euo pipefail
+          [[ "$SCRIPT" =~ ^[a-z0-9-]+$ ]] && [ -f "ops/scripts/$SCRIPT.cjs" ] || { echo "::error::no ops/scripts/$SCRIPT.cjs"; exit 1; }
+          docker exec -i -w /app --env-file "$RUNNER_TEMP/ops.env" ${{ steps.c.outputs.id }} node - < "ops/scripts/$SCRIPT.cjs" | tee "$RUNNER_TEMP/out.txt"
+          { echo "### $SCRIPT"; echo '```'; cut -c1-3000 "$RUNNER_TEMP/out.txt" | tail -80; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: create-ops-staff
+        if: inputs.action == 'create-ops-staff'
+        run: |
+          set -euo pipefail
+          grep -q '^OPS_STAFF_PASSWORD=' "$RUNNER_TEMP/ops.env" || { echo "::error::secret COMMERCE_OPS_STAFF_PASSWORD missing"; exit 1; }
+          sed -n 's/^OPS_STAFF_PASSWORD=/STAFF_PASSWORD=/p' "$RUNNER_TEMP/ops.env" > "$RUNNER_TEMP/staff.env"
+          docker exec -i --env-file "$RUNNER_TEMP/staff.env" ${{ steps.c.outputs.id }} node src/cli/create-staff.js "$OPS_STAFF_EMAIL" admin
+
+      - name: Remove env files
+        if: always()
+        run: rm -f "$RUNNER_TEMP/ops.env" "$RUNNER_TEMP/staff.env" "$RUNNER_TEMP/out.txt"

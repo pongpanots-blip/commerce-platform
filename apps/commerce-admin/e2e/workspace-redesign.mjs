@@ -21,10 +21,24 @@ const nav = navigation.navFor('admin');
 const routes = nav.flatMap(group => group.links.map(link => link.to));
 assert.equal(new Set(routes).size, routes.length, 'Every navigation route is unique');
 assert.equal(routes.filter(route => !route.startsWith('/workspaces/')).length, 114, 'Retain all original navigation destinations');
-for (const role of ['marketing', 'cs', 'merchandising', undefined]) {
+for (const role of ['marketing', 'cs', 'merchandising', 'sales_manager', 'business_analyst', 'graphic']) {
   const allowed = navigation.navFor(role).flatMap(group => group.links.map(link => link.to));
   assert.ok(!allowed.includes('/settings/staff') && !allowed.includes('/settings/josh-staff'), 'Staff administration stays admin-only');
   assert.ok(allowed.includes('/account/password'), 'Every staff role can change its password');
+}
+assert.deepEqual(navigation.navFor(undefined), [], 'Unknown roles receive no navigation destinations');
+const roleBoundaries = {
+  marketing: { allow: ['/j/coupons', '/marketing/growth'], deny: ['/stock-moves', '/j/order', '/orders'] },
+  merchandising: { allow: ['/products', '/stock-moves', '/j/allproducts'], deny: ['/j/coupons', '/j/order', '/orders'] },
+  cs: { allow: ['/cs', '/j/order', '/j/shipments'], deny: ['/j/coupons', '/stock-moves', '/orders'] },
+  sales_manager: { allow: ['/reports/sales', '/reports/winback'], deny: ['/j/coupons', '/stock-moves', '/orders'] },
+  business_analyst: { allow: ['/reports/sales', '/orders', '/marketing/growth', '/erp/inventory-warehouse'], deny: ['/j/coupons', '/stock-moves', '/marketing/growth/plans'] },
+  graphic: { allow: ['/products', '/j/allproducts', '/j/product/bulk-image-upload'], deny: ['/stock-moves', '/j/product/create', '/orders'] },
+};
+for (const [role, boundaries] of Object.entries(roleBoundaries)) {
+  const allowed = navigation.navFor(role).flatMap(group => group.links.map(link => link.to));
+  for (const path of boundaries.allow) assert.ok(allowed.includes(path), `${role} retains ${path}`);
+  for (const path of boundaries.deny) assert.ok(!allowed.includes(path), `${role} does not receive ${path}`);
 }
 for (const workspace of navigation.WORKSPACES) {
   const links = nav.find(group => group.group === workspace.title).links.filter(link => !link.to.startsWith('/workspaces/'));
@@ -37,19 +51,43 @@ assert.ok(nav.find(group => group.group === 'ระบบเชื่อมต�
 const OUT = '.e2e-out/redesign';
 mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
-const admin = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-const portal = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+let admin = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+let portal = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 const failures = [], unavailable = new Set(), checked = [];
 const fixture = {};
 let token;
-admin.on('dialog', dialog => dialog.accept());
-for (const page of [admin, portal]) {
+function watch(page) {
+  page.on('dialog', dialog => dialog.accept());
   page.on('pageerror', error => failures.push(`JavaScript (${new URL(page.url()).pathname}): ${error.message}`));
   page.on('response', response => { if (response.status() >= 500) unavailable.add(`${response.status()} ${new URL(response.url()).pathname}`); });
 }
+for (const page of [admin, portal]) watch(page);
 async function open(page, url) {
+  // Bound renderer memory during the large route audit while retaining actual authentication.
+  if (checked.length && checked.length % 35 === 0) {
+    const sessions = await page.evaluate(() => Object.fromEntries(Object.entries(sessionStorage)));
+    const origin = new URL(page.url()).origin;
+    const replacement = await browser.newPage({ viewport: page.viewportSize(), storageState: await page.context().storageState() });
+    await replacement.addInitScript(({ origin, sessions }) => {
+      if (window === window.top && location.origin === origin) {
+        for (const [key, value] of Object.entries(sessions)) if (sessionStorage.getItem(key) === null) sessionStorage.setItem(key, value);
+      }
+    }, { origin, sessions });
+    watch(replacement);
+    if (page === admin) admin = replacement;
+    if (page === portal) portal = replacement;
+    await page.close();
+    page = replacement;
+  }
   await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await page.locator('main').waitFor();
+  try { await page.locator('main').waitFor(); }
+  catch (error) {
+    const state = await page.evaluate(() => {
+      const main = document.querySelector('main');
+      return { path: location.pathname, hasSession: !!sessionStorage.getItem('cp_admin_token'), headings: [...document.querySelectorAll('h1')].map(h => h.textContent), mainPresent: !!main, mainDisplay: main ? getComputedStyle(main).display : null, rootChildren: document.getElementById('root')?.children.length };
+    });
+    throw new Error(`${new URL(url).pathname}: main unavailable ${JSON.stringify(state)}`, { cause: error });
+  }
   if (new URL(url).pathname.startsWith('/j/')) {
     await page.waitForFunction(() => {
       const content = document.querySelector('main .josh-tw')?.textContent?.trim();

@@ -4,17 +4,12 @@ import {
   Alert, Button, Chip, CopyValue, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Select,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { session, staffApi, StaffAccount, StaffRole } from '../../lib/api';
+import { session, staffApi, STAFF_ROLE_LABEL, StaffAccount, StaffRole } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const ROLE_LABEL: Record<StaffRole, string> = {
-  get admin(){return __uiText("admin — ทุกเมนู");},
-  get marketing(){return __uiText("marketing — รายงานและการตลาด");},
-  get merchandising(){return __uiText("MER — สินค้า ราคา หมวด แบรนด์ supplier");},
-  get cs(){return __uiText("CS — order shipment งาน CS credit note");},
-};
+const ROLES = Object.keys(STAFF_ROLE_LABEL) as StaffRole[];
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /**
@@ -88,7 +83,7 @@ export function StaffAccounts() {
           <Field label={__uiText("ชื่อ")}><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
           <Field label={__uiText("สิทธิ์")}>
             <Select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as StaffRole })}>
-              {(Object.keys(ROLE_LABEL) as StaffRole[]).map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
+              {ROLES.map((r) => <option key={r} value={r}>{__uiText(STAFF_ROLE_LABEL[r])}</option>)}
             </Select>
           </Field>
         </FormPanel></Modal>
@@ -117,7 +112,8 @@ export function StaffAccounts() {
                     <TD>{a.name ?? '—'}</TD>
                     <TD>
                       <Select aria-label={__uiText("สิทธิ์ของ {0}", {"0": a.email})} value={a.role} disabled={self || !!busy} onChange={(e) => setRole(a, e.target.value as StaffRole)}>
-                        {(Object.keys(ROLE_LABEL) as StaffRole[]).map((r) => <option key={r} value={r}>{r === 'merchandising' ? __uiText("MER") : r === 'cs' ? __uiText("CS") : r}</option>)}
+                        {!ROLES.includes(a.role) && <option value={a.role}>{a.role}</option>}
+                        {ROLES.map((r) => <option key={r} value={r}>{__uiText(STAFF_ROLE_LABEL[r])}</option>)}
                       </Select>
                     </TD>
                     <TD><StatusChip status={a.status} /></TD>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Alert, Button, Chip, Empty, ErrorText, Loading, Page, PageHeader, Panel, PanelHead, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { JOSH_STAFF_ROLES, joshStaffApi, JoshStaffAccount } from '../../lib/api';
+import { JOSH_ROLE_LABEL, JOSH_STAFF_ROLES, joshStaffApi, JoshStaffAccount } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -78,7 +78,7 @@ export function JoshStaff() {
                     {canEdit ? (
                       <Select aria-label={__uiText("สิทธิ์ใน josh ของ {0}", {"0": a.email})} value={a.role} disabled={!!busy} onChange={(e) => setRole(a, e.target.value)}>
                         {!(JOSH_STAFF_ROLES as readonly string[]).includes(a.role) && <option value={a.role} disabled>{a.role}</option>}
-                        {JOSH_STAFF_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                        {JOSH_STAFF_ROLES.map((r) => <option key={r} value={r}>{__uiText(JOSH_ROLE_LABEL[r])}</option>)}
                       </Select>
                     ) : a.role}
                   </TD>

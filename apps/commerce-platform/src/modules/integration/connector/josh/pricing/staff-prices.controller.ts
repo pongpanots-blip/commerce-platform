@@ -1,14 +1,15 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
-import { StaffRequest } from '../../../../../shared-kernel/presentation/auth.decorators';
+import { StaffRequest, StaffRoles } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StaffPriceKind } from './staff-price.entity';
 import { StaffPriceInput, StaffPrices } from './staff-prices';
 import { joshOnly } from '../system-health';
 
 /**
- * Customer and branch contract prices owned by commerce (admin only, the guard default — josh's own
+ * Customer and branch contract prices owned by commerce (admin and merchandise — josh's own
  * routes for them are AdminOnlyGuard too). Each change is written to josh by josh's services.
  */
 @Controller('staff-prices')
+@StaffRoles('merchandising')
 export class StaffPricesController {
   constructor(private readonly prices: StaffPrices) {}
 

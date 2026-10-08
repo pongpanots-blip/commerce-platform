@@ -18,7 +18,7 @@ Open the [design gallery](gallery.html) to search every route and filter by work
 
 ## Usability changes in the apps
 
-The Admin has seven task-based work areas with translated navigation, permitted-page search, keyboard shortcuts and a consistent shell. Portal keeps its own navigation and next-step actions. Existing role restrictions and all 114 original navigation destinations remain available.
+The Admin has seven task-based work areas with translated navigation, permitted-page search, keyboard shortcuts and a consistent shell. Portal keeps its own navigation and next-step actions. All 114 original navigation destinations remain available to Admin. The latest master staff-role policy is preserved for Marketing, Merchandising, CS, Sales manager, Business analyst and Graphic; each receives only its permitted destinations. Non-admin sign-in opens a permitted work area and does not load admin-only top-bar feeds. Analyst creation controls and Graphic product creation stay hidden.
 
 Lists lead with records, then their existing filters and actions. Native product/customer/order creation and editing use named dialogs with keyboard containment, Escape and restored trigger focus. Long management forms use visible section navigation, associated labels and hints, and sticky Cancel/Save controls. Sortable headers are keyboard buttons with `aria-sort`; wide tables scroll inside their panels.
 
@@ -30,7 +30,7 @@ Failed initial reads on product, segment, bot and workflow editors show a retrya
 
 Thai is the default. Admin, Portal, authentication pages and native dialogs have a ไทย / English selector; the choice persists after reload. Changing language keeps form values, selected API enums, files and record identifiers. Dates, known statuses, option labels, help, validation and UI notices use the selected language.
 
-**5,378 active source-copy keys have both translations**, with no missing catalogue keys. The runtime dictionary retains 5,519 entries, including earlier references. Stitch translation exports and [reviewed copy](curated-translations.json) are merged into the [UI dictionary](../../../../libs/ui/src/locales/ui-messages.json). The [source catalogue](ui-copy-catalogue.json) and [translation coverage](translation-coverage.json) make that coverage inspectable. All dictionary entries pass placeholder checks; English entries contain no untranslated Thai UI except the explicit language-selector label.
+**5,386 active source-copy keys have both translations**, with no missing catalogue keys. The runtime dictionary retains 5,531 entries, including earlier references. Stitch translation exports and [reviewed copy](curated-translations.json) are merged into the [UI dictionary](../../../../libs/ui/src/locales/ui-messages.json). The [source catalogue](ui-copy-catalogue.json) and [translation coverage](translation-coverage.json) make that coverage inspectable. All dictionary entries pass placeholder checks; English entries contain no untranslated Thai UI except the explicit language-selector label.
 
 Names, descriptions, user-written campaign content, SKUs, IDs, URLs, source diagnostic details and API payloads retain their original values. The final English review retains Thai product/customer/warehouse names as record data. Backend/provider messages that are not known UI copy remain available as source diagnostics.
 
@@ -58,7 +58,11 @@ Both application type checks and production builds pass. Browser checks passed:
 
 The full route audit blocks operational API writes after authentication, including legacy segment preview writes. Its 39 unavailable backend/external endpoints are recorded in [validation.json](validation.json). Live Josh services are unconfigured, so these checks verify rendered loading/error states and local workflows, not live Josh operations. Stock mutations were not exercised because seeded warehouses are ERP-owned. Builds retain large-chunk warnings.
 
-Repository runners: [workspace-redesign.mjs](../../../../apps/commerce-admin/e2e/workspace-redesign.mjs), [bilingual-ui.mjs](../../../../apps/commerce-admin/e2e/bilingual-ui.mjs), [full-ui-routes.mjs](../../../../apps/commerce-admin/e2e/full-ui-routes.mjs). They require an isolated local stack and generated mock credentials; credentials are never printed.
+Staff-role labels added while integrating the latest master also have Thai/English copy; four obsolete role captions are marked retired in the catalogue. Validation after integrating the current staff-role policy is recorded separately in [pr-merge-validation.json](pr-merge-validation.json).
+
+Additional merge checks passed: **20 focused route/language visits**, **13 staff-role browser checks** with mocked API responses and no operational writes, eight existing staff authorization tests and the existing Graphic image-save test. The 162 navigation/CRUD visits and seven bilingual workflow checks were rerun successfully after integration. All six non-admin destination lists match the upstream staff policy.
+
+Repository runners: [workspace-redesign.mjs](../../../../apps/commerce-admin/e2e/workspace-redesign.mjs), [bilingual-ui.mjs](../../../../apps/commerce-admin/e2e/bilingual-ui.mjs), [full-ui-routes.mjs](../../../../apps/commerce-admin/e2e/full-ui-routes.mjs), [staff-role-ui.mjs](../../../../apps/commerce-admin/e2e/staff-role-ui.mjs). They require an isolated local stack and generated mock credentials; credentials are never printed.
 
 ```bash
 source /workspace/.commerce-cloud/env.sh

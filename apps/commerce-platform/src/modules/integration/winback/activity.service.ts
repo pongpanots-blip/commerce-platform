@@ -265,7 +265,14 @@ export class ActivityService {
       account.activity_count = (account.activity_count ?? 0) + 1;
       if (isVisit(t)) account.visit_count = (account.visit_count ?? 0) + 1;
     }
+    const fromStage = account.stage;
+    if (dto.stage_after && dto.stage_after !== account.stage) {
+      account.stage = dto.stage_after as WinbackStage;
+      activity.stage_after = dto.stage_after;
+      await this.activities.save(activity);
+    }
     await this.accounts.save(account);
+    await this.recordStageChange(account.id, fromStage, account.stage, activity.sales_user_id, now, dto.note);
     return { activity, contact_done: contactDone };
   }
 

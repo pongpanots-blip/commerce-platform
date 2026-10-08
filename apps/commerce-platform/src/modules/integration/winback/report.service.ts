@@ -52,6 +52,8 @@ export type TeamRepStat = {
   pitches: number;
   activities: number;
   won: number;
+  /** Baht in the period — the same figure as `/dashboard` `byPerson[].gmv` (its default period when from/to are omitted). */
+  gmv?: number;
 };
 
 export type DashboardPersonRow = {
@@ -505,8 +507,12 @@ export class ReportService {
       ]);
     if (from && to) qb.andWhere('a.create_date BETWEEN :from AND :to', { from, to });
     const rows = await qb.getRawMany<AccRow>();
-    const perRep = await this.buildPerRep(rows, from, to);
-    return { reps: perRep };
+    const [perRep, dashboard] = await Promise.all([
+      this.buildPerRep(rows, from, to),
+      this.getDashboard('team', '', from, to),
+    ]);
+    const gmvByRep = new Map(dashboard.by_person.map((p) => [p.sales_user_id, p.gmv]));
+    return { reps: perRep.map((r) => ({ ...r, gmv: gmvByRep.get(r.sales_user_id) ?? 0 })) };
   }
 
   private async buildPerRep(

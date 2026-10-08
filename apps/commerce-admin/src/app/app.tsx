@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from
 import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { Workspace } from './pages/Workspace';
-import { AdminStats, api, reportsApi, session, staffApi } from '../lib/api';
+import { AdminStats, api, reportsApi, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { StaffAccounts } from './pages/StaffAccounts';
@@ -62,7 +62,7 @@ import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __us
 const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
 
 /** Route context and a single page-search entry point across every category. */
-function AdminTopBar() {
+function AdminTopBar({ role }: { role?: string }) {
   __useUiLocale();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -80,16 +80,16 @@ function AdminTopBar() {
   const current = nav.flatMap(group => group.links.map(link => ({ group, link })))
     .filter(({ link }) => pathname === link.to || (link.to !== '/' && !link.end && pathname.startsWith(link.to + '/')))
     .sort((a, b) => b.link.to.length - a.link.to.length)[0];
-  const stats = useAsync(() => api.get<AdminStats>('/admin/stats'));
-  const health = useAsync(() => reportsApi.health({ period: 'today' }));
+  const stats = useAsync(() => role === 'admin' ? api.get<AdminStats>('/admin/stats') : Promise.resolve(null), [role]);
+  const health = useAsync(() => role === 'admin' ? reportsApi.health({ period: 'today' }) : Promise.resolve(null), [role]);
   const problems = health.data?.now.problems.length ?? 0;
   const docsBase = import.meta.env.VITE_COMMERCE_API || (import.meta.env.DEV ? 'http://localhost:3100/api' : '/api');
   return <TopBar
     left={<div className="flex flex-wrap items-center gap-3">
       <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("Commerce workspace")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "พื้นที่ทำงาน")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
-      <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>
+      {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
     </div>}
-    right={<><LanguageSelector /><CommandMenu /><IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} /><IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
+    right={<><LanguageSelector /><CommandMenu />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
   />;
 }
 
@@ -116,7 +116,8 @@ export function App() {
   if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
 
   const claims = session.claims();
-  const nav = navFor(claims?.role);
+  const role = claims?.role;
+  const nav = navFor(role);
 
   function signOut() {
     session.clear();
@@ -136,13 +137,13 @@ export function App() {
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
             nav={nav}
             searchable
-            user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${claims.role}` : undefined, onSignOut: signOut }}
+            user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${__uiText(STAFF_ROLE_LABEL[role as StaffRole] ?? role ?? '')}` : undefined, onSignOut: signOut }}
           />
         }
-        topbar={<AdminTopBar />}
+        topbar={<AdminTopBar role={role} />}
       >
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={nav[0]?.links[0]?.to ?? '/account/password'} replace />} />
             <Route path="/workspaces/:workspaceId" element={<Workspace />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />

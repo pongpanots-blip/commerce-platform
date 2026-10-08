@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { JoshActionsController } from './josh-actions.controller';
 
 describe('JoshActionsController — back-office actions', () => {
@@ -35,6 +36,29 @@ describe('JoshActionsController — back-office actions', () => {
       ['admin-access', 'reject', { requestId: ID, reason: 'ข้อมูลไม่ครบ' }],
       ['coupons', 'set_active', { couponId: ID, isActive: false }],
     ]);
+  });
+
+  it('graphic saves copy fields only and drops every commercial field', async () => {
+    const contents = { edit: jest.fn(async () => ({ sku: 'SKU-1' })) };
+    const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    const graphic = { staff: { userId: 'staff-1', email: 'g@jagota.co.th', role: 'graphic' } } as never;
+    const commercial = [
+      ['buying_price', 12.5], ['low_stock_threshold', 3], ['reorder_quantity', 4],
+      ['selling_unit_price', 10], ['product_status', 'inactive'],
+    ] as const;
+    process.env.COMMERCE_OWNS_PRODUCT_CONTENT = 'true';
+    try {
+      for (const [key, value] of commercial) {
+        contents.edit.mockClear();
+        await ctl.updateProduct(ID, { fields: { product_name_th: 'ซอส', [key]: value } }, graphic);
+        expect(contents.edit).toHaveBeenCalledWith('SKU-1', { product_name_th: 'ซอส' }, 'staff-1');
+        await expect(ctl.updateProduct(ID, { fields: { [key]: value } }, graphic)).rejects.toBeInstanceOf(ForbiddenException);
+      }
+      expect(josh.run).not.toHaveBeenCalled();
+    } finally { delete process.env.COMMERCE_OWNS_PRODUCT_CONTENT; }
+    await ctl.updateProduct(ID, { fields: { product_description_en: 'sauce', buying_price: 9, low_stock_threshold: 1, reorder_quantity: 2 } }, graphic);
+    expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { product_description_en: 'sauce' } }, expect.anything(), 'admin');
   });
 
   it('product update sends the fields to josh, then refreshes the catalog copy', async () => {

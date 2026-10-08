@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev:platform": "COMMERCE_DB_HOST=localhost COMMERCE_DB_USERNAME=${USER} COMMERCE_DB_NAME=commerce_db REDIS_HOST=localhost PORT=3100 STOREFRONT_API_KEYS=dev-key PORTAL_JWT_SECRET=dev-portal-secret COMMERCE_CORS_ORIGINS=http://localhost:4403,http://localhost:4404 npx nx serve commerce-platform",
+    "dev:platform": "COMMERCE_DB_HOST=localhost COMMERCE_DB_USERNAME=${USER} COMMERCE_DB_NAME=commerce_db REDIS_HOST=localhost PORT=3100 STOREFRONT_API_KEYS=dev-key PORTAL_JWT_SECRET=dev-portal-secret PORTAL_SELF_REGISTER=true COMMERCE_CORS_ORIGINS=http://localhost:4403,http://localhost:4404 npx nx serve commerce-platform",
     "dev:admin": "npx nx serve commerce-admin",
     "dev:portal": "npx nx serve commerce-portal",
     "build:platform": "npx nx build commerce-platform",

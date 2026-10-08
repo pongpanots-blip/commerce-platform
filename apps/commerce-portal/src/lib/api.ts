@@ -133,6 +133,14 @@ interface RequestOptions {
   skipAuthRedirect?: boolean;
 }
 
+/** A non-2xx reply; same message as before, plus the HTTP status for pages that branch on it. */
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export async function request<T>(
   path: string,
   init?: RequestInit,
@@ -167,7 +175,7 @@ export async function request<T>(
   if (!res.ok) {
     const message =
       body?.error?.message || body?.message || `${res.status} ${res.statusText}`;
-    throw new Error(Array.isArray(message) ? message.join(', ') : String(message));
+    throw new ApiError(Array.isArray(message) ? message.join(', ') : String(message), res.status);
   }
   return body as T;
 }

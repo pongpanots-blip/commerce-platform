@@ -141,6 +141,7 @@ export class ActivityService {
     if (open) {
       if (dto.lat !== undefined) open.lat = dto.lat;
       if (dto.lng !== undefined) open.lng = dto.lng;
+      if (dto.accuracy_m !== undefined) open.checkin_accuracy_m = dto.accuracy_m;
       return this.activities.save(open);
     }
 
@@ -157,6 +158,7 @@ export class ActivityService {
         planned.sales_user_id = salesUserId || planned.sales_user_id;
         planned.lat = dto.lat ?? planned.lat;
         planned.lng = dto.lng ?? planned.lng;
+        planned.checkin_accuracy_m = dto.accuracy_m ?? planned.checkin_accuracy_m;
         if (dto.note) {
           planned.note = planned.note ? `${planned.note}\n${dto.note}` : dto.note;
         }
@@ -189,6 +191,7 @@ export class ActivityService {
         status: 'in_progress',
         lat: dto.lat ?? null,
         lng: dto.lng ?? null,
+        checkin_accuracy_m: dto.accuracy_m ?? null,
         contact_id: dto.contact_id ?? null,
       }),
     );
@@ -228,6 +231,11 @@ export class ActivityService {
     activity.outcome = dto.outcome as WinbackActivity['outcome'];
     activity.checkout_at = now;
     activity.status = 'done';
+    if (dto.lat !== undefined && dto.lng !== undefined) {
+      activity.checkout_lat = dto.lat;
+      activity.checkout_lng = dto.lng;
+      activity.checkout_accuracy_m = dto.accuracy_m ?? null;
+    }
     if (dto.photo_urls?.length) {
       activity.photo_urls = [...(activity.photo_urls ?? []), ...dto.photo_urls];
     }
@@ -258,6 +266,10 @@ export class ActivityService {
           status: 'done',
           lat: activity.lat,
           lng: activity.lng,
+          checkin_accuracy_m: activity.checkin_accuracy_m,
+          checkout_lat: activity.checkout_lat,
+          checkout_lng: activity.checkout_lng,
+          checkout_accuracy_m: activity.checkout_accuracy_m,
           photo_urls: [],
         }),
       );

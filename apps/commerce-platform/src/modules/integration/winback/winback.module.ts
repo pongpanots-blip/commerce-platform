@@ -35,7 +35,8 @@ import { CommercialService } from './commercial.service';
 import { WinbackService } from './winback.service';
 import { SyncService } from './sync.service';
 import { ImportService } from './import.service';
-import { MatchingService } from './matching.service';
+import { JoshMatchLookup, MatchingService } from './matching.service';
+import { JoshMatchService } from './josh-match.service';
 import { LeadService } from './lead.service';
 import { ActivityService } from './activity.service';
 import { DiaryService } from './diary.service';
@@ -86,6 +87,8 @@ for (const c of [WinbackController, WinbackAppController, WinbackIntakeControlle
     SyncService,
     ImportService,
     MatchingService,
+    JoshMatchLookup,
+    JoshMatchService,
     LeadService,
     ActivityService,
     DiaryService,

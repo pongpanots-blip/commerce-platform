@@ -79,6 +79,73 @@ describe('AnalyticsService team tracking', () => {
     });
   });
 
+  it('judges each visit against the customer pin and counts the extra checkout rows once', async () => {
+    const day = '2026-07-21';
+    const checkin = new Date('2026-07-21T03:00:00Z');
+    const visit = {
+      id: 'v1',
+      account_id: 'acc1',
+      sales_user_id: 'u1',
+      type: 'store_visit',
+      status: 'done',
+      activity_at: checkin,
+      checkin_at: checkin,
+      checkout_at: new Date('2026-07-21T03:40:00Z'),
+      lat: '13.7470000', // ~111 m from the shop
+      lng: '100.5350000',
+      checkin_accuracy_m: '10.0',
+      checkout_lat: '13.7600000', // ~1.5 km away at checkout
+      checkout_lng: '100.5350000',
+      checkout_accuracy_m: null,
+    } as unknown as WinbackActivity;
+    const sibling = { ...visit, id: 'v1-call', type: 'call' } as WinbackActivity; // same check-in, written by checkout()
+    const noGps = {
+      ...visit,
+      id: 'v2',
+      account_id: 'acc2',
+      checkin_at: new Date('2026-07-21T06:00:00Z'),
+      lat: null,
+      lng: null,
+      checkout_lat: null,
+      checkout_lng: null,
+    } as unknown as WinbackActivity;
+    const users = repo<User>([[{ id: 'u1', first_name: 'Ada', last_name: 'Sale' }] as User[]]);
+    const activities = repo<WinbackActivity>([[visit, sibling, noGps]]);
+    const accounts = repo<WinbackAccount>([
+      [
+        { id: 'acc1', display_name: 'ร้านหนึ่ง', lat: '13.7460000', lng: '100.5350000', restaurant_place_id: 'p1' },
+        { id: 'acc2', display_name: 'ร้านสอง', lat: null, lng: null, restaurant_place_id: null },
+      ] as unknown as WinbackAccount[],
+    ]);
+    const service = new AnalyticsService(
+      repo<WinbackSalesTarget>() as unknown as Repository<WinbackSalesTarget>,
+      activities as unknown as Repository<WinbackActivity>,
+      accounts as unknown as Repository<WinbackAccount>,
+      users as unknown as Repository<User>,
+      repo<Order>() as unknown as Repository<Order>,
+      repo<WinbackStageHistory>() as unknown as Repository<WinbackStageHistory>,
+      {} as ReportService,
+      {} as WinbackService,
+    );
+
+    const out = await service.getVisitGps({ id: 'manager', isManager: true }, day, day);
+
+    expect(out.radius_m).toBe(200);
+    expect(out.visits.map((v) => v.activity_id)).toEqual(['v1', 'v2']);
+    expect(out.visits[0]).toMatchObject({
+      name: 'Ada Sale',
+      account_name: 'ร้านหนึ่ง',
+      from_enriched_place: true,
+      customer_lat: 13.746,
+      checkin: { status: 'on_site', distance_m: 111, accuracy_m: 10 },
+      checkout: { status: 'off_site', lat: 13.76 },
+    });
+    expect(out.visits[1].checkin).toMatchObject({ status: 'no_gps', distance_m: null });
+    expect(out.summary).toEqual([
+      expect.objectContaining({ sales_user_id: 'u1', name: 'Ada Sale', visits: 2, on_site: 1, no_gps: 1, on_site_rate: 100 }),
+    ]);
+  });
+
   it('scopes sales feed to self and computes sequences from full histories', async () => {
     const feedRow = {
       id: 'a2',

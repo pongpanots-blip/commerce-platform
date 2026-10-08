@@ -78,6 +78,20 @@ describe('ActivityService checkin', () => {
     expect(result).toBe(open);
     expect((activities.create as jest.Mock)).not.toHaveBeenCalled();
   });
+
+  it('stores the check-in GPS fix with its accuracy', async () => {
+    const activities = makeActivitiesRepo({} as WinbackActivity);
+    const service = new ActivityService(activities, makeAccountsRepo(makeAccount()), makeStageHistoryRepo());
+
+    const created = await service.checkin('acc1', 'sales1', {
+      type: 'store_visit',
+      lat: 13.746,
+      lng: 100.535,
+      accuracy_m: 12.5,
+    });
+
+    expect(created).toMatchObject({ lat: 13.746, lng: 100.535, checkin_accuracy_m: 12.5 });
+  });
 });
 
 describe('ActivityService checkout', () => {
@@ -143,6 +157,35 @@ describe('ActivityService checkout', () => {
     expect(account.activity_count).toBe(6);
     expect(account.visit_count).toBe(2);
     expect(activities.create).not.toHaveBeenCalled();
+  });
+
+  it('stores the check-out GPS fix, and keeps it off the row when the app sends none', async () => {
+    const open = () =>
+      ({
+        id: 'act1',
+        account_id: 'acc1',
+        sales_user_id: 'sales1',
+        type: 'store_visit',
+        status: 'in_progress',
+        checkin_at: new Date('2026-07-21T03:00:00Z'),
+        checkout_at: null,
+        photo_urls: [],
+        lat: 13.7,
+        lng: 100.5,
+        checkout_lat: null,
+        checkout_lng: null,
+        checkout_accuracy_m: null,
+      }) as unknown as WinbackActivity;
+
+    const withGps = open();
+    await new ActivityService(makeActivitiesRepo(withGps), makeAccountsRepo(makeAccount()), makeStageHistoryRepo())
+      .checkout('act1', { outcome: 'interested', types: ['store_visit'], lat: 13.71, lng: 100.51, accuracy_m: 8 });
+    expect(withGps).toMatchObject({ checkout_lat: 13.71, checkout_lng: 100.51, checkout_accuracy_m: 8 });
+
+    const without = open();
+    await new ActivityService(makeActivitiesRepo(without), makeAccountsRepo(makeAccount()), makeStageHistoryRepo())
+      .checkout('act1', { outcome: 'interested', types: ['store_visit'] });
+    expect(without).toMatchObject({ checkout_lat: null, checkout_lng: null, checkout_accuracy_m: null });
   });
 
   it('rejects checkout when the activity has not been checked in', async () => {

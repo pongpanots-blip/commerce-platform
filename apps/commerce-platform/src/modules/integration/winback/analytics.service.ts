@@ -29,6 +29,8 @@ import {
   roundBaht,
 } from './dashboard.helpers';
 import { UpsertTargetDto } from './dto/upsert-target.dto';
+import { judgeVisitGps, summarizeVisitGps, visitRadiusM, VisitGpsStatus } from './visit-gps.helpers';
+import { WinbackActivityType } from './winback.enums';
 import { isWon } from './report.helpers';
 import { ReportService } from './report.service';
 import { WinbackService } from './winback.service';
@@ -50,6 +52,32 @@ type RepRow = {
   sales_user_id: string;
   name: string | null;
   email: string | null;
+};
+
+type VisitGpsFix = {
+  lat: number | null;
+  lng: number | null;
+  accuracy_m: number | null;
+  status: VisitGpsStatus;
+  distance_m: number | null;
+};
+
+export type VisitGpsRow = {
+  activity_id: string;
+  sales_user_id: string;
+  name: string | null;
+  account_id: string;
+  account_name: string | null;
+  from_enriched_place: boolean;
+  type: string;
+  status: string;
+  activity_at: string;
+  checkin_at: string | null;
+  checkout_at: string | null;
+  customer_lat: number | null;
+  customer_lng: number | null;
+  checkin: VisitGpsFix;
+  checkout: VisitGpsFix;
 };
 
 export type TeamLocation = RepRow & {
@@ -292,6 +320,101 @@ export class AnalyticsService {
         stage_after: activity.stage_after,
       };
     });
+  }
+
+  /**
+   * Field visits with where the rep was against where the customer is: one row per
+   * check-in (or visit-type activity) in the range, plus per-rep on-site counts.
+   * Default range is today, like the activity feed. A rep sees only their own visits.
+   */
+  async getVisitGps(
+    requester: Requester,
+    from?: string,
+    to?: string,
+    filterSalesUserId?: string,
+  ): Promise<{ radius_m: number; summary: ReturnType<typeof summarizeVisitGps>; visits: VisitGpsRow[] }> {
+    const radius = visitRadiusM();
+    const reps = await this.visibleReps(requester);
+    let visibleIds = reps.map((rep) => rep.sales_user_id);
+    if (filterSalesUserId && requester.isManager) {
+      visibleIds = visibleIds.includes(filterSalesUserId) ? [filterSalesUserId] : [];
+    }
+    if (!visibleIds.length) return { radius_m: radius, summary: [], visits: [] };
+
+    const range = this.activityRange(from, to);
+    const base = {
+      sales_user_id: In(visibleIds),
+      status: In(['done', 'in_progress']),
+      activity_at: Between(range.from, range.to),
+    };
+    const rows = await this.activities.find({
+      where: [
+        { ...base, checkin_at: Not(IsNull()) },
+        { ...base, type: In([WinbackActivityType.VISIT, WinbackActivityType.STORE_VISIT]) },
+      ],
+      order: { activity_at: 'DESC', id: 'DESC' },
+    });
+    // checkout() writes one sibling row per extra type with the same check-in; count the visit once.
+    const seen = new Set<string>();
+    const visitsOnly = rows.filter((a) => {
+      if (!a.checkin_at) return true;
+      const key = `${a.account_id}|${a.sales_user_id}|${new Date(a.checkin_at).toISOString()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    const accountIds = [...new Set(visitsOnly.map((a) => a.account_id))];
+    const accounts = accountIds.length
+      ? await this.accounts.find({
+          where: { id: In(accountIds) },
+          select: ['id', 'display_name', 'lat', 'lng', 'restaurant_place_id'],
+        })
+      : [];
+    const accountById = new Map(accounts.map((a) => [a.id, a]));
+    const repById = new Map(reps.map((rep) => [rep.sales_user_id, rep]));
+
+    const visits = visitsOnly.map((a): VisitGpsRow => {
+      const account = accountById.get(a.account_id);
+      const customer = account ? { lat: account.lat, lng: account.lng } : null;
+      const checkin = judgeVisitGps({ lat: a.lat, lng: a.lng }, customer, {
+        accuracyM: a.checkin_accuracy_m,
+        radiusM: radius,
+      });
+      const checkout = judgeVisitGps({ lat: a.checkout_lat, lng: a.checkout_lng }, customer, {
+        accuracyM: a.checkout_accuracy_m,
+        radiusM: radius,
+      });
+      const num = (v: unknown) => (v === null || v === undefined ? null : Number(v));
+      return {
+        activity_id: a.id,
+        sales_user_id: a.sales_user_id,
+        name: repById.get(a.sales_user_id)?.name ?? null,
+        account_id: a.account_id,
+        account_name: account?.display_name ?? null,
+        from_enriched_place: Boolean(account?.restaurant_place_id),
+        type: a.type,
+        status: a.status,
+        activity_at: new Date(a.activity_at).toISOString(),
+        checkin_at: a.checkin_at ? new Date(a.checkin_at).toISOString() : null,
+        checkout_at: a.checkout_at ? new Date(a.checkout_at).toISOString() : null,
+        customer_lat: num(account?.lat),
+        customer_lng: num(account?.lng),
+        checkin: { lat: num(a.lat), lng: num(a.lng), accuracy_m: num(a.checkin_accuracy_m), ...checkin },
+        checkout: {
+          lat: num(a.checkout_lat),
+          lng: num(a.checkout_lng),
+          accuracy_m: num(a.checkout_accuracy_m),
+          ...checkout,
+        },
+      };
+    });
+
+    const summary = summarizeVisitGps(visits).map((rep) => ({
+      ...rep,
+      name: repById.get(rep.sales_user_id)?.name ?? null,
+    }));
+    return { radius_m: radius, summary, visits };
   }
 
   async getAnalytics(

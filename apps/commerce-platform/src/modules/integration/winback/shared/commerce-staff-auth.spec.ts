@@ -46,7 +46,7 @@ it.each([
   expect(req.user).toEqual({ sub: COMMERCE, email: 'test@example.test', role, source: 'commerce' });
   expect(winbackActorOf(req)).toEqual({ id: COMMERCE, email: 'test@example.test', role, source: 'commerce', isManager });
   expect(new WinbackAppRoleGuard().canActivate(context(req))).toBe(true);
-  const controller = new WinbackController(...Array(13).fill({}) as ConstructorParameters<typeof WinbackController>);
+  const controller = new WinbackController(...Array(14).fill({}) as ConstructorParameters<typeof WinbackController>);
   expect(controller.me(req)).toMatchObject({ id: COMMERCE, salesUserId: COMMERCE, role, isManager, source: 'commerce' });
 });
 

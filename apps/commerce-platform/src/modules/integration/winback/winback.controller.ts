@@ -52,6 +52,7 @@ import { ActivityService } from './activity.service';
 import { DiaryService } from './diary.service';
 import { ReportService } from './report.service';
 import { AnalyticsService } from './analytics.service';
+import { JoshMatchService } from './josh-match.service';
 import { ContactService } from './contact.service';
 import { MeetingPrepService } from './meeting-prep.service';
 import { ScorecardQueryDto } from './dto/scorecard-query.dto';
@@ -125,6 +126,7 @@ export class WinbackController {
     private readonly uploads: UploadService,
     private readonly appRecords: AppRecordsService,
     private readonly opportunities: OpportunityService,
+    private readonly joshMatch: JoshMatchService,
   ) {}
 
   private salesId(req: RequestWithUser): string {
@@ -188,6 +190,25 @@ export class WinbackController {
         id: c.sub,
         isManager,
       },
+      isManager ? q.sales_user_id : undefined,
+    );
+  }
+
+  /**
+   * GPS ของการเข้าเยี่ยม: ตำแหน่งตอน check-in/check-out เทียบกับพิกัดร้าน (on_site / off_site / no_gps / no_customer_location).
+   * manager เห็นทั้งทีม (กรอง sales_user_id ได้), sale เห็นเฉพาะของตัวเอง. ค่าเริ่มต้นคือวันนี้.
+   */
+  @Get('visit-gps')
+  visitGps(
+    @Req() req: RequestWithUser,
+    @Query(pipe) q: AnalyticsQueryDto,
+  ) {
+    const c = this.claims(req);
+    const isManager = isWinbackManager(c.role);
+    return this.analytics.getVisitGps(
+      { id: c.sub, isManager },
+      q.from,
+      q.to,
       isManager ? q.sales_user_id : undefined,
     );
   }
@@ -335,6 +356,15 @@ export class WinbackController {
   @Get('account/:id')
   account(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.winback.getAccount(id);
+  }
+
+  /**
+   * ลูกค้ารายนี้ (เช่น lead จากร้านที่ enrich มา) ตรงกับลูกค้าใน Josh จริงไหม และที่ผูกไว้ถูกคนหรือเปล่า:
+   * เทียบรหัสลูกค้า / เลขผู้เสียภาษี-ทะเบียน-บัตรประชาชน / อีเมล (ร้าน + ผู้ติดต่อ) / ชื่อบริษัท. อ่านอย่างเดียว ไม่ผูกให้เอง.
+   */
+  @Get('account/:id/josh-match')
+  accountJoshMatch(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.joshMatch.checkAccount(id);
   }
 
   /** สั่ง sync ข้อมูล winback จาก Josh ย้อนหลัง N วัน — แต่ละรอบถูกบันทึกไว้ (`GET /sync/runs`), `runId` = รอบนี้ */
@@ -495,8 +525,16 @@ export class WinbackController {
 
   /** Manual promote TMP → Lead (ยืนยันสมัครแอปแล้ว). */
   @Patch('account/:id/promote')
-  promoteLead(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.leads.promoteToLead(id);
+  async promoteLead(@Param('id', new ParseUUIDPipe()) id: string) {
+    const account = await this.leads.promoteToLead(id);
+    // A warning, not a gate: the rep still decides. `josh_match.status` other than
+    // `matched` means the app sign-up could not be confirmed against Josh's customers.
+    // The promote is already saved, so a failed check reports `null` instead of failing it.
+    const match = await this.joshMatch.checkAccount(id).catch(() => null);
+    return {
+      ...account,
+      josh_match: match && { status: match.status, conflicts: match.conflicts, candidate: match.candidate },
+    };
   }
 
   /** ดึงรายชื่อผู้ติดต่อของบัญชี lead ตาม id */

@@ -155,7 +155,7 @@ const CreateCategory = () => {
           <span>
             <span className="font-medium text-ink">{__uiText('แสดงบนหน้าแรก')}</span>
             <span className="block text-xs text-ink-muted">
-              {__uiText('แถวไอคอนหน้าแรกอ่านเฉพาะหมวด Level 1 — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวด Level 1')}
+              {__uiText('แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวดชั้นบนสุด')}
             </span>
           </span>
         </label>

@@ -22,14 +22,14 @@ export function Products() {
   return (
     <ResourcePage<Product>
       title={__uiText("แคตตาล็อกแพลตฟอร์ม")}
-      subtitle={__uiText("ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ")}
+      subtitle={__uiText("ดูและจัดการสินค้าในแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ")}
       endpoint="/products"
       columns={columns}
       fields={fields}
       createLabel={__uiText("เพิ่มสินค้า")}
       readOnly={['sale', 'graphic'].includes(session.claims()?.role ?? '')}
       searchText={row => `${row.sku} ${row.name}`}
-      searchPlaceholder="ค้นหา SKU หรือชื่อสินค้า…"
+      searchPlaceholder="ค้นหารหัสหรือชื่อสินค้า…"
     />
   );
 }

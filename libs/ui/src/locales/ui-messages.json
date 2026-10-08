@@ -24354,5 +24354,17 @@
   "บันทึกขั้นตอนของบอท": {
     "th": "บันทึกขั้นตอนของบอท",
     "en": "Save bot step"
+  },
+  "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวดชั้นบนสุด": {
+    "th": "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวดชั้นบนสุด",
+    "en": "The homepage icon row shows only top-level categories, so this box appears only when you create a top-level category"
+  },
+  "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ": {
+    "th": "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ",
+    "en": "View and manage platform products. Use the product code to tell items apart"
+  },
+  "ค้นหารหัสหรือชื่อสินค้า…": {
+    "th": "ค้นหารหัสหรือชื่อสินค้า…",
+    "en": "Search by product code or name…"
   }
 }

@@ -1,3 +1,4 @@
+import { listStaffRoster } from './shared/winback-staff-roster';
 import {
   BadRequestException,
   ConflictException,
@@ -7,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackContact } from './entities/winback-contact.entity';
 import { JoshUser as User } from './josh-copies.entity';
@@ -112,59 +113,15 @@ export class LeadService {
 
   private readonly logger = new Logger(LeadService.name);
 
-  async listSalesUsers(search?: string): Promise<
-    Array<{ id: string; email: string; name: string; role: string }>
-  > {
-    const qb = this.users
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.email', 'u.first_name', 'u.last_name', 'u.role'])
-      // app_roles is the source of truth for "internal" (josh_users.internal = its user_type); the role
-      // list alone once let a customer-side role through (see winback-roles.ts).
-      .where('u.internal = true')
-      .andWhere('u.role IN (:...roles)', { roles: [...WINBACK_ASSIGNABLE_ROLES] })
-      .andWhere('u.is_active = true')
-      .orderBy('u.first_name', 'ASC')
-      .addOrderBy('u.email', 'ASC')
-      .take(100);
-
-    if (search?.trim()) {
-      const s = `%${search.trim().toLowerCase()}%`;
-      qb.andWhere(
-        '(LOWER(u.email) LIKE :s OR LOWER(u.first_name) LIKE :s OR LOWER(u.last_name) LIKE :s)',
-        { s },
-      );
-    }
-
-    const rows = await qb.getMany();
-    return rows.map((u) => ({
-      id: u.id,
-      email: u.email,
-      name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
-      role: u.role,
-    }));
+  async listSalesUsers(search?: string): Promise<Array<{ id: string; name: string; role: string }>> {
+    const rows = await this.listStaffNames(WINBACK_ASSIGNABLE_ROLES);
+    const term = search?.trim().toLowerCase();
+    return term ? rows.filter(row => row.name.toLowerCase().includes(term)) : rows;
   }
 
-  /**
-   * Active internal staff with one of `roles`, id + display name (+ role), UNBOUNDED — unlike
-   * `listSalesUsers` (a picker capped at 100). For §4.11.8 recipient checks, `/collaboration/directory` and
-   * name resolution, which must see everyone. Same internal-user rule and order as `listSalesUsers`.
-   */
+  /** Unbounded display directory, with managers/admins only when requested. */
   async listStaffNames(roles: readonly string[]): Promise<Array<{ id: string; name: string; role: string }>> {
-    if (!roles.length) return [];
-    const rows = await this.users
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.email', 'u.first_name', 'u.last_name', 'u.role'])
-      .where('u.internal = true')
-      .andWhere('u.role IN (:...roles)', { roles: [...roles] })
-      .andWhere('u.is_active = true')
-      .orderBy('u.first_name', 'ASC')
-      .addOrderBy('u.email', 'ASC')
-      .getMany();
-    return rows.map((u) => ({
-      id: u.id,
-      name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || `Staff ${u.id.slice(0, 8)}`,
-      role: u.role,
-    }));
+    return listStaffRoster(this.users, roles);
   }
 
   async create(salesUserId: string, dto: CreateLeadDto): Promise<WinbackAccount> {
@@ -313,6 +270,9 @@ export class LeadService {
     rejectMaskedPiiValues(dto as unknown as Record<string, unknown>);
     assertIdentityPairOnTypeChange(account, dto);
 
+    if (dto.assigned_sales_user_id && !(await this.listSalesUsers()).some(rep => rep.id === dto.assigned_sales_user_id)) {
+      throw new BadRequestException('ไม่พบพนักงานขาย');
+    }
     const previousOwner = account.assigned_sales_user_id;
     const patch = dto as unknown as Record<string, unknown>;
     const target = account as unknown as Record<string, unknown>;
@@ -395,12 +355,9 @@ export class LeadService {
     const unique = [...new Set(ids.filter(Boolean))];
     const map = new Map<string, { email: string; name: string }>();
     if (!unique.length) return map;
-    const users = await this.users.find({ where: { id: In(unique) } });
+    const users = await this.listStaffNames(['sale', 'sales', 'manager', 'admin', 'platform_admin']);
     for (const u of users) {
-      map.set(u.id, {
-        email: u.email,
-        name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
-      });
+      if (unique.includes(u.id)) map.set(u.id, { email: '', name: u.name });
     }
     return map;
   }

@@ -1,3 +1,4 @@
+import { listStaffRoster } from './shared/winback-staff-roster';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -368,11 +369,7 @@ export class ReportService {
         : [
             ...new Set([
               ...byPerson.keys(),
-              ...(await this.users.find({
-                where: { role: In([...WINBACK_ASSIGNABLE_ROLES]), is_active: true },
-                select: ['id'],
-                take: 200,
-              })).map((u) => u.id),
+              ...(await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES)).map((u) => u.id),
             ]),
           ];
     const targetRows = targetUserIds.length
@@ -404,16 +401,8 @@ export class ReportService {
     }
     const usersById = new Map<string, { email: string | null; name: string | null }>();
     if (userIds.length) {
-      const users = await this.users.find({
-        where: { id: In(userIds) },
-        select: ['id', 'email', 'first_name', 'last_name'],
-      });
-      for (const u of users) {
-        usersById.set(u.id, {
-          email: u.email,
-          name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
-        });
-      }
+      const users = await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES);
+      for (const u of users) if (userIds.includes(u.id)) usersById.set(u.id, { email: null, name: u.name });
     }
 
     const by_person: DashboardPersonRow[] = userIds
@@ -565,35 +554,11 @@ export class ReportService {
       ]),
     );
 
-    const staff = await this.users.find({
-      where: { role: In([...WINBACK_ASSIGNABLE_ROLES]), is_active: true },
-      select: ['id', 'email', 'first_name', 'last_name'],
-      take: 200,
-    });
+    const staff = await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES);
     const staffIds = new Set(staff.map((u) => u.id));
     for (const id of byOwner.keys()) staffIds.add(id);
     for (const id of actById.keys()) if (id) staffIds.add(id);
-
-    const usersById = new Map<string, { email: string | null; name: string | null }>();
-    for (const u of staff) {
-      usersById.set(u.id, {
-        email: u.email,
-        name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
-      });
-    }
-    const missing = [...staffIds].filter((id) => !usersById.has(id));
-    if (missing.length) {
-      const extra = await this.users.find({
-        where: { id: In(missing) },
-        select: ['id', 'email', 'first_name', 'last_name'],
-      });
-      for (const u of extra) {
-        usersById.set(u.id, {
-          email: u.email,
-          name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
-        });
-      }
-    }
+    const usersById = new Map<string, { email: string | null; name: string | null }>(staff.map(u => [u.id, { email: null, name: u.name }]));
 
     const reps: TeamRepStat[] = [];
     for (const id of staffIds) {

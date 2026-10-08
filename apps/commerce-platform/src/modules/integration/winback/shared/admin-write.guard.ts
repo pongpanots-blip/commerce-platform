@@ -3,44 +3,79 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { readBearerToken } from './bearer-token.util';
+import { normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { acceptsJoshJwt } from './winback.config';
+import { WinbackStaffIdentityService } from './winback-staff-identity.service';
+import { WinbackPrincipal, WinbackRequest } from './winback-actor';
+import { isWinbackManager } from '../winback-roles';
 import { ownsStaff } from '../../customers/josh-staff-access.service';
 
 /** The roles josh's AdminWriteGuard lets through for marketing-only routes (kept for imports that reference it). */
 export const MARKETING_EDITOR_ROLES = new Set(['marketing', 'platform_admin', 'dev']);
 const CACHE_MS = 60_000;
 
-/**
- * josh's AdminWriteGuard for the saleactivity app, in commerce: the app keeps logging in at josh
- * (`POST /api/auth/login`) and sends josh's access token. Same checks josh runs — HybridAuthGuard
- * (signature with josh's JWT secret, not a purpose token, the session still valid: user active and
- * `tokenVersion` = users.token_version) then InternalAuthGuard (app_roles.user_type = 'internal') —
- * read from commerce's staff copy (josh_staff, staff.snapshot events — stage 2c), cached 60s like josh. Always strict here (josh skips it outside prod).
- */
+/** Commerce account checks run on every request; legacy Josh session checks retain their 60s cache. */
 @Injectable()
 export class AdminWriteGuard implements CanActivate {
   private readonly cache = new Map<string, { at: number; ok: true } | { at: number; error: Error }>();
   private jwt: JwtService | null = null;
 
-  constructor(@InjectDataSource() private readonly db: DataSource) {}
+  constructor(@InjectDataSource() private readonly db: DataSource,
+    private readonly identities: WinbackStaffIdentityService = new WinbackStaffIdentityService(db)) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const secret = process.env.JOSH_JWT_SECRET?.trim();
-    if (!secret) throw new ServiceUnavailableException('winback sign-in is not configured on this server (JOSH_JWT_SECRET).');
-    const req = context.switchToHttp().getRequest<{ headers: Record<string, string | undefined>; user?: unknown }>();
+    if (process.env.NODE_ENV === 'production' && !process.env.PORTAL_JWT_SECRET) {
+      throw new UnauthorizedException('staff auth unavailable');
+    }
+    const req = context.switchToHttp().getRequest<WinbackRequest & { headers: Record<string, string | undefined> }>();
     const token = readBearerToken(req.headers.authorization);
     if (!token) throw new UnauthorizedException('ไม่มีสิทธิ์เข้าถึง: กรุณาส่ง Token มายืนยัน');
-    if (token.split('.').length !== 3) throw new UnauthorizedException('Token ไม่ครบ — JWT ต้องมีสามท่อน (header.payload.signature) จาก POST /api/auth/login');
+    if (token.split('.').length !== 3) throw new UnauthorizedException('Token ไม่ครบ — JWT ต้องมีสามท่อน (header.payload.signature)');
+    // Same secret/options as AuthModule. Only a signature mismatch permits legacy verification;
+    // expiry, purpose tokens and account failures can never downgrade to Josh auth.
+    let commerce: { sub?: string; role?: string; purpose?: unknown; typ?: unknown };
+    try {
+      commerce = await new JwtService({ secret: process.env.PORTAL_JWT_SECRET || 'dev-portal-secret' }).verifyAsync(token);
+    } catch (error) {
+      if ((error as Error)?.message !== 'invalid signature') throw new UnauthorizedException('invalid or expired commerce token');
+      if (!acceptsJoshJwt()) throw new UnauthorizedException('กรุณาเข้าสู่ระบบด้วยบัญชี commerce — sign in with your commerce staff account');
+      return this.josh(req, token);
+    }
+    if (!commerce || typeof commerce !== 'object' || 'purpose' in commerce || 'typ' in commerce || typeof commerce.sub !== 'string' || !commerce.sub) {
+      throw new UnauthorizedException('Token นี้ไม่ใช่ accessToken');
+    }
+    // Developer tokens share the portal secret and must never authenticate staff, even after a row role change.
+    if (normalizeStaffRole(commerce.role ?? '') === 'developer') throw new ForbiddenException('เฉพาะทีมขายที่ใช้งานส่วนนี้ได้');
+    const [row]: { id: string; email: string; role: string; status: string; must_change_password: boolean }[] = await this.db.query(
+      'SELECT id, email, role, status, must_change_password FROM users WHERE id = $1', [commerce.sub]);
+    if (!row || row.status !== 'active') throw new UnauthorizedException('account disabled or removed');
+    if (row.must_change_password) throw new ForbiddenException({ message: 'change your password first', code: 'PASSWORD_CHANGE_REQUIRED' });
+    const role = normalizeStaffRole(row.role);
+    if (!['sale', 'sales_manager', 'admin'].includes(role)) throw new ForbiddenException('เฉพาะทีมขายที่ใช้งานส่วนนี้ได้');
+    await this.setActor(req, row.id, role, row.email, 'commerce');
+    return true;
+  }
 
+  private async setActor(req: WinbackRequest, sub: string, role: string, email: string | undefined, source: 'commerce' | 'josh') {
+    const identity = await this.identities.resolve(source, sub);
+    const actor: WinbackPrincipal = { ...identity, role: normalizeStaffRole(role), email, source, isManager: isWinbackManager(role) };
+    req.winbackActor = actor;
+    req.user = { sub: actor.id, email, role: actor.role, source };
+  }
+
+  private async josh(req: WinbackRequest, token: string): Promise<boolean> {
+    const secret = process.env.JOSH_JWT_SECRET?.trim();
+    if (!secret) throw new ServiceUnavailableException('winback sign-in is not configured on this server (JOSH_JWT_SECRET).');
     this.jwt ??= new JwtService({ secret });
-    let payload: { sub?: string; email?: string; role?: string; tokenVersion?: number; purpose?: unknown };
+    let payload: { sub?: string; email?: string; role?: string; tokenVersion?: number; purpose?: unknown; typ?: unknown };
     try {
       payload = await this.jwt.verifyAsync(token, { secret, algorithms: ['HS256'] });
     } catch (error) {
       const name = (error as { name?: string })?.name;
       throw new UnauthorizedException(name === 'TokenExpiredError' ? 'Token หมดอายุ — login ใหม่ที่ POST /api/auth/login' : 'Token หมดอายุหรือไม่ถูกต้อง');
     }
-    if (payload && typeof payload === 'object' && 'purpose' in payload) throw new UnauthorizedException('Token นี้ไม่ใช่ accessToken — ใช้ค่าจาก POST /api/auth/login');
-    if (!payload?.sub || !payload.role?.trim()) throw new UnauthorizedException('ไม่มีสิทธิ์เข้าถึง: กรุณาส่ง Token มายืนยัน');
+    if (payload && typeof payload === 'object' && ('purpose' in payload || 'typ' in payload)) throw new UnauthorizedException('Token นี้ไม่ใช่ accessToken — ใช้ค่าจาก POST /api/auth/login');
+    if (typeof payload?.sub !== 'string' || !payload.sub || typeof payload.role !== 'string' || !payload.role.trim()) throw new UnauthorizedException('ไม่มีสิทธิ์เข้าถึง: กรุณาส่ง Token มายืนยัน');
 
     const key = `${payload.sub}:${payload.tokenVersion ?? 0}:${payload.role}`;
     const hit = this.cache.get(key);
@@ -55,7 +90,7 @@ export class AdminWriteGuard implements CanActivate {
         throw error;
       }
     }
-    req.user = payload;
+    await this.setActor(req, payload.sub, payload.role.trim(), payload.email, 'josh');
     return true;
   }
 

@@ -9,9 +9,10 @@ import { AnalyticsService } from './analytics.service';
 import { ReportService } from './report.service';
 import { WinbackService } from './winback.service';
 
-function repo<T>(findResults: T[][] = []): jest.Mocked<Pick<Repository<T>, 'find'>> {
+function repo<T>(findResults: T[][] = []): jest.Mocked<Pick<Repository<T>, 'find'>> & { query: jest.Mock } {
   return {
     find: jest.fn().mockImplementation(() => Promise.resolve(findResults.shift() ?? [])),
+    query: jest.fn(async () => (findResults.shift() ?? []).map((row: any) => ({ id: row.id, name: [row.first_name, row.last_name].filter(Boolean).join(' '), role: 'sale' }))),
   };
 }
 

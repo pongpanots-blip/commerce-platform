@@ -1,3 +1,4 @@
+import { listStaffRoster } from './shared/winback-staff-roster';
 import {
   BadRequestException,
   ForbiddenException,
@@ -463,33 +464,10 @@ export class AnalyticsService {
   }
 
   private async visibleReps(requester: Requester): Promise<RepRow[]> {
-    const users = requester.isManager
-      ? await this.users.find({
-          where: {
-            role: In([...WINBACK_ASSIGNABLE_ROLES]),
-            is_active: true,
-          },
-          select: ['id', 'email', 'first_name', 'last_name'],
-          take: 200,
-          order: { first_name: 'ASC', last_name: 'ASC' },
-        })
-      : await this.users.find({
-          where: { id: requester.id },
-          select: ['id', 'email', 'first_name', 'last_name'],
-          take: 1,
-        });
-
-    if (!requester.isManager && !users.length) {
-      return [{ sales_user_id: requester.id, name: null, email: null }];
-    }
-    return users.map((user) => ({
-      sales_user_id: user.id,
-      email: user.email ?? null,
-      name:
-        [user.first_name, user.last_name].filter(Boolean).join(' ').trim() ||
-        user.email ||
-        null,
-    }));
+    const roster = await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES);
+    const visible = requester.isManager ? roster : roster.filter(rep => rep.id === requester.id);
+    if (!requester.isManager && !visible.length) return [{ sales_user_id: requester.id, name: null, email: null }];
+    return visible.map(rep => ({ sales_user_id: rep.id, name: rep.name, email: null }));
   }
 
   private analyticsRange(
@@ -721,25 +699,8 @@ export class AnalyticsService {
     targetByRep: Map<string, number>,
   ): Promise<AnalyticsPerRep[]> {
     if (!repIds.length) return [];
-    const users = await this.users.find({
-      where: { id: In(repIds) },
-      select: ['id', 'email', 'first_name', 'last_name'],
-    });
-    const userById = new Map(
-      users.map((user) => [
-        user.id,
-        {
-          email: user.email ?? null,
-          name:
-            [user.first_name, user.last_name]
-              .filter(Boolean)
-              .join(' ')
-              .trim() ||
-            user.email ||
-            null,
-        },
-      ]),
-    );
+    const users = (await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES)).filter(user => repIds.includes(user.id));
+    const userById = new Map(users.map(user => [user.id, { name: user.name, email: null }]));
     const dashboardByRep = new Map(
       dashboardRows.map((row) => [row.sales_user_id, row]),
     );

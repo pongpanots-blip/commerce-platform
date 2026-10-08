@@ -39,7 +39,7 @@ describe('winback in commerce', () => {
 
     it('is closed (503) when this server cannot check josh tokens', async () => {
       delete process.env.JOSH_JWT_SECRET;
-      await expect(new AdminWriteGuard(replica(null) as never).canActivate(ctx({ headers: {} }))).rejects.toBeInstanceOf(ServiceUnavailableException);
+      await expect(new AdminWriteGuard(replica(null) as never).canActivate(ctx({ headers: { authorization: `Bearer ${token({ sub: 'u1', role: 'sales' })}` } }))).rejects.toBeInstanceOf(ServiceUnavailableException);
     });
   });
 

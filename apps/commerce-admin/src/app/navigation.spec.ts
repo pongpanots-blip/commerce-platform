@@ -134,7 +134,7 @@ describe('copy (TH + EN)', () => {
     ...SECTIONS.flatMap((s) => [s.title, s.description]),
     ...NAV_ENTRIES.flatMap((e) => [e.label, e.description, ...Object.values(e.roleLabels ?? {})]),
     HOME.label, HOME.description!, DASHBOARD.label, DASHBOARD.description!,
-    'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น',
+    'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น', 'ตอนนี้อยู่ที่', 'หลังบ้านของทีม', 'หน้าหลัก',
   ];
 
   it('menu copy is named by task: no internal module or system names, in either language', () => {

@@ -88,7 +88,7 @@ function AdminTopBar({ role }: { role?: string }) {
   const docsBase = import.meta.env.VITE_COMMERCE_API || (import.meta.env.DEV ? 'http://localhost:3100/api' : '/api');
   return <TopBar
     left={<div className="flex flex-wrap items-center gap-3">
-      <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("Commerce workspace")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "พื้นที่ทำงาน")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
+      <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("ตอนนี้อยู่ที่")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "หน้าหลัก")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
       {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
     </div>}
     right={<><LanguageSelector /><CommandMenu />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
@@ -158,7 +158,7 @@ export function App() {
       <AppShell
         sidebar={
           <Sidebar
-            brand={{ title: 'Commerce Platform', subtitle: 'พื้นที่ทำงานของทีม' }}
+            brand={{ title: 'Commerce Platform', subtitle: 'หลังบ้านของทีม' }}
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
             nav={nav}
             searchable

@@ -24,7 +24,7 @@ import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
 import { LanguageSelector } from './i18n';
 import { PageChrome, fieldExample, fieldHint } from './usability';
-import { CopyableId, FormActions, blankFieldMessage, scrollToFirstInvalid, useUnsavedChanges } from './forms';
+import { blankFieldMessage, scrollToFirstInvalid, useUnsavedChanges } from './forms';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
@@ -527,9 +527,15 @@ export function FormPanel({
           <Alert tone="danger">{__uiText(error)}</Alert>
         </div>
       )}
-      {extraActions && <div className="flex justify-end gap-2 px-4">{extraActions}</div>}
-      <div className="px-4 pb-4">
-        <FormActions saveLabel={submitLabel} saving={busy} onCancel={onCancel ? () => { void requestLeave(onCancel); } : undefined} />
+      <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 border-t border-secondary-container bg-surface-container-low/50">
+        {extraActions}
+        {onCancel && (
+          <Button variant="ghost" onClick={() => { void requestLeave(onCancel); }} disabled={busy}>
+            {__uiText("ยกเลิก")}</Button>
+        )}
+        <Button variant="primary" type="submit" icon={busy ? 'progress_activity' : 'check'} disabled={busy}>
+          {submitLabel}
+        </Button>
       </div>
     </form>
   );
@@ -540,19 +546,23 @@ export function Span({ children, className }: { children: ReactNode; className?:
   return <div className={cx('col-span-full', className)}>{children}</div>;
 }
 
-/** Detail facts: label on the left, value on the right. Empty values are an em dash. */
-export function KeyValueGrid({ items }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean; copy?: boolean }[]; cols?: 2 | 3 | 4 }) {
+/** Detail facts: label above value, in a responsive grid. Values may be any node (chips, mono, links). */
+export function KeyValueGrid({ items, cols = 4 }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean; copy?: boolean }[]; cols?: 2 | 3 | 4 }) {
   __useUiLocale();
+  const grid = { 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-2 lg:grid-cols-3', 4: 'sm:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
-    <dl className="divide-y divide-secondary-container">
+    <dl className={cx('grid grid-cols-1 gap-x-6 gap-y-3', grid)}>
       {items.map((it, i) => {
         const empty = it.value === null || it.value === undefined || it.value === '';
-        const text = empty ? '—' : it.value;
-        const copy = !empty && (it.copy || it.mono) && typeof it.value === 'string';
         return (
-          <div key={i} className="grid grid-cols-1 gap-1 py-2 sm:grid-cols-[minmax(8rem,14rem)_1fr] sm:items-baseline sm:gap-4">
-            <dt className="text-xs text-on-surface-variant">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
-            <dd className={cx('min-w-0 text-sm text-on-surface break-words', it.mono && !copy && 'font-mono text-[11px] text-on-surface-variant')}>{copy ? <CopyableId value={it.value as string} /> : text}</dd>
+          <div key={i} className={cx('min-w-0', it.wide && 'col-span-full')}>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-outline">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
+            <dd className={cx('mt-0.5 text-xs text-on-surface break-words', it.mono && 'font-mono text-[11px]')}>
+              {empty ? '—' : it.value}
+              {it.copy && typeof it.value === 'string' && it.value && (
+                <button type="button" className="ml-1.5 text-[10px] font-medium normal-case tracking-normal text-primary" onClick={() => { void navigator.clipboard?.writeText(it.value as string); }}>{__uiText('คัดลอก')}</button>
+              )}
+            </dd>
           </div>
         );
       })}

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Alert, Button, CopyableId, DetailHeader, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, Panel, PanelHead, RowLink,
+  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, RowLink,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
 import { customerFields } from './catalog-fields';
@@ -56,12 +56,12 @@ export function CustomerDetail() {
 
   return (
     <Page>
-      <DetailHeader
+      <PageHeader
         back={{ to: '/customers', label: 'ลูกค้าแพลตฟอร์ม' }}
         title={c?.name ?? __uiText("รายละเอียดลูกค้า")}
-        status={c && <StatusChip status={c.status} />}
-        facts={c?.code ? [{ label: 'รหัสลูกค้า', value: <CopyableId value={c.code} /> }] : undefined}
-        primary={<>
+        badge={c && <StatusChip status={c.status} />}
+        subtitle={c?.code && <span className="font-mono">{c.code}</span>}
+        actions={<>
           <Button icon="refresh" onClick={() => { customer.reload(); orders.reload(); }}>{__uiText("รีเฟรช")}</Button>
           {c && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขลูกค้า")}</Button>}
         </>}

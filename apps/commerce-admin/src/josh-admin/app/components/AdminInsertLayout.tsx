@@ -1,4 +1,4 @@
-import { FormActions, FormSection, PageHeader, Panel, Stepper, scrollToFirstInvalid, useUnsavedChanges } from '@cp/ui';
+import { Button, PageHeader, Panel, Stepper, scrollToFirstInvalid, useUnsavedChanges } from '@cp/ui';
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,20 +48,15 @@ export function AdminInsertLayout({
   };
 
   return (
-    <div
-      ref={root}
-      className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`}
-      onInput={() => setDirty(true)}
-    >
-      <button type="button" className="inline-flex min-h-10 items-center gap-1 text-sm font-medium text-primary" onClick={() => void leave()}>{__uiText("กลับ")}</button>
+    <div ref={root} className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`} onInput={() => setDirty(true)}>
+      <Button variant="ghost" icon="arrow_back" onClick={() => void leave()}>{__uiText("กลับ")}</Button>
       <PageHeader title={title} subtitle={subtitle} actions={headerActions} />
       {steps && steps.length > 0 && <Stepper steps={steps} />}
-      <Panel className="p-4 md:p-6">
-        <FormSection title="ข้อมูลที่ต้องกรอก" description="ช่องที่มีดอกจันต้องกรอกก่อนบันทึก ช่องที่ไม่มีดอกจันเว้นว่างได้">
-          <div className="flex flex-col gap-5">{children}</div>
-        </FormSection>
-      </Panel>
-      <FormActions saveLabel={saveLabel} saving={saving} onSave={save} onCancel={() => void leave()} />
+      <Panel className="p-4 md:p-6 flex flex-col gap-5">{children}</Panel>
+      <div className="sticky bottom-0 z-20 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-secondary-container bg-white/95 p-3 shadow-sm backdrop-blur-sm">
+        <Button variant="secondary" onClick={() => void leave()} disabled={saving}>{__uiText("ยกเลิก")}</Button>
+        <Button variant="primary" icon="check" onClick={save} disabled={saving}>{saving ? __uiText("กำลังบันทึก...") : __uiText(saveLabel)}</Button>
+      </div>
     </div>
   );
 }

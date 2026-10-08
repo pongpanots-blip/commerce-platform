@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Alert, Button, CopyableId, DetailHeader, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, Panel, PanelHead, Span, Stack2,
+  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, Span, Stack2,
   StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, fmt,
 } from '@cp/ui';
 import { productFields } from './catalog-fields';
@@ -57,12 +57,12 @@ export function ProductDetail() {
 
   return (
     <Page>
-      <DetailHeader
+      <PageHeader
         back={{ to: '/products', label: 'แคตตาล็อกแพลตฟอร์ม' }}
         title={p?.name ?? __uiText("รายละเอียดสินค้า")}
-        status={p && <StatusChip status={p.status} />}
-        facts={p ? [{ label: 'รหัสสินค้า', value: <CopyableId value={p.sku} /> }] : undefined}
-        primary={<>
+        badge={p && <StatusChip status={p.status} />}
+        subtitle={p && <span className="font-mono">{p.sku}</span>}
+        actions={<>
           <Button icon="refresh" onClick={() => { product.reload(); inventory.reload(); warehouses.reload(); }}>{__uiText("รีเฟรช")}</Button>
           {p && canEdit && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขสินค้า")}</Button>}
         </>}

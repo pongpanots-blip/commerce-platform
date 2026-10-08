@@ -25,7 +25,7 @@ import { nutritionForDisplay } from './product-nutrition.helpers';
 import { normalizeProductStatus, productStatusBadge } from './product-status.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { CopyableId, DetailHeader, fmt, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { fmt, uiText as __uiText, useUiLocale as __useUiLocale } from "@cp/ui";
 function MediaPreview({ item }: { item: ProductMediaItem }) {
   __useUiLocale();
   const [failed, setFailed] = useState(false);
@@ -117,13 +117,35 @@ const ProductDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
-      <DetailHeader
-        back={{ to: ADMIN_ROUTES.products, label: 'กลับรายการสินค้า' }}
-        title={String(product.product_name ?? th?.product_name ?? 'รายละเอียดสินค้า')}
-        status={<span className="text-sm text-on-surface-variant">{statusBadge.label}</span>}
-        facts={[{ label: 'รหัสสินค้า', value: <CopyableId value={String(product.product_inventory_sku ?? '')} /> }]}
-        primary={<Button text={__uiText("แก้ไขสินค้า")} onClick={() => id && navigate(ADMIN_ROUTES.productEdit(id))} />}
-      />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <button
+            type="button"
+            onClick={() => navigate(ADMIN_ROUTES.products)}
+            className="text-sm text-gray-500 hover:text-gray-800 mb-2"
+          >
+            {__uiText("← กลับรายการสินค้า")}</button>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {String(product.product_name ?? th?.product_name ?? 'รายละเอียดสินค้า')}
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {__uiText("รหัสสินค้า")} {String(product.product_inventory_sku ?? '—')}
+            {product.product_inventory_sku ? (
+              <button
+                type="button"
+                className="ml-2 text-xs text-gray-400 hover:text-gray-700"
+                onClick={() => { void navigator.clipboard?.writeText(String(product.product_inventory_sku)); }}
+              >
+                {__uiText("คัดลอก")}
+              </button>
+            ) : null}
+          </p>
+        </div>
+        <Button
+          text={__uiText("แก้ไขสินค้า")}
+          onClick={() => id && navigate(ADMIN_ROUTES.productEdit(id))}
+        />
+      </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-6">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -308,9 +330,9 @@ const ProductDetail = () => {
 
 function InfoRow({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
   return (
-    <div className={`grid grid-cols-1 gap-1 border-b border-gray-100 py-2 sm:grid-cols-[minmax(8rem,12rem)_1fr] ${wide ? 'md:col-span-2' : ''}`}>
+    <div className={`rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 ${wide ? 'md:col-span-2' : ''}`}>
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm text-gray-900 whitespace-pre-wrap">{value || '—'}</p>
+      <p className="text-sm font-medium text-gray-900 mt-1 whitespace-pre-wrap">{value || '—'}</p>
     </div>
   );
 }

@@ -4,6 +4,8 @@ import { validate } from 'class-validator';
 import {
   ActivityDraftDto,
   AppointmentPlanDto,
+  CollabLogPageDto,
+  CollabLogQueryDto,
   CollabMessageDto,
   CreateCollabRequestDto,
   CompleteSignalDto,
@@ -76,6 +78,27 @@ describe('app gap DTOs', () => {
     expect((await check(ResolveCollabRequestDto, { status: 'pending', note: '' })).fields).toEqual(['status', 'note']);
     expect((await check(CollabMessageDto, { recipient_id: UUID, text: 'hi', is_call_note: true })).fields).toEqual([]);
     expect((await check(CollabMessageDto, { recipient_id: UUID, text: '', is_call_note: 'yes' })).fields).toEqual(['text', 'is_call_note']);
+  });
+
+  it('collaboration log query: defaults, UUID filters, event list, Bangkok day or zoned ISO', async () => {
+    expect((await check(CollabLogQueryDto, {})).dto).toMatchObject({ page: 1, limit: 50 });
+    const ok = await check(CollabLogQueryDto, {
+      opportunity_id: UUID, actor_id: UUID, target_user_id: UUID, user_id: UUID, event: 'request_created, owner_changed',
+      from: '2026-10-08', to: '2026-10-08T23:59:59.999+07:00', page: '2', limit: '100',
+    });
+    expect(ok.fields).toEqual([]);
+    expect(ok.dto).toMatchObject({ event: ['request_created', 'owner_changed'], page: 2, limit: 100 });
+    expect((await check(CollabLogQueryDto, { event: 'request_created,deleted' })).fields).toEqual(['event']);
+    expect((await check(CollabLogQueryDto, { opportunity_id: 'p1', actor_id: 'x', target_user_id: 'y', user_id: 'z' })).fields)
+      .toEqual(['opportunity_id', 'actor_id', 'target_user_id', 'user_id']);
+    expect((await check(CollabLogQueryDto, { from: '08/10/2026', to: '2026-10-08T10:00' })).fields).toEqual(['from', 'to']);
+    expect((await check(CollabLogQueryDto, { from: '2026-10-08T10:00:00Z' })).fields).toEqual([]);
+    expect((await check(CollabLogQueryDto, { limit: '101' })).fields).toEqual(['limit']);
+    expect((await check(CollabLogQueryDto, { page: '0' })).fields).toEqual(['page']);
+    expect((await check(CollabLogPageDto, { page: '3' })).dto).toMatchObject({ page: 3, limit: 50 });
+    expect((await check(CollabLogPageDto, { limit: '0' })).fields).toEqual(['limit']);
+    // `superseded` is server-only: a client cannot resolve a request to it
+    expect((await check(ResolveCollabRequestDto, { status: 'superseded', note: 'x' })).fields).toEqual(['status']);
   });
 
   it('signals: status enum, ordered is not a completion outcome, dismiss needs a reason', async () => {

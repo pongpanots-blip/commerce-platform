@@ -146,6 +146,8 @@ export enum WinbackAppRecordKind {
   OPPORTUNITY_META = 'opportunity_meta',
   /** One per opportunity (key = restaurant place id): handoff / coordinate requests + internal messages. */
   OPPORTUNITY_COLLAB = 'opportunity_collab',
+  /** Append-only, one row per collaboration event (record_key NULL; status = event, sales_user_id = actor). */
+  OPPORTUNITY_COLLAB_LOG = 'opp_collab_log',
 }
 
 /** Revenue-signal kinds. Only `reactivate` / `prevent` are computed today (from the reorder baseline). */
@@ -279,6 +281,20 @@ export enum WinbackCollabRequestStatus {
   APPROVED = 'approved',
   REJECTED = 'rejected',
   CANCELLED = 'cancelled',
+  /** Closed by the server: another handoff on the same opportunity was approved. Never sent by a client. */
+  SUPERSEDED = 'superseded',
+}
+
+/** What `opp_collab_log` records (`winback_app_record.status`). */
+export enum WinbackCollabLogEvent {
+  REQUEST_CREATED = 'request_created',
+  REQUEST_APPROVED = 'request_approved',
+  REQUEST_REJECTED = 'request_rejected',
+  REQUEST_CANCELLED = 'request_cancelled',
+  REQUEST_SUPERSEDED = 'request_superseded',
+  MESSAGE_POSTED = 'message_posted',
+  META_CHANGED = 'meta_changed',
+  OWNER_CHANGED = 'owner_changed',
 }
 
 export const WINBACK_APP_RECORD_KINDS = Object.values(WinbackAppRecordKind);
@@ -299,3 +315,4 @@ export const WINBACK_RECOMMENDATION_REASONS = Object.values(WinbackRecommendatio
 export const WINBACK_RECOMMENDATION_URGENCIES = Object.values(WinbackRecommendationUrgency);
 export const WINBACK_COLLAB_REQUEST_KINDS = Object.values(WinbackCollabRequestKind);
 export const WINBACK_COLLAB_REQUEST_STATUSES = Object.values(WinbackCollabRequestStatus);
+export const WINBACK_COLLAB_LOG_EVENTS = Object.values(WinbackCollabLogEvent);

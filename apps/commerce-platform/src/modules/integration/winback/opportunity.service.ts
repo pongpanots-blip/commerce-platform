@@ -34,8 +34,13 @@ import {
   provinceForDistrict,
   provinceQueryCode,
 } from './winback-geography';
+import { WINBACK_NAMED_ROLES } from './winback-roles';
 
-/** Places scored per list call. The list is ranked in memory, so this bounds the work, not the result. */
+/**
+ * Places scored per list call (enriched + most-reviewed first), before tabs / pagination. The list is ranked in
+ * memory, so this bounds the work — but when more open places match, the list's tab counts / totals can be
+ * lower than `/opportunities/filter-meta`, which counts every matching place (no cap).
+ */
 export const OPPORTUNITY_CANDIDATE_CAP = 3000;
 
 /** A broken rule from opportunity-meta.helpers as its HTTP error. */
@@ -100,6 +105,7 @@ export class OpportunityService {
       'a.stage AS account_stage',
       'a.assigned_sales_user_id AS account_owner_id',
       'a.cuisine_id AS account_cuisine_id',
+      'a.display_name AS account_name',
       'm.id AS meta_id',
       'm.payload AS meta_payload',
       'm.sales_user_id AS meta_owner_id',
@@ -108,9 +114,9 @@ export class OpportunityService {
     ]);
   }
 
-  /** Sales-user id → display name (the `/sales-users` roster). */
+  /** Staff id → display name: sales team + admins, unbounded (not the 100-row `/sales-users` picker). */
   async rosterNames(): Promise<Map<string, string>> {
-    const users = (await this.leads.listSalesUsers()) as Array<{ id: string; name: string }>;
+    const users = await this.leads.listStaffNames(WINBACK_NAMED_ROLES);
     return new Map(users.map((u) => [u.id, u.name]));
   }
 
@@ -192,9 +198,11 @@ export class OpportunityService {
   }
 
   /**
-   * Counts for the filter chips over every open opportunity (no lead yet — the list's universe), uncapped like
-   * `/opportunities/provinces`: one GROUP BY over places + stored meta. A sales user counts what they own and
-   * what nobody owns; a manager counts everything.
+   * Counts for the filter chips over every open opportunity (no lead yet) — the same population `list` shows
+   * every caller (the list is not scoped by owner, so neither are these counts): one GROUP BY over places +
+   * stored meta, uncapped like `/opportunities/provinces` (the list evaluates at most
+   * OPPORTUNITY_CANDIDATE_CAP places). `owners`: every owner for a manager; for a sale only themself (the only
+   * owner a sale may filter by — any other is 403), with their count.
    */
   async filterMeta(actor: WinbackActor) {
     const qb = this.joined()
@@ -208,13 +216,11 @@ export class OpportunityService {
       .addGroupBy(PURPOSE_SQL)
       .addGroupBy(OWNER_SQL)
       .addGroupBy(RESEARCH_SQL);
-    if (!actor.isManager) {
-      if (actor.id) qb.andWhere(`(${OWNER_SQL} IS NULL OR ${OWNER_SQL} = :me)`, { me: actor.id });
-      else qb.andWhere(`${OWNER_SQL} IS NULL`);
-    }
     const groups = await qb.getRawMany<OpportunityMetaGroup>();
-    const names = groups.some((g) => g.owner) ? await this.rosterNames() : new Map<string, string>();
-    return summarizeOpportunityMeta(groups, names);
+    const onlyOwner = actor.isManager ? undefined : actor.id || null;
+    const named = onlyOwner !== undefined ? !!onlyOwner : groups.some((g) => g.owner);
+    const names = named ? await this.rosterNames() : new Map<string, string>();
+    return summarizeOpportunityMeta(groups, names, onlyOwner);
   }
 
   /** The opportunity (restaurant place) ids converted into an account — `winback_account.restaurant_place_id`. */

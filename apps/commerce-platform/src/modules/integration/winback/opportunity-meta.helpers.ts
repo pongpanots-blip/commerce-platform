@@ -6,6 +6,7 @@ import {
   WINBACK_OPPORTUNITY_PURPOSES,
   WINBACK_RECOMMENDATION_REASONS,
   WINBACK_STAGES,
+  WinbackCollabLogEvent,
   WinbackCollabRequestKind,
   WinbackCollabRequestStatus,
   WinbackOpportunityPurpose,
@@ -39,6 +40,8 @@ export interface OpportunityMetaPlaceRow extends OpportunityPlaceRow {
   account_stage?: string | null;
   account_owner_id?: string | null;
   account_cuisine_id?: string | null;
+  /** `winback_account.display_name` of the converted account (the audit log's `account_name`). */
+  account_name?: string | null;
 }
 
 /** What is stored (kind `opportunity_meta`): only the fields someone set; the rest stay derived. */
@@ -201,8 +204,16 @@ function truthy(v: boolean | string | null): boolean {
   return v === true || v === 't' || v === 'true';
 }
 
-/** Every enum value is listed (0 included); owners only when they own at least one, most first. */
-export function summarizeOpportunityMeta(groups: OpportunityMetaGroup[], names: ReadonlyMap<string, string>): OpportunityFilterMeta {
+/**
+ * Every enum value is listed (0 included); owners only when they own at least one, most first.
+ * `onlyOwner` (a sale's filter-meta): the owner chips are just that caller, with their count (0 included) —
+ * the only owner value a sale may filter by; `null` = no chip at all (a sale without a caller id).
+ */
+export function summarizeOpportunityMeta(
+  groups: OpportunityMetaGroup[],
+  names: ReadonlyMap<string, string>,
+  onlyOwner?: string | null,
+): OpportunityFilterMeta {
   const stages = new Map<string, number>(WINBACK_STAGES.map((s) => [s, 0]));
   const purposes = new Map<string, number>(WINBACK_OPPORTUNITY_PURPOSES.map((p) => [p, 0]));
   const reasons = new Map<string, number>(WINBACK_RECOMMENDATION_REASONS.map((r) => [r, 0]));
@@ -217,13 +228,16 @@ export function summarizeOpportunityMeta(groups: OpportunityMetaGroup[], names: 
     else unassigned += n;
   }
   const list = (m: Map<string, number>) => [...m].map(([value, count]) => ({ value, count }));
+  const chip = (id: string, count: number) => ({ sales_user_id: id, name: names.get(id) ?? null, count });
   return {
     stages: list(stages),
     purposes: list(purposes),
     recommendation_reasons: list(reasons),
-    owners: [...owners]
-      .map(([id, count]) => ({ sales_user_id: id, name: names.get(id) ?? null, count }))
-      .sort((a, b) => b.count - a.count || String(a.name ?? a.sales_user_id).localeCompare(String(b.name ?? b.sales_user_id))),
+    owners: onlyOwner !== undefined
+      ? (onlyOwner ? [chip(onlyOwner, owners.get(onlyOwner) ?? 0)] : [])
+      : [...owners]
+        .map(([id, count]) => chip(id, count))
+        .sort((a, b) => b.count - a.count || String(a.name ?? a.sales_user_id).localeCompare(String(b.name ?? b.sales_user_id))),
     unassigned_count: unassigned,
   };
 }
@@ -244,6 +258,12 @@ export interface CollabRequest {
   resolved_by_id: string | null;
   resolved_by_name: string | null;
   resolved_at: string | null;
+  /**
+   * The coordination owner when the request was created (handoff only; null = unowned or a coordinate
+   * request). Absent on requests stored before this field existed — those are never treated as stale.
+   */
+  from_owner_id?: string | null;
+  from_owner_name?: string | null;
 }
 
 export interface CollabMessage {
@@ -307,4 +327,144 @@ export function collabResolveError(actor: Actor, request: CollabRequest, status:
   }
   if (request.status !== WinbackCollabRequestStatus.PENDING) return { status: 409, message: 'คำขอนี้ไม่ได้รออยู่แล้ว' };
   return null;
+}
+
+export const STALE_HANDOFF_MESSAGE = 'คำขอนี้ล้าสมัยแล้ว ผู้ดูแลโอกาสเปลี่ยนไปแล้ว';
+
+/**
+ * Approving a handoff whose owner moved on since it was asked (e.g. a manager approved another handoff):
+ * 409, nothing changes, the request stays pending (its requester or a manager can cancel it). A request
+ * stored before `from_owner_id` existed has no baseline → valid.
+ */
+export function staleHandoffError(request: CollabRequest, currentOwnerId: string | null): RuleError | null {
+  if (request.kind !== WinbackCollabRequestKind.HANDOFF || !('from_owner_id' in request)) return null;
+  if ((request.from_owner_id ?? null) === (currentOwnerId ?? null)) return null;
+  return { status: 409, message: STALE_HANDOFF_MESSAGE };
+}
+
+/** The resolution note the server writes on a handoff it auto-closes. */
+export function supersededNote(recipientName: string | null, recipientId: string): string {
+  return `ปิดอัตโนมัติ: อนุมัติส่งต่อให้ ${recipientName ?? recipientId} แล้ว`;
+}
+
+/** A request as the API shows it: `from_owner_*` always present (null on requests stored before them). */
+export function requestView(request: CollabRequest): CollabRequest {
+  return { ...request, from_owner_id: request.from_owner_id ?? null, from_owner_name: request.from_owner_name ?? null };
+}
+
+// --- Collaboration audit log (kind `opp_collab_log`, one append-only row per event) ---
+
+export interface CollabLogChanges {
+  stage?: { from: string | null; to: string | null };
+  purpose?: { from: string | null; to: string | null };
+  owner?: { from: string | null; to: string | null; from_name: string | null; to_name: string | null };
+}
+
+/** `winback_app_record.payload` of a log row (snake_case like every kind; the interceptor camelCases it). */
+export interface CollabLogPayload {
+  opportunity_id: string;
+  opportunity_name: string | null;
+  account_name: string | null;
+  actor_name: string | null;
+  target_user_id: string | null;
+  target_user_name: string | null;
+  request_id: string | null;
+  request_kind: WinbackCollabRequestKind | null;
+  note: string | null;
+  changes: CollabLogChanges | null;
+  /** Order inside one write: rows of one transaction share `create_date` (Postgres `now()`). */
+  seq: number;
+}
+
+/** The log row columns the entry is read from (WinbackAppRecord). */
+export interface CollabLogRecord {
+  id: string;
+  status: string | null;
+  sales_user_id: string | null;
+  account_id: string | null;
+  created_by: string | null;
+  payload: Record<string, unknown> | null;
+  create_date: Date | string | null;
+}
+
+export interface CollabLogEntry {
+  id: string;
+  event: WinbackCollabLogEvent;
+  opportunity_id: string;
+  opportunity_name: string | null;
+  account_id: string | null;
+  account_name: string | null;
+  actor_id: string | null;
+  actor_name: string | null;
+  target_user_id: string | null;
+  target_user_name: string | null;
+  request_id: string | null;
+  request_kind: WinbackCollabRequestKind | null;
+  note: string | null;
+  changes: CollabLogChanges | null;
+  created_at: string | null;
+}
+
+export function collabLogEntry(r: CollabLogRecord): CollabLogEntry {
+  const p = (r.payload ?? {}) as Partial<CollabLogPayload>;
+  return {
+    id: r.id,
+    event: r.status as WinbackCollabLogEvent,
+    opportunity_id: String(p.opportunity_id ?? ''),
+    opportunity_name: p.opportunity_name ?? null,
+    account_id: r.account_id ?? null,
+    account_name: p.account_name ?? null,
+    actor_id: r.sales_user_id ?? r.created_by ?? null,
+    actor_name: p.actor_name ?? null,
+    target_user_id: p.target_user_id ?? null,
+    target_user_name: p.target_user_name ?? null,
+    request_id: p.request_id ?? null,
+    request_kind: p.request_kind ?? null,
+    note: p.note ?? null,
+    changes: p.changes ?? null,
+    created_at: iso(r.create_date),
+  };
+}
+
+/** stage / purpose before → after; only what actually changed (null = nothing to log). */
+export function metaChanges(
+  before: { stage: string; purpose: string },
+  after: { stage: string; purpose: string },
+): CollabLogChanges | null {
+  const changes: CollabLogChanges = {};
+  if (before.stage !== after.stage) changes.stage = { from: before.stage, to: after.stage };
+  if (before.purpose !== after.purpose) changes.purpose = { from: before.purpose, to: after.purpose };
+  return Object.keys(changes).length ? changes : null;
+}
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const MS_PER_DAY = 86_400_000;
+const BANGKOK_OFFSET_MS = 7 * 3_600_000;
+
+/** `YYYY-MM-DD` (a Bangkok calendar day) or an ISO date-time with a zone → that instant; null when invalid. */
+function instant(value: string, endOfDay: boolean): Date | null {
+  if (DAY.test(value)) {
+    const utc = new Date(`${value}T00:00:00Z`);
+    if (Number.isNaN(utc.getTime()) || utc.toISOString().slice(0, 10) !== value) return null; // 2026-02-30 rolls over
+    const start = new Date(utc.getTime() - BANGKOK_OFFSET_MS);
+    return endOfDay ? new Date(start.getTime() + MS_PER_DAY) : start;
+  }
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/**
+ * The log's created-at window: `from` inclusive; `to` inclusive — a day means up to the end of that Bangkok
+ * day (`< next day 00:00 +07:00`), an ISO instant means `<=` it. 400 on an invalid date or from > to.
+ */
+export function collabLogRange(from?: string, to?: string): { gte: Date | null; lt: Date | null; lte: Date | null } | RuleError {
+  const gte = from ? instant(from, false) : null;
+  if (from && !gte) return { status: 400, message: 'from ต้องเป็น YYYY-MM-DD หรือ ISO date-time' };
+  const end = to ? instant(to, DAY.test(to)) : null;
+  if (to && !end) return { status: 400, message: 'to ต้องเป็น YYYY-MM-DD หรือ ISO date-time' };
+  const dayEnd = !!to && DAY.test(to);
+  const lt = dayEnd ? end : null;
+  const lte = dayEnd ? null : end;
+  if (gte && ((lt && gte >= lt) || (lte && gte > lte))) return { status: 400, message: 'from ต้องไม่เกิน to' };
+  return { gte, lt, lte };
 }

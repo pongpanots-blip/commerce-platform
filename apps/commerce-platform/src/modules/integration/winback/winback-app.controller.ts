@@ -35,6 +35,8 @@ import {
   ActivityDraftDto,
   AppointmentPlanDto,
   CoachingTaskQueryDto,
+  CollabLogPageDto,
+  CollabLogQueryDto,
   CollabMessageDto,
   CreateCollabRequestDto,
   CompleteSignalDto,
@@ -70,6 +72,7 @@ import {
 } from './dto/app-gaps.dto';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
+const COLLAB_LOG_MANAGER_ONLY = 'เฉพาะ manager ที่ดูบันทึกการประสานงานได้';
 const uuid = () => new ParseUUIDPipe();
 
 /** A draft key is an account id or `standalone`. */
@@ -123,7 +126,7 @@ export class WinbackAppController {
     return this.opportunities.provinces(q);
   }
 
-  /** นับตาม stage / purpose / recommendation / owner ในขอบเขตของผู้เรียก (sale: ของตัวเอง + ยังไม่มีเจ้าของ) */
+  /** นับตาม stage / purpose / recommendation / owner ทุกร้านที่ยังไม่มี lead (เท่ากับ list) — owners ของ sale = ตัวเองเท่านั้น */
   @Get('opportunities/filter-meta')
   opportunityFilterMeta(@Req() req: RequestWithUser) {
     return this.opportunities.filterMeta(this.actor(req));
@@ -162,6 +165,13 @@ export class WinbackAppController {
     return this.collab.createRequest(this.actor(req), id, dto);
   }
 
+  /** บันทึกการประสานงานของโอกาสนี้ (manager เท่านั้น) — `{ data, meta: { page, limit, total } }` ใหม่→เก่า */
+  @Get('opportunities/:id/collaboration/logs')
+  opportunityCollaborationLogs(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Query(pipe) q: CollabLogPageDto) {
+    this.manager(req, COLLAB_LOG_MANAGER_ONLY);
+    return this.collab.opportunityLogs(id, q);
+  }
+
   @Post('opportunities/:id/collaboration/messages')
   postCollabMessage(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: CollabMessageDto) {
     return this.collab.postMessage(this.actor(req), id, dto);
@@ -186,6 +196,13 @@ export class WinbackAppController {
   @Get('collaboration/directory')
   collaborationDirectory() {
     return this.collab.directory();
+  }
+
+  /** บันทึกการประสานงานทุกโอกาส (manager เท่านั้น, append-only) — กรอง opportunity / actor / target / user / event / ช่วงวัน */
+  @Get('collaboration/logs')
+  collaborationLogs(@Req() req: RequestWithUser, @Query(pipe) q: CollabLogQueryDto) {
+    this.manager(req, COLLAB_LOG_MANAGER_ONLY);
+    return this.collab.logs(q);
   }
 
   // --- Revenue signals (id = account id) ---

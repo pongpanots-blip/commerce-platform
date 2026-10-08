@@ -1,5 +1,41 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) collaboration log page ({ data, meta } passes through, camelCased) 1`] = `
+{
+  "data": [
+    {
+      "accountId": null,
+      "accountName": null,
+      "actorId": "mgr-1",
+      "actorName": "Mgr One",
+      "changes": {
+        "owner": {
+          "from": "sales-2",
+          "fromName": "Rep Two",
+          "to": "sales-1",
+          "toName": "Rep One",
+        },
+      },
+      "createdAt": "2026-10-08T03:00:00.000Z",
+      "event": "owner_changed",
+      "id": "00000000-0000-4000-8000-000000000001",
+      "note": null,
+      "opportunityId": "00000000-0000-4000-8000-000000000001",
+      "opportunityName": "ร้านวัฒนา",
+      "requestId": "00000000-0000-4000-8000-000000000001",
+      "requestKind": "handoff",
+      "targetUserId": "sales-1",
+      "targetUserName": "Rep One",
+    },
+  ],
+  "meta": {
+    "limit": 50,
+    "page": 1,
+    "total": 1,
+  },
+}
+`;
+
 exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) convert 1`] = `
 {
   "data": {
@@ -295,10 +331,12 @@ exports[`WinbackAppController contract route table 1`] = `
   "PATCH /winback/opportunities/:id/meta → updateOpportunityMeta",
   "GET /winback/opportunities/:id/collaboration → opportunityCollaboration",
   "POST /winback/opportunities/:id/collaboration → createCollabRequest",
+  "GET /winback/opportunities/:id/collaboration/logs → opportunityCollaborationLogs",
   "POST /winback/opportunities/:id/collaboration/messages → postCollabMessage",
   "PATCH /winback/opportunities/:id/collaboration/:requestId → resolveCollabRequest",
   "GET /winback/account/:id/opportunities → accountOpportunities",
   "GET /winback/collaboration/directory → collaborationDirectory",
+  "GET /winback/collaboration/logs → collaborationLogs",
   "GET /winback/signals → listSignals",
   "POST /winback/signals/:id/complete → completeSignal",
   "POST /winback/signals/:id/snooze → snoozeSignal",

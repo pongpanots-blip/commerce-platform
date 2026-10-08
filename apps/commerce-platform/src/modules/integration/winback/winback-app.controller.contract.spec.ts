@@ -76,6 +76,8 @@ describe('WinbackAppController contract', () => {
       ['syncRuns', (c: WinbackAppController) => c.syncRuns(sale, { limit: 20 })],
       ['saveQuoteTerms', (c: WinbackAppController) => c.saveQuoteTerms(sale, {} as any)],
       ['reviewDailyReport', (c: WinbackAppController) => c.reviewDailyReport(sale, UUID, '2026-10-08', {} as any)],
+      ['collaborationLogs', (c: WinbackAppController) => c.collaborationLogs(sale, { page: 1, limit: 50 } as any)],
+      ['opportunityCollaborationLogs', (c: WinbackAppController) => c.opportunityCollaborationLogs(sale, UUID, { page: 1, limit: 50 } as any)],
     ])('%s is manager-only (403 for a sale)', (_name, call) => {
       const { controller } = createController();
       expect(() => call(controller)).toThrow(ForbiddenException);
@@ -109,6 +111,34 @@ describe('WinbackAppController contract', () => {
       expect(collab.postMessage).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { recipient_id: UUID, text: 't' });
       controller.collaborationDirectory();
       expect(collab.directory).toHaveBeenCalled();
+    });
+
+    it('collaboration logs: 403 message for a sale, the query goes through for a manager', () => {
+      const { controller, collab } = createController();
+      expect(() => controller.collaborationLogs(sale, { page: 1, limit: 50 } as any)).toThrow('เฉพาะ manager ที่ดูบันทึกการประสานงานได้');
+      expect(collab.logs).not.toHaveBeenCalled();
+      expect(collab.opportunityLogs).not.toHaveBeenCalled();
+      const q = { page: 2, limit: 10, opportunity_id: UUID, event: ['owner_changed'], from: '2026-10-08' };
+      controller.collaborationLogs(manager, q as any);
+      expect(collab.logs).toHaveBeenCalledWith(q);
+      controller.opportunityCollaborationLogs(manager, UUID, { page: 1, limit: 50 } as any);
+      expect(collab.opportunityLogs).toHaveBeenCalledWith(UUID, { page: 1, limit: 50 });
+    });
+
+    it('collaboration log routes are GETs that no other route shadows', () => {
+      const r = routes();
+      expect(r).toEqual(expect.arrayContaining([
+        'GET /winback/collaboration/logs → collaborationLogs',
+        'GET /winback/opportunities/:id/collaboration/logs → opportunityCollaborationLogs',
+      ]));
+      // same depth, same method, declared earlier would win — only the PATCH :requestId route is that deep
+      expect(r.filter((x) => /^GET \/winback\/opportunities\/:id\/collaboration\/[^/]+ /.test(x))).toEqual([
+        'GET /winback/opportunities/:id/collaboration/logs → opportunityCollaborationLogs',
+      ]);
+      expect(r.filter((x) => /^GET \/winback\/collaboration\/[^/]+ /.test(x))).toEqual([
+        'GET /winback/collaboration/directory → collaborationDirectory',
+        'GET /winback/collaboration/logs → collaborationLogs',
+      ]);
     });
 
     it('filter-meta is declared before opportunities/:id (else ParseUUIDPipe would 400 it)', () => {
@@ -182,6 +212,21 @@ describe('WinbackAppController contract', () => {
       expect(wrapWinbackResponse(await controller.opportunityCollaboration(UUID))).toMatchSnapshot();
       expect(wrapWinbackResponse(await controller.accountOpportunities(UUID))).toEqual({ data: [UUID] });
       expect(wrapWinbackResponse(await controller.collaborationDirectory())).toEqual({ data: [{ id: 'sales-1', name: 'Rep One' }] });
+    });
+
+    it('collaboration log page ({ data, meta } passes through, camelCased)', async () => {
+      const { controller, collab } = createController();
+      collab.logs.mockResolvedValue({
+        data: [{
+          id: UUID, event: 'owner_changed', opportunity_id: UUID, opportunity_name: 'ร้านวัฒนา', account_id: null, account_name: null,
+          actor_id: 'mgr-1', actor_name: 'Mgr One', target_user_id: 'sales-1', target_user_name: 'Rep One', request_id: UUID,
+          request_kind: 'handoff', note: null,
+          changes: { owner: { from: 'sales-2', to: 'sales-1', from_name: 'Rep Two', to_name: 'Rep One' } },
+          created_at: '2026-10-08T03:00:00.000Z',
+        }],
+        meta: { page: 1, limit: 50, total: 1 },
+      });
+      expect(wrapWinbackResponse(await controller.collaborationLogs(manager, { page: 1, limit: 50 } as any))).toMatchSnapshot();
     });
 
     it('convert', async () => {

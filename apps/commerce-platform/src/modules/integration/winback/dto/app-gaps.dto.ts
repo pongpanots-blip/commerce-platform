@@ -26,6 +26,7 @@ import {
   WINBACK_ACTIVITY_OUTCOMES,
   WINBACK_ACTIVITY_TYPES,
   WINBACK_APPOINTMENT_PLACES,
+  WINBACK_COLLAB_LOG_EVENTS,
   WINBACK_COLLAB_REQUEST_KINDS,
   WINBACK_APPOINTMENT_PURPOSES,
   WINBACK_DAILY_REPORT_STATUSES,
@@ -125,6 +126,28 @@ export class CollabMessageDto {
   @IsUUID() recipient_id: string;
   @IsString() @MinLength(1) @MaxLength(1000) text: string;
   @IsOptional() @IsBoolean() is_call_note?: boolean;
+}
+
+/** `YYYY-MM-DD` (a Bangkok day) or an ISO date-time that carries its zone (`Z` / `±hh:mm`). */
+const DAY_OR_ZONED_ISO = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?(Z|[+-]\d{2}:\d{2}))?$/;
+
+/** Collaboration audit log paging (manager only): newest first. */
+export class CollabLogPageDto {
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) page = 1;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit = 50;
+}
+
+export class CollabLogQueryDto extends CollabLogPageDto {
+  @IsOptional() @IsUUID() opportunity_id?: string;
+  @IsOptional() @IsUUID() actor_id?: string;
+  @IsOptional() @IsUUID() target_user_id?: string;
+  /** Actor OR target. */
+  @IsOptional() @IsUUID() user_id?: string;
+  /** `request_created,owner_changed` (or a repeated key). */
+  @IsOptional() @Transform(toList) @IsArray() @ArrayMaxSize(20) @IsIn(WINBACK_COLLAB_LOG_EVENTS, { each: true }) event?: string[];
+  /** Inclusive; a day is read in Bangkok (`to` = through the end of that day). */
+  @IsOptional() @Matches(DAY_OR_ZONED_ISO, { message: 'from must be YYYY-MM-DD or an ISO date-time with a zone' }) from?: string;
+  @IsOptional() @Matches(DAY_OR_ZONED_ISO, { message: 'to must be YYYY-MM-DD or an ISO date-time with a zone' }) to?: string;
 }
 
 // --- Revenue signals ---

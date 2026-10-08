@@ -1,18 +1,24 @@
 import { placeToOpportunity } from './app-gaps.helpers';
 import {
   buildOpportunityMeta,
+  collabLogEntry,
+  collabLogRange,
   collabPayload,
   CollabRequest,
   collabRequestError,
   collabResolveError,
   deriveRecommendation,
+  metaChanges,
   metaEditError,
   NEEDS_RESEARCH_TEXT,
   OpportunityMetaPlaceRow,
   ownerFilterError,
   recipientError,
+  requestView,
+  staleHandoffError,
   storedMeta,
   summarizeOpportunityMeta,
+  supersededNote,
   versionError,
 } from './opportunity-meta.helpers';
 import { WINBACK_STAGES } from './winback.enums';
@@ -118,6 +124,20 @@ describe('opportunity meta rules', () => {
     expect(out.unassigned_count).toBe(7);
     expect(summarizeOpportunityMeta([], NAMES)).toMatchObject({ owners: [], unassigned_count: 0 });
   });
+
+  it('filter-meta summary for a sale: same counts, owner chips are only the caller (0 included)', () => {
+    const groups = [
+      { stage: 'prospect', purpose: 'new_product', owner: null, research: true, count: '5' },
+      { stage: 'negotiate', purpose: 'expansion', owner: 'rep-2', research: false, count: 3 },
+      { stage: 'contacted', purpose: 'winback', owner: 'rep-1', research: false, count: 1 },
+    ];
+    const all = summarizeOpportunityMeta(groups, NAMES);
+    const mine = summarizeOpportunityMeta(groups, NAMES, 'rep-1');
+    expect({ ...mine, owners: [] }).toEqual({ ...all, owners: [] });
+    expect(mine.owners).toEqual([{ sales_user_id: 'rep-1', name: 'Rep One', count: 1 }]);
+    expect(summarizeOpportunityMeta(groups, NAMES, 'rep-3').owners).toEqual([{ sales_user_id: 'rep-3', name: null, count: 0 }]);
+    expect(summarizeOpportunityMeta(groups, NAMES, null).owners).toEqual([]);
+  });
 });
 
 describe('collaboration rules', () => {
@@ -161,5 +181,67 @@ describe('collaboration rules', () => {
     expect(collabResolveError(OTHER, pending({ status: 'approved' as never }), 'rejected')).toEqual({ status: 409, message: 'คำขอนี้ไม่ได้รออยู่แล้ว' });
     // a stranger gets 403 even on a resolved request
     expect(collabResolveError({ id: 'rep-9', isManager: false }, pending({ status: 'approved' as never }), 'rejected')?.status).toBe(403);
+  });
+
+  it('stale handoff: 409 when the owner moved on since the request; legacy requests and coordinate are never stale', () => {
+    const asked = pending({ from_owner_id: 'rep-1', from_owner_name: 'Rep One' });
+    expect(staleHandoffError(asked, 'rep-1')).toBeNull();
+    expect(staleHandoffError(asked, 'rep-9')).toEqual({ status: 409, message: 'คำขอนี้ล้าสมัยแล้ว ผู้ดูแลโอกาสเปลี่ยนไปแล้ว' });
+    expect(staleHandoffError(asked, null)?.status).toBe(409);
+    expect(staleHandoffError(pending({ from_owner_id: null }), null)).toBeNull();
+    expect(staleHandoffError(pending({ from_owner_id: null }), 'rep-1')?.status).toBe(409);
+    expect(staleHandoffError(pending(), 'rep-9')).toBeNull(); // stored before from_owner_id existed
+    expect(staleHandoffError(pending({ kind: 'coordinate' as never, from_owner_id: 'rep-1' }), 'rep-9')).toBeNull();
+  });
+
+  it('superseded note + request view (from_owner_* always present)', () => {
+    expect(supersededNote('Rep Three', 'rep-3')).toBe('ปิดอัตโนมัติ: อนุมัติส่งต่อให้ Rep Three แล้ว');
+    expect(supersededNote(null, 'rep-3')).toBe('ปิดอัตโนมัติ: อนุมัติส่งต่อให้ rep-3 แล้ว');
+    expect(requestView(pending())).toMatchObject({ from_owner_id: null, from_owner_name: null });
+    expect(requestView(pending({ from_owner_id: 'rep-1', from_owner_name: 'Rep One' }))).toMatchObject({ from_owner_id: 'rep-1', from_owner_name: 'Rep One' });
+  });
+});
+
+describe('collaboration audit log rules', () => {
+  it('meta changes: only what changed, null when nothing did', () => {
+    expect(metaChanges({ stage: 'prospect', purpose: 'new_product' }, { stage: 'contacted', purpose: 'new_product' })).toEqual({ stage: { from: 'prospect', to: 'contacted' } });
+    expect(metaChanges({ stage: 'prospect', purpose: 'new_product' }, { stage: 'prospect', purpose: 'winback' })).toEqual({ purpose: { from: 'new_product', to: 'winback' } });
+    expect(metaChanges({ stage: 'prospect', purpose: 'winback' }, { stage: 'prospect', purpose: 'winback' })).toBeNull();
+  });
+
+  it('entry: row columns + payload snapshot, nulls when absent', () => {
+    const created = new Date('2026-10-08T03:00:00Z');
+    expect(collabLogEntry({
+      id: 'l1', status: 'owner_changed', sales_user_id: 'rep-3', account_id: 'acc-1', created_by: 'rep-3', create_date: created,
+      payload: { opportunity_id: 'p1', opportunity_name: 'ร้าน', account_name: 'ร้าน (TMP)', actor_name: 'Rep Three', target_user_id: 'rep-3',
+        target_user_name: 'Rep Three', request_id: 'r1', request_kind: 'handoff', note: null, seq: 1,
+        changes: { owner: { from: 'rep-1', to: 'rep-3', from_name: 'Rep One', to_name: 'Rep Three' } } },
+    })).toEqual({
+      id: 'l1', event: 'owner_changed', opportunity_id: 'p1', opportunity_name: 'ร้าน', account_id: 'acc-1', account_name: 'ร้าน (TMP)',
+      actor_id: 'rep-3', actor_name: 'Rep Three', target_user_id: 'rep-3', target_user_name: 'Rep Three', request_id: 'r1', request_kind: 'handoff',
+      note: null, changes: { owner: { from: 'rep-1', to: 'rep-3', from_name: 'Rep One', to_name: 'Rep Three' } }, created_at: '2026-10-08T03:00:00.000Z',
+    });
+    expect(collabLogEntry({ id: 'l2', status: 'message_posted', sales_user_id: null, account_id: null, created_by: null, create_date: null, payload: { opportunity_id: 'p2' } }))
+      .toMatchObject({ actor_id: null, actor_name: null, account_name: null, target_user_id: null, changes: null, created_at: null });
+  });
+
+  it('range: a day is a Bangkok day (from inclusive, to through its end), ISO instants are exact', () => {
+    expect(collabLogRange()).toEqual({ gte: null, lt: null, lte: null });
+    expect(collabLogRange('2026-10-08', '2026-10-08')).toEqual({
+      gte: new Date('2026-10-07T17:00:00.000Z'), lt: new Date('2026-10-08T17:00:00.000Z'), lte: null,
+    });
+    expect(collabLogRange(undefined, '2026-12-31')).toEqual({ gte: null, lt: new Date('2026-12-31T17:00:00.000Z'), lte: null });
+    expect(collabLogRange('2026-10-08T09:00:00+07:00', '2026-10-08T10:00:00Z')).toEqual({
+      gte: new Date('2026-10-08T02:00:00.000Z'), lt: null, lte: new Date('2026-10-08T10:00:00.000Z'),
+    });
+    expect(collabLogRange('2026-10-08T10:00:00Z', '2026-10-08T10:00:00Z')).toMatchObject({ lte: new Date('2026-10-08T10:00:00Z') });
+  });
+
+  it('range errors: invalid day, from after to', () => {
+    expect(collabLogRange('2026-02-30')).toMatchObject({ status: 400 });
+    expect(collabLogRange(undefined, '2026-13-01')).toMatchObject({ status: 400 });
+    expect(collabLogRange('2026-10-09', '2026-10-08')).toEqual({ status: 400, message: 'from ต้องไม่เกิน to' });
+    expect(collabLogRange('2026-10-08T17:00:00Z', '2026-10-08')).toMatchObject({ status: 400 }); // 9 Oct 00:00 Bangkok
+    expect(collabLogRange('2026-10-08T10:00:01Z', '2026-10-08T10:00:00Z')).toMatchObject({ status: 400 });
   });
 });

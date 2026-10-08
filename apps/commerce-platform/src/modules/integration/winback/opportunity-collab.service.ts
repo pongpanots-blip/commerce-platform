@@ -6,31 +6,67 @@ import { WinbackAppRecord } from './entities/winback-app-record.entity';
 import { LeadService } from './lead.service';
 import { WinbackActor } from './app-records.service';
 import { OpportunityMetaRow, OpportunityService, raiseRule } from './opportunity.service';
-import { CollabMessageDto, CreateCollabRequestDto, ResolveCollabRequestDto, UpdateOpportunityMetaDto } from './dto/app-gaps.dto';
 import {
+  CollabLogPageDto,
+  CollabLogQueryDto,
+  CollabMessageDto,
+  CreateCollabRequestDto,
+  ResolveCollabRequestDto,
+  UpdateOpportunityMetaDto,
+} from './dto/app-gaps.dto';
+import {
+  CollabLogChanges,
+  collabLogEntry,
+  CollabLogPayload,
+  collabLogRange,
   CollabPayload,
   collabPayload,
   CollabRequest,
   collabRequestError,
   collabResolveError,
+  metaChanges,
   metaEditError,
   recipientError,
+  requestView,
+  staleHandoffError,
+  supersededNote,
   versionError,
 } from './opportunity-meta.helpers';
 import {
   WinbackAppRecordKind as Kind,
+  WinbackCollabLogEvent as LogEvent,
   WinbackCollabRequestKind,
   WinbackCollabRequestStatus,
 } from './winback.enums';
+import { WINBACK_ASSIGNABLE_ROLES, WINBACK_NAMED_ROLES } from './winback-roles';
 
 const PG_UNIQUE_VIOLATION = '23505';
+
+/** Ties inside one write share `create_date` (Postgres `now()` is per transaction): `seq` keeps their order. */
+const LOG_SEQ_SQL = "CAST(l.payload->>'seq' AS integer)";
+
+const RESOLVED_EVENT: Record<string, LogEvent> = {
+  [WinbackCollabRequestStatus.APPROVED]: LogEvent.REQUEST_APPROVED,
+  [WinbackCollabRequestStatus.REJECTED]: LogEvent.REQUEST_REJECTED,
+  [WinbackCollabRequestStatus.CANCELLED]: LogEvent.REQUEST_CANCELLED,
+};
+
+/** One audit-log event of a write (who did it and which opportunity come from the write itself). */
+interface CollabLogEvent {
+  event: LogEvent;
+  target_user_id?: string | null;
+  request?: CollabRequest | null;
+  note?: string | null;
+  changes?: CollabLogChanges | null;
+}
 
 /**
  * §4.11.8 writes: an opportunity's stage / purpose, and the team's collaboration on it (handoff / coordinate
  * requests + internal messages and call notes). Record-only coordination facts in `winback_app_record`
  * (`opportunity_meta`, `opportunity_collab`; key = restaurant place id): nothing reassigns a winback account,
  * changes its stage, or sends a push / LINE / email. Writes take a row lock per opportunity, so concurrent
- * requests never lose an update.
+ * requests never lose an update. Every change also appends `opp_collab_log` rows (one per event) in the same
+ * transaction — a rolled-back change leaves no log row.
  */
 @Injectable()
 export class OpportunityCollabService {
@@ -40,9 +76,19 @@ export class OpportunityCollabService {
     private readonly leads: LeadService,
   ) {}
 
+  /**
+   * Unbounded (not the 100-row `/sales-users` picker): recipients = active sale / sales / manager;
+   * names = those plus admin / platform_admin (they resolve requests as managers).
+   */
   private async roster() {
-    const users = (await this.leads.listSalesUsers()) as Array<{ id: string; name: string }>;
-    return { users, names: new Map(users.map((u) => [u.id, u.name])), ids: new Set(users.map((u) => u.id)) };
+    const staff = await this.leads.listStaffNames(WINBACK_NAMED_ROLES);
+    const assignable = new Set<string>(WINBACK_ASSIGNABLE_ROLES);
+    const recipients = staff.filter((u) => assignable.has(u.role));
+    return {
+      recipients,
+      names: new Map(staff.map((u) => [u.id, u.name])),
+      ids: new Set(recipients.map((u) => u.id)),
+    };
   }
 
   /** Requests and messages need a caller id (the JWT `sub`). */
@@ -81,6 +127,46 @@ export class OpportunityCollabService {
     return repo.create({ kind, record_key: key, version: 0, sales_user_id: null, created_by: actor.id || null, payload: {} });
   }
 
+  /**
+   * Append one `opp_collab_log` row per event through the write's own transactional repository. `record_key`
+   * stays NULL (never collides with the unique key index); actor → `sales_user_id` / `created_by`, event →
+   * `status`, converted account → `account_id`; names are a snapshot taken now.
+   */
+  private async log(
+    repo: Repository<WinbackAppRecord>,
+    row: OpportunityMetaRow,
+    actor: WinbackActor,
+    names: ReadonlyMap<string, string>,
+    events: CollabLogEvent[],
+  ) {
+    for (const [seq, e] of events.entries()) {
+      const target = e.target_user_id ?? null;
+      const payload: CollabLogPayload = {
+        opportunity_id: row.id,
+        opportunity_name: row.name_th || row.name_en || null,
+        account_name: row.account_name ?? null,
+        actor_name: (actor.id && names.get(actor.id)) || null,
+        target_user_id: target,
+        target_user_name: target ? names.get(target) ?? null : null,
+        request_id: e.request?.id ?? null,
+        request_kind: e.request?.kind ?? null,
+        note: e.note ?? null,
+        changes: e.changes ?? null,
+        seq,
+      };
+      await repo.save(repo.create({
+        kind: Kind.OPPORTUNITY_COLLAB_LOG,
+        record_key: null,
+        version: 1,
+        sales_user_id: actor.id || null,
+        created_by: actor.id || null,
+        account_id: row.winback_account_id ?? null,
+        status: e.event,
+        payload: payload as unknown as Record<string, unknown>,
+      }));
+    }
+  }
+
   // --- meta (stage / purpose) ---
 
   async updateMeta(actor: WinbackActor, id: string, dto: UpdateOpportunityMetaDto) {
@@ -101,7 +187,10 @@ export class OpportunityCollabService {
       };
       next.account_id = row.winback_account_id ?? null;
       next.version = (next.version ?? 0) + 1;
-      return this.opportunities.metaOf(row, await repo.save(next), names);
+      const updated = this.opportunities.metaOf(row, await repo.save(next), names);
+      const changes = metaChanges(current, updated);
+      if (changes) await this.log(repo, row, actor, names, [{ event: LogEvent.META_CHANGED, changes }]);
+      return updated;
     });
   }
 
@@ -113,7 +202,7 @@ export class OpportunityCollabService {
       opportunity_id: row.id,
       owner_sales_user_id: owner.owner_sales_user_id,
       owner_name: owner.owner_name,
-      requests: state.requests,
+      requests: state.requests.map(requestView),
       messages: state.messages,
       revision: collab?.version ?? 0,
     };
@@ -146,9 +235,10 @@ export class OpportunityCollabService {
       const state = collabPayload(record?.payload);
       // The owner only changes under this collab lock (approving a handoff), so a plain read is current.
       const meta = await repo.findOne({ where: { kind: Kind.OPPORTUNITY_META, record_key: id } });
-      const owner = this.opportunities.metaOf(row, meta, names).owner_sales_user_id;
-      raiseRule(collabRequestError(actor, state, dto.kind, dto.recipient_id, owner, ids));
-      state.requests.push({
+      const owner = this.opportunities.metaOf(row, meta, names);
+      raiseRule(collabRequestError(actor, state, dto.kind, dto.recipient_id, owner.owner_sales_user_id, ids));
+      const handoff = dto.kind === WinbackCollabRequestKind.HANDOFF;
+      const request: CollabRequest = {
         id: randomUUID(),
         kind: dto.kind as WinbackCollabRequestKind,
         requester_id: actorId,
@@ -162,13 +252,24 @@ export class OpportunityCollabService {
         resolved_by_id: null,
         resolved_by_name: null,
         resolved_at: null,
-      });
+        // The approval is checked against this baseline (a handoff whose owner moved on is stale → 409).
+        from_owner_id: handoff ? owner.owner_sales_user_id : null,
+        from_owner_name: handoff ? owner.owner_name : null,
+      };
+      state.requests.push(request);
       const saved = await this.saveCollab(repo, record, row, actor, state);
+      await this.log(repo, row, actor, names, [
+        { event: LogEvent.REQUEST_CREATED, target_user_id: request.recipient_id, request, note: reason },
+      ]);
       return this.view(row, saved, state, meta, names);
     });
   }
 
-  /** Approving a handoff makes the recipient the coordination owner (opportunity_meta) — the account stays as is. */
+  /**
+   * Approving a handoff makes the recipient the coordination owner (opportunity_meta) — the account stays as
+   * is — and closes every other pending handoff on the opportunity as `superseded`. 409 when the owner is no
+   * longer the one the handoff was asked from (nothing changes then).
+   */
   async resolveRequest(actor: WinbackActor, id: string, requestId: string, dto: ResolveCollabRequestDto) {
     const note = OpportunityCollabService.trimmed(dto.note, 'note');
     const row = await this.opportunities.placeRow(id);
@@ -179,25 +280,44 @@ export class OpportunityCollabService {
       const request: CollabRequest | undefined = state.requests.find((r) => r.id === requestId);
       if (!request) throw new NotFoundException('request not found');
       raiseRule(collabResolveError(actor, request, dto.status));
-      Object.assign(request, {
-        status: dto.status,
-        resolution_note: note,
+      const handoff = dto.status === WinbackCollabRequestStatus.APPROVED && request.kind === WinbackCollabRequestKind.HANDOFF;
+      // Lock order is always collab row → meta row.
+      let meta = handoff
+        ? await this.locked(repo, Kind.OPPORTUNITY_META, id)
+        : await repo.findOne({ where: { kind: Kind.OPPORTUNITY_META, record_key: id } });
+      const before = this.opportunities.metaOf(row, meta, names);
+      if (handoff) raiseRule(staleHandoffError(request, before.owner_sales_user_id));
+      const resolved = {
         resolved_by_id: actor.id || null,
-        resolved_by_name: names.get(actor.id) ?? null,
+        resolved_by_name: (actor.id && names.get(actor.id)) || null,
         resolved_at: new Date().toISOString(),
-      });
-      let meta: WinbackAppRecord | null;
-      if (dto.status === WinbackCollabRequestStatus.APPROVED && request.kind === WinbackCollabRequestKind.HANDOFF) {
-        const current = await this.locked(repo, Kind.OPPORTUNITY_META, id);
-        const next = current ?? this.fresh(repo, Kind.OPPORTUNITY_META, id, actor);
+      };
+      Object.assign(request, { status: dto.status, resolution_note: note, ...resolved });
+      const events: CollabLogEvent[] = [{ event: RESOLVED_EVENT[dto.status], target_user_id: request.recipient_id, request, note }];
+      if (handoff) {
+        const next = meta ?? this.fresh(repo, Kind.OPPORTUNITY_META, id, actor);
         next.sales_user_id = request.recipient_id;
         next.account_id = row.winback_account_id ?? null;
         next.version = (next.version ?? 0) + 1;
         meta = await repo.save(next);
-      } else {
-        meta = await repo.findOne({ where: { kind: Kind.OPPORTUNITY_META, record_key: id } });
+        const toName = names.get(request.recipient_id) ?? request.recipient_name ?? null;
+        if (before.owner_sales_user_id !== request.recipient_id) {
+          events.push({
+            event: LogEvent.OWNER_CHANGED,
+            target_user_id: request.recipient_id,
+            request,
+            changes: { owner: { from: before.owner_sales_user_id, to: request.recipient_id, from_name: before.owner_name, to_name: toName } },
+          });
+        }
+        const closing = supersededNote(toName, request.recipient_id);
+        for (const other of state.requests) {
+          if (other === request || other.status !== WinbackCollabRequestStatus.PENDING || other.kind !== WinbackCollabRequestKind.HANDOFF) continue;
+          Object.assign(other, { status: WinbackCollabRequestStatus.SUPERSEDED, resolution_note: closing, ...resolved });
+          events.push({ event: LogEvent.REQUEST_SUPERSEDED, target_user_id: other.recipient_id, request: other, note: closing });
+        }
       }
       const saved = await this.saveCollab(repo, record, row, actor, state);
+      await this.log(repo, row, actor, names, events);
       return this.view(row, saved, state, meta, names);
     });
   }
@@ -222,13 +342,50 @@ export class OpportunityCollabService {
         created_at: new Date().toISOString(),
       });
       const saved = await this.saveCollab(repo, record, row, actor, state);
+      await this.log(repo, row, actor, names, [{ event: LogEvent.MESSAGE_POSTED, target_user_id: dto.recipient_id, note: body }]);
       return this.view(row, saved, state, undefined, names);
     });
   }
 
   /** Active sales users, names only — sales get 403 on `/sales-users` but must pick a recipient. */
   async directory() {
-    const { users } = await this.roster();
-    return users.map((u) => ({ id: u.id, name: u.name }));
+    const { recipients } = await this.roster();
+    return recipients.map((u) => ({ id: u.id, name: u.name }));
+  }
+
+  // --- audit log (manager only — the controller checks the role) ---
+
+  /** `{ data, meta: { page, limit, total } }`, newest first (the interceptor passes the envelope through). */
+  async logs(q: CollabLogQueryDto) {
+    const range = collabLogRange(q.from, q.to);
+    if ('status' in range) throw new BadRequestException(range.message);
+    const page = q.page ?? 1;
+    const limit = q.limit ?? 50;
+    const qb = this.records.createQueryBuilder('l').where('l.kind = :logKind', { logKind: Kind.OPPORTUNITY_COLLAB_LOG });
+    if (q.opportunity_id) qb.andWhere("l.payload->>'opportunity_id' = :logOpportunity", { logOpportunity: q.opportunity_id });
+    if (q.actor_id) qb.andWhere('l.sales_user_id = :logActor', { logActor: q.actor_id });
+    if (q.target_user_id) qb.andWhere("l.payload->>'target_user_id' = :logTarget", { logTarget: q.target_user_id });
+    if (q.user_id) {
+      // Two names: one parameter used as both uuid and text would not type-check in Postgres.
+      qb.andWhere("(l.sales_user_id = :logUser OR l.payload->>'target_user_id' = :logUserText)", { logUser: q.user_id, logUserText: q.user_id });
+    }
+    if (q.event?.length) qb.andWhere('l.status IN (:...logEvents)', { logEvents: q.event });
+    if (range.gte) qb.andWhere('l.create_date >= :logFrom', { logFrom: range.gte });
+    if (range.lt) qb.andWhere('l.create_date < :logBefore', { logBefore: range.lt });
+    if (range.lte) qb.andWhere('l.create_date <= :logUntil', { logUntil: range.lte });
+    const [rows, total] = await qb
+      .orderBy('l.create_date', 'DESC')
+      .addOrderBy(LOG_SEQ_SQL, 'DESC')
+      .addOrderBy('l.id', 'DESC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getManyAndCount();
+    return { data: rows.map(collabLogEntry), meta: { page, limit, total } };
+  }
+
+  /** One opportunity's log; 404 when the place does not exist. */
+  async opportunityLogs(id: string, q: CollabLogPageDto) {
+    await this.opportunities.placeRow(id);
+    return this.logs({ page: q.page, limit: q.limit, opportunity_id: id });
   }
 }

@@ -26,7 +26,7 @@ import { LeafCategorySelect, useCategoryRows } from '../category/category-form';
 // import { Button, Input, DragDropUpload, DateRangeInput } from '@/components/common';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, Stepper, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function InsertProductForm() {
   __useUiLocale();
   const categoryRows = useCategoryRows();
@@ -54,7 +54,7 @@ export default function InsertProductForm() {
         setBrandOptions(
           rows.map((b: any) => ({
             value: b.brand_code,
-            label: `${b.brand_code} — ${b.brand_name_th || b.brand_name_en || 'ยังไม่มีชื่อ'}`,
+            label: `${b.brand_name_th || b.brand_name_en || 'ยังไม่มีชื่อ'}${b.brand_code ? ` (${b.brand_code})` : ''}`,
           })),
         );
       })
@@ -109,15 +109,13 @@ export default function InsertProductForm() {
   // 🚀 ฟังก์ชันซับมิทส่งก้อนข้อมูลแบบ FormData ไปหลังบ้าน
   const handleSubmit = async () => {
     // เช็กความเหนียวของสเปกสินค้าเบื้องต้น
-    if (
-      !formData.product_sku ||
-      !formData.product_name_th ||
-      !formData.product_name_en ||
-      !sellingPrice.trim()
-    ) {
-      alert(
-        __uiText("กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ"),
-      );
+    const missing: string[] = [];
+    if (!formData.product_sku.trim()) missing.push(__uiText('รหัสสินค้า เช่น BREAD-001'));
+    if (!formData.product_name_th.trim()) missing.push(__uiText('ชื่อภาษาไทยที่ลูกค้าเห็น'));
+    if (!formData.product_name_en.trim()) missing.push(__uiText('ชื่อภาษาอังกฤษ'));
+    if (!sellingPrice.trim()) missing.push(__uiText('ราคาขายเป็นตัวเลข เช่น 45'));
+    if (missing.length) {
+      alert(__uiText('ยังบันทึกสินค้าไม่ได้ กรอกให้ครบ: {0}', { 0: missing.join(' · ') }));
       return;
     }
 
@@ -173,8 +171,9 @@ export default function InsertProductForm() {
       const result = response.data as { product_inventory_id?: string; product_inventory_sku?: string; message?: string };
 
       if (result?.product_inventory_id) {
-        alert(
-          __uiText("🎉 สร้างสินค้าใหม่และอัปโหลดรูปภาพสำเร็จ! SKU {0} · ID: {1}", {"0": result.product_inventory_sku ?? formData.product_sku, "1": result.product_inventory_id}),
+        toast(
+          __uiText('บันทึกสินค้าแล้ว'),
+          { label: __uiText('ขั้นถัดไป: เปิดดูสินค้าในรายการ'), href: '/j/allproducts' },
         );
         // ตั้งค่าเคลียร์ฟอร์มตามใจชอบหลังจากทำรายการสำเร็จ
       } else {
@@ -189,22 +188,24 @@ export default function InsertProductForm() {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="space-y-6 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800 border-b pb-4">
-          {__uiText("✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ")}</h2>
+        <PageHeader title={__uiText('เพิ่มสินค้า')} subtitle={__uiText('กรอกชื่อที่ลูกค้าเห็น ราคา และหมวด แล้วบันทึก')} />
+        <Stepper steps={['ข้อมูลสินค้า', 'ราคา', 'รายละเอียด', 'รูปภาพ']} />
 
         {/* 📌 ส่วนที่ 1: ข้อมูลหลักสินค้า (ใช้ Component กลาง <Input />) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">
-            {__uiText("📦 1. ข้อมูลหลักสินค้า (Global Info)")}</h3>
+            {__uiText('1. ข้อมูลสินค้า')}</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Input
-                label={__uiText("รหัสสินค้า (SKU) *")}
+                label={__uiText("รหัสสินค้า")}
+                required
+                hint={__uiText("รหัสสั้นที่ใช้ค้นในระบบ เช่น BREAD-001 ลูกค้าเห็นชื่อสินค้า ไม่ใช่รหัสนี้")}
                 value={formData.product_sku}
                 onChange={(e: any) =>
                   handleInputChange('product_sku', e.target.value)
                 }
-                placeholder={__uiText("เช่น BIDBEK666640977")}
+                placeholder={__uiText("BREAD-001")}
               />
             </div>
             <div>
@@ -251,7 +252,9 @@ export default function InsertProductForm() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label={__uiText("ราคาขาย (฿) *")}
+              label={__uiText("ราคาขาย")}
+              required
+              hint={__uiText("ราคาต่อหน่วยที่ลูกค้าจ่าย เช่น 45")}
               type="number"
               min={0}
               step="0.01"
@@ -265,6 +268,7 @@ export default function InsertProductForm() {
           <div>
             <Input
               label={__uiText("หน่วยขาย")}
+              hint={__uiText("หน่วยที่ลูกค้าสั่ง เช่น ชิ้น แพ็ก หรือกิโลกรัม")}
               value={sellingUnit}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSellingUnit(e.target.value)
@@ -279,7 +283,8 @@ export default function InsertProductForm() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label={__uiText("จำนวนสต็อกเริ่มต้น")}
+              label={__uiText("จำนวนในคลังเริ่มต้น")}
+              hint={__uiText("ไม่บังคับ ใส่ 0 ถ้ายังไม่รับสินค้าเข้า")}
               type="number"
               value={stockQty}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -301,16 +306,21 @@ export default function InsertProductForm() {
         {/* 🇹🇭 ส่วนที่ 2: ข้อมูลภาษาไทย (Thai Translation) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-red-600">
-            {__uiText("🇹🇭 2. ข้อมูลภาษาไทย (Thai Translation)")}</h3>
+            {__uiText('2. ชื่อและคำอธิบายภาษาไทย')}</h3>
           <Input
-            label={__uiText("ชื่อสินค้า (ภาษาไทย) *")}
+            label={__uiText("ชื่อสินค้าภาษาไทย")}
+            required
+            hint={__uiText("ชื่อที่ลูกค้าภาษาไทยเห็นบนร้าน")}
+            placeholder={__uiText("ขนมปังโฮลวีต")}
             value={formData.product_name_th}
             onChange={(e: any) =>
               handleInputChange('product_name_th', e.target.value)
             }
           />
           <Input
-            label={__uiText("รายละเอียดสินค้าอย่างย่อ (ภาษาไทย)")}
+            label={__uiText("คำอธิบายภาษาไทย")}
+            hint={__uiText("ไม่บังคับ สั้น ๆ หนึ่งถึงสองประโยค")}
+            placeholder={__uiText("ขนมปังโฮลวีต 450 กรัม")}
             value={formData.product_description_th}
             onChange={(e: any) =>
               handleInputChange('product_description_th', e.target.value)
@@ -323,16 +333,21 @@ export default function InsertProductForm() {
         {/* 🇺🇸 ส่วนที่ 3: ข้อมูลภาษาอังกฤษ (English Translation) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">
-            {__uiText("🇺🇸 3. ข้อมูลภาษาอังกฤษ (English Translation)")}</h3>
+            {__uiText('3. ชื่อและคำอธิบายภาษาอังกฤษ')}</h3>
           <Input
-            label={__uiText("ชื่อสินค้า (ภาษาอังกฤษ) *")}
+            label={__uiText("ชื่อสินค้าภาษาอังกฤษ")}
+            required
+            hint={__uiText("ชื่อที่ลูกค้าภาษาอังกฤษเห็น")}
+            placeholder="Whole wheat bread"
             value={formData.product_name_en}
             onChange={(e: any) =>
               handleInputChange('product_name_en', e.target.value)
             }
           />
           <Input
-            label={__uiText("รายละเอียดสินค้าอย่างย่อ (ภาษาอังกฤษ)")}
+            label={__uiText("คำอธิบายภาษาอังกฤษ")}
+            hint={__uiText("ไม่บังคับ")}
+            placeholder="Whole wheat loaf, 450 g"
             value={formData.product_description_en}
             onChange={(e: any) =>
               handleInputChange('product_description_en', e.target.value)
@@ -354,7 +369,7 @@ export default function InsertProductForm() {
         {/* 📸 ส่วนที่ 4: ลากวางอัปโหลดไฟล์จริง (Component กลาง <DragDropUpload />) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-green-600">
-            {__uiText("📸 4. คลังรูปภาพสินค้า (อัปโหลดสูงสุด 3 รูป)")}</h3>
+            {__uiText('4. รูปสินค้า สูงสุด 3 รูป')}</h3>
 
           {/* เสียบตัวลากวางส่วนกลางของคุณที่นี่ */}
           <DragDropUpload
@@ -397,7 +412,7 @@ export default function InsertProductForm() {
         {/* 🚀 ปุ่มกดบันทึกโดยใช้ Component กลาง <Button /> ของคุณ */}
         <div className="pt-4">
           <Button
-            text={__uiText("💾 บันทึกข้อมูลและประมวลผล AI")}
+            text={__uiText("บันทึกสินค้า")}
             onClick={() => handleSubmit()}
           />
         </div>

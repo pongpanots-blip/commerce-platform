@@ -16,63 +16,22 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { getRuleTypeLabel, isLiveSegment, summarizeRuleConfig } from './segment-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { confirmAction, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const SegmentList = () => {
   __useUiLocale();
   const navigate = useNavigate();
   const [segments, setSegments] = useState<UserSegmentListItem[]>([]);
   const [loading, setLoading] = useState(false);
-  // Legacy non-live segments only — `frozen_at === null` means never previewed since the
-  // freeze-on-read change, so one preview call freezes them. Live rows and already-frozen
-  // rows never call this; `member_count` from the list response covers them.
-  const [lazyFrozenCounts, setLazyFrozenCounts] = useState<Record<string, number>>({});
-  const [lazyFreezingIds, setLazyFreezingIds] = useState<Set<string>>(new Set());
-  // Bumped on every loadData() so a slow lazy-freeze from a stale load (e.g. before a
-  // delete) can't overwrite counts from the load that replaced it.
+  const [lockingId, setLockingId] = useState<string | null>(null);
   const loadSeq = useRef(0);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     const seq = ++loadSeq.current;
-    setLazyFrozenCounts({});
-    setLazyFreezingIds(new Set());
     try {
       const items = await getUserSegments();
       if (seq !== loadSeq.current) return;
       setSegments(items);
-
-      const toFreeze = items.filter(
-        (segment) => !isLiveSegment(segment.rule_type, segment.definition) && segment.frozen_at === null,
-      );
-      setLazyFreezingIds(new Set(toFreeze.map((s) => s.id)));
-      const freezes = toFreeze.map((segment) =>
-        previewUserSegmentCount(segment.id)
-          .then((count) => {
-            if (seq !== loadSeq.current) return;
-            setLazyFrozenCounts((prev) => ({ ...prev, [segment.id]: count }));
-          })
-          .catch((error: unknown) => {
-            console.error('lazy freeze failed:', segment.id, error);
-          })
-          .finally(() => {
-            if (seq === loadSeq.current) {
-              setLazyFreezingIds((prev) => {
-                const next = new Set(prev);
-                next.delete(segment.id);
-                return next;
-              });
-            }
-          }),
-      );
-      // Re-read once so freshly frozen rows show their "ล็อกเมื่อ" date too, not just the count.
-      if (freezes.length > 0) {
-        void Promise.allSettled(freezes)
-          .then(() => getUserSegments())
-          .then((fresh) => {
-            if (seq === loadSeq.current) setSegments(fresh);
-          })
-          .catch((error: unknown) => console.error('reload after freeze failed:', error));
-      }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'load failed';
       console.error('load segments error:', message);
@@ -85,8 +44,35 @@ const SegmentList = () => {
     loadData();
   }, [loadData]);
 
+  const lockMembers = async (row: UserSegmentListItem) => {
+    const ok = await confirmAction({
+      title: 'ล็อกรายชื่อของกลุ่มนี้?',
+      body: __uiMessage('ระบบจะจำรายชื่อที่ตรงเงื่อนไขของ {0} ตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ', { 0: row.name }),
+      confirmLabel: 'ล็อกรายชื่อ',
+      danger: true,
+    });
+    if (!ok) return;
+    setLockingId(row.id);
+    try {
+      await previewUserSegmentCount(row.id);
+      toast('ล็อกรายชื่อแล้ว');
+      await loadData();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'lock failed';
+      alert(__uiText('ล็อกรายชื่อไม่สำเร็จ: {0}', { 0: message }));
+    } finally {
+      setLockingId(null);
+    }
+  };
+
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(__uiText("ยืนยันการลบ segment \"{0}\"?", {"0": name}))) return;
+    const ok = await confirmAction({
+      title: 'ลบกลุ่มลูกค้านี้?',
+      body: __uiMessage('{0} จะหายจากรายการ คูปองหรือข้อความที่ใช้อยู่จะหากลุ่มนี้ไม่เจอ', { 0: name }),
+      confirmLabel: 'ลบกลุ่มลูกค้า',
+      danger: true,
+    });
+    if (!ok) return;
     try {
       await deleteUserSegment(id);
       await loadData();
@@ -118,11 +104,11 @@ const SegmentList = () => {
     },
     {
       key: 'rule_type',
-      label: __uiText("Rule Type"),
+      label: __uiText("วิธีเลือก"),
       render: (value: string, row) =>
         row.definition ? (
           <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-            {__uiText("Visual Builder")}</span>
+            {__uiText("ตัวสร้างเงื่อนไข")}</span>
         ) : (
           <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
             {getRuleTypeLabel(value)}
@@ -131,7 +117,7 @@ const SegmentList = () => {
     },
     {
       key: 'rule_config',
-      label: __uiText("Config"),
+      label: __uiText("เงื่อนไข"),
       render: (_, row) =>
         row.definition ? (
           <span className="text-xs text-gray-400">{__uiText("เงื่อนไขแบบ AND/OR — แก้ไขใน Builder")}</span>
@@ -150,20 +136,24 @@ const SegmentList = () => {
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-gray-700">—</span>
               <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
-                {__uiText("live")}</span>
+                {__uiText("นับสด")}</span>
             </div>
           );
         }
 
-        const freezing = lazyFreezingIds.has(row.id);
-        const count = row.member_count ?? lazyFrozenCounts[row.id] ?? null;
+        const count = row.member_count;
         const frozenAt = row.frozen_at;
 
         return (
           <div className="text-sm">
             <span className="text-gray-700">
-              {freezing ? '…' : count != null ? __uiText("{0} คน", {"0": count.toLocaleString()}) : '—'}
+              {lockingId === row.id ? '…' : count != null ? __uiText("{0} คน", {"0": count.toLocaleString()}) : __uiText('ยังไม่ล็อก')}
             </span>
+            {!frozenAt && (
+              <button type="button" className="mt-1 block text-xs text-primary hover:underline" disabled={lockingId === row.id} onClick={() => void lockMembers(row)}>
+                {__uiText('ล็อกรายชื่อ')}
+              </button>
+            )}
             {frozenAt ? (
               <div className="text-xs text-gray-400">
                 {__uiText("ล็อกเมื่อ ")}{new Date(frozenAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}
@@ -178,9 +168,9 @@ const SegmentList = () => {
       label: __uiText("สถานะ"),
       render: (value: boolean) =>
         value ? (
-          <span className="text-xs font-semibold text-green-600">{__uiText("Active")}</span>
+          <span className="text-xs font-semibold text-green-600">{__uiText("ใช้งานอยู่")}</span>
         ) : (
-          <span className="text-xs text-gray-400">{__uiText("Inactive")}</span>
+          <span className="text-xs text-gray-400">{__uiText("ปิดอยู่")}</span>
         ),
     },
     {

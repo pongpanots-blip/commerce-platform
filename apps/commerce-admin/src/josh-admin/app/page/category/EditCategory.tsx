@@ -107,6 +107,8 @@ const EditCategory = () => {
       subtitle={__uiText('แก้ชื่อ ไอคอน ลำดับ และการแสดงผลบนหน้าแรก — ตำแหน่งในโครงสร้างมาจาก seed ย้ายที่นี่ไม่ได้')}
       backPath={ADMIN_ROUTES.categories}
       saving={saving}
+      saveLabel="บันทึกหมวดหมู่"
+      steps={['ตรวจชื่อหมวด', 'แก้ชื่อหรือรูป', 'บันทึก']}
       onSave={handleSubmit}
     >
       {error && <p className="text-sm text-alert">{__uiText(error)}</p>}

@@ -35,8 +35,9 @@ const CreateBotIntentRule = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม Intent Rule")}
-      subtitle={__uiText("กฎจับคู่ intent ของ chatbot จาก pattern (regex)")}
+      title={__uiText("เพิ่มกติกาที่บอทใช้ตอบ")}
+      subtitle={__uiText("บอกคำที่ลูกค้าพิมพ์ แล้วเลือกรูปแบบคำตอบที่บอทใช้")}
+      saveLabel="บันทึกกติกา"
       backPath={ADMIN_ROUTES.botIntentRules}
       saving={saving}
       onSave={handleSubmit}

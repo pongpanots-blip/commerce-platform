@@ -45,7 +45,9 @@ function PageEditor({
     <LeaveGuardContext.Provider value={guard.context}>
       <AdminInsertLayout
         title={page ? __uiText("แก้ไขหน้าโปรโมชัน") : __uiText("สร้างหน้าโปรโมชัน")}
-        subtitle={__uiText("แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — ไม่มีขั้นตอน publish")}
+        subtitle={__uiText("ใส่ภาพแบนเนอร์ แล้วเลือกแคมเปญ สินค้าและคูปองบนหน้านั้นมาจากแคมเปญที่เลือก บันทึกแล้วลูกค้าเห็นได้เลย")}
+        saveLabel="บันทึกหน้าโปรโมชัน"
+        steps={['ตั้งชื่อหน้า', 'เลือกแคมเปญและภาพ', 'บันทึกหน้าโปรโมชัน']}
         saving={state.saving}
         wide
         onBack={() =>

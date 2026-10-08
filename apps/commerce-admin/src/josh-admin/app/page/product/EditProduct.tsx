@@ -398,7 +398,9 @@ const EditProduct = () => {
   return (
     <AdminInsertLayout
       title={__uiText("แก้ไขสินค้า")}
-      subtitle={__uiText("อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้า Upload Video")}
+      subtitle={__uiText("อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้าอัปโหลดวิดีโอ")}
+      saveLabel="บันทึกสินค้า"
+      steps={['ตรวจชื่อสินค้า', 'แก้ราคาหรือรูป', 'บันทึกสินค้า']}
       backPath={id ? ADMIN_ROUTES.productDetail(id) : ADMIN_ROUTES.products}
       saving={saving}
       onSave={handleSubmit}

@@ -17,7 +17,7 @@ import {
 
 /** Name + dates only — the promotions, coupons and page are added from the campaign's own page. */
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function CreateCampaign() {
   __useUiLocale();
   const navigate = useNavigate();
@@ -42,6 +42,7 @@ export default function CreateCampaign() {
     setSaving(true);
     try {
       const created = await createCampaign(buildCreateCampaignPayload(form));
+      toast('บันทึกแคมเปญแล้ว', { label: 'ขั้นถัดไป: เพิ่มโปรหรือคูปอง', href: ADMIN_ROUTES.campaignDetail(created.id) });
       navigate(ADMIN_ROUTES.campaignDetail(created.id));
     } catch (err) {
       setSaveError(getErrorMessage(err, 'สร้าง Campaign ไม่สำเร็จ'));
@@ -51,21 +52,24 @@ export default function CreateCampaign() {
 
   return (
     <AdminInsertLayout
-      title={__uiText("สร้าง Campaign")}
-      subtitle={__uiText("ตั้งชื่อและช่วงเวลา แล้วเพิ่มโปร คูปอง และหน้าโปรในหน้าถัดไป")}
+      title={__uiText("สร้างแคมเปญ")}
+      subtitle={__uiText("ตั้งชื่อและช่วงเวลาที่โปรนี้ใช้ได้ โปรและคูปองเพิ่มในหน้าถัดไป")}
       backPath={ADMIN_ROUTES.campaigns}
       saving={saving}
+      saveLabel="บันทึกแคมเปญ"
+      steps={['ตั้งชื่อแคมเปญ', 'เลือกวันเริ่มและวันสิ้นสุด', 'บันทึก แล้วไปเพิ่มโปรในหน้าถัดไป']}
       onSave={() => void handleSave()}
     >
       <CouponFormErrorBanner error={saveError} />
       <Section title={__uiText("ข้อมูล Campaign")}>
         <Input
-          label={__uiText("ชื่อ Campaign")}
+          label={__uiText("ชื่อแคมเปญ")}
           required
+          hint={__uiText("ชื่อที่ทีมและลูกค้าเข้าใจ เช่น ลดราคาขนมปังสิ้นเดือน")}
           value={form.name}
           error={errors.name}
           aria-invalid={!!errors.name}
-          placeholder={__uiText("เช่น 11.11 Beef Fest")}
+          placeholder={__uiText("ลดราคาขนมปังสิ้นเดือน")}
           onChange={(event) => patch({ name: event.target.value })}
         />
         <div role="group" aria-labelledby={dateLabelId} aria-describedby={errors.dates ? datesErrorId : undefined}>

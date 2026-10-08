@@ -63,8 +63,9 @@ const CreateBotTemplate = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม Template")}
-      subtitle={__uiText("กำหนดรูปแบบการตอบกลับของ chatbot")}
+      title={__uiText("เพิ่มรูปแบบคำตอบ")}
+      subtitle={__uiText("เขียนข้อความที่บอทใช้ตอบลูกค้า")}
+      saveLabel="บันทึกรูปแบบคำตอบ"
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}

@@ -192,8 +192,10 @@ function MechanicEditor({ id }: { id?: string }) {
 
   return (
     <AdminInsertLayout
-      title={isEdit ? __uiText("แก้ไข Promotion Mechanic") : __uiText("สร้าง Promotion Mechanic")}
-      subtitle={__uiText("ทุก SKU ในโปรได้ส่วนลดเดียวกัน — SKU มาจาก Product set ที่เลือก")}
+      title={isEdit ? __uiText("แก้ไขโปรโมชัน") : __uiText("สร้างโปรโมชัน")}
+      subtitle={__uiText("สินค้าในชุดที่เลือกได้ส่วนลดเท่ากันทั้งหมด")}
+      saveLabel="บันทึกโปรโมชัน"
+      steps={['ตั้งชื่อโปรโมชัน', 'เลือกชุดสินค้าและส่วนลด', 'บันทึกโปรโมชัน']}
       backPath={campaignParam ? ADMIN_ROUTES.campaignDetail(campaignParam) : ADMIN_ROUTES.promotionsMechanic}
       saving={saving}
       wide

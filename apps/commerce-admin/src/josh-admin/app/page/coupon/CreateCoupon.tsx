@@ -511,7 +511,9 @@ const CreateCoupon = () => {
   return (
     <CouponDraftStashContext.Provider value={stashDraft}>
       <AdminInsertLayout
-        title={duplicateParams ? __uiText("คัดลอกคูปอง") : __uiText("เพิ่ม Coupon")}
+        title={duplicateParams ? __uiText("คัดลอกคูปอง") : __uiText("สร้างคูปอง")}
+        saveLabel="บันทึกคูปอง"
+        steps={['ตั้งชื่อและโค้ด', 'เลือกส่วนลดและกลุ่มลูกค้า', 'บันทึกคูปอง']}
         subtitle={
           duplicatedFromCode
             ? __uiText("คัดลอกจาก {0} — ตรวจวันที่เริ่ม/สิ้นสุดก่อนบันทึก", {"0": duplicatedFromCode})

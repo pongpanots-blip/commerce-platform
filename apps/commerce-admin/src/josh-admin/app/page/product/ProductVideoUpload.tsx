@@ -100,7 +100,8 @@ const ProductVideoUpload = () => {
   return (
     <AdminInsertLayout
       title={__uiText("อัปโหลดวิดีโอสินค้า")}
-      subtitle={__uiText("เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)")}
+      subtitle={__uiText("เลือกสินค้าที่ต้องการให้วิดีโอนี้ไปแสดง วิดีโอจะอยู่ท้ายสุดเสมอ")}
+      saveLabel="บันทึกวิดีโอ"
       backPath={ADMIN_ROUTES.products}
       saving={saving}
       onSave={handleSubmit}

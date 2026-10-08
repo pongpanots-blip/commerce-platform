@@ -58,8 +58,9 @@ const CreateBotWorkflow = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม Workflow")}
-      subtitle={__uiText("กำหนด trigger, action และ response template ของ chatbot workflow")}
+      title={__uiText("เพิ่มขั้นตอนของบอท")}
+      subtitle={__uiText("เลือกเหตุการณ์ที่เริ่มขั้นตอน แล้วเลือกว่าบอททำอะไรและตอบด้วยข้อความไหน")}
+      saveLabel="บันทึกขั้นตอนของบอท"
       backPath={ADMIN_ROUTES.botWorkflows}
       saving={saving}
       onSave={handleSubmit}

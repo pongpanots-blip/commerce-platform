@@ -1,4 +1,5 @@
 import type { AxiosResponse } from 'axios';
+import { uiText } from '@cp/ui';
 import { apiClient } from '../api-client/api-client';
 
 export interface OrderListParams {
@@ -746,19 +747,19 @@ export const formatShipmentDuration = (
   seconds: number | null | undefined,
 ): string => {
   if (seconds == null || seconds < 0) return '-';
-  if (seconds < 60) return '<1 นาที';
+  if (seconds < 60) return uiText('<1 นาที');
 
   const totalMins = Math.floor(seconds / 60);
-  if (totalMins < 60) return `${totalMins} นาที`;
+  if (totalMins < 60) return uiText('{0} นาที', { 0: totalMins });
 
   const days = Math.floor(totalMins / (60 * 24));
   const hours = Math.floor((totalMins % (60 * 24)) / 60);
   const mins = totalMins % 60;
 
   const parts: string[] = [];
-  if (days > 0) parts.push(`${days} วัน`);
-  if (hours > 0) parts.push(`${hours} ชม.`);
-  if (mins > 0 || parts.length === 0) parts.push(`${mins} นาที`);
+  if (days > 0) parts.push(uiText('{0} วัน', { 0: days }));
+  if (hours > 0) parts.push(uiText('{0} ชม.', { 0: hours }));
+  if (mins > 0 || parts.length === 0) parts.push(uiText('{0} นาที', { 0: mins }));
   return parts.join(' ');
 };
 
@@ -767,7 +768,7 @@ export const formatShipmentDurationMinutes = (
   minutes: number | null | undefined,
 ): string => {
   if (minutes == null || minutes < 0) return '-';
-  if (minutes < 1) return '<1 นาที';
+  if (minutes < 1) return uiText('<1 นาที');
   return formatShipmentDuration(minutes * 60);
 };
 

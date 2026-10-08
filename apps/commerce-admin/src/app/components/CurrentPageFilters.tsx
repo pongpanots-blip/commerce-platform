@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Field, SearchInput, Select, statusLabel } from '@cp/ui';
+import { Button, Field, FilterBar, SearchInput, Select, statusLabel } from '@cp/ui';
 
 /** These APIs paginate records but do not support a server-side text query. */
 // ui-copy-migration: only literal UI copy and notification templates
@@ -19,19 +19,16 @@ export function CurrentPageFilters({ filter, placeholder, loading }: {
   loading: boolean;
 }) {
   __useUiLocale();
-  return <div className="space-y-3 border-b border-secondary-container p-4 md:px-5">
-    <div className="flex flex-wrap items-end gap-3">
-      <Field label={__uiText("ค้นหาในหน้านี้")} className="min-w-0 w-full sm:w-80">
+  return <FilterBar hint={loading ? __uiText("กำลังโหลดข้อมูล…") : __uiText("แสดง {0} จาก {1} รายการในหน้านี้ · ค้นหาและกรองเฉพาะหน้าที่เปิดอยู่", {"0": filter.visible.length.toLocaleString(), "1": filter.loaded.toLocaleString()})}>
+      <Field label={__uiText("ค้นหาในหน้านี้")} hint={__uiText("พิมพ์ชื่อหรือรหัสที่เห็นในตารางนี้")} className="min-w-0 w-full sm:w-80">
         <SearchInput value={filter.query} placeholder={placeholder} onChange={event => filter.setQuery(event.target.value)} disabled={loading} />
       </Field>
-      <Field label={__uiText("สถานะในหน้านี้")} className="w-full sm:w-48">
+      <Field label={__uiText("สถานะในหน้านี้")} hint={__uiText("แสดงเฉพาะสถานะที่อยู่ในหน้านี้")} className="w-full sm:w-48">
         <Select value={filter.status} onChange={event => filter.setStatus(event.target.value)} disabled={loading}>
           <option value="">{__uiText("ทุกสถานะ")}</option>
           {filter.statuses.map(status => <option key={status} value={status}>{statusLabel(status)}</option>)}
         </Select>
       </Field>
       {filter.filtered && <Button icon="filter_alt_off" onClick={filter.clear}>{__uiText("ล้างตัวกรอง")}</Button>}
-    </div>
-    <p aria-live="polite" className="text-xs text-on-surface-variant">{loading ? __uiText("กำลังโหลดข้อมูล…") : __uiText("แสดง {0} จาก {1} รายการในหน้านี้", {"0": filter.visible.length.toLocaleString(), "1": filter.loaded.toLocaleString()})} {__uiText(" · ค้นหาและกรองเฉพาะหน้าปัจจุบัน")}</p>
-  </div>;
+    </FilterBar>;
 }

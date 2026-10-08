@@ -6,7 +6,7 @@ import AdminInsertLayout from '../../components/AdminInsertLayout';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CreateSupplier = () => {
   __useUiLocale();
   const navigate = useNavigate();
@@ -21,13 +21,14 @@ const CreateSupplier = () => {
 
   const handleSubmit = async () => {
     if (!form.supplier_name) {
-      alert(__uiText("กรุณากรอกชื่อ Supplier"));
+      alert(__uiText("กรอกชื่อผู้จัดจำหน่าย เช่น บริษัท ตัวอย่าง จำกัด"));
       return;
     }
     setSaving(true);
     try {
       const response = await createSupplier(form);
       if (response.data?.message === '') {
+        toast('บันทึกผู้จัดจำหน่ายแล้ว', { label: 'เปิดรายการผู้จัดจำหน่าย', href: ADMIN_ROUTES.suppliers });
         navigate(ADMIN_ROUTES.suppliers);
       } else if (response.data?.message) {
         alert(response.data.message);
@@ -41,14 +42,19 @@ const CreateSupplier = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม Supplier")}
-      subtitle={__uiText("ข้อมูลผู้จัดจำหน่าย / ซัพพลายเออร์")}
+      title={__uiText("เพิ่มผู้จัดจำหน่าย")}
+      subtitle={__uiText("ชื่อร้านหรือบริษัทที่ส่งสินค้าให้เรา")}
       backPath={ADMIN_ROUTES.suppliers}
       saving={saving}
+      saveLabel="บันทึกผู้จัดจำหน่าย"
+      steps={['กรอกชื่อ', 'ใส่ช่องทางติดต่อ', 'บันทึกผู้จัดจำหน่าย']}
       onSave={handleSubmit}
     >
       <Input
-        label={__uiText("ชื่อ Supplier *")}
+        label={__uiText("ชื่อผู้จัดจำหน่าย")}
+        required
+        hint={__uiText("ใช้ชื่อที่ทีมเรียกจริง")}
+        placeholder={__uiText("เช่น บริษัท ตัวอย่าง จำกัด")}
         value={form.supplier_name}
         onChange={(e) => setForm({ ...form, supplier_name: e.target.value })}
       />

@@ -1,4 +1,4 @@
-import { Button, PageHeader, Panel } from '@cp/ui';
+import { Button, PageHeader, Panel, Stepper } from '@cp/ui';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,8 @@ type AdminInsertLayoutProps = {
   onBack?: () => void;
   /** Extra controls rendered left of ยกเลิก/บันทึก in the header (e.g. an active switch). */
   headerActions?: React.ReactNode;
+  /** Ordered steps shown above the form. */
+  steps?: string[];
   children: React.ReactNode;
 };
 
@@ -31,6 +33,7 @@ export function AdminInsertLayout({
   onSave,
   onBack,
   headerActions,
+  steps,
   children,
 }: AdminInsertLayoutProps) {
   __useUiLocale();
@@ -41,6 +44,7 @@ export function AdminInsertLayout({
     <div className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`}>
       <Button variant="ghost" icon="arrow_back" onClick={handleBack}>{__uiText("กลับ")}</Button>
       <PageHeader title={title} subtitle={subtitle} actions={headerActions} />
+      {steps && steps.length > 0 && <Stepper steps={steps} />}
       <Panel className="p-4 md:p-6 flex flex-col gap-5">{children}</Panel>
       <div className="sticky bottom-0 z-20 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-secondary-container bg-white/95 p-3 shadow-sm backdrop-blur-sm">
         <Button variant="secondary" onClick={handleBack} disabled={saving}>{__uiText("ยกเลิก")}</Button>

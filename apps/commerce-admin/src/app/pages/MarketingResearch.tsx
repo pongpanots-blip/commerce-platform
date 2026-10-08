@@ -3,7 +3,7 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-caption-migration: literal captions only
 // ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
-import { Alert, Button, ButtonLink, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
+import { Alert, Button, ButtonLink, Checkbox, CodeBlock, confirmAction, EmptyState, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, fmt, toast } from '@cp/ui';
 import {
   marketingResearchApi, RESEARCH_AREAS, RESEARCH_KINDS, RESEARCH_SECTORS,
   ResearchKind, ResearchRun, ResearchTopic, ResearchTopicInput,
@@ -49,7 +49,25 @@ export function MarketingResearch() {
   }
 
   function submit() {
-    act('create', () => marketingResearchApi.create(form), 'บันทึกโจทย์แล้ว').then(() => setForm(blank));
+    if (!form.title.trim()) {
+      setNote({ ok: false, text: __uiMessage('ใส่หัวข้อเป็นประโยค เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ') });
+      return;
+    }
+    act('create', () => marketingResearchApi.create(form), 'บันทึกโจทย์แล้ว').then(() => {
+      setForm(blank);
+      toast('บันทึกโจทย์แล้ว', { label: 'ขั้นถัดไป: เปิดรายงานเมื่อมีผล' });
+    });
+  }
+
+  async function archiveTopic(topic: ResearchTopic) {
+    const ok = await confirmAction({
+      title: 'เก็บโจทย์นี้ไว้ในประวัติ?',
+      body: 'โจทย์จะหายจากรายการที่ใช้งาน และจะไม่ถูกรันต่อ รายงานที่เก็บไว้แล้วยังอยู่',
+      confirmLabel: 'เก็บโจทย์',
+      danger: true,
+    });
+    if (!ok) return;
+    await act(`arc-${topic.id}`, () => marketingResearchApi.archive(topic), 'เก็บโจทย์แล้ว');
   }
 
   const ready = new Set((sources.data ?? []).filter((s) => s.ready).map((s) => s.id));
@@ -75,8 +93,8 @@ export function MarketingResearch() {
         onSubmit={submit}
         submitLabel={busy === 'create' ? __uiText("กำลังบันทึก…") : __uiText("บันทึกโจทย์")}
       >
-        <Field label={__uiText("หัวข้อ")}>
-          <Input required maxLength={400} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={__uiText("เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ")} />
+        <Field label={__uiText("หัวข้อ")} required hint={__uiText("เขียนเป็นประโยคที่คนอ่านรู้เรื่อง")}>
+          <Input required maxLength={400} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={__uiText("ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ")} />
         </Field>
         <Field label={__uiText("ประเภท")}>
           <Select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as ResearchKind })}>
@@ -125,7 +143,7 @@ export function MarketingResearch() {
         {topics.loading ? (
           <Loading />
         ) : !topics.data?.items.length ? (
-          <Empty icon="search">{__uiText("ยังไม่มีโจทย์")}</Empty>
+          <EmptyState icon="search" title={__uiText('ยังไม่มีโจทย์')} description={__uiText('กรอกหัวข้อด้านบน แล้วกดบันทึกโจทย์')} action={<Button variant="primary" onClick={() => document.querySelector<HTMLInputElement>('input[required]')?.focus()}>{__uiText('เริ่มตั้งโจทย์')}</Button>} />
         ) : (
           <Table>
             <THead>
@@ -159,7 +177,7 @@ export function MarketingResearch() {
                               const updated = await marketingResearchApi.update(t, { title, kind, area, days, sector, followHourly, sources: [...sources, ...FREE] });
                               await marketingResearchApi.requestRun(updated.id);
                             }, 'เพิ่มแหล่งฟรีและส่งเข้าคิวแล้ว')}>{__uiText("เพิ่มแหล่งฟรี")}</Button>}
-                          <Button variant="danger-ghost" size="sm" disabled={busy === `arc-${t.id}`} onClick={() => act(`arc-${t.id}`, () => marketingResearchApi.archive(t), 'เก็บโจทย์แล้ว')}>{__uiText("เก็บ")}</Button>
+                          <Button variant="danger-ghost" size="sm" disabled={busy === `arc-${t.id}`} onClick={() => void archiveTopic(t)}>{__uiText("เก็บโจทย์")}</Button>
                         </>
                       )}
                     </TD>

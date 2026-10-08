@@ -1,4 +1,4 @@
-import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { fieldExample, fieldHint, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import React, { ReactNode } from 'react';
 
 // สืบทอดคุณสมบัติมาตรฐานของแท็ก <input> มาทั้งหมดเพื่อให้ใช้งานง่าย
@@ -32,6 +32,8 @@ export function Input({
   const generatedId = React.useId();
   const inputId = label ? (id ?? generatedId) : id;
   const messageId = `${generatedId}-message`;
+  const example = placeholder ?? (label ? fieldExample(type) : undefined);
+  const help = hint ?? (label ? fieldHint(required) : undefined);
 
   return (
     <div className="w-full">
@@ -50,7 +52,7 @@ export function Input({
         <input
           id={inputId}
           type={type}
-          placeholder={placeholder ? __uiText(placeholder) : undefined}
+          placeholder={example ? __uiText(example) : undefined}
           disabled={disabled}
           required={required}
           // Figma "Data Entry / Basic Input" — h-40 px-12 radius-8, ขอบ #DEEAFF → primary ตอน hover/focus
@@ -69,7 +71,7 @@ export function Input({
           `}
           {...props}
           aria-invalid={error ? true : props['aria-invalid']}
-          aria-describedby={[props['aria-describedby'], (error || hint) && messageId].filter(Boolean).join(' ') || undefined}
+          aria-describedby={[props['aria-describedby'], (error || help) && messageId].filter(Boolean).join(' ') || undefined}
         />
         {unit && (
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-ink-muted">
@@ -80,7 +82,7 @@ export function Input({
       {error ? (
         <p id={messageId} className="mt-1 text-sm text-alert">{__uiText(error)}</p>
       ) : (
-        hint && <p id={messageId} className="mt-1 text-xs text-ink-muted">{__uiText(hint)}</p>
+        help && <p id={messageId} className="mt-1 text-xs text-ink-muted">{__uiText(help)}</p>
       )}
     </div>
   );

@@ -14,7 +14,7 @@ import {
   useCategoryRows,
 } from './category-form';
 
-import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 
 /** Level 3 เป็นชั้นลึกสุดใน seed — หมวดที่ลึกกว่านั้นจะหลุดจากทุกคิวรีที่หน้าร้านใช้ */
 const DEEPEST_PARENT_LEVEL = 2;
@@ -35,6 +35,7 @@ const CreateCategory = () => {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ parent?: string; name?: string }>({});
   const [form, setForm] = useState({
     parent_id: '',
     category_name_en: '',
@@ -48,12 +49,12 @@ const CreateCategory = () => {
   const homepageApplies = newLevel === 1;
 
   const handleSubmit = async () => {
-    if (!form.parent_id) {
-      setError('กรุณาเลือกหมวดแม่');
-      return;
-    }
-    if (!form.category_name_en) {
-      setError('กรุณากรอกชื่อหมวดหมู่ (EN)');
+    const next: { parent?: string; name?: string } = {};
+    if (!form.parent_id) next.parent = 'เลือกหมวดที่อยู่เหนือหมวดใหม่ เช่น เบเกอรี่ หมวดชั้นวางสินค้าเลือกเป็นหมวดแม่ไม่ได้';
+    if (!form.category_name_en.trim()) next.name = 'ใส่ชื่อภาษาอังกฤษสั้น ๆ เช่น Bakery';
+    setFieldErrors(next);
+    if (next.parent || next.name) {
+      setError('ยังบันทึกไม่ได้ — แก้ช่องที่ขึ้นสีแดงตามคำแนะนำ');
       return;
     }
     setError('');
@@ -68,6 +69,7 @@ const CreateCategory = () => {
       });
       if (response.data?.status) {
         await queryClient.invalidateQueries({ queryKey: CATEGORY_ROWS_QUERY_KEY });
+        toast('บันทึกหมวดหมู่แล้ว', { label: 'ไปจัดลำดับในรายการหมวด', href: ADMIN_ROUTES.categories });
         navigate(ADMIN_ROUTES.categories);
       }
     } catch (err: any) {
@@ -80,22 +82,26 @@ const CreateCategory = () => {
   return (
     <AdminInsertLayout
       title={__uiText('สร้างหมวดหมู่สินค้า')}
-      subtitle={__uiText('เลือกหมวดแม่แล้วตั้งชื่อ/ไอคอน — ชั้นและรหัสคำนวณจากหมวดแม่ให้อัตโนมัติ')}
+      subtitle={__uiText('เลือกหมวดที่อยู่เหนือกว่า แล้วตั้งชื่อที่ลูกค้าอ่านได้')}
       backPath={ADMIN_ROUTES.categories}
       saving={saving}
+      saveLabel="บันทึกหมวดหมู่"
+      steps={['เลือกหมวดที่อยู่เหนือกว่า', 'ตั้งชื่อ', 'ใส่รูปถ้าต้องการ']}
       onSave={handleSubmit}
     >
       {error && <p className="text-sm text-alert">{__uiText(error)}</p>}
 
       <Field
-        label="หมวดแม่ *"
-        hint="เลือกได้ถึง Level 2 — หมวดใหม่จะไปเป็นชั้นถัดไปใต้หมวดที่เลือก (Level 3 คือชั้นลึกสุด จึงเป็นหมวดแม่ไม่ได้)"
+        label="หมวดที่อยู่เหนือกว่า"
+        required
+        error={fieldErrors.parent}
+        hint="เลือกกลุ่มที่หมวดใหม่อยู่ข้างใน ชั้นวางสินค้า (ชั้นลึกสุด) เลือกไม่ได้"
       >
         <CategorySelect
           rows={parents}
           value={form.parent_id}
           groupDepth={1}
-          placeholder="— เลือกหมวดแม่ —"
+          placeholder="เช่น เบเกอรี่"
           onChange={(parent_id) => setForm({ ...form, parent_id })}
         />
       </Field>
@@ -115,19 +121,19 @@ const CreateCategory = () => {
         </div>
       )}
 
-      <Field label="ชื่อหมวดหมู่ (EN) *">
+      <Field label="ชื่อภาษาอังกฤษ" required error={fieldErrors.name} hint="ใช้ในระบบและหน้าร้านภาษาอังกฤษ เช่น Bakery">
         <Input
           value={form.category_name_en}
           onChange={(e) => setForm({ ...form, category_name_en: e.target.value })}
-          placeholder="เช่น BAKERY"
+          placeholder="Bakery"
         />
       </Field>
 
-      <Field label="ชื่อหมวดหมู่ (TH)" hint="ว่างไว้ = fallback ไปชื่อ EN">
+      <Field label="ชื่อภาษาไทย" hint="ชื่อที่ลูกค้าภาษาไทยเห็น ถ้าว่าง ร้านจะใช้ชื่อภาษาอังกฤษ">
         <Input
           value={form.category_name_th}
           onChange={(e) => setForm({ ...form, category_name_th: e.target.value })}
-          placeholder="เช่น เบเกอรี่"
+          placeholder="เบเกอรี่"
         />
       </Field>
 

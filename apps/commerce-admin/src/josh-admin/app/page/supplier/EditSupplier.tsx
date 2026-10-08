@@ -77,14 +77,17 @@ const EditSupplier = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไข Supplier")}
-      subtitle={__uiText("ข้อมูลผู้จัดจำหน่าย / ซัพพลายเออร์")}
+      title={__uiText("แก้ไขผู้จัดจำหน่าย")}
+      subtitle={__uiText("แก้ชื่อหรือช่องทางติดต่อ แล้วกดบันทึก")}
+      saveLabel="บันทึกผู้จัดจำหน่าย"
       backPath={ADMIN_ROUTES.suppliers}
       saving={saving}
       onSave={handleSubmit}
     >
       <Input
-        label={__uiText("ชื่อ Supplier *")}
+        label={__uiText("ชื่อผู้จัดจำหน่าย")}
+        required
+        placeholder={__uiText("เช่น บริษัท ตัวอย่าง จำกัด")}
         value={form.supplier_name}
         onChange={(e) => setForm({ ...form, supplier_name: e.target.value })}
       />

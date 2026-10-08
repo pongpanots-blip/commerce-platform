@@ -203,7 +203,7 @@ const ShipmentDetailPage = () => {
                   : formatShipmentDuration(timing?.toShipSeconds)}
                 {timing?.toShipMinutes != null ? (
                   <span className="ml-1 text-xs text-gray-400">
-                    ({timing.toShipMinutes} {__uiText(" นาที)")}</span>
+                    ({__uiText("{0} นาที", {"0": timing.toShipMinutes})})</span>
                 ) : null}
               </dd>
             </div>
@@ -215,7 +215,7 @@ const ShipmentDetailPage = () => {
                   : formatShipmentDuration(timing?.shippingSeconds)}
                 {timing?.shippingMinutes != null ? (
                   <span className="ml-1 text-xs text-gray-400">
-                    ({timing.shippingMinutes} {__uiText(" นาที)")}</span>
+                    ({__uiText("{0} นาที", {"0": timing.shippingMinutes})})</span>
                 ) : null}
               </dd>
             </div>
@@ -227,7 +227,7 @@ const ShipmentDetailPage = () => {
                   : formatShipmentDuration(timing?.totalSeconds)}
                 {timing?.totalMinutes != null ? (
                   <span className="ml-1 text-xs font-normal text-gray-400">
-                    ({timing.totalMinutes} {__uiText(" นาที)")}</span>
+                    ({__uiText("{0} นาที", {"0": timing.totalMinutes})})</span>
                 ) : null}
               </dd>
             </div>

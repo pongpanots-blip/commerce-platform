@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { uiText, useUiLocale } from './i18n';
+import { PageChrome } from './usability';
 
 /** Navigation follows the page's real sections, including conditionally shown form fields. */
 export function TaskPageFrame({ children }: { children: ReactNode }) {
@@ -35,6 +36,7 @@ export function TaskPageFrame({ children }: { children: ReactNode }) {
     return () => { observer.disconnect(); cancelAnimationFrame(frame); };
   }, [pathname, prefix]);
   return <div className="cp-task-page mx-auto max-w-[1240px] space-y-4">
+    <PageChrome>
     {sections.length >= 3 && <nav aria-label={uiText('ส่วนต่าง ๆ ในหน้านี้')} className="cp-section-nav flex gap-2 overflow-x-auto rounded-xl border border-secondary-container bg-white p-2">
       {sections.map(section => <button key={section.id} type="button" className="min-h-10 shrink-0 rounded-lg px-3 text-xs font-medium text-on-surface-variant hover:bg-primary-container hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" onClick={() => {
         const heading = document.getElementById(section.id);
@@ -43,5 +45,6 @@ export function TaskPageFrame({ children }: { children: ReactNode }) {
       }}>{section.label}</button>)}
     </nav>}
     <div ref={content} className="cp-task-content min-w-0">{children}</div>
+    </PageChrome>
   </div>;
 }

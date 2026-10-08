@@ -1,5 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
-import { getUiLocale as __dateLocale } from '@cp/ui';
+import { confirmAction, getUiLocale as __dateLocale, PageHeader, toast } from '@cp/ui';
 import {
   createUserSegment,
   getSegmentFields,
@@ -110,24 +110,6 @@ export function SegmentBuilder() {
               : { op: 'AND', children: [segment.definition] },
           );
         }
-
-        // Legacy segment, never previewed since the freeze-on-read change — one call freezes
-        // it (backend), then re-fetch to pick up the now-set frozen_at/member_count.
-        if (segment.frozen_at === null) {
-          setFreezing(true);
-          try {
-            await previewUserSegmentCount(routeId);
-            const refreshed = await getUserSegmentById(routeId);
-            if (active && refreshed) {
-              setFrozenAt(refreshed.frozen_at);
-              setFrozenMemberCount(refreshed.member_count);
-            }
-          } catch {
-            // ponytail: leave count as "—" on failure — nothing to retry from this page.
-          } finally {
-            if (active) setFreezing(false);
-          }
-        }
       })
       .catch((error: unknown) => { if (active) setLoadError(error); })
       .finally(() => { if (active) setLoadingSegment(false); });
@@ -161,23 +143,46 @@ export function SegmentBuilder() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(tree), fieldsData]);
 
+  const lockMembers = async () => {
+    if (!routeId) return;
+    const ok = await confirmAction({
+      title: 'ล็อกรายชื่อลูกค้าในกลุ่มนี้?',
+      body: 'ระบบจะจำรายชื่อที่ตรงเงื่อนไขตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ',
+      confirmLabel: 'ล็อกรายชื่อ',
+      danger: true,
+    });
+    if (!ok) return;
+    setFreezing(true);
+    try {
+      const count = await previewUserSegmentCount(routeId);
+      const refreshed = await getUserSegmentById(routeId);
+      setFrozenMemberCount(refreshed?.member_count ?? count);
+      setFrozenAt(refreshed?.frozen_at ?? new Date().toISOString());
+      toast('ล็อกรายชื่อแล้ว', { label: 'กลับไปรายการกลุ่มลูกค้า', href: ADMIN_ROUTES.segments });
+    } catch {
+      alert(__uiText('ล็อกรายชื่อไม่สำเร็จ ลองอีกครั้ง'));
+    } finally {
+      setFreezing(false);
+    }
+  };
+
   const applyPreset = (build: () => SegmentBranch['children'][number]) => {
     setTree({ op: 'AND', children: [build()] });
   };
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert(__uiText("กรุณากรอกชื่อ Segment"));
+      alert(__uiText("ใส่ชื่อกลุ่มที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน"));
       return;
     }
     if (!routeId && !slug.trim()) {
-      alert(__uiText("กรุณากรอก slug"));
+      alert(__uiText("ใส่รหัสอ้างอิงภาษาอังกฤษตัวเล็ก เช่น vip-customers"));
       return;
     }
     // Locked (edit-mode) segments never re-send their definition — only name/description/active.
     const pruned = locked ? null : pruneEmptyBranches(tree);
     if (!locked && !pruned) {
-      alert(__uiText("กรุณาเพิ่มอย่างน้อย 1 เงื่อนไข"));
+      alert(__uiText("เพิ่มอย่างน้อย 1 เงื่อนไข เช่น ไม่ได้สั่งซื้อเกิน 30 วัน"));
       return;
     }
 
@@ -250,11 +255,10 @@ export function SegmentBuilder() {
             className="mb-2 text-sm text-gray-500 hover:text-gray-800"
           >
             {__uiText("← กลับ")}</button>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {routeId ? __uiText("แก้ไข Segment (Visual Builder)") : __uiText("สร้าง Segment ใหม่ (Visual Builder)")}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {__uiText("สร้างกลุ่มลูกค้าด้วยเงื่อนไข AND/OR แบบไม่ต้องเขียนโค้ด")}</p>
+          <PageHeader
+            title={routeId ? __uiText('แก้ไขกลุ่มลูกค้า') : __uiText('สร้างกลุ่มลูกค้า')}
+            subtitle={__uiText('ตั้งชื่อแล้วเพิ่มเงื่อนไขที่อ่านได้ การเปิดหน้านี้ไม่บันทึกและไม่ล็อกรายชื่อ')}
+          />
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <div className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700">
@@ -272,9 +276,14 @@ export function SegmentBuilder() {
               <>
                 ≈ <strong>{previewCount.toLocaleString()}</strong> {__uiText(" ลูกค้า")}</>
             ) : (
-              '— ลูกค้า'
+              __uiText('ยังไม่ทราบจำนวน')
             )}
           </div>
+          {routeId && locked && !frozenAt && (
+            <button type="button" onClick={() => void lockMembers()} disabled={freezing} className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+              {freezing ? __uiText('กำลังล็อกรายชื่อ...') : __uiText('ล็อกรายชื่อ')}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => navigate(ADMIN_ROUTES.segments)}
@@ -287,7 +296,7 @@ export function SegmentBuilder() {
             disabled={saving}
             className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-light disabled:opacity-50"
           >
-            {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
+            {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึกกลุ่มลูกค้า")}
           </button>
         </div>
       </div>
@@ -298,21 +307,25 @@ export function SegmentBuilder() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Input
-              label={__uiText("Slug{0}", {"0": !routeId ? ' *' : ''})}
+              label={__uiText("รหัสอ้างอิง")}
+              required={!routeId}
+              hint={__uiText("ตัวอักษรอังกฤษตัวเล็กและขีดกลาง เช่น vip-customers ใช้ในระบบ ไม่ใช่ชื่อที่ลูกค้าเห็น")}
               value={slug}
               disabled={Boolean(routeId)}
               onChange={(e) =>
                 setSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))
               }
-              placeholder={__uiText("เช่น vip-customers")}
+              placeholder="vip-customers"
             />
           </div>
           <div>
             <Input
-              label={__uiText("ชื่อ Segment *")}
+              label={__uiText("ชื่อกลุ่ม")}
+              required
+              hint={__uiText("ชื่อที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน")}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={__uiText("เช่น ลูกค้า VIP")}
+              placeholder={__uiText("ลูกค้าที่ไม่ได้สั่ง 30 วัน")}
             />
           </div>
         </div>
@@ -320,6 +333,7 @@ export function SegmentBuilder() {
         <div>
           <Input
             label={__uiText("คำอธิบาย")}
+            hint={__uiText("ไม่บังคับ บอกว่ากลุ่มนี้ใช้กับงานอะไร")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={__uiText("ไม่บังคับ")}

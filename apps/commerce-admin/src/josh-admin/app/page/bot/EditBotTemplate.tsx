@@ -97,7 +97,8 @@ const EditBotTemplate = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไข Template")}
+      title={__uiText("แก้ไขรูปแบบคำตอบ")}
+      saveLabel="บันทึกรูปแบบคำตอบ"
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}

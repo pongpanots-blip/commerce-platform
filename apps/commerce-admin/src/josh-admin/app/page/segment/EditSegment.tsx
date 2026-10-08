@@ -25,7 +25,7 @@ import {
 } from './segment-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { confirmAction, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EditSegment = () => {
   __useUiLocale();
   const { id } = useParams<{ id: string }>();
@@ -84,23 +84,6 @@ const EditSegment = () => {
 
         setFrozenAt(segment.frozen_at);
         setLockedMemberCount(segment.member_count);
-        // Legacy segment, never previewed since the freeze-on-read change — one call freezes
-        // it (backend), then re-fetch to pick up the now-set frozen_at/member_count.
-        if (segment.frozen_at === null) {
-          setFreezing(true);
-          try {
-            await previewUserSegmentCount(id);
-            const refreshed = await getUserSegmentById(id);
-            if (active && refreshed) {
-              setFrozenAt(refreshed.frozen_at);
-              setLockedMemberCount(refreshed.member_count);
-            }
-          } catch {
-            // ponytail: leave count as "—" on failure — nothing to retry from this page.
-          } finally {
-            if (active) setFreezing(false);
-          }
-        }
       })
       .catch((error: unknown) => { if (active) setLoadError(error); })
       .finally(() => { if (active) setLoading(false); });
@@ -161,10 +144,11 @@ const EditSegment = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไข User Segment")}
-      subtitle={__uiText("slug: {0}", {"0": slug})}
+      title={__uiText("แก้ไขกลุ่มลูกค้า")}
+      subtitle={__uiText("รหัสอ้างอิง: {0}", {"0": slug})}
       backPath={returnDestination}
       saving={saving}
+      saveLabel="บันทึกกลุ่มลูกค้า"
       onSave={handleSubmit}
     >
       <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm text-gray-600">
@@ -189,8 +173,29 @@ const EditSegment = () => {
                   {' · '}
                   {lockedMemberCount != null ? __uiText("{0} คน", {"0": lockedMemberCount.toLocaleString()}) : '—'}
                 </div>
+                {!frozenAt && (
+                  <button type="button" className="mt-2 text-xs font-medium text-primary hover:underline" disabled={freezing} onClick={() => void (async () => {
+                    const ok = await confirmAction({
+                      title: 'ล็อกรายชื่อลูกค้าในกลุ่มนี้?',
+                      body: 'ระบบจะจำรายชื่อที่ตรงเงื่อนไขตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ',
+                      confirmLabel: 'ล็อกรายชื่อ',
+                      danger: true,
+                    });
+                    if (!ok || !id) return;
+                    setFreezing(true);
+                    try {
+                      const count = await previewUserSegmentCount(id);
+                      const refreshed = await getUserSegmentById(id);
+                      setLockedMemberCount(refreshed?.member_count ?? count);
+                      setFrozenAt(refreshed?.frozen_at ?? new Date().toISOString());
+                      toast('ล็อกรายชื่อแล้ว');
+                    } finally {
+                      setFreezing(false);
+                    }
+                  })()}>{freezing ? __uiText('กำลังล็อกรายชื่อ...') : __uiText('ล็อกรายชื่อ')}</button>
+                )}
                 <div className="mt-1 text-xs text-gray-400">
-                  {__uiText("ต้องการรายชื่อใหม่? สร้าง segment ใหม่")}</div>
+                  {__uiText("ต้องการรายชื่อชุดใหม่? สร้างกลุ่มลูกค้าใหม่")}</div>
               </>
             ) : null}
           </div>

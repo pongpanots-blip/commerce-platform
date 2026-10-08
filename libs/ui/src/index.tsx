@@ -23,6 +23,7 @@ import {
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
 import { LanguageSelector } from './i18n';
+import { PageChrome, fieldExample, fieldHint } from './usability';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
@@ -219,23 +220,31 @@ export function SearchInput({ className, ...rest }: InputHTMLAttributes<HTMLInpu
   );
 }
 
-/** Labelled form field. */
-export function Field({ label, hint, children, className }: { label: ReactNode; hint?: ReactNode; children: ReactNode; className?: string }) {
+/** Labelled form field. Required fields show a star. `error` says how to fix the value. */
+export function Field({ label, hint, required, error, children, className }: { label: ReactNode; hint?: ReactNode; required?: boolean; error?: ReactNode; children: ReactNode; className?: string }) {
   __useUiLocale();
   const labelId = useId();
   const hintId = useId();
+  const help = error ? undefined : hint ?? fieldHint(required);
+  const describedBy = [help || error ? hintId : ''].filter(Boolean).join(' ');
   const controls = Children.map(children, (child, index) => {
-    if (index !== 0 || !isValidElement<{ 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string }>(child)) return child;
+    if (index !== 0 || !isValidElement<{ type?: string; placeholder?: string; 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string; 'aria-invalid'?: boolean; required?: boolean }>(child)) return child;
+    const example = child.props.placeholder ?? fieldExample(child.type === 'select' ? 'select' : child.props.type);
     return cloneElement(child, {
+      ...(example && !child.props.placeholder ? { placeholder: __uiText(example) } : {}),
       ...(label && !child.props['aria-label'] && !child.props['aria-labelledby'] ? { 'aria-labelledby': labelId } : {}),
-      ...(hint ? { 'aria-describedby': [child.props['aria-describedby'], hintId].filter(Boolean).join(' ') } : {}),
+      ...(describedBy ? { 'aria-describedby': [child.props['aria-describedby'], describedBy].filter(Boolean).join(' ') } : {}),
+      ...(error ? { 'aria-invalid': true } : {}),
     });
   });
   return (
     <label className={cx('flex flex-col gap-1 min-w-0', className)}>
-      <span id={labelId} className="text-xs font-medium text-on-surface">{typeof label === 'string' ? __uiText(label) : label}</span>
+      <span id={labelId} className="text-xs font-medium text-on-surface">
+        {typeof label === 'string' ? __uiText(label) : label}
+        {required && <span className="text-[#c2333f]"> *</span>}
+      </span>
       {controls}
-      {hint && <span id={hintId} className="text-[11px] text-outline">{typeof hint === 'string' ? __uiText(hint) : hint}</span>}
+      {error ? <span id={hintId} className="text-[11px] text-[#c2333f]">{typeof error === 'string' ? __uiText(error) : error}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
     </label>
   );
 }
@@ -427,7 +436,11 @@ export function SectionTitle({ children, note }: { children: ReactNode; note?: R
 
 /** The standard page body width + vertical rhythm. */
 export function Page({ children }: { children: ReactNode }) {
-  return <div className="max-w-[1240px] mx-auto space-y-4">{children}</div>;
+  return (
+    <div className="max-w-[1240px] mx-auto space-y-4">
+      <PageChrome>{children}</PageChrome>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------- create / edit forms and detail views
@@ -1381,3 +1394,6 @@ export const fmt = {
 };
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
+export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
+export { pageGuide } from './page-guides';
+export type { PageGuide } from './page-guides';

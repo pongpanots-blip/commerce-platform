@@ -13,10 +13,10 @@ const columns: Column<Customer>[] = [
 ];
 
 const fields: Field[] = [
-  { name: 'name', get label(){return __uiText("ชื่อลูกค้า");}, required: true, placeholder: 'ชื่อบริษัทหรือลูกค้า' },
-  { name: 'code', get label(){return __uiText("รหัสลูกค้า");}, placeholder: 'C1' },
-  { name: 'email', get label(){return __uiText("อีเมล");}, type: 'email', placeholder: 'billing@acme.test' },
-  { name: 'phone', get label(){return __uiText("เบอร์โทร");}, type: 'tel' },
+  { name: 'name', get label(){return __uiText("ชื่อลูกค้า");}, required: true, placeholder: 'ร้านอาหารบ้านสวน', get hint(){return __uiText("ชื่อที่ทีมใช้เรียกลูกค้ารายนี้");} },
+  { name: 'code', get label(){return __uiText("รหัสลูกค้า");}, placeholder: 'CUST-001', get hint(){return __uiText("ไม่บังคับ ใช้เมื่อต้องการอ้างอิงรหัสเดิม");} },
+  { name: 'email', get label(){return __uiText("อีเมล");}, type: 'email', placeholder: 'orders@example.com', get hint(){return __uiText("ไม่บังคับ ใช้ส่งเอกสาร");} },
+  { name: 'phone', get label(){return __uiText("เบอร์โทร");}, type: 'tel', placeholder: '0812345678', get hint(){return __uiText("ไม่บังคับ ใส่ตัวเลขโดยไม่ต้องมีขีด");} },
 ];
 
 export function Customers() {

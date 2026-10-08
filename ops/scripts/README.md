@@ -8,5 +8,6 @@ Scripts must never print secrets.
 - `josh-sql`  — `SCRIPT_ARGS='SELECT …'` → one read-only query on josh (`default_transaction_read_only`)
 - `josh-subscription` — `SCRIPT_ARGS='add=a,b remove=c'` → edit or create the josh webhook subscription (refuses `*` and 4f types)
 - `env-names` — `SCRIPT_ARGS='NAME …'` → whether each env name is set in the platform container (booleans only)
+- `env-fingerprint` — `SCRIPT_ARGS='JOSH_JWT_SECRET WINBACK_INTAKE_KEY'` → sha256 (first 12 hex) + length per value (allowlisted names; compare with josh without printing)
 - `image-roundtrip` — stage 4e: upload 1 image to a josh draft SKU via commerce → josh product_media → restore → josh restored
 - `seg-test`  — stage 2a: create an inactive test segment in commerce → wait for it (same id, member_count) in josh → delete → wait gone

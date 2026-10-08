@@ -163,6 +163,11 @@ jobs:
           JAGOTA_NODEAPI_BASE_URL: ${{ vars.JAGOTA_NODEAPI_BASE_URL }}
           JAGOTA_NODEAPI_USERNAME: ${{ secrets.JAGOTA_NODEAPI_USERNAME }}
           JAGOTA_NODEAPI_PASSWORD: ${{ secrets.JAGOTA_NODEAPI_PASSWORD }}
+          # Stage 1 cutover flags (repo variables; unset = compose defaults).
+          CRON_COMPETITOR_PRICES_REFRESH_ENABLED: ${{ vars.CRON_COMPETITOR_PRICES_REFRESH_ENABLED }}
+          CRON_MARKETING_RESEARCH_ENABLED: ${{ vars.CRON_MARKETING_RESEARCH_ENABLED }}
+          RESEARCH_FREE_WORKER_ENABLED: ${{ vars.RESEARCH_FREE_WORKER_ENABLED }}
+          SCRAPING_CRON_DISABLED: ${{ vars.SCRAPING_CRON_DISABLED }}
         run: |
           cd "${{ secrets.EC2_DEPLOY_DIR }}/docker"
           # Persist the env for manual compose commands on the box (ssl-init.sh, logs, exec). Compose reads
@@ -172,7 +177,8 @@ jobs:
             for v in ECR_REGISTRY COMMERCE_DB_HOST COMMERCE_DB_USERNAME COMMERCE_DB_PASSWORD COMMERCE_DB_NAME REDIS_HOST \
                      STOREFRONT_API_KEYS PORTAL_JWT_SECRET COMMERCE_CORS_ORIGINS JOSH_DATABASE_URL JOSH_MONGO_URL \
                      JOSH_MONGO_DB JOSH_API_URL JOSH_EVENTS_SECRET JOSH_JWT_SECRET \
-                     JAGOTA_GATEWAY_ENABLED JAGOTA_NODEAPI_BASE_URL JAGOTA_NODEAPI_USERNAME JAGOTA_NODEAPI_PASSWORD; do
+                     JAGOTA_GATEWAY_ENABLED JAGOTA_NODEAPI_BASE_URL JAGOTA_NODEAPI_USERNAME JAGOTA_NODEAPI_PASSWORD \
+                     CRON_COMPETITOR_PRICES_REFRESH_ENABLED CRON_MARKETING_RESEARCH_ENABLED RESEARCH_FREE_WORKER_ENABLED SCRAPING_CRON_DISABLED; do
               if [ -n "${!v}" ]; then printf "%s='%s'\n" "$v" "${!v}"; fi
             done; } > .env.new && mv .env.new .env
           SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')

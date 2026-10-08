@@ -1,9 +1,9 @@
-import { Button, PageHeader, Panel, Stepper } from '@cp/ui';
-import React from 'react';
+import { FormActions, FormSection, PageHeader, Panel, Stepper, scrollToFirstInvalid, useUnsavedChanges } from '@cp/ui';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, useUiLocale as __useUiLocale } from "@cp/ui";
 type AdminInsertLayoutProps = {
   title: string;
   subtitle?: string;
@@ -38,18 +38,30 @@ export function AdminInsertLayout({
 }: AdminInsertLayoutProps) {
   __useUiLocale();
   const navigate = useNavigate();
-  const handleBack = () => (onBack ? onBack() : backPath ? navigate(backPath) : navigate(-1));
+  const root = useRef<HTMLDivElement>(null);
+  const [dirty, setDirty] = useState(false);
+  const requestLeave = useUnsavedChanges(dirty);
+  const leave = () => requestLeave(() => (onBack ? onBack() : backPath ? navigate(backPath) : navigate(-1)));
+  const save = () => {
+    onSave();
+    window.setTimeout(() => scrollToFirstInvalid(root.current), 0);
+  };
 
   return (
-    <div className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`}>
-      <Button variant="ghost" icon="arrow_back" onClick={handleBack}>{__uiText("กลับ")}</Button>
+    <div
+      ref={root}
+      className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`}
+      onInput={() => setDirty(true)}
+    >
+      <button type="button" className="inline-flex min-h-10 items-center gap-1 text-sm font-medium text-primary" onClick={() => void leave()}>{__uiText("กลับ")}</button>
       <PageHeader title={title} subtitle={subtitle} actions={headerActions} />
       {steps && steps.length > 0 && <Stepper steps={steps} />}
-      <Panel className="p-4 md:p-6 flex flex-col gap-5">{children}</Panel>
-      <div className="sticky bottom-0 z-20 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-secondary-container bg-white/95 p-3 shadow-sm backdrop-blur-sm">
-        <Button variant="secondary" onClick={handleBack} disabled={saving}>{__uiText("ยกเลิก")}</Button>
-        <Button variant="primary" icon="check" onClick={onSave} disabled={saving}>{saving ? __uiText("กำลังบันทึก...") : __uiText(saveLabel)}</Button>
-      </div>
+      <Panel className="p-4 md:p-6">
+        <FormSection title="ข้อมูลที่ต้องกรอก" description="ช่องที่มีดอกจันต้องกรอกก่อนบันทึก ช่องที่ไม่มีดอกจันเว้นว่างได้">
+          <div className="flex flex-col gap-5">{children}</div>
+        </FormSection>
+      </Panel>
+      <FormActions saveLabel={saveLabel} saving={saving} onSave={save} onCancel={() => void leave()} />
     </div>
   );
 }

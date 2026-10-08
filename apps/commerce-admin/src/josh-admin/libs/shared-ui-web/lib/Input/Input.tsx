@@ -1,4 +1,4 @@
-import { fieldExample, fieldHint, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { blankFieldMessage, fieldExample, fieldHint, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import React, { ReactNode } from 'react';
 
 // สืบทอดคุณสมบัติมาตรฐานของแท็ก <input> มาทั้งหมดเพื่อให้ใช้งานง่าย
@@ -34,6 +34,8 @@ export function Input({
   const messageId = `${generatedId}-message`;
   const example = placeholder ?? (label ? fieldExample(type) : undefined);
   const help = hint ?? (label ? fieldHint(required) : undefined);
+  const [blank, setBlank] = React.useState(false);
+  const shownError = error || (blank && label ? blankFieldMessage(label, example) : '');
 
   return (
     <div className="w-full">
@@ -62,7 +64,7 @@ export function Input({
             transition-colors
             ${icon ? 'pl-9' : ''}
             ${unit ? 'pr-9' : ''}
-            ${error
+            ${shownError
               ? 'border-alert'
               : 'border-gray-200 hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/10'}
             focus:outline-none
@@ -70,8 +72,16 @@ export function Input({
             ${className}
           `}
           {...props}
-          aria-invalid={error ? true : props['aria-invalid']}
-          aria-describedby={[props['aria-describedby'], (error || help) && messageId].filter(Boolean).join(' ') || undefined}
+          aria-invalid={shownError ? true : props['aria-invalid']}
+          aria-describedby={[props['aria-describedby'], (shownError || help) && messageId].filter(Boolean).join(' ') || undefined}
+          onBlur={(event) => {
+            props.onBlur?.(event);
+            if (required && label && !event.target.value.trim()) setBlank(true);
+          }}
+          onChange={(event) => {
+            props.onChange?.(event);
+            if (event.target.value.trim()) setBlank(false);
+          }}
         />
         {unit && (
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-ink-muted">
@@ -79,8 +89,8 @@ export function Input({
           </span>
         )}
       </div>
-      {error ? (
-        <p id={messageId} className="mt-1 text-sm text-alert">{__uiText(error)}</p>
+      {shownError ? (
+        <p id={messageId} className="mt-1 text-sm text-alert">{__uiText(shownError)}</p>
       ) : (
         help && <p id={messageId} className="mt-1 text-xs text-ink-muted">{__uiText(help)}</p>
       )}

@@ -29,6 +29,7 @@ interface Props<T> {
   columns: Column<T>[];
   fields: Field[];
   createLabel: string;
+  saveLabel?: string;
   readOnly?: boolean;
   searchText: (row: T) => string;
   searchPlaceholder: string;
@@ -36,7 +37,7 @@ interface Props<T> {
 
 export function ResourcePage<T extends { id: string; status: string }>(props: Props<T>) {
   __useUiLocale();
-  const { title, subtitle, endpoint, columns, fields, createLabel, readOnly } = props;
+  const { title, subtitle, endpoint, columns, fields, createLabel, saveLabel = createLabel, readOnly } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [creating, setCreating] = useState(false);
@@ -97,7 +98,7 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
         icon="add_circle"
         cols={2}
         error={formError}
-        submitLabel={createLabel}
+        submitLabel={saveLabel}
         busy={submitting}
         onSubmit={handleSubmit}
         onCancel={() => setCreating(false)}

@@ -24,6 +24,7 @@ import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
 import { LanguageSelector } from './i18n';
 import { PageChrome, fieldExample, fieldHint } from './usability';
+import { CopyableId, FormActions, blankFieldMessage, scrollToFirstInvalid, useUnsavedChanges } from './forms';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
@@ -220,21 +221,38 @@ export function SearchInput({ className, ...rest }: InputHTMLAttributes<HTMLInpu
   );
 }
 
-/** Labelled form field. Required fields show a star. `error` says how to fix the value. */
-export function Field({ label, hint, required, error, children, className }: { label: ReactNode; hint?: ReactNode; required?: boolean; error?: ReactNode; children: ReactNode; className?: string }) {
+/** Label, star, example, helper, and an error that says how to fix the value. */
+export function FormField({ label, hint, required, error, children, className }: { label: ReactNode; hint?: ReactNode; required?: boolean; error?: ReactNode; children: ReactNode; className?: string }) {
   __useUiLocale();
   const labelId = useId();
   const hintId = useId();
-  const help = error ? undefined : hint ?? fieldHint(required);
-  const describedBy = [help || error ? hintId : ''].filter(Boolean).join(' ');
+  const [blank, setBlank] = useState(false);
+  const labelText = typeof label === 'string' ? label : '';
+  const first = Children.toArray(children)[0];
+  const firstEl = isValidElement<{ type?: string; placeholder?: string }>(first) ? first : null;
+  const exampleText = firstEl?.props.placeholder ?? fieldExample(firstEl?.type === 'select' ? 'select' : firstEl?.props.type);
+  const shownError = error || (blank && labelText ? blankFieldMessage(labelText, exampleText) : '');
+  const help = shownError ? undefined : hint ?? fieldHint(required);
+  const describedBy = [help || shownError ? hintId : ''].filter(Boolean).join(' ');
   const controls = Children.map(children, (child, index) => {
-    if (index !== 0 || !isValidElement<{ type?: string; placeholder?: string; 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string; 'aria-invalid'?: boolean; required?: boolean }>(child)) return child;
+    if (index !== 0 || !isValidElement<{ type?: string; placeholder?: string; onBlur?: (event: unknown) => void; onChange?: (event: unknown) => void; 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string; 'aria-invalid'?: boolean }>(child)) return child;
     const example = child.props.placeholder ?? fieldExample(child.type === 'select' ? 'select' : child.props.type);
     return cloneElement(child, {
       ...(example && !child.props.placeholder ? { placeholder: __uiText(example) } : {}),
       ...(label && !child.props['aria-label'] && !child.props['aria-labelledby'] ? { 'aria-labelledby': labelId } : {}),
       ...(describedBy ? { 'aria-describedby': [child.props['aria-describedby'], describedBy].filter(Boolean).join(' ') } : {}),
-      ...(error ? { 'aria-invalid': true } : {}),
+      ...(shownError ? { 'aria-invalid': true } : {}),
+      onBlur: (event: unknown) => {
+        child.props.onBlur?.(event);
+        const target = (event as { target?: { value?: string; type?: string } | null }).target;
+        if (target?.type === 'checkbox' || target?.type === 'radio') return;
+        if (required && labelText && !String(target?.value ?? '').trim()) setBlank(true);
+      },
+      onChange: (event: unknown) => {
+        child.props.onChange?.(event);
+        const target = (event as { target?: { value?: string } | null }).target;
+        if (String(target?.value ?? '').trim()) setBlank(false);
+      },
     });
   });
   return (
@@ -244,10 +262,12 @@ export function Field({ label, hint, required, error, children, className }: { l
         {required && <span className="text-[#c2333f]"> *</span>}
       </span>
       {controls}
-      {error ? <span id={hintId} className="text-[11px] text-[#c2333f]">{typeof error === 'string' ? __uiText(error) : error}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
+      {shownError ? <span id={hintId} className="text-[11px] text-[#c2333f]">{typeof shownError === 'string' ? __uiText(shownError) : shownError}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
     </label>
   );
 }
+
+export const Field = FormField;
 
 export function Checkbox({ label, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: ReactNode }) {
   __useUiLocale();
@@ -476,12 +496,19 @@ export function FormPanel({
   extraActions?: ReactNode;
 }) {
   __useUiLocale();
+  const [dirty, setDirty] = useState(false);
+  const requestLeave = useUnsavedChanges(dirty);
   const grid = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
     <form data-panel
       className={cx(panelCls, 'overflow-hidden')}
+      onInput={() => setDirty(true)}
       onSubmit={(e) => {
         e.preventDefault();
+        if (e.currentTarget.querySelector('[aria-invalid="true"]')) {
+          scrollToFirstInvalid(e.currentTarget);
+          return;
+        }
         void onSubmit(e);
       }}
     >
@@ -500,15 +527,9 @@ export function FormPanel({
           <Alert tone="danger">{__uiText(error)}</Alert>
         </div>
       )}
-      <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 border-t border-secondary-container bg-surface-container-low/50">
-        {extraActions}
-        {onCancel && (
-          <Button variant="ghost" onClick={onCancel} disabled={busy}>
-            {__uiText("ยกเลิก")}</Button>
-        )}
-        <Button variant="primary" type="submit" icon={busy ? 'progress_activity' : 'check'} disabled={busy}>
-          {submitLabel}
-        </Button>
+      {extraActions && <div className="flex justify-end gap-2 px-4">{extraActions}</div>}
+      <div className="px-4 pb-4">
+        <FormActions saveLabel={submitLabel} saving={busy} onCancel={onCancel ? () => { void requestLeave(onCancel); } : undefined} />
       </div>
     </form>
   );
@@ -519,18 +540,22 @@ export function Span({ children, className }: { children: ReactNode; className?:
   return <div className={cx('col-span-full', className)}>{children}</div>;
 }
 
-/** Detail facts: label above value, in a responsive grid. Values may be any node (chips, mono, links). */
-export function KeyValueGrid({ items, cols = 4 }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean }[]; cols?: 2 | 3 | 4 }) {
+/** Detail facts: label on the left, value on the right. Empty values are an em dash. */
+export function KeyValueGrid({ items }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean; copy?: boolean }[]; cols?: 2 | 3 | 4 }) {
   __useUiLocale();
-  const grid = { 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-2 lg:grid-cols-3', 4: 'sm:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
-    <dl className={cx('grid grid-cols-1 gap-x-6 gap-y-3', grid)}>
-      {items.map((it, i) => (
-        <div key={i} className={cx('min-w-0', it.wide && 'col-span-full')}>
-          <dt className="text-[10px] font-semibold uppercase tracking-wide text-outline">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
-          <dd className={cx('mt-0.5 text-xs text-on-surface break-words', it.mono && 'font-mono text-[11px]')}>{it.value ?? '—'}</dd>
-        </div>
-      ))}
+    <dl className="divide-y divide-secondary-container">
+      {items.map((it, i) => {
+        const empty = it.value === null || it.value === undefined || it.value === '';
+        const text = empty ? '—' : it.value;
+        const copy = !empty && (it.copy || it.mono) && typeof it.value === 'string';
+        return (
+          <div key={i} className="grid grid-cols-1 gap-1 py-2 sm:grid-cols-[minmax(8rem,14rem)_1fr] sm:items-baseline sm:gap-4">
+            <dt className="text-xs text-on-surface-variant">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
+            <dd className={cx('min-w-0 text-sm text-on-surface break-words', it.mono && !copy && 'font-mono text-[11px] text-on-surface-variant')}>{copy ? <CopyableId value={it.value as string} /> : text}</dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }
@@ -1380,9 +1405,9 @@ export const fmt = {
     n === null || n === undefined || n === '' ? '—' : `฿${Number(n).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })}`,
   /** "24 ต.ค. 2026 10:42" */
   when: (d: string | number | Date | null | undefined) =>
-    d ? new Date(d).toLocaleString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—',
+    d ? new Date(d).toLocaleString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' }) : '—',
   date: (d: string | number | Date | null | undefined) =>
-    d ? new Date(d).toLocaleDateString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—',
+    d ? new Date(d).toLocaleDateString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Bangkok' }) : '—',
   /** "3 นาทีที่แล้ว" */
   ago: (d: string | number | Date | null | undefined) => {
     if (!d) return '—';
@@ -1395,5 +1420,6 @@ export const fmt = {
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
 export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
+export { FormSection, FormActions, DetailHeader, CopyableId, useUnsavedChanges, scrollToFirstInvalid, blankFieldMessage } from './forms';
 export { pageGuide } from './page-guides';
 export type { PageGuide } from './page-guides';

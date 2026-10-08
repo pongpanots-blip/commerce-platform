@@ -1,4 +1,4 @@
-import { pageGuide, setUiLocale } from '@cp/ui';
+import { fmt, pageGuide, setUiLocale } from '@cp/ui';
 import { formatShipmentDuration } from './josh-admin/libs/shared-api/lib/orders/orders.api';
 
 describe('page usability', () => {
@@ -13,6 +13,11 @@ describe('page usability', () => {
     expect(formatShipmentDuration(30)).toBe('<1 min');
     expect(formatShipmentDuration(120)).toBe('2 min');
     expect(formatShipmentDuration(3600)).toBe('1 hr');
+  });
+
+  it('shows timestamps in Bangkok time', () => {
+    setUiLocale('en');
+    expect(fmt.when('2026-01-01T00:00:00Z')).toContain('07:00');
   });
 
   it('gives a first-visit guide for known routes and a fallback for the rest', () => {

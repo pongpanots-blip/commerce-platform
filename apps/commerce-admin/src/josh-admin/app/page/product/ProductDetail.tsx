@@ -1,6 +1,5 @@
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
-import { getUiLocale as __dateLocale } from '@cp/ui';
 import { getProductById } from '@josh/shared-api';
 import { ADMIN_PRODUCT_READ } from '../../config/admin-product-read';
 import { Button } from '@josh/shared-ui-web';
@@ -26,7 +25,7 @@ import { nutritionForDisplay } from './product-nutrition.helpers';
 import { normalizeProductStatus, productStatusBadge } from './product-status.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { CopyableId, DetailHeader, fmt, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function MediaPreview({ item }: { item: ProductMediaItem }) {
   __useUiLocale();
   const [failed, setFailed] = useState(false);
@@ -113,31 +112,18 @@ const ProductDetail = () => {
     if (raw == null || raw === '') return '-';
     const date = new Date(String(raw));
     if (Number.isNaN(date.getTime())) return String(raw);
-    return date.toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'));
+    return fmt.when(date);
   };
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <button
-            type="button"
-            onClick={() => navigate(ADMIN_ROUTES.products)}
-            className="text-sm text-gray-500 hover:text-gray-800 mb-2"
-          >
-            {__uiText("← กลับรายการสินค้า")}</button>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {String(product.product_name ?? th?.product_name ?? 'รายละเอียดสินค้า')}
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {__uiText("SKU: ")}{String(product.product_inventory_sku ?? '-')}
-          </p>
-        </div>
-        <Button
-          text={__uiText("แก้ไขสินค้า")}
-          onClick={() => id && navigate(ADMIN_ROUTES.productEdit(id))}
-        />
-      </div>
+      <DetailHeader
+        back={{ to: ADMIN_ROUTES.products, label: 'กลับรายการสินค้า' }}
+        title={String(product.product_name ?? th?.product_name ?? 'รายละเอียดสินค้า')}
+        status={<span className="text-sm text-on-surface-variant">{statusBadge.label}</span>}
+        facts={[{ label: 'รหัสสินค้า', value: <CopyableId value={String(product.product_inventory_sku ?? '')} /> }]}
+        primary={<Button text={__uiText("แก้ไขสินค้า")} onClick={() => id && navigate(ADMIN_ROUTES.productEdit(id))} />}
+      />
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-6">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -148,7 +134,7 @@ const ProductDetail = () => {
           />
           {promotionSummary && (
             <InfoRow
-              label={__uiText("Promotion Mechanic")}
+              label={__uiText("โปรโมชัน")}
               value={promotionSummary}
             />
           )}
@@ -157,8 +143,8 @@ const ProductDetail = () => {
             value={`${Number(product.product_inventory_quantity ?? 0).toLocaleString()} ชิ้น`}
           />
           <InfoRow label={__uiText("แบรนด์")} value={String(product.brand_name ?? '-')} />
-          <InfoRow label={__uiText("Marketed By")} value={String(product.marketed_by ?? '-')} />
-          <InfoRow label={__uiText("VAT Type")} value={String(product.vat_type ?? '-')} />
+          <InfoRow label={__uiText("ผู้ขาย")} value={String(product.marketed_by ?? '')} />
+          <InfoRow label={__uiText("ภาษีมูลค่าเพิ่ม")} value={String(product.vat_type ?? '')} />
           <InfoRow label={__uiText("หมวดหมู่")} value={String(product.category_names_path ?? '-')} />
           <InfoRow
             label={__uiText("อุณหภูมิเก็บรักษา")}
@@ -320,23 +306,11 @@ const ProductDetail = () => {
   );
 };
 
-function InfoRow({
-  label,
-  value,
-  wide,
-}: {
-  label: string;
-  value: string;
-  wide?: boolean;
-}) {
+function InfoRow({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
   return (
-    <div
-      className={`rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 ${wide ? 'md:col-span-2' : ''}`}
-    >
+    <div className={`grid grid-cols-1 gap-1 border-b border-gray-100 py-2 sm:grid-cols-[minmax(8rem,12rem)_1fr] ${wide ? 'md:col-span-2' : ''}`}>
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-medium text-gray-900 mt-1 whitespace-pre-wrap">
-        {value || '-'}
-      </p>
+      <p className="text-sm text-gray-900 whitespace-pre-wrap">{value || '—'}</p>
     </div>
   );
 }

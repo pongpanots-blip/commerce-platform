@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, Span, Stack2,
+  Alert, Button, CopyableId, DetailHeader, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, Panel, PanelHead, Span, Stack2,
   StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, fmt,
 } from '@cp/ui';
+import { productFields } from './catalog-fields';
 import { api, InventoryLevel, Paginated, Product, productsApi, stockApi, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -56,17 +57,15 @@ export function ProductDetail() {
 
   return (
     <Page>
-      <PageHeader
+      <DetailHeader
         back={{ to: '/products', label: 'แคตตาล็อกแพลตฟอร์ม' }}
         title={p?.name ?? __uiText("รายละเอียดสินค้า")}
-        badge={p && <StatusChip status={p.status} />}
-        subtitle={p && <span className="font-mono">{p.sku}</span>}
-        actions={
-          <>
-            <Button icon="refresh" onClick={() => { product.reload(); inventory.reload(); warehouses.reload(); }}>{__uiText("รีเฟรช")}</Button>
-            {p && canEdit && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขสินค้า")}</Button>}
-          </>
-        }
+        status={p && <StatusChip status={p.status} />}
+        facts={p ? [{ label: 'รหัสสินค้า', value: <CopyableId value={p.sku} /> }] : undefined}
+        primary={<>
+          <Button icon="refresh" onClick={() => { product.reload(); inventory.reload(); warehouses.reload(); }}>{__uiText("รีเฟรช")}</Button>
+          {p && canEdit && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขสินค้า")}</Button>}
+        </>}
       />
 
       {msg && <Alert tone="ok" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
@@ -77,16 +76,21 @@ export function ProductDetail() {
       ) : p ? (
         <>
           {editing && <Modal title={__uiText("แก้ไขสินค้า")} onClose={cancelEdit} width={640}>
-            <FormPanel title={__uiText("ข้อมูลสินค้า")} icon="edit" busy={busy} error={error} onSubmit={save} onCancel={cancelEdit}>
-              <Field label={__uiText("SKU")}><Input required value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></Field>
-              <Field label={__uiText("ชื่อสินค้า")}><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-              <Span><Field label={__uiText("รายละเอียด")}><Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field></Span>
+            <FormPanel title={__uiText("ข้อมูลสินค้า")} description={__uiText("ช่องเดียวกับตอนเพิ่มสินค้า")} icon="edit" submitLabel={__uiText("บันทึกสินค้า")} busy={busy} error={error} onSubmit={save} onCancel={cancelEdit}>
+              {productFields.map((f) => {
+                const key = f.name as keyof Form;
+                const control = f.type === 'textarea'
+                  ? <Textarea rows={3} placeholder={f.placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                  : <Input placeholder={f.placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />;
+                const field = <Field key={f.name} label={f.label} required={f.required} hint={f.hint}>{control}</Field>;
+                return f.type === 'textarea' ? <Span key={f.name}>{field}</Span> : field;
+              })}
             </FormPanel>
           </Modal>}
             <Panel className="p-4">
               <KeyValueGrid
                 items={[
-                  { label: 'SKU', value: p.sku, mono: true },
+                  { label: 'รหัสสินค้า', value: p.sku, copy: true },
                   { label: __uiText("รูปแบบจัดส่ง"), value: p.fulfillmentMode ?? '—' },
                   { label: __uiText("ระยะเวลาเตรียมสินค้า"), value: p.leadTimeDays !== null && p.leadTimeDays !== undefined ? __uiText('{0} วัน', {'0': p.leadTimeDays}) : '—' },
                   { label: __uiText("อัปเดตล่าสุด"), value: p.updatedAt ? fmt.when(p.updatedAt) : '—' },

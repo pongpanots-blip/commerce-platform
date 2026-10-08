@@ -115,7 +115,7 @@ const EditCategory = () => {
 
       <div className="rounded-lg bg-primary-soft px-4 py-3 text-sm text-ink-secondary">
         <div className="mb-1 flex items-center gap-2">
-          <span className="font-medium text-ink">{__uiText('Category ID:')}</span>
+          <span className="font-medium text-ink">{__uiText('รหัสอ้างอิง')}</span>
           <span className="font-mono text-xs">{id}</span>
           {id && <CopyIdButton id={id} />}
           <a
@@ -137,7 +137,7 @@ const EditCategory = () => {
         </span>
       </div>
 
-      <Field label="ชื่อหมวดหมู่ (EN) *" hint="ชื่อนี้เป็นส่วนหนึ่งของ path — เปลี่ยนแล้ว path ของหมวดลูกทั้งกิ่งจะถูกเขียนใหม่ให้อัตโนมัติ">
+      <Field label="ชื่อภาษาอังกฤษ" required hint="ชื่อนี้เป็นส่วนหนึ่งของที่อยู่หมวด เปลี่ยนแล้วหมวดลูกจะตามชื่อใหม่">
         <Input
           value={form.category_name_en}
           onChange={(e) => setForm({ ...form, category_name_en: e.target.value })}
@@ -145,7 +145,7 @@ const EditCategory = () => {
         />
       </Field>
 
-      <Field label="ชื่อหมวดหมู่ (TH)" hint="ชื่อที่ลูกค้าเห็นเมื่อใช้ภาษาไทย — ว่างไว้จะ fallback ไปใช้ชื่อ EN">
+      <Field label="ชื่อภาษาไทย" hint="ชื่อที่ลูกค้าภาษาไทยเห็น ถ้าว่าง ร้านจะใช้ชื่อภาษาอังกฤษ">
         <Input
           value={form.category_name_th}
           onChange={(e) => setForm({ ...form, category_name_th: e.target.value })}
@@ -161,7 +161,7 @@ const EditCategory = () => {
       />
 
       <Field
-        label="ลำดับการแสดงผล (Sort order)"
+        label="ลำดับที่แสดง"
         hint={lockedSort ? 'หมวด All อยู่ลำดับ 0 เสมอ' : 'ตัวเลขน้อยมาก่อน — เรียงกันเฉพาะในกลุ่มหมวดพี่น้องเดียวกัน'}
       >
         <Input
@@ -174,7 +174,7 @@ const EditCategory = () => {
       </Field>
 
       <Field
-        label="ค่าเรียงเริ่มต้นของหน้ารายการสินค้า (Default sort key)"
+        label="การเรียงสินค้าเริ่มต้น"
         hint="ต้องตรงกับ key ใน Sort options ด้านล่าง — เว้นว่างได้ถ้าไม่ต้องการบังคับ"
       >
         <Input

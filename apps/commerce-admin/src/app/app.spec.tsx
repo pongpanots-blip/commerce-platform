@@ -81,4 +81,24 @@ describe('commerce-admin sign-in gate', () => {
     await render('/login?redirect=%2Fsettings%2Fstaff'); // admin-only
     expect(window.location.pathname).toBe('/products');
   });
+
+  it('old workspace overview links open the replacing section, or the role home', async () => {
+    sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
+    await render('/workspaces/settings');
+    expect(window.location.pathname).toBe('/account/password');
+    act(() => root.unmount());
+    container.remove();
+    await render('/workspaces/connections'); // now Settings › Advanced: nothing there for merchandising
+    expect(window.location.pathname).toBe('/products');
+  });
+
+  it('the sidebar lists task sections, highlights the current page and shows its purpose', async () => {
+    sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
+    await render('/account/password');
+    const groups = [...container.querySelectorAll('aside nav button[aria-expanded]')].map((b) => b.textContent);
+    expect(groups.some((t) => t?.includes('แคตตาล็อกสินค้า'))).toBe(true);
+    expect(groups.some((t) => t?.includes('ตั้งค่าขั้นสูง'))).toBe(false);
+    expect(container.querySelector('aside a[aria-current="page"]')?.getAttribute('href')).toBe('/account/password');
+    expect(container.querySelector('[data-page-purpose]')?.textContent).toBe('เปลี่ยนรหัสผ่านของคุณ');
+  });
 });

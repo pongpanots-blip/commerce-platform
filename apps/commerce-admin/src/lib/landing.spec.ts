@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { FALLBACK_LANDING, isRouteAllowed, isSafeInternalPath, landingFor, loginPathFor, redirectParam, resolvePostLoginPath, ROLE_LANDING } from './landing';
-import { navFor } from '../app/navigation';
+import { navFor, SECTIONS } from '../app/navigation';
 
 const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic'];
 
@@ -24,6 +24,21 @@ describe('role landing (commerce-admin)', () => {
       expect(links).toContain(landingFor(role));
       expect(isRouteAllowed(role, landingFor(role))).toBe(true);
     }
+  });
+
+  it.each([
+    ['admin', null], // Dashboard, outside the sections
+    ['merchandising', 'catalog'],
+    ['graphic', 'catalog'],
+    ['marketing', 'marketing'],
+    ['sales_manager', 'reports'],
+    ['business_analyst', 'reports'],
+    ['cs', 'customers'],
+  ])('%s lands in its main section (%s), on a main item, never behind "show more"', (role, section) => {
+    const landing = landingFor(role);
+    const group = navFor(role).find((g) => g.links.some((l) => l.to === landing))!;
+    expect(group.group ?? null).toBe(section && SECTIONS.find((s) => s.id === section)!.title);
+    expect(group.links.find((l) => l.to === landing)!.more).toBeFalsy();
   });
 
   it('unknown or missing role → the page every staff role can open', () => {
@@ -55,13 +70,12 @@ describe('deep links', () => {
     expect(resolvePostLoginPath(role, redirect)).toBe(expected);
   });
 
-  it('a workspace page only when the role has links in it', () => {
-    const own = navFor('cs').flatMap((g) => g.links.map((l) => l.to)).filter((to) => to.startsWith('/workspaces/'));
-    expect(own.length).toBeGreaterThan(0);
-    for (const id of ['catalog', 'orders', 'customers', 'marketing', 'reports', 'connections', 'settings']) {
-      expect(isRouteAllowed('cs', `/workspaces/${id}`)).toBe(own.includes(`/workspaces/${id}`));
-    }
-    expect(isRouteAllowed('cs', '/workspaces/marketing')).toBe(false);
+  it('an old workspace page only when the replacing section has a page for the role', () => {
+    // cs: Orders and Customers & Service yes; Marketing / Reports / Advanced (old "connections") no
+    expect(['catalog', 'orders', 'customers', 'marketing', 'reports', 'connections', 'settings'].filter((id) => isRouteAllowed('cs', `/workspaces/${id}`)))
+      .toEqual(['orders', 'customers', 'settings']);
+    expect(isRouteAllowed('marketing', '/workspaces/connections')).toBe(true); // Advanced: AI connections, marketing tools
+    expect(isRouteAllowed('graphic', '/workspaces/marketing')).toBe(false);
   });
 
   it('rejects open redirects', () => {

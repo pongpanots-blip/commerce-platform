@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, useUiLocale } from '@cp/ui';
+import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { Workspace } from './pages/Workspace';
 import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
@@ -78,10 +78,7 @@ function AdminTopBar({ role }: { role?: string }) {
     refresh();
     return () => observer.disconnect();
   }, [pathname]);
-  const nav = navFor(session.claims()?.role);
-  const current = nav.flatMap(group => group.links.map(link => ({ group, link })))
-    .filter(({ link }) => pathname === link.to || (link.to !== '/' && !link.end && pathname.startsWith(link.to + '/')))
-    .sort((a, b) => b.link.to.length - a.link.to.length)[0];
+  const current = currentNavItem(navFor(session.claims()?.role), pathname);
   const stats = useAsync(() => role === 'admin' ? api.get<AdminStats>('/admin/stats') : Promise.resolve(null), [role]);
   const health = useAsync(() => role === 'admin' ? reportsApi.health({ period: 'today' }) : Promise.resolve(null), [role]);
   const problems = health.data?.now.problems.length ?? 0;
@@ -170,7 +167,8 @@ export function App() {
           <Routes>
             <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={landingFor(role)} replace />} />
             <Route path="/login" element={<LoginRedirect role={role} />} />
-            <Route path="/workspaces/:workspaceId" element={<Workspace />} />
+            {/* #80 workspace overview pages: old links open the replacing section */}
+            <Route path="/workspaces/:workspaceId" element={<Workspace role={role} />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />
             <Route path="/account/password" element={<ChangePassword />} />

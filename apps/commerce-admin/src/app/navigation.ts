@@ -1,225 +1,182 @@
 import type { NavGroup, NavItem } from '@cp/ui';
 
-const ORIGINAL_NAV: NavGroup[] = [
-  { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
-  {
-    group: 'รายงานร้าน (josh)', icon: 'storefront',
-    links: [
-      { to: '/reports/sales', label: 'ยอดขาย', end: false },
-      { to: '/reports/products', label: 'สินค้า (josh)', end: false },
-      { to: '/reports/orders', label: 'Orders (josh)', end: false },
-      { to: '/reports/customers', label: 'ลูกค้า / บริษัท (josh)', end: false },
-      { to: '/reports/prices', label: 'ราคาที่ลูกค้าเห็น (josh)', end: false },
-      { to: '/reports/price-shadow', label: 'ราคา: commerce คิดคู่กัน (ทดลอง)', end: false },
-      { to: '/prices/staff', label: 'ราคาลูกค้า / ราคาสัญญา (commerce)', end: false },
-      { to: '/reports/traffic', label: 'Traffic', end: false },
-      { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
-      { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
-      { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
-    ],
-  },
-  {
-    group: 'หลังบ้าน josh (อ่านจาก replica ใช้ได้แม้ josh ล่ม)', icon: 'inventory_2',
-    links: [
-      { to: '/josh/kyc', label: 'KYC รอตรวจ', end: false },
-      { to: '/josh/credit_terms', label: 'ขอเครดิต', end: false },
-      { to: '/josh/admin_access', label: 'คำขอเข้า admin', end: false },
-      { to: '/josh/shipments', label: 'Shipments', end: false },
-      { to: '/josh/payments', label: 'รายการชำระเงิน', end: false },
-      { to: '/josh/credit_notes', label: 'Credit notes', end: false },
-      { to: '/josh/credit_backs', label: 'Credit backs', end: false },
-      { to: '/josh/invoices', label: 'ใบแจ้งหนี้', end: false },
-      { to: '/josh/coupons', label: 'Coupons', end: false },
-      { to: '/josh/campaigns', label: 'Campaigns', end: false },
-      { to: '/josh/segments', label: 'Segments', end: false },
-      { to: '/josh/suppliers', label: 'Suppliers', end: false },
-      { to: '/josh/internal_docs', label: 'เอกสารภายใน', end: false },
-      { to: '/josh-api-logs', label: 'API log ของ josh', end: false },
-    ],
-  },
-  {
-    group: 'Marketing', icon: 'campaign',
-    links: [
-      { to: '/marketing/analyst', label: 'ถาม Marketing Analyst', end: false },
-      { to: '/marketing/growth', label: 'Growth Workspace', end: true },
-      { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน Growth', end: false },
-      { to: '/marketing/research', label: 'Research', end: false },
-      { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
-      { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
-      { to: '/j/coupons', label: 'Coupons', end: false },
-      { to: '/j/promotion-product-sets', label: 'Promotion product sets', end: false },
-      { to: '/j/promotions-mechanic', label: 'Promotion mechanics', end: false },
-      { to: '/j/promotion-pages', label: 'Promotion pages', end: false },
-      { to: '/j/promotions/campaigns', label: 'Campaigns', end: false },
-      { to: '/j/segments', label: 'Segments', end: false },
-      { to: '/j/marketing/push-campaigns', label: 'Push campaigns', end: false },
-      { to: '/j/cs/notification-catalog', label: 'Notification catalog', end: false },
-      { to: '/j/cs/notification-log', label: 'Notification log', end: false },
-      { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
-      { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', end: false },
-      { to: '/j/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
-      { to: '/j/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
-      { to: '/j/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
-    ],
-  },
-  {
-    group: 'CS / แชต', icon: 'support_agent',
-    links: [
-      { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
-      { to: '/livechat', label: 'Live chat', end: false },
-      { to: '/j/bot/intent-rules', label: 'Bot · intent rules', end: false },
-      { to: '/j/bot/workflows', label: 'Bot · workflows', end: false },
-      { to: '/j/bot/templates', label: 'Bot · templates', end: false },
-    ],
-  },
-  {
-    group: 'สินค้า / ลูกค้า (จาก josh)', icon: 'shelves',
-    links: [
-      { to: '/j/allproducts', label: 'สินค้า (จัดการ)', end: false },
-      { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true },
-      { to: '/j/product/video-upload', label: 'Video upload', end: true },
-      { to: '/j/product/bulk-image-upload', label: 'Bulk image upload', end: true },
-      { to: '/j/suppliers', label: 'Suppliers', end: false },
-      { to: '/j/brands', label: 'แบรนด์', end: false },
-      { to: '/j/categories', label: 'จัดการหมวดหมู่', end: false },
-      { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
-      { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
-      { to: '/j/company', label: 'บริษัท', end: false },
-      { to: '/j/kyc', label: 'KYC', end: false },
-      { to: '/j/cs/sample-requests', label: 'Sample requests', end: false },
-      { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', end: false },
-      { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', end: false },
-      { to: '/j/price-requests', label: 'Price requests', end: false },
-      { to: '/j/active-offers', label: 'Active offers', end: false },
-      { to: '/j/admin-access', label: 'Admin access requests', end: false },
-    ],
-  },
-  {
-    group: 'Order / การเงิน (จาก josh)', icon: 'receipt_long',
-    links: [
-      { to: '/j/order', label: 'Orders (จัดการ)', end: false },
-      { to: '/j/shipments', label: 'Shipments (จัดการ)', end: false },
-      { to: '/j/payment-transactions', label: 'รายการชำระเงิน (จัดการ)', end: false },
-      { to: '/j/order/import', label: 'นำเข้า order', end: true },
-      { to: '/j/batch-sticker', label: 'พิมพ์ sticker', end: false },
-      { to: '/j/kbank/testing-console', label: 'KBank testing console', end: false },
-      { to: '/j/invoices', label: 'Overdue invoices', end: false },
-      { to: '/j/credit-notes', label: 'Credit notes', end: false },
-      { to: '/j/credit-backs', label: 'Credit backs', end: false },
-      { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', end: false },
-      { to: '/j/billing', label: 'Billing', end: false },
-      { to: '/j/refunds', label: 'Returns & refunds', end: false },
-      { to: '/j/jagota/payment-testing', label: 'Jagota payment testing', end: false },
-      { to: '/j/erp/webhook-simulator', label: 'ERP webhook simulator (josh)', end: false },
-    ],
-  },
-  {
-    group: 'Marketing (จาก josh)', icon: 'campaign',
-    links: [
-      { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', end: false },
-      { to: '/j/smart-links', label: 'Smart links', end: false },
-      { to: '/j/marketing-links', label: 'Marketing links', end: false },
-      { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', end: false },
-      { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', end: false },
-      { to: '/j/marketing/queue', label: 'คิวงานการตลาด', end: false },
-      { to: '/j/marketing/journey-funnel', label: 'Journey funnel', end: false },
-      { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', end: false },
-    ],
-  },
-  { group: 'AI', icon: 'smart_toy', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
-  {
-    group: 'ERP hub', icon: 'hub',
-    links: [
-      { to: '/erp/inbound-log', label: 'Inbound log', end: false },
-      { to: '/erp/josh-logs', label: 'ERP log ของ josh', end: false },
-      { to: '/erp/webhook-dead-letter', label: 'Dead letter', end: false },
-      { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
-      { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
-      { to: '/erp/simulator', label: 'ERP simulator', end: false },
-      { to: '/erp/jagota-shadow', label: 'ส่ง order ผ่าน commerce (ทดลอง)', end: false },
-    ],
-  },
-  {
-    group: 'Integration', icon: 'cable',
-    links: [
-      { to: '/integrations', label: 'Integrations', end: false },
-      { to: '/webhooks', label: 'Webhook events (in)', end: false },
-      { to: '/subscriptions', label: 'Outgoing webhooks', end: false },
-      { to: '/sync-jobs', label: 'Sync jobs', end: false },
-      { to: '/erp-stock', label: 'ERP stub stock', end: false },
-      { to: '/erp-ingest', label: 'ERP ingest', end: false },
-    ],
-  },
-  {
-    group: 'Commerce data', icon: 'database',
-    links: [
-      { to: '/customers', label: 'Customers', end: false },
-      { to: '/products', label: 'Products', end: false },
-      { to: '/stock-moves', label: 'Stock moves', end: false },
-      { to: '/product-prices', label: 'ราคาสินค้า', end: false },
-      { to: '/product-master-queue', label: 'คิวข้อมูลสินค้าจาก ERP', end: false },
-      { to: '/order-periods', label: 'รอบสั่งซื้อ supplier', end: false },
-      { to: '/orders', label: 'Orders', end: false },
-      { to: '/reservations', label: 'Reservations', end: false },
-    ],
-  },
-  {
-    group: 'ตั้งค่า', icon: 'settings',
-    links: [
-      { to: '/settings/staff', label: 'บัญชี staff', end: false },
-      { to: '/settings/josh-staff', label: 'บัญชี josh (staff)', end: false },
-      { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', end: false },
-    ],
-  },
+/**
+ * The admin sidebar, in task-based sections. One source for the sidebar, the page headers (each item's
+ * one-line `description`), role landing and deep links (src/lib/landing.ts) and the tests.
+ * - `more`: less used, behind the section's "show more" (search still finds it).
+ * - Settings › Advanced (`advanced`): ops-only, logs, testing tools and josh replica views; collapsed.
+ * - `activeFor`: sub-pages (create / edit / detail) outside `to` that highlight the item.
+ * Labels and descriptions are UI copy keys (libs/ui/src/locales/ui-messages.json, TH + EN).
+ * The pre-redesign sidebar is frozen in navigation.legacy.ts (old → new mapping, redirects, tests).
+ */
+export type SectionId = 'catalog' | 'orders' | 'customers' | 'marketing' | 'reports' | 'settings' | 'advanced';
+
+export interface Section { id: SectionId; title: string; icon: string; description: string }
+
+export const SECTIONS: readonly Section[] = [
+  { id: 'catalog', title: 'แคตตาล็อกสินค้า', icon: 'inventory_2', description: 'สินค้า หมวดหมู่ แบรนด์ รูปภาพ ราคา และสต็อก' },
+  { id: 'orders', title: 'ออเดอร์และการเงิน', icon: 'receipt_long', description: 'คำสั่งซื้อ การจัดส่ง การชำระเงิน ใบแจ้งหนี้ และเครดิต' },
+  { id: 'customers', title: 'ลูกค้าและงานบริการ', icon: 'support_agent', description: 'บริษัทลูกค้า ผู้ใช้ งาน CS แชต และการติดตามลูกค้าเก่า' },
+  { id: 'marketing', title: 'การตลาด', icon: 'campaign', description: 'แคมเปญ คูปอง โปรโมชัน กลุ่มลูกค้า ข้อความ และข้อมูลคู่แข่ง' },
+  { id: 'reports', title: 'รายงานและข้อมูล', icon: 'monitoring', description: 'ยอดขาย ออเดอร์ สินค้า ลูกค้า ราคา และการเข้าชม' },
+  { id: 'settings', title: 'ตั้งค่าและทีมงาน', icon: 'settings', description: 'บัญชีทีมงาน สิทธิ์เข้าใช้งาน และรหัสผ่าน' },
+  { id: 'advanced', title: 'ตั้งค่าขั้นสูง', icon: 'tune', description: 'ระบบเชื่อมต่อ บันทึก เครื่องมือทดสอบ และข้อมูลสำรองจาก josh (ใช้ไม่บ่อย)' },
 ];
 
+type NavEntry = Omit<NavItem, 'icon' | 'badge'> & { description: string };
 
-export const WORKSPACES = [
-  { id: 'catalog', title: 'สินค้าและสต็อก', icon: 'inventory_2', description: 'จัดการสินค้า ราคา และความพร้อมขายในที่เดียว', primary: ['/products', '/j/allproducts', '/product-prices', '/stock-moves'], steps: ['จัดการข้อมูลสินค้า', 'ตรวจสอบราคาและสต็อก', 'เตรียมสินค้าให้พร้อมขาย'] },
-  { id: 'orders', title: 'ออเดอร์และการเงิน', icon: 'receipt_long', description: 'ดูคำสั่งซื้อ การจัดส่ง และรายการชำระเงิน', primary: ['/j/order', '/j/shipments', '/j/payment-transactions', '/j/invoices'], steps: ['ตรวจสอบคำสั่งซื้อ', 'ติดตามการชำระเงิน', 'เตรียมและติดตามการจัดส่ง'] },
-  { id: 'customers', title: 'ลูกค้าและบริการ', icon: 'support_agent', description: 'ดูแลบัญชีลูกค้า ติดต่อ และติดตามงานบริการ', primary: ['/j/company', '/cs', '/livechat', '/reports/winback'], steps: ['ค้นหาลูกค้าหรือบริษัท', 'ดูประวัติและคำขอ', 'ติดตามงานบริการ'] },
-  { id: 'marketing', title: 'การตลาด', icon: 'campaign', description: 'วางแผนแคมเปญ โปรโมชัน และสื่อสารกับลูกค้า', primary: ['/marketing/growth', '/j/coupons', '/marketing/workflows', '/marketing/analyst'], steps: ['วิเคราะห์และวางแผน', 'เตรียมแคมเปญและเนื้อหา', 'ติดตามผลการสื่อสาร'] },
-  { id: 'reports', title: 'รายงานและข้อมูล', icon: 'monitoring', description: 'ดูภาพรวมยอดขาย สินค้า ลูกค้า และผลการทำงาน', primary: ['/reports/sales', '/reports/orders', '/reports/products', '/reports/customers'], steps: ['เลือกรายงาน', 'กำหนดช่วงเวลาหรือเงื่อนไข', 'ดูรายละเอียดเพื่อใช้ตัดสินใจ'] },
-  { id: 'connections', title: 'ระบบเชื่อมต่อ', icon: 'hub', description: 'ติดตามการเชื่อมต่อ คิวงาน และปัญหาการส่งข้อมูล', primary: ['/integrations', '/erp/inbound-log', '/sync-jobs', '/erp/webhook-dead-letter'], steps: ['ตรวจสอบการเชื่อมต่อ', 'ติดตามคิวและการส่งข้อมูล', 'ตรวจสอบรายการที่ต้องแก้ไข'] },
-  { id: 'settings', title: 'ตั้งค่าและทีมงาน', icon: 'settings', description: 'จัดการบัญชีทีมงาน สิทธิ์ และการตั้งค่าบัญชี', primary: ['/settings/staff', '/settings/josh-staff', '/account/password'], steps: ['จัดการบัญชีทีมงาน', 'ตรวจสอบบทบาทและสิทธิ์', 'ดูแลความปลอดภัยของบัญชี'] },
-] as const;
+const H_INTEGRATIONS = 'การเชื่อมต่อและ ERP';
+const H_LOGS = 'บันทึกและตรวจปัญหา';
+const H_TESTING = 'ทดสอบและทดลอง';
+const H_MARKETING = 'การตลาด: ติดตามและตั้งค่า';
+const H_REPLICA = 'ข้อมูลจาก josh (อ่านอย่างเดียว)';
+const REPLICA = 'ดูข้อมูลจาก replica ของ josh แบบอ่านอย่างเดียว ใช้ได้แม้ josh ล่ม งานจัดการทำที่หน้าหลักของหมวดนั้น';
 
-export type WorkspaceId = typeof WORKSPACES[number]['id'];
-
-const LABELS: Record<string, string> = {
-  '/': 'ภาพรวม',
-  '/j/allproducts': 'จัดการสินค้า', '/products': 'แคตตาล็อกแพลตฟอร์ม',
-  '/j/product/create': 'เพิ่มสินค้า', '/j/product/video-upload': 'อัปโหลดวิดีโอสินค้า', '/j/product/bulk-image-upload': 'อัปโหลดรูปสินค้าหลายรายการ',
-  '/j/suppliers': 'จัดการซัพพลายเออร์', '/josh/suppliers': 'ข้อมูลซัพพลายเออร์',
-  '/j/order': 'จัดการออเดอร์', '/orders': 'ออเดอร์แพลตฟอร์ม', '/j/shipments': 'จัดการการจัดส่ง',
-  '/j/payment-transactions': 'จัดการการชำระเงิน', '/j/invoices': 'ใบแจ้งหนี้ค้างชำระ', '/j/order/import': 'นำเข้าออเดอร์',
-  '/josh/credit_notes': 'ข้อมูลใบลดหนี้', '/j/credit-notes': 'จัดการใบลดหนี้',
-  '/josh/credit_backs': 'ข้อมูลคืนเครดิต', '/j/credit-backs': 'จัดการคืนเครดิต',
-  '/josh/shipments': 'ข้อมูลการจัดส่ง', '/josh/payments': 'ข้อมูลรายการชำระเงิน',
-  '/josh/coupons': 'ข้อมูลคูปอง', '/j/coupons': 'จัดการคูปอง',
-  '/josh/campaigns': 'ข้อมูลแคมเปญ', '/j/promotions/campaigns': 'จัดการแคมเปญ',
-  '/josh/segments': 'ข้อมูลกลุ่มลูกค้า', '/j/segments': 'จัดการกลุ่มลูกค้า',
-  '/j/batch-sticker': 'พิมพ์สติกเกอร์', '/j/billing': 'วางบิล', '/j/refunds': 'คืนสินค้าและคืนเงิน',
-  '/j/allusers': 'จัดการผู้ใช้', '/j/company': 'จัดการบริษัท', '/customers': 'ลูกค้าแพลตฟอร์ม',
-  '/j/kyc': 'ตรวจสอบตัวตนลูกค้า', '/josh/kyc': 'ข้อมูลคำขอ KYC', '/j/membership-tiers': 'ระดับสมาชิก',
-  '/cs': 'งานบริการลูกค้า', '/livechat': 'แชตกับลูกค้า', '/reports/winback': 'ติดตามลูกค้าเก่า',
-  '/stock-moves': 'ความเคลื่อนไหวสต็อก', '/reservations': 'การจองสินค้า',
-  '/reports/sales': 'รายงานยอดขาย', '/reports/products': 'รายงานสินค้า', '/reports/orders': 'รายงานออเดอร์',
-  '/reports/customers': 'รายงานลูกค้าและบริษัท', '/reports/prices': 'รายงานราคาขาย', '/reports/traffic': 'การเข้าชม',
-  '/reports/health': 'สุขภาพระบบ', '/reports/order-targetgroup': 'กลุ่มลูกค้าเป้าหมาย',
-  '/marketing/growth': 'วางแผนการเติบโต', '/marketing/growth/plans': 'แผนและปฏิทิน', '/marketing/analyst': 'ผู้ช่วยวิเคราะห์การตลาด',
-  '/marketing/research': 'งานวิจัยตลาด', '/marketing/restaurants': 'ค้นหาตลาดร้านอาหาร', '/marketing/workflows': 'เวิร์กโฟลว์การตลาด',
-  '/integrations': 'การเชื่อมต่อ', '/webhooks': 'เหตุการณ์ขาเข้า', '/subscriptions': 'การส่งเหตุการณ์ขาออก', '/sync-jobs': 'งานซิงก์ข้อมูล',
-  '/erp/inbound-log': 'บันทึกข้อมูลขาเข้า', '/erp/webhook-dead-letter': 'รายการส่งไม่สำเร็จ',
-  '/erp/webhook-platforms': 'แพลตฟอร์มปลายทาง', '/erp/inventory-warehouse': 'สต็อกแยกตามคลัง', '/erp/simulator': 'ทดสอบการเชื่อมต่อ ERP',
-  '/ai/connectors': 'การเชื่อมต่อ AI', '/settings/staff': 'บัญชีทีมงาน', '/settings/josh-staff': 'บัญชีทีมงานร้านค้า',
-  '/j/price-requests': 'คำขอราคา', '/j/active-offers': 'ข้อเสนอราคาที่ใช้งาน',
-  '/j/erp/webhook-simulator': 'ทดสอบเหตุการณ์ ERP ของร้านค้า',
+const NAV: Record<SectionId, NavEntry[]> = {
+  catalog: [
+    { to: '/j/allproducts', label: 'จัดการสินค้า', activeFor: ['/j/product'], description: 'ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า' },
+    { to: '/products', label: 'แคตตาล็อกแพลตฟอร์ม', description: 'สินค้าตาม SKU ในแพลตฟอร์ม และอนุมัติสินค้าใหม่จาก ERP' },
+    { to: '/j/categories', label: 'จัดการหมวดหมู่', description: 'จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า' },
+    { to: '/j/brands', label: 'แบรนด์', description: 'รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า' },
+    { to: '/j/product/bulk-image-upload', label: 'อัปโหลดรูปสินค้าหลายรายการ', end: true, description: 'อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน' },
+    { to: '/j/suppliers', label: 'จัดการซัพพลายเออร์', activeFor: ['/j/supplier'], description: 'ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ' },
+    { to: '/product-prices', label: 'ราคาสินค้า', description: 'ราคาขาย ราคาสั่ง และ MOQ ตรวจและอนุมัติราคาที่ ERP เปลี่ยน' },
+    { to: '/product-master-queue', label: 'คิวข้อมูลสินค้าจาก ERP', description: 'ตรวจและอนุมัติข้อมูลสินค้าที่ ERP เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT' },
+    { to: '/stock-moves', label: 'ความเคลื่อนไหวสต็อก', description: 'บันทึกการรับเข้า ปรับยอด และโอนสินค้าระหว่างคลัง' },
+    { to: '/erp/inventory-warehouse', label: 'สต็อกแยกตามคลัง', description: 'ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง' },
+    { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true, more: true, description: 'สร้างสินค้าใหม่บนร้านค้า' },
+    { to: '/j/product/video-upload', label: 'อัปโหลดวิดีโอสินค้า', end: true, more: true, description: 'อัปโหลดวิดีโอประกอบหน้าสินค้า' },
+    { to: '/prices/staff', label: 'ราคาลูกค้า / ราคาสัญญา (commerce)', more: true, description: 'ราคาเฉพาะลูกค้าและราคาสัญญาที่ commerce ดูแล' },
+    { to: '/order-periods', label: 'รอบสั่งซื้อ supplier', more: true, description: 'รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับจาก ERP' },
+  ],
+  orders: [
+    { to: '/j/order', label: 'จัดการออเดอร์', description: 'ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ' },
+    { to: '/j/shipments', label: 'จัดการการจัดส่ง', description: 'ติดตามการจัดส่งและอัปเดตสถานะพัสดุ' },
+    { to: '/j/payment-transactions', label: 'จัดการการชำระเงิน', description: 'รายการชำระเงินของลูกค้าและสถานะการชำระ' },
+    { to: '/j/invoices', label: 'ใบแจ้งหนี้ค้างชำระ', description: 'ใบแจ้งหนี้ที่เลยกำหนดชำระ เพื่อติดตามกับลูกค้า' },
+    { to: '/j/billing', label: 'วางบิล', description: 'ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ทั้งหมด' },
+    { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', description: 'พิจารณาใบสมัครเครดิตเทอมของลูกค้า' },
+    { to: '/j/credit-notes', label: 'จัดการใบลดหนี้', description: 'ออกและติดตามใบลดหนี้' },
+    { to: '/j/credit-backs', label: 'จัดการคืนเครดิต', description: 'คืนเครดิตให้ลูกค้าและติดตามสถานะ' },
+    { to: '/j/refunds', label: 'คืนสินค้าและคืนเงิน', description: 'คำขอคืนสินค้าและการคืนเงินของลูกค้า' },
+    { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', description: 'รอบจัดส่งและเกณฑ์การจัดส่ง' },
+    { to: '/j/order/import', label: 'นำเข้าออเดอร์', end: true, more: true, description: 'นำเข้าคำสั่งซื้อจากไฟล์' },
+    { to: '/j/batch-sticker', label: 'พิมพ์สติกเกอร์', more: true, description: 'พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน' },
+    { to: '/orders', label: 'ออเดอร์แพลตฟอร์ม', more: true, description: 'คำสั่งซื้อในแพลตฟอร์ม commerce พร้อมการชำระเงินและการจองสินค้า' },
+    { to: '/reservations', label: 'การจองสินค้า', more: true, description: 'สต็อกที่ถูกจองระหว่างชำระเงิน ทั้งที่จอง ยืนยัน ปล่อย และหมดอายุ' },
+  ],
+  customers: [
+    { to: '/j/company', label: 'จัดการบริษัท', description: 'บริษัทลูกค้า B2B ข้อมูล เครดิตเทอม และสิทธิ์สั่งซื้อ' },
+    { to: '/j/allusers', label: 'จัดการผู้ใช้', description: 'ค้นหาบัญชีผู้ใช้ของลูกค้าและดูประวัติ' },
+    { to: '/cs', label: 'งานบริการลูกค้า', description: 'สั่งแทนลูกค้า คำขอสินค้าตัวอย่าง และรวมบัญชีในที่เดียว' },
+    { to: '/livechat', label: 'แชตกับลูกค้า', description: 'อ่านและตอบแชตของลูกค้า' },
+    { to: '/j/cs/sample-requests', label: 'Sample requests', description: 'คำขอสินค้าตัวอย่างจากลูกค้า' },
+    { to: '/j/price-requests', label: 'คำขอราคา', description: 'คำขอราคาพิเศษจากลูกค้า' },
+    { to: '/j/active-offers', label: 'ข้อเสนอราคาที่ใช้งาน', description: 'ราคาพิเศษเฉพาะลูกค้า (private price) ที่ยังใช้งานอยู่' },
+    { to: '/j/kyc', label: 'ตรวจสอบตัวตนลูกค้า', description: 'ตรวจเอกสารยืนยันตัวตน (KYC) ที่รอพิจารณา' },
+    { to: '/reports/winback', label: 'ติดตามลูกค้าเก่า', description: 'ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย' },
+    { to: '/j/membership-tiers', label: 'ระดับสมาชิก', more: true, description: 'กำหนดระดับสมาชิกและเงื่อนไขของแต่ละระดับ' },
+    { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', more: true, description: 'หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี' },
+    { to: '/customers', label: 'ลูกค้าแพลตฟอร์ม', more: true, description: 'ข้อมูลติดต่อและรายละเอียดลูกค้าในแพลตฟอร์ม commerce' },
+  ],
+  marketing: [
+    { to: '/marketing/growth', label: 'วางแผนการเติบโต', end: true, activeFor: ['/marketing/growth/results', '/marketing/growth/companies'], description: 'เริ่มจากข้อมูลลูกค้าและยอดขาย แล้ววางแผนแคมเปญที่ผ่านการตรวจทาน' },
+    { to: '/j/promotions/campaigns', label: 'จัดการแคมเปญ', description: 'สร้างและติดตามแคมเปญโปรโมชัน' },
+    { to: '/j/coupons', label: 'จัดการคูปอง', activeFor: ['/j/coupon'], description: 'สร้าง แก้ไข และติดตามการใช้คูปอง' },
+    { to: '/j/promotions-mechanic', label: 'Promotion mechanics', description: 'กติกาส่วนลด เช่น ซื้อครบลด หรือซื้อ X แถม Y' },
+    { to: '/j/promotion-product-sets', label: 'Promotion product sets', description: 'ชุดสินค้าที่ใช้กับโปรโมชันและคูปอง' },
+    { to: '/j/promotion-pages', label: 'Promotion pages', description: 'หน้าโปรโมชันบนร้านค้า' },
+    { to: '/j/segments', label: 'จัดการกลุ่มลูกค้า', description: 'กำหนดกลุ่มลูกค้าเป้าหมายสำหรับแคมเปญและคูปอง' },
+    { to: '/j/marketing/push-campaigns', label: 'Push campaigns', description: 'ส่งการแจ้งเตือนแบบ push ถึงลูกค้า' },
+    { to: '/marketing/workflows', label: 'เวิร์กโฟลว์การตลาด', description: 'ข้อความอัตโนมัติที่ส่งตามพฤติกรรมลูกค้า' },
+    { to: '/j/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', description: 'เทียบราคาสินค้าของเรากับเว็บคู่แข่ง' },
+    { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน', more: true, description: 'แผนการตลาดที่บันทึกไว้และปฏิทินงาน' },
+    { to: '/marketing/analyst', label: 'ผู้ช่วยวิเคราะห์การตลาด', more: true, description: 'ถามคำถามการตลาดกับผู้ช่วย AI จากข้อมูลในระบบ' },
+    { to: '/marketing/research', label: 'งานวิจัยตลาด', more: true, description: 'รายงานวิจัยตลาดและหัวข้อที่ติดตาม' },
+    { to: '/marketing/restaurants', label: 'ค้นหาตลาดร้านอาหาร', more: true, description: 'สำรวจร้านอาหารบนแผนที่เพื่อหาลูกค้าใหม่' },
+    { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', more: true, description: 'แม่แบบข้อความสำหรับแจ้งเตือนลูกค้า' },
+    { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', more: true, description: 'อีเมลต้อนรับลูกค้าที่สนใจ (ลีด) รายใหม่' },
+    { to: '/j/smart-links', label: 'Smart links', more: true, description: 'ลิงก์ที่ติดตามผลได้ พาลูกค้าไปยังหน้าที่เลือก' },
+    { to: '/j/marketing-links', label: 'Marketing links', more: true, description: 'สร้างลิงก์การตลาดพร้อม UTM' },
+    { to: '/j/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', more: true, description: 'สินค้าที่เก็บมาจากเว็บคู่แข่ง' },
+    { to: '/j/bot/intent-rules', label: 'Bot · intent rules', more: true, description: 'กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า' },
+    { to: '/j/bot/workflows', label: 'Bot · workflows', more: true, description: 'ลำดับการตอบของแชตบอต' },
+    { to: '/j/bot/templates', label: 'Bot · templates', more: true, description: 'ข้อความสำเร็จรูปของแชตบอต' },
+  ],
+  reports: [
+    { to: '/reports/sales', label: 'รายงานยอดขาย', description: 'ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า' },
+    { to: '/reports/orders', label: 'รายงานออเดอร์', description: 'รายการและสรุปคำสั่งซื้อของร้าน' },
+    { to: '/reports/products', label: 'รายงานสินค้า', description: 'สินค้าขายดี ยอดขาย และสถานะสินค้า' },
+    { to: '/reports/customers', label: 'รายงานลูกค้าและบริษัท', description: 'ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด' },
+    { to: '/reports/prices', label: 'รายงานราคาขาย', description: 'ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา' },
+    { to: '/reports/order-targetgroup', label: 'กลุ่มลูกค้าเป้าหมาย', description: 'ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย' },
+    { to: '/reports/traffic', label: 'การเข้าชม', description: 'การเข้าชมร้านค้าและพฤติกรรมการใช้งาน' },
+    { to: '/reports/health', label: 'สุขภาพระบบ', description: 'ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้' },
+  ],
+  settings: [
+    { to: '/settings/staff', label: 'บัญชีทีมงาน', description: 'เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี' },
+    { to: '/settings/josh-staff', label: 'บัญชีทีมงานร้านค้า', description: 'บัญชีทีมงานฝั่งร้านค้า (josh)' },
+    { to: '/j/admin-access', label: 'Admin access requests', description: 'คำขอใช้งาน web-admin ของร้านค้าที่รออนุมัติ' },
+    { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', description: 'เปลี่ยนรหัสผ่านของคุณ' },
+  ],
+  advanced: [
+    // Integrations & ERP
+    { to: '/integrations', label: 'การเชื่อมต่อ', heading: H_INTEGRATIONS, description: 'ระบบภายนอกที่เชื่อมกับแพลตฟอร์มและสถานะการเชื่อมต่อ' },
+    { to: '/webhooks', label: 'เหตุการณ์ขาเข้า', heading: H_INTEGRATIONS, description: 'เหตุการณ์ที่ระบบภายนอกส่งเข้ามา' },
+    { to: '/subscriptions', label: 'การส่งเหตุการณ์ขาออก', heading: H_INTEGRATIONS, description: 'ปลายทางที่รับเหตุการณ์จากแพลตฟอร์ม (webhook ขาออก)' },
+    { to: '/sync-jobs', label: 'งานซิงก์ข้อมูล', heading: H_INTEGRATIONS, description: 'งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์' },
+    { to: '/erp/webhook-platforms', label: 'แพลตฟอร์มปลายทาง', heading: H_INTEGRATIONS, description: 'แพลตฟอร์มที่รับข้อมูลจาก ERP hub' },
+    { to: '/erp-ingest', label: 'ERP ingest', heading: H_INTEGRATIONS, description: 'ข้อมูลที่รับจาก ERP เข้าแพลตฟอร์ม' },
+    { to: '/ai/connectors', label: 'การเชื่อมต่อ AI', heading: H_INTEGRATIONS, description: 'เชื่อมเครื่องมือ AI (MCP) กับข้อมูลแพลตฟอร์มแบบอ่านอย่างเดียว' },
+    // Logs & troubleshooting
+    { to: '/erp/inbound-log', label: 'บันทึกข้อมูลขาเข้า', heading: H_LOGS, description: 'บันทึกข้อมูลที่ ERP ส่งเข้ามา' },
+    { to: '/erp/webhook-dead-letter', label: 'รายการส่งไม่สำเร็จ', heading: H_LOGS, description: 'ข้อมูลที่ส่งไม่สำเร็จ ตรวจสอบและส่งใหม่' },
+    { to: '/erp/josh-logs', label: 'ERP log ของ josh', heading: H_LOGS, description: 'บันทึกการเรียก ERP ฝั่ง josh' },
+    { to: '/josh-api-logs', label: 'API log ของ josh', heading: H_LOGS, description: 'บันทึกการเรียก API ของ josh' },
+    // Testing & experiments
+    { to: '/erp/simulator', label: 'ทดสอบการเชื่อมต่อ ERP', heading: H_TESTING, description: 'จำลองข้อมูล ERP เพื่อทดสอบการเชื่อมต่อ' },
+    { to: '/j/erp/webhook-simulator', label: 'ทดสอบเหตุการณ์ ERP ของร้านค้า', heading: H_TESTING, description: 'ส่งเหตุการณ์ ERP ทดสอบไปยังร้านค้า' },
+    { to: '/erp-stock', label: 'ERP stub stock', heading: H_TESTING, description: 'สต็อกจำลองของ ERP สำหรับทดสอบ' },
+    { to: '/j/kbank/testing-console', label: 'KBank testing console', heading: H_TESTING, description: 'ทดสอบการชำระเงินผ่าน KBank' },
+    { to: '/j/jagota/payment-testing', label: 'Jagota payment testing', heading: H_TESTING, description: 'ทดสอบการชำระเงินของ Jagota' },
+    { to: '/erp/jagota-shadow', label: 'ส่ง order ผ่าน commerce (ทดลอง)', heading: H_TESTING, description: 'ทดลองส่งออเดอร์ไป ERP ผ่าน commerce' },
+    { to: '/reports/price-shadow', label: 'ราคา: commerce คิดคู่กัน (ทดลอง)', heading: H_TESTING, description: 'เทียบราคาที่ commerce คำนวณกับราคาของ josh' },
+    // Marketing: monitoring & settings
+    { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', heading: H_MARKETING, description: 'ค่าที่มีผลกับเวิร์กโฟลว์การตลาดทั้งหมด' },
+    { to: '/j/marketing/queue', label: 'คิวงานการตลาด', heading: H_MARKETING, description: 'ข้อความการตลาดที่รอส่งและที่ส่งแล้ว' },
+    { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', heading: H_MARKETING, description: 'ตรวจว่าอุปกรณ์หรือผู้ใช้จะเห็นข้อเสนอใดบนร้านค้า' },
+    { to: '/j/marketing/journey-funnel', label: 'Journey funnel', heading: H_MARKETING, description: 'จำนวนลูกค้าที่ผ่านแต่ละขั้นของการใช้งาน' },
+    { to: '/j/cs/notification-catalog', label: 'Notification catalog', heading: H_MARKETING, description: 'การแจ้งเตือนทุกประเภทที่ระบบส่งได้ และการเปิดปิด' },
+    { to: '/j/cs/notification-log', label: 'Notification log', heading: H_MARKETING, description: 'บันทึกการแจ้งเตือนที่ส่งถึงลูกค้า' },
+    { to: '/j/cs/notification-stats', label: 'Notification delivery stats', heading: H_MARKETING, description: 'สถิติการส่งแจ้งเตือนที่สำเร็จและไม่สำเร็จ' },
+    { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', heading: H_MARKETING, description: 'ผลของการแจ้งเตือนสินค้า ตั้งแต่ส่งจนถึงสั่งซื้อ' },
+    { to: '/j/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', heading: H_MARKETING, description: 'เลือกเว็บคู่แข่งที่ระบบเก็บข้อมูล และการเก็บอัตโนมัติ' },
+    // josh replica (read-only)
+    { to: '/josh/kyc', label: 'ข้อมูลคำขอ KYC', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/credit_terms', label: 'ข้อมูลคำขอเครดิต', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/admin_access', label: 'ข้อมูลคำขอเข้า admin', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/shipments', label: 'ข้อมูลการจัดส่ง', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/payments', label: 'ข้อมูลรายการชำระเงิน', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/credit_notes', label: 'ข้อมูลใบลดหนี้', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/credit_backs', label: 'ข้อมูลคืนเครดิต', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/invoices', label: 'ข้อมูลใบแจ้งหนี้', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/coupons', label: 'ข้อมูลคูปอง', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/campaigns', label: 'ข้อมูลแคมเปญ', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/segments', label: 'ข้อมูลกลุ่มลูกค้า', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/suppliers', label: 'ข้อมูลซัพพลายเออร์', heading: H_REPLICA, description: REPLICA },
+    { to: '/josh/internal_docs', label: 'เอกสารภายใน', heading: H_REPLICA, description: REPLICA },
+  ],
 };
+
+export const DASHBOARD: NavItem = { to: '/', label: 'แดชบอร์ด', end: true, icon: 'space_dashboard', description: 'งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว' };
+
+/** Every sidebar destination (Dashboard aside), in sidebar order, with its section. */
+export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatMap((s) => NAV[s.id].map((item) => ({ ...item, section: s.id })));
 
 /**
  * Destination permissions from the staff-role policy; omitted destinations are admin-only.
- * Also decides post-login landing pages and deep links (src/lib/landing.ts).
+ * Mirrors backend @StaffRoles and, for /j/* pages, the josh admin-call relay AREAS: a role never gets
+ * a page whose first API calls 403 for it. Also decides post-login landing pages and deep links.
  */
 export const ROLE_ACCESS: Record<string, readonly string[]> = {
   "/reports/sales": [
@@ -405,9 +362,7 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
   "/j/marketing/queue": [
     "marketing"
   ],
-  "/j/marketing/journey-funnel": [
-    "marketing"
-  ],
+  // "/j/marketing/journey-funnel": admin-only — the page reads josh /analytics/funnel, which the relay allows admin only
   "/j/marketing/offers-check": [
     "marketing"
   ],
@@ -447,94 +402,29 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
   ]
 };
 
-function category(item: NavItem, group = ''): WorkspaceId {
-  const p = item.to;
-  if (p.startsWith('/settings/') || p.startsWith('/account/') || p === '/josh/internal_docs') return 'settings';
-  if (p === '/reports/winback' || p.startsWith('/cs') || p.startsWith('/livechat') || p.startsWith('/customers') || p.startsWith('/j/bot/') ||
-      ['/j/allusers', '/j/company', '/j/kyc', '/j/membership-tiers', '/j/cs/sample-requests', '/j/cs/cart-move-categories', '/j/admin-access', '/josh/kyc', '/josh/admin_access'].includes(p)) return 'customers';
-  if (p.startsWith('/reports/')) return 'reports';
-  if (p.startsWith('/marketing/') || group.startsWith('Marketing') ||
-      ['/josh/coupons', '/josh/campaigns', '/josh/segments'].includes(p)) return 'marketing';
-  if (p === '/erp/inventory-warehouse' || p === '/erp-stock' || p === '/prices/staff' || p.startsWith('/product') || p === '/stock-moves' || p === '/order-periods' ||
-      ['/j/allproducts', '/j/suppliers', '/j/brands', '/j/categories', '/josh/suppliers', '/j/price-requests', '/j/active-offers'].includes(p) || p.startsWith('/j/product/') || p.startsWith('/j/categories/')) return 'catalog';
-  if (p.startsWith('/j/erp/')) return 'connections';
-  if (p === '/orders' || p === '/reservations' || p === '/j/cs/delivery-schedule' || group.startsWith('Order') ||
-      ['/josh/shipments', '/josh/payments', '/josh/credit_notes', '/josh/credit_backs', '/josh/invoices', '/josh/credit_terms'].includes(p)) return 'orders';
-  return 'connections';
+export const canSee = (role: string | null | undefined, to: string) => role === 'admin' || (!!role && !!ROLE_ACCESS[to]?.includes(role));
+
+/** The sidebar for a role: only items it may open, no empty sections; Dashboard for admin. */
+export function navFor(role?: string): NavGroup[] {
+  const groups = SECTIONS.flatMap((section): NavGroup[] => {
+    const links = NAV[section.id].filter((item) => canSee(role, item.to));
+    if (!links.length) return [];
+    // nothing but "more" items for this role: show them as the section's main items
+    return [{ group: section.title, icon: section.icon, links: links.every((item) => item.more) ? links.map((item) => ({ ...item, more: false })) : links }];
+  });
+  return role === 'admin' ? [{ links: [DASHBOARD] }, ...groups] : groups;
 }
 
-interface TaskSection {
-  title: string;
-  description: string;
-  icon: string;
-  matches?: RegExp;
-}
+/** The section a role's sidebar shows for a section id (undefined when the role has nothing there). */
+export const sectionNavFor = (role: string | undefined, id: SectionId) => navFor(role).find((g) => g.group === SECTIONS.find((s) => s.id === id)?.title);
 
-const TASK_SECTIONS: Record<WorkspaceId, TaskSection[]> = {
-  catalog: [
-    { title: 'ข้อมูลสินค้า', description: 'เพิ่มสินค้าและดูแลข้อมูลแคตตาล็อก', icon: 'inventory_2', matches: /^\/(products$|product-master-queue|j\/(allproducts|product\/create))/ },
-    { title: 'ราคาและข้อเสนอ', description: 'กำหนดราคาและติดตามคำขอจากลูกค้า', icon: 'sell', matches: /price|active-offers/ },
-    { title: 'สต็อกและการสั่งซื้อ', description: 'ตรวจยอดสินค้า รับเข้า และโอนระหว่างคลัง', icon: 'warehouse', matches: /stock|inventory|order-periods/ },
-    { title: 'ซัพพลายเออร์ แบรนด์ และสื่อ', description: 'จัดการแหล่งสินค้าและรูปหรือวิดีโอประกอบ', icon: 'storefront' },
-  ],
-  orders: [
-    { title: 'คำสั่งซื้อและการจอง', description: 'สร้าง ตรวจสอบ และเตรียมคำสั่งซื้อ', icon: 'receipt_long', matches: /^\/(orders|reservations|j\/order)(\/|$)/ },
-    { title: 'จัดส่งสินค้า', description: 'เตรียมเอกสารและติดตามรอบจัดส่ง', icon: 'local_shipping', matches: /shipment|sticker|delivery-schedule/ },
-    { title: 'คืนสินค้าและคืนเงิน', description: 'ดูแลรายการคืนสินค้าและเอกสารคืนเครดิต', icon: 'assignment_return', matches: /refund|credit[-_](notes|backs)/ },
-    { title: 'ชำระเงินและเครดิต', description: 'ติดตามยอดชำระ ใบแจ้งหนี้ และเครดิตลูกค้า', icon: 'payments' },
-  ],
-  customers: [
-    { title: 'บัญชีลูกค้าและบริษัท', description: 'ค้นหาข้อมูลติดต่อและดูแลสมาชิก', icon: 'group', matches: /customers|allusers|company|membership/ },
-    { title: 'ตรวจสอบและอนุมัติ', description: 'ตรวจตัวตนและคำขอสิทธิ์เข้าใช้งาน', icon: 'verified_user', matches: /kyc|admin[-_]access/ },
-    { title: 'แชตและผู้ช่วย', description: 'ตอบลูกค้าและจัดการข้อความอัตโนมัติ', icon: 'chat', matches: /livechat|\/bot\// },
-    { title: 'บริการและติดตามลูกค้า', description: 'ดูคำขอสินค้า งานบริการ และการติดตามลูกค้าเก่า', icon: 'support_agent' },
-  ],
-  marketing: [
-    { title: 'วางแผนและค้นคว้า', description: 'วางแผนงานและเข้าใจตลาดก่อนเริ่มแคมเปญ', icon: 'calendar_month', matches: /growth|research|restaurants|analyst|competitor|scrap/ },
-    { title: 'แคมเปญและโปรโมชัน', description: 'กำหนดกลุ่มเป้าหมายและข้อเสนอ', icon: 'campaign', matches: /coupon|promotion|segment|\/campaigns/ },
-    { title: 'เนื้อหาและการสื่อสาร', description: 'เตรียมข้อความ อีเมล ลิงก์ และงานสื่อสาร', icon: 'mail', matches: /template|welcome|links|push-campaigns|notification-catalog|workflows/ },
-    { title: 'ติดตามผลและตั้งค่า', description: 'ตรวจผลการส่งข้อความ คิวงาน และค่าการตลาด', icon: 'monitoring' },
-  ],
-  reports: [
-    { title: 'ยอดขายและคำสั่งซื้อ', description: 'ติดตามยอดขายและกลุ่มลูกค้าเป้าหมาย', icon: 'receipt_long', matches: /sales|orders|order-targetgroup/ },
-    { title: 'สินค้า ลูกค้า และราคา', description: 'เจาะข้อมูลสินค้า ลูกค้า และราคาที่ใช้ขาย', icon: 'query_stats', matches: /products|customers|price/ },
-    { title: 'การเข้าชมและสุขภาพระบบ', description: 'ตรวจการใช้งานและปัญหาที่กระทบระบบ', icon: 'monitoring' },
-  ],
-  connections: [
-    { title: 'จัดการการเชื่อมต่อ', description: 'ตั้งค่าระบบต้นทางและปลายทางที่ใช้งาน', icon: 'hub', matches: /integrations|connectors|webhook-platforms/ },
-    { title: 'ข้อมูลขาเข้า', description: 'ดูเหตุการณ์และบันทึกข้อมูลที่รับเข้าระบบ', icon: 'input', matches: /^\/webhooks$|inbound|logs|api-logs/ },
-    { title: 'ซิงก์และส่งข้อมูล', description: 'ติดตามคิวงานและเหตุการณ์ขาออก', icon: 'sync', matches: /sync-jobs|subscriptions|erp-ingest/ },
-    { title: 'ตรวจปัญหาและทดสอบ', description: 'ตรวจรายการไม่สำเร็จและทดสอบการเชื่อมต่อ', icon: 'troubleshoot' },
-  ],
-  settings: [
-    { title: 'ทีมงานและสิทธิ์', description: 'จัดการบัญชีทีมงานและบทบาทการทำงาน', icon: 'group', matches: /^\/settings\// },
-    { title: 'บัญชีและเอกสาร', description: 'เปลี่ยนรหัสผ่านและเปิดเอกสารภายใน', icon: 'settings' },
-  ],
+/** Old workspace overview pages (/workspaces/:id, #80) → the section that replaced each. */
+export const WORKSPACE_SECTION: Readonly<Record<string, SectionId>> = {
+  catalog: 'catalog', orders: 'orders', customers: 'customers', marketing: 'marketing', reports: 'reports', connections: 'advanced', settings: 'settings',
 };
 
-/** Each permitted destination appears once, including less common legacy tools. */
-export function taskSectionsFor(id: WorkspaceId, links: NavItem[]) {
-  const sections = TASK_SECTIONS[id].map(section => ({ ...section, links: [] as NavItem[] }));
-  for (const link of links) {
-    const section = sections.find(item => item.matches?.test(link.to)) ?? sections[sections.length - 1];
-    section.links.push(link);
-  }
-  return sections.filter(section => section.links.length > 0);
-}
-
-export function navFor(role?: string): NavGroup[] {
-  const grouped = new Map<WorkspaceId, NavItem[]>(WORKSPACES.map(w => [w.id, []]));
-  const seen = new Set<string>();
-  for (const group of ORIGINAL_NAV) for (const item of group.links) {
-    if (item.to === '/' || seen.has(item.to) || (role !== 'admin' && !ROLE_ACCESS[item.to]?.includes(role ?? ''))) continue;
-    seen.add(item.to);
-    grouped.get(category(item, group.group))!.push({ ...item, label: LABELS[item.to] ?? item.label });
-  }
-  return [
-    ...(role === 'admin' ? [{ links: [{ to: '/', label: 'ภาพรวม', end: true, icon: 'space_dashboard' }] }] : []),
-    ...WORKSPACES.filter(w => grouped.get(w.id)!.length > 0).map(w => ({
-      group: w.title, icon: w.icon,
-      links: [{ to: `/workspaces/${w.id}`, label: `ภาพรวม${w.title}`, end: true, icon: w.icon }, ...grouped.get(w.id)!],
-    })),
-  ];
+/** Where an old /workspaces/:id link now goes for this role: the first page of the replacing section (null = nothing for it there). */
+export function workspaceTarget(role: string | undefined, workspaceId: string): string | null {
+  const section = WORKSPACE_SECTION[workspaceId];
+  return (section && sectionNavFor(role, section)?.links[0]?.to) || null;
 }

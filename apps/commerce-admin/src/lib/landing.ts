@@ -1,19 +1,19 @@
 // Where a staff member lands after sign-in, and which deep links they may be sent to. Pure (unit-tested).
 // The per-role list is navigation.ts ROLE_ACCESS — the same one the sidebar uses — so there is one source.
-import { navFor, ROLE_ACCESS } from '../app/navigation';
+import { ROLE_ACCESS, workspaceTarget } from '../app/navigation';
 
 /**
- * Each role's home: a page in its own sidebar whose first API calls the platform allows for that role
- * (@StaffRoles on the controller, or the josh relay's AREAS list for /j/*).
+ * Each role's home: the main page of its main sidebar section, whose first API calls the platform allows
+ * for that role (@StaffRoles on the controller, or the josh relay's AREAS list for /j/*).
  */
 export const ROLE_LANDING: Readonly<Record<string, string>> = {
   admin: '/', // Dashboard (admin-only)
-  merchandising: '/products', // platform catalog — GET /products: merchandising, graphic
-  sales_manager: '/reports/sales', // GET /reports/sales: sales_manager, business_analyst
+  merchandising: '/products', // Catalog › platform catalog (SKU approvals) — GET /products: merchandising, graphic
+  sales_manager: '/reports/sales', // Reports › sales — GET /reports/sales: sales_manager, business_analyst
   business_analyst: '/reports/sales', // read-only role, GET only
-  cs: '/cs', // CS desk — no API call on load; its tabs use the josh relay /cs-admin/* (cs)
-  graphic: '/j/product/bulk-image-upload', // product images — relay /product/images*: marketing, merchandising, graphic
-  marketing: '/marketing/growth', // GET /growth/*: marketing, business_analyst
+  cs: '/cs', // Customers & Service › CS desk — no API call on load; its tabs use the josh relay /cs-admin/* (cs)
+  graphic: '/j/product/bulk-image-upload', // Catalog › product images — relay /product/images*: marketing, merchandising, graphic
+  marketing: '/marketing/growth', // Marketing › growth (the section's first page) — GET /growth/*: marketing, business_analyst
 };
 
 /** Any role, including one the app does not know yet: GET /admin/auth/me + POST /admin/auth/password are @AnyStaff. */
@@ -39,7 +39,9 @@ export function isRouteAllowed(role: string | null | undefined, path: string): b
   if (pathname === '/login') return false;
   if (role === 'admin') return true;
   if (pathname === '/') return false;
-  if (/^\/workspaces\/[^/]+$/.test(pathname)) return navFor(role).some((g) => g.links.some((l) => l.to === pathname));
+  // old workspace overview pages redirect to the replacing section: allowed when the role has a page there
+  const workspace = /^\/workspaces\/([^/]+)$/.exec(pathname);
+  if (workspace) return workspaceTarget(role, workspace[1]) !== null;
   const key = Object.keys(ROLE_ACCESS)
     .filter((k) => pathname === k || pathname.startsWith(`${k}/`))
     .sort((a, b) => b.length - a.length)[0];

@@ -22414,5 +22414,497 @@
   "ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของ shop": {
     "th": "ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของ shop",
     "en": "Tick to show this category on the shop homepage icon row"
+  },
+  "แคตตาล็อกสินค้า": {
+    "th": "แคตตาล็อกสินค้า",
+    "en": "Catalog"
+  },
+  "สินค้า หมวดหมู่ แบรนด์ รูปภาพ ราคา และสต็อก": {
+    "th": "สินค้า หมวดหมู่ แบรนด์ รูปภาพ ราคา และสต็อก",
+    "en": "Products, categories, brands, images, prices and stock"
+  },
+  "คำสั่งซื้อ การจัดส่ง การชำระเงิน ใบแจ้งหนี้ และเครดิต": {
+    "th": "คำสั่งซื้อ การจัดส่ง การชำระเงิน ใบแจ้งหนี้ และเครดิต",
+    "en": "Orders, shipments, payments, invoices and credit"
+  },
+  "ลูกค้าและงานบริการ": {
+    "th": "ลูกค้าและงานบริการ",
+    "en": "Customers & Service"
+  },
+  "บริษัทลูกค้า ผู้ใช้ งาน CS แชต และการติดตามลูกค้าเก่า": {
+    "th": "บริษัทลูกค้า ผู้ใช้ งาน CS แชต และการติดตามลูกค้าเก่า",
+    "en": "Customer companies, users, the CS desk, chat and win-back"
+  },
+  "แคมเปญ คูปอง โปรโมชัน กลุ่มลูกค้า ข้อความ และข้อมูลคู่แข่ง": {
+    "th": "แคมเปญ คูปอง โปรโมชัน กลุ่มลูกค้า ข้อความ และข้อมูลคู่แข่ง",
+    "en": "Campaigns, coupons, promotions, segments, messages and competitor data"
+  },
+  "ยอดขาย ออเดอร์ สินค้า ลูกค้า ราคา และการเข้าชม": {
+    "th": "ยอดขาย ออเดอร์ สินค้า ลูกค้า ราคา และการเข้าชม",
+    "en": "Sales, orders, products, customers, prices and traffic"
+  },
+  "บัญชีทีมงาน สิทธิ์เข้าใช้งาน และรหัสผ่าน": {
+    "th": "บัญชีทีมงาน สิทธิ์เข้าใช้งาน และรหัสผ่าน",
+    "en": "Staff accounts, access requests and your password"
+  },
+  "ระบบเชื่อมต่อ บันทึก เครื่องมือทดสอบ และข้อมูลสำรองจาก josh (ใช้ไม่บ่อย)": {
+    "th": "ระบบเชื่อมต่อ บันทึก เครื่องมือทดสอบ และข้อมูลสำรองจาก josh (ใช้ไม่บ่อย)",
+    "en": "Integrations, logs, testing tools and josh replica views (rarely used)"
+  },
+  "การเชื่อมต่อและ ERP": {
+    "th": "การเชื่อมต่อและ ERP",
+    "en": "Integrations & ERP"
+  },
+  "บันทึกและตรวจปัญหา": {
+    "th": "บันทึกและตรวจปัญหา",
+    "en": "Logs & troubleshooting"
+  },
+  "ทดสอบและทดลอง": {
+    "th": "ทดสอบและทดลอง",
+    "en": "Testing & experiments"
+  },
+  "การตลาด: ติดตามและตั้งค่า": {
+    "th": "การตลาด: ติดตามและตั้งค่า",
+    "en": "Marketing: monitoring & settings"
+  },
+  "ข้อมูลจาก josh (อ่านอย่างเดียว)": {
+    "th": "ข้อมูลจาก josh (อ่านอย่างเดียว)",
+    "en": "josh replica (read-only)"
+  },
+  "แดชบอร์ด": {
+    "th": "แดชบอร์ด",
+    "en": "Dashboard"
+  },
+  "งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว": {
+    "th": "งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว",
+    "en": "Today's follow-ups and system status on one page"
+  },
+  "แสดงเพิ่มเติม ({0})": {
+    "th": "แสดงเพิ่มเติม ({0})",
+    "en": "Show {0} more"
+  },
+  "แสดงน้อยลง": {
+    "th": "แสดงน้อยลง",
+    "en": "Show less"
+  },
+  "ต้องการทำรายการนี้ใช่หรือไม่": {
+    "th": "ต้องการทำรายการนี้ใช่หรือไม่",
+    "en": "Do you want to continue?"
+  },
+  "ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า": {
+    "th": "ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า",
+    "en": "Find, edit and add the products sold in the shop"
+  },
+  "สินค้าตาม SKU ในแพลตฟอร์ม และอนุมัติสินค้าใหม่จาก ERP": {
+    "th": "สินค้าตาม SKU ในแพลตฟอร์ม และอนุมัติสินค้าใหม่จาก ERP",
+    "en": "Platform products by SKU, and approval of new products from ERP"
+  },
+  "จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า": {
+    "th": "จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า",
+    "en": "Organise the shop category tree, its order and images"
+  },
+  "รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า": {
+    "th": "รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า",
+    "en": "Brand names and logos used on products"
+  },
+  "อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน": {
+    "th": "อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน",
+    "en": "Upload images for many products at once"
+  },
+  "ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ": {
+    "th": "ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ",
+    "en": "The suppliers behind the shop products and their contacts"
+  },
+  "ราคาขาย ราคาสั่ง และ MOQ ตรวจและอนุมัติราคาที่ ERP เปลี่ยน": {
+    "th": "ราคาขาย ราคาสั่ง และ MOQ ตรวจและอนุมัติราคาที่ ERP เปลี่ยน",
+    "en": "Selling price, order price and MOQ; review and approve price changes from ERP"
+  },
+  "ตรวจและอนุมัติข้อมูลสินค้าที่ ERP เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT": {
+    "th": "ตรวจและอนุมัติข้อมูลสินค้าที่ ERP เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT",
+    "en": "Review and approve product data changed in ERP, such as unit, pack, brand and VAT"
+  },
+  "บันทึกการรับเข้า ปรับยอด และโอนสินค้าระหว่างคลัง": {
+    "th": "บันทึกการรับเข้า ปรับยอด และโอนสินค้าระหว่างคลัง",
+    "en": "Record stock receipts, adjustments and transfers between warehouses"
+  },
+  "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง": {
+    "th": "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง",
+    "en": "Stock on hand for each product in each warehouse"
+  },
+  "สร้างสินค้าใหม่บนร้านค้า": {
+    "th": "สร้างสินค้าใหม่บนร้านค้า",
+    "en": "Create a new product in the shop"
+  },
+  "อัปโหลดวิดีโอประกอบหน้าสินค้า": {
+    "th": "อัปโหลดวิดีโอประกอบหน้าสินค้า",
+    "en": "Upload videos for product pages"
+  },
+  "ราคาเฉพาะลูกค้าและราคาสัญญาที่ commerce ดูแล": {
+    "th": "ราคาเฉพาะลูกค้าและราคาสัญญาที่ commerce ดูแล",
+    "en": "Customer-specific and contract prices managed in commerce"
+  },
+  "รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับจาก ERP": {
+    "th": "รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับจาก ERP",
+    "en": "Pre-order periods from ERP: delivery dates and cut-off"
+  },
+  "ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ": {
+    "th": "ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ",
+    "en": "Find and track orders; open one for its details and status"
+  },
+  "ติดตามการจัดส่งและอัปเดตสถานะพัสดุ": {
+    "th": "ติดตามการจัดส่งและอัปเดตสถานะพัสดุ",
+    "en": "Track shipments and update their delivery status"
+  },
+  "รายการชำระเงินของลูกค้าและสถานะการชำระ": {
+    "th": "รายการชำระเงินของลูกค้าและสถานะการชำระ",
+    "en": "Customer payments and their status"
+  },
+  "ใบแจ้งหนี้ที่เลยกำหนดชำระ เพื่อติดตามกับลูกค้า": {
+    "th": "ใบแจ้งหนี้ที่เลยกำหนดชำระ เพื่อติดตามกับลูกค้า",
+    "en": "Invoices past their due date, to follow up with customers"
+  },
+  "ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ทั้งหมด": {
+    "th": "ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ทั้งหมด",
+    "en": "Find a company and see its credit and all of its invoices"
+  },
+  "พิจารณาใบสมัครเครดิตเทอมของลูกค้า": {
+    "th": "พิจารณาใบสมัครเครดิตเทอมของลูกค้า",
+    "en": "Review customer applications for credit terms"
+  },
+  "ออกและติดตามใบลดหนี้": {
+    "th": "ออกและติดตามใบลดหนี้",
+    "en": "Issue and track credit notes"
+  },
+  "คืนเครดิตให้ลูกค้าและติดตามสถานะ": {
+    "th": "คืนเครดิตให้ลูกค้าและติดตามสถานะ",
+    "en": "Give credit back to customers and track it"
+  },
+  "คำขอคืนสินค้าและการคืนเงินของลูกค้า": {
+    "th": "คำขอคืนสินค้าและการคืนเงินของลูกค้า",
+    "en": "Customer return and refund requests"
+  },
+  "รอบจัดส่งและเกณฑ์การจัดส่ง": {
+    "th": "รอบจัดส่งและเกณฑ์การจัดส่ง",
+    "en": "Delivery rounds and their rules"
+  },
+  "นำเข้าคำสั่งซื้อจากไฟล์": {
+    "th": "นำเข้าคำสั่งซื้อจากไฟล์",
+    "en": "Import orders from a file"
+  },
+  "พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน": {
+    "th": "พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน",
+    "en": "Print box stickers for many orders at once"
+  },
+  "คำสั่งซื้อในแพลตฟอร์ม commerce พร้อมการชำระเงินและการจองสินค้า": {
+    "th": "คำสั่งซื้อในแพลตฟอร์ม commerce พร้อมการชำระเงินและการจองสินค้า",
+    "en": "Orders in the commerce platform, with payments and stock reservations"
+  },
+  "สต็อกที่ถูกจองระหว่างชำระเงิน ทั้งที่จอง ยืนยัน ปล่อย และหมดอายุ": {
+    "th": "สต็อกที่ถูกจองระหว่างชำระเงิน ทั้งที่จอง ยืนยัน ปล่อย และหมดอายุ",
+    "en": "Stock held during checkout: held, confirmed, released or expired"
+  },
+  "บริษัทลูกค้า B2B ข้อมูล เครดิตเทอม และสิทธิ์สั่งซื้อ": {
+    "th": "บริษัทลูกค้า B2B ข้อมูล เครดิตเทอม และสิทธิ์สั่งซื้อ",
+    "en": "B2B customer companies: details, credit terms and ordering rights"
+  },
+  "ค้นหาบัญชีผู้ใช้ของลูกค้าและดูประวัติ": {
+    "th": "ค้นหาบัญชีผู้ใช้ของลูกค้าและดูประวัติ",
+    "en": "Find customer user accounts and see their history"
+  },
+  "สั่งแทนลูกค้า คำขอสินค้าตัวอย่าง และรวมบัญชีในที่เดียว": {
+    "th": "สั่งแทนลูกค้า คำขอสินค้าตัวอย่าง และรวมบัญชีในที่เดียว",
+    "en": "Order for customers, handle sample requests and merge accounts in one place"
+  },
+  "อ่านและตอบแชตของลูกค้า": {
+    "th": "อ่านและตอบแชตของลูกค้า",
+    "en": "Read and answer customer chats"
+  },
+  "คำขอสินค้าตัวอย่างจากลูกค้า": {
+    "th": "คำขอสินค้าตัวอย่างจากลูกค้า",
+    "en": "Customer requests for product samples"
+  },
+  "ราคาพิเศษเฉพาะลูกค้า (private price) ที่ยังใช้งานอยู่": {
+    "th": "ราคาพิเศษเฉพาะลูกค้า (private price) ที่ยังใช้งานอยู่",
+    "en": "Customer-specific (private) prices that are still active"
+  },
+  "ตรวจเอกสารยืนยันตัวตน (KYC) ที่รอพิจารณา": {
+    "th": "ตรวจเอกสารยืนยันตัวตน (KYC) ที่รอพิจารณา",
+    "en": "Review identity (KYC) documents waiting for a decision"
+  },
+  "ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย": {
+    "th": "ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย",
+    "en": "Customers who stopped ordering, and the sales follow-ups"
+  },
+  "กำหนดระดับสมาชิกและเงื่อนไขของแต่ละระดับ": {
+    "th": "กำหนดระดับสมาชิกและเงื่อนไขของแต่ละระดับ",
+    "en": "Define membership tiers and the rules for each"
+  },
+  "หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี": {
+    "th": "หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี",
+    "en": "Categories that may move between shipments to unlock free shipping"
+  },
+  "ข้อมูลติดต่อและรายละเอียดลูกค้าในแพลตฟอร์ม commerce": {
+    "th": "ข้อมูลติดต่อและรายละเอียดลูกค้าในแพลตฟอร์ม commerce",
+    "en": "Customer contacts and details in the commerce platform"
+  },
+  "เริ่มจากข้อมูลลูกค้าและยอดขาย แล้ววางแผนแคมเปญที่ผ่านการตรวจทาน": {
+    "th": "เริ่มจากข้อมูลลูกค้าและยอดขาย แล้ววางแผนแคมเปญที่ผ่านการตรวจทาน",
+    "en": "Start from customer and sales evidence, then plan a reviewed campaign"
+  },
+  "สร้างและติดตามแคมเปญโปรโมชัน": {
+    "th": "สร้างและติดตามแคมเปญโปรโมชัน",
+    "en": "Create and track promotion campaigns"
+  },
+  "สร้าง แก้ไข และติดตามการใช้คูปอง": {
+    "th": "สร้าง แก้ไข และติดตามการใช้คูปอง",
+    "en": "Create and edit coupons and track how they are used"
+  },
+  "กติกาส่วนลด เช่น ซื้อครบลด หรือซื้อ X แถม Y": {
+    "th": "กติกาส่วนลด เช่น ซื้อครบลด หรือซื้อ X แถม Y",
+    "en": "Discount rules, such as spend-and-save or buy X get Y"
+  },
+  "ชุดสินค้าที่ใช้กับโปรโมชันและคูปอง": {
+    "th": "ชุดสินค้าที่ใช้กับโปรโมชันและคูปอง",
+    "en": "Product sets used by promotions and coupons"
+  },
+  "หน้าโปรโมชันบนร้านค้า": {
+    "th": "หน้าโปรโมชันบนร้านค้า",
+    "en": "Promotion landing pages in the shop"
+  },
+  "กำหนดกลุ่มลูกค้าเป้าหมายสำหรับแคมเปญและคูปอง": {
+    "th": "กำหนดกลุ่มลูกค้าเป้าหมายสำหรับแคมเปญและคูปอง",
+    "en": "Define target customer groups for campaigns and coupons"
+  },
+  "ส่งการแจ้งเตือนแบบ push ถึงลูกค้า": {
+    "th": "ส่งการแจ้งเตือนแบบ push ถึงลูกค้า",
+    "en": "Send push notifications to customers"
+  },
+  "ข้อความอัตโนมัติที่ส่งตามพฤติกรรมลูกค้า": {
+    "th": "ข้อความอัตโนมัติที่ส่งตามพฤติกรรมลูกค้า",
+    "en": "Automated messages triggered by customer behaviour"
+  },
+  "เทียบราคาสินค้าของเรากับเว็บคู่แข่ง": {
+    "th": "เทียบราคาสินค้าของเรากับเว็บคู่แข่ง",
+    "en": "Compare our product prices with competitor websites"
+  },
+  "แผนการตลาดที่บันทึกไว้และปฏิทินงาน": {
+    "th": "แผนการตลาดที่บันทึกไว้และปฏิทินงาน",
+    "en": "Saved growth plans and the campaign calendar"
+  },
+  "ถามคำถามการตลาดกับผู้ช่วย AI จากข้อมูลในระบบ": {
+    "th": "ถามคำถามการตลาดกับผู้ช่วย AI จากข้อมูลในระบบ",
+    "en": "Ask an AI assistant marketing questions about platform data"
+  },
+  "รายงานวิจัยตลาดและหัวข้อที่ติดตาม": {
+    "th": "รายงานวิจัยตลาดและหัวข้อที่ติดตาม",
+    "en": "Market research reports and tracked topics"
+  },
+  "สำรวจร้านอาหารบนแผนที่เพื่อหาลูกค้าใหม่": {
+    "th": "สำรวจร้านอาหารบนแผนที่เพื่อหาลูกค้าใหม่",
+    "en": "Explore restaurants on a map to find new customers"
+  },
+  "แม่แบบข้อความสำหรับแจ้งเตือนลูกค้า": {
+    "th": "แม่แบบข้อความสำหรับแจ้งเตือนลูกค้า",
+    "en": "Message templates for customer notifications"
+  },
+  "อีเมลต้อนรับลูกค้าที่สนใจ (ลีด) รายใหม่": {
+    "th": "อีเมลต้อนรับลูกค้าที่สนใจ (ลีด) รายใหม่",
+    "en": "The welcome email for new leads"
+  },
+  "ลิงก์ที่ติดตามผลได้ พาลูกค้าไปยังหน้าที่เลือก": {
+    "th": "ลิงก์ที่ติดตามผลได้ พาลูกค้าไปยังหน้าที่เลือก",
+    "en": "Tracked links that take customers to a chosen page"
+  },
+  "สร้างลิงก์การตลาดพร้อม UTM": {
+    "th": "สร้างลิงก์การตลาดพร้อม UTM",
+    "en": "Build marketing links with UTM tags"
+  },
+  "สินค้าที่เก็บมาจากเว็บคู่แข่ง": {
+    "th": "สินค้าที่เก็บมาจากเว็บคู่แข่ง",
+    "en": "Products collected from competitor websites"
+  },
+  "กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า": {
+    "th": "กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า",
+    "en": "Rules that help the chatbot understand customer questions"
+  },
+  "ลำดับการตอบของแชตบอต": {
+    "th": "ลำดับการตอบของแชตบอต",
+    "en": "The chatbot reply flows"
+  },
+  "ข้อความสำเร็จรูปของแชตบอต": {
+    "th": "ข้อความสำเร็จรูปของแชตบอต",
+    "en": "Ready-made chatbot replies"
+  },
+  "ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า": {
+    "th": "ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า",
+    "en": "Sales over time, compared with the previous period"
+  },
+  "รายการและสรุปคำสั่งซื้อของร้าน": {
+    "th": "รายการและสรุปคำสั่งซื้อของร้าน",
+    "en": "The shop orders, listed and summarised"
+  },
+  "สินค้าขายดี ยอดขาย และสถานะสินค้า": {
+    "th": "สินค้าขายดี ยอดขาย และสถานะสินค้า",
+    "en": "Best sellers, product sales and product status"
+  },
+  "ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด": {
+    "th": "ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด",
+    "en": "Customers and companies, their spend and latest orders"
+  },
+  "ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา": {
+    "th": "ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา",
+    "en": "The prices each customer branch sees, and quotations"
+  },
+  "ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย": {
+    "th": "ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย",
+    "en": "Orders by target customer group"
+  },
+  "การเข้าชมร้านค้าและพฤติกรรมการใช้งาน": {
+    "th": "การเข้าชมร้านค้าและพฤติกรรมการใช้งาน",
+    "en": "Shop visits and how visitors use the shop"
+  },
+  "ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้": {
+    "th": "ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้",
+    "en": "Errors and problems affecting sales right now"
+  },
+  "เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี": {
+    "th": "เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี",
+    "en": "Add staff, set their role and close accounts"
+  },
+  "บัญชีทีมงานฝั่งร้านค้า (josh)": {
+    "th": "บัญชีทีมงานฝั่งร้านค้า (josh)",
+    "en": "Staff accounts on the shop side (josh)"
+  },
+  "คำขอใช้งาน web-admin ของร้านค้าที่รออนุมัติ": {
+    "th": "คำขอใช้งาน web-admin ของร้านค้าที่รออนุมัติ",
+    "en": "Pending requests to use the shop web-admin"
+  },
+  "เปลี่ยนรหัสผ่านของคุณ": {
+    "th": "เปลี่ยนรหัสผ่านของคุณ",
+    "en": "Change your own password"
+  },
+  "ระบบภายนอกที่เชื่อมกับแพลตฟอร์มและสถานะการเชื่อมต่อ": {
+    "th": "ระบบภายนอกที่เชื่อมกับแพลตฟอร์มและสถานะการเชื่อมต่อ",
+    "en": "External systems connected to the platform, and their status"
+  },
+  "เหตุการณ์ที่ระบบภายนอกส่งเข้ามา": {
+    "th": "เหตุการณ์ที่ระบบภายนอกส่งเข้ามา",
+    "en": "Events received from external systems"
+  },
+  "ปลายทางที่รับเหตุการณ์จากแพลตฟอร์ม (webhook ขาออก)": {
+    "th": "ปลายทางที่รับเหตุการณ์จากแพลตฟอร์ม (webhook ขาออก)",
+    "en": "Destinations that receive platform events (outgoing webhooks)"
+  },
+  "งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์": {
+    "th": "งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์",
+    "en": "Data sync jobs with external systems and their results"
+  },
+  "แพลตฟอร์มที่รับข้อมูลจาก ERP hub": {
+    "th": "แพลตฟอร์มที่รับข้อมูลจาก ERP hub",
+    "en": "Platforms that receive data from the ERP hub"
+  },
+  "ข้อมูลที่รับจาก ERP เข้าแพลตฟอร์ม": {
+    "th": "ข้อมูลที่รับจาก ERP เข้าแพลตฟอร์ม",
+    "en": "Data taken in from ERP"
+  },
+  "เชื่อมเครื่องมือ AI (MCP) กับข้อมูลแพลตฟอร์มแบบอ่านอย่างเดียว": {
+    "th": "เชื่อมเครื่องมือ AI (MCP) กับข้อมูลแพลตฟอร์มแบบอ่านอย่างเดียว",
+    "en": "Connect AI tools (MCP) to platform data, read-only"
+  },
+  "บันทึกข้อมูลที่ ERP ส่งเข้ามา": {
+    "th": "บันทึกข้อมูลที่ ERP ส่งเข้ามา",
+    "en": "Log of the data ERP sends in"
+  },
+  "ข้อมูลที่ส่งไม่สำเร็จ ตรวจสอบและส่งใหม่": {
+    "th": "ข้อมูลที่ส่งไม่สำเร็จ ตรวจสอบและส่งใหม่",
+    "en": "Failed deliveries to review and resend"
+  },
+  "บันทึกการเรียก ERP ฝั่ง josh": {
+    "th": "บันทึกการเรียก ERP ฝั่ง josh",
+    "en": "Log of josh calls to ERP"
+  },
+  "บันทึกการเรียก API ของ josh": {
+    "th": "บันทึกการเรียก API ของ josh",
+    "en": "Log of josh API calls"
+  },
+  "จำลองข้อมูล ERP เพื่อทดสอบการเชื่อมต่อ": {
+    "th": "จำลองข้อมูล ERP เพื่อทดสอบการเชื่อมต่อ",
+    "en": "Simulate ERP data to test the connection"
+  },
+  "ส่งเหตุการณ์ ERP ทดสอบไปยังร้านค้า": {
+    "th": "ส่งเหตุการณ์ ERP ทดสอบไปยังร้านค้า",
+    "en": "Send test ERP events to the shop"
+  },
+  "สต็อกจำลองของ ERP สำหรับทดสอบ": {
+    "th": "สต็อกจำลองของ ERP สำหรับทดสอบ",
+    "en": "Simulated ERP stock for testing"
+  },
+  "ทดสอบการชำระเงินผ่าน KBank": {
+    "th": "ทดสอบการชำระเงินผ่าน KBank",
+    "en": "Test payments through KBank"
+  },
+  "ทดสอบการชำระเงินของ Jagota": {
+    "th": "ทดสอบการชำระเงินของ Jagota",
+    "en": "Test Jagota payments"
+  },
+  "ทดลองส่งออเดอร์ไป ERP ผ่าน commerce": {
+    "th": "ทดลองส่งออเดอร์ไป ERP ผ่าน commerce",
+    "en": "Trial: send orders to ERP through commerce"
+  },
+  "เทียบราคาที่ commerce คำนวณกับราคาของ josh": {
+    "th": "เทียบราคาที่ commerce คำนวณกับราคาของ josh",
+    "en": "Compare prices calculated by commerce with josh prices"
+  },
+  "ค่าที่มีผลกับเวิร์กโฟลว์การตลาดทั้งหมด": {
+    "th": "ค่าที่มีผลกับเวิร์กโฟลว์การตลาดทั้งหมด",
+    "en": "Settings that apply to every marketing workflow"
+  },
+  "ข้อความการตลาดที่รอส่งและที่ส่งแล้ว": {
+    "th": "ข้อความการตลาดที่รอส่งและที่ส่งแล้ว",
+    "en": "Marketing messages waiting to be sent and already sent"
+  },
+  "ตรวจว่าอุปกรณ์หรือผู้ใช้จะเห็นข้อเสนอใดบนร้านค้า": {
+    "th": "ตรวจว่าอุปกรณ์หรือผู้ใช้จะเห็นข้อเสนอใดบนร้านค้า",
+    "en": "Check which offers a device or user will see in the shop"
+  },
+  "จำนวนลูกค้าที่ผ่านแต่ละขั้นของการใช้งาน": {
+    "th": "จำนวนลูกค้าที่ผ่านแต่ละขั้นของการใช้งาน",
+    "en": "How many customers reach each step of their journey"
+  },
+  "การแจ้งเตือนทุกประเภทที่ระบบส่งได้ และการเปิดปิด": {
+    "th": "การแจ้งเตือนทุกประเภทที่ระบบส่งได้ และการเปิดปิด",
+    "en": "Every notification type the system can send, and switching them on or off"
+  },
+  "บันทึกการแจ้งเตือนที่ส่งถึงลูกค้า": {
+    "th": "บันทึกการแจ้งเตือนที่ส่งถึงลูกค้า",
+    "en": "Log of notifications sent to customers"
+  },
+  "สถิติการส่งแจ้งเตือนที่สำเร็จและไม่สำเร็จ": {
+    "th": "สถิติการส่งแจ้งเตือนที่สำเร็จและไม่สำเร็จ",
+    "en": "Statistics of delivered and failed notifications"
+  },
+  "ผลของการแจ้งเตือนสินค้า ตั้งแต่ส่งจนถึงสั่งซื้อ": {
+    "th": "ผลของการแจ้งเตือนสินค้า ตั้งแต่ส่งจนถึงสั่งซื้อ",
+    "en": "Product notification results, from sent to ordered"
+  },
+  "เลือกเว็บคู่แข่งที่ระบบเก็บข้อมูล และการเก็บอัตโนมัติ": {
+    "th": "เลือกเว็บคู่แข่งที่ระบบเก็บข้อมูล และการเก็บอัตโนมัติ",
+    "en": "Choose which competitor websites are collected, and when"
+  },
+  "ดูข้อมูลจาก replica ของ josh แบบอ่านอย่างเดียว ใช้ได้แม้ josh ล่ม งานจัดการทำที่หน้าหลักของหมวดนั้น": {
+    "th": "ดูข้อมูลจาก replica ของ josh แบบอ่านอย่างเดียว ใช้ได้แม้ josh ล่ม งานจัดการทำที่หน้าหลักของหมวดนั้น",
+    "en": "Read-only view from the josh replica that works even when josh is down; manage these records on the main page of their section"
+  },
+  "ข้อมูลคำขอเครดิต": {
+    "th": "ข้อมูลคำขอเครดิต",
+    "en": "Credit application records"
+  },
+  "ข้อมูลคำขอเข้า admin": {
+    "th": "ข้อมูลคำขอเข้า admin",
+    "en": "Admin access request records"
+  },
+  "ข้อมูลใบแจ้งหนี้": {
+    "th": "ข้อมูลใบแจ้งหนี้",
+    "en": "Invoice records"
   }
 }

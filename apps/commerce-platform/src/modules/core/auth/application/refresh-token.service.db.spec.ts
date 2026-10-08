@@ -10,7 +10,7 @@ import { AuthRefreshToken1795800000000 } from '../../../../migrations/1795800000
 import { RefreshTokenService } from './refresh-token.service';
 
 /*
- * Refresh rotation under real Postgres locking (pg_advisory_xact_lock + one transaction per refresh).
+ * Refresh rotation and login under real Postgres locking (pg_advisory_xact_lock + one transaction per call).
  * Opt-in, migrated scratch DB only (needs `users`; creates auth_refresh_token IF NOT EXISTS):
  *   AUTH_TEST_DATABASE_URL=postgres:///commerce_auth_test npx jest -c apps/commerce-platform/jest.config.cts --runInBand refresh-token.service.db
  */
@@ -116,6 +116,51 @@ type Row = { id: string; family_id: string; used_at: Date | null; revoked_at: Da
     hold.restore();
     expect(await live()).toEqual([]);
     await expect(svc.refresh(refreshed.refreshToken, 'staff')).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('a login racing revokeAllForUser leaves no surviving active token issued before the revoke', async () => {
+    // revoke arriving while the login is mid-transaction (family row inserted, not committed): it waits for the
+    // account lock, then revokes the login's row
+    const hold = holdFirstRefresh(); // holds the first signAsync, which issueSession also runs after its insert
+    const signingIn = svc.issueSession(await user(), 'staff');
+    await hold.reached;
+    await db.query(`UPDATE users SET status = 'disabled' WHERE id = $1`, [USER]);
+    await svc.revokeAllForUser(USER, 'disabled');
+    const session = await signingIn;
+    hold.restore();
+    expect(await live()).toEqual([]);
+    await expect(svc.refresh(session.refreshToken, 'staff')).rejects.toBeInstanceOf(UnauthorizedException);
+
+    // the other order: the login checked the account, then disable + revoke committed, then the login inserts —
+    // it re-reads the account under the lock and refuses instead of minting a family from the stale check
+    await reset();
+    const checked = await user();
+    await db.query(`UPDATE users SET status = 'disabled' WHERE id = $1`, [USER]);
+    await svc.revokeAllForUser(USER, 'disabled');
+    await expect(svc.issueSession(checked, 'staff')).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(await family()).toEqual([]);
+
+    // same for a password change (the login verified the old hash)
+    await reset();
+    const beforeChange = await user();
+    await db.query(`UPDATE users SET password_hash = 'changed' WHERE id = $1`, [USER]);
+    await svc.revokeAllForUser(USER, 'password_changed');
+    await expect(svc.issueSession(beforeChange, 'staff')).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(await family()).toEqual([]);
+
+    // and both started together, a few times
+    for (let i = 0; i < 3; i++) {
+      await reset();
+      const stale = await user();
+      await Promise.allSettled([
+        svc.issueSession(stale, 'staff'),
+        (async () => {
+          await db.query(`UPDATE users SET status = 'disabled' WHERE id = $1`, [USER]);
+          await svc.revokeAllForUser(USER, 'disabled');
+        })(),
+      ]);
+      expect(await live()).toEqual([]);
+    }
   });
 
   it('a failure after the spend (here: signing) rolls back — the token is not burnt', async () => {

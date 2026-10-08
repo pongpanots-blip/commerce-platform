@@ -29,7 +29,11 @@ user's OK for the switch time.
 
 1. **Commerce** — merge + deploy the restaurant-place endpoint PR (additive, no migration). Smoke: `GET /api/winback/restaurant-place?limit=1`
    with a sale token → 200; with a cs token → 403.
-2. **Webjosh nginx** — merge the proxy PR, cut an `nginx-v*` tag, deploy nginx with the gate **off** (rendered config is byte-identical).
+2. **Webjosh nginx** — the change is prepared on Webjosh branch `feat/commerce-staff-auth-proxy`
+   (template `docker/nginx/snippets/commerce-staff-proxy.conf.template`, entrypoint gate `COMMERCE_STAFF_PROXY`, compose wiring,
+   render tests + mock-upstream smoke, `docs/nginx-commerce-staff-proxy.md`). Merge it, cut an `nginx-v*` tag, deploy nginx with the
+   gate **off** (rendered config is byte-identical to today). The exact block it renders when the gate is on (origin = the existing
+   `COMMERCE_PLATFORM_BASE_URL` without `/api`) is in [Appendix A](#appendix-a--nginx-block-rendered-when-commerce_staff_proxytrue).
 3. **Enable the proxy** — host `.env` `COMMERCE_STAFF_PROXY=true`, rerun Prod for nginx with the same tag and `env_diff_only=false`
    (recreate, not reload). Check:
    - `curl -s -o /dev/null -w '%{http_code}' -X POST https://joshapp.io/api/commerce/admin/auth/login -H 'content-type: application/json' -d '{"email":"nobody@example.com","password":"x"}'` → `401` (commerce's `invalid credentials`)
@@ -67,3 +71,61 @@ user's OK for the switch time.
 2. nginx: optional — set `COMMERCE_STAFF_PROXY=false` (or remove it) and recreate nginx; the route disappears.
 3. Commerce endpoint: additive, leave it.
 4. Backfill: not reverted. Links keep Josh subjects resolving to the commerce ids, so josh-mode users still see their rows.
+
+## Appendix A — nginx block rendered when `COMMERCE_STAFF_PROXY=true`
+
+Appended to josh nginx `snippets/proxy-paths.conf` by the entrypoint (never hand-edit prod nginx; recreate the container).
+Non-POST on the auth routes → 405 `Allow: POST`; anything else under `/api/commerce` → 404 without contacting commerce.
+
+```nginx
+location = /api/commerce {
+  return 404;
+}
+
+location ^~ /api/commerce/ {
+  location ~ ^/api/commerce/admin/auth/(login|refresh|logout|password)$ {
+    limit_req zone=api_auth burst=15 nodelay;
+
+    set $commerce_origin http://172.31.40.66:3100;
+    if ($request_method != POST) {
+      add_header Allow POST always;
+      return 405;
+    }
+    rewrite ^/api/commerce/admin/auth/(login|refresh|logout|password)$ /api/admin/auth/$1 break;
+
+    proxy_pass $commerce_origin;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $forwarded_proto;
+    proxy_set_header X-Client-Id "";
+    proxy_set_header X-Client-Secret "";
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 120s;
+    proxy_send_timeout 120s;
+  }
+
+  location ^~ /api/commerce/winback/ {
+    limit_req zone=api_general burst=50 nodelay;
+
+    set $commerce_origin http://172.31.40.66:3100;
+    rewrite ^/api/commerce/(winback/.*)$ /api/$1 break;
+    return 404;
+
+    proxy_pass $commerce_origin;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $forwarded_proto;
+    proxy_set_header X-Client-Id "";
+    proxy_set_header X-Client-Secret "";
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 120s;
+    proxy_send_timeout 120s;
+  }
+
+  return 404;
+}
+```

@@ -1,25 +1,32 @@
 import { FormEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, ErrorText, Field, Icon, Input, LanguageSelector } from '@cp/ui';
-import { auth } from '../../lib/api';
+import { auth, tokenClaims } from '../../lib/api';
+import { resolvePostLoginPath } from '../../lib/landing';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function Login() {
   __useUiLocale();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // already signed in (or restored on start): on to the deep link or the account's home
+  if (auth.isAuthenticated() && !submitting) {
+    return <Navigate to={resolvePostLoginPath(tokenClaims()?.role, params.get('redirect'))} replace />;
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
     try {
-      await auth.login(email, password);
-      navigate('/');
+      const role = await auth.login(email, password);
+      navigate(resolvePostLoginPath(role, params.get('redirect')), { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

@@ -1,13 +1,14 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { AppShell, Button, CommandMenu, IconButton, LanguageSelector, NavGroup, Sidebar, TopBar, NavProvider, useUiLocale } from '@cp/ui';
+import { AppShell, Button, CommandMenu, IconButton, LanguageSelector, Loading, NavGroup, Sidebar, TopBar, NavProvider, useUiLocale } from '@cp/ui';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { ApiKeys } from './pages/ApiKeys';
 import { Webhooks } from './pages/Webhooks';
 import { Docs } from './pages/Docs';
-import { auth, tokenClaims } from '../lib/api';
+import { auth, needsRestore, restoreSession, tokenClaims } from '../lib/api';
+import { loginPathFor } from '../lib/landing';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -22,10 +23,11 @@ const NAV: NavGroup[] = [
   },
 ];
 
-/** Every non-auth route requires a token; bounce to /login without one. */
+/** Every non-auth route requires a token; bounce to /login without one (and come back here after). */
 function RequireAuth({ children }: { children: ReactNode }) {
+  const location = useLocation();
   if (!auth.isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={loginPathFor(location.pathname + location.search + location.hash)} replace />;
   }
   return <>{children}</>;
 }
@@ -72,6 +74,12 @@ function PortalTopBar() {
 
 export function App() {
   useUiLocale();
+  // a refresh token but no fresh access token: refresh silently before rendering any page (no login flash)
+  const [restoring, setRestoring] = useState(needsRestore);
+  useEffect(() => {
+    if (restoring) restoreSession().then(() => setRestoring(false));
+  }, [restoring]);
+  if (restoring) return <div className="min-h-screen bg-background flex items-center justify-center"><Loading /></div>;
   return (
     <BrowserRouter>
       <Routes>
@@ -91,7 +99,7 @@ export function App() {
                       name: tokenClaims()?.email?.split('@')[0] ?? 'Partner',
                       detail: tokenClaims()?.email,
                       onSignOut: () => {
-                        auth.logout();
+                        void auth.logout();
                         window.location.assign('/login');
                       },
                     }}

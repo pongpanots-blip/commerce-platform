@@ -1,3 +1,4 @@
+import { SalesRepIdentity } from './application/sales-rep-identity.service';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,7 +21,7 @@ import { StaffAuthController } from './presentation/staff-auth.controller';
   ],
   controllers: [StaffAuthController, StaffAccountsController],
   // Global default-deny: every HTTP route needs a staff token unless @Public().
-  providers: [PortalAuthService, StaffAccountsService, { provide: APP_GUARD, useClass: StaffAuthGuard }],
-  exports: [PortalAuthService, JwtModule],
+  providers: [SalesRepIdentity, PortalAuthService, StaffAccountsService, { provide: APP_GUARD, useClass: StaffAuthGuard }],
+  exports: [SalesRepIdentity, PortalAuthService, JwtModule],
 })
 export class AuthModule {}

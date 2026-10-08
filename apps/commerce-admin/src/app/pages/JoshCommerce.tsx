@@ -1,3 +1,4 @@
+import { SalesRepFilter } from '../components/SalesRepFilter';
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, Fragment, ReactNode, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -5,7 +6,7 @@ import {
   Button, Chip, DetailSection, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FilterChip, FormPanel, Hint, Icon, Input, KeyValueGrid, Loading,
   Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Segmented, Select, SectionTitle, Span, Stack2, StatGrid, StatTile, StatusChip, StatusDot,
   TBody, TD, TH, THead, TR, Table, TitleBadge, fmt, RowLink } from '@cp/ui';
-import { joshActionsApi, JoshRow, joshCustomerApi, joshOrderApi, joshPriceApi } from '../../lib/api';
+import { joshActionsApi, JoshRow, joshCustomerApi, joshOrderApi, joshPriceApi, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -51,13 +52,14 @@ export function JoshOrdersPage() {
   __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [salesUserId, setSalesUserId] = useState(['admin', 'sales_manager'].includes(session.claims()?.role ?? '') ? searchParams.get('salesUserId') ?? '' : '');
   const empty = { search: '', status: '', from: '', to: '' };
   const [draft, setDraft] = useState(empty);
   const [f, setF] = useState({ ...empty, sync: '' });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(LIMIT);
-  const summary = useAsync(() => joshOrderApi.summary({ ...f, sync: undefined }), [f.search, f.status, f.from, f.to]);
-  const list = useAsync(() => joshOrderApi.list({ ...f, ...(f.sync === 'payment_missing' ? { sync: '', payment: 'missing' } : {}), page, limit: pageSize }), [f, page, pageSize]);
+  const summary = useAsync(() => joshOrderApi.summary({ ...f, sync: undefined, salesUserId: salesUserId || undefined }), [f.search, f.status, f.from, f.to, salesUserId]);
+  const list = useAsync(() => joshOrderApi.list({ ...f, ...(f.sync === 'payment_missing' ? { sync: '', payment: 'missing' } : {}), page, limit: pageSize, salesUserId: salesUserId || undefined }), [f, page, pageSize, salesUserId]);
   const s = summary.data;
 
   const apply = (next: Partial<typeof f>) => { setPage(1); setF({ ...f, ...next }); };
@@ -70,8 +72,9 @@ export function JoshOrdersPage() {
 
   return (
     <Page>
+      <SalesRepFilter value={salesUserId} onChange={id => { setPage(1); setSalesUserId(id); }} />
       <PageHeader
-        title={__uiText("Orders (josh)")}
+        title={__uiText(session.claims()?.role === 'sale' ? "ออเดอร์ของฉัน" : "Orders (josh)")}
         badge={<TitleBadge icon="visibility">{__uiText("อ่านอย่างเดียว · ข้อมูลจาก josh")}</TitleBadge>}
         subtitle={__uiText("ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง")}
         actions={
@@ -198,19 +201,21 @@ export function JoshCustomersPage() {
   __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [salesUserId, setSalesUserId] = useState(['admin', 'sales_manager'].includes(session.claims()?.role ?? '') ? searchParams.get('salesUserId') ?? '' : '');
   const [search, setSearch] = useState('');
   const [f, setF] = useState({ search: '', issue: '' });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(LIMIT);
-  const summary = useAsync(() => joshCustomerApi.summary(), []);
-  const list = useAsync(() => joshCustomerApi.list({ ...f, page, limit: pageSize }), [f, page, pageSize]);
+  const summary = useAsync(() => joshCustomerApi.summary(salesUserId || undefined), [salesUserId]);
+  const list = useAsync(() => joshCustomerApi.list({ ...f, page, limit: pageSize, salesUserId: salesUserId || undefined }), [f, page, pageSize, salesUserId]);
   const s = summary.data;
 
   return (
     <Page>
+      <SalesRepFilter value={salesUserId} onChange={id => { setPage(1); setSalesUserId(id); }} />
       <PageHeader
-        title={__uiText("ลูกค้า / บริษัท (josh)")}
-        subtitle={__uiText("บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว")}
+        title={__uiText(session.claims()?.role === 'sale' ? "ลูกค้าของฉัน" : "ลูกค้า / บริษัท (josh)")}
+        subtitle={__uiText(session.claims()?.role === 'sale' ? "บริษัทและข้อมูลติดต่อของลูกค้าที่ฉันดูแล" : "บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว")}
         actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>{__uiText("Refresh")}</Button>}
       />
       <div className="border-t border-secondary-container" />

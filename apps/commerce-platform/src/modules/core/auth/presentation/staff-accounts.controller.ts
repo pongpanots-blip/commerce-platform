@@ -1,18 +1,19 @@
 import { Body, Controller, Get, HttpCode, Param, ParseUUIDPipe, Patch, Post, Req } from '@nestjs/common';
+import { Transform } from 'class-transformer';
 import { IsEmail, IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
-import { STAFF_ROLES, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { STAFF_ROLES, StaffRole, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { StaffAccountsService, StaffStatus } from '../application/staff-accounts.service';
 import { StaffPrincipal } from './staff-auth.guard';
 
 class CreateStaffDto {
   @IsEmail() @MaxLength(191) email!: string;
   @IsOptional() @IsString() @MaxLength(191) name?: string | null;
-  @IsIn(STAFF_ROLES) role!: StaffRole;
+  @Transform(({ value }) => typeof value === 'string' ? normalizeStaffRole(value) : value) @IsIn(STAFF_ROLES) role!: StaffRole;
 }
 
 class UpdateStaffDto {
   @IsOptional() @IsString() @MaxLength(191) name?: string | null;
-  @IsOptional() @IsIn(STAFF_ROLES) role?: StaffRole;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? normalizeStaffRole(value) : value) @IsIn(STAFF_ROLES) role?: StaffRole;
   @IsOptional() @IsIn(['active', 'disabled']) status?: StaffStatus;
 }
 

@@ -2,7 +2,7 @@ import { Body, Controller, ForbiddenException, Get, HttpCode, Post, Req } from '
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 import { PortalAuthService } from '../application/portal-auth.service';
 import { MIN_PASSWORD, StaffAccountsService } from '../application/staff-accounts.service';
-import { AllowPendingPassword, AllowReadOnlyWrite, AnyStaff, Public, STAFF_ROLES } from '../../../../shared-kernel/presentation/auth.decorators';
+import { AllowPendingPassword, AllowReadOnlyWrite, AnyStaff, Public, STAFF_ROLES, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { StaffPrincipal } from './staff-auth.guard';
 
 class StaffLoginDto {
@@ -24,7 +24,8 @@ export class StaffAuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() dto: StaffLoginDto) {
-    const session = await this.auth.login(dto.email, dto.password);
+    const result = await this.auth.login(dto.email, dto.password);
+    const session = { ...result, role: normalizeStaffRole(result.role) };
     if (!STAFF_ROLES.includes(session.role as never)) {
       throw new ForbiddenException('not a commerce-admin account');
     }

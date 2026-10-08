@@ -45,3 +45,12 @@ describe('SalesRepsService (stage 2b)', () => {
     expect(published[0]).toMatchObject({ payload: { salesUserId: null } });
   });
 });
+
+
+it('assignment roster selects only active internal sales reps and no contact fields', async () => {
+  const db = { query: jest.fn().mockResolvedValue([{ id: REP, name: 'Rep' }]) };
+  expect(await new SalesRepsService(db as never, {} as never).list()).toEqual([{ id: REP, name: 'Rep' }]);
+  const sql = db.query.mock.calls[0][0];
+  expect(sql).toContain("is_active AND user_type = 'internal' AND role IN ('sale', 'sales', 'manager')");
+  expect(sql).not.toMatch(/email|phone/);
+});

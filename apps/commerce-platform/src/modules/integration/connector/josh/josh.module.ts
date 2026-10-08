@@ -1,4 +1,5 @@
 import { ProductPromotionRulesModule } from '../../../commerce/product-promotion-rules/product-promotion-rules.module';
+import { AuthModule } from '../../../core/auth/auth.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JoshCatalogProduct } from './josh-catalog-product.entity';
@@ -57,7 +58,7 @@ import { WebhookSubscriptionModule } from '../../webhook-subscription/webhook-su
 /** Everything that reads josh's data (via its replica): the catalog copy and the offloaded heavy jobs (Task 9). */
 import { InventoryModule } from '../../../commerce/inventory/inventory.module';
 @Module({
-  imports: [ProductPromotionRulesModule, TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck, JagotaOrderSend, JagotaCustomerSend, JagotaSyncHistory, DbdLookup, JoshOrderCopy, JoshOrderLineCopy, PriceShadowCheck, StaffPrice, JoshCustomerCopy, JoshErpFallbackCall]), WebhookSubscriptionModule, ApiKeyModule, InventoryModule],
+  imports: [AuthModule,ProductPromotionRulesModule, TypeOrmModule.forFeature([JoshCatalogProduct, JagotaShadowCheck, JagotaOrderSend, JagotaCustomerSend, JagotaSyncHistory, DbdLookup, JoshOrderCopy, JoshOrderLineCopy, PriceShadowCheck, StaffPrice, JoshCustomerCopy, JoshErpFallbackCall]), WebhookSubscriptionModule, ApiKeyModule, InventoryModule],
   controllers: [ShopReportsController, JoshActionsController, JagotaShadowController, JagotaGatewayController, JagotaGatewayReportController, JagotaSyncHistoryController, JoshBackofficeController, PriceShadowController, StaffPricesController, JoshPromotionsController, DbdRelayController, JoshMarketingWorkflowsController, JoshAdminCallController, JoshOrderPlacedController, JoshOrderCopyReportController, JoshEventsController, JoshBackfillController],
   providers: [JoshReplica, JoshCatalogSyncService, BestsellersOffloadJob, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, JoshPromotions, JoshMarketingWorkflows, JoshOrderCopyService, StorefrontApiKeyGuard, JoshEventsService],
   exports: [JoshReplica, JoshCatalogSyncService, JoshInsights, SystemHealthReport, RestaurantPlaces, JoshErpLogs, JoshWinback, JoshPushCampaigns, JoshActions, JoshProducts, JoshOrders, JoshCustomers, JoshPrices, JagotaShadow, JagotaGateway, JagotaSyncHistoryImport, JoshBackoffice, JoshApiLogs, PriceShadow, StaffPrices, JoshPromotions, JoshMarketingWorkflows, JoshOrderCopyService],

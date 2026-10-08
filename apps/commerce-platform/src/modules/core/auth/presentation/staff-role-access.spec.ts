@@ -1,7 +1,9 @@
-import { ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { JoshAdminCallController } from '../../../integration/connector/josh/josh-admin-call.controller';
+import { McpConnectionsController } from '../../../../mcp/mcp-connections.controller';
+import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { READ_ONLY_STAFF_ROLES, STAFF_ROLES, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { READ_ONLY_STAFF_ROLES, STAFF_ROLES, StaffRole, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JOSH_STAFF_ROLES } from '../../../integration/customers/josh-staff-access.service';
 import { CompetitorPricesController } from '../../../integration/competitor-prices/competitor-prices.controller';
 import { SalesRepsController } from '../../../integration/customers/sales-reps.controller';
@@ -27,10 +29,12 @@ let account: { id: string; email: string; role: string; status: string; mustChan
 const users = { findOne: jest.fn(async () => account) };
 const guard = new StaffAuthGuard(jwt, new Reflector(), users as never);
 
-async function hit(role: string, handler: (...args: never[]) => unknown, cls: abstract new (...args: never[]) => unknown, method: string) {
+let lastRequest: Record<string, unknown>;
+async function hit(role: string, handler: (...args: never[]) => unknown, cls: abstract new (...args: never[]) => unknown, method: string, tokenRole = role, signer = jwt) {
   account = { id: 'u-1', email: 'a@b.c', role, status: 'active' };
-  const token = await jwt.signAsync({ sub: 'u-1', email: 'a@b.c', role });
+  const token = await signer.signAsync({ sub: 'u-1', email: 'a@b.c', role: tokenRole });
   const request: Record<string, unknown> = { headers: { authorization: `Bearer ${token}` }, method };
+  lastRequest = request;
   const context = {
     getType: () => 'http',
     getHandler: () => handler,
@@ -51,9 +55,9 @@ describe('staff role access', () => {
   it('keeps commerce-only roles off the josh staff.access list (josh would 422)', () => {
     expect(JOSH_STAFF_ROLES).toEqual(['cs', 'marketing', 'merchandising', 'sale', 'sales', 'manager', 'admin', 'dev']);
     expect(JOSH_STAFF_ROLES).not.toEqual(expect.arrayContaining(['business_analyst', 'graphic', 'sales_manager', 'platform_admin', 'sale_manager']));
-    expect(STAFF_ROLES).toEqual(['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic']);
-    expect(READ_ONLY_STAFF_ROLES).toEqual(['business_analyst']);
-    expect(STAFF_ROLES).not.toContain('sale');
+    expect(STAFF_ROLES).toEqual(['admin', 'marketing', 'merchandising', 'cs', 'sale', 'sales_manager', 'business_analyst', 'graphic']);
+    expect(READ_ONLY_STAFF_ROLES).toEqual(['business_analyst', 'sale']);
+    expect(STAFF_ROLES).not.toContain('manager');
   });
 
   it('GET /admin/auth/me and POST /admin/auth/password work for every commerce role', async () => {
@@ -63,8 +67,10 @@ describe('staff role access', () => {
     }
   });
 
-  it('a josh sale token is not a commerce-admin login', async () => {
-    await deny('sale', StaffAuthController.prototype.me, StaffAuthController, 'GET');
+  it('Josh tokens still fail signature verification; the commerce DB row is authoritative', async () => {
+    await expect(hit('sale', StaffAuthController.prototype.me, StaffAuthController, 'GET', 'sale', new JwtService({ secret: 'josh-test-secret' }))).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(hit('manager', StaffAuthController.prototype.me, StaffAuthController, 'GET', 'sale')).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(hit('graphic', ShopReportsController.prototype.sales, ShopReportsController, 'GET', 'sale')).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('business analyst is GET-only on the analyst routes and blocked elsewhere', async () => {
@@ -149,5 +155,69 @@ describe('staff role access', () => {
     await allow('marketing', GrowthController.prototype.workspace, GrowthController, 'GET');
     await allow('marketing', ShopReportsController.prototype.traffic, ShopReportsController, 'GET');
     await deny('marketing', ShopReportsController.prototype.sales, ShopReportsController, 'GET');
+  });
+});
+
+
+describe('sale / manager access matrix (real global guard, method overrides included)', () => {
+  const endpoints: Array<[Function, Function, string, string[]]> = [
+    [ShopReportsController.prototype.sales, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.customerSummary, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.customerList, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.customerDetail, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.orderSummary, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.orderList, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.orderDetail, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.priceBranches, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.branchPrices, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.priceQuotations, ShopReportsController, 'GET', ['sale', 'sales_manager']],
+    [ShopReportsController.prototype.salesByRep, ShopReportsController, 'GET', ['sales_manager']],
+    [ShopReportsController.prototype.systemHealth, ShopReportsController, 'GET', ['sales_manager']],
+    [ShopReportsController.prototype.salesParity, ShopReportsController, 'GET', ['sales_manager']],
+    [ShopReportsController.prototype.orderTargetgroup, ShopReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.teamOpportunities, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.myOpportunities, WinbackReportsController, 'GET', ['sale']],
+    [WinbackReportsController.prototype.myPool, WinbackReportsController, 'GET', ['sale']],
+    [WinbackReportsController.prototype.overview, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.pool, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.aging, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.scorecard, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.dashboard, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.teamStats, WinbackReportsController, 'GET', ['sales_manager']],
+    [WinbackReportsController.prototype.leadSignals, WinbackReportsController, 'GET', ['sales_manager']],
+    [SalesRepsController.prototype.list, SalesRepsController, 'GET', ['sales_manager']],
+    [SalesRepsController.prototype.assign, SalesRepsController, 'PATCH', ['sales_manager']],
+    [ProductController.prototype.list, ProductController, 'GET', ['sale', 'graphic']],
+    [ProductController.prototype.get, ProductController, 'GET', ['sale', 'graphic']],
+    [ProductController.prototype.create, ProductController, 'POST', []],
+    [ProductController.prototype.update, ProductController, 'PATCH', []],
+    [InventoryController.prototype.list, InventoryController, 'GET', ['sale']],
+    [InventoryOverviewController.prototype.overview, InventoryOverviewController, 'GET', ['sale']],
+    [StockMovesController.prototype.adjust, StockMovesController, 'POST', []],
+    [ShopReportsController.prototype.erpLogList, ShopReportsController, 'GET', []],
+    [CustomerController.prototype.list, CustomerController, 'GET', []],
+    [GrowthController.prototype.workspace, GrowthController, 'GET', []],
+    [StaffAuthController.prototype.me, StaffAuthController, 'GET', ['sale', 'sales_manager', 'graphic']],
+    [StaffAuthController.prototype.changePassword, StaffAuthController, 'POST', ['sale', 'sales_manager', 'graphic']],
+  ];
+  it.each(['sale', 'sales_manager', 'sale_manager', 'manager', 'admin', 'graphic'])('%s follows the endpoint policy', async role => {
+    for (const [handler, cls, method, allowed] of endpoints) {
+      const call = hit(role, handler as never, cls as never, method);
+      if (role === 'admin' || allowed.includes(normalizeStaffRole(role))) {
+        await expect(call).resolves.toBe(true);
+        expect(lastRequest.staff).toMatchObject({ role: normalizeStaffRole(role) });
+      } else await expect(call).rejects.toBeInstanceOf(ForbiddenException);
+    }
+  });
+  it('sale is GET/HEAD only even for an allowed read path', async () => {
+    await deny('sale', ShopReportsController.prototype.sales, ShopReportsController, 'POST');
+    await deny('sale', ProductController.prototype.list, ProductController, 'PATCH');
+    await allow('sale', ProductController.prototype.list, ProductController, 'HEAD');
+  });
+  it('sale cannot enter the Josh relay or MCP', async () => {
+    // Class permissions apply regardless of a handler without its own decorator.
+    const handler = () => undefined;
+    await deny('sale', handler, JoshAdminCallController, 'GET');
+    await deny('sale', handler, McpConnectionsController, 'GET');
   });
 });

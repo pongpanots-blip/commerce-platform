@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { In, Repository } from 'typeorm';
 import { AuditLog } from '../../audit/infrastructure/audit-log.entity';
 import { User } from '../../user/infrastructure/user.entity';
-import { STAFF_ROLES, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { STAFF_ROLES, StaffRole, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 
 export type StaffStatus = 'active' | 'disabled';
 export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: StaffStatus; mustChangePassword: boolean; createdAt: Date }
@@ -13,7 +13,7 @@ export interface StaffActor { userId: string; email: string }
 
 export const MIN_PASSWORD = 10;
 const temporaryPassword = () => randomBytes(12).toString('base64url');
-const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.name, role: u.role as StaffRole, status: u.status as StaffStatus, mustChangePassword: !!u.mustChangePassword, createdAt: u.createdAt });
+const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.name, role: normalizeStaffRole(u.role) as StaffRole, status: u.status as StaffStatus, mustChangePassword: !!u.mustChangePassword, createdAt: u.createdAt });
 
 /**
  * commerce-admin staff accounts (admin / marketing) — commerce's own, nothing shared with josh.
@@ -29,11 +29,13 @@ export class StaffAccountsService {
   ) {}
 
   async list(): Promise<StaffAccount[]> {
-    const rows = await this.users.find({ where: { role: In([...STAFF_ROLES]) }, order: { createdAt: 'ASC' } });
+    const rows = await this.users.find({ where: { role: In([...STAFF_ROLES, 'sale_manager']) }, order: { createdAt: 'ASC' } });
     return rows.map(view);
   }
 
-  async create(input: { email: string; name?: string | null; role: StaffRole }, actor: StaffActor) {
+  async create(input: { email: string; name?: string | null; role: string }, actor: StaffActor) {
+    input = { ...input, role: normalizeStaffRole(input.role) };
+    if (!STAFF_ROLES.includes(input.role as StaffRole)) throw new BadRequestException('invalid staff role');
     const email = input.email.trim().toLowerCase();
     if (await this.users.findOne({ where: { email }, withDeleted: true })) throw new ConflictException(`${email} already has an account`);
     const password = temporaryPassword();
@@ -44,7 +46,11 @@ export class StaffAccountsService {
     return { account: view(saved), temporaryPassword: password };
   }
 
-  async update(id: string, changes: { name?: string | null; role?: StaffRole; status?: StaffStatus }, actor: StaffActor) {
+  async update(id: string, changes: { name?: string | null; role?: string; status?: StaffStatus }, actor: StaffActor) {
+    if (changes.role !== undefined) {
+      changes = { ...changes, role: normalizeStaffRole(changes.role) };
+      if (!STAFF_ROLES.includes(changes.role as StaffRole)) throw new BadRequestException('invalid staff role');
+    }
     const user = await this.staff(id);
     const before = view(user);
     const losesAdmin = user.role === 'admin' && user.status === 'active'
@@ -85,7 +91,7 @@ export class StaffAccountsService {
 
   private async staff(id: string): Promise<User> {
     const user = await this.users.findOne({ where: { id } });
-    if (!user || !STAFF_ROLES.includes(user.role as StaffRole)) throw new NotFoundException('staff account not found');
+    if (!user || !STAFF_ROLES.includes(normalizeStaffRole(user.role) as StaffRole)) throw new NotFoundException('staff account not found');
     return user;
   }
 

@@ -1,3 +1,4 @@
+import { normalizeRole } from '../lib/role-home';
 import type { NavGroup, NavItem } from '@cp/ui';
 
 const ORIGINAL_NAV: NavGroup[] = [
@@ -15,6 +16,9 @@ const ORIGINAL_NAV: NavGroup[] = [
       { to: '/reports/traffic', label: 'Traffic', end: false },
       { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
       { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
+      { to: '/reports/winback/opportunities', label: 'โอกาสของทีม', end: false },
+      { to: '/reports/winback/my', label: 'โอกาสและลีดของฉัน', end: false },
+      { to: '/cs/sales-assignment', label: 'มอบหมายพนักงานขาย', end: false },
       { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
     ],
   },
@@ -217,8 +221,12 @@ const LABELS: Record<string, string> = {
 };
 
 /** Destination permissions from the staff-role policy; omitted destinations are admin-only. */
-const ROLE_ACCESS: Record<string, readonly string[]> = {
+export const ROLE_ACCESS: Record<string, readonly string[]> = {
+  "/reports/winback/opportunities": ["sales_manager", "business_analyst"],
+  "/reports/winback/my": ["sale"],
+  "/cs/sales-assignment": ["sales_manager"],
   "/reports/sales": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
@@ -227,14 +235,17 @@ const ROLE_ACCESS: Record<string, readonly string[]> = {
     "merchandising"
   ],
   "/reports/orders": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
   "/reports/customers": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
   "/reports/prices": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
@@ -408,10 +419,12 @@ const ROLE_ACCESS: Record<string, readonly string[]> = {
     "marketing"
   ],
   "/erp/inventory-warehouse": [
+    "sale",
     "merchandising",
     "business_analyst"
   ],
   "/products": [
+    "sale",
     "merchandising",
     "graphic"
   ],
@@ -431,6 +444,7 @@ const ROLE_ACCESS: Record<string, readonly string[]> = {
     "business_analyst"
   ],
   "/account/password": [
+    "sale",
     "marketing",
     "merchandising",
     "cs",
@@ -516,12 +530,13 @@ export function taskSectionsFor(id: WorkspaceId, links: NavItem[]) {
 }
 
 export function navFor(role?: string): NavGroup[] {
+  role = normalizeRole(role);
   const grouped = new Map<WorkspaceId, NavItem[]>(WORKSPACES.map(w => [w.id, []]));
   const seen = new Set<string>();
   for (const group of ORIGINAL_NAV) for (const item of group.links) {
     if (item.to === '/' || seen.has(item.to) || (role !== 'admin' && !ROLE_ACCESS[item.to]?.includes(role ?? ''))) continue;
     seen.add(item.to);
-    grouped.get(category(item, group.group))!.push({ ...item, label: LABELS[item.to] ?? item.label });
+    grouped.get(category(item, group.group))!.push({ ...item, label: role === 'sale' ? ({ '/reports/sales': 'ยอดขายของฉัน', '/reports/customers': 'ลูกค้าของฉัน', '/reports/orders': 'ออเดอร์ของฉัน' } as Record<string, string>)[item.to] ?? LABELS[item.to] ?? item.label : role === 'sales_manager' && item.to === '/reports/sales' ? 'ยอดขายทีมและผลงานรายเซลส์' : LABELS[item.to] ?? item.label });
   }
   return [
     ...(role === 'admin' ? [{ links: [{ to: '/', label: 'ภาพรวม', end: true, icon: 'space_dashboard' }] }] : []),

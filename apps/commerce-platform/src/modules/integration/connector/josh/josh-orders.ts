@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { repScopeSql } from './sales-rep-scope';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone } from './winback/pii.helper';
 import { paidOrderSql } from './josh-insights';
@@ -47,10 +48,10 @@ export const SYNC_STATES = {
   sent: `js.sync_status IN ('sent','confirmed','reserved','skipped')`,
 } as const;
 
-export interface OrderFilters { search?: string; status?: string; sync?: string; companyId?: string; from?: string; to?: string; payment?: string }
+export interface OrderFilters { search?: string; status?: string; sync?: string; companyId?: string; from?: string; to?: string; payment?: string; repIds?: string[] }
 
 /** `paid` = the paid-order test for `o` (the replica's payment_transactions EXISTS, or the copy's `o.paid`). */
-export function orderWhere(f: OrderFilters, paid = paidOrderSql('o')): { where: string; params: unknown[] } {
+export function orderWhere(f: OrderFilters, paid = paidOrderSql('o'), copies = false): { where: string; params: unknown[] } {
   const params: unknown[] = [];
   const add = (v: unknown) => `$${params.push(v)}`;
   const w: string[] = [];
@@ -73,6 +74,7 @@ export function orderWhere(f: OrderFilters, paid = paidOrderSql('o')): { where: 
     if (Number.isNaN(Date.parse(v))) throw new BadRequestException(`${k} must be a date`);
     w.push(`o.create_date ${op} ${add(new Date(v))}`);
   }
+  if (f.repIds !== undefined) w.push(repScopeSql('c', add(f.repIds), copies));
   return { where: w.length ? `WHERE ${w.join(' AND ')}` : '', params };
 }
 
@@ -94,7 +96,7 @@ export class JoshOrders {
 
   async summary(f: OrderFilters = {}) {
     const t = T[this.source];
-    const { where, params } = orderWhere(f, t.paid);
+    const { where, params } = orderWhere(f, t.paid, this.source === 'copies');
     const sync = Object.entries(SYNC_STATES).map(([k, cond]) => `count(*) FILTER (WHERE ${cond})::int AS sync_${k}`).join(', ');
     const from = `FROM ${t.orders} o LEFT JOIN ${t.company} c ON c.id = o.company_id ${latestSync(t.sync)} ${where}`;
     const [[row], byStatus] = await Promise.all([
@@ -110,7 +112,7 @@ export class JoshOrders {
 
   async list(f: OrderFilters, page = 1, limit = 50) {
     const copies = this.source === 'copies', t = T[this.source];
-    const { where, params } = orderWhere(f, t.paid);
+    const { where, params } = orderWhere(f, t.paid, this.source === 'copies');
     const n = params.length;
     const base = copies
       ? `FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_branches b ON b.id = o.branch_id ${latestSync(t.sync)} ${LATEST_PAYMENT_COPY} ${where}`
@@ -126,8 +128,8 @@ export class JoshOrders {
     return { items, total, page, limit, ...(copies ? { source: 'copies', notCopied: NOT_COPIED } : {}) };
   }
 
-  async detail(idOrNumber: string) {
-    if (this.source === 'copies') return this.detailFromCopies(idOrNumber);
+  async detail(idOrNumber: string, repIds?: string[]) {
+    if (this.source === 'copies') return this.detailFromCopies(idOrNumber, repIds);
     const byId = UUID.test(idOrNumber);
     const [order] = await this.replica.query<Record<string, unknown>>(
       `SELECT o.orders_id, o.order_number, o.status::text AS status, o.fulfillment_type::text AS fulfillment_type, o.payment_type::text AS payment_type, o.create_date, o.delivery_date::text AS delivery_date, o.sending_date::text AS sending_date, o.customer_code, o.po_number, o.remark,
@@ -136,7 +138,7 @@ export class JoshOrders {
           c.id AS company_id, c.name AS company_name, c.erp_customer_code, b.name AS branch_name, b.erp_branch_code,
           u.first_name, u.last_name, u.email, u.mobile_phone
         FROM orders o LEFT JOIN company c ON c.id = o.company_id LEFT JOIN branch b ON b.id = o.branch_id LEFT JOIN users u ON u.id = o.user_id
-       WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} LIMIT 1`, [idOrNumber.trim().slice(0, 64)]);
+       WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} ${repIds !== undefined ? `AND ${repScopeSql('c', '$2', false)}` : ''} LIMIT 1`, repIds !== undefined ? [idOrNumber.trim().slice(0, 64), repIds] : [idOrNumber.trim().slice(0, 64)]);
     if (!order) throw new NotFoundException(`order ${idOrNumber} not found in josh`);
     const id = order.orders_id;
     const [items, shipments, jagota, payments] = await Promise.all([
@@ -162,7 +164,7 @@ export class JoshOrders {
   }
 
   /** One order from the copies; what is not copied yet is null and listed in `notCopied`. */
-  private async detailFromCopies(idOrNumber: string) {
+  private async detailFromCopies(idOrNumber: string, repIds?: string[]) {
     const byId = UUID.test(idOrNumber);
     const [order] = await this.db.query(
       `SELECT o.orders_id, o.order_number, o.status, o.fulfillment_type, o.payment_type, o.create_date, o.delivery_date::text AS delivery_date,
@@ -174,7 +176,7 @@ export class JoshOrders {
           u.first_name, u.last_name, u.email, jc.data->>'mobile_phone' AS mobile_phone
         FROM josh_orders o LEFT JOIN josh_companies c ON c.id = o.company_id LEFT JOIN josh_users u ON u.id = o.user_id
         LEFT JOIN josh_branches b ON b.id = o.branch_id LEFT JOIN josh_customers jc ON jc.id = o.user_id AND jc.deleted_at IS NULL
-       WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} LIMIT 1`, [idOrNumber.trim().slice(0, 64)]);
+       WHERE ${byId ? 'o.orders_id = $1' : 'o.order_number = $1'} ${repIds !== undefined ? `AND ${repScopeSql('c', '$2', true)}` : ''} LIMIT 1`, repIds !== undefined ? [idOrNumber.trim().slice(0, 64), repIds] : [idOrNumber.trim().slice(0, 64)]);
     if (!order) throw new NotFoundException(`order ${idOrNumber} not found in commerce's copy of josh orders`);
     const id = order.orders_id;
     const [items, jagota, shipments, payments] = await Promise.all([

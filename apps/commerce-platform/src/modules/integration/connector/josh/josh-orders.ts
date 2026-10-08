@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { repScopeSql } from './sales-rep-scope';
+import { containsPattern } from '../../../../shared-kernel/helpers/like.helper';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone } from './winback/pii.helper';
 import { paidOrderSql } from './josh-insights';
@@ -56,7 +57,7 @@ export function orderWhere(f: OrderFilters, paid = paidOrderSql('o'), copies = f
   const add = (v: unknown) => `$${params.push(v)}`;
   const w: string[] = [];
   const s = f.search?.trim().slice(0, 100);
-  if (s) { const p = add(`%${s}%`); w.push(`(o.order_number ILIKE ${p} OR o.customer_code ILIKE ${p} OR o.po_number ILIKE ${p} OR c.name ILIKE ${p})`); }
+  if (s) { const p = add(containsPattern(s)); w.push(`(o.order_number ILIKE ${p} ESCAPE '\\' OR o.customer_code ILIKE ${p} ESCAPE '\\' OR o.po_number ILIKE ${p} ESCAPE '\\' OR c.name ILIKE ${p} ESCAPE '\\')`); }
   if (f.status) w.push(`o.status::text = ${add(f.status.slice(0, 30))}`);
   if (f.sync) {
     if (!(f.sync in SYNC_STATES)) throw new BadRequestException(`sync must be one of: ${Object.keys(SYNC_STATES).join(', ')}`);

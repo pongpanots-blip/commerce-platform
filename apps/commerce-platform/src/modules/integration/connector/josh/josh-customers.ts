@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { repScopeSql } from './sales-rep-scope';
+import { containsPattern } from '../../../../shared-kernel/helpers/like.helper';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone, maskRegisterNumber } from './winback/pii.helper';
 import { paidOrderSql } from './josh-insights';
@@ -34,7 +35,7 @@ export function companyWhere(f: CompanyFilters): { where: string; params: unknow
   const params: unknown[] = [];
   const w: string[] = [];
   const s = f.search?.trim().slice(0, 100);
-  if (s) { params.push(`%${s}%`); w.push(`(c.name ILIKE $1 OR c.erp_customer_code ILIKE $1)`); }
+  if (s) { params.push(containsPattern(s)); w.push(`(c.name ILIKE $1 ESCAPE '\\' OR c.erp_customer_code ILIKE $1 ESCAPE '\\')`); }
   if (f.issue) {
     if (!(f.issue in COMPANY_ISSUES)) throw new BadRequestException(`issue must be one of: ${Object.keys(COMPANY_ISSUES).join(', ')}`);
     w.push(COMPANY_ISSUES[f.issue as keyof typeof COMPANY_ISSUES]);

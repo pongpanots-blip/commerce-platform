@@ -166,6 +166,15 @@ describe('ShopReportsController as cs: page=1 and min-2 search reject before any
       expect(r).toHaveProperty('page', 1);
     }
   });
+  it.each([['%%', '%\\%\\%%'], ['__', '%\\_\\_%']])('wildcard-only search %s matches literally (bound as %s), so it cannot list the whole book', async (search, pattern) => {
+    const { c, query } = setup();
+    await c.customerList({ search }, cs);
+    expect(query.mock.calls[0][1]).toEqual([pattern, 20, 0]);
+    expect(query.mock.calls[0][0]).toContain(`ILIKE $1 ESCAPE '\\'`);
+    const p = setup();
+    await p.c.productList({ search }, cs);
+    expect(p.query.mock.calls[0][1]).toEqual([pattern, 'active', 10, 0]);
+  });
   it('other roles keep paging and short searches', async () => {
     const { c, customers, products } = setup();
     const cl = jest.spyOn(customers, 'list');

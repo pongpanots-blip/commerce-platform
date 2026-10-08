@@ -254,19 +254,24 @@ describe('SignalService', () => {
 
 describe('OpportunityService.convert', () => {
   it('is idempotent and survives a double tap', async () => {
-    const { accounts, leads } = setup();
-    const svc = new OpportunityService({} as never, accounts as never, leads as never);
+    const { accounts, leads, records } = setup();
+    const svc = new OpportunityService({} as never, accounts as never, leads as never, records as never);
+    // This spec exercises idempotency; joined-row visibility is covered in opportunity-collab.service.spec.
+    jest.spyOn(svc, 'placeRow').mockImplementation(async (id) => ({
+      id, name_th: null, name_en: null, district: null, raw_category: null, rating: null,
+      review_count: null, price_range: null, enriched_at: null,
+    }));
     leads.createTmpFromRestaurantPlace.mockResolvedValueOnce({ id: 'acc-new', customer_code: 'TMP-1', stage: 'prospect', lifecycle: 'tmp' });
-    expect(await svc.convert('rep-1', 'p1')).toEqual({ opportunity_id: 'p1', winback_account_id: 'acc-new', customer_code: 'TMP-1', stage: 'prospect', lifecycle: 'tmp' });
+    expect(await svc.convert(REP, 'p1')).toEqual({ opportunity_id: 'p1', winback_account_id: 'acc-new', customer_code: 'TMP-1', stage: 'prospect', lifecycle: 'tmp' });
     accounts.rows.push(account({ id: 'acc-p2', restaurant_place_id: 'p2', stage: 'prospect' }));
-    expect(await svc.convert('rep-1', 'p2')).toMatchObject({ winback_account_id: 'acc-p2' });
+    expect(await svc.convert(REP, 'p2')).toMatchObject({ winback_account_id: 'acc-p2' });
     leads.createTmpFromRestaurantPlace.mockImplementationOnce(async () => {
       accounts.rows.push(account({ id: 'acc-p3', restaurant_place_id: 'p3' }));
       throw new ConflictException('มี tmp lead จากร้านนี้แล้ว');
     });
-    expect(await svc.convert('rep-1', 'p3')).toMatchObject({ winback_account_id: 'acc-p3' });
+    expect(await svc.convert(REP, 'p3')).toMatchObject({ winback_account_id: 'acc-p3' });
     leads.createTmpFromRestaurantPlace.mockRejectedValueOnce(new NotFoundException('ไม่พบร้านใน Market Explorer'));
-    await expect(svc.convert('rep-1', 'p4')).rejects.toThrow('Opportunity not found');
+    await expect(svc.convert(REP, 'p4')).rejects.toThrow('Opportunity not found');
   });
 });
 

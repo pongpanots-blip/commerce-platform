@@ -2,6 +2,7 @@ import { Module, UseGuards } from '@nestjs/common';
 import { JoshModule } from '../../integration/connector/josh/josh.module';
 import { Public } from '../../../shared-kernel/presentation/auth.decorators';
 import { AdminWriteGuard } from './shared/admin-write.guard';
+import { WinbackAppRoleGuard } from './winback-app-role.guard';
 import { NotificationService } from './shared/notification.service';
 import { BrevoEmailService } from './shared/brevo-email.service';
 import { UploadService } from './shared/upload.service';
@@ -49,6 +50,8 @@ import { WinbackReportsController } from './winback-reports.controller';
 
 // The app signs in at josh and sends josh's access token: commerce's staff guard steps aside and
 // AdminWriteGuard (josh's checks, on the staff copy) decides. Writes only when commerce owns winback.
+// UseGuards appends class metadata: on the app, auth → sales role gate → ownership. Admin callers use
+// WinbackController / reports; relays carry the sales user's Josh JWT, and crons call services directly.
 for (const c of [WinbackController, WinbackAppController, WinbackIntakeController]) { Public()(c); UseGuards(WinbackOwnershipGuard)(c); }
 
 /**
@@ -67,6 +70,7 @@ for (const c of [WinbackController, WinbackAppController, WinbackIntakeControlle
   controllers: [WinbackController, WinbackAppController, WinbackIntakeController, WinbackLoginController, WinbackReportsController],
   providers: [
     AdminWriteGuard,
+    WinbackAppRoleGuard,
     StorefrontApiKeyGuard,
     WinbackOwnershipGuard,
     NotificationService,

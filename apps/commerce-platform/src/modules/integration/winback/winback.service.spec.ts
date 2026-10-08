@@ -5,6 +5,8 @@ import { WinbackAccount } from './entities/winback-account.entity';
 import { JoshRestaurantPlace as RestaurantPlace } from './josh-copies.entity';
 import { MatchingService } from './matching.service';
 import { PoolQueryDto } from './dto/pool-query.dto';
+import { WinbackAppRecord } from './entities/winback-app-record.entity';
+import { opportunityVisibility } from './opportunity-meta.helpers';
 
 const POOL_QUERY = { page: 1, limit: 20 } as PoolQueryDto;
 
@@ -346,9 +348,10 @@ describe('WinbackService.findPool', () => {
     expect(restaurantPlaces.find).toHaveBeenCalledTimes(1);
   });
 
-  it('lists unassigned place candidates with restaurantPlace when include_places', async () => {
+  it.each([false, true])('lists visible place candidates with restaurantPlace (manager=%s)', async (isManager) => {
     const qb = {
       where: jest.fn().mockReturnThis(),
+      leftJoin: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       addOrderBy: jest.fn().mockReturnThis(),
@@ -379,7 +382,19 @@ describe('WinbackService.findPool', () => {
       ...POOL_QUERY,
       assigned: 'unassigned',
       include_places: true,
-    } as PoolQueryDto);
+    } as PoolQueryDto, { id: ' REP-1 ', isManager });
+
+    const visibility = opportunityVisibility({ id: 'rep-1', isManager: false });
+    if (isManager) {
+      // Managers see every place: the query stays join-free and unfiltered.
+      expect(qb.leftJoin).not.toHaveBeenCalled();
+      expect(qb.andWhere).not.toHaveBeenCalled();
+    } else {
+      expect(qb.leftJoin).toHaveBeenCalledWith(WinbackAccount, 'a', 'a.restaurant_place_id = p.id');
+      expect(qb.leftJoin).toHaveBeenCalledWith(WinbackAppRecord, 'm', 'm.kind = :metaKind AND m.record_key = CAST(p.id AS text)', { metaKind: 'opportunity_meta' });
+      expect(qb.andWhere).toHaveBeenCalledWith(visibility.sql, { visibleOwner: 'rep-1' });
+    }
+    expect(qb.andWhere.mock.invocationCallOrder[0] ?? 0).toBeLessThan(qb.getCount.mock.invocationCallOrder[0]);
 
     expect(result.meta.total).toBe(1);
     expect(result.data[0]).toMatchObject({

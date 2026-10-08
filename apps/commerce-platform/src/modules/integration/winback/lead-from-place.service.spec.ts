@@ -115,8 +115,10 @@ describe('LeadService.createTmpFromRestaurantPlace', () => {
       {} as NotificationService,
     );
 
-    await expect(
-      service.createTmpFromRestaurantPlace('sales-1', 'place-1'),
-    ).rejects.toBeInstanceOf(ConflictException);
+    const error = await service.createTmpFromRestaurantPlace('sales-1', 'place-1').catch((e) => e);
+    expect(error).toBeInstanceOf(ConflictException);
+    expect(error.getStatus()).toBe(409);
+    expect(error.message).toBe('มี tmp lead จากร้านนี้แล้ว');
+    expect(JSON.stringify(error.getResponse())).not.toMatch(/lead-old|TMP-OLD/);
   });
 });

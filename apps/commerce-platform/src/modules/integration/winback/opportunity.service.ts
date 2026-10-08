@@ -16,6 +16,7 @@ import { OpportunityProvinceQueryDto, OpportunityQueryDto } from './dto/app-gaps
 import { Opportunity, pageOpportunities, placeToOpportunity } from './app-gaps.helpers';
 import {
   buildOpportunityMeta,
+  collabPayload,
   normalizeActor,
   normalizeId,
   OPPORTUNITY_DEFAULT_PURPOSE,
@@ -24,6 +25,7 @@ import {
   OpportunityMeta,
   OpportunityMetaGroup,
   OpportunityMetaPlaceRow,
+  opportunityAccessError,
   opportunityVisibility,
   ownerFilterError,
   RuleError,
@@ -43,7 +45,8 @@ import { WINBACK_NAMED_ROLES } from './winback-roles';
 /**
  * Places scored per list call (enriched + most-reviewed first), before tabs / pagination. The list is ranked in
  * memory, so this bounds the work — but when more open places match, the list's tab counts / totals can be
- * lower than `/opportunities/filter-meta`, which counts every matching place (no cap).
+ * lower than `/opportunities/filter-meta`, which counts every matching place (no cap). List pagination
+ * and filter-meta expose `capped` / `candidate_cap` when that population exceeds this limit.
  */
 export const OPPORTUNITY_CANDIDATE_CAP = 3000;
 
@@ -85,8 +88,9 @@ function scoped<T extends SelectQueryBuilder<RestaurantPlace>>(qb: T, actor: Win
  * the TMP lead exactly like `POST /leads/from-restaurant-place/:placeId` (and is idempotent).
  *
  * Visibility (§4.11.8): a manager sees every opportunity, anyone else only their own (coordination owner)
- * and unassigned ones — `list`, `filterMeta` and `accountOpportunities` here; the per-opportunity routes
- * (detail, meta, collaboration) are checked in OpportunityCollabService, which also knows request recipients.
+ * and unassigned ones — `list`, `filterMeta`, `provinces` and `accountOpportunities` here. Per-opportunity
+ * detail / meta / collaboration use OpportunityCollabService; convert / lead creation use assertCanTake.
+ * Both use thread access, including recipients of pending or past requests.
  */
 @Injectable()
 export class OpportunityService {
@@ -94,6 +98,7 @@ export class OpportunityService {
     @InjectRepository(RestaurantPlace) private readonly places: Repository<RestaurantPlace>,
     @InjectRepository(WinbackAccount) private readonly accounts: Repository<WinbackAccount>,
     private readonly leads: LeadService,
+    @InjectRepository(WinbackAppRecord) private readonly records: Repository<WinbackAppRecord>,
   ) {}
 
   private joined(): SelectQueryBuilder<RestaurantPlace> {
@@ -190,7 +195,10 @@ export class OpportunityService {
     if (q.province_codes?.length) {
       // Prefilter by district text; the exact province is checked again per row (pageOpportunities).
       const patterns = codes.flatMap((c) => districtNamesOfProvince(c)).map((n) => `%${n}%`);
-      if (!patterns.length) return { ...pageOpportunities([], q), items: await this.withMeta([], []) };
+      if (!patterns.length) {
+        const page = pageOpportunities([], q);
+        return { ...page, pagination: { ...page.pagination, capped: false, candidate_cap: OPPORTUNITY_CANDIDATE_CAP }, items: await this.withMeta([], []) };
+      }
       qb.andWhere('p.district ILIKE ANY(ARRAY[:...patterns])', { patterns });
     }
     if (q.search?.trim()) {
@@ -200,15 +208,18 @@ export class OpportunityService {
       );
     }
     this.applyMetaFilters(qb, q);
-    const rows = await qb
+    // One extra row detects truncation without counting or scoring the entire population.
+    const candidates = await qb
       .orderBy('p.enriched_at IS NULL', 'ASC')
       .addOrderBy('p.review_count', 'DESC', 'NULLS LAST')
       .addOrderBy('p.id', 'ASC')
-      .limit(OPPORTUNITY_CANDIDATE_CAP)
+      .limit(OPPORTUNITY_CANDIDATE_CAP + 1)
       .getRawMany<OpportunityMetaRow>();
+    const capped = candidates.length > OPPORTUNITY_CANDIDATE_CAP;
+    const rows = candidates.slice(0, OPPORTUNITY_CANDIDATE_CAP);
     const filter = { ...q, province_codes: codes.map(provinceQueryCode) };
     const page = pageOpportunities(rows.map(placeToOpportunity), filter);
-    return { ...page, items: await this.withMeta(page.items, rows) };
+    return { ...page, pagination: { ...page.pagination, capped, candidate_cap: OPPORTUNITY_CANDIDATE_CAP }, items: await this.withMeta(page.items, rows) };
   }
 
   /** UNSCOPED builders over a place row — callers check access first (OpportunityCollabService). */
@@ -229,7 +240,7 @@ export class OpportunityService {
   /**
    * Counts for the filter chips over the open opportunities (no lead yet) THE CALLER MAY SEE — the same
    * population and the same visibility clause as `list` (manager: all; anyone else: own + unassigned), so
-   * the counts match the list's totals for every caller: one GROUP BY over places + stored meta, uncapped
+   * the counts match the list's totals below the candidate cap: one GROUP BY over places + stored meta, uncapped
    * like `/opportunities/provinces` (the list evaluates at most OPPORTUNITY_CANDIDATE_CAP places). `owners`:
    * every owner for a manager; for a sale only themself (the only owner a sale may filter by or see).
    */
@@ -251,7 +262,9 @@ export class OpportunityService {
     const onlyOwner = actor.isManager ? undefined : actor.id || null;
     const named = onlyOwner !== undefined ? !!onlyOwner : groups.some((g) => g.owner);
     const names = named ? await this.rosterNames() : new Map<string, string>();
-    return summarizeOpportunityMeta(groups, names, onlyOwner);
+    // Counts remain uncapped; `capped` means the unfiltered list's candidates would be truncated.
+    const capped = groups.reduce((n, g) => n + (Number(g.count) || 0), 0) > OPPORTUNITY_CANDIDATE_CAP;
+    return { ...summarizeOpportunityMeta(groups, names, onlyOwner), capped, candidate_cap: OPPORTUNITY_CANDIDATE_CAP };
   }
 
   /**
@@ -270,14 +283,14 @@ export class OpportunityService {
     return opportunityVisibility(actor).allows(owner) ? [placeId] : [];
   }
 
-  /** Every province with how many open opportunities it has (0 included), most first. */
-  async provinces(q: OpportunityProvinceQueryDto) {
-    const rows = await this.places
-      .createQueryBuilder('p')
-      .leftJoin(WinbackAccount, 'a', 'a.restaurant_place_id = p.id')
+  /** Every province with how many visible open opportunities it has (0 included), most first. */
+  async provinces(caller: WinbackActor, q: OpportunityProvinceQueryDto) {
+    const actor = normalizeActor(caller);
+    const qb = this.joined()
       .select('p.district', 'district')
       .addSelect('COUNT(*)', 'count')
-      .where('a.id IS NULL')
+      .where('a.id IS NULL');
+    const rows = await scoped(qb, actor)
       .groupBy('p.district')
       .getRawMany<{ district: string | null; count: string }>();
     const counts = new Map<number, number>();
@@ -293,12 +306,15 @@ export class OpportunityService {
     return { items };
   }
 
-  /** Idempotent: an opportunity already converted returns its lead. */
-  async convert(salesUserId: string, id: string) {
+  /** Thread visibility applies before creation or returning an existing lead; conversion is idempotent. */
+  async convert(caller: WinbackActor, rawId: string) {
+    const actor = normalizeActor(caller);
+    const id = normalizeId(rawId);
+    await this.assertCanTake(actor, id);
     const existing = await this.accounts.findOne({ where: { restaurant_place_id: id } });
     if (existing) return this.converted(id, existing);
     try {
-      return this.converted(id, await this.leads.createTmpFromRestaurantPlace(salesUserId, id));
+      return this.converted(id, await this.leads.createTmpFromRestaurantPlace(actor.id, id));
     } catch (error) {
       if (!(error instanceof ConflictException)) {
         if (error instanceof NotFoundException) throw new NotFoundException('Opportunity not found');
@@ -307,8 +323,21 @@ export class OpportunityService {
       // Two taps at once: the other request created it.
       const raced = await this.accounts.findOne({ where: { restaurant_place_id: id } });
       if (!raced) throw error;
+      await this.assertCanTake(actor, id);
       return this.converted(id, raced);
     }
+  }
+
+  /** Shared thread access for convert and POST leads/from-restaurant-place, including stored owners. */
+  async assertCanTake(caller: WinbackActor, rawId: string) {
+    const actor = normalizeActor(caller);
+    const id = normalizeId(rawId);
+    const row = await this.placeRow(id); // Unknown places stay 404, before checking visibility.
+    const record = await this.records.findOne({ where: { kind: Kind.OPPORTUNITY_COLLAB, record_key: id } });
+    const owner = this.metaOf(row, undefined, new Map()).owner_sales_user_id;
+    // Match detail/readable's thread access, including recipients of pending or past requests.
+    // A recipient may convert a place they can read; this does not transfer its coordination owner.
+    raiseRule(opportunityAccessError(actor, owner, collabPayload(record?.payload), 'thread'));
   }
 
   private converted(opportunityId: string, account: WinbackAccount) {

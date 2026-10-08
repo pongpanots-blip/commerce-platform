@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto';
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { WinbackAccount } from './entities/winback-account.entity';
 import { WinbackAppRecord } from './entities/winback-app-record.entity';
 import { LeadService } from './lead.service';
 import { WinbackActor } from './app-records.service';
@@ -41,12 +42,12 @@ import {
   WinbackCollabRequestKind,
   WinbackCollabRequestStatus,
 } from './winback.enums';
-import { WINBACK_ASSIGNABLE_ROLES, WINBACK_NAMED_ROLES } from './winback-roles';
+import { isWinbackManager, WINBACK_ASSIGNABLE_ROLES, WINBACK_NAMED_ROLES } from './winback-roles';
 
 /** What `/collaboration/directory` exposes per person — nothing else (no email / phone / role field). */
 export interface CollabDirectoryEntry {
   id: string;
-  /** Display name; the email when the user has no first / last name (as everywhere names are shown). */
+  /** Display name; an id-based staff placeholder when first / last name are missing. */
   name: string;
 }
 
@@ -123,10 +124,10 @@ export class OpportunityCollabService {
    * One transaction per write. The first write of an opportunity inserts its row; if two race, the loser hits
    * `uq_winback_app_record_key` and runs once more against the row the winner created (now locked).
    */
-  private async inLock<T>(work: (repo: Repository<WinbackAppRecord>) => Promise<T>): Promise<T> {
+  private async inLock<T>(work: (repo: Repository<WinbackAppRecord>, em: EntityManager) => Promise<T>): Promise<T> {
     for (let attempt = 0; ; attempt += 1) {
       try {
-        return await this.records.manager.transaction((em) => work(em.getRepository(WinbackAppRecord)));
+        return await this.records.manager.transaction((em) => work(em.getRepository(WinbackAppRecord), em));
       } catch (error) {
         const e = error as { code?: string; driverError?: { code?: string } };
         if (attempt === 0 && (e?.code ?? e?.driverError?.code) === PG_UNIQUE_VIOLATION) continue;
@@ -333,12 +334,22 @@ export class OpportunityCollabService {
     const requestId = normalizeId(rawRequestId);
     const row = await this.opportunities.placeRow(rawId);
     const id = row.id;
+    // Cheap early rejection only; the locked reads below decide access and stale handoffs.
+    const preRecord = await this.plain(this.records, Kind.OPPORTUNITY_COLLAB, id);
+    this.allow(actor, this.opportunities.metaOf(row, undefined, new Map()).owner_sales_user_id, collabPayload(preRecord?.payload), 'resolve');
     const { names } = await this.roster();
-    return this.inLock(async (repo) => {
+    return this.inLock(async (repo, em) => {
       const record = await this.locked(repo, Kind.OPPORTUNITY_COLLAB, id);
       const state = collabPayload(record?.payload);
-      // Lock order is always collab row → meta row.
+      // Lock order is always collab row → meta row → converted account row.
       let meta = await this.locked(repo, Kind.OPPORTUNITY_META, id);
+      if (row.winback_account_id) {
+        const account = await em.getRepository(WinbackAccount).findOne({
+          where: { id: normalizeId(row.winback_account_id) },
+          lock: { mode: 'pessimistic_write' },
+        });
+        row.account_owner_id = normalizeId(account?.assigned_sales_user_id ?? null);
+      }
       const before = this.opportunities.metaOf(row, meta, names);
       this.allow(actor, before.owner_sales_user_id, state, 'resolve');
       const request: CollabRequest | undefined = state.requests.find((r) => normalizeId(r.id) === requestId);
@@ -378,6 +389,12 @@ export class OpportunityCollabService {
       }
       const saved = await this.saveCollab(repo, record, row, actor, state);
       await this.log(repo, row, actor, names, events);
+      const owner = this.opportunities.metaOf(row, meta, names).owner_sales_user_id;
+      if (opportunityAccessError(actor, owner, state, 'thread')) {
+        // Requesters may still cancel after losing visibility. Keep the response keys clients expect,
+        // but acknowledge only this request; resolving it must not grant access to the rest of the thread.
+        return this.view(row, saved, { requests: [request], messages: [] }, meta, names);
+      }
       return this.view(row, saved, state, meta, names);
     });
   }
@@ -390,13 +407,20 @@ export class OpportunityCollabService {
     const recipientId = normalizeId(dto.recipient_id);
     const row = await this.opportunities.placeRow(rawId);
     const id = row.id;
-    const { names, ids } = await this.roster();
+    const { names, ids, recipients } = await this.roster();
     return this.inLock(async (repo) => {
       const record = await this.locked(repo, Kind.OPPORTUNITY_COLLAB, id);
       const state = collabPayload(record?.payload);
       const meta = await this.plain(repo, Kind.OPPORTUNITY_META, id);
-      this.allow(actor, this.opportunities.metaOf(row, meta, names).owner_sales_user_id, state, 'thread');
+      const owner = this.opportunities.metaOf(row, meta, names).owner_sales_user_id;
+      this.allow(actor, owner, state, 'thread');
       raiseRule(recipientError(actor, recipientId, ids));
+      const recipient = recipients.find((u) => u.id === recipientId)!;
+      // Reject rather than silently drop the addressee: otherwise a successful message would be
+      // invisible to its intended recipient. Requests themselves grant thread access when created.
+      if (opportunityAccessError({ id: recipient.id, isManager: isWinbackManager(recipient.role) }, owner, state, 'thread')) {
+        throw new ForbiddenException('ผู้รับต้องเป็นผู้ที่เห็นโอกาสนี้ได้');
+      }
       state.messages.push({
         id: randomUUID(),
         author_id: actorId,

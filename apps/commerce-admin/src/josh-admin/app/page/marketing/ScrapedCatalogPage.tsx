@@ -10,7 +10,6 @@ import { ScrapingNavigation, scrapingButton, scrapingPrimary, scrapingInput, scr
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { PageHeader } from '@cp/ui';
 export default function ScrapedCatalogPage() {
   __useUiLocale();
   const [params, setParams] = useSearchParams();
@@ -49,8 +48,8 @@ export default function ScrapedCatalogPage() {
   }, [sourceId, query, page, refresh]);
   return <div className="mx-auto max-w-7xl space-y-5 p-4 md:p-6">
     <ScrapingNavigation />
-    <PageHeader title={__uiText("ข้อมูลจากเว็บ")} subtitle={__uiText("ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา")}
-      actions={<Link className={scrapingPrimary} to={ADMIN_ROUTES.scrapingSources}>{__uiText("ตั้งค่า / เริ่มเก็บเว็บ")}</Link>} />
+    <header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-2xl font-semibold">{__uiText("ข้อมูลจากเว็บ")}</h1>
+      <p className="mt-1 text-sm text-gray-500">{__uiText("ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา")}</p></div><Link className={scrapingPrimary} to={ADMIN_ROUTES.scrapingSources}>{__uiText("ตั้งค่า / เริ่มเก็บเว็บ")}</Link></header>
     <form className="flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-white p-4" onSubmit={e => { e.preventDefault(); setPage(1); setQuery(search); setRefresh(r => r + 1); }}>
       <label className="min-w-40 text-sm">{__uiText("เว็บต้นทาง")}<select className={scrapingInput} value={sourceId} onChange={e => { setPage(1); setParams(e.target.value ? { sourceId: e.target.value } : {}); }}><option value="">{__uiText("ทุกเว็บ")}</option>{sources.map(source => <option key={source.id} value={source.id}>{source.name}</option>)}</select></label>
       <label className="min-w-48 flex-1 text-sm">{__uiText("ชื่อสินค้า / SKU")}<input className={scrapingInput} maxLength={200} value={search} placeholder={__uiText("เช่น เนื้อ 1 กก.")} onChange={e => setSearch(e.target.value)} /></label>

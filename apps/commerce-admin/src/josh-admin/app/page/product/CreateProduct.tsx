@@ -27,7 +27,6 @@ import { LeafCategorySelect, useCategoryRows } from '../category/category-form';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { NavPageHeader } from '@cp/ui';
 export default function InsertProductForm() {
   __useUiLocale();
   const categoryRows = useCategoryRows();
@@ -188,8 +187,7 @@ export default function InsertProductForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen space-y-4">
-      <NavPageHeader />
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="space-y-6 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
         <h2 className="text-2xl font-bold text-gray-800 border-b pb-4">
           {__uiText("✨ เพิ่มสินค้าใหม่พร้อมระบบอัปโหลดคลังภาพ 3 มิติ")}</h2>

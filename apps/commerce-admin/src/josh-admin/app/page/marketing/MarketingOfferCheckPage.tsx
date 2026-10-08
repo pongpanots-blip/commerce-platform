@@ -12,7 +12,6 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { PageHeader } from '@cp/ui';
 const INPUT_CLASS =
   'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
 
@@ -81,14 +80,15 @@ export default function MarketingOfferCheckPage() {
 
   return (
     <div className="flex flex-col gap-5 p-4">
-      <PageHeader
-        back={{ to: ADMIN_ROUTES.marketingWorkflows, label: 'เวิร์กโฟลว์การตลาด' }}
-        title={__uiText("Offer Check")}
-        subtitle={<>
+      <div>
+        <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
+          {__uiText("&larr; Marketing Workflows")}</Link>
+        <h1 className="mt-1 text-2xl font-bold text-gray-900">{__uiText("Offer Check")}</h1>
+        <p className="mt-1 max-w-2xl text-sm text-gray-500">
           {__uiText("เช็กว่า device มีลิงก์ user หรือยัง, offer ถูก dismiss ไปหรือยัง, และ shop จะเห็นอะไรจาก")}{' '}
           <code className="text-xs">{__uiText("GET /marketing-offers/active")}</code>
-        </>}
-      />
+        </p>
+      </div>
 
       <form
         onSubmit={(event) => void runInspect(event)}

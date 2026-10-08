@@ -1175,12 +1175,6 @@ export function NavProvider({ nav, children }: { nav: NavGroup[]; children: Reac
 
 export function useNavigation() { return useContext(NavContext); }
 
-/** Whether the signed-in role's nav covers `path` — hide links to pages the role cannot open (the nav only lists permitted pages). */
-export function useNavAllows() {
-  const nav = useContext(NavContext);
-  return (path: string) => nav.some(group => group.links.some(link => navMatchLength(link, path) > 0));
-}
-
 /** The nav item for the current route (undefined outside the nav, e.g. login). */
 export function useCurrentNavItem() {
   const nav = useContext(NavContext);

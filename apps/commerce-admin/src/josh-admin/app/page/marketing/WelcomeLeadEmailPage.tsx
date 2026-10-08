@@ -1,6 +1,7 @@
 // ui-metadata-migration: static labels and UI notices only
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
 import { useEffect, useId, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   getWelcomeLeadEmailAssets,
   updateWelcomeLeadEmailAssets,
@@ -18,7 +19,6 @@ import { RichTextEditor } from '../../components/rich-text/RichTextEditor';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { PageHeader } from '@cp/ui';
 const INPUT_CLASS =
   'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
 
@@ -560,11 +560,13 @@ export default function WelcomeLeadEmailPage() {
 
   return (
     <div className="mx-auto max-w-[1500px] space-y-6 p-6">
-      <PageHeader
-        back={{ to: ADMIN_ROUTES.marketingSettings, label: 'ตั้งค่าการตลาด' }}
-        title={__uiText("Welcome Lead Email")}
-        subtitle={__uiText("แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy")}
-      />
+      <div>
+        <Link to={ADMIN_ROUTES.marketingSettings} className="text-sm text-gray-500 hover:text-gray-700">
+          {__uiText("← Marketing Settings")}</Link>
+        <h1 className="mt-2 text-xl font-semibold text-gray-900">{__uiText("Welcome Lead Email")}</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          {__uiText("แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy")}</p>
+      </div>
 
       {error ? (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{(typeof error === 'string' ? __uiText(error) : error)}</div>

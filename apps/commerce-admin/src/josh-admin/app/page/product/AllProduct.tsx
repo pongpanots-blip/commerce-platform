@@ -19,7 +19,6 @@ import { resolveMediaUrl } from './product-media.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { ButtonLink, EmptyState, FilterBar, HelpText, Loading } from '@cp/ui';
 const LIMIT = 10;
 
 type ProductStatusFilter = 'active' | 'inactive' | 'draft' | 'all';
@@ -355,29 +354,28 @@ const AllProduct = () => {
         createLabel={__uiText("เพิ่มสินค้า")}
         createPath={ADMIN_ROUTES.productCreate}
       />
-      <FilterBar
-        search={{
-          value: filter,
-          label: 'ค้นหาสินค้า',
-          placeholder: 'ค้นหาด้วยชื่อสินค้า',
-          onChange: (value) => {
-            setFilter(value);
+      <div className="flex flex-wrap items-end gap-4">
+        <Input
+          label={__uiText("ค้นหาสินค้า")}
+          placeholder={__uiText("ค้นหาด้วยชื่อสินค้า")}
+          onChange={(e) => {
+            setFilter(e.target.value);
             setSelectAllMatching(false);
             clearApproveFeedback();
-          },
-        }}
-        onReset={filter || status !== 'active' ? () => { setFilter(''); setSelectAllMatching(false); handleStatusChange('active'); } : undefined}
-      >
-        <div className="w-48">
-          <Select
-            label={__uiText("สถานะสินค้า")}
-            data={PRODUCT_STATUS_OPTIONS}
-            value={status}
-            onChange={(e) => handleStatusChange(e.target.value)}
-          />
+          }}
+        />
+        <div className="flex items-center gap-2">
+          <AiOutlineFilter size={24} />
+          <div className="w-48">
+            <Select
+              label={__uiText("สถานะสินค้า")}
+              data={PRODUCT_STATUS_OPTIONS}
+              value={status}
+              onChange={(e) => handleStatusChange(e.target.value)}
+            />
+          </div>
         </div>
-      </FilterBar>
-      {status === 'draft' && <HelpText>{__uiText("สินค้ารออนุมัติ คือสินค้าใหม่หรือข้อมูลที่ ERP เปลี่ยนและรอการตรวจ เลือกหลายแถวเพื่ออนุมัติหรือปฏิเสธพร้อมกัน")}</HelpText>}
+      </div>
 
       {approvedMessage && (
         <div className="px-4 py-2 text-sm text-emerald-700 bg-emerald-50 rounded-lg">
@@ -483,9 +481,6 @@ const AllProduct = () => {
         selectedIds={selectedIds}
         onSelectRow={handleSelectRow}
         onSelectAll={handleSelectAll}
-        empty={isLoading ? <Loading /> : filter || status !== 'active'
-          ? <EmptyState icon="search_off" title="ไม่พบสินค้าที่ตรงกับตัวกรอง" description="ลองเปลี่ยนคำค้นหรือสถานะ หรือกดล้างตัวกรอง" />
-          : <EmptyState icon="inventory_2" title="ยังไม่มีสินค้า" action={<ButtonLink to={ADMIN_ROUTES.productCreate} variant="primary" icon="add">{__uiText("เพิ่มสินค้า")}</ButtonLink>} />}
       />
     </div>
   );

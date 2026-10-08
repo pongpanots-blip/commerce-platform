@@ -14,15 +14,15 @@ import {
   Select,
   Table,
   TableColumn,
+  Text,
 } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { Button as UiButton, ButtonLink, PageHeader } from '@cp/ui';
 const PAGE_SIZE = 20;
 
 const STATUS_OPTIONS = [
@@ -284,14 +284,23 @@ const PaymentTransactions = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader
-        title={__uiText("Payment Transactions")}
-        subtitle={__uiText("บันทึกการชำระเงินจาก Omise, Stripe, เครดิตลูกค้า และ COD")}
-        actions={<>
-          <ButtonLink to={ADMIN_ROUTES.orders} icon="receipt_long">{__uiText("ดูออเดอร์ทั้งหมด")}</ButtonLink>
-          <UiButton icon="refresh" onClick={() => void loadData()}>{__uiText("Refresh")}</UiButton>
-        </>}
-      />
+      <div className="flex justify-between gap-4">
+        <div className="flex flex-col">
+          <Text bold text={__uiText("Payment Transactions")} size="2xl" />
+          <Text
+            text={__uiText("บันทึกการชำระเงินจาก Omise, Stripe, เครดิตลูกค้า และ COD")}
+            size="sm"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Link
+            to={ADMIN_ROUTES.orders}
+            className="inline-flex items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+          >
+            {__uiText("ดูออเดอร์ทั้งหมด")}</Link>
+          <Button text={__uiText("Refresh")} onClick={() => void loadData()} />
+        </div>
+      </div>
 
       <div className="grid grid-cols-4 gap-5">
         {cardData.map((card) => (

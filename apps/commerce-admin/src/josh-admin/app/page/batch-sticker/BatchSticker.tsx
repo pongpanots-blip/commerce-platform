@@ -28,7 +28,6 @@ import type { StickerAsset, StickerPreset } from '../../types/batch-sticker';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { PageHeader } from '@cp/ui';
 export function BatchSticker() {
   __useUiLocale();
   const [state, dispatch] = useReducer(batchStickerReducer, initialBatchState);
@@ -160,7 +159,11 @@ export function BatchSticker() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 p-4">
-      <PageHeader title={__uiText("Batch Sticker")} subtitle={__uiText("Images are processed locally in your browser. Your files are not uploaded.")} />
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold text-gray-800">{__uiText("Batch Sticker")}</h1>
+      </div>
+      <p className="text-xs text-gray-400">
+        {__uiText("Images are processed locally in your browser. Your files are not uploaded.")}</p>
 
       {result ? (
         <ProcessingResult result={result} onDownload={handleDownload} onStartNewLot={handleStartNewLot} />

@@ -17,6 +17,7 @@ import {
   Select,
   Table,
   TableColumn,
+  Text,
 } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -25,7 +26,6 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { ButtonLink, PageHeader } from '@cp/ui';
 const PAGE_SIZE = 20;
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
 
@@ -419,11 +419,20 @@ const Shipments = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader
-        title={__uiText("Shipments")}
-        subtitle={__uiText("ดู shipment แยกจาก order — timing ต่อสถานะ + ลิงก์กลับ order")}
-        actions={<ButtonLink to={ADMIN_ROUTES.orders} icon="receipt_long">{__uiText("All Orders")}</ButtonLink>}
-      />
+      <div className="flex justify-between gap-4">
+        <div className="flex flex-col">
+          <Text bold={true} text={__uiText("Shipments")} size="2xl" />
+          <Text
+            text={__uiText("ดู shipment แยกจาก order — timing ต่อสถานะ + ลิงก์กลับ order")}
+            size="sm"
+          />
+        </div>
+        <Link
+          to={ADMIN_ROUTES.orders}
+          className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+        >
+          {__uiText("All Orders")}</Link>
+      </div>
 
       <div className="grid grid-cols-5 gap-4">
         {cardData.map((card) => (

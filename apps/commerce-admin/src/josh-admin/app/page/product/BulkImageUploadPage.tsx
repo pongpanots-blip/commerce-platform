@@ -26,7 +26,6 @@ import {
 // ---- constants (per docs/superpowers/plans/2026-08-17-sku-image-dropzone.html) ----
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-import { PageHeader } from '@cp/ui';
 const MAX_STAGED_FILES = 500;
 const BATCH_SIZE = 10;
 const VISIBLE_ROWS_STEP = 50;
@@ -461,12 +460,12 @@ const BulkImageUploadPage = () => {
       >
         {__uiText("← กลับ")}</button>
       <div className="mb-4">
-        <PageHeader
-          title={__uiText("อัปโหลดรูปสินค้าแบบชุด")}
-          subtitle={mode === 'replace'
+        <h1 className="text-2xl font-bold text-gray-900">{__uiText("อัปโหลดรูปสินค้าแบบชุด")}</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          {mode === 'replace'
             ? __uiText("ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)")
             : __uiText("ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วเพิ่มต่อท้ายแกลเลอรีเดิม (ไม่ลบ/ไม่แทนที่รูปเดิม)")}
-        />
+        </p>
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-4">

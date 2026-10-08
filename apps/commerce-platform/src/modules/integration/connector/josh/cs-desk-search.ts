@@ -4,7 +4,8 @@ import { ProductFilters } from './josh-products';
 /**
  * Role `cs` reads exactly what the CS desk's "order on behalf" pickers show (commerce-admin CsDesk.tsx):
  * a customer search, one customer's users / branches / credit, and an active-product search.
- * Search is required, pages are small, every other filter is refused and responses carry only the shown columns.
+ * Search (min 2 characters) is required, only the first page is served (page=1), pages are small, every other filter is refused
+ * and responses carry only the shown columns.
  * cs is not rep-scoped (all customers, like admin / sales_manager) and never chooses a rep (salesUserId → 400).
  */
 export const CS_CUSTOMER_LIMIT = 20;
@@ -13,12 +14,17 @@ export const CS_PRODUCT_LIMIT = 10;
 type Row = Record<string, unknown>;
 const pick = (row: Row, keys: readonly string[]): Row => Object.fromEntries(keys.map((k) => [k, row[k]]));
 
+/** cs searches need at least this many characters (after trimming), so a search can't list the whole book. */
+export const CS_MIN_SEARCH = 2;
+
 function csSearch(query: object, allowed: readonly string[]): string {
   const q = query as Row;
   const extra = Object.keys(q).filter((k) => !allowed.includes(k));
   if (extra.length) throw new BadRequestException(`cs can only search here (${allowed.join(', ')}); not allowed: ${extra.join(', ')}`);
+  // First page only: a missing page means 1; anything else ('', 0, 2, 'x', arrays) is refused — no paging through results.
+  if (q.page !== undefined && q.page !== '1' && q.page !== 1) throw new BadRequestException('cs can only read the first page (page=1)');
   const search = typeof q.search === 'string' ? q.search.trim() : '';
-  if (!search) throw new BadRequestException('search is required');
+  if (search.length < CS_MIN_SEARCH) throw new BadRequestException(`search needs at least ${CS_MIN_SEARCH} characters`);
   return search;
 }
 

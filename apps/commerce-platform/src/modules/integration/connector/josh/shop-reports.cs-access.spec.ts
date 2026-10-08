@@ -52,12 +52,33 @@ describe('cs desk search helpers', () => {
   it('require a non-empty search and refuse every other filter', () => {
     expect(csCustomerSearch({ search: ' acme ', page: '1', limit: '20' })).toEqual({ search: 'acme' });
     for (const q of [{}, { search: '' }, { search: '   ' }, { search: ['a', 'b'] }, { search: { x: 1 } }]) expect(() => csCustomerSearch(q)).toThrow(BadRequestException);
-    for (const extra of ['issue', 'salesUserId', 'repIds', 'status']) expect(() => csCustomerSearch({ search: 'a', [extra]: 'x' })).toThrow(BadRequestException);
+    for (const extra of ['issue', 'salesUserId', 'repIds', 'status']) expect(() => csCustomerSearch({ search: 'ab', [extra]: 'x' })).toThrow(BadRequestException);
     expect(csProductSearch({ search: 'salmon' })).toEqual({ search: 'salmon', status: 'active' });
     expect(csProductSearch({ search: 'salmon', status: 'active' })).toEqual({ search: 'salmon', status: 'active' });
     expect(() => csProductSearch({ search: 'salmon', status: 'inactive' })).toThrow(BadRequestException);
     expect(() => csProductSearch({ status: 'active' })).toThrow(BadRequestException);
-    for (const extra of ['issue', 'categoryId', 'brand', 'orderTaking']) expect(() => csProductSearch({ search: 'a', [extra]: 'x' } as never)).toThrow(BadRequestException);
+    for (const extra of ['issue', 'categoryId', 'brand', 'orderTaking']) expect(() => csProductSearch({ search: 'ab', [extra]: 'x' } as never)).toThrow(BadRequestException);
+  });
+
+  it('search needs at least 2 characters after trimming; " ab " is the accepted boundary', () => {
+    for (const search of [undefined, '', '   ', 'a', ' a ', '\t', 'ก']) {
+      expect(() => csCustomerSearch(search === undefined ? {} : { search })).toThrow(BadRequestException);
+      expect(() => csProductSearch((search === undefined ? {} : { search }) as never)).toThrow(BadRequestException);
+    }
+    expect(csCustomerSearch({ search: ' ab ' })).toEqual({ search: 'ab' });
+    expect(csProductSearch({ search: ' ab ' })).toEqual({ search: 'ab', status: 'active' });
+  });
+
+  it('page is pinned to 1: missing or 1 is fine, anything else is a 400', () => {
+    for (const page of [undefined, '1']) {
+      const q = page === undefined ? { search: 'ab' } : { search: 'ab', page };
+      expect(csCustomerSearch(q)).toEqual({ search: 'ab' });
+      expect(csProductSearch(q as never)).toEqual({ search: 'ab', status: 'active' });
+    }
+    for (const page of ['0', '2', '-1', '1.5', '01', 'x', '', ' 1', ['1', '2']]) {
+      expect(() => csCustomerSearch({ search: 'ab', page })).toThrow(BadRequestException);
+      expect(() => csProductSearch({ search: 'ab', page } as never)).toThrow(BadRequestException);
+    }
   });
 
   it('project to exactly the columns the desk shows', () => {
@@ -85,7 +106,7 @@ describe('ShopReportsController as cs', () => {
 
   it('customer search: 400 without search, past 20, with salesUserId or any other filter', async () => {
     const { c, query } = setup();
-    for (const q of [{}, { search: ' ' }, { search: 'a', limit: '21' }, { search: 'a', salesUserId: REP }, { search: 'a', issue: 'over_credit' }, { search: 'a', repIds: [REP] }]) {
+    for (const q of [{}, { search: ' ' }, { search: 'ab', limit: '21' }, { search: 'ab', salesUserId: REP }, { search: 'ab', issue: 'over_credit' }, { search: 'ab', repIds: [REP] }]) {
       await expect(c.customerList(q as never, cs)).rejects.toBeInstanceOf(BadRequestException);
     }
     expect(query).not.toHaveBeenCalled();
@@ -112,10 +133,47 @@ describe('ShopReportsController as cs', () => {
 
   it('product search: 400 without search, past 10, non-active status or any other filter', async () => {
     const { c, query } = setup();
-    for (const q of [{}, { status: 'active' }, { search: 'a', limit: '11' }, { search: 'a', status: 'inactive' }, { search: 'a', issue: 'no_price' }, { search: 'a', brand: 'x' }]) {
+    for (const q of [{}, { status: 'active' }, { search: 'ab', limit: '11' }, { search: 'ab', status: 'inactive' }, { search: 'ab', issue: 'no_price' }, { search: 'ab', brand: 'x' }]) {
       await expect(c.productList(q as never, cs)).rejects.toBeInstanceOf(BadRequestException);
     }
     expect(query).not.toHaveBeenCalled();
+  });
+});
+
+describe('ShopReportsController as cs: page=1 and min-2 search reject before any DB query', () => {
+  const bad = [
+    {}, { search: '' }, { search: '   ' }, { search: 'a' }, { search: ' a ' },
+    { search: 'ab', page: '0' }, { search: 'ab', page: '2' }, { search: 'ab', page: 'x' }, { search: 'ab', page: '' },
+  ];
+  it.each(bad.map((q) => [JSON.stringify(q), q]))('customer search %s → 400, no query', async (_label, q) => {
+    const { c, query } = setup();
+    await expect(c.customerList(q as never, cs)).rejects.toBeInstanceOf(BadRequestException);
+    expect(query).not.toHaveBeenCalled();
+  });
+  it.each(bad.map((q) => [JSON.stringify(q), q]))('product search %s → 400, no query', async (_label, q) => {
+    const { c, query } = setup();
+    await expect(c.productList(q as never, cs)).rejects.toBeInstanceOf(BadRequestException);
+    expect(query).not.toHaveBeenCalled();
+  });
+  it('accepts the boundary " ab " with page missing or page=1, always reading page 1', async () => {
+    for (const q of [{ search: ' ab ' }, { search: ' ab ', page: '1' }]) {
+      const { c, query } = setup();
+      await c.customerList(q as never, cs);
+      expect(query.mock.calls[0][1]).toEqual(['%ab%', 20, 0]);
+      const p = setup();
+      const r = await p.c.productList(q as never, cs);
+      expect(p.query.mock.calls[0][1]).toEqual(['%ab%', 'active', 10, 0]);
+      expect(r).toHaveProperty('page', 1);
+    }
+  });
+  it('other roles keep paging and short searches', async () => {
+    const { c, customers, products } = setup();
+    const cl = jest.spyOn(customers, 'list');
+    const pl = jest.spyOn(products, 'list');
+    await c.customerList({ search: 'a', page: '2' } as never, as('sales_manager'));
+    expect(cl).toHaveBeenLastCalledWith({ search: 'a', page: '2', repIds: undefined }, 2, 50, { unmask: false });
+    await c.productList({ search: 'a', page: '3' } as never, as('merchandising'));
+    expect(pl).toHaveBeenLastCalledWith({ search: 'a', page: '3' }, 3, 50);
   });
 });
 

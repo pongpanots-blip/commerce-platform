@@ -36,7 +36,7 @@ function range(q: PeriodQuery) {
  * answers the MCP tools give, from josh's read replica — josh is not called.
  * Sales, health, order target group, orders, customers and prices: admin, sales manager and business analyst.
  * Traffic, restaurants, push campaigns: marketing. Product reports: marketing and merchandising.
- * CS: only the CS desk's customer / product search and customer detail, search-only and projected (cs-desk-search.ts).
+ * CS: only the CS desk's customer / product search and customer detail — search (min 2 chars) on page 1 only, projected (cs-desk-search.ts).
  * ERP log payloads stay admin (unredacted customer codes and prices).
  */
 @Controller('reports')
@@ -205,7 +205,7 @@ export class ShopReportsController {
     if (req.staff.role === 'cs') {
       const f = csProductSearch(q);
       this.productsReady();
-      return csProductSearchView(await this.products.list(f, int(q.page, 1, 1, 1e6), int(q.limit, CS_PRODUCT_LIMIT, 1, CS_PRODUCT_LIMIT)));
+      return csProductSearchView(await this.products.list(f, 1, int(q.limit, CS_PRODUCT_LIMIT, 1, CS_PRODUCT_LIMIT)));
     }
     this.productsReady();
     return this.products.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
@@ -236,7 +236,7 @@ export class ShopReportsController {
     if (req.staff.role === 'cs') {
       const f = csCustomerSearch(q);
       this.replica('customers');
-      return csCustomerSearchView(await this.customers.list(f, int(q.page, 1, 1, 1e6), int(q.limit, CS_CUSTOMER_LIMIT, 1, CS_CUSTOMER_LIMIT)));
+      return csCustomerSearchView(await this.customers.list(f, 1, int(q.limit, CS_CUSTOMER_LIMIT, 1, CS_CUSTOMER_LIMIT)));
     }
     this.replica('customers'); return this.customers.list({ ...q, repIds: await this.repIds(req, q.salesUserId) }, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200), { unmask: req.staff.role === 'sale' });
   }

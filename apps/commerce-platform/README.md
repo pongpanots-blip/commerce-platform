@@ -26,7 +26,7 @@ make cp-stop     # stop everything
 ```
 
 `make cp-dev` runs the platform with dev defaults: `STOREFRONT_API_KEYS=dev-key`,
-`PORTAL_JWT_SECRET=dev-portal-secret`, `PORTAL_SELF_REGISTER=true`, CORS for :4403/:4404. Individual apps:
+`PORTAL_JWT_SECRET=dev-portal-secret`, `PORTAL_SELF_REGISTER=true`, `PORTAL_KEY_MINT_ACCOUNT_IDS=*`, CORS for :4403/:4404. Individual apps:
 `npm run dev:cp` / `dev:cpadmin` / `dev:cpportal`.
 
 <details>
@@ -71,6 +71,7 @@ Core (see `.env.example`): `COMMERCE_DATABASE_URL` *or* `COMMERCE_DB_HOST` /
 |---|---|---|
 | `PORTAL_JWT_SECRET` | *(dev fallback `dev-portal-secret`)* | Signs/verifies developer-portal JWTs (`PortalAuthService`, `PortalJwtGuard`). **Required in `NODE_ENV=production`** — register/login and every `PortalJwtGuard`-protected route fail closed (`503`/`401`) without it, rather than silently falling back to the public dev secret. |
 | `PORTAL_SELF_REGISTER` | *(unset = off)* | `true`/`1` opens developer self-signup (`POST /api/v1/portal/auth/register`). Off: register is `403` (no account created, no `409` for a known email); existing developer accounts, login, refresh and API keys work as before. |
+| `PORTAL_KEY_MINT_ACCOUNT_IDS` | *(unset = nobody)* | Admin approval for minting storefront keys: comma-separated developer account ids allowed to `POST /api/v1/portal/keys`; others get `403`. `*` = any account (dev/e2e only). Listing/revoking keys and every key already issued (josh's included) are unaffected — the storefront guard never reads this. |
 | `AUTH_ACCESS_TOKEN_TTL_SECONDS` | `900` (15 min) | Lifetime of the access JWT returned by staff (`/api/admin/auth/login`) and portal (`/api/v1/portal/auth/login`) sign-in and refresh. The shared `JwtModule` default (12 h) is unchanged for other signers. |
 | `AUTH_REFRESH_TOKEN_TTL_DAYS` | `30` | Lifetime of the opaque refresh token (sliding: every rotation issues a fresh one with the full TTL, up to the family cap below). Only its sha256 is stored (`auth_refresh_token`). |
 | `AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS` | `90` | Absolute cap on one sign-in (a refresh-token family) counted from the password login: successors never expire later than this, and a refresh past it is refused (`401`, family revoked as `family_expired`). |
@@ -367,6 +368,8 @@ thin controllers delegating to `core/auth` and `core/api-key`.
 
 **API keys** (`GET|POST /api/v1/portal/keys`, `POST /api/v1/portal/keys/:id/revoke`)
 — account-scoped, no cross-account access:
+- `POST` needs an approved account: its id must be in `PORTAL_KEY_MINT_ACCOUNT_IDS`
+  (else `403`; see the env table).
 - `POST` `{ name }` → `{ id, name, keyPrefix, scope, fullKey }`. **`fullKey`
   (format `ck_live_<32 hex chars>`) is returned exactly once, at creation** —
   only its SHA-256 hash and an 16-char display `keyPrefix` persist. The portal
@@ -579,7 +582,7 @@ practice" above for why this is required, not optional, for the I scenarios).
 
 ```bash
 COMMERCE_DB_HOST=localhost COMMERCE_DB_USERNAME=$USER COMMERCE_DB_NAME=commerce_db \
-REDIS_HOST=localhost PORT=3100 STOREFRONT_API_KEYS=e2e-key PORTAL_JWT_SECRET=e2e-secret PORTAL_SELF_REGISTER=true \
+REDIS_HOST=localhost PORT=3100 STOREFRONT_API_KEYS=e2e-key PORTAL_JWT_SECRET=e2e-secret PORTAL_SELF_REGISTER=true PORTAL_KEY_MINT_ACCOUNT_IDS='*' \
 node dist/apps/commerce-platform/src/main.js &
 bash apps/commerce-platform/e2e/portal-ingest-scenarios.sh
 kill %1

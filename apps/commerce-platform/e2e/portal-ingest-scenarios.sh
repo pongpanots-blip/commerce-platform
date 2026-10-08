@@ -3,7 +3,8 @@
 #
 # Prereqs (see apps/commerce-platform/README.md):
 #   - platform running on :3100 with PORTAL_JWT_SECRET set and
-#     PORTAL_SELF_REGISTER=true (P1 registers a fresh account); jq, curl,
+#     PORTAL_SELF_REGISTER=true + PORTAL_KEY_MINT_ACCOUNT_IDS='*' (P1 registers a
+#     fresh account, P3 mints a key for it); jq, curl,
 #     openssl, psql installed
 #   - STOREFRONT_API_KEYS must include the KEY this script uses as its env
 #     fallback (default "e2e-key") for helper calls (products, erp-stub/stock,

@@ -3299,6 +3299,10 @@
     "th": "ปิดการสมัครใช้งานด้วยตนเองอยู่ กรุณาติดต่อทีม Commerce Platform เพื่อขอบัญชีนักพัฒนา",
     "en": "Self-registration is disabled; contact the Commerce Platform team for a developer account"
   },
+  "This developer account is not approved to create API keys; contact the Commerce Platform team": {
+    "th": "บัญชีนักพัฒนานี้ยังไม่ได้รับอนุมัติให้สร้าง API key กรุณาติดต่อทีม Commerce Platform",
+    "en": "This developer account is not approved to create API keys; contact the Commerce Platform team"
+  },
   "{0} กก.": {
     "th": "{0} กก.",
     "en": "{0} kg"

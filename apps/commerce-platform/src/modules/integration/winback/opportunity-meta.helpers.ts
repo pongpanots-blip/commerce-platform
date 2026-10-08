@@ -222,8 +222,8 @@ export function opportunityVisibility(actor: Actor): OpportunityVisibility {
 
 /**
  * What a route needs beyond visibility:
- * - `owner` — PATCH meta, starting a request: visibility only.
- * - `thread` — read the opportunity / meta / thread, convert / create a lead, post or receive a message:
+ * - `owner` — PATCH meta, starting a request, creating a lead (convert / from-place): visibility only.
+ * - `thread` — read the opportunity / meta / thread, return an existing converted lead, post or receive a message:
  *   visibility, or the recipient of any
  *   request (pending or past) on it.
  * - `resolve` — approve / reject / cancel: visibility, or the recipient or requester of a request on it

@@ -148,17 +148,7 @@ export class WinbackService {
     limit: number,
     actor: WinbackActor,
   ) {
-    const qb = this.placeCandidatesQuery();
-    // No account does not imply no coordination owner: use the opportunity list's visibility rule.
-    // Managers see every place, so they keep the join-free query.
-    const visibility = opportunityVisibility(actor);
-    if (visibility.sql) {
-      qb.leftJoin(WinbackAccount, 'a', 'a.restaurant_place_id = p.id')
-        .leftJoin(WinbackAppRecord, 'm', 'm.kind = :metaKind AND m.record_key = CAST(p.id AS text)', {
-          metaKind: WinbackAppRecordKind.OPPORTUNITY_META,
-        })
-        .andWhere(visibility.sql, visibility.params);
-    }
+    const qb = this.placeCandidatesQuery(actor);
 
     if (q.search?.trim()) {
       qb.andWhere('(p.name_th ILIKE :search OR p.name_en ILIKE :search)', {
@@ -184,13 +174,17 @@ export class WinbackService {
    * "ยังไม่มีผู้ดูแล" tab shows alongside unassigned accounts (`place_candidate: true`).
    * One definition for the list and for `getCounts`.
    */
-  private placeCandidatesQuery() {
-    return this.restaurantPlaces.createQueryBuilder('p').where(
-      `NOT EXISTS (
-        SELECT 1 FROM winback_account wa
-        WHERE wa.restaurant_place_id = p.id
-      )`,
-    );
+  private placeCandidatesQuery(actor: WinbackActor) {
+    // Share the opportunity visibility aliases, including meta-only coordination owners.
+    const qb = this.restaurantPlaces.createQueryBuilder('p')
+      .leftJoin(WinbackAccount, 'a', 'a.restaurant_place_id = p.id')
+      .leftJoin(WinbackAppRecord, 'm', 'm.kind = :metaKind AND m.record_key = CAST(p.id AS text)', {
+        metaKind: WinbackAppRecordKind.OPPORTUNITY_META,
+      })
+      .where('a.id IS NULL');
+    const visibility = opportunityVisibility(actor);
+    if (visibility.sql) qb.andWhere(visibility.sql, visibility.params);
+    return qb;
   }
 
   private placeCandidateRow(place: RestaurantPlace) {
@@ -227,14 +221,14 @@ export class WinbackService {
   }
 
   /**
-   * Pool tab counts. `mine` = leads assigned to `salesUserId` (the caller), so
+   * Pool tab counts. `mine` = leads assigned to `actor.id` (the caller), so
    * the "ของฉัน" tab can show a number without a second `GET /pool` round trip.
    * `placeCandidates` / `unassignedIncludingPlaces` back the "ยังไม่มีผู้ดูแล" tab,
    * which lists unassigned accounts plus Market Explorer places with no lead yet
    * (`GET /pool?assigned=unassigned&include_places=true`).
    */
-  async getCounts(salesUserId?: string) {
-    const placeCandidates = await this.placeCandidatesQuery().getCount();
+  async getCounts(actor: WinbackActor = { id: '', isManager: false }) {
+    const placeCandidates = await this.placeCandidatesQuery(actor).getCount();
     const raw = await this.accounts
       .createQueryBuilder('a')
       .select('a.health', 'health')
@@ -244,7 +238,7 @@ export class WinbackService {
       .addSelect('a.assigned_sales_user_id IS NULL', 'unassigned')
       .addSelect('a.assigned_sales_user_id = :me', 'mine')
       .addSelect('COUNT(*)', 'count')
-      .setParameter('me', salesUserId ?? null)
+      .setParameter('me', actor.id || null)
       .groupBy('a.health')
       .addGroupBy('a.stage')
       .addGroupBy('a.source')

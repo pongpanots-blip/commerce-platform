@@ -37,7 +37,7 @@ describe('WinbackReportsController', () => {
     const { c, josh, winback } = make(false);
     const res = await c.overview() as { data: { counts: unknown } };
     expect(res.data.counts).toEqual({ total: 3 });
-    expect(winback.getCounts).toHaveBeenCalled();
+    expect(winback.getCounts).toHaveBeenCalledWith({ id: '', isManager: true });
     expect(josh.overview).not.toHaveBeenCalled();
   });
 

@@ -4,7 +4,7 @@ import {
   Alert, Button, DetailSection, Empty, ErrorText, KeyValueGrid, Loading, Page, PageHeader, Panel, StatusChip, TBody, TD, TH, THead, TR,
   Table, fmt,
 } from '@cp/ui';
-import { ordersApi, OrderFull } from '../../lib/api';
+import { ordersApi, OrderFull, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 const money = (currency: string, v: string | number | null | undefined) => (v === null || v === undefined ? '—' : `${currency} ${fmt.num(v)}`);
@@ -35,6 +35,7 @@ export function OrderDetail() {
   const d = detail.data;
   const o = d?.order;
   const held = d?.reservations.some((r) => r.status === 'held');
+  const readOnly = session.claims()?.role === 'business_analyst';
 
   return (
     <Page>
@@ -46,12 +47,12 @@ export function OrderDetail() {
         actions={
           o && (
             <>
-              {o.status === 'draft' && (
+              {!readOnly && o.status === 'draft' && (
                 <Button variant="primary" icon="shopping_cart_checkout" disabled={!!busy} onClick={() => run('checkout', 'Checked out', () => ordersApi.checkout(o.id))}>
                   {busy === 'checkout' ? '…' : 'Checkout'}
                 </Button>
               )}
-              {o.status === 'pending_payment' && d?.payment?.status === 'pending' && (
+              {!readOnly && o.status === 'pending_payment' && d?.payment?.status === 'pending' && (
                 <>
                   <Button variant="primary" icon="paid" disabled={!!busy} onClick={() => run('pay', 'Marked paid', () => ordersApi.pay(d.payment!.id))}>
                     {busy === 'pay' ? '…' : 'Mark paid'}
@@ -61,7 +62,7 @@ export function OrderDetail() {
                   </Button>
                 </>
               )}
-              {held && (
+              {!readOnly && held && (
                 <Button icon="lock_open" disabled={!!busy} onClick={() => run('release', 'Holds released', () => ordersApi.releaseReservations(o.id))}>
                   {busy === 'release' ? '…' : 'Release holds'}
                 </Button>

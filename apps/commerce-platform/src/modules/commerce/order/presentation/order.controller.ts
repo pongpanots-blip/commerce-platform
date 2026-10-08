@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Headers, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { BaseCrudController } from '../../../../shared-kernel/presentation/base-crud.controller';
 import { Order } from '../infrastructure/order.entity';
 import { OrderService } from '../application/order.service';
@@ -16,6 +17,7 @@ export class OrderController extends BaseCrudController<Order>() {
   }
 
   @Get()
+  @StaffRoles('business_analyst')
   override list(@Query() query: OrderListQueryDto) {
     return this.service.findMany({
       page: query.page,
@@ -29,7 +31,14 @@ export class OrderController extends BaseCrudController<Order>() {
     return this.service.createWithLines(dto);
   }
 
+  @Get(':id')
+  @StaffRoles('business_analyst')
+  override get(@Param('id', ParseUUIDPipe) id: string) {
+    return super.get(id);
+  }
+
   @Get(':id/full')
+  @StaffRoles('business_analyst')
   full(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.getFull(id);
   }

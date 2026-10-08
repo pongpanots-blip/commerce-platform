@@ -28,6 +28,7 @@ import {
 } from './PromotionRulesLockedNotice';
 import AdminInsertLayout from '../../components/AdminInsertLayout';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
+import { session } from '../../../../lib/api';
 import {
   getTranslation,
   ProductMediaItem,
@@ -298,7 +299,8 @@ const EditProduct = () => {
       return;
     }
 
-    if (!form.selling_unit_price.trim()) {
+    const graphic = session.claims()?.role === 'graphic';
+    if (!graphic && !form.selling_unit_price.trim()) {
       alert('กรุณาระบุราคาขาย');
       return;
     }
@@ -308,7 +310,7 @@ const EditProduct = () => {
       return;
     }
 
-    const tierError = rulesLockedBy ? null : validatePromotionMechanicForm(tierForm);
+    const tierError = graphic || rulesLockedBy ? null : validatePromotionMechanicForm(tierForm);
     if (tierError) {
       alert(tierError);
       return;
@@ -332,7 +334,7 @@ const EditProduct = () => {
       initialRulesRef.current,
       rulesLockedBy !== null,
     );
-    if (editedRules !== undefined) payload.append('promotion_rules', editedRules);
+    if (!graphic && editedRules !== undefined) payload.append('promotion_rules', editedRules);
     payload.append('removed_media_ids', JSON.stringify(removedMediaIds));
     newImages.forEach((file) => payload.append('images', file));
 
@@ -340,11 +342,13 @@ const EditProduct = () => {
     try {
       const response = await updateProduct(id, payload);
       if (response.data?.statusCode === 200) {
-        try {
-          await setProductCuisines(id, selectedCuisineIds);
-        } catch {
-          alert('บันทึกสินค้าแล้ว แต่บันทึก cuisine ไม่สำเร็จ — ลองบันทึกอีกครั้ง');
-          return;
+        if (!graphic) {
+          try {
+            await setProductCuisines(id, selectedCuisineIds);
+          } catch {
+            alert('บันทึกสินค้าแล้ว แต่บันทึก cuisine ไม่สำเร็จ — ลองบันทึกอีกครั้ง');
+            return;
+          }
         }
         navigate(ADMIN_ROUTES.productDetail(id));
         return;

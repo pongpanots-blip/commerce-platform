@@ -190,7 +190,7 @@ export class GrowthDataService {
   }
 
   async timeline(companyId: string, actor: Actor): Promise<GrowthTimeline> {
-    if (actor.role !== 'admin') throw new ForbiddenException('admin only');
+    if (actor.role !== 'admin' && actor.role !== 'business_analyst') throw new ForbiddenException('admin only');
     this.id(companyId); this.connected(true);
     if (this.copies) return this.timelineFromCopies(companyId);
     const [company] = await this.replica.query(`SELECT id, name FROM company WHERE id = $1`, [companyId]);

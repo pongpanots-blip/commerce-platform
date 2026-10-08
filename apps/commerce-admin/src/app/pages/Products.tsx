@@ -1,5 +1,5 @@
 import { StatusChip, RowLink } from '@cp/ui';
-import { Product } from '../../lib/api';
+import { Product, session } from '../../lib/api';
 import { ResourcePage, Column, Field } from '../components/ResourcePage';
 
 const columns: Column<Product>[] = [
@@ -23,6 +23,7 @@ export function Products() {
       columns={columns}
       fields={fields}
       createLabel="Add product"
+      readOnly={session.claims()?.role === 'graphic'}
     />
   );
 }

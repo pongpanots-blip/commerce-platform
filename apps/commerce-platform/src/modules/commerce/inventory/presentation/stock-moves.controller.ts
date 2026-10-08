@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { IsIn, IsInt, IsOptional, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { StaffRequest } from '../../../../shared-kernel/presentation/auth.decorators';
+import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { ADJUST_REASONS, AdjustReason, StockMovesService } from '../application/stock-moves.service';
 
 class AdjustStockDto {
@@ -25,15 +25,15 @@ class TransferStockDto {
 export class StockMovesController {
   constructor(private readonly moves: StockMovesService) {}
 
-  @Get('warehouses') warehouses() { return this.moves.warehouses(); }
+  @Get('warehouses') @StaffRoles('merchandising') warehouses() { return this.moves.warehouses(); }
 
-  @Post('adjustments')
+  @Post('adjustments') @StaffRoles('merchandising')
   adjust(@Body() dto: AdjustStockDto, @Req() req: StaffRequest) { return this.moves.adjust(dto, req.staff.userId); }
 
   /** Cutover / repair: send every SKU's sellable stock to the platforms again. */
   @Post('sellable-snapshots/resend')
   resend() { return this.moves.resendSellable(); }
 
-  @Post('transfers')
+  @Post('transfers') @StaffRoles('merchandising')
   transfer(@Body() dto: TransferStockDto, @Req() req: StaffRequest) { return this.moves.transfer(dto, req.staff.userId); }
 }

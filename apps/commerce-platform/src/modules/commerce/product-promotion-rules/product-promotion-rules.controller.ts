@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
-import { StaffRequest } from '../../../shared-kernel/presentation/auth.decorators';
+import { StaffRequest, StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { ProductPromotionRulesService } from './product-promotion-rules.service';
 @Controller('product-promotion-rules')
+@StaffRoles('merchandising')
 export class ProductPromotionRulesController {
   constructor(private readonly service: ProductPromotionRulesService) {}
   @Get('parity') parity() { return this.service.parity(); }

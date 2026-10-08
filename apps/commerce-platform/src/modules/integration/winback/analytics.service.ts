@@ -218,23 +218,28 @@ export class AnalyticsService {
     const visibleIds = reps.map((rep) => rep.sales_user_id);
     if (!visibleIds.length) return { locations: [], repsWithoutLocation: [] };
 
-    const gpsActivities = await this.activities.find({
-      where: {
-        sales_user_id: In(visibleIds),
-        status: 'done',
-        lat: Not(IsNull()),
-        lng: Not(IsNull()),
-      },
-      order: { activity_at: 'DESC', id: 'DESC' },
-    });
-    const latestByRep = new Map<string, WinbackActivity>();
-    for (const activity of gpsActivities) {
-      if (!latestByRep.has(activity.sales_user_id)) {
-        latestByRep.set(activity.sales_user_id, activity);
-      }
-    }
+    // One row per rep in SQL (DISTINCT ON keeps the first row of each
+    // sales_user_id group), instead of loading every GPS activity ever.
+    const latest = (
+      await this.activities
+        .createQueryBuilder('act')
+        .distinctOn(['act.sales_user_id'])
+        .where('act.sales_user_id IN (:...ids)', { ids: visibleIds })
+        .andWhere('act.status = :status', { status: 'done' })
+        .andWhere('act.lat IS NOT NULL')
+        .andWhere('act.lng IS NOT NULL')
+        .orderBy('act.sales_user_id')
+        .addOrderBy('act.activity_at', 'DESC')
+        .addOrderBy('act.id', 'DESC')
+        .getMany()
+    ).sort(
+      // Keep the previous response order: most recent location first.
+      (a, b) =>
+        new Date(b.activity_at).getTime() - new Date(a.activity_at).getTime() ||
+        (a.id < b.id ? 1 : a.id > b.id ? -1 : 0),
+    );
+    const repsWithLocation = new Set(latest.map((activity) => activity.sales_user_id));
 
-    const latest = [...latestByRep.values()];
     const { accountSequences, dailySequences } =
       await this.sequenceMaps(latest);
     const accountsById = await this.accountNames(
@@ -265,7 +270,7 @@ export class AnalyticsService {
       };
     });
     const repsWithoutLocation = reps.filter(
-      (rep) => !latestByRep.has(rep.sales_user_id),
+      (rep) => !repsWithLocation.has(rep.sales_user_id),
     );
     return { locations, repsWithoutLocation };
   }

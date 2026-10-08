@@ -1,5 +1,5 @@
 import type { IconType } from 'react-icons';
-import { MdAccountBalanceWallet, MdAccountTree, MdAdd, MdAddCircle, MdArrowBack, MdArrowForward, MdAutoAwesome, MdAutorenew, MdBadge, MdBolt, MdBusiness, MdCable, MdCalculate, MdCalendarMonth, MdCalendarToday, MdCampaign, MdCheck, MdCheckCircle, MdChevronLeft, MdChevronRight, MdCircle, MdClose, MdCloudOff, MdCloudUpload, MdContentCopy, MdDashboard, MdDelete, MdDownload, MdEdit, MdEditCalendar, MdEditNote, MdError, MdExpandMore, MdFactCheck, MdFilterAlt, MdFilterAltOff, MdFilterList, MdForum, MdGroup, MdHelp, MdHelpOutline, MdHistory, MdHourglassTop, MdHub, MdInbox, MdInfo, MdInsights, MdInventory, MdInventory2, MdKey, MdLayers, MdLightbulb, MdLocalShipping, MdLocationOff, MdLocationOn, MdLockOpen, MdLogout, MdMail, MdManageSearch, MdMap, MdMenu, MdMenuBook, MdMerge, MdMoneyOff, MdNotifications, MdOpenInNew, MdOutbox, MdPaid, MdPayments, MdPerson, MdPersonAdd, MdPhotoLibrary, MdPolyline, MdQueryStats, MdRateReview, MdReceiptLong, MdRefresh, MdRequestQuote, MdSchedule, MdScience, MdSearch, MdSearchOff, MdSecurity, MdSettings, MdShoppingCartCheckout, MdSpaceDashboard, MdStar, MdStorage, MdStore, MdStorefront, MdSupportAgent, MdSync, MdSyncAlt, MdTaskAlt, MdTerminal, MdTravelExplore, MdTune, MdTrendingDown, MdTrendingFlat, MdTrendingUp, MdVerified, MdVerifiedUser, MdVisibility, MdWarehouse, MdWarning, MdWebhook } from 'react-icons/md';
+import { MdAccountBalanceWallet, MdAccountTree, MdAdd, MdAddCircle, MdArrowBack, MdArrowForward, MdAutoAwesome, MdAutorenew, MdBadge, MdBolt, MdBusiness, MdCable, MdCalculate, MdCalendarMonth, MdCalendarToday, MdCampaign, MdCheck, MdCheckCircle, MdChevronLeft, MdChevronRight, MdCircle, MdClose, MdCloudOff, MdCloudUpload, MdContentCopy, MdDashboard, MdDownload, MdEdit, MdEditCalendar, MdEditNote, MdError, MdExpandMore, MdFactCheck, MdFilterAlt, MdFilterAltOff, MdFilterList, MdForum, MdGroup, MdHelp, MdHelpOutline, MdHistory, MdHourglassTop, MdHub, MdInbox, MdInfo, MdInsights, MdInventory, MdInventory2, MdKey, MdLayers, MdLightbulb, MdLocalShipping, MdLocationOff, MdLocationOn, MdLockOpen, MdLogout, MdMail, MdManageSearch, MdMap, MdMenu, MdMenuBook, MdMerge, MdMoneyOff, MdNotifications, MdOpenInNew, MdOutbox, MdPaid, MdPayments, MdPerson, MdPersonAdd, MdPhotoLibrary, MdPolyline, MdQueryStats, MdRateReview, MdReceiptLong, MdRefresh, MdRequestQuote, MdSchedule, MdScience, MdSearch, MdSearchOff, MdSecurity, MdSettings, MdShoppingCartCheckout, MdSpaceDashboard, MdStar, MdStorage, MdStore, MdStorefront, MdSupportAgent, MdSync, MdSyncAlt, MdTaskAlt, MdTerminal, MdTravelExplore, MdTrendingDown, MdTrendingFlat, MdTrendingUp, MdVerified, MdVerifiedUser, MdVisibility, MdWarehouse, MdWarning, MdWebhook } from 'react-icons/md';
 
 export const ICONS: Record<string, IconType> = {
   account_balance_wallet: MdAccountBalanceWallet,
@@ -31,7 +31,6 @@ export const ICONS: Record<string, IconType> = {
   cloud_upload: MdCloudUpload,
   content_copy: MdContentCopy,
   dashboard: MdDashboard,
-  delete: MdDelete,
   database: MdStorage,
   description: MdMenuBook,
   download: MdDownload,
@@ -107,7 +106,6 @@ export const ICONS: Record<string, IconType> = {
   task_alt: MdTaskAlt,
   terminal: MdTerminal,
   travel_explore: MdTravelExplore,
-  tune: MdTune,
   troubleshoot: MdManageSearch,
   trending_down: MdTrendingDown,
   trending_flat: MdTrendingFlat,

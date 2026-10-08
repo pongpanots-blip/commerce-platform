@@ -12,8 +12,6 @@ import {
   TextareaHTMLAttributes,
   createContext,
   Children,
-  Fragment,
-  useCallback,
   cloneElement,
   isValidElement,
   useEffect,
@@ -354,18 +352,13 @@ export function PanelHead({ title, icon, badge, sub, actions }: { title: ReactNo
   );
 }
 
-/**
- * Page title block: breadcrumb (section / page), H1 (+badge), a one-line purpose, right-hand actions.
- * On a page that is itself a nav item, the purpose comes from that item's `description` (one central
- * list, navigation.ts) and the page's own `subtitle` stays underneath as detail.
- */
+/** Page title block: breadcrumb, H1 (+badge), subtitle, right-hand actions. */
 export function PageHeader({
   crumbs: crumbsProp,
   back,
   title,
   badge,
   subtitle,
-  description,
   actions,
 }: {
   crumbs?: string[];
@@ -374,34 +367,19 @@ export function PageHeader({
   title: ReactNode;
   badge?: ReactNode;
   subtitle?: ReactNode;
-  /** Overrides the nav item's one-line purpose. */
-  description?: ReactNode;
   actions?: ReactNode;
 }) {
   __useUiLocale();
-  const current = useCurrentNavItem();
-  const purpose = description ?? (current?.exact && current.link.description ? __uiText(current.link.description) : undefined);
-  const lead = purpose ?? subtitle;
-  const detail = purpose && subtitle && subtitle !== purpose ? subtitle : undefined;
-  const sectionHome = current?.group.links[0];
-  const crumbs: { label: string; to?: string }[] | undefined = crumbsProp
-    ? crumbsProp.map(label => ({ label }))
-    : current?.group.group
-      ? [
-        { label: __uiText(current.group.group), to: sectionHome && sectionHome.to !== current.link.to ? sectionHome.to : undefined },
-        { label: __uiText(current.link.label), to: current.exact ? undefined : current.link.to },
-      ]
-      : undefined;
+  const derived = useNavCrumbs();
+  const crumbs = crumbsProp ?? derived;
   return (
-    <section className="space-y-1.5" data-page-header="">
+    <section className="space-y-1.5">
       {crumbs && crumbs.length > 0 && (
         <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium" aria-label={__uiText("breadcrumb")}>
           {crumbs.map((c, i) => (
             <span key={i} className="flex items-center gap-1.5">
               {i > 0 && <span className="text-outline-variant">/</span>}
-              {c.to
-                ? <Link to={c.to} className="hover:text-primary hover:underline">{c.label}</Link>
-                : <span className={i === crumbs.length - 1 ? 'text-on-surface font-semibold' : undefined}>{c.label}</span>}
+              <span className={i === crumbs.length - 1 ? 'text-on-surface font-semibold' : undefined}>{c}</span>
             </span>
           ))}
         </nav>
@@ -418,22 +396,12 @@ export function PageHeader({
             <h1 className="text-2xl md:text-[28px] font-semibold tracking-tight text-on-surface font-headline break-words [overflow-wrap:anywhere]">{title}</h1>
             {badge}
           </div>
-          {lead && <p className="text-sm text-on-surface-variant mt-2 max-w-3xl leading-relaxed" data-page-purpose="">{lead}</p>}
-          {detail && <p className="text-xs text-outline mt-1 max-w-3xl leading-relaxed">{detail}</p>}
+          {subtitle && <p className="text-sm text-on-surface-variant mt-2 max-w-3xl leading-relaxed">{subtitle}</p>}
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
     </section>
   );
-}
-
-/** PageHeader for a page that has no title of its own: title and purpose from the current nav item. */
-export function NavPageHeader({ actions, badge, fallbackTitle }: { actions?: ReactNode; badge?: ReactNode; fallbackTitle?: string }) {
-  __useUiLocale();
-  const current = useCurrentNavItem();
-  const title = current?.link.label ?? fallbackTitle;
-  if (!title) return null;
-  return <PageHeader title={__uiText(title)} badge={badge} actions={actions} />;
 }
 
 /** Small outlined pill next to a page title ("อ่านอย่างเดียว · ข้อมูลจาก josh"). */
@@ -662,126 +630,6 @@ export function Loading({ children = 'กำลังโหลด…' }: { child
 export function Hint({ children, className }: { children: ReactNode; className?: string }) {
   __useUiLocale();
   return <p className={cx('text-[11px] text-on-surface-variant', className)}>{typeof children === 'string' ? __uiText(children) : children}</p>;
-}
-
-// ---------------------------------------------------------------- page kit (shared by native and josh pages)
-
-const copy = (node: ReactNode) => (typeof node === 'string' ? __uiText(node) : node);
-
-/** Inline help for a non-obvious field or option: an info icon and one short sentence. */
-export function HelpText({ children, className, id }: { children: ReactNode; className?: string; id?: string }) {
-  __useUiLocale();
-  return (
-    <p id={id} className={cx('flex items-start gap-1.5 text-[11px] leading-relaxed text-on-surface-variant', className)}>
-      <Icon name="info" size={14} className="mt-px text-outline" />
-      <span>{copy(children)}</span>
-    </p>
-  );
-}
-
-/** A list with nothing to show: what is missing, why, and the next step (usually the page's primary action). */
-export function EmptyState({ icon = 'inbox', title, description, action }: { icon?: string; title: ReactNode; description?: ReactNode; action?: ReactNode }) {
-  __useUiLocale();
-  return (
-    <div role="status" className="flex flex-col items-center gap-2 px-6 py-12 text-center">
-      <span className="flex size-12 items-center justify-center rounded-full bg-surface-container-low text-outline"><Icon name={icon} size={26} /></span>
-      <p className="text-sm font-semibold text-on-surface">{copy(title)}</p>
-      {description && <p className="max-w-md text-xs leading-relaxed text-on-surface-variant">{copy(description)}</p>}
-      {action && <div className="mt-2 flex flex-wrap justify-center gap-2">{action}</div>}
-    </div>
-  );
-}
-
-/** Search and filters of a list in one bar: search first, filters next to it, reset / extra actions on the right. */
-export function FilterBar({
-  search,
-  children,
-  actions,
-  onReset,
-  className,
-}: {
-  search?: { value: string; onChange: (value: string) => void; placeholder?: string; label?: string };
-  /** Filter controls (Select, Segmented, date inputs …). */
-  children?: ReactNode;
-  actions?: ReactNode;
-  /** Shows "Clear filters" when set. */
-  onReset?: () => void;
-  className?: string;
-}) {
-  __useUiLocale();
-  return (
-    <div role="search" className={cx(panelCls, 'flex flex-wrap items-center gap-3 p-3', className)}>
-      {search && (
-        <SearchInput
-          aria-label={__uiText(search.label ?? 'ค้นหา')}
-          placeholder={__uiText(search.placeholder ?? 'ค้นหา…')}
-          value={search.value}
-          onChange={(event) => search.onChange(event.target.value)}
-          className="min-w-[220px] flex-1"
-        />
-      )}
-      {children && <div className="flex flex-wrap items-center gap-3">{children}</div>}
-      {(onReset || actions) && (
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          {onReset && <Button variant="ghost" icon="filter_alt_off" onClick={onReset}>{__uiText('ล้างตัวกรอง')}</Button>}
-          {actions}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export type ConfirmOptions = {
-  title: ReactNode;
-  message?: ReactNode;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  /** 'danger' (default) for delete / remove / revoke / cancel / deactivate. */
-  tone?: 'danger' | 'primary';
-};
-
-/** Asks before a destructive action; Cancel is the default focus, Esc or the backdrop cancels. */
-export function ConfirmDialog({
-  open,
-  title,
-  message,
-  confirmLabel = 'ยืนยัน',
-  cancelLabel = 'ยกเลิก',
-  tone = 'danger',
-  busy,
-  onConfirm,
-  onCancel,
-}: ConfirmOptions & { open: boolean; busy?: boolean; onConfirm: () => void; onCancel: () => void }) {
-  __useUiLocale();
-  if (!open) return null;
-  return (
-    <Modal
-      title={copy(title)}
-      onClose={onCancel}
-      width={440}
-      footer={<>
-        <Button onClick={onCancel} disabled={busy} autoFocus data-confirm-cancel="">{__uiText(cancelLabel)}</Button>
-        <Button variant={tone === 'danger' ? 'danger' : 'primary'} icon={tone === 'danger' ? 'delete' : 'check'} onClick={onConfirm} disabled={busy} data-confirm-ok="">{__uiText(confirmLabel)}</Button>
-      </>}
-    >
-      <div className="flex items-start gap-3 text-sm text-on-surface">
-        <Icon name="warning" size={20} className={tone === 'danger' ? 'text-[#c2333f]' : 'text-primary'} />
-        <div className="space-y-1">{message ? copy(message) : __uiText('ต้องการทำรายการนี้ใช่หรือไม่')}</div>
-      </div>
-    </Modal>
-  );
-}
-
-/**
- * Promise-style confirmation for event handlers: `if (!(await confirm({ title }))) return;`.
- * Render the returned dialog once in the component.
- */
-export function useConfirm() {
-  const [pending, setPending] = useState<(ConfirmOptions & { resolve: (ok: boolean) => void }) | null>(null);
-  const confirm = useCallback((options: ConfirmOptions) => new Promise<boolean>((resolve) => setPending({ ...options, resolve })), []);
-  const settle = (ok: boolean) => { pending?.resolve(ok); setPending(null); };
-  const dialog = pending ? <ConfirmDialog {...pending} open onConfirm={() => settle(true)} onCancel={() => settle(false)} /> : null;
-  return [confirm, dialog] as const;
 }
 
 // ---------------------------------------------------------------- stats
@@ -1175,11 +1023,16 @@ export function NavProvider({ nav, children }: { nav: NavGroup[]; children: Reac
 
 export function useNavigation() { return useContext(NavContext); }
 
-/** The nav item for the current route (undefined outside the nav, e.g. login). */
-export function useCurrentNavItem() {
+/** [group, page] for the current route, from the nav (undefined for top-level pages like Overview). */
+function useNavCrumbs(): string[] | undefined {
   const nav = useContext(NavContext);
   const { pathname } = useLocation();
-  return currentNavItem(nav, pathname);
+  const matches = nav.flatMap(group => group.links.map(link => ({ group, link })))
+    .filter(({ link }) => matchPath({ path: link.to, end: link.end ?? false }, pathname) && (link.to !== '/' || pathname === '/'))
+    .sort((a, b) => b.link.to.length - a.link.to.length);
+  const hit = matches[0];
+  if (hit) return hit.group.group ? [__uiText(hit.group.group), __uiText(hit.link.label)] : undefined;
+  return undefined;
 }
 
 export type NavItem = {
@@ -1188,14 +1041,12 @@ export type NavItem = {
   end?: boolean;
   icon?: string;
   badge?: ReactNode;
-  /** One line on what the page is for (UI copy); PageHeader shows it on that page. */
+  /** One line on what the page is for (UI copy): the item's tooltip and menu-search text. */
   description?: string;
   /** Sub-pages outside `to` (create / edit / detail) that highlight this item, e.g. '/j/coupon'. */
   activeFor?: string[];
-  /** Less used: behind the group's "show more" toggle in the sidebar (search still finds it). */
+  /** Less used: listed after the group's "show more" item (menu search still finds it). */
   more?: boolean;
-  /** Small sub-heading shown above this item when it differs from the previous item's. */
-  heading?: string;
 };
 export type NavGroup = { group?: string; icon?: string; links: NavItem[] };
 
@@ -1208,13 +1059,13 @@ export function navMatchLength(item: NavItem, pathname: string): number {
   return Math.max(0, ...(item.activeFor ?? []).filter(prefix => startsWithPath(pathname, prefix)).map(prefix => prefix.length));
 }
 
-/** The nav item (and its group) for the current page; `exact` when the page is the item itself, not a sub-page. */
-export function currentNavItem(nav: NavGroup[], pathname: string): { group: NavGroup; link: NavItem; exact: boolean } | undefined {
-  let best: { group: NavGroup; link: NavItem; exact: boolean } | undefined;
+/** The nav item (and its group) for the current page, sub-pages included. */
+export function currentNavItem(nav: NavGroup[], pathname: string): { group: NavGroup; link: NavItem } | undefined {
+  let best: { group: NavGroup; link: NavItem } | undefined;
   let bestLength = 0;
   for (const group of nav) for (const link of group.links) {
     const length = navMatchLength(link, pathname);
-    if (length > bestLength) { bestLength = length; best = { group, link, exact: Boolean(matchPath({ path: link.to, end: true }, pathname)) }; }
+    if (length > bestLength) { bestLength = length; best = { group, link }; }
   }
   return best;
 }
@@ -1233,7 +1084,7 @@ export function CommandMenu() {
   const titleId = useId();
   const resultsId = useId();
   const results = nav.flatMap(group => group.links.map(link => ({ ...link, group: group.group })))
-    .filter(link => `${link.label} ${link.group ?? ''} ${__uiText(link.label)} ${link.group ? __uiText(link.group) : ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+    .filter(link => `${link.label} ${link.group ?? ''} ${__uiText(link.label)} ${link.group ? __uiText(link.group) : ''} ${link.description ? __uiText(link.description) : ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   const close = () => setOpen(false);
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
@@ -1264,7 +1115,7 @@ export function CommandMenu() {
       <div id={resultsId} role="listbox" aria-label={__uiText("ผลการค้นหาเมนู")} className="max-h-[55vh] overflow-y-auto border-t border-secondary-container p-2">
         {results.length ? results.map((item, index) => <div key={item.to} id={`${resultsId}-${index}`} role="option" aria-selected={selected === index} className={cx('rounded-lg', selected === index && 'bg-primary-container/50')}>
           <button type="button" tabIndex={-1} onClick={() => visit(index)} className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left">
-            <span><span className="block text-sm font-medium">{__uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}</span></span><Icon name="arrow_forward" className="text-outline" />
+            <span><span className="block text-sm font-medium">{__uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}{item.description ? ` · ${__uiText(item.description)}` : ''}</span></span><Icon name="arrow_forward" className="text-outline" />
           </button>
         </div>) : <Empty icon="search_off">{__uiText("ไม่พบเมนู ลองค้นหาด้วยคำอื่น")}</Empty>}
       </div>
@@ -1275,8 +1126,7 @@ export function CommandMenu() {
 
 /**
  * Left sidebar (256px, fixed). Groups with a title collapse; the group holding the current page
- * opens by default, user toggles win. Items marked `more` fold behind "show more", `heading` adds a
- * sub-heading, `activeFor` highlights an item on its sub-pages. A filter box narrows links by label.
+ * opens by default, user toggles win. A filter box narrows links by label.
  */
 export function Sidebar({
   brand,
@@ -1304,6 +1154,7 @@ export function Sidebar({
   const q = query.trim().toLowerCase();
   const activeDestination = currentNavItem(nav, pathname)?.link.to;
   const isCurrent = (l: NavItem) => l.to === activeDestination;
+  const matches = (group: string | undefined, l: NavItem) => `${group ?? ''} ${__uiText(group ?? '')} ${l.label} ${__uiText(l.label)} ${l.description ? __uiText(l.description) : ''}`.toLowerCase().includes(q);
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
     cx(
@@ -1349,14 +1200,14 @@ export function Sidebar({
 
         <nav id={navId} className={cx('space-y-3', !mobileOpen && 'hidden md:block')} onClick={(event) => { if ((event.target as HTMLElement).closest('a')) setMobileOpen(false); }}>
           {nav.map((section, gi) => {
-            const links = q ? section.links.filter((l) => `${section.group ?? ''} ${__uiText(section.group ?? '')} ${l.label} ${__uiText(l.label)}`.toLowerCase().includes(q)) : section.links;
+            const links = q ? section.links.filter((l) => matches(section.group, l)) : section.links;
             if (!links.length) return null;
             // Untitled group: a flat list of top-level links (portal, "Overview").
             if (!section.group) {
               return (
                 <div key={gi} className="space-y-0.5">
                   {links.map((l) => (
-                    <Link key={l.to} to={l.to} aria-current={isCurrent(l) ? 'page' : undefined} className={linkCls({ isActive: isCurrent(l) })}>
+                    <Link key={l.to} to={l.to} title={l.description ? __uiText(l.description) : undefined} aria-current={isCurrent(l) ? 'page' : undefined} className={linkCls({ isActive: isCurrent(l) })}>
                       <Icon name={l.icon ?? 'circle'} />
                       <span className="flex-1 truncate">{__uiText(l.label)}</span>
                       {l.badge}
@@ -1367,11 +1218,10 @@ export function Sidebar({
             }
             const expanded = Boolean(q) || (toggled[section.group] ?? section.links.some(isCurrent));
             const holdsCurrent = section.links.some(isCurrent);
-            // "show more": less used items stay folded unless searching, opened, or one of them is the current page
-            const moreLinks = links.filter((l) => l.more);
-            const moreOpen = Boolean(q) || (showMore[section.group] ?? moreLinks.some(isCurrent));
+            // "show more": less used items follow a toggle item (same look as the others) unless searching or one is open
+            const moreCount = links.filter((l) => l.more).length;
+            const moreOpen = Boolean(q) || (showMore[section.group] ?? links.some((l) => l.more && isCurrent(l)));
             const shown = moreOpen ? links : links.filter((l) => !l.more);
-            let lastHeading: string | undefined;
             return (
               <div key={section.group}>
                 <button
@@ -1392,30 +1242,18 @@ export function Sidebar({
                 </button>
                 {expanded && (
                   <div id={`${navId}-${gi}`} className="mt-0.5 space-y-0.5 pl-1.5 border-l-2 border-primary/20 ml-3">
-                    {shown.map((l) => {
-                      const heading = l.heading && l.heading !== lastHeading ? l.heading : undefined;
-                      lastHeading = l.heading;
-                      const active = isCurrent(l);
-                      return (
-                        <Fragment key={l.to}>
-                          {heading && <p className="px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-wider text-outline">{__uiText(heading)}</p>}
-                          <Link to={l.to} aria-current={active ? 'page' : undefined} className={subLinkCls({ isActive: active })}>
-                            <span className={cx('w-1.5 h-1.5 rounded-full shrink-0', active ? 'bg-primary' : 'bg-outline-variant')} />
-                            <span className="flex-1 truncate">{__uiText(l.label)}</span>
-                            {l.badge}
-                          </Link>
-                        </Fragment>
-                      );
-                    })}
-                    {moreLinks.length > 0 && !q && (
-                      <button
-                        type="button"
-                        aria-expanded={moreOpen}
-                        onClick={() => setShowMore((m) => ({ ...m, [section.group as string]: !moreOpen }))}
-                        className="w-full rounded-lg min-h-9 px-3 py-1.5 flex items-center gap-2 text-left text-xs font-medium text-primary hover:bg-surface-container-low"
-                      >
-                        <Icon name={moreOpen ? 'expand_more' : 'chevron_right'} size={14} />
-                        {moreOpen ? __uiText('แสดงน้อยลง') : __uiText('แสดงเพิ่มเติม ({0})', { 0: moreLinks.length })}
+                    {shown.map((l) => (
+                      <Link key={l.to} to={l.to} title={l.description ? __uiText(l.description) : undefined} aria-current={isCurrent(l) ? 'page' : undefined} className={subLinkCls({ isActive: isCurrent(l) })}>
+                        <span className={cx('w-1.5 h-1.5 rounded-full shrink-0', isCurrent(l) ? 'bg-primary' : 'bg-outline-variant')} />
+                        <span className="flex-1 truncate">{__uiText(l.label)}</span>
+                        {l.badge}
+                      </Link>
+                    ))}
+                    {moreCount > 0 && !q && (
+                      <button type="button" aria-expanded={moreOpen} onClick={() => setShowMore((m) => ({ ...m, [section.group as string]: !moreOpen }))} className={cx(subLinkCls({ isActive: false }), 'w-full text-left')}>
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-outline-variant" />
+                        <span className="flex-1 truncate">{moreOpen ? __uiText('แสดงน้อยลง') : __uiText('แสดงเพิ่มเติม ({0})', { 0: moreCount })}</span>
+                        <Icon name={moreOpen ? 'expand_more' : 'chevron_right'} size={16} className="text-outline" />
                       </button>
                     )}
                   </div>
@@ -1423,7 +1261,7 @@ export function Sidebar({
               </div>
             );
           })}
-          {q && !nav.some(group => group.links.some(link => `${group.group ?? ''} ${link.label} ${__uiText(link.label)} ${group.group ? __uiText(group.group) : ''}`.toLowerCase().includes(q))) && <p role="status" className="px-3 py-4 text-xs text-on-surface-variant">{__uiText("ไม่พบเมนู ลองใช้คำอื่น")}</p>}
+          {q && !nav.some(group => group.links.some(link => matches(group.group, link))) && <p role="status" className="px-3 py-4 text-xs text-on-surface-variant">{__uiText("ไม่พบเมนู ลองใช้คำอื่น")}</p>}
         </nav>
       </div>
 

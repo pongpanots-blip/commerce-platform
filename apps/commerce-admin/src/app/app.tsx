@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSe
 import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { Workspace } from './pages/Workspace';
+import { RoleHome } from './pages/RoleHome';
 import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
 import { initialAuthState } from '../lib/auth';
 import { landingFor, loginPathFor, redirectParam, resolvePostLoginPath } from '../lib/landing';
@@ -169,6 +170,7 @@ export function App() {
           <Routes>
             <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={landingFor(role)} replace />} />
             <Route path="/login" element={<LoginRedirect role={role} />} />
+            <Route path="/home" element={<RoleHome role={role} />} />
             {/* #80 workspace overview pages: old links open the replacing section */}
             <Route path="/workspaces/:workspaceId" element={<Workspace role={role} />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />

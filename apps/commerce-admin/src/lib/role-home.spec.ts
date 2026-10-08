@@ -3,9 +3,10 @@ import { homeForRole, ROLE_HOME } from './role-home';
 
 describe('commerce role homes', () => {
   it('covers every commerce role with the agreed landing pages', () => {
+    // every role lands on /home (RoleHome); its main pages are the home shortcuts (navigation.ts ROLE_SHORTCUTS)
     expect(ROLE_HOME).toEqual({
-      admin: '/', merchandising: '/products', business_analyst: '/reports/sales', cs: '/cs',
-      graphic: '/j/product/bulk-image-upload', marketing: '/marketing/growth', sale: '/reports/sales', sales_manager: '/reports/sales',
+      admin: '/home', merchandising: '/home', business_analyst: '/home', cs: '/home',
+      graphic: '/home', marketing: '/home', sale: '/home', sales_manager: '/home',
     });
     for (const [role, home] of Object.entries(ROLE_HOME)) expect(homeForRole(role)).toBe(home);
   });

@@ -4,7 +4,7 @@ import { matchPath } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { currentNavItem } from '@cp/ui';
 import messages from '../../../../libs/ui/src/locales/ui-messages.json';
-import { DASHBOARD, NAV_ENTRIES, ROLE_ACCESS, SECTIONS, WORKSPACE_SECTION, navFor, workspaceTarget } from './navigation';
+import { DASHBOARD, HOME, NAV_ENTRIES, ROLE_ACCESS, ROLE_SHORTCUTS, SECTIONS, WORKSPACE_SECTION, navFor, shortcutsFor, workspaceTarget } from './navigation';
 import { LEGACY_ITEMS, LEGACY_WORKSPACES, legacyMapping, legacyNavFor } from './navigation.legacy';
 import { isRouteAllowed, landingFor } from '../lib/landing';
 import { homeForRole, ROLE_HOME } from '../lib/role-home';
@@ -24,9 +24,10 @@ describe('sidebar per role', () => {
     if (role !== 'admin') for (const to of links) expect(ROLE_ACCESS[to], `${to} is admin-only`).toContain(role);
   });
 
-  it('admin sees every destination, Dashboard first', () => {
-    expect(navFor('admin')[0].links).toEqual([DASHBOARD]);
-    expect(linksOf('admin').slice(1).sort()).toEqual(NAV_ENTRIES.map((e) => e.to).sort());
+  it('Home first for every role (admin: Home + Dashboard); admin sees every destination', () => {
+    expect(navFor('admin')[0].links).toEqual([HOME, DASHBOARD]);
+    for (const role of NON_ADMIN) expect(navFor(role)[0].links, role).toEqual([HOME]);
+    expect(linksOf('admin').slice(2).sort()).toEqual(NAV_ENTRIES.map((e) => e.to).sort());
   });
 
   it('a few task sections; each shows at most 10 items before "show more" (Advanced is folded)', () => {
@@ -49,7 +50,7 @@ describe('sidebar per role', () => {
 
   it('per-role item counts (PR body table)', () => {
     const counts = Object.fromEntries(STAFF_ROLES.map((role) => [role, linksOf(role).length]));
-    expect(counts).toEqual({ admin: 118, marketing: 40, merchandising: 18, cs: 9, sales_manager: 10, business_analyst: 13, graphic: 5, sale: 8 });
+    expect(counts).toEqual({ admin: 119, marketing: 41, merchandising: 19, cs: 10, sales_manager: 11, business_analyst: 14, graphic: 6, sale: 9 });
   });
 
   it('journey funnel (josh /analytics/funnel is admin-only) is no longer offered to marketing', () => {
@@ -66,7 +67,7 @@ describe('old menu → new menu', () => {
     for (const role of NON_ADMIN) {
       const before = legacyNavFor(role).flatMap((g) => g.links.map((l) => l.to)).filter((to) => !to.startsWith('/workspaces/'));
       const narrowed = role === 'marketing' ? ['/j/marketing/journey-funnel'] : [];
-      expect(linksOf(role).sort(), role).toEqual(before.filter((to) => !narrowed.includes(to)).sort());
+      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual(before.filter((to) => !narrowed.includes(to)).sort());
     }
   });
 
@@ -97,7 +98,8 @@ describe('routes', () => {
   const resolves = (path: string) => [...appRoutes, ...joshRoutes].some((pattern) => matchPath({ path: pattern, end: true }, path));
 
   it('every new and old menu item (and old workspace page) still has a route', () => {
-    for (const to of [...NAV_ENTRIES.map((e) => e.to), ...LEGACY_ITEMS.map((i) => i.to), '/', ...Object.keys(WORKSPACE_SECTION).map((id) => `/workspaces/${id}`)]) {
+    const shortcuts = Object.values(ROLE_SHORTCUTS).flatMap((list) => list.map((s) => s.to));
+    for (const to of [...NAV_ENTRIES.map((e) => e.to), ...LEGACY_ITEMS.map((i) => i.to), HOME.to, DASHBOARD.to, ...shortcuts, ...Object.keys(WORKSPACE_SECTION).map((id) => `/workspaces/${id}`)]) {
       expect(resolves(to), to).toBe(true);
     }
   });
@@ -130,10 +132,17 @@ describe('copy (TH + EN)', () => {
   const placeholders = (s: string) => (s.match(/\{\w+\}/g) ?? []).sort();
   const keys = [
     ...SECTIONS.flatMap((s) => [s.title, s.description]),
-    ...NAV_ENTRIES.flatMap((e) => [e.label, e.description, ...(e.heading ? [e.heading] : [])]),
-    DASHBOARD.label, DASHBOARD.description!,
-    'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'ต้องการทำรายการนี้ใช่หรือไม่',
+    ...NAV_ENTRIES.flatMap((e) => [e.label, e.description, ...Object.values(e.roleLabels ?? {})]),
+    HOME.label, HOME.description!, DASHBOARD.label, DASHBOARD.description!,
+    'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น',
   ];
+
+  it('menu copy is named by task: no internal module or system names, in either language', () => {
+    const jargon = /josh|commerce|replica|\bMCP\b|workspace|ERP hub|\bhub\b|stub|shadow|ingest|platform|แพลตฟอร์ม|\(ทดลอง\)|webhook/i;
+    for (const key of new Set(keys)) {
+      for (const text of [key, catalogue[key]?.th ?? '', catalogue[key]?.en ?? '']) expect(text, key).not.toMatch(jargon);
+    }
+  });
 
   it('every section, menu label, description and heading exists in both languages', () => {
     for (const key of new Set(keys)) {
@@ -153,18 +162,19 @@ describe('copy (TH + EN)', () => {
 });
 
 // #83: sale / sales manager menus
+// (adapted: every role's sidebar now starts with Home, /home)
 const destinations = (role: string) => navFor(role).flatMap(group => group.links.map(link => link.to)).filter(path => !path.startsWith('/workspaces/'));
 
 describe('sale navigation', () => {
   it('includes only own reports and read-only catalog / prices / stock / password', () => {
     expect(destinations('sale').sort()).toEqual([
-      '/account/password', '/erp/inventory-warehouse', '/products', '/reports/customers',
+      '/account/password', '/erp/inventory-warehouse', '/home', '/products', '/reports/customers',
       '/reports/orders', '/reports/prices', '/reports/sales', '/reports/winback/my',
     ].sort());
   });
   it('manager has team reports, rep KPIs and assignment without PII pages or write areas', () => {
     expect(destinations('sales_manager').sort()).toEqual([
-      '/account/password', '/cs/sales-assignment', '/reports/customers', '/reports/health',
+      '/account/password', '/cs/sales-assignment', '/home', '/reports/customers', '/reports/health',
       '/reports/orders', '/reports/order-targetgroup', '/reports/prices', '/reports/sales', '/reports/winback', '/reports/winback/opportunities',
     ].sort());
     expect(navFor('sale_manager')).toEqual(navFor('sales_manager'));
@@ -175,5 +185,32 @@ describe('sale navigation', () => {
       expect(destinations(role)).toContain(homeForRole(role));
       if (role !== 'admin') expect(ROLE_ACCESS[homeForRole(role)]).toContain(role);
     }
+  });
+});
+
+describe('role home shortcuts', () => {
+  it.each(STAFF_ROLES)('%s: 3–6 shortcuts, each a main task the role may open and has in its sidebar', (role) => {
+    const shortcuts = shortcutsFor(role);
+    expect(shortcuts.length).toBe(ROLE_SHORTCUTS[role].length); // none dropped for lack of access
+    expect(shortcuts.length).toBeGreaterThanOrEqual(3);
+    expect(shortcuts.length).toBeLessThanOrEqual(6);
+    const links = linksOf(role);
+    for (const s of shortcuts) {
+      expect(isRouteAllowed(role, s.to), `${role} → ${s.to}`).toBe(true);
+      expect(links).toContain(s.to);
+      expect(s.description, s.to).toBeTruthy();
+    }
+    expect(new Set(shortcuts.map((s) => s.to)).size).toBe(shortcuts.length);
+  });
+
+  it('shortcuts use the role\'s own labels (a rep sees "My sales")', () => {
+    expect(shortcutsFor('sale')[0]).toMatchObject({ to: '/reports/sales', label: 'ยอดขายของฉัน' });
+    expect(shortcutsFor('sale_manager')).toEqual(shortcutsFor('sales_manager'));
+    expect(shortcutsFor('developer')).toEqual([]);
+  });
+
+  it.each(STAFF_ROLES)('%s lands on its home page, which it may open', (role) => {
+    expect(landingFor(role)).toBe('/home');
+    expect(isRouteAllowed(role, '/home')).toBe(true);
   });
 });

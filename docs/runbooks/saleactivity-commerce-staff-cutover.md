@@ -31,7 +31,9 @@ review. Nothing below has been run against prod. Every command is copy-paste; se
 
 1. **commerce restaurant-place PR**: merge → normal commerce deploy (tag/workflow as usual). It's additive with no migration.
    Check: `GET /api/winback/restaurant-place?limit=1` with a sale token → 200; with a cs token → 403.
-2. **commerce runbook PR (this one)**: merge to master. That puts both backfill scripts where the Ops platform workflow reads them (`--ref master`). No deploy needed.
+2. **commerce runbook PR (this one)**: merge to master → normal commerce **platform deploy**. Merging puts both backfill scripts where the Ops platform
+   workflow reads them (`--ref master`); the deploy ships the CLI's `--expect-links/--expect-rows` guard that the apply wrapper passes. Against an
+   older image the CLI rejects those flags before connecting, so the apply refuses (exit 1) and writes nothing. No migration.
 3. **Webjosh nginx PR**: merge → cut `nginx-v<x.y.z>` → deploy nginx with the gate **off** (the rendered config is byte-identical to today's).
 4. **Enable the proxy**: add `COMMERCE_STAFF_PROXY=true` to the josh web host `.env` (`EC2_WEB_DEPLOY_DIR`) and rerun **Prod** with the same nginx tag and
    `env_diff_only=false`. That recreates the container; a reload isn't enough. Check:
@@ -72,10 +74,18 @@ direct DB session from the operator, and no JWT minting**. The workflow only sup
   ```sh
   gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=script -f script=winback-staff-backfill-apply -f args='apply links=2 rows=37'
   ```
-  The wrapper re-runs the dry run and **refuses** if the plan isn't exactly `links=2 rows=37` or anything is ambiguous. Then it runs `--apply`
-  (the CLI refuses unless `WINBACK_OWNER=commerce` and `COMMERCE_OWNS_SALES_REPS=true`; one locked transaction that rolls back on any conflict).
-  Finally it runs the dry run again and fails unless that one plans **0 links / 0 rows**. Wait 60 s for identity caches before reopening the app.
-  Josh-mode installs keep working afterwards.
+  What the wrapper actually guarantees (pinned to the reviewed plan; `ops/scripts/winback-staff-backfill-apply.test.cjs`):
+  - `args` must be exactly `apply links=2 rows=37`. **Any other value exits 2 and the CLI is never started** (no dry run, no apply).
+    The 2 and 37 are constants in the script, not read from `args`.
+  - It runs the dry run first. If that report has no numeric `counts.links`, `counts.ambiguous` or `rowsChanged`, it exits 2.
+    If it already plans **0 links / 0 rows / ambiguous 0** (the backfill was already applied), it **exits 0 without `--apply`**, so a rerun is safe.
+    Any other plan than exactly 2 links / 37 rows / ambiguous 0 exits 1 without `--apply`.
+  - Then `--apply --expect-links=2 --expect-rows=37`. The CLI refuses unless `WINBACK_OWNER=commerce` and `COMMERCE_OWNS_SALES_REPS=true`, then
+    takes the table locks and **re-checks 2 / 37 / ambiguous 0 inside that locked transaction, before any write**. If the plan drifted after the dry
+    run, it throws there and the transaction **rolls back; nothing is committed**. It also rolls back on any link/key conflict.
+  - Last, a second dry run must plan **0 links / 0 rows**. This check is post-commit: it can fail the run but **cannot undo** the apply, and
+    there is no automatic undo of a committed backfill (the app rollback in §2 doesn't revert it either).
+  Wait 60 s for identity caches before reopening the app. Josh-mode installs keep working afterwards.
   (Before the runbook PR is merged, use `--ref feat/saleactivity-commerce-cutover` instead of `--ref master`.)
 
 ## 4. Smoke checks (read-only apart from the sign-in itself)
@@ -109,10 +119,19 @@ Optional write checks (handoff, collaboration message) need a test lead and the 
 ## Appendix A — nginx block rendered when `COMMERCE_STAFF_PROXY=true`
 
 Appended to josh nginx `snippets/proxy-paths.conf` by the entrypoint (never hand-edit prod nginx; recreate the container).
-Non-POST on the auth routes → 405 `Allow: POST`; anything else under `/api/commerce` → 404 without contacting commerce.
+Allowlist, same as Webjosh #558: `POST /api/commerce/admin/auth/{login,refresh,logout,password}` and `/api/commerce/winback/*` only.
+Non-POST on the auth routes → 405 `Allow: POST`; anything else under `/api/commerce` (including `/api/commerce`, `/api/commerce/winback`
+without the slash, `…/login/`, `/api/commerce/admin/staff`) → 404 without contacting commerce. This shows the routing only; the template in
+Webjosh #558 (`docker/nginx/snippets/commerce-staff-proxy.conf.template`) is the source of truth for rate-limit zones and proxy headers.
+Checked with nginx 1.26 against a local echo upstream: every allowlisted route reaches commerce as `/api/…`; all the paths above are 404.
 
 ```nginx
 location = /api/commerce {
+  return 404;
+}
+
+# Without this, nginx answers the slash-less prefix of `^~ /api/commerce/winback/` (a proxied location) with a 301.
+location = /api/commerce/winback {
   return 404;
 }
 
@@ -144,8 +163,12 @@ location ^~ /api/commerce/ {
     limit_req zone=api_general burst=50 nodelay;
 
     set $commerce_origin http://172.31.40.66:3100;
+    # Gate before the rewrite (a `return` after `rewrite ... break` never runs). The gate and the rewrite use the
+    # same pattern, so a URI the rewrite can't map (e.g. a decoded %0A) is 404 here and never reaches commerce.
+    if ($uri !~ "^/api/commerce/winback/.*$") {
+      return 404;
+    }
     rewrite ^/api/commerce/(winback/.*)$ /api/$1 break;
-    return 404;
 
     proxy_pass $commerce_origin;
     proxy_http_version 1.1;

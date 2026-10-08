@@ -98,8 +98,8 @@ export function App() {
                     user={{
                       name: tokenClaims()?.email?.split('@')[0] ?? 'Partner',
                       detail: tokenClaims()?.email,
-                      onSignOut: () => {
-                        void auth.logout();
+                      onSignOut: async () => {
+                        await auth.logout();
                         window.location.assign('/login');
                       },
                     }}

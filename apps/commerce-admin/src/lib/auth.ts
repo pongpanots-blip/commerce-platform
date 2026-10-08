@@ -145,12 +145,30 @@ export function initialAuthState(): 'in' | 'checking' | 'out' {
   return session.fresh() ? 'in' : session.getRefresh() ? 'checking' : 'out';
 }
 
-/** Sign out: end the sign-in on the server (best effort, survives a page change) and drop both tokens regardless. */
-export function logout(): Promise<void> {
+/** How long sign-out waits for the server before dropping the tokens anyway. */
+export const LOGOUT_TIMEOUT_MS = 3000;
+
+/**
+ * Sign out: first end the sign-in on the server (so the refresh token is revoked while we still hold it),
+ * waiting at most LOGOUT_TIMEOUT_MS, then drop both tokens — also when the call fails or times out.
+ */
+export async function logout(): Promise<void> {
   const refreshToken = session.getRefresh();
-  session.clear();
-  if (!refreshToken) return Promise.resolve();
-  return fetch(`${BASE}/admin/auth/logout`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refreshToken }), keepalive: true,
-  }).then(() => undefined, () => undefined);
+  try {
+    if (!refreshToken) return;
+    const abort = new AbortController();
+    const timer = setTimeout(() => abort.abort(), LOGOUT_TIMEOUT_MS);
+    try {
+      await fetch(`${BASE}/admin/auth/logout`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refreshToken }),
+        keepalive: true, signal: abort.signal,
+      });
+    } catch {
+      // best effort: offline, timed out, server error — the tokens go regardless
+    } finally {
+      clearTimeout(timer);
+    }
+  } finally {
+    session.clear();
+  }
 }

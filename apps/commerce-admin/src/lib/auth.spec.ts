@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { api, login, request } from './api';
-import { authedFetch, BASE, initialAuthState, logout, refreshSession, restoreSession, session } from './auth';
+import { authedFetch, BASE, initialAuthState, logout, LOGOUT_TIMEOUT_MS, refreshSession, restoreSession, session } from './auth';
 import { isAdminTokenValid } from '../josh-admin/app/lib/admin-auth';
 
 /** Unsigned look-alike JWTs (test fixtures only — the client never verifies). */
@@ -162,15 +162,47 @@ describe('session storage', () => {
 });
 
 describe('logout', () => {
-  it('sends the refresh token best-effort and clears both tokens, even when the call fails', async () => {
+  it('posts the refresh token BEFORE clearing, then clears both tokens', async () => {
     session.set(NEW, 'refresh-1');
-    fetchMock.mockImplementationOnce(async () => { throw new TypeError('network'); });
+    let storedDuringCall: (string | null)[] = [];
+    fetchMock.mockImplementationOnce(async () => { storedDuringCall = [session.get(), session.getRefresh()]; return json(200, { ok: true }); });
     await logout();
-    expect(session.get()).toBeNull();
-    expect(session.getRefresh()).toBeNull();
+    expect(storedDuringCall).toEqual([NEW, 'refresh-1']);
+    expect([session.get(), session.getRefresh()]).toEqual([null, null]);
     const [, init] = fetchMock.mock.calls[0];
     expect(JSON.parse(init.body)).toEqual({ refreshToken: 'refresh-1' });
     expect(init.keepalive).toBe(true);
+  });
+
+  it('still clears both tokens when the call fails', async () => {
+    session.set(NEW, 'refresh-1');
+    fetchMock.mockImplementationOnce(async () => { throw new TypeError('network'); });
+    await logout();
+    expect([session.get(), session.getRefresh()]).toEqual([null, null]);
+  });
+
+  it('gives up after LOGOUT_TIMEOUT_MS and clears anyway', async () => {
+    vi.useFakeTimers();
+    try {
+      session.set(NEW, 'refresh-1');
+      fetchMock.mockImplementationOnce((_url: string, init: RequestInit) => new Promise((_, reject) => {
+        init.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+      }));
+      const done = logout();
+      expect(session.getRefresh()).toBe('refresh-1');
+      await vi.advanceTimersByTimeAsync(LOGOUT_TIMEOUT_MS);
+      await done;
+      expect([session.get(), session.getRefresh()]).toEqual([null, null]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('no refresh token: nothing to send, the access token is cleared', async () => {
+    session.set(NEW);
+    await logout();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(session.get()).toBeNull();
   });
 });
 

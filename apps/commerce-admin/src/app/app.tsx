@@ -145,8 +145,8 @@ export function App() {
   const role = claims?.role;
   const nav = navFor(role);
 
-  function signOut() {
-    void logout();
+  async function signOut() {
+    await logout();
     window.history.replaceState(null, '', '/login');
     setAuth('out');
   }

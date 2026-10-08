@@ -16,9 +16,13 @@ on:
         options: [check, import, parity, status]
         default: check
       scopes:
-        description: 'import scopes, in order'
+        description: 'import scopes, in order (any import-from-josh scope except ordering / all)'
         type: string
         default: 'research scraping competitor'
+      parity:
+        description: 'parity CLIs to run after import / for action=parity (competitor segment price content category master image promotion)'
+        type: string
+        default: 'competitor'
       josh_host:
         description: 'josh DB host as seen from commerce EC2 (josh-db-server-prod private IP)'
         type: string
@@ -96,19 +100,29 @@ jobs:
         run: |
           set -euo pipefail
           for s in $SCOPES; do
-            case "$s" in research|scraping|competitor) ;; *) echo "::error::scope $s not allowed here"; exit 1;; esac
+            case "$s" in research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|masters|images) ;; *) echo "::error::scope $s not allowed here (ordering is skipped)"; exit 1;; esac
             echo "::group::import-from-josh $s"
             docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node src/cli/import-from-josh.js "$s"
             echo "::endgroup::"
           done
 
-      - name: competitor-parity
+      - name: parity
         if: inputs.action == 'import' || inputs.action == 'parity'
+        env:
+          PARITY: ${{ inputs.parity }}
         run: |
-          set -euo pipefail
-          docker exec -i ${{ steps.c.outputs.id }} node src/cli/competitor-parity.js | tee "$RUNNER_TEMP/parity.json"
-          echo '### competitor-parity' >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"; cut -c1-4000 "$RUNNER_TEMP/parity.json" >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
+          set -uo pipefail
+          rc=0
+          echo '### parity' >> "$GITHUB_STEP_SUMMARY"
+          for p in $PARITY; do
+            case "$p" in competitor|segment|price|content|category|master|image|promotion) ;; *) echo "::error::unknown parity $p"; exit 1;; esac
+            echo "::group::$p-parity"
+            docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node "src/cli/$p-parity.js" > "$RUNNER_TEMP/parity.txt" 2>&1; r=$?
+            cut -c1-6000 "$RUNNER_TEMP/parity.txt"; echo "::endgroup::"
+            echo "$p-parity exit=$r"; [ $r -ne 0 ] && rc=1
+            { echo "**$p** exit=$r"; echo '```'; cut -c1-2500 "$RUNNER_TEMP/parity.txt" | tail -30; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          done
+          exit $rc
 
       - name: Status (read-only) — scraping / research activity on commerce
         if: inputs.action == 'status'

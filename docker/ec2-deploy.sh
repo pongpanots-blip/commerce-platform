@@ -34,6 +34,8 @@ for svc in "${SERVICES[@]}"; do
 done
 
 COMPOSE=(docker compose -f docker-compose.prod.yml)
+# env_file of platform (cutover flags) must exist even when no flags are set.
+touch platform-flags.env
 
 # Optional sidecar for Jagota gateway (josh via-commerce). Survives deploy-ecr.yml's
 # .env rewrite (which only knows its listed keys). Create once on the box:

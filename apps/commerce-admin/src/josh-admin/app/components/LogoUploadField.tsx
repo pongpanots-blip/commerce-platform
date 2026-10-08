@@ -9,12 +9,15 @@ type LogoUploadFieldProps = {
   label?: string;
   value: string;
   onChange: (url: string) => void;
+  /** Category pages pass commerce's upload. The default stays josh's brand-logo route. */
+  upload?: (file: File) => Promise<{ data?: { status?: boolean; data?: { url?: string } } }>;
 };
 
 export function LogoUploadField({
   label = 'โลโก้ / รูปภาพ',
   value,
   onChange,
+  upload,
 }: LogoUploadFieldProps) {
   __useUiLocale();
   const [uploading, setUploading] = useState(false);
@@ -24,7 +27,7 @@ export function LogoUploadField({
   const handleFile = async (file: File) => {
     setUploading(true);
     try {
-      const response = await uploadImage(file);
+      const response = await (upload ?? uploadImage)(file);
       if (response.data?.status && response.data.data?.url) {
         onChange(response.data.data.url);
       } else {
@@ -40,7 +43,7 @@ export function LogoUploadField({
   return (
     <div className="flex flex-col gap-3">
       {/* หัวข้อเฉย ๆ ไม่ผูก htmlFor — label ของ Input ด้านล่างเป็นตัวให้ accessible name ของช่อง URL */}
-      <p className="text-sm font-semibold text-ink-secondary">{label}</p>
+      <p className="text-sm font-semibold text-ink-secondary">{__uiText(label)}</p>
       <DragDropUpload
         onFileSelect={handleFile}
         accept="image/*"

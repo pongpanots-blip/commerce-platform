@@ -24,6 +24,18 @@ export function normalizeSortOptions(options?: Array<{ key: string; label: strin
   return (options ?? []).map((opt, index) => ({ key: opt.key, label: opt.label, order: opt.order ?? index }));
 }
 
+/** Josh web #549. Parent null, level 1, sort 0, code ALL. Josh's applyTree skips this id on delete; commerce still stores the row so parity and image edits have it. */
+export const ALL_CATEGORY_ID = '00000000-0000-4000-8000-000000000a11';
+
+export function isAllCategory(id: string | null | undefined): boolean {
+  return id === ALL_CATEGORY_ID;
+}
+
+/** Numbered level-1 order. All stays out of it so resort cannot rewrite its code or move it off sort 0. */
+export function level1NumberedIds(orderedIds: string[]): string[] {
+  return orderedIds.filter((id) => !isAllCategory(id));
+}
+
 /** Columns of a category row, as josh's product_category has them (the tree snapshot carries exactly these). */
 export const CATEGORY_COLUMNS = [
   'id', 'parent_id', 'category_code', 'category_name_en', 'category_name_th', 'category_path', 'category_path_code', 'sort',

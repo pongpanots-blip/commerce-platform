@@ -1,4 +1,5 @@
 import { compareCategoryOrder, compareLevel1Order } from '@josh/shared-api';
+import { pinAllCategoryFirst, withoutAllAtRoot } from './category-all';
 import type { CategoryRow } from './category-form';
 
 /**
@@ -12,9 +13,10 @@ import type { CategoryRow } from './category-form';
 
 /** ลูกทั้งหมดของหมวดแม่ตัวหนึ่ง เรียงแบบเดียวกับที่หน้าร้านเรียง · `null` = Division ชั้นบนสุด */
 export function childrenOf(rows: CategoryRow[], parentId: string | null): CategoryRow[] {
-  return rows
-    .filter((row) => (row.parent_id_uuid ?? null) === parentId)
-    .sort(compareCategoryOrder);
+  return withoutAllAtRoot(
+    rows.filter((row) => (row.parent_id_uuid ?? null) === parentId),
+    parentId,
+  ).sort(compareCategoryOrder);
 }
 
 /** หมวดแม่ไล่จากบนสุดลงมาถึงตัวมันเอง — ใช้ทำ breadcrumb · กันข้อมูลวนลูปด้วยตัวนับ */
@@ -83,10 +85,9 @@ export type Level1Row = { row: CategoryRow; parent: CategoryRow | null };
 
 export function level1Rows(rows: CategoryRow[]): Level1Row[] {
   const byId = new Map(rows.map((row) => [row.category_id_uuid, row]));
-  return rows
-    .filter((row) => (row.category_level ?? -1) === 1)
-    .sort(compareLevel1Order)
-    .map((row) => ({
+  return pinAllCategoryFirst(
+    rows.filter((row) => (row.category_level ?? -1) === 1).sort(compareLevel1Order),
+  ).map((row) => ({
       row,
       parent: (row.parent_id_uuid && byId.get(row.parent_id_uuid)) || null,
     }));

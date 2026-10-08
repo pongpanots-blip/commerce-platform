@@ -1,5 +1,6 @@
 import { SalesRepIdentity } from './application/sales-rep-identity.service';
 import { Module } from '@nestjs/common';
+import { COMMERCE_JWT_ISSUER } from '../../../shared-kernel/presentation/jwt-issuer';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/infrastructure/user.entity';
@@ -16,7 +17,8 @@ import { StaffAuthController } from './presentation/staff-auth.controller';
     TypeOrmModule.forFeature([User, AuditLog]),
     JwtModule.register({
       secret: process.env.PORTAL_JWT_SECRET || 'dev-portal-secret',
-      signOptions: { expiresIn: '12h' },
+      // issuer: tells commerce tokens apart from josh's without trying secrets (winback AdminWriteGuard).
+      signOptions: { expiresIn: '12h', issuer: COMMERCE_JWT_ISSUER },
     }),
   ],
   controllers: [StaffAuthController, StaffAccountsController],

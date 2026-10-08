@@ -48,7 +48,7 @@ function createService(overrides: Record<string, any> = {}) {
       },
     ]),
   };
-  const users = { find: jest.fn(async () => []) };
+  const users = { find: jest.fn(async () => []), query: jest.fn(async () => []) };
 
   const deps = { accounts, activities, stageHistory, acks, users, ...overrides };
   const service = new MeetingPrepService(
@@ -200,20 +200,13 @@ describe('MeetingPrepService per-rep stage timing', () => {
     await service.getLeadSignals({ salesUserId: 'sales-1', isManager: false });
 
     // No rep lookup at all — a sales user may only ever see their own figures.
-    expect(users.find).not.toHaveBeenCalledWith(
-      expect.objectContaining({ where: expect.objectContaining({ is_active: true }) }),
-    );
+    expect(users.query).not.toHaveBeenCalled();
   });
 
   it('resolves every active rep for a manager', async () => {
     const { service, users } = createService();
     await service.getLeadSignals({ salesUserId: 'mgr-1', isManager: true });
 
-    expect(users.find).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({ is_active: true }),
-        select: ['id'],
-      }),
-    );
+    expect(users.query).toHaveBeenCalledWith(expect.stringContaining("status = 'active'"), [['sale', 'sales', 'manager']]);
   });
 });

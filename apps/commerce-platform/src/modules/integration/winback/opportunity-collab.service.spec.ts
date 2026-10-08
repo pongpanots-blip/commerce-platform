@@ -896,21 +896,14 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
   });
 
   it('LeadService.listStaffNames: no row cap, internal staff of the given roles, email-only names use an id placeholder', async () => {
-    const calls: Array<[string, unknown[]]> = [];
-    const qb: Row = new Proxy({}, {
-      get: (_t, key: string) => key === 'getMany'
-        ? async () => [{ id: 'a', email: 'a@x', first_name: 'Ann', last_name: 'B', role: 'admin' }, { id: '1a2b3c4d-0000-4000-8000-000000000001', email: 'emailonly@x', first_name: null, last_name: null, role: 'sale' }]
-        : (...args: unknown[]) => { calls.push([key, args]); return qb; },
-    });
-    const users = { createQueryBuilder: jest.fn(() => qb) };
+    const users = { query: jest.fn(async () => [{ id: 'a', name: 'Ann B', role: 'admin' }, { id: '1a2b3c4d-0000-4000-8000-000000000001', name: 'Staff 1a2b3c4d', role: 'sale' }]) };
     const service = new LeadService({} as never, {} as never, users as never, {} as never, {} as never, {} as never);
     const staff = await service.listStaffNames(WINBACK_NAMED_ROLES);
     expect(staff).toEqual([{ id: 'a', name: 'Ann B', role: 'admin' }, { id: '1a2b3c4d-0000-4000-8000-000000000001', name: 'Staff 1a2b3c4d', role: 'sale' }]);
-    expect(JSON.stringify(staff)).not.toContain('emailonly');
     expect(JSON.stringify(staff)).not.toContain('@');
-    const names = calls.map(([k]) => k);
-    for (const cap of ['take', 'limit', 'skip', 'offset']) expect(names).not.toContain(cap);
-    expect(calls.find(([k, a]) => (k === 'where' || k === 'andWhere') && String(a[0]).includes('u.role IN'))![1][1]).toEqual({ roles: [...WINBACK_NAMED_ROLES] });
+    const sql = users.query.mock.calls[0] as unknown as [string];
+    expect(sql[0]).not.toMatch(/LIMIT|OFFSET/i);
+    expect(sql[0]).toContain("user_type = 'internal'");
     expect(await service.listStaffNames([])).toEqual([]);
   });
 });

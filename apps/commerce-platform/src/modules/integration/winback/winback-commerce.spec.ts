@@ -13,7 +13,8 @@ describe('winback in commerce', () => {
   afterEach(() => { process.env = { ...saved }; });
 
   describe('AdminWriteGuard (josh access token, checked on the replica)', () => {
-    const token = (claims: Record<string, unknown>, secret = SECRET) => new JwtService({ secret }).sign(claims);
+    // josh access tokens always carry companyId + tokenVersion (josh AuthService.signAccessToken); the guard routes on that shape.
+    const token = (claims: Record<string, unknown>, secret = SECRET) => new JwtService({ secret }).sign({ companyId: null, tokenVersion: 0, ...claims });
     const replica = (row: unknown) => ({ configured: true, query: jest.fn().mockResolvedValue(row ? [row] : []) });
 
     beforeEach(() => { process.env.JOSH_JWT_SECRET = SECRET; });
@@ -39,7 +40,7 @@ describe('winback in commerce', () => {
 
     it('is closed (503) when this server cannot check josh tokens', async () => {
       delete process.env.JOSH_JWT_SECRET;
-      await expect(new AdminWriteGuard(replica(null) as never).canActivate(ctx({ headers: {} }))).rejects.toBeInstanceOf(ServiceUnavailableException);
+      await expect(new AdminWriteGuard(replica(null) as never).canActivate(ctx({ headers: { authorization: `Bearer ${token({ sub: 'u1', role: 'sales' })}` } }))).rejects.toBeInstanceOf(ServiceUnavailableException);
     });
   });
 

@@ -51,7 +51,7 @@ export class CommercialService {
 
   // --- quotes ---
 
-  private quoteView(r: WinbackAppRecord, today = bangkokToday()) {
+  private quoteView(r: WinbackAppRecord, today = bangkokToday()): Payload {
     const v = this.store.view(r);
     return { ...v, status_at: quoteStatusAt(String(r.status), String(r.payload.valid_until), today) };
   }

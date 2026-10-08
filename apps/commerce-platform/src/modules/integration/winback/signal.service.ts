@@ -93,7 +93,7 @@ export class SignalService {
   }
 
   /** Record only: completing a signal logs no activity and creates no order. */
-  complete(actor: WinbackActor, accountId: string, dto: CompleteSignalDto) {
+  async complete(actor: WinbackActor, accountId: string, dto: CompleteSignalDto) {
     return this.act(actor, accountId, {
       status: WinbackSignalStatus.COMPLETED,
       outcome: dto.outcome,
@@ -101,13 +101,13 @@ export class SignalService {
     });
   }
 
-  snooze(actor: WinbackActor, accountId: string, dto: SnoozeSignalDto) {
+  async snooze(actor: WinbackActor, accountId: string, dto: SnoozeSignalDto) {
     const until = bangkokDay(dto.until);
     if (until <= bangkokToday()) throw new BadRequestException('until ต้องเป็นวันในอนาคต');
     return this.act(actor, accountId, { status: WinbackSignalStatus.OPEN, snoozed_until: until });
   }
 
-  dismiss(actor: WinbackActor, accountId: string, dto: DismissSignalDto) {
+  async dismiss(actor: WinbackActor, accountId: string, dto: DismissSignalDto) {
     const reason = dto.reason.trim();
     if (!reason) throw new BadRequestException('reason ต้องไม่ว่าง');
     return this.act(actor, accountId, { status: WinbackSignalStatus.DISMISSED, reason });

@@ -26,18 +26,23 @@ import {
   WINBACK_ACTIVITY_OUTCOMES,
   WINBACK_ACTIVITY_TYPES,
   WINBACK_APPOINTMENT_PLACES,
+  WINBACK_COLLAB_LOG_EVENTS,
+  WINBACK_COLLAB_REQUEST_KINDS,
   WINBACK_APPOINTMENT_PURPOSES,
   WINBACK_DAILY_REPORT_STATUSES,
   WINBACK_NEXT_ACTIONS,
+  WINBACK_OPPORTUNITY_PURPOSES,
   WINBACK_OPPORTUNITY_SEGMENTS,
   WINBACK_OPPORTUNITY_TABS,
   WINBACK_PRODUCT_REACTIONS,
   WINBACK_QUOTE_DISPATCH_CHANNELS,
   WINBACK_QUOTE_STATUSES,
+  WINBACK_RECOMMENDATION_REASONS,
   WINBACK_SIGNAL_STATUSES,
   WINBACK_STAGES,
   WINBACK_WORK_PLAN_STEPS,
   WinbackActivityOutcome,
+  WinbackCollabRequestStatus,
 } from '../winback.enums';
 
 /** `a,b,c` (or a repeated query key) → `['a','b','c']`; empty → undefined. */
@@ -75,10 +80,74 @@ export class OpportunityQueryDto {
   @IsOptional() @IsIn(['sales_priority_desc']) sort?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page = 1;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit = 20;
+  // §4.11.8 filter metadata — applied in SQL before the candidate cap, pagination and tab counts.
+  @IsOptional() @IsIn(WINBACK_STAGES) stage?: string;
+  @IsOptional() @IsIn(WINBACK_OPPORTUNITY_PURPOSES) purpose?: string;
+  @IsOptional() @IsIn(WINBACK_RECOMMENDATION_REASONS) recommendation?: string;
+  /** Coordination owner. A sales user may only pass their own id (403 otherwise). */
+  @IsOptional() @IsUUID() owner_sales_user_id?: string;
+  /** Only opportunities with no owner; 400 together with `owner_sales_user_id`. */
+  @IsOptional() @Transform(toOptionalBoolean) @IsBoolean() unassigned_only?: boolean;
 }
 
 export class OpportunityProvinceQueryDto {
   @IsOptional() @IsString() @MaxLength(100) search?: string;
+}
+
+// --- Opportunity filter metadata + collaboration (§4.11.8, record-only) ---
+
+export class UpdateOpportunityMetaDto {
+  /** At least one of `stage` / `purpose`. Record-only: a converted account's own stage is not touched. */
+  @IsOptional() @IsIn(WINBACK_STAGES) stage?: string;
+  @IsOptional() @IsIn(WINBACK_OPPORTUNITY_PURPOSES) purpose?: string;
+  /** The `version` the caller last read (0 = nothing stored yet); 409 when it moved on. */
+  @IsOptional() @Type(() => Number) @IsInt() @Min(0) expected_version?: number;
+}
+
+export class CreateCollabRequestDto {
+  @IsIn(WINBACK_COLLAB_REQUEST_KINDS) kind: string;
+  @IsUUID() recipient_id: string;
+  @IsString() @MinLength(1) @MaxLength(1000) reason: string;
+}
+
+/** `approved` / `rejected`: the recipient or a manager · `cancelled`: the requester or a manager. */
+export const COLLAB_RESOLUTIONS = [
+  WinbackCollabRequestStatus.APPROVED,
+  WinbackCollabRequestStatus.REJECTED,
+  WinbackCollabRequestStatus.CANCELLED,
+];
+
+export class ResolveCollabRequestDto {
+  @IsIn(COLLAB_RESOLUTIONS) status: string;
+  @IsString() @MinLength(1) @MaxLength(1000) note: string;
+}
+
+export class CollabMessageDto {
+  @IsUUID() recipient_id: string;
+  @IsString() @MinLength(1) @MaxLength(1000) text: string;
+  @IsOptional() @IsBoolean() is_call_note?: boolean;
+}
+
+/** `YYYY-MM-DD` (a Bangkok day) or an ISO date-time that carries its zone (`Z` / `±hh:mm`). */
+const DAY_OR_ZONED_ISO = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?(Z|[+-]\d{2}:\d{2}))?$/;
+
+/** Collaboration audit log paging (manager only): newest first. */
+export class CollabLogPageDto {
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) page = 1;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit = 50;
+}
+
+export class CollabLogQueryDto extends CollabLogPageDto {
+  @IsOptional() @IsUUID() opportunity_id?: string;
+  @IsOptional() @IsUUID() actor_id?: string;
+  @IsOptional() @IsUUID() target_user_id?: string;
+  /** Actor OR target. */
+  @IsOptional() @IsUUID() user_id?: string;
+  /** `request_created,owner_changed` (or a repeated key). */
+  @IsOptional() @Transform(toList) @IsArray() @ArrayMaxSize(20) @IsIn(WINBACK_COLLAB_LOG_EVENTS, { each: true }) event?: string[];
+  /** Inclusive; a day is read in Bangkok (`to` = through the end of that day). */
+  @IsOptional() @Matches(DAY_OR_ZONED_ISO, { message: 'from must be YYYY-MM-DD or an ISO date-time with a zone' }) from?: string;
+  @IsOptional() @Matches(DAY_OR_ZONED_ISO, { message: 'to must be YYYY-MM-DD or an ISO date-time with a zone' }) to?: string;
 }
 
 // --- Revenue signals ---

@@ -4,6 +4,10 @@ import { validate } from 'class-validator';
 import {
   ActivityDraftDto,
   AppointmentPlanDto,
+  CollabLogPageDto,
+  CollabLogQueryDto,
+  CollabMessageDto,
+  CreateCollabRequestDto,
   CompleteSignalDto,
   CreateCoachingTaskDto,
   DiscoveryQueryDto,
@@ -12,10 +16,12 @@ import {
   OpportunityQueryDto,
   QuoteDispatchDto,
   QuoteTermsCatalogDto,
+  ResolveCollabRequestDto,
   ReviewDailyReportDto,
   SaveQuoteDto,
   SignalQueryDto,
   TeamDto,
+  UpdateOpportunityMetaDto,
   VisitCompletionDto,
   VisitStartEvidenceDto,
   WorkPlanDto,
@@ -43,6 +49,67 @@ describe('app gap DTOs', () => {
     expect((await check(OpportunityQueryDto, { province_codes: 'Bangkok' })).fields).toEqual(['province_codes']);
     expect((await check(OpportunityQueryDto, { segments: 'thai' })).fields).toEqual(['segments']);
     expect((await check(OpportunityQueryDto, { limit: '101' })).fields).toEqual(['limit']);
+  });
+
+  it('opportunity query (§4.11.8): stage / purpose / recommendation enums, owner UUID, unassigned_only boolean', async () => {
+    const { dto, fields } = await check(OpportunityQueryDto, {
+      stage: 'negotiate', purpose: 'winback', recommendation: 'needs_research', owner_sales_user_id: UUID, unassigned_only: 'false',
+    });
+    expect(fields).toEqual([]);
+    expect(dto).toMatchObject({ stage: 'negotiate', purpose: 'winback', recommendation: 'needs_research', owner_sales_user_id: UUID, unassigned_only: false });
+    expect((await check(OpportunityQueryDto, { unassigned_only: 'true' })).dto.unassigned_only).toBe(true);
+    expect((await check(OpportunityQueryDto, { stage: 'hot' })).fields).toEqual(['stage']);
+    expect((await check(OpportunityQueryDto, { purpose: 'upsell' })).fields).toEqual(['purpose']);
+    expect((await check(OpportunityQueryDto, { recommendation: 'urgent' })).fields).toEqual(['recommendation']);
+    expect((await check(OpportunityQueryDto, { owner_sales_user_id: 'rep-1' })).fields).toEqual(['owner_sales_user_id']);
+    // not offered: restaurant_place has no cuisine / district code (whitelist drops them)
+    expect((await check(OpportunityQueryDto, { cuisine_id: UUID, district_codes: '1001' })).dto).not.toHaveProperty('cuisine_id');
+  });
+
+  it('opportunity meta PATCH + collaboration bodies', async () => {
+    expect((await check(UpdateOpportunityMetaDto, { stage: 'won', purpose: 'expansion', expected_version: '0' })).dto.expected_version).toBe(0);
+    expect((await check(UpdateOpportunityMetaDto, { stage: 'hot' })).fields).toEqual(['stage']);
+    expect((await check(UpdateOpportunityMetaDto, { purpose: 'x' })).fields).toEqual(['purpose']);
+    expect((await check(UpdateOpportunityMetaDto, { expected_version: -1 })).fields).toEqual(['expected_version']);
+    expect((await check(CreateCollabRequestDto, { kind: 'handoff', recipient_id: UUID, reason: 'r' })).fields).toEqual([]);
+    expect((await check(CreateCollabRequestDto, { kind: 'transfer', recipient_id: 'x', reason: '' })).fields).toEqual(['kind', 'recipient_id', 'reason']);
+    expect((await check(CreateCollabRequestDto, { kind: 'coordinate', recipient_id: UUID, reason: 'r'.repeat(1001) })).fields).toEqual(['reason']);
+    expect((await check(ResolveCollabRequestDto, { status: 'approved', note: 'ok' })).fields).toEqual([]);
+    expect((await check(ResolveCollabRequestDto, { status: 'pending', note: '' })).fields).toEqual(['status', 'note']);
+    expect((await check(CollabMessageDto, { recipient_id: UUID, text: 'hi', is_call_note: true })).fields).toEqual([]);
+    expect((await check(CollabMessageDto, { recipient_id: UUID, text: '', is_call_note: 'yes' })).fields).toEqual(['text', 'is_call_note']);
+  });
+
+  it('uppercase UUIDs pass validation unchanged (the services normalise them — §4.11.8 UUID case)', async () => {
+    const UP = 'ABCDEF00-0000-4000-8000-0000000000A1';
+    const body = await check(CreateCollabRequestDto, { kind: 'handoff', recipient_id: UP, reason: 'r' });
+    expect(body.fields).toEqual([]);
+    expect(body.dto.recipient_id).toBe(UP);
+    const q = await check(CollabLogQueryDto, { opportunity_id: UP, actor_id: UP, target_user_id: UP, user_id: UP });
+    expect(q.fields).toEqual([]);
+    expect(q.dto.opportunity_id).toBe(UP);
+    expect((await check(OpportunityQueryDto, { owner_sales_user_id: UP })).fields).toEqual([]);
+  });
+
+  it('collaboration log query: defaults, UUID filters, event list, Bangkok day or zoned ISO', async () => {
+    expect((await check(CollabLogQueryDto, {})).dto).toMatchObject({ page: 1, limit: 50 });
+    const ok = await check(CollabLogQueryDto, {
+      opportunity_id: UUID, actor_id: UUID, target_user_id: UUID, user_id: UUID, event: 'request_created, owner_changed',
+      from: '2026-10-08', to: '2026-10-08T23:59:59.999+07:00', page: '2', limit: '100',
+    });
+    expect(ok.fields).toEqual([]);
+    expect(ok.dto).toMatchObject({ event: ['request_created', 'owner_changed'], page: 2, limit: 100 });
+    expect((await check(CollabLogQueryDto, { event: 'request_created,deleted' })).fields).toEqual(['event']);
+    expect((await check(CollabLogQueryDto, { opportunity_id: 'p1', actor_id: 'x', target_user_id: 'y', user_id: 'z' })).fields)
+      .toEqual(['opportunity_id', 'actor_id', 'target_user_id', 'user_id']);
+    expect((await check(CollabLogQueryDto, { from: '08/10/2026', to: '2026-10-08T10:00' })).fields).toEqual(['from', 'to']);
+    expect((await check(CollabLogQueryDto, { from: '2026-10-08T10:00:00Z' })).fields).toEqual([]);
+    expect((await check(CollabLogQueryDto, { limit: '101' })).fields).toEqual(['limit']);
+    expect((await check(CollabLogQueryDto, { page: '0' })).fields).toEqual(['page']);
+    expect((await check(CollabLogPageDto, { page: '3' })).dto).toMatchObject({ page: 3, limit: 50 });
+    expect((await check(CollabLogPageDto, { limit: '0' })).fields).toEqual(['limit']);
+    // `superseded` is server-only: a client cannot resolve a request to it
+    expect((await check(ResolveCollabRequestDto, { status: 'superseded', note: 'x' })).fields).toEqual(['status']);
   });
 
   it('signals: status enum, ordered is not a completion outcome, dismiss needs a reason', async () => {

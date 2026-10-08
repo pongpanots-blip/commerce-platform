@@ -18,7 +18,9 @@ const manager = { user: { sub: 'mgr-1', role: 'manager' } } as any;
 const UUID = '00000000-0000-4000-8000-000000000001';
 
 function createController() {
-  const opportunities = { list: jest.fn(), provinces: jest.fn(), detail: jest.fn(), convert: jest.fn() };
+  const opportunities = {
+    list: jest.fn(), provinces: jest.fn(), convert: jest.fn(), filterMeta: jest.fn(), accountOpportunities: jest.fn(),
+  };
   const signals = { list: jest.fn(), complete: jest.fn(), snooze: jest.fn(), dismiss: jest.fn(), revenueContext: jest.fn() };
   const catalog = { listProducts: jest.fn() };
   const records = new Proxy({} as Record<string, jest.Mock>, {
@@ -27,14 +29,18 @@ function createController() {
   const commercial = new Proxy({} as Record<string, jest.Mock>, {
     get: (target, key: string) => (target[key] ??= jest.fn()),
   });
+  const collab = new Proxy({} as Record<string, jest.Mock>, {
+    get: (target, key: string) => (target[key] ??= jest.fn()),
+  });
   const controller = new WinbackAppController(
     opportunities as any,
     signals as any,
     catalog as any,
     records as any,
     commercial as any,
+    collab as any,
   );
-  return { controller, opportunities, signals, catalog, records, commercial };
+  return { controller, opportunities, signals, catalog, records, commercial, collab };
 }
 
 function routes() {
@@ -69,6 +75,8 @@ describe('WinbackAppController contract', () => {
       ['syncRuns', (c: WinbackAppController) => c.syncRuns(sale, { limit: 20 })],
       ['saveQuoteTerms', (c: WinbackAppController) => c.saveQuoteTerms(sale, {} as any)],
       ['reviewDailyReport', (c: WinbackAppController) => c.reviewDailyReport(sale, UUID, '2026-10-08', {} as any)],
+      ['collaborationLogs', (c: WinbackAppController) => c.collaborationLogs(sale, { page: 1, limit: 50 } as any)],
+      ['opportunityCollaborationLogs', (c: WinbackAppController) => c.opportunityCollaborationLogs(sale, UUID, { page: 1, limit: 50 } as any)],
     ])('%s is manager-only (403 for a sale)', (_name, call) => {
       const { controller } = createController();
       expect(() => call(controller)).toThrow(ForbiddenException);
@@ -84,6 +92,76 @@ describe('WinbackAppController contract', () => {
       expect(commercial.invoiceEvidence).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, { limit: 100 });
       controller.teams(manager);
       expect(records.listTeams).toHaveBeenCalled();
+    });
+
+    it('§4.11.8: list / filter-meta / meta and collaboration writes get the caller as actor', () => {
+      const { controller, opportunities, collab } = createController();
+      controller.listOpportunities(sale, { page: 1, limit: 20, owner_sales_user_id: UUID } as any);
+      expect(opportunities.list).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, { page: 1, limit: 20, owner_sales_user_id: UUID });
+      controller.opportunityFilterMeta(manager);
+      expect(opportunities.filterMeta).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true });
+      controller.updateOpportunityMeta(sale, UUID, { stage: 'contacted', expected_version: 0 });
+      expect(collab.updateMeta).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { stage: 'contacted', expected_version: 0 });
+      controller.createCollabRequest(sale, UUID, { kind: 'handoff', recipient_id: UUID, reason: 'r' });
+      expect(collab.createRequest).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { kind: 'handoff', recipient_id: UUID, reason: 'r' });
+      controller.resolveCollabRequest(manager, UUID, UUID, { status: 'approved', note: 'ok' });
+      expect(collab.resolveRequest).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true }, UUID, UUID, { status: 'approved', note: 'ok' });
+      controller.postCollabMessage(sale, UUID, { recipient_id: UUID, text: 't' });
+      expect(collab.postMessage).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { recipient_id: UUID, text: 't' });
+      controller.collaborationDirectory();
+      expect(collab.directory).toHaveBeenCalled();
+    });
+
+    it('§4.11.8 visibility: detail / meta / thread / account opportunities get the caller (scoped in the service)', () => {
+      const { controller, opportunities, collab } = createController();
+      controller.opportunity(sale, UUID);
+      expect(collab.detail).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+      controller.opportunityMeta(sale, UUID);
+      expect(collab.meta).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+      controller.opportunityCollaboration(manager, UUID);
+      expect(collab.collaboration).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true }, UUID);
+      controller.accountOpportunities(sale, UUID);
+      expect(opportunities.accountOpportunities).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+    });
+
+    it('a caller without a JWT sub reaches the service with an empty id (the service answers 403 on writes)', () => {
+      const { controller, collab } = createController();
+      const noSub = { user: { role: 'sale' } } as any;
+      controller.postCollabMessage(noSub, UUID, { recipient_id: UUID, text: 't' });
+      expect(collab.postMessage).toHaveBeenCalledWith({ id: '', isManager: false }, UUID, { recipient_id: UUID, text: 't' });
+    });
+
+    it('collaboration logs: 403 message for a sale, the query goes through for a manager', () => {
+      const { controller, collab } = createController();
+      expect(() => controller.collaborationLogs(sale, { page: 1, limit: 50 } as any)).toThrow('เฉพาะ manager ที่ดูบันทึกการประสานงานได้');
+      expect(collab.logs).not.toHaveBeenCalled();
+      expect(collab.opportunityLogs).not.toHaveBeenCalled();
+      const q = { page: 2, limit: 10, opportunity_id: UUID, event: ['owner_changed'], from: '2026-10-08' };
+      controller.collaborationLogs(manager, q as any);
+      expect(collab.logs).toHaveBeenCalledWith(q);
+      controller.opportunityCollaborationLogs(manager, UUID, { page: 1, limit: 50 } as any);
+      expect(collab.opportunityLogs).toHaveBeenCalledWith(UUID, { page: 1, limit: 50 });
+    });
+
+    it('collaboration log routes are GETs that no other route shadows', () => {
+      const r = routes();
+      expect(r).toEqual(expect.arrayContaining([
+        'GET /winback/collaboration/logs → collaborationLogs',
+        'GET /winback/opportunities/:id/collaboration/logs → opportunityCollaborationLogs',
+      ]));
+      // same depth, same method, declared earlier would win — only the PATCH :requestId route is that deep
+      expect(r.filter((x) => /^GET \/winback\/opportunities\/:id\/collaboration\/[^/]+ /.test(x))).toEqual([
+        'GET /winback/opportunities/:id/collaboration/logs → opportunityCollaborationLogs',
+      ]);
+      expect(r.filter((x) => /^GET \/winback\/collaboration\/[^/]+ /.test(x))).toEqual([
+        'GET /winback/collaboration/directory → collaborationDirectory',
+        'GET /winback/collaboration/logs → collaborationLogs',
+      ]);
+    });
+
+    it('filter-meta is declared before opportunities/:id (else ParseUUIDPipe would 400 it)', () => {
+      const r = routes();
+      expect(r.findIndex((x) => x.includes('opportunities/filter-meta'))).toBeLessThan(r.findIndex((x) => x.startsWith('GET /winback/opportunities/:id ')));
     });
 
     it('convert stamps the caller as the lead creator', () => {
@@ -114,7 +192,59 @@ describe('WinbackAppController contract', () => {
         pagination: { page: 1, limit: 20, total: 1 },
         counts: { recommended: 1, near_warehouse: 0, needs_enrich: 3 },
       });
-      expect(wrapWinbackResponse(await controller.listOpportunities({ page: 1, limit: 20 } as any))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.listOpportunities(sale, { page: 1, limit: 20 } as any))).toMatchSnapshot();
+    });
+
+    it('opportunity meta + filter-meta + collaboration (§4.11.8)', async () => {
+      const { controller, opportunities, collab } = createController();
+      collab.meta.mockResolvedValue({
+        opportunity_id: UUID, stage: 'prospect', purpose: 'new_product', owner_sales_user_id: null, owner_name: null,
+        cuisine_id: null, district_code: null, source: 'derived', version: 0, updated_at: null,
+        recommendation: {
+          reason: 'needs_research', reason_detail: 'ข้อมูลร้านยังไม่ครบ (ยังไม่มีช่วงราคาต่อหัว)', suggestion: 'เก็บข้อมูลร้านก่อนประเมินการเสนอขาย',
+          urgency: 'research', source: 'restaurant_place', source_date: '2026-09-01T00:00:00.000Z', historical_monthly_purchase_baht: null,
+          purchase_evidence: null, proposal_monthly_estimate_baht: null, product_summary: null,
+        },
+      });
+      opportunities.filterMeta.mockResolvedValue({
+        stages: [{ value: 'prospect', count: 3 }], purposes: [{ value: 'new_product', count: 3 }],
+        recommendation_reasons: [{ value: 'needs_research', count: 1 }], owners: [{ sales_user_id: 'sales-1', name: 'Rep One', count: 1 }],
+        unassigned_count: 2,
+      });
+      collab.collaboration.mockResolvedValue({
+        opportunity_id: UUID, owner_sales_user_id: 'sales-1', owner_name: 'Rep One', revision: 2,
+        requests: [{
+          id: UUID, kind: 'handoff', requester_id: 'sales-2', requester_name: 'Rep Two', recipient_id: 'sales-1', recipient_name: 'Rep One',
+          reason: 'ช่วยดูแลต่อ', created_at: '2026-10-08T00:00:00.000Z', status: 'approved', resolution_note: 'รับ',
+          resolved_by_id: 'sales-1', resolved_by_name: 'Rep One', resolved_at: '2026-10-08T01:00:00.000Z',
+        }],
+        messages: [{
+          id: UUID, author_id: 'sales-1', author_name: 'Rep One', recipient_id: 'sales-2', recipient_name: 'Rep Two',
+          text: 'โทรแล้ว', is_call_note: true, created_at: '2026-10-08T02:00:00.000Z',
+        }],
+      });
+      opportunities.accountOpportunities.mockResolvedValue([UUID]);
+      collab.directory.mockResolvedValue([{ id: 'sales-1', name: 'Rep One' }]);
+      expect(wrapWinbackResponse(await controller.opportunityMeta(sale, UUID))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.opportunityFilterMeta(sale))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.opportunityCollaboration(sale, UUID))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.accountOpportunities(sale, UUID))).toEqual({ data: [UUID] });
+      expect(wrapWinbackResponse(await controller.collaborationDirectory())).toEqual({ data: [{ id: 'sales-1', name: 'Rep One' }] });
+    });
+
+    it('collaboration log page ({ data, meta } passes through, camelCased)', async () => {
+      const { controller, collab } = createController();
+      collab.logs.mockResolvedValue({
+        data: [{
+          id: UUID, event: 'owner_changed', opportunity_id: UUID, opportunity_name: 'ร้านวัฒนา', account_id: null, account_name: null,
+          actor_id: 'mgr-1', actor_name: 'Mgr One', target_user_id: 'sales-1', target_user_name: 'Rep One', request_id: UUID,
+          request_kind: 'handoff', note: null,
+          changes: { owner: { from: 'sales-2', to: 'sales-1', from_name: 'Rep Two', to_name: 'Rep One' } },
+          created_at: '2026-10-08T03:00:00.000Z',
+        }],
+        meta: { page: 1, limit: 50, total: 1 },
+      });
+      expect(wrapWinbackResponse(await controller.collaborationLogs(manager, { page: 1, limit: 50 } as any))).toMatchSnapshot();
     });
 
     it('convert', async () => {

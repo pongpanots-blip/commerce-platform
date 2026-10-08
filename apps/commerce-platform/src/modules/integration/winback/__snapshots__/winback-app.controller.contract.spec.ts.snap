@@ -1,5 +1,41 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) collaboration log page ({ data, meta } passes through, camelCased) 1`] = `
+{
+  "data": [
+    {
+      "accountId": null,
+      "accountName": null,
+      "actorId": "mgr-1",
+      "actorName": "Mgr One",
+      "changes": {
+        "owner": {
+          "from": "sales-2",
+          "fromName": "Rep Two",
+          "to": "sales-1",
+          "toName": "Rep One",
+        },
+      },
+      "createdAt": "2026-10-08T03:00:00.000Z",
+      "event": "owner_changed",
+      "id": "00000000-0000-4000-8000-000000000001",
+      "note": null,
+      "opportunityId": "00000000-0000-4000-8000-000000000001",
+      "opportunityName": "ร้านวัฒนา",
+      "requestId": "00000000-0000-4000-8000-000000000001",
+      "requestKind": "handoff",
+      "targetUserId": "sales-1",
+      "targetUserName": "Rep One",
+    },
+  ],
+  "meta": {
+    "limit": 50,
+    "page": 1,
+    "total": 1,
+  },
+}
+`;
+
 exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) convert 1`] = `
 {
   "data": {
@@ -53,6 +89,108 @@ exports[`WinbackAppController contract envelope (wrapWinbackResponse over the se
       "page": 1,
       "total": 1,
     },
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) opportunity meta + filter-meta + collaboration (§4.11.8) 1`] = `
+{
+  "data": {
+    "cuisineId": null,
+    "districtCode": null,
+    "opportunityId": "00000000-0000-4000-8000-000000000001",
+    "ownerName": null,
+    "ownerSalesUserId": null,
+    "purpose": "new_product",
+    "recommendation": {
+      "historicalMonthlyPurchaseBaht": null,
+      "productSummary": null,
+      "proposalMonthlyEstimateBaht": null,
+      "purchaseEvidence": null,
+      "reason": "needs_research",
+      "reasonDetail": "ข้อมูลร้านยังไม่ครบ (ยังไม่มีช่วงราคาต่อหัว)",
+      "source": "restaurant_place",
+      "sourceDate": "2026-09-01T00:00:00.000Z",
+      "suggestion": "เก็บข้อมูลร้านก่อนประเมินการเสนอขาย",
+      "urgency": "research",
+    },
+    "source": "derived",
+    "stage": "prospect",
+    "updatedAt": null,
+    "version": 0,
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) opportunity meta + filter-meta + collaboration (§4.11.8) 2`] = `
+{
+  "data": {
+    "owners": [
+      {
+        "count": 1,
+        "name": "Rep One",
+        "salesUserId": "sales-1",
+      },
+    ],
+    "purposes": [
+      {
+        "count": 3,
+        "value": "new_product",
+      },
+    ],
+    "recommendationReasons": [
+      {
+        "count": 1,
+        "value": "needs_research",
+      },
+    ],
+    "stages": [
+      {
+        "count": 3,
+        "value": "prospect",
+      },
+    ],
+    "unassignedCount": 2,
+  },
+}
+`;
+
+exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) opportunity meta + filter-meta + collaboration (§4.11.8) 3`] = `
+{
+  "data": {
+    "messages": [
+      {
+        "authorId": "sales-1",
+        "authorName": "Rep One",
+        "createdAt": "2026-10-08T02:00:00.000Z",
+        "id": "00000000-0000-4000-8000-000000000001",
+        "isCallNote": true,
+        "recipientId": "sales-2",
+        "recipientName": "Rep Two",
+        "text": "โทรแล้ว",
+      },
+    ],
+    "opportunityId": "00000000-0000-4000-8000-000000000001",
+    "ownerName": "Rep One",
+    "ownerSalesUserId": "sales-1",
+    "requests": [
+      {
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kind": "handoff",
+        "reason": "ช่วยดูแลต่อ",
+        "recipientId": "sales-1",
+        "recipientName": "Rep One",
+        "requesterId": "sales-2",
+        "requesterName": "Rep Two",
+        "resolutionNote": "รับ",
+        "resolvedAt": "2026-10-08T01:00:00.000Z",
+        "resolvedById": "sales-1",
+        "resolvedByName": "Rep One",
+        "status": "approved",
+      },
+    ],
+    "revision": 2,
   },
 }
 `;
@@ -186,8 +324,19 @@ exports[`WinbackAppController contract route table 1`] = `
 [
   "GET /winback/opportunities → listOpportunities",
   "GET /winback/opportunities/provinces → opportunityProvinces",
+  "GET /winback/opportunities/filter-meta → opportunityFilterMeta",
   "GET /winback/opportunities/:id → opportunity",
   "POST /winback/opportunities/:id/convert → convertOpportunity",
+  "GET /winback/opportunities/:id/meta → opportunityMeta",
+  "PATCH /winback/opportunities/:id/meta → updateOpportunityMeta",
+  "GET /winback/opportunities/:id/collaboration → opportunityCollaboration",
+  "POST /winback/opportunities/:id/collaboration → createCollabRequest",
+  "GET /winback/opportunities/:id/collaboration/logs → opportunityCollaborationLogs",
+  "POST /winback/opportunities/:id/collaboration/messages → postCollabMessage",
+  "PATCH /winback/opportunities/:id/collaboration/:requestId → resolveCollabRequest",
+  "GET /winback/account/:id/opportunities → accountOpportunities",
+  "GET /winback/collaboration/directory → collaborationDirectory",
+  "GET /winback/collaboration/logs → collaborationLogs",
   "GET /winback/signals → listSignals",
   "POST /winback/signals/:id/complete → completeSignal",
   "POST /winback/signals/:id/snooze → snoozeSignal",

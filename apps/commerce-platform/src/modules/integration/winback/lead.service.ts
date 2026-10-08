@@ -144,6 +144,29 @@ export class LeadService {
     }));
   }
 
+  /**
+   * Active internal staff with one of `roles`, id + display name (+ role), UNBOUNDED — unlike
+   * `listSalesUsers` (a picker capped at 100). For §4.11.8 recipient checks, `/collaboration/directory` and
+   * name resolution, which must see everyone. Same internal-user rule and order as `listSalesUsers`.
+   */
+  async listStaffNames(roles: readonly string[]): Promise<Array<{ id: string; name: string; role: string }>> {
+    if (!roles.length) return [];
+    const rows = await this.users
+      .createQueryBuilder('u')
+      .select(['u.id', 'u.email', 'u.first_name', 'u.last_name', 'u.role'])
+      .where('u.internal = true')
+      .andWhere('u.role IN (:...roles)', { roles: [...roles] })
+      .andWhere('u.is_active = true')
+      .orderBy('u.first_name', 'ASC')
+      .addOrderBy('u.email', 'ASC')
+      .getMany();
+    return rows.map((u) => ({
+      id: u.id,
+      name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
+      role: u.role,
+    }));
+  }
+
   async create(salesUserId: string, dto: CreateLeadDto): Promise<WinbackAccount> {
     const code = normalizeCustomerCode(
       dto.customer_code || `LEAD-${dto.phone || dto.restaurant_name || dto.display_name}`,

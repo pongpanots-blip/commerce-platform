@@ -16,6 +16,12 @@ export const WINBACK_MANAGER_ROLES = new Set(['platform_admin', 'admin', 'manage
  */
 export const WINBACK_ASSIGNABLE_ROLES = ['sale', 'sales', 'manager'] as const;
 
+/**
+ * Whose names the app resolves (collaboration requester / recipient / resolver, coordination owner, audit
+ * log actors): the sales team plus `admin` / `platform_admin`, who act as managers. Not a rep list.
+ */
+export const WINBACK_NAMED_ROLES = [...WINBACK_ASSIGNABLE_ROLES, 'admin', 'platform_admin'] as const;
+
 export function isWinbackManager(role: string | null | undefined): boolean {
   return !!role && WINBACK_MANAGER_ROLES.has(role);
 }

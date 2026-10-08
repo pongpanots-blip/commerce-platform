@@ -26,6 +26,7 @@ import { claimsFromBearer, RequestWithUser } from './winback.controller';
 import { isWinbackManager } from './winback-roles';
 import { WinbackResponseInterceptor } from './winback-response.interceptor';
 import { OpportunityService } from './opportunity.service';
+import { OpportunityCollabService } from './opportunity-collab.service';
 import { SignalService } from './signal.service';
 import { WinbackCatalogService } from './winback-catalog.service';
 import { AppRecordsService, SYNC_SOURCES, WinbackActor } from './app-records.service';
@@ -34,6 +35,10 @@ import {
   ActivityDraftDto,
   AppointmentPlanDto,
   CoachingTaskQueryDto,
+  CollabLogPageDto,
+  CollabLogQueryDto,
+  CollabMessageDto,
+  CreateCollabRequestDto,
   CompleteSignalDto,
   CreateCoachingTaskDto,
   DailyReportQueryDto,
@@ -49,6 +54,7 @@ import {
   QuoteFollowUpDto,
   QuoteQueryDto,
   QuoteTermsCatalogDto,
+  ResolveCollabRequestDto,
   ReviewDailyReportDto,
   SaveDailyReportDto,
   SaveQuoteDto,
@@ -58,6 +64,7 @@ import {
   SyncRunQueryDto,
   TeamDto,
   UpdateCoachingTaskDto,
+  UpdateOpportunityMetaDto,
   VisitCompletionDto,
   VisitStartEvidenceDto,
   WorkPlanDto,
@@ -65,6 +72,7 @@ import {
 } from './dto/app-gaps.dto';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
+const COLLAB_LOG_MANAGER_ONLY = 'เฉพาะ manager ที่ดูบันทึกการประสานงานได้';
 const uuid = () => new ParseUUIDPipe();
 
 /** A draft key is an account id or `standalone`. */
@@ -88,6 +96,7 @@ export class WinbackAppController {
     private readonly catalog: WinbackCatalogService,
     private readonly records: AppRecordsService,
     private readonly commercial: CommercialService,
+    private readonly collab: OpportunityCollabService,
   ) {}
 
   private actor(req: RequestWithUser): WinbackActor {
@@ -106,10 +115,10 @@ export class WinbackAppController {
 
   // --- Opportunities (Market Explorer places with no lead yet) ---
 
-  @ApiOperation({ summary: 'โอกาสการขาย: ร้านใน Market Explorer ที่ยังไม่มี lead — { items, pagination, counts }' })
+  @ApiOperation({ summary: 'โอกาสการขาย: ร้านใน Market Explorer ที่ยังไม่มี lead — { items (+ meta), pagination, counts }' })
   @Get('opportunities')
-  listOpportunities(@Query(pipe) q: OpportunityQueryDto) {
-    return this.opportunities.list(q);
+  listOpportunities(@Req() req: RequestWithUser, @Query(pipe) q: OpportunityQueryDto) {
+    return this.opportunities.list(this.actor(req), q);
   }
 
   @Get('opportunities/provinces')
@@ -117,15 +126,87 @@ export class WinbackAppController {
     return this.opportunities.provinces(q);
   }
 
+  /** นับตาม stage / purpose / recommendation / owner ร้านที่ยังไม่มี lead ที่ผู้เรียกมองเห็น (scope เดียวกับ list) — owners ของ sale = ตัวเองเท่านั้น */
+  @Get('opportunities/filter-meta')
+  opportunityFilterMeta(@Req() req: RequestWithUser) {
+    return this.opportunities.filterMeta(this.actor(req));
+  }
+
+  /** 403 on another rep's opportunity (same rule as its meta / thread — §4.11.8 visibility) */
   @Get('opportunities/:id')
-  opportunity(@Param('id', uuid()) id: string) {
-    return this.opportunities.detail(id);
+  opportunity(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.collab.detail(this.actor(req), id);
   }
 
   /** สร้าง TMP lead จากโอกาส (idempotent — แปลงแล้วคืน lead เดิม) */
   @Post('opportunities/:id/convert')
   convertOpportunity(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
     return this.opportunities.convert(this.actor(req).id, id);
+  }
+
+  // --- Opportunity filter metadata + collaboration (§4.11.8, record-only: nothing is sent or reassigned) ---
+  // Visibility: manager = every opportunity; anyone else = own + unassigned (+ reading / messaging / resolving
+  // on a thread where a request is addressed to them) — 403 `โอกาสนี้มีผู้ดูแลคนอื่น …` otherwise.
+
+  @Get('opportunities/:id/meta')
+  opportunityMeta(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.collab.meta(this.actor(req), id);
+  }
+
+  @Patch('opportunities/:id/meta')
+  updateOpportunityMeta(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: UpdateOpportunityMetaDto) {
+    return this.collab.updateMeta(this.actor(req), id, dto);
+  }
+
+  @Get('opportunities/:id/collaboration')
+  opportunityCollaboration(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.collab.collaboration(this.actor(req), id);
+  }
+
+  @Post('opportunities/:id/collaboration')
+  createCollabRequest(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: CreateCollabRequestDto) {
+    return this.collab.createRequest(this.actor(req), id, dto);
+  }
+
+  /** บันทึกการประสานงานของโอกาสนี้ (manager เท่านั้น) — `{ data, meta: { page, limit, total } }` ใหม่→เก่า */
+  @Get('opportunities/:id/collaboration/logs')
+  opportunityCollaborationLogs(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Query(pipe) q: CollabLogPageDto) {
+    this.manager(req, COLLAB_LOG_MANAGER_ONLY);
+    return this.collab.opportunityLogs(id, q);
+  }
+
+  @Post('opportunities/:id/collaboration/messages')
+  postCollabMessage(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: CollabMessageDto) {
+    return this.collab.postMessage(this.actor(req), id, dto);
+  }
+
+  @Patch('opportunities/:id/collaboration/:requestId')
+  resolveCollabRequest(
+    @Req() req: RequestWithUser,
+    @Param('id', uuid()) id: string,
+    @Param('requestId', uuid()) requestId: string,
+    @Body(pipe) dto: ResolveCollabRequestDto,
+  ) {
+    return this.collab.resolveRequest(this.actor(req), id, requestId, dto);
+  }
+
+  /** place id ที่แปลงเป็น account นี้ — เฉพาะที่ผู้เรียกมองเห็น (ของตัวเอง / ยังไม่มีผู้ดูแล; manager ทั้งหมด) */
+  @Get('account/:id/opportunities')
+  accountOpportunities(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.opportunities.accountOpportunities(this.actor(req), id);
+  }
+
+  /** รายชื่อเซลล์ให้เลือกผู้รับคำขอ/ข้อความ — `{ id, name }` เท่านั้น (ไม่มี email/phone/role) · sale ดู `/sales-users` ไม่ได้ */
+  @Get('collaboration/directory')
+  collaborationDirectory() {
+    return this.collab.directory();
+  }
+
+  /** บันทึกการประสานงานทุกโอกาส (manager เท่านั้น, append-only) — กรอง opportunity / actor / target / user / event / ช่วงวัน */
+  @Get('collaboration/logs')
+  collaborationLogs(@Req() req: RequestWithUser, @Query(pipe) q: CollabLogQueryDto) {
+    this.manager(req, COLLAB_LOG_MANAGER_ONLY);
+    return this.collab.logs(q);
   }
 
   // --- Revenue signals (id = account id) ---

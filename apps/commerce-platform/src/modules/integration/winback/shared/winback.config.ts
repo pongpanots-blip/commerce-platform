@@ -28,3 +28,8 @@ export const appConfig = {
     leadAgingDays: intEnv('WINBACK_LEAD_AGING_DAYS', 3),
   },
 };
+
+/** Legacy sign-in stays on until the account/link cutover is complete. */
+export function acceptsJoshJwt(): boolean {
+  return !['false', '0', 'off'].includes((process.env.WINBACK_ACCEPT_JOSH_JWT ?? '').trim().toLowerCase());
+}

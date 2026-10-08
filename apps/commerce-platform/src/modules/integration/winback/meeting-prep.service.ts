@@ -1,3 +1,4 @@
+import { listStaffRoster } from './shared/winback-staff-roster';
 import {
   BadRequestException,
   ForbiddenException,
@@ -211,10 +212,7 @@ export class MeetingPrepService {
     if (!scope.isManager) return new Set([scope.salesUserId]);
     if (requested) return new Set([requested]);
 
-    const reps = await this.users.find({
-      where: { role: In([...WINBACK_ASSIGNABLE_ROLES]), is_active: true },
-      select: ['id'],
-    });
+    const reps = await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES);
     return new Set(reps.map((u) => u.id));
   }
 
@@ -297,17 +295,8 @@ export class MeetingPrepService {
     const byId = new Map<string, string | null>();
     if (!ids.length) return byId;
 
-    const rows = await this.users.find({
-      where: { id: In(ids) },
-      select: ['id', 'first_name', 'last_name', 'email'],
-    });
-    for (const user of rows) {
-      const name = [user.first_name, user.last_name]
-        .filter((part) => !!part?.trim())
-        .join(' ')
-        .trim();
-      byId.set(user.id, name || user.email || null);
-    }
+    const rows = await listStaffRoster(this.users, WINBACK_ASSIGNABLE_ROLES);
+    for (const user of rows) if (ids.includes(user.id)) byId.set(user.id, user.name);
     return byId;
   }
 

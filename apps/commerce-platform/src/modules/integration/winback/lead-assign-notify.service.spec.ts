@@ -24,7 +24,7 @@ function build(existing: Partial<WinbackAccount>) {
   const service = new LeadService(
     accounts,
     {} as Repository<WinbackContact>,
-    {} as Repository<User>,
+    { query: jest.fn(async () => ['sale-1', 'sale-2', 'mgr-1'].map(id => ({ id, name: id, role: 'sale' }))) } as unknown as Repository<User>,
     {} as Repository<RestaurantPlace>,
     {} as MatchingService,
     notifications,

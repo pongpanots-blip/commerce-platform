@@ -25,7 +25,9 @@
     "image-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/image-parity.ts",
     "ordering-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/ordering-parity.ts",
     "migration:generate": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json typeorm-ts-node-commonjs migration:generate -d apps/commerce-platform/src/data-source.ts",
-    "seed:mock": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node scripts/seed-mock.ts"
+    "seed:mock": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node scripts/seed-mock.ts",
+    "winback-staff-backfill": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/winback-staff-backfill.ts",
+    "winback-staff-accounts-plan": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/winback-staff-accounts-plan.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1146.0",

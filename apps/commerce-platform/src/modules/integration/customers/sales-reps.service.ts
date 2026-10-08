@@ -1,3 +1,4 @@
+import { listStaffRoster, staffRosterSql } from '../winback/shared/winback-staff-roster';
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -16,7 +17,7 @@ export class CompanySalesRepAssigned extends DomainEvent<CompanySalesRepPayload>
 /**
  * Company → sales rep, owned by commerce from stage 2b (COMMERCE_OWNS_SALES_REPS, with josh COMMERCE_OWNS_CUSTOMERS).
  * josh CS-admin's assignSalesRep rules: the company must exist (here: in the import or the customer copy) and the rep
- * must be a josh staff member (staff copy, stage 2c); null clears. Answers in josh's shape so the hosted CS page is unchanged.
+ * must be an active sales rep in the commerce / unlinked Josh roster; null clears. Answers in josh's shape so the hosted CS page is unchanged.
  */
 @Injectable()
 export class SalesRepsService {
@@ -26,9 +27,8 @@ export class SalesRepsService {
   ) {}
 
   /** Assignment picker: only active internal reps, with no email / phone. Managers of commerce are not reps. */
-  list(): Promise<{ id: string; name: string }[]> {
-    return this.db.query(`SELECT id, trim(concat_ws(' ', first_name, last_name)) AS name FROM josh_staff
-      WHERE is_active AND user_type = 'internal' AND role IN ('sale', 'sales', 'manager') ORDER BY name, id`);
+  async list(): Promise<{ id: string; name: string }[]> {
+    return (await listStaffRoster(this.db, ['sale', 'sales', 'manager'])).map(({ id, name }) => ({ id, name }));
   }
 
   async assign(companyId: string, salesUserId: string | null) {
@@ -39,7 +39,7 @@ export class SalesRepsService {
          UNION ALL SELECT 1 FROM josh_customers WHERE data->>'company_id' = $1 AND deleted_at IS NULL LIMIT 1`, [companyId]);
       if (!company) throw new NotFoundException('ไม่พบบริษัท');
       if (salesUserId) {
-        const [rep] = await m.query(`SELECT 1 FROM josh_users WHERE id = $1 AND internal`, [salesUserId]);
+        const [rep] = await m.query(`SELECT 1 FROM (${staffRosterSql(['sale', 'sales', 'manager'])}) reps WHERE id = $2`, [['sale', 'sales', 'manager'], salesUserId]);
         if (!rep) throw new NotFoundException('ไม่พบพนักงานขาย');
       }
       await m.query(

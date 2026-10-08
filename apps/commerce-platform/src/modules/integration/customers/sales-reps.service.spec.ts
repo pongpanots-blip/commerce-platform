@@ -7,7 +7,7 @@ function setup({ company = true, rep = true } = {}) {
   const m = {
     query: jest.fn(async (sql: string) => {
       if (sql.includes('company_id')) return company ? [{}] : [];
-      if (sql.includes('FROM josh_users')) return rep ? [{}] : [];
+      if (sql.includes('FROM users')) return rep ? [{}] : [];
       return [];
     }),
   };
@@ -25,7 +25,7 @@ describe('SalesRepsService (stage 2b)', () => {
     await expect(setup().svc.assign(CO, REP)).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('404s an unknown company or a rep who is not josh staff, like josh', async () => {
+  it('404s an unknown company or an unavailable sales rep', async () => {
     await expect(setup({ company: false }).svc.assign(CO, REP)).rejects.toThrow('ไม่พบบริษัท');
     await expect(setup({ rep: false }).svc.assign(CO, REP)).rejects.toBeInstanceOf(NotFoundException);
   });

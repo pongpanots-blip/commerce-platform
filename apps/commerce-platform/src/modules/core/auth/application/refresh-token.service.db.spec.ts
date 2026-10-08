@@ -6,7 +6,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AuthRefreshToken } from '../infrastructure/auth-refresh-token.entity';
 import { User } from '../../user/infrastructure/user.entity';
-import { AuthRefreshToken1795700000000 } from '../../../../migrations/1795700000000-AuthRefreshToken';
+import { AuthRefreshToken1795800000000 } from '../../../../migrations/1795800000000-AuthRefreshToken';
 import { RefreshTokenService } from './refresh-token.service';
 
 /*
@@ -62,7 +62,7 @@ type Row = { id: string; family_id: string; used_at: Date | null; revoked_at: Da
     db = mod.get(DataSource);
     svc = mod.get(RefreshTokenService);
     const runner = db.createQueryRunner();
-    try { await new AuthRefreshToken1795700000000().up(runner); } finally { await runner.release(); }
+    try { await new AuthRefreshToken1795800000000().up(runner); } finally { await runner.release(); }
     await clean();
   });
   beforeEach(reset);

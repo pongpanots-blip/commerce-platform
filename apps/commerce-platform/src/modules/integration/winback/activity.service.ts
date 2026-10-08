@@ -15,6 +15,7 @@ import {
 import { isVisit, nextStageAfterActivity } from './activity.helpers';
 import { partitionCheckoutTypes } from './checkout.helpers';
 import { WinbackStage } from './winback.enums';
+import { maskWinbackAccountPii } from './winback-pii.helpers';
 
 @Injectable()
 export class ActivityService {
@@ -327,6 +328,7 @@ export class ActivityService {
   /**
    * Move a lead to a new stage and record WHY in its diary.
    * `note` is the reason for the move; rejection also carries a structured reason.
+   * Returns the account masked like `GET /account/:id` (phone, email, identity numbers).
    */
   async moveStage(
     accountId: string,
@@ -371,7 +373,7 @@ export class ActivityService {
     } else {
       await this.accounts.save(account);
     }
-    return account;
+    return maskWinbackAccountPii(account);
   }
 
   private async recordStageChange(

@@ -205,3 +205,49 @@ describe('ActivityService checkout', () => {
     ).rejects.toThrow('activity has no check-in');
   });
 });
+
+describe('ActivityService moveStage', () => {
+  const pii = {
+    phone: '0985496936',
+    email: 'somchai@gmail.com',
+    company_registration_num: '0105560000123',
+    register_number: '5412430744195',
+    id_card_number: '1100000000123',
+  };
+
+  it.each([
+    ['moves the stage', 'interested'],
+    ['re-saves the current stage', 'contacted'],
+  ])('%s: a sale rep gets the account masked like GET /account/:id, other fields intact', async (_, stage) => {
+    const account = makeAccount({ display_name: 'ร้าน A', customer_code: 'C001', ...pii });
+    const accounts = makeAccountsRepo(account);
+    const service = new ActivityService(makeActivitiesRepo({} as WinbackActivity), accounts, makeStageHistoryRepo());
+
+    const result = await service.moveStage('acc1', 'sale-rep-1', stage);
+
+    expect(result).toMatchObject({
+      id: 'acc1',
+      stage,
+      display_name: 'ร้าน A',
+      customer_code: 'C001',
+      phone: '098-***6936',
+      email: 'so***@gmail.com',
+      company_registration_num: '010******0123',
+      register_number: '541******4195',
+      id_card_number: '110******0123',
+    });
+    expect(Object.keys(result).sort()).toEqual(Object.keys(account).sort());
+    // The stored row keeps the full values; only the response is masked.
+    expect(accounts.save).toHaveBeenCalledWith(expect.objectContaining({ ...pii, stage }));
+    expect(account).toMatchObject(pii);
+  });
+
+  it('returns reject_reason / reject_note unmasked on rejection', async () => {
+    const account = makeAccount(pii);
+    const service = new ActivityService(makeActivitiesRepo({} as WinbackActivity), makeAccountsRepo(account), makeStageHistoryRepo());
+
+    const result = await service.moveStage('acc1', 'sale-rep-1', 'rejected', { rejectReason: 'price', rejectNote: 'แพงไป' });
+
+    expect(result).toMatchObject({ stage: 'rejected', reject_reason: 'price', reject_note: 'แพงไป', phone: '098-***6936' });
+  });
+});

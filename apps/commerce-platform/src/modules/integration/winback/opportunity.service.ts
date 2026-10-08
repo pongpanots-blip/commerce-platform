@@ -89,8 +89,8 @@ function scoped<T extends SelectQueryBuilder<RestaurantPlace>>(qb: T, actor: Win
  *
  * Visibility (§4.11.8): a manager sees every opportunity, anyone else only their own (coordination owner)
  * and unassigned ones — `list`, `filterMeta`, `provinces` and `accountOpportunities` here. Per-opportunity
- * detail / meta / collaboration use OpportunityCollabService; convert / lead creation use assertCanTake.
- * Both use thread access, including recipients of pending or past requests.
+ * detail / meta / collaboration use OpportunityCollabService; convert / lead creation use assertOpportunityVisible.
+ * Thread access includes request recipients when returning an existing lead; creating one needs owner access.
  */
 @Injectable()
 export class OpportunityService {
@@ -306,13 +306,14 @@ export class OpportunityService {
     return { items };
   }
 
-  /** Thread visibility applies before creation or returning an existing lead; conversion is idempotent. */
+  /** Returning an existing lead needs thread access; creating one needs owner access. Conversion is idempotent. */
   async convert(caller: WinbackActor, rawId: string) {
     const actor = normalizeActor(caller);
-    const id = normalizeId(rawId);
-    await this.assertCanTake(actor, id);
+    const row = await this.assertOpportunityVisible(actor, rawId);
+    const id = row.id;
     const existing = await this.accounts.findOne({ where: { restaurant_place_id: id } });
     if (existing) return this.converted(id, existing);
+    raiseRule(opportunityAccessError(actor, this.metaOf(row, undefined, new Map()).owner_sales_user_id, null, 'owner'));
     try {
       return this.converted(id, await this.leads.createTmpFromRestaurantPlace(actor.id, id));
     } catch (error) {
@@ -323,21 +324,21 @@ export class OpportunityService {
       // Two taps at once: the other request created it.
       const raced = await this.accounts.findOne({ where: { restaurant_place_id: id } });
       if (!raced) throw error;
-      await this.assertCanTake(actor, id);
+      await this.assertOpportunityVisible(actor, id);
       return this.converted(id, raced);
     }
   }
 
-  /** Shared thread access for convert and POST leads/from-restaurant-place, including stored owners. */
-  async assertCanTake(caller: WinbackActor, rawId: string) {
+  /** Thread access may return an existing lead; taking an opportunity to create a lead needs owner access. */
+  async assertOpportunityVisible(caller: WinbackActor, rawId: string, access: 'thread' | 'owner' = 'thread'): Promise<OpportunityMetaRow> {
     const actor = normalizeActor(caller);
     const id = normalizeId(rawId);
     const row = await this.placeRow(id); // Unknown places stay 404, before checking visibility.
-    const record = await this.records.findOne({ where: { kind: Kind.OPPORTUNITY_COLLAB, record_key: id } });
     const owner = this.metaOf(row, undefined, new Map()).owner_sales_user_id;
-    // Match detail/readable's thread access, including recipients of pending or past requests.
-    // A recipient may convert a place they can read; this does not transfer its coordination owner.
-    raiseRule(opportunityAccessError(actor, owner, collabPayload(record?.payload), 'thread'));
+    const record = access === 'owner' || opportunityVisibility(actor).allows(owner) ? null
+      : await this.records.findOne({ where: { kind: Kind.OPPORTUNITY_COLLAB, record_key: id } });
+    raiseRule(opportunityAccessError(actor, owner, collabPayload(record?.payload), access));
+    return row;
   }
 
   private converted(opportunityId: string, account: WinbackAccount) {

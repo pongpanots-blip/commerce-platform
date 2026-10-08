@@ -288,7 +288,8 @@ export class OpportunityCollabService {
     return this.inLock(async (repo) => {
       const record = await this.locked(repo, Kind.OPPORTUNITY_COLLAB, id);
       const state = collabPayload(record?.payload);
-      // The owner only changes under this collab lock (approving a handoff), so a plain read is current.
+      // The coordination owner (meta) only changes under this collab lock (approving a handoff).
+      // An account rep read before the transaction may be slightly stale.
       const meta = await this.plain(repo, Kind.OPPORTUNITY_META, id);
       const owner = this.opportunities.metaOf(row, meta, names);
       this.allow(actor, owner.owner_sales_user_id, null, 'owner');
@@ -332,24 +333,26 @@ export class OpportunityCollabService {
     this.staff(actor);
     const note = OpportunityCollabService.trimmed(dto.note, 'note');
     const requestId = normalizeId(rawRequestId);
-    const row = await this.opportunities.placeRow(rawId);
-    const id = row.id;
-    // Cheap early rejection only; the locked reads below decide access and stale handoffs.
-    const preRecord = await this.plain(this.records, Kind.OPPORTUNITY_COLLAB, id);
-    this.allow(actor, this.opportunities.metaOf(row, undefined, new Map()).owner_sales_user_id, collabPayload(preRecord?.payload), 'resolve');
+    const place = await this.opportunities.placeRow(rawId);
+    const id = place.id;
     const { names } = await this.roster();
-    return this.inLock(async (repo, em) => {
+    const result = await this.inLock(async (repo, em) => {
       const record = await this.locked(repo, Kind.OPPORTUNITY_COLLAB, id);
       const state = collabPayload(record?.payload);
       // Lock order is always collab row → meta row → converted account row.
       let meta = await this.locked(repo, Kind.OPPORTUNITY_META, id);
-      if (row.winback_account_id) {
-        const account = await em.getRepository(WinbackAccount).findOne({
-          where: { id: normalizeId(row.winback_account_id) },
-          lock: { mode: 'pessimistic_write' },
-        });
-        row.account_owner_id = normalizeId(account?.assigned_sales_user_id ?? null);
-      }
+      // Re-read the account rep under the lock, including an account converted since the place join.
+      const account = await em.getRepository(WinbackAccount).findOne({
+        where: { restaurant_place_id: id }, lock: { mode: 'pessimistic_write' },
+      });
+      const row: OpportunityMetaRow = {
+        ...place,
+        winback_account_id: account?.id ?? null,
+        account_owner_id: account?.assigned_sales_user_id ?? null,
+        account_stage: account?.stage ?? null,
+        account_cuisine_id: account?.cuisine_id ?? null,
+        account_name: account?.display_name ?? null,
+      };
       const before = this.opportunities.metaOf(row, meta, names);
       this.allow(actor, before.owner_sales_user_id, state, 'resolve');
       const request: CollabRequest | undefined = state.requests.find((r) => normalizeId(r.id) === requestId);
@@ -389,14 +392,18 @@ export class OpportunityCollabService {
       }
       const saved = await this.saveCollab(repo, record, row, actor, state);
       await this.log(repo, row, actor, names, events);
-      const owner = this.opportunities.metaOf(row, meta, names).owner_sales_user_id;
-      if (opportunityAccessError(actor, owner, state, 'thread')) {
-        // Requesters may still cancel after losing visibility. Keep the response keys clients expect,
-        // but acknowledge only this request; resolving it must not grant access to the rest of the thread.
-        return this.view(row, saved, { requests: [request], messages: [] }, meta, names);
-      }
-      return this.view(row, saved, state, meta, names);
+      return { row, saved, state, meta, request };
     });
+    const { row, saved, state, meta, request } = result;
+    const owner = this.opportunities.metaOf(row, meta, names).owner_sales_user_id;
+    // After commit, a requester who lost thread access receives only their request and redacted owners.
+    if (opportunityAccessError(actor, owner, state, 'thread')) {
+      return {
+        opportunity_id: id, owner_sales_user_id: null, owner_name: null,
+        requests: [requestView(request)], messages: [], revision: saved.version,
+      };
+    }
+    return this.view(row, saved, state, meta, names);
   }
 
   /** The owner / unassigned / a manager — or the recipient of a request on this opportunity (its thread). */

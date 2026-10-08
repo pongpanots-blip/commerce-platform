@@ -101,6 +101,14 @@ describe('staff role access', () => {
 
   it('merchandise keeps catalog access and gains stock, rounds, promotions and staff prices', async () => {
     const mer = 'merchandising' as const;
+    await allow(mer, ProductCategoriesController.prototype.create, ProductCategoriesController, 'POST');
+    await allow(mer, ProductCategoriesController.prototype.upload, ProductCategoriesController, 'POST');
+    await allow(mer, ProductCategoriesController.prototype.update, ProductCategoriesController, 'PATCH');
+    await allow(mer, ProductCategoriesController.prototype.remove, ProductCategoriesController, 'DELETE');
+    await allow(mer, ProductCategoriesController.prototype.reorderLevel1, ProductCategoriesController, 'PUT');
+    await allow(mer, ProductCategoriesController.prototype.reorderChildren, ProductCategoriesController, 'PUT');
+    await allow('admin', ProductCategoriesController.prototype.upload, ProductCategoriesController, 'POST');
+    await allow('admin', ProductCategoriesController.prototype.update, ProductCategoriesController, 'PATCH');
     await allow(mer, ProductController.prototype.list, ProductController, 'GET');
     await allow(mer, ProductController.prototype.create, ProductController, 'POST');
     await allow(mer, InventoryController.prototype.list, InventoryController, 'GET');
@@ -125,6 +133,7 @@ describe('staff role access', () => {
     await allow(graphic, ProductController.prototype.get, ProductController, 'GET');
     await deny(graphic, ProductController.prototype.create, ProductController, 'POST');
     await deny(graphic, ProductCategoriesController.prototype.create, ProductCategoriesController, 'POST');
+    await deny(graphic, ProductCategoriesController.prototype.upload, ProductCategoriesController, 'POST');
     await deny(graphic, StaffPricesController.prototype.create, StaffPricesController, 'POST');
     await deny(graphic, ShopReportsController.prototype.sales, ShopReportsController, 'GET');
     await deny(graphic, OrderController.prototype.list, OrderController, 'GET');
@@ -149,6 +158,9 @@ describe('staff role access', () => {
   it('cs and marketing stay off the routes this change did not give them', async () => {
     await deny('cs', ProductController.prototype.list, ProductController, 'GET');
     await deny('cs', ShopReportsController.prototype.sales, ShopReportsController, 'GET');
+    await deny('marketing', ProductCategoriesController.prototype.upload, ProductCategoriesController, 'POST');
+    await deny('marketing', ProductCategoriesController.prototype.update, ProductCategoriesController, 'PATCH');
+    await deny('cs', ProductCategoriesController.prototype.reorderLevel1, ProductCategoriesController, 'PUT');
     await deny('marketing', StaffPricesController.prototype.list, StaffPricesController, 'GET');
     await deny('marketing', OrderingController.prototype.periods, OrderingController, 'GET');
     await deny('marketing', GrowthController.prototype.timeline, GrowthController, 'GET');

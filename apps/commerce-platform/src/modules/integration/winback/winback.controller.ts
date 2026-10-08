@@ -321,13 +321,14 @@ export class WinbackController {
   @Get('pool')
   pool(@Req() req: RequestWithUser, @Query(pipe) q: PoolQueryDto) {
     const c = this.claims(req);
-    return this.winback.findPool(q, { id: c.sub, isManager: isWinbackManager(c.role) });
+    return this.winback.findPool(q, normalizeActor({ id: c.sub, isManager: isWinbackManager(c.role) }));
   }
 
   /** ดึงจำนวน lead แยกตามสถานะใน pool (+ `mine` = ที่ assign ให้ผู้เรียก) */
   @Get('pool/counts')
   counts(@Req() req: RequestWithUser) {
-    return this.winback.getCounts(this.salesId(req));
+    const c = this.claims(req);
+    return this.winback.getCounts(normalizeActor({ id: c.sub, isManager: isWinbackManager(c.role) }));
   }
 
   /** ดึงข้อมูลบัญชี lead ตาม id */
@@ -406,7 +407,8 @@ export class WinbackController {
     const actor = normalizeActor({ id: c.sub, isManager: isWinbackManager(c.role) });
     const id = normalizeId(placeId);
     try {
-      await this.opportunities.assertCanTake(actor, id);
+      // Creating a lead takes the opportunity and needs owner access.
+      await this.opportunities.assertOpportunityVisible(actor, id, 'owner');
     } catch (error) {
       if (error instanceof NotFoundException) throw new NotFoundException('ไม่พบร้านใน Market Explorer');
       throw error;

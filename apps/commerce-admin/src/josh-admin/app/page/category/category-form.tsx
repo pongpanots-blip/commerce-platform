@@ -69,13 +69,14 @@ export function Field({
   hint?: string;
   children: React.ReactNode;
 }) {
+  __useUiLocale();
   return (
     <div>
       <label className="block">
-        <span className="mb-1 block text-sm text-ink-secondary">{label}</span>
+        <span className="mb-1 block text-sm text-ink-secondary">{__uiText(label)}</span>
         {children}
       </label>
-      {hint && <p className="mt-1 text-xs text-ink-muted">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-ink-muted">{__uiText(hint)}</p>}
     </div>
   );
 }
@@ -157,6 +158,7 @@ export function CategorySelect({
   placeholder?: string;
   groupDepth?: number;
 }) {
+  __useUiLocale();
   const sorted = [...rows].sort(compareCategoryOrder);
   const groups = [
     ...new Set(sorted.map((row) => splitPath(row.category_path, groupDepth).group)),
@@ -164,7 +166,7 @@ export function CategorySelect({
 
   return (
     <Select value={value} onChange={(e) => onChange(e.target.value)}>
-      <option value="">{placeholder}</option>
+      <option value="">{__uiText(placeholder)}</option>
       {groups.map((group) => (
         <optgroup key={group} label={group}>
           {sorted

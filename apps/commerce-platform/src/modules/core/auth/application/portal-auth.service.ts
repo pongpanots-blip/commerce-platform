@@ -1,9 +1,10 @@
-import { ConflictException, Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../user/infrastructure/user.entity';
+import { STAFF_ROLES } from '../../../../shared-kernel/presentation/auth.decorators';
+import { AuthSession, ClientMeta, RefreshAudience, RefreshTokenService } from './refresh-token.service';
 
 /**
  * Compared against on login paths that have no real hash (unknown email,
@@ -23,12 +24,12 @@ function isUniqueViolation(error: unknown): boolean {
   );
 }
 
-/** Minimal portal auth (spec §3): bcrypt + JWT. Real SSO/verification = later. */
+/** Minimal portal auth (spec §3): bcrypt + short JWT + rotating refresh token. Real SSO/verification = later. */
 @Injectable()
 export class PortalAuthService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
-    private readonly jwt: JwtService,
+    private readonly sessions: RefreshTokenService,
   ) {}
 
   private assertSecret(): void {
@@ -72,13 +73,25 @@ export class PortalAuthService {
     return user;
   }
 
-  async login(emailRaw: string, password: string) {
+  /**
+   * Shared by the admin ('staff') and portal sign-ins. The staff audience is refused before a refresh token
+   * exists for an account that cannot use commerce-admin.
+   */
+  async login(emailRaw: string, password: string, audience: RefreshAudience = 'portal', meta: ClientMeta = {}): Promise<AuthSession> {
     this.assertSecret();
     const user = await this.verifyCredentials(emailRaw, password);
-    return {
-      accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }),
-      role: user.role,
-      mustChangePassword: !!user.mustChangePassword,
-    };
+    if (audience === 'staff' && !STAFF_ROLES.includes(user.role as never)) {
+      throw new ForbiddenException('not a commerce-admin account');
+    }
+    return this.sessions.issueSession(user, audience, meta);
+  }
+
+  refresh(refreshToken: string, audience: RefreshAudience, meta: ClientMeta = {}): Promise<AuthSession> {
+    this.assertSecret();
+    return this.sessions.refresh(refreshToken, audience, meta);
+  }
+
+  logout(refreshToken: string, audience: RefreshAudience) {
+    return this.sessions.logout(refreshToken, audience);
   }
 }

@@ -11,8 +11,10 @@
 import 'reflect-metadata';
 import { randomBytes } from 'crypto';
 import * as bcrypt from 'bcrypt';
+import { IsNull } from 'typeorm';
 import { AppDataSource } from '../data-source';
 import { User } from '../modules/core/user/infrastructure/user.entity';
+import { AuthRefreshToken } from '../modules/core/auth/infrastructure/auth-refresh-token.entity';
 import { STAFF_ROLES } from '../shared-kernel/presentation/auth.decorators';
 
 async function main() {
@@ -31,6 +33,14 @@ async function main() {
   await repo.save(repo.create({
     ...(existing ?? {}), email, role, status: 'active', passwordHash: await bcrypt.hash(password, 10), mustChangePassword: generated,
   }));
+  if (existing) {
+    // new password (and maybe role): end the account's existing sign-ins
+    try {
+      await AppDataSource.getRepository(AuthRefreshToken).update({ userId: existing.id, revokedAt: IsNull() }, { revokedAt: new Date(), revokedReason: 'cli' });
+    } catch (error) {
+      console.warn(`could not revoke existing sign-ins (auth_refresh_token migration not run yet?): ${(error as Error).message}`);
+    }
+  }
   await AppDataSource.destroy();
 
   console.log(`${existing ? 'updated' : 'created'} ${email} (${role})`);

@@ -70,6 +70,8 @@ Core (see `.env.example`): `COMMERCE_DATABASE_URL` *or* `COMMERCE_DB_HOST` /
 | Variable | Default | Purpose |
 |---|---|---|
 | `PORTAL_JWT_SECRET` | *(dev fallback `dev-portal-secret`)* | Signs/verifies developer-portal JWTs (`PortalAuthService`, `PortalJwtGuard`). **Required in `NODE_ENV=production`** — register/login and every `PortalJwtGuard`-protected route fail closed (`503`/`401`) without it, rather than silently falling back to the public dev secret. |
+| `AUTH_ACCESS_TOKEN_TTL_SECONDS` | `900` (15 min) | Lifetime of the access JWT returned by staff (`/api/admin/auth/login`) and portal (`/api/v1/portal/auth/login`) sign-in and refresh. The shared `JwtModule` default (12 h) is unchanged for other signers. |
+| `AUTH_REFRESH_TOKEN_TTL_DAYS` | `30` | Lifetime of the opaque refresh token (sliding: every rotation issues a fresh one with the full TTL). Only its sha256 is stored (`auth_refresh_token`). |
 | `STOREFRONT_API_KEYS` | *(unset)* | Still supported as a bootstrap/e2e fallback for `StorefrontApiKeyGuard` — see "API keys" below for how it now interacts with DB-backed keys. |
 
 ## Endpoints
@@ -346,9 +348,19 @@ thin controllers delegating to `core/auth` and `core/api-key`.
   bcrypt-hashed, `core/user` row with `role: 'developer'`. `409` on a
   duplicate email (also correct under a concurrent double-register — the
   unique index on `email` is the real arbiter, not the pre-check).
-- `POST /api/v1/portal/auth/login` — `{ email, password }` → `{ accessToken }`
-  (JWT signed with `PORTAL_JWT_SECRET`, `sub`/`email`/`role` claims). Every
-  route below requires `Authorization: Bearer <accessToken>` (`PortalJwtGuard`).
+- `POST /api/v1/portal/auth/login` — `{ email, password }` → `{ accessToken,
+  role, mustChangePassword, refreshToken, expiresIn, refreshExpiresIn }`
+  (JWT signed with `PORTAL_JWT_SECRET`, `sub`/`email`/`role` claims, 15 min by
+  default). Every route below requires `Authorization: Bearer <accessToken>`
+  (`PortalJwtGuard`).
+- `POST /api/v1/portal/auth/refresh` — `{ refreshToken }` → the same shape as
+  login with a NEW `refreshToken`; the old one is spent (single use). Showing a
+  spent token again revokes the whole sign-in (reuse detection). Any failure is
+  a generic `401 invalid refresh token`. Staff tokens are refused here and portal
+  tokens on `POST /api/admin/auth/refresh` (same contract for commerce-admin).
+- `POST /api/v1/portal/auth/logout` — `{ refreshToken }` → `{ ok: true }`
+  (always, also for unknown tokens); ends that sign-in. No access token needed.
+  Staff: `POST /api/admin/auth/logout`.
 
 **API keys** (`GET|POST /api/v1/portal/keys`, `POST /api/v1/portal/keys/:id/revoke`)
 — account-scoped, no cross-account access:

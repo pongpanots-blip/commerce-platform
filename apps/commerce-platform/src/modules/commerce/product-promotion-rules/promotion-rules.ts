@@ -1,4 +1,4 @@
-import { unitLabelForStorage } from '../../integration/connector/josh/pricing/unit-label.helper';
+import { unitLabelForStorage } from '../../../shared-kernel/helpers/unit-label.helper';
 import { BadRequestException } from '@nestjs/common';
 
 export interface PromotionRule { min_qty: number; max_qty?: number; promotion_price: number; unit_label?: string; badge_text?: string }

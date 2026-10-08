@@ -27,12 +27,13 @@ describe('page usability', () => {
     expect(findMasterMatch(options, 'Other')).toBeUndefined();
   });
 
-  it('gives a first-visit guide for known routes and a fallback for the rest', () => {
-    expect(pageGuide('/j/segments/builder').summary).toContain('ไม่ล็อกรายชื่อ');
-    expect(pageGuide('/j/segments/builder/00000000-0000-4000-8000-000000000001').summary).toContain('ไม่ล็อกรายชื่อ');
-    expect(pageGuide('/marketing/research').steps.length).toBeGreaterThan(0);
-    expect(pageGuide('/anything/create').summary).toContain('สร้างรายการใหม่');
-    expect(pageGuide('/anything/12').summary).toContain('รายละเอียด');
-    expect(pageGuide('/not-a-known-page').summary).toContain('รายการ');
+  it('gives a guide only for a route that has its own', () => {
+    expect(pageGuide('/j/segments/builder')?.summary).toContain('ไม่ล็อกรายชื่อ');
+    expect(pageGuide('/j/segments/builder/00000000-0000-4000-8000-000000000001')?.summary).toContain('ไม่ล็อกรายชื่อ');
+    expect(pageGuide('/marketing/research')?.steps.length).toBeGreaterThan(0);
+    expect(pageGuide('/anything/create')).toBeUndefined();
+    expect(pageGuide('/anything/12')).toBeUndefined();
+    expect(pageGuide('/not-a-known-page')).toBeUndefined();
+    expect(pageGuide('/home')).toBeUndefined();
   });
 });

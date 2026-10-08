@@ -11,6 +11,7 @@ import {
   getCouponReport,
   getCouponRewardRules,
   notifyCouponEntitlements,
+  previewUserSegmentCount,
   updateCoupon,
   updateCouponEntitlementStatus,
   updateCouponRewardRule,
@@ -293,7 +294,12 @@ const CouponDetail = () => {
 
     if (couponRecord?.audience_segment_id) {
       setAudienceSegmentId(couponRecord.audience_segment_id);
-      setSegmentMemberCount(null);
+      try {
+        const count = await previewUserSegmentCount(couponRecord.audience_segment_id);
+        setSegmentMemberCount(count ?? null);
+      } catch {
+        setSegmentMemberCount(null);
+      }
     } else {
       setAudienceSegmentId(null);
       setSegmentMemberCount(null);
@@ -814,7 +820,6 @@ const CouponDetail = () => {
     <AdminInsertLayout
       title={`${coupon.coupon_code} — ${coupon.title}`}
       subtitle={subtitle}
-      saveLabel="บันทึกคูปอง"
       backPath={ADMIN_ROUTES.coupons}
       saving={busy}
       wide

@@ -225,7 +225,7 @@ export default function InsertProductForm() {
                 />
               </label>
               <p className="mt-1 text-xs text-gray-500">
-                {__uiText("เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ")}</p>
+                {__uiText("เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)")}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>

@@ -34,8 +34,8 @@ export function MarketingResearch() {
 
   async function act(key: string, work: () => Promise<unknown>, done: string) {
     setBusy(key); setNote(null);
-    try { await work(); setNote({ ok: true, text: done }); topics.reload(); }
-    catch (e) { setNote({ ok: false, text: e instanceof Error ? e.message : String(e) }); }
+    try { await work(); setNote({ ok: true, text: done }); topics.reload(); return true; }
+    catch (e) { setNote({ ok: false, text: e instanceof Error ? e.message : String(e) }); return false; }
     finally { setBusy(null); }
   }
 
@@ -48,15 +48,15 @@ export function MarketingResearch() {
     } catch (e) { setNote({ ok: false, text: e instanceof Error ? e.message : String(e) }); }
   }
 
-  function submit() {
+  async function submit() {
     if (!form.title.trim()) {
       setNote({ ok: false, text: __uiMessage('ใส่หัวข้อเป็นประโยค เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ') });
-      return;
+      return false;
     }
-    act('create', () => marketingResearchApi.create(form), 'บันทึกโจทย์แล้ว').then(() => {
-      setForm(blank);
-      toast('บันทึกโจทย์แล้ว', { label: 'ขั้นถัดไป: เปิดรายงานเมื่อมีผล' });
-    });
+    const ok = await act('create', () => marketingResearchApi.create(form), 'บันทึกโจทย์แล้ว');
+    if (!ok) return false;
+    setForm(blank);
+    toast('บันทึกโจทย์แล้ว');
   }
 
   async function archiveTopic(topic: ResearchTopic) {
@@ -82,7 +82,7 @@ export function MarketingResearch() {
         actions={<Button onClick={topics.reload} icon="refresh">{__uiText("Refresh")}</Button>}
       />
 
-      {note && <Alert tone={note.ok ? 'ok' : 'danger'}>{note.text}</Alert>}
+      {note && <Alert tone={note.ok ? 'ok' : 'danger'}>{__uiText(note.text)}</Alert>}
 
       <FormPanel
         title={__uiText("ตั้งโจทย์ใหม่")}
@@ -191,7 +191,7 @@ export function MarketingResearch() {
                           {(runs[t.id] ?? []).map((r) => (
                             <div key={r.id} className="border-b border-secondary-container/70 pb-4 last:border-0">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-on-surface">{r.status}</span>
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-on-surface">{__uiText({ waiting_configuration: 'รอการตั้งค่า', queued: 'รอคิว', running: 'กำลังรัน', completed: 'เสร็จแล้ว', partial: 'ได้ผลบางส่วน', failed: 'ไม่สำเร็จ', cancelled: 'ยกเลิกแล้ว' }[r.status] ?? r.status)}</span>
                                 <span className="text-xs text-on-surface-variant">{new Date(r.createdAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))} {__uiText(" · พบ ")}{fmt.num(r.findingsCount)} {__uiText(" ข้อ")}</span>
                               </div>
                               {r.message && <div className="text-xs text-on-surface-variant mb-2">{r.message}</div>}
@@ -217,7 +217,7 @@ export function MarketingResearch() {
                               {!!r.report?.evidence?.length && <div className="my-2"><ButtonLink to={`/marketing/growth/plans/new?${new URLSearchParams({ template: 'market', topicId: t.id, runId: r.id, title: t.title, goal: r.report.summary ?? '' })}`} icon="edit_note">{__uiText("ร่างแผน Growth จากหลักฐานนี้")}</ButtonLink></div>}
                               {r.report?.analysis ? (
                                 <div className="text-xs mb-2 rounded bg-surface-container p-2">
-                                  <div className="font-semibold mb-1">{__uiText("สรุปด้วย AI · ")}{{ queued: 'รอคิว', running: 'กำลังสรุป', completed: 'เสร็จแล้ว', not_configured: 'ยังไม่ได้ตั้งค่า AI', unavailable: 'AI ใช้งานไม่ได้ตอนนี้', insufficient_data: 'หลักฐานไม่พอ' }[r.report.analysis.status]}</div>
+                                  <div className="font-semibold mb-1">{__uiText("สรุปด้วย AI · ")}{__uiText({ queued: 'รอคิว', running: 'กำลังสรุป', completed: 'เสร็จแล้ว', not_configured: 'ยังไม่ได้ตั้งค่า AI', unavailable: 'AI ใช้งานไม่ได้ตอนนี้', insufficient_data: 'หลักฐานไม่พอ' }[r.report.analysis.status] ?? r.report.analysis.status)}</div>
                                   {r.report.analysis.summary && <p className="text-on-surface mb-1">{r.report.analysis.summary}</p>}
                                   {r.report.analysis.findings.map((f, i) => <div key={i} className="text-on-surface">• {f.text}</div>)}
                                   {r.report.analysis.reason && r.report.analysis.status !== 'completed' && <div className="text-on-surface-variant">{r.report.analysis.reason}</div>}

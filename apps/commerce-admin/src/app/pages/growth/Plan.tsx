@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import type { GrowthAiDraft, GrowthPlan, GrowthPlanInput, GrowthReadiness, GrowthTask, GrowthTemplate } from '@cp/growth';
 import { Alert, ArrowLink, Button, ButtonLink, Checkbox, Chip, DetailPanel, DetailSection, Field, FormPanel, Input, KeyValueGrid, MasterDataSelect, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, fmt } from '@cp/ui';
-import { createUserSegment, getUserSegments, type UserSegmentRuleType } from '@josh/shared-api';
-import { roleCanWrite } from '../../role-can';
+import { getUserSegments } from '@josh/shared-api';
 import { api, session } from '../../../lib/api';
 import { useAsync } from '../../hooks';
 import { Evidence, LoadState, PlanStatus, localDateTime, templateLabels } from './shared';
@@ -16,25 +15,6 @@ function inputOf(plan: GrowthPlan): GrowthPlanInput {
   return { title, goal, template, owner, segmentIds, excludeSegmentIds, productSkus, notifyTemplateKey, scheduleAt, budgetThb, minimumMarginPercent, holdoutPercent, cooldownDays, conversionWindowDays, variants, selectedVariant, researchTopicId, researchRunId, analysisId };
 }
 const commaList = (value: string) => [...new Set(value.split(',').map((item) => item.trim()).filter(Boolean))];
-const segmentCreateFields = [
-  { name: 'name', label: 'ชื่อกลุ่มลูกค้า', required: true, placeholder: 'ลูกค้าที่ไม่ได้สั่ง 30 วัน' },
-  { name: 'rule_type', label: 'ชนิดของกลุ่ม', options: [
-    { value: 'member', label: 'สมาชิก' },
-    { value: 'guest', label: 'ผู้มาเยือน' },
-    { value: 'staff', label: 'พนักงาน' },
-    { value: 'has_company', label: 'มีบริษัท' },
-  ] },
-];
-async function createSegmentOption(draft: Record<string, string>) {
-  const name = draft.name.trim();
-  const rule_type = (draft.rule_type || 'member') as UserSegmentRuleType;
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'segment';
-  await createUserSegment({ slug, name, rule_type, rule_config: {}, is_active: true });
-  const rows = await getUserSegments();
-  const made = rows.find((row) => row.slug === slug) ?? rows.find((row) => row.name === name);
-  if (!made) throw new Error('บันทึกกลุ่มลูกค้าไม่สำเร็จ');
-  return { value: made.id, label: made.name };
-}
 function CommaInput({ value, onChange, placeholder, uuid = false }: { value: string[]; onChange: (value: string[]) => void; placeholder?: string; uuid?: boolean }) {
   __useUiLocale();
   const [text, setText] = useState(value.join(', '));
@@ -89,17 +69,17 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
   useEffect(() => { if (loaded.data) accept(loaded.data); }, [loaded.data]);
   function update<K extends keyof GrowthPlanInput>(key: K, value: GrowthPlanInput[K]) { setForm((old) => ({ ...old, [key]: value })); }
   async function act(key: string, work: () => Promise<GrowthPlan>, message: string) {
-    if (busy) return;
+    if (busy) return false;
     setBusy(key); setNote(null);
-    try { accept(await work(), key === 'save' && tasksDirty); setNote({ ok: true, text: message }); }
-    catch (error) { setNote({ ok: false, text: error instanceof Error ? error.message : String(error) }); }
+    try { accept(await work(), key === 'save' && tasksDirty); setNote({ ok: true, text: message }); return true; }
+    catch (error) { setNote({ ok: false, text: error instanceof Error ? error.message : String(error) }); return false; }
     finally { setBusy(''); }
   }
   async function save() {
-    if (!canManage || busy || exportPending) return;
+    if (!canManage || busy || exportPending) return false;
     const body = JSON.stringify(form);
     if (!id && requestBody.current !== body) { requestId.current = crypto.randomUUID(); requestBody.current = body; }
-    await act('save', async () => {
+    return act('save', async () => {
       const saved = id ? await api.put<GrowthPlan>(`/growth/plans/${encodeURIComponent(id)}`, { version: plan!.version, plan: form })
         : await api.post<GrowthPlan>('/growth/plans', { requestId: requestId.current, plan: form });
       if (!id) navigate(`/marketing/growth/plans/${encodeURIComponent(saved.id)}`, { replace: true });
@@ -121,7 +101,7 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
     <PageHeader crumbs={[__uiText("Marketing"), __uiText("Growth"), id ? __uiText("รายละเอียดแผน") : __uiText("สร้างแผน")]} back={{ to: '/marketing/growth/plans', label: 'แผนและปฏิทิน' }} title={plan?.title ?? __uiText("สร้างแผน Growth")}
       badge={plan ? <PlanStatus status={plan.status} /> : <Chip>{__uiText("ร่างใหม่")}</Chip>} subtitle={__uiText("ร่างข้อเสนอและข้อความ ตรวจหลักฐาน แล้วอนุมัติ revision ก่อนสร้าง workflow ที่หยุดไว้")}
       actions={plan?.workflowId ? <><ButtonLink to={`/marketing/workflows/${encodeURIComponent(plan.workflowId)}/edit`} icon="account_tree">{__uiText("เปิดร่าง workflow")}</ButtonLink><ButtonLink to={`/marketing/growth/results/${encodeURIComponent(plan.workflowId)}`} icon="monitoring">{__uiText("ดูผล")}</ButtonLink></> : undefined} />
-    {note && <Alert tone={note.ok ? 'ok' : 'danger'} onClose={() => setNote(null)} actions={!note.ok && id ? <Button size="sm" onClick={() => { setNote(null); loaded.reload(); }}>{__uiText("โหลดเวอร์ชันล่าสุด")}</Button> : undefined}>{note.text}</Alert>}
+    {note && <Alert tone={note.ok ? 'ok' : 'danger'} onClose={() => setNote(null)} actions={!note.ok && id ? <Button size="sm" onClick={() => { setNote(null); loaded.reload(); }}>{__uiText("โหลดเวอร์ชันล่าสุด")}</Button> : undefined}>{__uiText(note.text)}</Alert>}
     {!canManage && <Alert tone="muted">{__uiText("แผนนี้อ่านได้ การแก้เนื้อหาและอนุมัติเป็นหน้าที่เจ้าของแผนหรือผู้ดูแล")}</Alert>}
     {dirty && <Alert tone="warn">{__uiText("มีเนื้อหาที่แก้แล้วยังไม่บันทึก บันทึกก่อนใช้ AI ส่งตรวจ อนุมัติ หรือสร้างร่าง workflow")}</Alert>}
     <Alert tone="warn" title={__uiText("แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ")}>{__uiText("การบันทึก อนุมัติ และสร้างร่างไม่ส่งข้อความ ระบบยังไม่บังคับสต็อก กำไร และงบ ณ เวลาส่ง จึงต้องหยุด workflow นี้ไว้")}{readiness.data?.activationBlockers.length ? <ul className="list-disc pl-4 mt-2">{readiness.data.activationBlockers.map((item) => <li key={item}>{__uiText(item)}</li>)}</ul> : null}</Alert>
@@ -151,17 +131,17 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
         <Field label={__uiText("อัตรา contribution ขั้นต่ำ (%)")} hint={__uiText("เกณฑ์ของแผน ยังไม่บังคับตรวจ ณ เวลาส่ง")}><Input required type="number" min={0} max={100} step="0.1" value={form.minimumMarginPercent} onChange={(event) => update('minimumMarginPercent', Number(event.target.value))} /></Field>
         <Span><details className="rounded-lg border border-secondary-container p-3"><summary className="text-xs font-semibold text-primary cursor-pointer">{__uiText("กลุ่มเป้าหมาย สินค้า และการทดลอง")}</summary><div className="grid gap-3 md:grid-cols-2 mt-3">
           <Field label={__uiText("กลุ่มลูกค้า")} hint={__uiText("เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส")}>
-            <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.segmentIds} onChange={(value) => update('segmentIds', value as string[])} canCreate={roleCanWrite(['marketing'])} createFrom="name" createFields={segmentCreateFields} onCreate={createSegmentOption} />
+            <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.segmentIds} onChange={(value) => update('segmentIds', value as string[])} />
           </Field>
           <Field label={__uiText("กลุ่มที่ไม่รวม")} hint={__uiText("เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส")}>
-            <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.excludeSegmentIds} onChange={(value) => update('excludeSegmentIds', value as string[])} canCreate={roleCanWrite(['marketing'])} createFrom="name" createFields={segmentCreateFields} onCreate={createSegmentOption} />
+            <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.excludeSegmentIds} onChange={(value) => update('excludeSegmentIds', value as string[])} />
           </Field>
           <Field label={__uiText("SKU ที่ใช้")} hint={__uiText("คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง")}><CommaInput value={form.productSkus} onChange={(value) => update('productSkus', value)} /></Field>
           <Field label={__uiText("ใช้ notification template เดิม (ไม่บังคับ)")} hint={__uiText("เว้นว่างเพื่อสร้าง template จากข้อความที่เลือก หากระบุ key เนื้อหาต้องตรงกับเวอร์ชันที่อนุมัติ")}><Input value={form.notifyTemplateKey ?? ''} onChange={(event) => update('notifyTemplateKey', event.target.value || null)} /></Field>
           <Field label={__uiText("กลุ่มควบคุม (%)")}><Input required type="number" min={1} max={50} value={form.holdoutPercent} onChange={(event) => update('holdoutPercent', Number(event.target.value))} /></Field>
           <Field label={__uiText("เว้นช่วงติดต่อ (วัน)")}><Input required type="number" min={1} max={365} value={form.cooldownDays} onChange={(event) => update('cooldownDays', Number(event.target.value))} /></Field>
           <Field label={__uiText("ช่วงนับ conversion (วัน)")}><Input required type="number" min={1} max={90} value={form.conversionWindowDays} onChange={(event) => update('conversionWindowDays', Number(event.target.value))} /></Field>
-          <div className="flex flex-wrap items-center gap-3"><ArrowLink to="/j/segments">{__uiText("ตรวจ Segments")}</ArrowLink><ArrowLink to="/j/marketing/notify-templates">{__uiText("ตรวจ template ข้อความ")}</ArrowLink></div>
+          <div className="flex flex-wrap items-center gap-3"><ArrowLink to="/j/segments">{__uiText("ตรวจ Segments")}</ArrowLink><ArrowLink to="/j/segments/builder">{__uiText("สร้างกลุ่มลูกค้า")}</ArrowLink><ArrowLink to="/j/marketing/notify-templates">{__uiText("ตรวจ template ข้อความ")}</ArrowLink></div>
         </div></details></Span>
         <Span><div className="grid gap-3 md:grid-cols-2">{form.variants.map((variant, index) => <section key={index} className={`rounded-lg border p-3 space-y-3 min-w-0 ${form.selectedVariant === index ? 'border-primary bg-primary-container/20' : 'border-secondary-container'}`}>
           <label className="flex items-center gap-2 text-xs font-semibold"><input type="radio" name="selected-variant" checked={form.selectedVariant === index} onChange={() => update('selectedVariant', index)} className="accent-primary" />{__uiText("เลือกเวอร์ชัน ")}{variant.label} {__uiText(" สำหรับตรวจ")}</label>

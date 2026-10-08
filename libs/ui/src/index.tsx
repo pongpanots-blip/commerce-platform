@@ -23,8 +23,8 @@ import {
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
 import { LanguageSelector } from './i18n';
-import { PageChrome, fieldExample, fieldHint } from './usability';
-import { blankFieldMessage, scrollToFirstInvalid, useUnsavedChanges } from './forms';
+import { PageChrome, PageHelpLink, fieldExample, fieldHint } from './usability';
+import { blankFieldMessage, confirmLeaveIfDirty, scrollToFirstInvalid, useUnsavedChanges } from './forms';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
@@ -229,10 +229,12 @@ export function FormField({ label, hint, required, error, children, className }:
   const [blank, setBlank] = useState(false);
   const labelText = typeof label === 'string' ? label : '';
   const first = Children.toArray(children)[0];
-  const firstEl = isValidElement<{ type?: string; placeholder?: string }>(first) ? first : null;
+  const firstEl = isValidElement<{ type?: string; placeholder?: string; required?: boolean; disabled?: boolean; readOnly?: boolean }>(first) ? first : null;
+  const isRequired = Boolean(required || firstEl?.props.required);
+  const skipHint = Boolean(firstEl?.props.disabled || firstEl?.props.readOnly);
   const exampleText = firstEl?.props.placeholder ?? fieldExample(firstEl?.type === 'select' ? 'select' : firstEl?.props.type);
-  const shownError = error || (blank && labelText ? blankFieldMessage(labelText, exampleText) : '');
-  const help = shownError ? undefined : hint ?? fieldHint(required);
+  const shownError = error || (blank && labelText && isRequired ? blankFieldMessage(labelText, exampleText) : '');
+  const help = shownError ? undefined : hint !== undefined ? hint : (!skipHint && isRequired ? fieldHint(true) : undefined);
   const describedBy = [help || shownError ? hintId : ''].filter(Boolean).join(' ');
   const controls = Children.map(children, (child, index) => {
     if (index !== 0 || !isValidElement<{ type?: string; placeholder?: string; onBlur?: (event: unknown) => void; onChange?: (event: unknown) => void; 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string; 'aria-invalid'?: boolean }>(child)) return child;
@@ -246,7 +248,7 @@ export function FormField({ label, hint, required, error, children, className }:
         child.props.onBlur?.(event);
         const target = (event as { target?: { value?: string; type?: string } | null }).target;
         if (target?.type === 'checkbox' || target?.type === 'radio') return;
-        if (required && labelText && !String(target?.value ?? '').trim()) setBlank(true);
+        if (isRequired && labelText && !String(target?.value ?? '').trim()) setBlank(true);
       },
       onChange: (event: unknown) => {
         child.props.onChange?.(event);
@@ -259,7 +261,7 @@ export function FormField({ label, hint, required, error, children, className }:
     <label className={cx('flex flex-col gap-1 min-w-0', className)}>
       <span id={labelId} className="text-xs font-medium text-on-surface">
         {typeof label === 'string' ? __uiText(label) : label}
-        {required && <span className="text-[#c2333f]"> *</span>}
+        {isRequired && <span className="text-[#c2333f]"> *</span>}
       </span>
       {controls}
       {shownError ? <span id={hintId} className="text-[11px] text-[#c2333f]">{typeof shownError === 'string' ? __uiText(shownError) : shownError}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
@@ -423,6 +425,7 @@ export function PageHeader({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl md:text-[28px] font-semibold tracking-tight text-on-surface font-headline break-words [overflow-wrap:anywhere]">{title}</h1>
+            <PageHelpLink />
             {badge}
           </div>
           {subtitle && <p className="text-sm text-on-surface-variant mt-2 max-w-3xl leading-relaxed">{subtitle}</p>}
@@ -509,7 +512,7 @@ export function FormPanel({
           scrollToFirstInvalid(e.currentTarget);
           return;
         }
-        void onSubmit(e);
+        void Promise.resolve(onSubmit(e)).then((result) => { if (result !== false) setDirty(false); });
       }}
     >
       <div className="flex items-start gap-3 px-4 py-3 border-b border-secondary-container">
@@ -1393,11 +1396,11 @@ export function Modal({ title, onClose, children, footer, width = 480 }: { title
     };
   }, []);
   return (
-    <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }} className={cx(panelCls, 'm-auto w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto p-0 shadow-xl backdrop:bg-inverse-surface/40')} style={{ maxWidth: width }}>
+    <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} onClick={event => { if (event.target === event.currentTarget) void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} className={cx(panelCls, 'm-auto w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto p-0 shadow-xl backdrop:bg-inverse-surface/40')} style={{ maxWidth: width }}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-secondary-container">
           <h2 id={titleId} className="min-w-0 text-sm font-semibold break-words [overflow-wrap:anywhere]">{title}</h2>
           <div className="flex shrink-0 items-center gap-2"><LanguageSelector />
-          <button type="button" onClick={onClose} aria-label={__uiText("ปิด")} className="text-outline hover:text-on-surface">
+          <button type="button" onClick={() => { void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} aria-label={__uiText("ปิด")} className="text-outline hover:text-on-surface">
             <Icon name="close" size={18} />
           </button></div>
         </div>
@@ -1429,7 +1432,7 @@ export const fmt = {
 };
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
-export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
-export { FormSection, FormActions, DetailHeader, CopyableId, MasterDataSelect, findMasterMatch, masterKey, useUnsavedChanges, scrollToFirstInvalid, blankFieldMessage } from './forms';
+export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, PageHelpLink, enablePageGuides, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
+export { FormSection, FormActions, DetailHeader, CopyableId, MasterDataSelect, findMasterMatch, masterKey, useUnsavedChanges, confirmLeaveIfDirty, scrollToFirstInvalid, blankFieldMessage } from './forms';
 export { pageGuide } from './page-guides';
 export type { PageGuide } from './page-guides';

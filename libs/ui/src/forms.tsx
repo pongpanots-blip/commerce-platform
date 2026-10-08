@@ -1,4 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { ICONS } from './icons';
 import { formatUiMessage, uiText, useUiLocale } from './i18n';
@@ -80,30 +81,69 @@ export function FormActions({
   );
 }
 
-/** Ask before leaving a form that has been edited. Reload is covered by the browser prompt. */
+let unsavedDirty = false;
+let unsavedAsk: (() => Promise<boolean>) | null = null;
+
+function askToLeave() {
+  return confirmAction({
+    title: 'ละทิ้งการเปลี่ยนแปลง?',
+    body: 'สิ่งที่แก้ไว้ยังไม่ถูกบันทึก และจะหายไปถ้าออกจากหน้านี้',
+    confirmLabel: 'ละทิ้งการเปลี่ยนแปลง',
+    cancelLabel: 'อยู่หน้านี้ต่อ',
+    danger: true,
+  });
+}
+
+/** True when nothing is unsaved, or the person agrees to drop the edits. */
+export function confirmLeaveIfDirty(): Promise<boolean> {
+  if (!unsavedDirty || !unsavedAsk) return Promise.resolve(true);
+  return unsavedAsk();
+}
+
+/**
+ * Ask before leaving a form that has been edited.
+ * Same-origin links (the sidebar included) and the modal close control use the same question.
+ * Tab close and reload use the browser prompt.
+ * ponytail: browser Back is not trapped. BrowserRouter has no blocker, and a fake history entry leaves the page when a save clears the form.
+ */
 export function useUnsavedChanges(dirty: boolean) {
   useEffect(() => {
+    unsavedDirty = dirty;
+    unsavedAsk = dirty ? askToLeave : null;
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = '';
     };
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as Element | null)?.closest?.('a[href]');
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      const next = `${url.pathname}${url.search}${url.hash}`;
+      if (next === `${window.location.pathname}${window.location.search}${window.location.hash}`) return;
+      event.preventDefault();
+      event.stopPropagation();
+      void askToLeave().then((ok) => {
+        if (!ok) return;
+        unsavedDirty = false;
+        unsavedAsk = null;
+        window.location.assign(anchor.href);
+      });
+    };
     window.addEventListener('beforeunload', warn);
-    return () => window.removeEventListener('beforeunload', warn);
+    document.addEventListener('click', onClick, true);
+    return () => {
+      window.removeEventListener('beforeunload', warn);
+      document.removeEventListener('click', onClick, true);
+      unsavedDirty = false;
+      unsavedAsk = null;
+    };
   }, [dirty]);
   return async function requestLeave(go: () => void) {
-    if (!dirty) {
-      go();
-      return;
-    }
-    const ok = await confirmAction({
-      title: 'ละทิ้งการเปลี่ยนแปลง?',
-      body: 'สิ่งที่แก้ไว้ยังไม่ถูกบันทึก และจะหายไปถ้าออกจากหน้านี้',
-      confirmLabel: 'ละทิ้งการเปลี่ยนแปลง',
-      cancelLabel: 'อยู่หน้านี้ต่อ',
-      danger: true,
-    });
-    if (ok) go();
+    if (await confirmLeaveIfDirty()) go();
   };
 }
 
@@ -114,7 +154,7 @@ export function scrollToFirstInvalid(root: ParentNode | null | undefined) {
 
 /** Empty required field, after blur. The message names an example. */
 export function blankFieldMessage(label: string, example?: string) {
-  return formatUiMessage('กรอก{0} ตัวอย่าง: {1}', { 0: label, 1: example || '—' });
+  return formatUiMessage('กรอก{0} ตัวอย่าง: {1}', { 0: uiText(label), 1: example ? uiText(example) : '—' });
 }
 
 /** Detail title, status, a few facts, the main action, and destructive actions in a menu. */
@@ -292,12 +332,13 @@ export function MasterDataSelect({
     return () => document.removeEventListener('mousedown', close);
   }, [open]);
 
+  const dialogOpen = creating !== null;
   useEffect(() => {
     const node = dialog.current;
-    if (!creating || !node) return;
+    if (!dialogOpen || !node) return;
     node.showModal();
     return () => { node.close(); };
-  }, [creating]);
+  }, [dialogOpen]);
 
   function choose(option: MasterOption) {
     if (multiple) {
@@ -322,6 +363,8 @@ export function MasterDataSelect({
 
   async function saveCreate() {
     if (!creating || !onCreate) return;
+    const requiredMissing = (createFields?.length ? createFields : [{ name: createFrom, label: 'ชื่อรายการ', required: true }]).some((field) => field.required && !creating[field.name]?.trim());
+    if (requiredMissing) return;
     const typed = creating[createFrom] ?? '';
     const duplicate = findMasterMatch(all, typed);
     if (duplicate) {
@@ -406,30 +449,33 @@ export function MasterDataSelect({
           )}
         </ul>
       )}
-      {creating && (
+      {creating && createPortal(
         <dialog ref={dialog} className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-secondary-container bg-surface-container-lowest p-0 shadow-xl backdrop:bg-inverse-surface/40" onCancel={(event) => { event.preventDefault(); if (!saving) setCreating(null); }}>
-          <div className="space-y-3 px-4 py-4">
-            <h2 className="text-base font-semibold text-on-surface">{uiText('+ สร้างใหม่')}</h2>
-            {fields.map((field) => (
-              <label key={field.name} className="flex flex-col gap-1 text-sm text-on-surface">
-                <span>{uiText(field.label)}{field.required ? ' *' : ''}</span>
-                {field.options ? (
-                  <select className={masterInputCls} value={creating[field.name] ?? ''} onChange={(event) => setCreating({ ...creating, [field.name]: event.target.value })}>
-                    <option value="">{uiText('ค้นหาแล้วเลือก')}</option>
-                    {field.options.map((option) => <option key={option.value || 'none'} value={option.value}>{option.label}</option>)}
-                  </select>
-                ) : (
-                  <input className={masterInputCls} value={creating[field.name] ?? ''} placeholder={field.placeholder ? uiText(field.placeholder) : undefined} onChange={(event) => setCreating({ ...creating, [field.name]: event.target.value })} />
-                )}
-              </label>
-            ))}
-            {createError && <p className="text-sm text-[#c2333f]">{createError}</p>}
-          </div>
-          <div className="flex justify-end gap-2 border-t border-secondary-container px-4 py-3">
-            <button type="button" className="inline-flex min-h-10 items-center rounded-lg px-3 text-sm text-on-surface" disabled={saving} onClick={() => setCreating(null)}>{uiText('ยกเลิก')}</button>
-            <button type="button" className="inline-flex min-h-10 items-center rounded-lg bg-primary px-3 text-sm font-medium text-on-primary disabled:opacity-60" disabled={saving || fields.some((field) => field.required && !creating[field.name]?.trim())} onClick={() => void saveCreate()}>{saving ? uiText('กำลังบันทึก...') : uiText('บันทึกรายการใหม่')}</button>
-          </div>
-        </dialog>
+          <form onSubmit={(event) => { event.preventDefault(); event.stopPropagation(); void saveCreate(); }}>
+            <div className="space-y-3 px-4 py-4">
+              <h2 className="text-base font-semibold text-on-surface">{uiText('+ สร้างใหม่')}</h2>
+              {fields.map((field) => (
+                <label key={field.name} className="flex flex-col gap-1 text-sm text-on-surface">
+                  <span>{uiText(field.label)}{field.required ? ' *' : ''}</span>
+                  {field.options ? (
+                    <select className={masterInputCls} value={creating[field.name] ?? ''} onChange={(event) => setCreating({ ...creating, [field.name]: event.target.value })}>
+                      <option value="">{uiText('ค้นหาแล้วเลือก')}</option>
+                      {field.options.map((option) => <option key={option.value || 'none'} value={option.value}>{uiText(option.label)}</option>)}
+                    </select>
+                  ) : (
+                    <input className={masterInputCls} value={creating[field.name] ?? ''} placeholder={field.placeholder ? uiText(field.placeholder) : undefined} onChange={(event) => setCreating({ ...creating, [field.name]: event.target.value })} />
+                  )}
+                </label>
+              ))}
+              {createError && <p className="text-sm text-[#c2333f]">{uiText(createError)}</p>}
+            </div>
+            <div className="flex justify-end gap-2 border-t border-secondary-container px-4 py-3">
+              <button type="button" className="inline-flex min-h-10 items-center rounded-lg px-3 text-sm text-on-surface" disabled={saving} onClick={() => setCreating(null)}>{uiText('ยกเลิก')}</button>
+              <button type="submit" className="inline-flex min-h-10 items-center rounded-lg bg-primary px-3 text-sm font-medium text-on-primary disabled:opacity-60" disabled={saving || fields.some((field) => field.required && !creating[field.name]?.trim())}>{saving ? uiText('กำลังบันทึก...') : uiText('บันทึกรายการใหม่')}</button>
+            </div>
+          </form>
+        </dialog>,
+        document.body,
       )}
     </div>
   );

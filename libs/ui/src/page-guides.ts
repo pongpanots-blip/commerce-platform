@@ -1,42 +1,6 @@
 /** Plain-language "how to do this" for each admin route. Not navigation config. */
 export type PageGuide = { summary: string; steps: string[] };
 
-const LIST: PageGuide = {
-  summary: 'หน้านี้เป็นรายการ ใช้ค้นหาแล้วเปิดรายการที่ต้องการ หรือกดปุ่มหลักมุมขวาบนเพื่อเริ่มงานใหม่',
-  steps: [
-    'อ่านชื่อหน้าและคำอธิบายสั้น ๆ เพื่อรู้ว่ากำลังจัดการอะไร',
-    'ใช้ช่องค้นหาหรือตัวกรองที่อยู่เหนือรายการ ถ้าต้องการเจอรายการเดิม',
-    'เปิดแถวเพื่อดูหรือแก้ไข หรือกดปุ่มหลักมุมขวาบนเพื่อเพิ่มรายการใหม่',
-  ],
-};
-
-const CREATE: PageGuide = {
-  summary: 'หน้านี้ใช้สร้างรายการใหม่ กรอกช่องที่มีดอกจันให้ครบ แล้วกดปุ่มบันทึกที่บอกชื่อสิ่งที่กำลังบันทึก',
-  steps: [
-    'ทำตามลำดับขั้นตอนด้านบน ทีละส่วน',
-    'ช่องที่มีดอกจันจำเป็นต้องกรอก ตัวอย่างอยู่ในช่อง และคำอธิบายสั้น ๆ อยู่ใต้ช่อง',
-    'ถ้ามีข้อความสีแดง ให้อ่านแล้วแก้ตามที่บอก แล้วกดปุ่มบันทึกอีกครั้ง',
-  ],
-};
-
-const EDIT: PageGuide = {
-  summary: 'หน้านี้ใช้แก้รายการที่มีอยู่แล้ว เปลี่ยนเฉพาะส่วนที่ต้องการ แล้วกดปุ่มบันทึก',
-  steps: [
-    'ตรวจชื่อรายการด้านบนว่าเป็นรายการที่ต้องการแก้',
-    'แก้ช่องที่ต้องการ ช่องที่มีดอกจันห้ามเว้นว่าง',
-    'กดปุ่มบันทึกเมื่อพร้อม ถ้ายังไม่ต้องการเปลี่ยน กดยกเลิกเพื่อกลับ',
-  ],
-};
-
-const DETAIL: PageGuide = {
-  summary: 'หน้านี้แสดงรายละเอียดของหนึ่งรายการ ใช้ปุ่มด้านบนเมื่อต้องการแก้ ลบ หรือทำขั้นถัดไป',
-  steps: [
-    'อ่านสถานะและข้อมูลหลักก่อนลงมือ',
-    'ถ้าจะลบหรือยกเลิก ระบบจะถามให้ยืนยันและบอกผลที่จะเกิดขึ้น',
-    'ใช้ลิงก์กลับเพื่อไปหน้ารายการ',
-  ],
-};
-
 const GUIDES: Record<string, PageGuide> = {
   '/': {
     summary: 'หน้านี้สรุปงานที่ต้องดูวันนี้ ตัวเลขมาจากข้อมูลจริง',
@@ -216,17 +180,13 @@ function match(spec: string, path: string) {
   return a.every((part, index) => part.startsWith(':') || part === b[index]);
 }
 
-/** Longest matching route pattern, otherwise a create, edit, detail, or list guide. */
-export function pageGuide(pathname: string): PageGuide {
+/** Longest matching route that has its own guide. Unknown routes, including /home, get nothing. */
+export function pageGuide(pathname: string): PageGuide | undefined {
   const path = pathname.split('?')[0].replace(/\/$/, '') || '/';
   let best: { spec: string; guide: PageGuide } | null = null;
   for (const [spec, guide] of Object.entries(GUIDES)) {
     if (!match(spec, path)) continue;
     if (!best || spec.length > best.spec.length) best = { spec, guide };
   }
-  if (best) return best.guide;
-  if (/\/(create|new)$/.test(path)) return CREATE;
-  if (/\/edit(\/|$)/.test(path)) return EDIT;
-  if (/\/[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(path) || /\/\d+$/.test(path)) return DETAIL;
-  return LIST;
+  return best?.guide;
 }

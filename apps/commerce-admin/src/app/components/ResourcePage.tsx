@@ -55,10 +55,10 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
   async function handleSubmit() {
     const nextErrors: Record<string, string> = {};
     for (const f of fields) {
-      if (f.required && !form[f.name]?.trim()) nextErrors[f.name] = __uiMessage('กรอก{0} ตัวอย่าง: {1}', { 0: f.label, 1: f.placeholder || f.label });
+      if (f.required && !form[f.name]?.trim()) nextErrors[f.name] = __uiMessage('กรอก{0} ตัวอย่าง: {1}', { 0: f.label, 1: f.placeholder ? __uiText(f.placeholder) : f.label });
     }
     setFieldErrors(nextErrors);
-    if (Object.keys(nextErrors).length) return;
+    if (Object.keys(nextErrors).length) return false;
     setSubmitting(true);
     setFormError(null);
     try {
@@ -76,6 +76,7 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
       else reload();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +105,7 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
         onCancel={() => setCreating(false)}
       >
         {fields.map((f) => (
-          <Field key={f.name} label={f.label} required={f.required} error={fieldErrors[f.name]} hint={f.hint ?? __uiText('ตัวอย่าง: {0}', { 0: f.placeholder || '—' })} className={f.type === 'textarea' ? 'md:col-span-2' : undefined}>
+          <Field key={f.name} label={f.label} required={f.required} error={fieldErrors[f.name]} hint={f.hint ?? (f.placeholder ? __uiText('ตัวอย่าง: {0}', { 0: __uiText(f.placeholder) }) : undefined)} className={f.type === 'textarea' ? 'md:col-span-2' : undefined}>
             {f.options ? (
               <Select value={form[f.name] ?? ''} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}>
                 <option value="">{__uiText('เลือก')}</option>
@@ -112,10 +113,10 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
                   <option key={o} value={o}>{o}</option>
                 ))}
               </Select>
-            ) : f.type === 'textarea' ? <Textarea rows={3} placeholder={f.placeholder} value={form[f.name] ?? ''} onChange={event => setForm({ ...form, [f.name]: event.target.value })} /> : (
+            ) : f.type === 'textarea' ? <Textarea rows={3} placeholder={f.placeholder ? __uiText(f.placeholder) : undefined} value={form[f.name] ?? ''} onChange={event => setForm({ ...form, [f.name]: event.target.value })} /> : (
               <Input
                 type={f.type ?? 'text'}
-                placeholder={f.placeholder}
+                placeholder={f.placeholder ? __uiText(f.placeholder) : undefined}
                 value={form[f.name] ?? ''}
                 onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
               />

@@ -2,9 +2,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Button, Empty, ErrorText, Field, FormPanel, Input, Loading, MasterDataSelect, Modal, Page, PageHeader, Panel, PanelHead, Pager, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
-import { api, customersApi, productsApi, Customer, Product, OrderRow, Paginated, session } from '../../lib/api';
-import { roleCanWrite } from '../role-can';
+  Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
+import { api, Customer, Product, OrderRow, Paginated, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { CurrentPageFilters, useCurrentPageFilter } from '../components/CurrentPageFilters';
 
@@ -14,6 +13,7 @@ interface LineForm {
   productId: string;
   qty: string;
   unitPrice: string;
+  manual?: boolean;
 }
 
 const emptyLine: LineForm = { productId: '', qty: '1', unitPrice: '' };
@@ -24,6 +24,7 @@ export function Orders() {
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const [creating, setCreating] = useState(false);
+  const [manualCustomer, setManualCustomer] = useState(false);
   const customers = useAsync(() => creating ? api.get<Paginated<Customer>>('/customers?page=1&pageSize=100') : Promise.resolve(null), [creating]);
   const products = useAsync(() => creating ? api.get<Paginated<Product>>('/products?page=1&pageSize=100') : Promise.resolve(null), [creating]);
   const { data, loading, error, reload } = useAsync(
@@ -58,15 +59,16 @@ export function Orders() {
       if (!customerId) {
         setFormError(__uiMessage("เลือกลูกค้าจากรายการ"));
         setSubmitting(false);
-        return;
+        return false;
       }
       if (!payload.lines.length) {
         setFormError(__uiMessage("กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ"));
         setSubmitting(false);
-        return;
+        return false;
       }
       const created = await api.post<OrderRow>('/orders', payload);
       setCustomerId('');
+      setManualCustomer(false);
       setLines([{ ...emptyLine }]);
       setCreating(false);
       if (page !== 1) setPage(1);
@@ -74,6 +76,7 @@ export function Orders() {
       navigate(`/orders/${created.id}`);
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -104,34 +107,23 @@ export function Orders() {
         onCancel={() => setCreating(false)}
       >
         <ErrorText error={customers.error ?? products.error} />
-        <Field label={__uiText("ลูกค้า")} hint={__uiText("ค้นจากชื่อ รายการที่โหลดมา 100 รายการแรก")}>
-          <MasterDataSelect
-            options={(customers.data?.items ?? []).map((customer) => ({ value: customer.id, label: customer.code ? `${customer.name} · ${customer.code}` : customer.name }))}
-            value={customerId}
-            onChange={(next) => setCustomerId(String(next))}
-            canCreate={roleCanWrite()}
-            createFields={[{ name: 'name', label: 'ชื่อลูกค้า', required: true, placeholder: 'ร้านอาหารบ้านสวน' }]}
-            onCreate={async (draft) => {
-              const made = await customersApi.create({ name: draft.name.trim() });
-              return { value: made.id, label: made.name };
-            }}
-          />
+        <Field label={__uiText("ลูกค้า")} hint={__uiText("แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง")}>
+          <Select required value={manualCustomer ? 'manual' : customerId} onChange={event => { setManualCustomer(event.target.value === 'manual'); setCustomerId(event.target.value === 'manual' ? '' : event.target.value); }}>
+            <option value="">{__uiText("เลือกลูกค้า")}</option>
+            {[...(customers.data?.items ?? [])].sort((a, b) => a.name.localeCompare(b.name, 'th')).map(customer => <option key={customer.id} value={customer.id}>{customer.name}{customer.code ? ` · ${customer.code}` : ''}</option>)}
+            <option value="manual">{__uiText("ระบุรหัสลูกค้าเอง")}</option>
+          </Select>
         </Field>
+        {manualCustomer && <Field label={__uiText("รหัสลูกค้า")}><Input required value={customerId} onChange={event => setCustomerId(event.target.value)} placeholder={__uiText("รหัส UUID ของลูกค้า")} /></Field>}
         {lines.map((l, i) => (
           <div key={i} className="col-span-full grid grid-cols-2 items-end gap-3 rounded-lg border border-secondary-container p-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_40px]">
-            <Field label={__uiText("สินค้า {0}", {"0": i + 1})} className="col-span-2 md:col-span-1">
-              <MasterDataSelect
-                options={(products.data?.items ?? []).map((product) => ({ value: product.id, label: `${product.sku} · ${product.name}` }))}
-                value={l.productId}
-                onChange={(next) => updateLine(i, { productId: String(next) })}
-                canCreate={roleCanWrite(['merchandising'])}
-                createFields={[{ name: 'sku', label: 'รหัสสินค้า', required: true, placeholder: 'BREAD-001' }, { name: 'name', label: 'ชื่อสินค้า', required: true, placeholder: 'ขนมปังโฮลวีต' }]}
-                createFrom="name"
-                onCreate={async (draft) => {
-                  const made = await productsApi.create({ sku: draft.sku.trim(), name: draft.name.trim() });
-                  return { value: made.id, label: `${made.sku} · ${made.name}` };
-                }}
-              />
+            <Field label={__uiText("สินค้า {0}", {"0": i + 1})} hint={__uiText("แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสสินค้าเอง")} className="col-span-2 md:col-span-1">
+              <Select value={l.manual ? 'manual' : l.productId} onChange={event => updateLine(i, { manual: event.target.value === 'manual', productId: event.target.value === 'manual' ? '' : event.target.value })}>
+                <option value="">{__uiText("เลือกสินค้า")}</option>
+                {[...(products.data?.items ?? [])].sort((a, b) => a.sku.localeCompare(b.sku, 'th') || a.name.localeCompare(b.name, 'th')).map(product => <option key={product.id} value={product.id}>{product.sku} · {product.name}</option>)}
+                <option value="manual">{__uiText("ระบุรหัสสินค้าเอง")}</option>
+              </Select>
+              {l.manual && <Input aria-label={__uiText("รหัสสินค้า {0}", {"0": i + 1})} required value={l.productId} onChange={event => updateLine(i, { productId: event.target.value })} placeholder={__uiText("รหัส UUID ของสินค้า")} />}
             </Field>
             <Field label={__uiText("จำนวน {0}", {"0": i + 1})}>
               <Input

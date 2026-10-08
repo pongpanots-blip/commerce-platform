@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import {
   getUserSegments,
+  previewUserSegmentCount,
   type UserSegmentListItem,
 } from '@josh/shared-api';
 import { Select, Textarea } from '@josh/shared-ui-web';
@@ -81,15 +82,24 @@ export function CouponAudienceFields({
     }
   }, [value.recipientFile]);
 
-  // Count comes from the segment list. Do not call preview: that call locks membership.
+  // Preview member count for the selected segment.
   useEffect(() => {
     if (value.mode !== 'segment' || !value.segmentId) {
       setMemberCount(null);
       return;
     }
-    const match = segments.find((segment) => segment.id === value.segmentId);
-    setMemberCount(match?.member_count ?? null);
-  }, [value.mode, value.segmentId, segments]);
+    let cancelled = false;
+    previewUserSegmentCount(value.segmentId)
+      .then((count) => {
+        if (!cancelled) setMemberCount(count ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setMemberCount(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [value.mode, value.segmentId]);
 
   // Hide throwaway coupon-* segments, except the one currently selected.
   const options = segments.filter(

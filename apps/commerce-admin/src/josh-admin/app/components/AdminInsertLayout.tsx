@@ -12,7 +12,7 @@ type AdminInsertLayoutProps = {
   /** Header save button text (default `บันทึก`) — set it when the page has other save buttons. */
   saveLabel?: string;
   wide?: boolean;
-  onSave: () => void;
+  onSave: () => unknown;
   /** Intercepts both the "← กลับ" and "ยกเลิก" buttons (e.g. to show an unsaved-changes
    * confirm dialog) instead of navigating straight to backPath/-1. */
   onBack?: () => void;
@@ -43,8 +43,15 @@ export function AdminInsertLayout({
   const requestLeave = useUnsavedChanges(dirty);
   const leave = () => requestLeave(() => (onBack ? onBack() : backPath ? navigate(backPath) : navigate(-1)));
   const save = () => {
-    onSave();
-    window.setTimeout(() => scrollToFirstInvalid(root.current), 0);
+    void Promise.resolve(onSave()).then((result) => {
+      window.setTimeout(() => {
+        if (root.current?.querySelector('[aria-invalid="true"]')) {
+          scrollToFirstInvalid(root.current);
+          return;
+        }
+        if (result !== false) setDirty(false);
+      }, 0);
+    });
   };
 
   return (

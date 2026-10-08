@@ -1,4 +1,4 @@
-import { blankFieldMessage, fieldExample, fieldHint, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { blankFieldMessage, fieldHint, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import React, { ReactNode } from 'react';
 
 // สืบทอดคุณสมบัติมาตรฐานของแท็ก <input> มาทั้งหมดเพื่อให้ใช้งานง่าย
@@ -26,16 +26,16 @@ export function Input({
   id,
   disabled,
   required,
+  readOnly,
   ...props
 }: InputProps) {
   __useUiLocale();
   const generatedId = React.useId();
   const inputId = label ? (id ?? generatedId) : id;
   const messageId = `${generatedId}-message`;
-  const example = placeholder ?? (label ? fieldExample(type) : undefined);
-  const help = hint ?? (label ? fieldHint(required) : undefined);
+  const help = hint ?? (label && required && !disabled && !readOnly ? fieldHint(true) : undefined);
   const [blank, setBlank] = React.useState(false);
-  const shownError = error || (blank && label ? blankFieldMessage(label, example) : '');
+  const shownError = error || (blank && label && required ? blankFieldMessage(label, placeholder) : '');
 
   return (
     <div className="w-full">
@@ -54,8 +54,9 @@ export function Input({
         <input
           id={inputId}
           type={type}
-          placeholder={example ? __uiText(example) : undefined}
+          placeholder={placeholder ? __uiText(placeholder) : undefined}
           disabled={disabled}
+          readOnly={readOnly}
           required={required}
           // Figma "Data Entry / Basic Input" — h-40 px-12 radius-8, ขอบ #DEEAFF → primary ตอน hover/focus
           // ponytail: border-2 คงที่ตลอด (ไม่ใช่ 1px→2px) กันความสูงกระโดดตอนโฟกัส — สีเข้มขึ้นแทนความหนา

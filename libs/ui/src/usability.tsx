@@ -27,7 +27,7 @@ export function fieldExample(type?: string): string | undefined {
     case 'tel': return '0812345678';
     case 'number': return '10';
     case 'url': return 'https://example.com';
-    case 'search': return 'ค้นหาจากชื่อ';
+    case 'search':
     case 'password':
     case 'date':
     case 'time':
@@ -38,9 +38,8 @@ export function fieldExample(type?: string): string | undefined {
     case 'color':
     case 'range':
     case 'select':
-      return undefined;
     default:
-      return 'เช่น ชื่อที่ทีมใช้';
+      return undefined;
   }
 }
 
@@ -103,47 +102,50 @@ export function Stepper({ steps }: { steps: string[] }) {
   );
 }
 
-/** Collapsible "how to do this" box. Open the first time; the choice is remembered on this browser. */
-export function HowTo({ id, summary, steps }: { id: string; summary: string; steps: string[] }) {
+/** Commerce-admin turns this on from its entry file. The portal never does. */
+let pageGuidesEnabled = false;
+export function enablePageGuides() { pageGuidesEnabled = true; }
+
+/** Small help control beside a title. Closed until opened, and not remembered. */
+export function PageHelpLink() {
   useUiLocale();
-  const storageKey = `cp-howto:${id}`;
-  const [open, setOpen] = useState(true);
+  const { pathname } = useLocation();
+  const [open, setOpen] = useState(false);
   const panelId = useId();
-  useEffect(() => {
-    try { if (sessionStorage.getItem(storageKey) === '0') setOpen(false); } catch { /* ignore */ }
-  }, [storageKey]);
-  function toggle() {
-    setOpen((value) => {
-      const next = !value;
-      try { sessionStorage.setItem(storageKey, next ? '1' : '0'); } catch { /* ignore */ }
-      return next;
-    });
-  }
+  const guide = pageGuidesEnabled ? pageGuide(pathname) : undefined;
+  useEffect(() => setOpen(false), [pathname]);
+  if (!guide) return null;
   return (
-    <section className="rounded-xl border border-secondary-container bg-surface-container-lowest">
-      <button type="button" className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left" aria-expanded={open} aria-controls={panelId} onClick={toggle}>
-        <span className="flex items-center gap-2 text-sm font-medium text-on-surface">
-          <Icon name="help" size={18} className="text-primary" />
-          {uiText('วิธีทำในหน้านี้')}
-        </span>
-        <span className="text-xs text-on-surface-variant">{open ? uiText('ซ่อน') : uiText('แสดง')}</span>
+    <span className="relative inline-flex">
+      <button type="button" className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-medium text-primary hover:bg-primary-container/40" aria-expanded={open} aria-controls={panelId} onClick={() => setOpen((value) => !value)}>
+        <Icon name="help" size={16} />
+        {uiText('ช่วยเหลือ')}
       </button>
       {open && (
-        <div id={panelId} className="space-y-2 px-4 pb-4">
-          <p className="text-sm leading-relaxed text-on-surface-variant">{uiText(summary)}</p>
+        <div id={panelId} className="absolute left-0 top-full z-30 mt-1 w-80 max-w-[80vw] space-y-2 rounded-xl border border-secondary-container bg-surface-container-lowest p-3 shadow-lg">
+          <p className="text-sm leading-relaxed text-on-surface-variant">{uiText(guide.summary)}</p>
           <ol className="list-decimal space-y-1 pl-5 text-sm text-on-surface">
-            {steps.map((step) => <li key={step}>{uiText(step)}</li>)}
+            {guide.steps.map((step) => <li key={step}>{uiText(step)}</li>)}
           </ol>
         </div>
       )}
-    </section>
+    </span>
+  );
+}
+
+/** @deprecated The page title help link replaced the open box. */
+export function HowTo({ summary, steps }: { id?: string; summary: string; steps: string[] }) {
+  useUiLocale();
+  return (
+    <div className="space-y-2">
+      <p className="text-sm leading-relaxed text-on-surface-variant">{uiText(summary)}</p>
+      <ol className="list-decimal space-y-1 pl-5 text-sm text-on-surface">{steps.map((step) => <li key={step}>{uiText(step)}</li>)}</ol>
+    </div>
   );
 }
 
 export function RouteHowTo() {
-  const { pathname } = useLocation();
-  const guide = pageGuide(pathname);
-  return <HowTo id={pathname} summary={guide.summary} steps={guide.steps} />;
+  return <PageHelpLink />;
 }
 
 type ConfirmOptions = {
@@ -263,11 +265,10 @@ export function ToastHost() {
   );
 }
 
-/** Hosts for confirm, toast, and the route how-to. Mount once per page body. */
+/** Hosts for confirm and toast. The help link sits on the page title, not above it. */
 export function PageChrome({ children }: { children?: ReactNode }) {
   return (
     <>
-      <RouteHowTo />
       {children}
       <ConfirmHost />
       <ToastHost />

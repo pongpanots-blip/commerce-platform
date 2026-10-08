@@ -4,8 +4,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * auth_refresh_token — rotating refresh tokens for commerce-admin (staff) and developer-portal sign-ins.
  * Only the sha256 of each token is stored. Additive only: a new table, nothing else is touched.
  */
-export class AuthRefreshToken1795600000000 implements MigrationInterface {
-  name = 'AuthRefreshToken1795600000000';
+export class AuthRefreshToken1795700000000 implements MigrationInterface {
+  name = 'AuthRefreshToken1795700000000';
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`CREATE TABLE IF NOT EXISTS auth_refresh_token (
     id uuid DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,

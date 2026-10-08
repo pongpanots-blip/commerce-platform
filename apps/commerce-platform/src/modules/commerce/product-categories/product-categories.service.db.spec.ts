@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { EventEmitterBus } from '../../../shared-kernel/infrastructure/event-emitter.bus';
 import { OutboxMessage } from '../../../shared-kernel/infrastructure/outbox.entity';
 import { EVENT_BUS } from '../../../shared-kernel/interfaces/event-bus.interface';
+import { ALL_CATEGORY_ID } from './category-rules';
 import { CATEGORY_TREE_AGGREGATE_ID } from './category-tree.events';
 import { ProductCategoriesService } from './product-categories.service';
 
@@ -65,10 +66,12 @@ const url = process.env.CATEGORIES_TEST_DATABASE_URL;
   });
 
   it('level-1 reorder takes the whole row; brand names publish one brand', async () => {
-    const ids: string[] = (await db.query(`SELECT id FROM product_categories WHERE level = 1 ORDER BY sort, id`)).map((r: { id: string }) => r.id);
+    const ids: string[] = (await db.query(`SELECT id FROM product_categories WHERE level = 1 AND id <> $1 ORDER BY sort, id`, [ALL_CATEGORY_ID])).map((r: { id: string }) => r.id);
     const moved = [...ids.slice(1), ids[0]];
     await svc.reorderLevel1(moved);
     expect((await row(ids[0])).sort).toBe(ids.length);
+    const all = await row(ALL_CATEGORY_ID);
+    if (all) expect(all).toMatchObject({ sort: 0, category_code: 'ALL', level: 1, parent_id: null, is_all_category: true });
     await expect(svc.reorderLevel1(moved.slice(1))).rejects.toThrow('ขาดหมวด Level 1');
     await svc.reorderLevel1(ids);
     expect((await row(ids[0])).sort).toBe(1);

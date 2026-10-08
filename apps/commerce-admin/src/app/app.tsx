@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppShell, Button, IconButton, Loading, NavGroup, Sidebar, StatusDot, TopBar, NavProvider } from '@cp/ui';
-import { AdminStats, api, reportsApi, session, staffApi } from '../lib/api';
+import { AdminStats, api, reportsApi, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { StaffAccounts } from './pages/StaffAccounts';
@@ -58,22 +58,34 @@ import { GrowthResults, GrowthTimeline } from './pages/growth/Results';
 
 const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
 
-const NAV: NavGroup[] = [
+type Link = { to: string; label: string; end: boolean; icon?: string; roles?: readonly StaffRole[] };
+type Nav = { group?: string; icon?: string; links: Link[] };
+const L = (to: string, label: string, roles?: readonly StaffRole[], end = false): Link => ({ to, label, end, ...(roles ? { roles } : {}) });
+const M = ['marketing'] as const;
+const MER = ['merchandising'] as const;
+const MM = ['marketing', 'merchandising'] as const;
+const CS = ['cs'] as const;
+const BA = ['business_analyst'] as const;
+const SHOP = ['sales_manager', 'business_analyst'] as const;
+const GFX = ['graphic'] as const;
+const ALL = ['marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic'] as const;
+
+const NAV: Nav[] = [
   { links: [{ to: '/', label: 'Overview', end: true, icon: 'dashboard' }] },
   {
     group: 'รายงานร้าน (josh)', icon: 'storefront',
     links: [
-      { to: '/reports/sales', label: 'ยอดขาย', end: false },
-      { to: '/reports/products', label: 'สินค้า (josh)', end: false },
-      { to: '/reports/orders', label: 'Orders (josh)', end: false },
-      { to: '/reports/customers', label: 'ลูกค้า / บริษัท (josh)', end: false },
-      { to: '/reports/prices', label: 'ราคาที่ลูกค้าเห็น (josh)', end: false },
-      { to: '/reports/price-shadow', label: 'ราคา: commerce คิดคู่กัน (ทดลอง)', end: false },
-      { to: '/prices/staff', label: 'ราคาลูกค้า / ราคาสัญญา (commerce)', end: false },
-      { to: '/reports/traffic', label: 'Traffic', end: false },
-      { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
-      { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
-      { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
+      L('/reports/sales', 'ยอดขาย', SHOP),
+      L('/reports/products', 'สินค้า (josh)', [...MM, ...SHOP]),
+      L('/reports/orders', 'Orders (josh)', SHOP),
+      L('/reports/customers', 'ลูกค้า / บริษัท (josh)', SHOP),
+      L('/reports/prices', 'ราคาที่ลูกค้าเห็น (josh)', SHOP),
+      L('/reports/price-shadow', 'ราคา: commerce คิดคู่กัน (ทดลอง)'),
+      L('/prices/staff', 'ราคาลูกค้า / ราคาสัญญา (commerce)', MER),
+      L('/reports/traffic', 'Traffic', ['marketing', ...SHOP]),
+      L('/reports/health', 'Error / สุขภาพระบบ', SHOP),
+      L('/reports/order-targetgroup', 'Order target group', SHOP),
+      L('/reports/winback', 'Win-back (ฝ่ายขาย)', SHOP),
     ],
   },
   {
@@ -98,92 +110,92 @@ const NAV: NavGroup[] = [
   {
     group: 'Marketing', icon: 'campaign',
     links: [
-      { to: '/marketing/analyst', label: 'ถาม Marketing Analyst', end: false },
-      { to: '/marketing/growth', label: 'Growth Workspace', end: true },
-      { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน Growth', end: false },
-      { to: '/marketing/research', label: 'Research', end: false },
-      { to: '/marketing/restaurants', label: 'Market Explorer (ร้านอาหาร)', end: false },
-      { to: '/marketing/workflows', label: 'Marketing workflows', end: false },
-      { to: '/j/coupons', label: 'Coupons', end: false },
-      { to: '/j/promotion-product-sets', label: 'Promotion product sets', end: false },
-      { to: '/j/promotions-mechanic', label: 'Promotion mechanics', end: false },
-      { to: '/j/promotion-pages', label: 'Promotion pages', end: false },
-      { to: '/j/promotions/campaigns', label: 'Campaigns', end: false },
-      { to: '/j/segments', label: 'Segments', end: false },
-      { to: '/j/marketing/push-campaigns', label: 'Push campaigns', end: false },
-      { to: '/j/cs/notification-catalog', label: 'Notification catalog', end: false },
-      { to: '/j/cs/notification-log', label: 'Notification log', end: false },
-      { to: '/j/cs/notification-stats', label: 'Notification delivery stats', end: false },
-      { to: '/j/cs/product-notify-funnel', label: 'Product notify funnel', end: false },
-      { to: '/j/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', end: false },
-      { to: '/j/marketing/scraping-sources', label: 'ตั้งค่าเก็บข้อมูลเว็บ', end: false },
-      { to: '/j/marketing/scraped-catalog', label: 'คลังข้อมูลเว็บคู่แข่ง', end: false },
+      L('/marketing/analyst', 'ถาม Marketing Analyst', M),
+      L('/marketing/growth', 'Growth Workspace', ['marketing', ...BA], true),
+      L('/marketing/growth/plans', 'แผนและปฏิทิน Growth', M),
+      L('/marketing/research', 'Research', M),
+      L('/marketing/restaurants', 'Market Explorer (ร้านอาหาร)', ['marketing', ...SHOP]),
+      L('/marketing/workflows', 'Marketing workflows', M),
+      L('/j/coupons', 'Coupons', M),
+      L('/j/promotion-product-sets', 'Promotion product sets', MM),
+      L('/j/promotions-mechanic', 'Promotion mechanics', MM),
+      L('/j/promotion-pages', 'Promotion pages', M),
+      L('/j/promotions/campaigns', 'Campaigns', M),
+      L('/j/segments', 'Segments', M),
+      L('/j/marketing/push-campaigns', 'Push campaigns', M),
+      L('/j/cs/notification-catalog', 'Notification catalog', M),
+      L('/j/cs/notification-log', 'Notification log', M),
+      L('/j/cs/notification-stats', 'Notification delivery stats', M),
+      L('/j/cs/product-notify-funnel', 'Product notify funnel', M),
+      L('/j/marketing/competitor-prices', 'เทียบราคาคู่แข่ง', ['marketing', ...BA]),
+      L('/j/marketing/scraping-sources', 'ตั้งค่าเก็บข้อมูลเว็บ', M),
+      L('/j/marketing/scraped-catalog', 'คลังข้อมูลเว็บคู่แข่ง', M),
     ],
   },
   {
     group: 'CS / แชต', icon: 'support_agent',
     links: [
-      { to: '/cs', label: 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', end: false },
-      { to: '/livechat', label: 'Live chat', end: false },
-      { to: '/j/bot/intent-rules', label: 'Bot · intent rules', end: false },
-      { to: '/j/bot/workflows', label: 'Bot · workflows', end: false },
-      { to: '/j/bot/templates', label: 'Bot · templates', end: false },
+      L('/cs', 'งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)', CS),
+      L('/livechat', 'Live chat'),
+      L('/j/bot/intent-rules', 'Bot · intent rules', M),
+      L('/j/bot/workflows', 'Bot · workflows', M),
+      L('/j/bot/templates', 'Bot · templates', M),
     ],
   },
   {
     group: 'สินค้า / ลูกค้า (จาก josh)', icon: 'shelves',
     links: [
-      { to: '/j/allproducts', label: 'สินค้า (จัดการ)', end: false },
-      { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true },
-      { to: '/j/product/video-upload', label: 'Video upload', end: true },
-      { to: '/j/product/bulk-image-upload', label: 'Bulk image upload', end: true },
-      { to: '/j/suppliers', label: 'Suppliers', end: false },
-      { to: '/j/brands', label: 'แบรนด์', end: false },
-      { to: '/j/allusers', label: 'ผู้ใช้ทั้งหมด', end: false },
-      { to: '/j/membership-tiers', label: 'ระดับสมาชิก', end: false },
-      { to: '/j/company', label: 'บริษัท', end: false },
-      { to: '/j/kyc', label: 'KYC', end: false },
-      { to: '/j/cs/sample-requests', label: 'Sample requests', end: false },
-      { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', end: false },
-      { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', end: false },
-      { to: '/j/price-requests', label: 'Price requests', end: false },
-      { to: '/j/active-offers', label: 'Active offers', end: false },
-      { to: '/j/admin-access', label: 'Admin access requests', end: false },
+      L('/j/allproducts', 'สินค้า (จัดการ)', [...MM, ...GFX]),
+      L('/j/product/create', 'เพิ่มสินค้า', MM, true),
+      L('/j/product/video-upload', 'Video upload', MM, true),
+      L('/j/product/bulk-image-upload', 'Bulk image upload', [...MM, ...GFX], true),
+      L('/j/suppliers', 'Suppliers', MM),
+      L('/j/brands', 'แบรนด์', [...MM, ...GFX]),
+      L('/j/allusers', 'ผู้ใช้ทั้งหมด'),
+      L('/j/membership-tiers', 'ระดับสมาชิก'),
+      L('/j/company', 'บริษัท'),
+      L('/j/kyc', 'KYC'),
+      L('/j/cs/sample-requests', 'Sample requests', CS),
+      L('/j/cs/delivery-schedule', 'ตารางรอบส่ง', CS),
+      L('/j/cs/cart-move-categories', 'หมวดที่ย้ายของในตะกร้าได้', CS),
+      L('/j/price-requests', 'Price requests'),
+      L('/j/active-offers', 'Active offers'),
+      L('/j/admin-access', 'Admin access requests'),
     ],
   },
   {
     group: 'Order / การเงิน (จาก josh)', icon: 'receipt_long',
     links: [
-      { to: '/j/order', label: 'Orders (จัดการ)', end: false },
-      { to: '/j/shipments', label: 'Shipments (จัดการ)', end: false },
-      { to: '/j/payment-transactions', label: 'รายการชำระเงิน (จัดการ)', end: false },
-      { to: '/j/order/import', label: 'นำเข้า order', end: true },
-      { to: '/j/batch-sticker', label: 'พิมพ์ sticker', end: false },
-      { to: '/j/kbank/testing-console', label: 'KBank testing console', end: false },
-      { to: '/j/invoices', label: 'Overdue invoices', end: false },
-      { to: '/j/credit-notes', label: 'Credit notes', end: false },
-      { to: '/j/credit-backs', label: 'Credit backs', end: false },
-      { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', end: false },
-      { to: '/j/billing', label: 'Billing', end: false },
-      { to: '/j/refunds', label: 'Returns & refunds', end: false },
-      { to: '/j/jagota/payment-testing', label: 'Jagota payment testing', end: false },
-      { to: '/j/erp/webhook-simulator', label: 'ERP webhook simulator (josh)', end: false },
+      L('/j/order', 'Orders (จัดการ)', CS),
+      L('/j/shipments', 'Shipments (จัดการ)', CS),
+      L('/j/payment-transactions', 'รายการชำระเงิน (จัดการ)'),
+      L('/j/order/import', 'นำเข้า order', undefined, true),
+      L('/j/batch-sticker', 'พิมพ์ sticker'),
+      L('/j/kbank/testing-console', 'KBank testing console'),
+      L('/j/invoices', 'Overdue invoices'),
+      L('/j/credit-notes', 'Credit notes', CS),
+      L('/j/credit-backs', 'Credit backs', CS),
+      L('/j/credit-terms', 'ใบสมัครเครดิต'),
+      L('/j/billing', 'Billing'),
+      L('/j/refunds', 'Returns & refunds'),
+      L('/j/jagota/payment-testing', 'Jagota payment testing'),
+      L('/j/erp/webhook-simulator', 'ERP webhook simulator (josh)'),
     ],
   },
   {
     group: 'Marketing (จาก josh)', icon: 'campaign',
     links: [
-      { to: '/j/marketing/notify-templates', label: 'Template ข้อความ', end: false },
-      { to: '/j/smart-links', label: 'Smart links', end: false },
-      { to: '/j/marketing-links', label: 'Marketing links', end: false },
-      { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', end: false },
-      { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', end: false },
-      { to: '/j/marketing/queue', label: 'คิวงานการตลาด', end: false },
-      { to: '/j/marketing/journey-funnel', label: 'Journey funnel', end: false },
-      { to: '/j/marketing/offers-check', label: 'ตรวจข้อเสนอ', end: false },
+      L('/j/marketing/notify-templates', 'Template ข้อความ', M),
+      L('/j/smart-links', 'Smart links', M),
+      L('/j/marketing-links', 'Marketing links', M),
+      L('/j/marketing/welcome-lead-email', 'อีเมลต้อนรับลีด', M),
+      L('/j/marketing/settings', 'ตั้งค่าการตลาด', M),
+      L('/j/marketing/queue', 'คิวงานการตลาด', M),
+      L('/j/marketing/journey-funnel', 'Journey funnel', M),
+      L('/j/marketing/offers-check', 'ตรวจข้อเสนอ', M),
     ],
   },
-  { group: 'AI', icon: 'smart_toy', links: [{ to: '/ai/connectors', label: 'AI connectors (MCP)', end: false }] },
+  { group: 'AI', icon: 'smart_toy', links: [L('/ai/connectors', 'AI connectors (MCP)', M)] },
   {
     group: 'ERP hub', icon: 'hub',
     links: [
@@ -191,7 +203,7 @@ const NAV: NavGroup[] = [
       { to: '/erp/josh-logs', label: 'ERP log ของ josh', end: false },
       { to: '/erp/webhook-dead-letter', label: 'Dead letter', end: false },
       { to: '/erp/webhook-platforms', label: 'Platforms', end: false },
-      { to: '/erp/inventory-warehouse', label: 'Inventory per warehouse', end: false },
+      L('/erp/inventory-warehouse', 'Inventory per warehouse', [...MER, ...BA]),
       { to: '/erp/simulator', label: 'ERP simulator', end: false },
       { to: '/erp/jagota-shadow', label: 'ส่ง order ผ่าน commerce (ทดลอง)', end: false },
     ],
@@ -210,14 +222,14 @@ const NAV: NavGroup[] = [
   {
     group: 'Commerce data', icon: 'database',
     links: [
-      { to: '/customers', label: 'Customers', end: false },
-      { to: '/products', label: 'Products', end: false },
-      { to: '/stock-moves', label: 'Stock moves', end: false },
-      { to: '/product-prices', label: 'ราคาสินค้า', end: false },
-      { to: '/product-master-queue', label: 'คิวข้อมูลสินค้าจาก ERP', end: false },
-      { to: '/order-periods', label: 'รอบสั่งซื้อ supplier', end: false },
-      { to: '/orders', label: 'Orders', end: false },
-      { to: '/reservations', label: 'Reservations', end: false },
+      L('/customers', 'Customers'),
+      L('/products', 'Products', [...MER, ...GFX]),
+      L('/stock-moves', 'Stock moves', MER),
+      L('/product-prices', 'ราคาสินค้า', MER),
+      L('/product-master-queue', 'คิวข้อมูลสินค้าจาก ERP', MER),
+      L('/order-periods', 'รอบสั่งซื้อ supplier', MER),
+      L('/orders', 'Orders', BA),
+      L('/reservations', 'Reservations'),
     ],
   },
   {
@@ -225,17 +237,24 @@ const NAV: NavGroup[] = [
     links: [
       { to: '/settings/staff', label: 'บัญชี staff', end: false },
       { to: '/settings/josh-staff', label: 'บัญชี josh (staff)', end: false },
-      { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', end: false },
+      L('/account/password', 'เปลี่ยนรหัสผ่าน', ALL),
     ],
   },
 ];
-/** Staff accounts (commerce's and josh's) are admin-only (the API refuses others too); everyone can change their own password. */
-const ADMIN_ONLY = new Set(['/settings/staff', '/settings/josh-staff']);
+/** A link with no roles is admin-only. Admin sees every link. */
 const navFor = (role?: string): NavGroup[] =>
-  role === 'admin' ? NAV : NAV.map((g) => ({ ...g, links: g.links.filter((l) => !ADMIN_ONLY.has(l.to)) }));
+  (role === 'admin' ? NAV : NAV.map((g) => ({ ...g, links: g.links.filter((l) => role && l.roles?.includes(role as StaffRole)) })))
+    .filter((g) => g.links.length);
 
-/** Live operations strip above every page (Stitch "Overview" top bar), fed by the same endpoints the pages use. */
-function AdminTopBar() {
+/** Live operations strip above every page (Stitch "Overview" top bar). Admin only — the feeds are admin routes. */
+function AdminTopBar({ role }: { role?: string }) {
+  if (role !== 'admin') {
+    return <TopBar left={<span className="font-headline text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Commerce Operations</span>} />;
+  }
+  return <OpsTopBar />;
+}
+
+function OpsTopBar() {
   const navigate = useNavigate();
   const stats = useAsync(() => api.get<AdminStats>('/admin/stats'));
   const health = useAsync(() => reportsApi.health({ period: 'today' }));
@@ -299,7 +318,8 @@ export function App() {
   if (!signedIn) return <Login onSignedIn={() => setSignedIn(true)} />;
 
   const claims = session.claims();
-  const nav = navFor(claims?.role);
+  const role = claims?.role;
+  const nav = navFor(role);
 
   function signOut() {
     session.clear();
@@ -319,10 +339,10 @@ export function App() {
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? 'Prod' : 'Local dev'}</>}
             nav={nav}
             searchable
-            user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${claims.role}` : undefined, onSignOut: signOut }}
+            user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${STAFF_ROLE_LABEL[role as StaffRole] ?? role}` : undefined, onSignOut: signOut }}
           />
         }
-        topbar={<AdminTopBar />}
+        topbar={<AdminTopBar role={role} />}
       >
           <Routes>
             <Route path="/" element={<Dashboard />} />

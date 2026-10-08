@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { JoshActionsController } from './josh-actions.controller';
 
 describe('JoshActionsController — back-office actions', () => {
@@ -35,6 +36,20 @@ describe('JoshActionsController — back-office actions', () => {
       ['admin-access', 'reject', { requestId: ID, reason: 'ข้อมูลไม่ครบ' }],
       ['coupons', 'set_active', { couponId: ID, isActive: false }],
     ]);
+  });
+
+  it('graphic saves content keys only and refuses a price-only edit', async () => {
+    const contents = { edit: jest.fn(async () => ({ sku: 'SKU-1' })) };
+    const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    const graphic = { staff: { userId: 'staff-1', email: 'g@jagota.co.th', role: 'graphic' } } as never;
+    process.env.COMMERCE_OWNS_PRODUCT_CONTENT = 'true';
+    try {
+      await ctl.updateProduct(ID, { fields: { product_name_th: 'ซอส', selling_unit_price: 10, product_status: 'inactive' } }, graphic);
+      expect(contents.edit).toHaveBeenCalledWith('SKU-1', { product_name_th: 'ซอส' }, 'staff-1');
+      expect(josh.run).not.toHaveBeenCalled();
+      await expect(ctl.updateProduct(ID, { fields: { selling_unit_price: 10 } }, graphic)).rejects.toBeInstanceOf(ForbiddenException);
+    } finally { delete process.env.COMMERCE_OWNS_PRODUCT_CONTENT; }
   });
 
   it('product update sends the fields to josh, then refreshes the catalog copy', async () => {

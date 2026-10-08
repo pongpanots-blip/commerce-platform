@@ -6,7 +6,11 @@ import { StaffAccessSnapshot } from './staff-access-snapshot.event';
 
 export const ownsStaff = () => process.env.COMMERCE_OWNS_STAFF === 'true';
 
-/** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts) without platform_admin — that one stays a josh-side grant. */
+/**
+ * josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts) without platform_admin — that one stays a josh-side grant.
+ * Do not add commerce-only roles (business_analyst, graphic, sales_manager): josh 422s a role with no internal app_roles row.
+ * Sale managers in josh are `manager`. `sale` is the rep. `sales_manager` is a commerce-admin login only.
+ */
 export const JOSH_STAFF_ROLES = ['cs', 'marketing', 'merchandising', 'sale', 'sales', 'manager', 'admin', 'dev'] as const;
 /** The account josh runs commerce's calls as — touching it would cut commerce off josh. */
 export const COMMERCE_SERVICE_ACCOUNT = 'commerce-platform@system.josh.internal';

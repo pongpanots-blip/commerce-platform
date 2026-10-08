@@ -23,10 +23,12 @@ interface Props<T> {
   columns: Column<T>[];
   fields: Field[];
   createLabel: string;
+  /** Hide the create form when this role may only read the list. */
+  readOnly?: boolean;
 }
 
 export function ResourcePage<T extends { id: string }>(props: Props<T>) {
-  const { title, subtitle, endpoint, columns, fields, createLabel } = props;
+  const { title, subtitle, endpoint, columns, fields, createLabel, readOnly } = props;
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const { data, loading, error, reload } = useAsync(
@@ -67,7 +69,7 @@ export function ResourcePage<T extends { id: string }>(props: Props<T>) {
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
       />
 
-      <FormPanel
+      {!readOnly && <FormPanel
         title={createLabel}
         icon="add_circle"
         cols={2}
@@ -95,7 +97,7 @@ export function ResourcePage<T extends { id: string }>(props: Props<T>) {
             )}
           </Field>
         ))}
-      </FormPanel>
+      </FormPanel>}
 
       <Panel>
         <PanelHead title={`${total.toLocaleString()} total`} />

@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { JoshAdminCallController } from './josh-admin-call.controller';
 
-const req = (role: 'admin' | 'marketing' | 'merchandising' | 'cs') => ({ staff: { userId: 's-1', email: 'x@jagota.co.th', role } }) as never;
+const req = (role: 'admin' | 'marketing' | 'merchandising' | 'cs' | 'graphic') => ({ staff: { userId: 's-1', email: 'x@jagota.co.th', role } }) as never;
 
 describe('JoshAdminCallController', () => {
   it('passes josh admin routes through and unwraps josh\'s answer', async () => {
@@ -42,6 +42,20 @@ describe('JoshAdminCallController', () => {
     for (const [role, path] of [['merchandising', '/orders'], ['merchandising', '/coupon'], ['cs', '/product/p-1'], ['cs', '/coupon'],
       ['cs', '/users'], ['merchandising', '/pii/reveal'], ['cs', '/admin-access/requests'], ['cs', '/payment/kbank/testing'], ['marketing', '/orders']] as const) {
       await expect(c.call({ method: 'GET', path }, req(role))).rejects.toBeInstanceOf(ForbiddenException);
+    }
+  });
+
+  it('graphic reads products and categories, uploads images, and cannot write the catalog or reach PII', async () => {
+    const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
+    const c = new JoshAdminCallController(josh as never);
+    await c.call({ method: 'GET', path: '/product/admin/list' }, req('graphic'));
+    await c.call({ method: 'GET', path: '/product-category' }, req('graphic'));
+    await c.call({ method: 'GET', path: '/brands' }, req('graphic'));
+    await c.call({ method: 'POST', path: '/upload/image' }, req('graphic'));
+    await c.call({ method: 'POST', path: '/product/images/bulk-upload' }, req('graphic'));
+    expect(josh.run).toHaveBeenCalledTimes(5);
+    for (const [method, path] of [['PATCH', '/product/p-1'], ['POST', '/product'], ['POST', '/product-category'], ['GET', '/users'], ['GET', '/orders']] as const) {
+      await expect(c.call({ method, path }, req('graphic'))).rejects.toBeInstanceOf(ForbiddenException);
     }
   });
 

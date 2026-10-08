@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
-import { api, ordersApi, OrderRow, Paginated } from '../../lib/api';
+import { api, ordersApi, OrderRow, Paginated, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 interface LineForm {
@@ -65,6 +65,7 @@ export function Orders() {
 
 
   const total = data?.total ?? 0;
+  const readOnly = session.claims()?.role === 'business_analyst';
 
   return (
     <Page>
@@ -74,7 +75,7 @@ export function Orders() {
         actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
       />
 
-      <FormPanel
+      {!readOnly && <FormPanel
         title="New order"
         icon="add_circle"
         cols={3}
@@ -116,7 +117,7 @@ export function Orders() {
             </Field>
           </div>
         ))}
-      </FormPanel>
+      </FormPanel>}
 
       <Panel>
         <PanelHead title={`${total.toLocaleString()} total`} />

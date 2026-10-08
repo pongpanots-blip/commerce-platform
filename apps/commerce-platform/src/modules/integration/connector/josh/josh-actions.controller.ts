@@ -1,6 +1,6 @@
 import { ownsPromotions, ProductPromotionRulesService } from '../../../commerce/product-promotion-rules/product-promotion-rules.service';
 import { splitPromotionRules } from '../../../commerce/product-promotion-rules/promotion-rules';
-import { Body, Controller, HttpCode, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, HttpCode, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Put, Req } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 import { winbackOwnedByCommerce } from '../../winback/shared/winback.config';
@@ -111,8 +111,10 @@ export class JoshActionsController {
    * it owns them — saved here and sent to josh as product.price / content / master / logistics.snapshot; the rest of the
    * form still goes to josh.
    */
-  @Post('products/:id/update') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising')
+  @Post('products/:id/update') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising', 'graphic')
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
+    // ponytail: graphic writes content keys only (content-fields.ts). The merchandising path below is unchanged.
+    if (req.staff.role === 'graphic') return this.editContentOnly(id, b?.fields, req);
     const promotion = ownsPromotions() ? splitPromotionRules(plain(b?.fields)) : { rules: undefined, rest: plain(b?.fields) };
     const { selling_unit_price: price, ...others } = promotion.rest;
     const ownPrice = price !== undefined && price !== '' && ownsPrices();
@@ -138,6 +140,15 @@ export class JoshActionsController {
     if (Object.keys(logistics).length) result.logistics = await this.modules.get(OrderingService, { strict: false }).editLogistics(sku, logistics, req.staff.userId);
     if (Object.keys(relay).length) result.product = await this.relayUpdate(id, relay, req);
     return result;
+  }
+
+  /** Graphic: stage-4b content keys only. Price, master, logistics and promotion rules are refused. */
+  private async editContentOnly(id: string, fields: Record<string, unknown> | undefined, req: StaffRequest) {
+    const { content } = splitContent(plain(fields));
+    if (!Object.keys(content).length) throw new ForbiddenException('graphic edits product content only');
+    const sku = await this.skuOf(id);
+    if (ownsProductContent()) return { content: await this.modules.get(ProductContentsService, { strict: false }).edit(sku, content, req.staff.userId) };
+    return { product: await this.relayUpdate(id, content, req) };
   }
 
   private async relayUpdate(id: string, fields: Record<string, unknown>, req: StaffRequest) {

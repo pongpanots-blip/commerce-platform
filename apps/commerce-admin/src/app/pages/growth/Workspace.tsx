@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { GrowthPlanPage, GrowthWorkspace as WorkspaceData } from '@cp/growth';
 import { Alert, ArrowLink, Button, ButtonLink, Chip, Empty, Field, Icon, Input, Page, PageHeader, Panel, PanelHead, RowLink, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, TitleBadge, fmt } from '@cp/ui';
-import { api } from '../../../lib/api';
+import { api, session } from '../../../lib/api';
 import { useAsync } from '../../hooks';
 import { Evidence, LoadState, PlanStatus, Readiness, templateLabels } from './shared';
 
@@ -12,10 +12,11 @@ export function GrowthWorkspace() {
   const [companyId, setCompanyId] = useState('');
   const navigate = useNavigate();
   const data = state.data;
+  const readOnly = session.claims()?.role === 'business_analyst';
   return <Page>
     <PageHeader crumbs={['Marketing', 'Growth']} title="Growth Workspace" badge={<TitleBadge icon="insights">ข้อมูล → แผน → ตรวจ → ผลลัพธ์</TitleBadge>}
       subtitle="เลือกโอกาสที่มีหลักฐาน แล้วเตรียมแผนให้ทีมตรวจและลงมือทำ"
-      actions={<><Button onClick={state.reload} icon="refresh">Refresh</Button><ButtonLink to="/marketing/growth/plans" icon="calendar_month">แผนและปฏิทิน</ButtonLink><ButtonLink to="/marketing/growth/plans/new" variant="primary" icon="add">สร้างแผน</ButtonLink></>} />
+      actions={<><Button onClick={state.reload} icon="refresh">Refresh</Button>{!readOnly && <ButtonLink to="/marketing/growth/plans" icon="calendar_month">แผนและปฏิทิน</ButtonLink>}{!readOnly && <ButtonLink to="/marketing/growth/plans/new" variant="primary" icon="add">สร้างแผน</ButtonLink>}</>} />
     <LoadState state={state} />
     {!state.loading && !state.error && data && <>
       <div className="flex flex-wrap gap-2 items-center text-xs text-on-surface-variant">
@@ -33,7 +34,7 @@ export function GrowthWorkspace() {
             <h2 className="text-sm font-semibold">{opportunity.title}</h2><p className="text-xs text-on-surface-variant">{opportunity.reason}</p>
             <p className="text-[11px] text-outline">หลักฐาน {opportunity.evidenceIds.length} รายการ</p>
             <div className="flex flex-wrap gap-3">
-              <ButtonLink to={`/marketing/growth/plans/new?${new URLSearchParams({ template: opportunity.template, title: opportunity.title, goal: opportunity.reason })}`} variant="primary" icon="edit_note">ร่างแผนจากโอกาสนี้</ButtonLink>
+              {!readOnly && <ButtonLink to={`/marketing/growth/plans/new?${new URLSearchParams({ template: opportunity.template, title: opportunity.title, goal: opportunity.reason })}`} variant="primary" icon="edit_note">ร่างแผนจากโอกาสนี้</ButtonLink>}
               {opportunity.href?.startsWith('/') && !opportunity.href.startsWith('//') && <ArrowLink to={opportunity.href}>ตรวจข้อมูลต้นทาง</ArrowLink>}
             </div>
           </article>)}

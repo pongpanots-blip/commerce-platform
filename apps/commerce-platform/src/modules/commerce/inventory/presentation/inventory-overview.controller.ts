@@ -1,14 +1,16 @@
 import { BadRequestException, Controller, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 
 const PAGE_SIZE = 50;
 
 /**
  * Read model for the "Inventory per warehouse" admin page: stock by SKU and
  * warehouse code (not ids), who owns each warehouse's stock, and the last
- * ledger movement per row. Admin only (global staff guard default).
+ * ledger movement per row. Merchandise and business analyst (read). No customer contact fields.
  */
 @Controller('inventory-overview')
+@StaffRoles('merchandising', 'business_analyst')
 export class InventoryOverviewController {
   constructor(private readonly db: DataSource) {}
 

@@ -3,15 +3,10 @@ import {
   Alert, Button, Chip, CopyValue, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { session, staffApi, StaffAccount, StaffRole } from '../../lib/api';
+import { session, staffApi, STAFF_ROLE_LABEL, StaffAccount, StaffRole } from '../../lib/api';
 import { useAsync } from '../hooks';
 
-const ROLE_LABEL: Record<StaffRole, string> = {
-  admin: 'admin — ทุกเมนู',
-  marketing: 'marketing — รายงานและการตลาด',
-  merchandising: 'MER — สินค้า ราคา หมวด แบรนด์ supplier',
-  cs: 'CS — order shipment งาน CS credit note',
-};
+const ROLES = Object.keys(STAFF_ROLE_LABEL) as StaffRole[];
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /**
@@ -84,7 +79,7 @@ export function StaffAccounts() {
           <Field label="ชื่อ"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
           <Field label="สิทธิ์">
             <Select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as StaffRole })}>
-              {(Object.keys(ROLE_LABEL) as StaffRole[]).map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
+              {ROLES.map((r) => <option key={r} value={r}>{STAFF_ROLE_LABEL[r]}</option>)}
             </Select>
           </Field>
         </FormPanel>
@@ -113,7 +108,8 @@ export function StaffAccounts() {
                     <TD>{a.name ?? '—'}</TD>
                     <TD>
                       <Select aria-label={`สิทธิ์ของ ${a.email}`} value={a.role} disabled={self || !!busy} onChange={(e) => setRole(a, e.target.value as StaffRole)}>
-                        {(Object.keys(ROLE_LABEL) as StaffRole[]).map((r) => <option key={r} value={r}>{r === 'merchandising' ? 'MER' : r === 'cs' ? 'CS' : r}</option>)}
+                        {!ROLES.includes(a.role) && <option value={a.role}>{a.role}</option>}
+                        {ROLES.map((r) => <option key={r} value={r}>{STAFF_ROLE_LABEL[r]}</option>)}
                       </Select>
                     </TD>
                     <TD><StatusChip status={a.status} /></TD>

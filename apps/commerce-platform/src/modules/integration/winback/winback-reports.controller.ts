@@ -1,4 +1,5 @@
 import { BadRequestException, Controller, Get, Query, ServiceUnavailableException, ValidationPipe } from '@nestjs/common';
+import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { WinbackReports } from './winback-reports';
 import { wrapWinbackResponse } from './winback-response.interceptor';
 import { PoolQueryDto } from './dto/pool-query.dto';
@@ -8,11 +9,12 @@ import { LeadSignalsQueryDto } from './dto/lead-signals-query.dto';
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
 
 /**
- * winback manager reports for commerce-admin (admin only — the guard default; the sales app uses `/winback/*`
+ * winback manager reports for commerce-admin (admin, sales manager, business analyst — the sales app uses `/winback/*`
  * with josh's token). Paths and answers mirror josh `GET /api/winback/*` (same `{data, meta}` camelCase envelope).
  * `scope` is always team here. Source: WINBACK_REPORTS_SOURCE (winback-reports.ts).
  */
 @Controller('reports/winback')
+@StaffRoles('sales_manager', 'business_analyst')
 export class WinbackReportsController {
   constructor(private readonly winback: WinbackReports) {}
 

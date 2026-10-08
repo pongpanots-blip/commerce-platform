@@ -1,5 +1,5 @@
 import { BadRequestException, Controller, Get, Header, NotFoundException, Param, ParseUUIDPipe, Query, ServiceUnavailableException } from '@nestjs/common';
-import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
+import { StaffRole, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { bangkokRange, JoshInsights, Period, PERIODS } from './josh-insights';
 import { JOSH_ONLY, joshOnly, NO_REPLICA, SystemHealthReport } from './system-health';
 import { parseRestaurantFilters, RestaurantPlaces } from './restaurant-places';
@@ -11,6 +11,9 @@ import { CompanyFilters, JoshCustomers } from './josh-customers';
 import { JoshPrices } from './josh-prices';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string }
+
+/** Shop-report readers besides admin. ERP log payloads stay admin (unredacted). Customer phones and emails on these routes are already masked. */
+const SHOP: readonly StaffRole[] = ['sales_manager', 'business_analyst'];
 
 const int = (v: unknown, def: number, min: number, max: number) => {
   if (v === undefined || v === '') return def;
@@ -28,8 +31,9 @@ function range(q: PeriodQuery) {
 /**
  * Read-only shop reports for commerce-admin (headless plan phase 1): the same
  * answers the MCP tools give, from josh's read replica — josh is not called.
- * Sales, health, order target group, josh's ERP log: admin only (the guard default).
+ * Sales, health, order target group: admin, sales manager and business analyst.
  * Traffic, restaurants (Market Explorer) and push campaigns: marketing too.
+ * ERP log payloads stay admin (unredacted customer codes and prices).
  */
 @Controller('reports')
 export class ShopReportsController {
@@ -57,7 +61,7 @@ export class ShopReportsController {
     if (!this.restaurants.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set RESTAURANTS_SOURCE=copies to read commerce's copy.`);
   }
 
-  @Get('sales')
+  @Get('sales') @StaffRoles(...SHOP)
   sales(@Query() q: PeriodQuery) {
     const r = range(q);
     if (!this.insights.salesAvailable) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set SALES_SOURCE=copies to read commerce's order copies.`);
@@ -65,7 +69,7 @@ export class ShopReportsController {
   }
 
   /** Replica and order copies for the same period side by side (totals that differ, top-products ranking) — check before SALES_SOURCE=copies. */
-  @Get('sales/parity')
+  @Get('sales/parity') @StaffRoles(...SHOP)
   salesParity(@Query() q: PeriodQuery) {
     const r = range(q);
     this.replica();
@@ -73,19 +77,19 @@ export class ShopReportsController {
   }
 
   @Get('traffic')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   traffic(@Query() q: PeriodQuery) {
     const r = range(q);
     this.replica('traffic');
     return this.insights.traffic(r, 20);
   }
 
-  @Get('health')
+  @Get('health') @StaffRoles(...SHOP)
   systemHealth(@Query() q: PeriodQuery) {
     return this.health.report(range(q).current);
   }
 
-  @Get('order-targetgroup')
+  @Get('order-targetgroup') @StaffRoles(...SHOP)
   orderTargetgroup(@Query() q: { minShipmentsPerWeek?: string; custCode?: string; limit?: string; offset?: string }) {
     this.replica('orderTargetgroup');
     return this.insights.orderTargetgroup({
@@ -95,7 +99,7 @@ export class ShopReportsController {
   }
 
   @Get('restaurants')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   restaurantList(@Query() q: Record<string, string>) {
     const filters = parseRestaurantFilters(q);
     this.restaurantsReady();
@@ -103,7 +107,7 @@ export class ShopReportsController {
   }
 
   @Get('restaurants/export')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   @Header('Content-Type', 'text/csv; charset=utf-8')
   @Header('Content-Disposition', 'attachment; filename="restaurant-places.csv"')
   async restaurantCsv(@Query() q: Record<string, string>) {
@@ -114,14 +118,14 @@ export class ShopReportsController {
 
   /** Replica vs commerce's copy (counts, enriched, linked to a winback account, newest update) — check before RESTAURANTS_SOURCE=copies. */
   @Get('restaurants/parity')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   restaurantParity() {
     this.replica();
     return this.restaurants.parity();
   }
 
   @Get('restaurants/:id')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   async restaurantDetail(@Param('id', ParseUUIDPipe) id: string) {
     this.restaurantsReady();
     const row = await this.restaurants.detail(id);
@@ -151,57 +155,57 @@ export class ShopReportsController {
 
   /** josh push campaigns, read-only (josh `GET /api/admin/push-campaigns*`). Creating and sending stay in josh. */
   @Get('push-campaigns/overview')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   pushOverview() { this.pushReady(); return this.push.overview(); }
 
   @Get('push-campaigns')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   pushList() { this.pushReady(); return this.push.list(); }
 
   @Get('push-campaigns/:id')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   pushOne(@Param('id', ParseUUIDPipe) id: string) { this.pushReady(); return this.push.findOne(id); }
 
   @Get('push-campaigns/:id/delivery')
-  @StaffRoles('marketing')
+  @StaffRoles('marketing', ...SHOP)
   pushDelivery(@Param('id', ParseUUIDPipe) id: string) { this.pushReady(); return this.push.delivery(id); }
 
   /** josh catalog, read-only (headless step 3 groundwork) — marketing and MER (stage 6). */
   @Get('products/summary')
-  @StaffRoles('marketing', 'merchandising')
+  @StaffRoles('marketing', 'merchandising', ...SHOP)
   productSummary() { this.productsReady(); return this.products.summary(); }
 
   @Get('products/categories')
-  @StaffRoles('marketing', 'merchandising')
+  @StaffRoles('marketing', 'merchandising', ...SHOP)
   productCategories() { this.productsReady(); return this.products.categories(); }
 
   @Get('products')
-  @StaffRoles('marketing', 'merchandising')
+  @StaffRoles('marketing', 'merchandising', ...SHOP)
   productList(@Query() q: ProductFilters & { page?: string; limit?: string }) {
     this.productsReady();
     return this.products.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
 
   @Get('products/:idOrSku')
-  @StaffRoles('marketing', 'merchandising')
+  @StaffRoles('marketing', 'merchandising', ...SHOP)
   productDetail(@Param('idOrSku') idOrSku: string) { this.productsReady(); return this.products.detail(idOrSku); }
 
-  // josh orders / customers / prices, read-only — admin only (the guard default).
-  @Get('orders/summary') orderSummary(@Query() q: OrderFilters) { this.ordersReady(); return this.orders.summary(q); }
-  @Get('orders') orderList(@Query() q: OrderFilters & { page?: string; limit?: string }) {
+  // josh orders / customers / prices, read-only. Phones, emails and family names are masked in josh-orders / josh-customers.
+  @Get('orders/summary') @StaffRoles(...SHOP) orderSummary(@Query() q: OrderFilters) { this.ordersReady(); return this.orders.summary(q); }
+  @Get('orders') @StaffRoles(...SHOP) orderList(@Query() q: OrderFilters & { page?: string; limit?: string }) {
     this.ordersReady(); return this.orders.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
-  @Get('orders/:idOrNumber') orderDetail(@Param('idOrNumber') id: string) { this.ordersReady(); return this.orders.detail(id); }
+  @Get('orders/:idOrNumber') @StaffRoles(...SHOP) orderDetail(@Param('idOrNumber') id: string) { this.ordersReady(); return this.orders.detail(id); }
 
-  @Get('customers/summary') customerSummary() { this.replica('customers'); return this.customers.summary(); }
-  @Get('customers') customerList(@Query() q: CompanyFilters & { page?: string; limit?: string }) {
+  @Get('customers/summary') @StaffRoles(...SHOP) customerSummary() { this.replica('customers'); return this.customers.summary(); }
+  @Get('customers') @StaffRoles(...SHOP) customerList(@Query() q: CompanyFilters & { page?: string; limit?: string }) {
     this.replica('customers'); return this.customers.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
-  @Get('customers/:id') customerDetail(@Param('id', ParseUUIDPipe) id: string) { this.replica('customers'); return this.customers.detail(id); }
+  @Get('customers/:id') @StaffRoles(...SHOP) customerDetail(@Param('id', ParseUUIDPipe) id: string) { this.replica('customers'); return this.customers.detail(id); }
 
-  @Get('prices/branches') priceBranches(@Query('search') search?: string) { this.replica('prices'); return this.prices.branches(search); }
-  @Get('prices/quotations') priceQuotations(@Query('customerCode') code = '') { this.replica('prices'); return this.prices.quotations(code); }
-  @Get('prices/branches/:branchId') branchPrices(@Param('branchId', ParseUUIDPipe) id: string, @Query('search') search?: string) {
+  @Get('prices/branches') @StaffRoles(...SHOP) priceBranches(@Query('search') search?: string) { this.replica('prices'); return this.prices.branches(search); }
+  @Get('prices/quotations') @StaffRoles(...SHOP) priceQuotations(@Query('customerCode') code = '') { this.replica('prices'); return this.prices.quotations(code); }
+  @Get('prices/branches/:branchId') @StaffRoles(...SHOP) branchPrices(@Param('branchId', ParseUUIDPipe) id: string, @Query('search') search?: string) {
     this.replica('prices'); return this.prices.forBranch(id, search);
   }
 }

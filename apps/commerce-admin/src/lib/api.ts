@@ -274,8 +274,17 @@ export const ordersApi = {
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
 };
 
-// commerce-admin staff accounts (admin / marketing / MER / CS) — commerce's own logins, not josh's.
-export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs';
+// commerce-admin logins. sales_manager is not josh's `manager` (that stays on the josh account). sale has no commerce login.
+export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs' | 'sales_manager' | 'business_analyst' | 'graphic';
+export const STAFF_ROLE_LABEL: Record<StaffRole, string> = {
+  admin: 'Admin — ทุกเมนู',
+  marketing: 'Marketing — รายงานการตลาดและแคมเปญ',
+  merchandising: 'Merchandise — สินค้า สต็อก ราคา โปรโมชัน รอบสั่ง',
+  cs: 'CS — order, shipment, งาน CS',
+  sales_manager: 'Sales manager — รายงานร้าน, winback, มอบหมายพนักงานขาย',
+  business_analyst: 'Business analyst — อ่านรายงาน สต็อก ออเดอร์ ราคาคู่แข่ง',
+  graphic: 'Graphic — รูปและเนื้อหาสินค้า',
+};
 export interface StaffAccount { id: string; email: string; name: string | null; role: StaffRole; status: 'active' | 'disabled'; createdAt: string }
 export const staffApi = {
   list: () => api.get<StaffAccount[]>('/admin/staff'),
@@ -287,8 +296,18 @@ export const staffApi = {
 };
 
 // josh staff accounts (sales app, CS chat, josh-only pages) — written by commerce once it owns staff (stage 6).
-/** josh ASSIGNABLE_ADMIN_ROLES (admin-access.constants.ts); platform_admin is given in josh only. */
+/** josh ASSIGNABLE_ADMIN_ROLES without platform_admin. Not business_analyst / graphic / sales_manager — those are commerce-only. `manager` is the sale manager. */
 export const JOSH_STAFF_ROLES = ['cs', 'marketing', 'merchandising', 'sale', 'sales', 'manager', 'admin', 'dev'] as const;
+export const JOSH_ROLE_LABEL: Record<(typeof JOSH_STAFF_ROLES)[number], string> = {
+  cs: 'CS',
+  marketing: 'Marketing',
+  merchandising: 'Merchandise',
+  sale: 'Sale',
+  sales: 'Sales',
+  manager: 'Sale manager',
+  admin: 'Admin',
+  dev: 'Dev',
+};
 export interface JoshStaffAccount {
   id: string; email: string | null; name: string; role: string; isActive: boolean; lastAppLoginAt: string | null;
   pending: boolean; updatedBy: string | null; updatedAt: string | null;

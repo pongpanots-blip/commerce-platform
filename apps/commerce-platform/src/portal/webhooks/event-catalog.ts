@@ -1,4 +1,13 @@
-/** Catalog of domain events a portal account may subscribe a webhook to. */
+/**
+ * Catalog of domain events a portal account may subscribe a webhook to.
+ *
+ * This list is also the delivery allowlist for portal subscriptions
+ * (`accountId` set): `WebhookSubscriptionService.matching` only fans an event
+ * out to them when its type is listed here, and "*" means "everything listed
+ * here". Customer events and raw ERP sale orders carry customer data from
+ * every account, so they stay admin-only (`accountId` null) until there is a
+ * real tenant model — do not add them back.
+ */
 export interface CatalogEvent {
   type: string;
   description: string;
@@ -13,12 +22,6 @@ export const EVENT_CATALOG: CatalogEvent[] = [
     example: { id: 'uuid' },
   },
   { type: 'order.cancelled', description: 'order ถูกยกเลิก', example: { id: 'uuid' } },
-  { type: 'customer.created', description: 'ลูกค้าใหม่ถูกสร้าง', example: { id: 'uuid' } },
-  {
-    type: 'customer.updated',
-    description: 'ข้อมูลลูกค้าเปลี่ยน (รวม customer code จาก ERP)',
-    example: { id: 'uuid' },
-  },
   { type: 'product.updated', description: 'ข้อมูลสินค้าเปลี่ยน', example: { id: 'uuid' } },
   {
     type: 'inventory.updated',
@@ -32,9 +35,7 @@ export const EVENT_CATALOG: CatalogEvent[] = [
   },
   { type: 'product.promotion-rules.snapshot', description: 'Product quantity promotion rules (whole replacement; empty clears)', example: { sku: '1001876', rules: [], version: '1' } },
   { type: 'price.updated', description: 'ราคาเปลี่ยน', example: { id: 'uuid' } },
-  {
-    type: 'erp.sale-order.created',
-    description: 'sale ฝั่ง ERP สร้าง order ตรง (demand visibility)',
-    example: { webhookEventId: 'uuid', order: { ORDER_NUMBER: 'SO-...' } },
-  },
 ];
+
+/** Event types a portal subscription may receive (see the note above). */
+export const PORTAL_EVENT_TYPES: ReadonlySet<string> = new Set(EVENT_CATALOG.map((e) => e.type));

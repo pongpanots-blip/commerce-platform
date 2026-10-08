@@ -9,6 +9,38 @@ import { WinbackStaffIdentityService } from './winback-staff-identity.service';
 import { WinbackPrincipal, WinbackRequest } from './winback-actor';
 import { isWinbackManager } from '../winback-roles';
 import { ownsStaff } from '../../customers/josh-staff-access.service';
+import { COMMERCE_JWT_ISSUER } from '../../../../shared-kernel/presentation/jwt-issuer';
+
+export type WinbackTokenKind = 'commerce' | 'commerce-legacy' | 'josh';
+
+/**
+ * Which issuer a bearer claims to be, read from the UNVERIFIED header + payload. The caller then verifies with that
+ * issuer's secret only, so equal secrets (or a leaked one) can never make a token pass as the other kind.
+ * - header `alg` must be HS256 (both sides sign HS256), else 401; a `purpose` claim (reset / OTP token) is 401;
+ * - `iss` = COMMERCE_JWT_ISSUER → 'commerce' (verified with the commerce secret + issuer check);
+ * - any other `iss` → 401 (unknown issuer);
+ * - no `iss` and josh-shaped (`tokenVersion` or `companyId` claim — josh signs both on every access token) → 'josh';
+ * - no `iss` and not josh-shaped → 'commerce-legacy': a commerce token signed before `iss` was added. It still has
+ *   to verify with the commerce secret; these stop existing once the pre-deploy tokens expire (≤ 12 h).
+ */
+export function winbackTokenKind(token: string): WinbackTokenKind {
+  const part = (i: number): Record<string, unknown> => {
+    try {
+      const value = JSON.parse(Buffer.from(token.split('.')[i] ?? '', 'base64url').toString('utf8'));
+      if (value && typeof value === 'object' && !Array.isArray(value)) return value as Record<string, unknown>;
+    } catch { /* fall through */ }
+    throw new UnauthorizedException('Token อ่านไม่ได้ — malformed token');
+  };
+  const header = part(0), payload = part(1);
+  if (header.alg !== 'HS256') throw new UnauthorizedException('unsupported token algorithm');
+  // josh's email-OTP / password-reset tokens ({ sub: email, purpose }) and any other purpose token are not sessions.
+  if ('purpose' in payload) throw new UnauthorizedException('Token นี้ไม่ใช่ accessToken — ใช้ค่าจาก POST /api/auth/login');
+  if ('iss' in payload) {
+    if (payload.iss === COMMERCE_JWT_ISSUER) return 'commerce';
+    throw new UnauthorizedException('unknown token issuer');
+  }
+  return 'tokenVersion' in payload || 'companyId' in payload ? 'josh' : 'commerce-legacy';
+}
 
 /** The roles josh's AdminWriteGuard lets through for marketing-only routes (kept for imports that reference it). */
 export const MARKETING_EDITOR_ROLES = new Set(['marketing', 'platform_admin', 'dev']);
@@ -31,15 +63,21 @@ export class AdminWriteGuard implements CanActivate {
     const token = readBearerToken(req.headers.authorization);
     if (!token) throw new UnauthorizedException('ไม่มีสิทธิ์เข้าถึง: กรุณาส่ง Token มายืนยัน');
     if (token.split('.').length !== 3) throw new UnauthorizedException('Token ไม่ครบ — JWT ต้องมีสามท่อน (header.payload.signature)');
-    // Same secret/options as AuthModule. Only a signature mismatch permits legacy verification;
-    // expiry, purpose tokens and account failures can never downgrade to Josh auth.
-    let commerce: { sub?: string; role?: string; purpose?: unknown; typ?: unknown };
-    try {
-      commerce = await new JwtService({ secret: process.env.PORTAL_JWT_SECRET || 'dev-portal-secret' }).verifyAsync(token);
-    } catch (error) {
-      if ((error as Error)?.message !== 'invalid signature') throw new UnauthorizedException('invalid or expired commerce token');
+    const kind = winbackTokenKind(token);
+    if (kind === 'josh') {
       if (!acceptsJoshJwt()) throw new UnauthorizedException('กรุณาเข้าสู่ระบบด้วยบัญชี commerce — sign in with your commerce staff account');
       return this.josh(req, token);
+    }
+    // Commerce: ONLY the commerce secret, HS256, and the commerce issuer when the token names one. Any failure
+    // (expired, bad signature, wrong issuer) is final — a token is never re-tried as josh's.
+    let commerce: { sub?: string; role?: string; purpose?: unknown; typ?: unknown };
+    try {
+      commerce = await new JwtService({ secret: process.env.PORTAL_JWT_SECRET || 'dev-portal-secret' }).verifyAsync(token, {
+        algorithms: ['HS256'], ...(kind === 'commerce' ? { issuer: COMMERCE_JWT_ISSUER } : {}),
+      });
+    } catch (error) {
+      const name = (error as { name?: string })?.name;
+      throw new UnauthorizedException(name === 'TokenExpiredError' ? 'commerce token expired — sign in again' : 'invalid commerce token');
     }
     if (!commerce || typeof commerce !== 'object' || 'purpose' in commerce || 'typ' in commerce || typeof commerce.sub !== 'string' || !commerce.sub) {
       throw new UnauthorizedException('Token นี้ไม่ใช่ accessToken');

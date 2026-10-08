@@ -6,13 +6,20 @@ import { WinbackRequest, winbackActorOf } from './winback-actor';
 import { WinbackAppRoleGuard } from '../winback-app-role.guard';
 import { acceptsJoshJwt } from './winback.config';
 import { WinbackController } from '../winback.controller';
+import { COMMERCE_JWT_ISSUER } from '../../../../shared-kernel/presentation/jwt-issuer';
+import { winbackTokenKind } from './admin-write.guard';
 
 const COMMERCE = '11111111-1111-4111-8111-111111111111';
 const JOSH = '22222222-2222-4222-8222-222222222222';
 const context = (req: unknown) => ({ switchToHttp: () => ({ getRequest: () => req }) }) as never;
 const saved = { ...process.env };
-const token = (source: 'commerce' | 'josh', extra: Record<string, unknown> = {}) => new JwtService({ secret: source === 'commerce' ? 'commerce-test' : 'josh-test' })
-  .sign({ sub: source === 'commerce' ? COMMERCE : JOSH, role: 'sale', email: 'test@example.test', ...extra });
+// Real shapes: commerce signs { sub, email, role } with iss (AuthModule signOptions); josh signs { sub, email, role,
+// companyId, tokenVersion } with no iss. `legacy` = a commerce token signed before iss was added.
+const token = (source: 'commerce' | 'josh' | 'legacy', extra: Record<string, unknown> = {}, secret?: string) =>
+  new JwtService({ secret: secret ?? (source === 'josh' ? 'josh-test' : 'commerce-test') }).sign(
+    source === 'josh' ? { sub: JOSH, role: 'sale', email: 'test@example.test', companyId: null, tokenVersion: 0, ...extra }
+      : { sub: COMMERCE, role: 'sale', email: 'test@example.test', ...extra },
+    source === 'commerce' ? { issuer: COMMERCE_JWT_ISSUER } : {});
 function setup(row: Record<string, unknown> | null = {}, linked = false) {
   const db = { query: jest.fn(async (sql: string) => {
     if (sql.includes('FROM winback_staff_links')) return linked ? [{ josh_user_id: JOSH, commerce_user_id: COMMERCE }] : [];
@@ -103,4 +110,76 @@ it.each(['commerce', 'josh'] as const)('app role gate uses canonical roles from 
     expect(new WinbackAppRoleGuard().canActivate(context({ winbackActor: { id: COMMERCE, role, source, isManager: false } }))).toBe(true);
   }
   expect(() => new WinbackAppRoleGuard().canActivate(context({ winbackActor: { id: COMMERCE, role: 'marketing', source } }))).toThrow(ForbiddenException);
+});
+
+describe('issuer routing: a token is verified only with the secret of the issuer it names', () => {
+  const unsigned = (header: object, payload: object) =>
+    [header, payload].map(v => Buffer.from(JSON.stringify(v)).toString('base64url')).join('.') + '.sig';
+
+  it('classifies by iss / josh shape from the unverified token', () => {
+    expect(winbackTokenKind(token('commerce'))).toBe('commerce');
+    expect(winbackTokenKind(token('josh'))).toBe('josh');
+    expect(winbackTokenKind(token('legacy'))).toBe('commerce-legacy');
+    expect(winbackTokenKind(unsigned({ alg: 'HS256' }, { sub: JOSH, tokenVersion: 3 }))).toBe('josh');
+    expect(winbackTokenKind(unsigned({ alg: 'HS256' }, { sub: JOSH, companyId: null }))).toBe('josh');
+    expect(() => winbackTokenKind(unsigned({ alg: 'HS256' }, { sub: JOSH, iss: 'someone-else' }))).toThrow('unknown token issuer');
+    expect(() => winbackTokenKind(unsigned({ alg: 'none' }, { sub: COMMERCE, iss: COMMERCE_JWT_ISSUER }))).toThrow('unsupported token algorithm');
+    expect(() => winbackTokenKind(unsigned({ alg: 'HS512' }, { sub: COMMERCE }))).toThrow('unsupported token algorithm');
+    expect(() => winbackTokenKind('not-json.not-json.sig')).toThrow(UnauthorizedException);
+  });
+
+  describe('with EQUAL commerce and josh secrets', () => {
+    beforeEach(() => { process.env.PORTAL_JWT_SECRET = 'same-secret'; process.env.JOSH_JWT_SECRET = 'same-secret'; });
+
+    it('a josh token takes the josh path (josh_staff checks, never the commerce users row)', async () => {
+      const svc = setup();
+      const req = await svc.authenticate(token('josh', {}, 'same-secret'));
+      expect(req.winbackActor).toMatchObject({ id: JOSH, source: 'josh' });
+      const sqls = svc.db.query.mock.calls.map(([sql]) => sql as string);
+      expect(sqls.some(sql => sql.includes('FROM josh_staff'))).toBe(true);
+      expect(sqls.some(sql => /FROM users WHERE id/.test(sql))).toBe(false);
+    });
+    it('a commerce token takes the commerce path (users row, never josh_staff)', async () => {
+      const svc = setup();
+      const req = await svc.authenticate(token('commerce', {}, 'same-secret'));
+      expect(req.winbackActor).toMatchObject({ id: COMMERCE, source: 'commerce' });
+      expect(svc.db.query.mock.calls.some(([sql]) => (sql as string).includes('FROM josh_staff'))).toBe(false);
+    });
+    it('a pre-iss commerce token still takes the commerce path', async () => {
+      expect((await setup().authenticate(token('legacy', {}, 'same-secret'))).winbackActor).toMatchObject({ id: COMMERCE, source: 'commerce' });
+    });
+    it.each(['commerce', 'legacy'] as const)('an expired %s token never falls back to josh', async kind => {
+      const spy = jest.spyOn(JwtService.prototype, 'verifyAsync');
+      const svc = setup();
+      await expect(svc.authenticate(token(kind, { exp: 1 }, 'same-secret'))).rejects.toThrow('commerce token expired');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(svc.db.query).not.toHaveBeenCalled();
+    });
+    it('WINBACK_ACCEPT_JOSH_JWT=false rejects a josh token even though it would verify with the commerce secret', async () => {
+      process.env.WINBACK_ACCEPT_JOSH_JWT = 'false';
+      const svc = setup();
+      await expect(svc.authenticate(token('josh', {}, 'same-secret'))).rejects.toThrow('commerce staff account');
+      expect(svc.db.query).not.toHaveBeenCalled();
+    });
+  });
+
+  it('a commerce-issuer token signed with the josh secret is refused, not re-tried as josh', async () => {
+    const svc = setup();
+    await expect(svc.authenticate(token('commerce', {}, 'josh-test'))).rejects.toThrow('invalid commerce token');
+    expect(svc.db.query).not.toHaveBeenCalled();
+  });
+  it('a josh-shaped token signed with the commerce secret is refused on the josh path', async () => {
+    const svc = setup();
+    await expect(svc.authenticate(token('josh', {}, 'commerce-test'))).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(svc.db.query.mock.calls.some(([sql]) => /FROM users WHERE id/.test(sql as string))).toBe(false);
+  });
+  it('an unknown issuer is refused before any verification', async () => {
+    const spy = jest.spyOn(JwtService.prototype, 'verifyAsync');
+    await expect(setup().authenticate(new JwtService({ secret: 'commerce-test' }).sign({ sub: COMMERCE, role: 'sale' }, { issuer: 'other' }))).rejects.toThrow('unknown token issuer');
+    expect(spy).not.toHaveBeenCalled();
+  });
+  it('WINBACK_ACCEPT_JOSH_JWT=false still accepts commerce tokens', async () => {
+    process.env.WINBACK_ACCEPT_JOSH_JWT = 'false';
+    expect((await setup().authenticate(token('commerce'))).winbackActor).toMatchObject({ source: 'commerce' });
+  });
 });

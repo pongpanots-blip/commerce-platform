@@ -38,10 +38,11 @@ describe('WinbackReports', () => {
 
   it('copies: answers from commerce tables without the replica', async () => {
     process.env.WINBACK_REPORTS_SOURCE = 'copies';
-    const { r, josh, reports, meetingPrep } = make(false);
+    const { r, josh, winback, reports, meetingPrep } = make(false);
     expect(r.available).toBe(true);
     const o = await r.overview();
     expect(o.counts).toEqual({ total: 3 });
+    expect(winback.getCounts).toHaveBeenCalledWith({ id: '', isManager: true });
     expect(o.revenueRisk).toMatchObject({ revenue_at_risk: 100, dormant_monthly_revenue: 200 });
     expect(await r.scorecard('2026-10-01', '2026-10-31')).toBe('scorecard');
     expect(reports.getScorecard).toHaveBeenCalledWith('team', '', '2026-10-01', '2026-10-31');

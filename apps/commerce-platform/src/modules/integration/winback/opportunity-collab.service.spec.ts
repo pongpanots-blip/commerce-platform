@@ -363,7 +363,7 @@ describe('OpportunityService — convert visibility', () => {
       opportunity_id: P1, winback_account_id: 'new-account', customer_code: 'TMP-NEW', stage: 'prospect', lifecycle: 'tmp',
     });
     expect(places.calls.at(-1)!.params.id).toBe(P1);
-    expect(records.findOne).toHaveBeenCalledWith({ where: { kind: 'opportunity_collab', record_key: P1 } });
+    expect(records.findOne).not.toHaveBeenCalled();
     expect(accounts.findOne).toHaveBeenCalledWith({ where: { restaurant_place_id: P1 } });
     expect(leads.createTmpFromRestaurantPlace).toHaveBeenCalledWith(actor.id, P1);
   });
@@ -373,7 +373,7 @@ describe('OpportunityService — convert visibility', () => {
     await expect(opportunities.convert(actor, PC.toUpperCase())).resolves.toMatchObject({ opportunity_id: PC, winback_account_id: 'acc-c' });
   });
 
-  it('matches detail access for recipients of pending and past requests', async () => {
+  it('returns an existing converted lead for recipients of pending and past requests', async () => {
     const { opportunities, collab, leads } = setup();
     const state = await collab.createRequest(OTHER, PC, { kind: 'coordinate', recipient_id: THIRD.id, reason: 'help' });
     await expect(collab.detail(THIRD, PC)).resolves.toMatchObject({ id: PC });
@@ -413,6 +413,23 @@ describe('WinbackController — lead-from-place visibility', () => {
     expect(JSON.stringify(error.getResponse())).not.toMatch(/acc-c|TMP-1/);
     expect(leads.createTmpFromRestaurantPlace).not.toHaveBeenCalled();
     expect(accounts.findOne).not.toHaveBeenCalled();
+  });
+
+  it.each(['pending', 'rejected'] as const)('a %s request recipient cannot convert or create a lead on another rep’s unconverted place', async (status) => {
+    const { controller, opportunities, collab, records, leads } = routeSetup();
+    records.rows.push({ id: 'm', kind: 'opportunity_meta', record_key: P1, sales_user_id: OTHER.id, payload: {}, version: 1 });
+    const state = await collab.createRequest(OTHER, P1, { kind: 'coordinate', recipient_id: THIRD.id, reason: 'help' });
+    if (status === 'rejected') await collab.resolveRequest(THIRD, P1, state.requests[0].id, { status, note: 'no' });
+    await expect(collab.detail(THIRD, P1)).resolves.toMatchObject({ id: P1 });
+    for (const call of [
+      () => opportunities.convert(THIRD, P1),
+      () => controller.createTmpFromRestaurantPlace({ user: { sub: THIRD.id, role: 'sale' } }, P1),
+    ]) {
+      const error = await call().catch((e) => e);
+      expect(error).toBeInstanceOf(ForbiddenException);
+      expect(error.getResponse()).toMatchObject({ statusCode: 403, message: OPPORTUNITY_NOT_YOURS });
+    }
+    expect(leads.createTmpFromRestaurantPlace).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -650,7 +667,7 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
     });
     accounts.findOne.mockImplementationOnce(async (opts) => {
       expect(records.inTransaction).toBe(true);
-      expect(opts).toEqual({ where: { id: 'acc-c' }, lock: { mode: 'pessimistic_write' } });
+      expect(opts).toEqual({ where: { restaurant_place_id: PC }, lock: { mode: 'pessimistic_write' } });
       return { ...accounts.rows.find((a) => a.id === 'acc-c')! };
     });
     await expect(collab.resolveRequest(THIRD, PC, requests[0].id, { status: 'approved', note: 'ok' })).rejects.toThrow('คำขอนี้ล้าสมัยแล้ว ผู้ดูแลโอกาสเปลี่ยนไปแล้ว');
@@ -664,7 +681,7 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
     expect(JSON.stringify(records.rows)).toBe(before);
   });
 
-  it('uses the locked account owner for access too, and takes no account lock for an open place', async () => {
+  it('uses the locked account owner for access and locks by place even when it is unconverted', async () => {
     const { collab, accounts, records } = setup();
     const { requests } = await collab.createRequest(MGR, PC, { kind: 'coordinate', recipient_id: THIRD.id, reason: 'x' });
     const transaction = records.manager.transaction.getMockImplementation()!;
@@ -673,11 +690,34 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
       return transaction(work);
     });
     await expect(collab.resolveRequest(OTHER, PC, requests[0].id, { status: 'rejected', note: 'no' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
-    expect(accounts.findOne).toHaveBeenCalledWith({ where: { id: 'acc-c' }, lock: { mode: 'pessimistic_write' } });
+    expect(accounts.findOne).toHaveBeenCalledWith({ where: { restaurant_place_id: PC }, lock: { mode: 'pessimistic_write' } });
     accounts.findOne.mockClear();
     const open = await collab.createRequest(REP, P1, { kind: 'coordinate', recipient_id: OTHER.id, reason: 'x' });
     await collab.resolveRequest(OTHER, P1, open.requests[0].id, { status: 'approved', note: 'ok' });
-    expect(accounts.findOne).not.toHaveBeenCalled();
+    expect(accounts.findOne).toHaveBeenCalledWith({ where: { restaurant_place_id: P1 }, lock: { mode: 'pessimistic_write' } });
+  });
+
+  it('locks an account converted after the place join and rejects the now-stale handoff', async () => {
+    const { collab, accounts, records, opportunities } = setup();
+    const { requests } = await collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: THIRD.id, reason: 'help' });
+    const before = JSON.stringify(records.rows);
+    const preRead = jest.spyOn(opportunities, 'placeRow');
+    records.findOne.mockClear();
+    accounts.findOne.mockClear();
+    const transaction = records.manager.transaction.getMockImplementation()!;
+    records.manager.transaction.mockImplementationOnce(async (work) => {
+      expect((await preRead.mock.results[0].value).winback_account_id).toBeNull();
+      accounts.rows.push({ id: 'new-account', restaurant_place_id: P1, assigned_sales_user_id: OTHER.id });
+      return transaction(work);
+    });
+    await expect(collab.resolveRequest(THIRD, P1, requests[0].id, { status: 'approved', note: 'ok' })).rejects.toThrow(ConflictException);
+    expect(accounts.findOne).toHaveBeenCalledWith({ where: { restaurant_place_id: P1 }, lock: { mode: 'pessimistic_write' } });
+    expect(records.findOne.mock.calls.map(([opts]) => opts)).toEqual([
+      { where: { kind: 'opportunity_collab', record_key: P1 }, lock: { mode: 'pessimistic_write' } },
+      { where: { kind: 'opportunity_meta', record_key: P1 }, lock: { mode: 'pessimistic_write' } },
+    ]);
+    expect(records.findOne.mock.invocationCallOrder[1]).toBeLessThan(accounts.findOne.mock.invocationCallOrder[0]);
+    expect(JSON.stringify(records.rows)).toBe(before);
   });
 
   it('a handoff stored before from_owner_id existed is never stale', async () => {
@@ -1075,18 +1115,25 @@ describe('§4.11.8 review: visibility (own + unassigned for sales, everything fo
     await expect(collab.resolveRequest(REP, P1, a.requests[0].id, { status: 'approved', note: 'x' })).rejects.toThrow('เฉพาะผู้รับคำขอหรือ manager ที่อนุมัติหรือปฏิเสธได้');
     await expect(collab.resolveRequest(THIRD, P1, a.requests[0].id, { status: 'approved', note: 'รับ' })).resolves.toMatchObject({ owner_sales_user_id: 'rep-3' });
     expect(await ids(opportunities, THIRD)).toEqual([P1, P2].sort());
+    // A second handoff moves the opportunity from rep-3 to rep-1 before rep-2 cancels.
+    const onward = await collab.createRequest(THIRD, P1, { kind: 'handoff', recipient_id: REP.id, reason: 'ส่งต่ออีกครั้ง' });
+    await collab.resolveRequest(REP, P1, onward.requests[2].id, { status: 'approved', note: 'รับต่อ' });
     // rep-2 no longer owns P1: no thread, but cancels the coordinate request they sent
     await expect(collab.collaboration(OTHER, P1)).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
     const out = await collab.resolveRequest(OTHER, P1, b.requests[1].id, { status: 'cancelled', note: 'ไม่ต้องแล้ว' });
     expect(out.requests).toEqual([expect.objectContaining({ id: b.requests[1].id, status: 'cancelled', resolution_note: 'ไม่ต้องแล้ว' })]);
     expect(out.messages).toEqual([]);
+    expect(out.owner_sales_user_id).toBeNull();
+    expect(out.owner_name).toBeNull();
+    expect(out.revision).toBeGreaterThan(0);
     expect(Object.keys(out).sort()).toEqual(['opportunity_id', 'owner_sales_user_id', 'owner_name', 'requests', 'messages', 'revision'].sort());
     const full = await collab.collaboration(MGR, P1);
-    expect(full.requests.map((r) => r.status)).toEqual(['approved', 'cancelled']);
+    expect(full.requests.map((r) => r.status)).toEqual(['approved', 'cancelled', 'approved']);
+    expect(full).toMatchObject({ owner_sales_user_id: REP.id, owner_name: 'Rep One', revision: out.revision });
     expect(full.messages).toHaveLength(1);
     // ... and only that: approving someone else's request is still 403 (the resolve rule's message)
-    const c = await collab.createRequest(THIRD, P1, { kind: 'coordinate', recipient_id: 'rep-1', reason: 'อีกที' });
-    await expect(collab.resolveRequest(OTHER, P1, c.requests[2].id, { status: 'approved', note: 'x' })).rejects.toThrow('เฉพาะผู้รับคำขอหรือ manager ที่อนุมัติหรือปฏิเสธได้');
+    const c = await collab.createRequest(REP, P1, { kind: 'coordinate', recipient_id: THIRD.id, reason: 'อีกที' });
+    await expect(collab.resolveRequest(OTHER, P1, c.requests[3].id, { status: 'approved', note: 'x' })).rejects.toThrow('เฉพาะผู้รับคำขอหรือ manager ที่อนุมัติหรือปฏิเสธได้');
   });
 
   it.each([OTHER, MGR])('keeps the full cancel response when the caller can still read the thread: %s', async (actor) => {
@@ -1097,6 +1144,7 @@ describe('§4.11.8 review: visibility (own + unassigned for sales, everything fo
     const out = await collab.resolveRequest(actor, P1, a.requests[0].id, { status: 'cancelled', note: 'done' });
     expect(out.requests.map((r) => r.status)).toEqual(['cancelled', 'pending']);
     expect(out.messages).toHaveLength(1);
+    expect(out).toMatchObject({ owner_sales_user_id: OTHER.id, owner_name: 'Rep Two' });
   });
 
   it('every collaboration write needs a caller id: 403 before anything else, nothing written', async () => {

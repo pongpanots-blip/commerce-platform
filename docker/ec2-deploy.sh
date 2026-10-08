@@ -6,22 +6,36 @@
 #   ./ec2-deploy.sh abc1234 platform         # just the API
 #   ./ec2-deploy.sh abc1234 admin portal     # both UIs
 #   ./ec2-deploy.sh --retention-only         # health-check + reclaim old tags (no pull/up)
+#   ./ec2-deploy.sh --retention-only --keep platform=947d385 --keep admin=947d385,portal=947d385
 #
 # Compose services: platform | admin | portal
 #
-# Image retention (post-deploy, only after health checks pass):
-#   Keeps per service: current .env tag, previous tag from .image-tags-prev,
-#   and any image used by a running container. On first run (no prev tag),
-#   also keeps the newest other tag by CreatedAt. Then prunes dangling
-#   images, stopped containers, and build cache. Never touches volumes.
+# --keep <service>=<tag>[,<service>=<tag>...]  (repeatable; any mode)
+#   Pins a tag so this run's retention never removes it, and seeds it as that service's
+#   previous tag in .image-tags-prev when the service has no recorded previous tag yet
+#   (never overwrites one). Use it on the first run to choose the rollback tag explicitly
+#   instead of the "newest other by CreatedAt" fallback.
+#
+# Image retention (post-deploy, only after health checks pass), per service:
+#   keep the current .env tag, every tag recorded for it in .image-tags-prev or
+#   .image-tags-prev.pending, any --keep pin, and any image used by a running container.
+#   When none of prev/pending/--keep has an entry for the service (first run), also keep
+#   the newest other tag by CreatedAt. Then prune dangling images, stopped containers and
+#   build cache. Never touches volumes, never `docker system prune`.
+#
+# State files (deploy dir, per service, KEY=value with PLATFORM_TAG/ADMIN_TAG/PORTAL_TAG):
+#   .image-tags-prev          last known-good previous tag per service
+#   .image-tags-prev.pending  tag that was live before a deploy of that service started;
+#                             promoted to .image-tags-prev (and removed from pending) only
+#                             when THAT service is deployed healthy. Entries for other
+#                             services are never touched by a partial deploy.
 set -euo pipefail
 
 ALL_SERVICES=(platform admin portal)
 PREV_TAGS_FILE=".image-tags-prev"
-# Old tags captured before `up -d`. Promoted to PREV_TAGS_FILE only after a healthy deploy;
-# kept (and honoured by retention) if the deploy fails, so a retry of the same tag — where
-# .env already holds the new tag — still knows the real rollback tag.
 PENDING_PREV_FILE=".image-tags-prev.pending"
+# --keep pins for this run: "TAG_VAR=tag" entries.
+COMMERCE_DEPLOY_KEEP=()
 HEALTH_ATTEMPTS="${COMMERCE_HEALTH_ATTEMPTS:-90}"
 HEALTH_SLEEP_SEC="${COMMERCE_HEALTH_SLEEP_SEC:-2}"
 
@@ -224,6 +238,83 @@ commerce_deploy_write_prev_tags() {
   mv "$tmp" "$dest"
 }
 
+# Atomically remove KEYs from a KEY=value state file. Deletes the file if it ends up empty.
+commerce_deploy_remove_keys() {
+  local dest="$1"
+  shift
+  [[ -f "$dest" ]] || return 0
+  local tmp key
+  tmp="$(mktemp "${dest}.tmp.XXXXXX")"
+  cp "$dest" "$tmp"
+  for key in "$@"; do
+    sed -i "/^${key}=/d" "$tmp"
+  done
+  if [[ -s "$tmp" ]]; then
+    mv "$tmp" "$dest"
+  else
+    rm -f "$tmp" "$dest"
+  fi
+}
+
+# Parse one --keep value ("svc=tag[,svc=tag...]") into COMMERCE_DEPLOY_KEEP.
+# Returns 1 (with a message) on an unknown service or a malformed tag.
+commerce_deploy_parse_keep() {
+  local spec="$1" item svc tag tag_var
+  local -a items=()
+  IFS=',' read -r -a items <<< "$spec"
+  if [[ ${#items[@]} -eq 0 ]]; then
+    echo "--keep needs <service>=<tag>" >&2
+    return 1
+  fi
+  for item in "${items[@]}"; do
+    [[ -z "$item" ]] && continue
+    if [[ "$item" != *=* ]]; then
+      echo "--keep: expected <service>=<tag>, got '${item}'" >&2
+      return 1
+    fi
+    svc="${item%%=*}"
+    tag="${item#*=}"
+    if ! tag_var="$(commerce_deploy_tag_var "$svc")"; then
+      echo "--keep: unknown service '${svc}' (platform|admin|portal)" >&2
+      return 1
+    fi
+    if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+      echo "--keep: invalid tag '${tag}' for ${svc}" >&2
+      return 1
+    fi
+    COMMERCE_DEPLOY_KEEP+=("${tag_var}=${tag}")
+  done
+}
+
+# Space-separated --keep tags for one TAG_VAR (empty if none).
+commerce_deploy_keep_tags_for() {
+  local tag_var="$1" entry out=""
+  for entry in "${COMMERCE_DEPLOY_KEEP[@]+"${COMMERCE_DEPLOY_KEEP[@]}"}"; do
+    [[ "${entry%%=*}" == "$tag_var" ]] && out="${out:+$out }${entry#*=}"
+  done
+  printf '%s' "$out"
+}
+
+# Seed .image-tags-prev with --keep pins for services that have no previous tag yet.
+commerce_deploy_seed_keep_prev() {
+  local entry tag_var tag
+  local -a pairs=()
+  local -A seen=()
+  for entry in "${COMMERCE_DEPLOY_KEEP[@]+"${COMMERCE_DEPLOY_KEEP[@]}"}"; do
+    tag_var="${entry%%=*}"
+    tag="${entry#*=}"
+    [[ -n "${seen[$tag_var]:-}" ]] && continue
+    seen["$tag_var"]=1
+    if [[ -z "$(commerce_deploy_read_kv "$PREV_TAGS_FILE" "$tag_var")" ]]; then
+      pairs+=("$tag_var" "$tag")
+      echo "seeding previous ${tag_var}=${tag} from --keep"
+    fi
+  done
+  if [[ ${#pairs[@]} -gt 0 ]]; then
+    commerce_deploy_write_prev_tags "$PREV_TAGS_FILE" "${pairs[@]}"
+  fi
+}
+
 commerce_deploy_health_url() {
   case "$1" in
     platform) echo "http://127.0.0.1:3100/api" ;;
@@ -308,16 +399,19 @@ commerce_deploy_run_retention() {
   images_tsv="$(commerce_deploy_list_images_tsv)"
   running_refs="$(commerce_deploy_running_image_refs)"
 
-  local svc suffix tag_var current_tag prev_tag pending_tag ref
+  local svc suffix tag_var current_tag prev_tag pending_tag keep_tags ref
+  local -a keep_list=()
   for svc in "${ALL_SERVICES[@]}"; do
     suffix="$(commerce_deploy_repo_suffix "$svc")"
     tag_var="$(commerce_deploy_tag_var "$svc")"
     current_tag="$(commerce_deploy_read_kv .env "$tag_var")"
     prev_tag="$(commerce_deploy_read_kv "$PREV_TAGS_FILE" "$tag_var")"
     pending_tag="$(commerce_deploy_read_kv "$PENDING_PREV_FILE" "$tag_var")"
-    if [[ -n "$pending_tag" && "$pending_tag" != "$prev_tag" ]]; then
-      prev_tag="${prev_tag:+$prev_tag }$pending_tag"
-    fi
+    keep_tags="$(commerce_deploy_keep_tags_for "$tag_var")"
+    # Every tag named in .image-tags-prev, .image-tags-prev.pending or --keep is kept.
+    # Empty only when none of them has an entry -> first-run "newest other" rule applies.
+    read -r -a keep_list <<< "${prev_tag} ${pending_tag} ${keep_tags}"
+    prev_tag="${keep_list[*]+"${keep_list[*]}"}"
     echo "retention ${svc}: current=${current_tag:-<none>} keep-prev=${prev_tag:-<none (first run)>}"
     while IFS= read -r ref || [[ -n "${ref:-}" ]]; do
       [[ -z "${ref:-}" ]] && continue
@@ -357,11 +451,27 @@ commerce_deploy_main() {
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   cd "$SCRIPT_DIR"
 
+  # Split options (--retention-only, --keep) from positionals (TAG, services...).
+  local retention_only=0
+  local -a positional=()
+  COMMERCE_DEPLOY_KEEP=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --retention-only) retention_only=1; shift ;;
+      --keep)
+        [[ $# -ge 2 ]] || { echo "--keep needs <service>=<tag>" >&2; exit 1; }
+        commerce_deploy_parse_keep "$2" || exit 1
+        shift 2 ;;
+      --keep=*) commerce_deploy_parse_keep "${1#--keep=}" || exit 1; shift ;;
+      --*) echo "unknown option: $1" >&2; exit 1 ;;
+      *) positional+=("$1"); shift ;;
+    esac
+  done
+
   # --- retention-only mode ---
-  if [[ "${1:-}" == "--retention-only" ]]; then
-    shift || true
-    if [[ $# -gt 0 ]]; then
-      echo "usage: $0 --retention-only" >&2
+  if [[ "$retention_only" -eq 1 ]]; then
+    if [[ ${#positional[@]} -gt 0 ]]; then
+      echo "usage: $0 --retention-only [--keep <service>=<tag>[,...]]..." >&2
       exit 1
     fi
     echo "retention-only: checking health of all app services first"
@@ -370,13 +480,13 @@ commerce_deploy_main() {
     if ! commerce_deploy_wait_healthy "${ALL_SERVICES[@]}"; then
       commerce_deploy_fail_unhealthy
     fi
+    commerce_deploy_seed_keep_prev
     commerce_deploy_run_retention
     return 0
   fi
 
-  local TAG="${1:-latest}"
-  shift || true
-  local -a SERVICES=("$@")
+  local TAG="${positional[0]:-latest}"
+  local -a SERVICES=("${positional[@]:1}")
   if [[ ${#SERVICES[@]} -eq 0 ]]; then
     SERVICES=("${ALL_SERVICES[@]}")
   fi
@@ -389,13 +499,7 @@ commerce_deploy_main() {
       echo "unknown service: $svc" >&2
       exit 1
     }
-    old_tag="$(commerce_deploy_read_kv .env "$TAG_VAR")"
-    # Re-deploy of the tag already in .env (e.g. retry after a failed health check): fall back
-    # to the pending old tag captured by that failed run.
-    if [[ -z "$old_tag" || "$old_tag" == "$TAG" ]]; then
-      old_tag="$(commerce_deploy_read_kv "$PENDING_PREV_FILE" "$TAG_VAR")"
-    fi
-    OLD_TAGS+=("$old_tag")
+    OLD_TAGS+=("$(commerce_deploy_read_kv .env "$TAG_VAR")")
     export "$TAG_VAR=$TAG"
     TAG_VARS+=("$TAG_VAR")
   done
@@ -436,12 +540,19 @@ commerce_deploy_main() {
   if [[ " ${SERVICES[*]} " == *" platform "* ]]; then
     "${COMPOSE[@]}" run --rm --no-deps platform node node_modules/typeorm/cli.js migration:run -d src/data-source.js
   fi
-  # Capture old tags (only where they differ from the new one) before replacing containers.
+
+  # Per deployed service, remember the tag that was live before this deploy in the pending
+  # file. If the service already has a pending entry, an earlier deploy of it did not finish
+  # healthy: that entry is still its last known-good tag, so it is kept, not overwritten
+  # with the (unhealthy) tag currently in .env. Other services' entries are left alone.
   local -a pending_pairs=()
-  local i
+  local i pending_tag
   for i in "${!SERVICES[@]}"; do
-    if [[ -n "${OLD_TAGS[$i]}" && "${OLD_TAGS[$i]}" != "$TAG" ]]; then
-      pending_pairs+=("${TAG_VARS[$i]}" "${OLD_TAGS[$i]}")
+    TAG_VAR="${TAG_VARS[$i]}"
+    old_tag="${OLD_TAGS[$i]}"
+    pending_tag="$(commerce_deploy_read_kv "$PENDING_PREV_FILE" "$TAG_VAR")"
+    if [[ -z "$pending_tag" && -n "$old_tag" && "$old_tag" != "$TAG" ]]; then
+      pending_pairs+=("$TAG_VAR" "$old_tag")
     fi
   done
   if [[ ${#pending_pairs[@]} -gt 0 ]]; then
@@ -470,21 +581,25 @@ commerce_deploy_main() {
     commerce_deploy_fail_unhealthy
   fi
 
-  # Record previous tags only after a healthy deploy, only for services we
-  # actually moved, and only when the old tag differs from the new one.
+  # Healthy: for each service deployed in THIS run only, promote its pending entry into
+  # .image-tags-prev (merge) and drop just that entry from pending. A pending entry equal to
+  # the new tag (rollback to the last known-good) is dropped without touching prev.
   local -a prev_pairs=()
+  local -a done_keys=()
   for i in "${!SERVICES[@]}"; do
-    old_tag="${OLD_TAGS[$i]}"
     TAG_VAR="${TAG_VARS[$i]}"
-    if [[ -n "$old_tag" && "$old_tag" != "$TAG" ]]; then
-      prev_pairs+=("$TAG_VAR" "$old_tag")
-      echo "recording previous ${TAG_VAR}=${old_tag} (new=${TAG})"
+    pending_tag="$(commerce_deploy_read_kv "$PENDING_PREV_FILE" "$TAG_VAR")"
+    if [[ -n "$pending_tag" && "$pending_tag" != "$TAG" ]]; then
+      prev_pairs+=("$TAG_VAR" "$pending_tag")
+      echo "recording previous ${TAG_VAR}=${pending_tag} (new=${TAG})"
     fi
+    done_keys+=("$TAG_VAR")
   done
   if [[ ${#prev_pairs[@]} -gt 0 ]]; then
     commerce_deploy_write_prev_tags "$PREV_TAGS_FILE" "${prev_pairs[@]}"
   fi
-  rm -f "$PENDING_PREV_FILE"
+  commerce_deploy_remove_keys "$PENDING_PREV_FILE" "${done_keys[@]}"
+  commerce_deploy_seed_keep_prev
 
   commerce_deploy_run_retention
 }

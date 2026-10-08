@@ -85,6 +85,8 @@ exports[`WinbackAppController contract envelope (wrapWinbackResponse over the se
       },
     ],
     "pagination": {
+      "candidateCap": 3000,
+      "capped": false,
       "limit": 20,
       "page": 1,
       "total": 1,
@@ -125,6 +127,8 @@ exports[`WinbackAppController contract envelope (wrapWinbackResponse over the se
 exports[`WinbackAppController contract envelope (wrapWinbackResponse over the service result) opportunity meta + filter-meta + collaboration (§4.11.8) 2`] = `
 {
   "data": {
+    "candidateCap": 3000,
+    "capped": false,
     "owners": [
       {
         "count": 1,

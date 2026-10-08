@@ -27,6 +27,10 @@ import {
 import { poolOrderBy } from './winback.helpers';
 import { maskEmail, maskPersonName, maskPhone } from './shared/pii.helper';
 import { maskContactFullName, maskWinbackAccountPii } from './winback-pii.helpers';
+import { WinbackActor } from './app-records.service';
+import { opportunityVisibility } from './opportunity-meta.helpers';
+import { WinbackAppRecord } from './entities/winback-app-record.entity';
+import { WinbackAppRecordKind } from './winback.enums';
 
 @Injectable()
 export class WinbackService {
@@ -62,7 +66,7 @@ export class WinbackService {
     return rows.map((row) => ({ province: row.province, count: Number(row.count) }));
   }
 
-  async findPool(q: PoolQueryDto) {
+  async findPool(q: PoolQueryDto, actor: WinbackActor = { id: '', isManager: false }) {
     const page = q.page ?? 1;
     const limit = q.limit ?? 20;
 
@@ -72,7 +76,7 @@ export class WinbackService {
           'include_places ใช้ได้เฉพาะกับ assigned=unassigned (ร้านที่ยังไม่มีคนดูแล)',
         );
       }
-      return this.findUnassignedPlaceCandidates(q, page, limit);
+      return this.findUnassignedPlaceCandidates(q, page, limit, actor);
     }
 
     const qb = this.accounts.createQueryBuilder('a');
@@ -142,8 +146,19 @@ export class WinbackService {
     q: PoolQueryDto,
     page: number,
     limit: number,
+    actor: WinbackActor,
   ) {
     const qb = this.placeCandidatesQuery();
+    // No account does not imply no coordination owner: use the opportunity list's visibility rule.
+    // Managers see every place, so they keep the join-free query.
+    const visibility = opportunityVisibility(actor);
+    if (visibility.sql) {
+      qb.leftJoin(WinbackAccount, 'a', 'a.restaurant_place_id = p.id')
+        .leftJoin(WinbackAppRecord, 'm', 'm.kind = :metaKind AND m.record_key = CAST(p.id AS text)', {
+          metaKind: WinbackAppRecordKind.OPPORTUNITY_META,
+        })
+        .andWhere(visibility.sql, visibility.params);
+    }
 
     if (q.search?.trim()) {
       qb.andWhere('(p.name_th ILIKE :search OR p.name_en ILIKE :search)', {

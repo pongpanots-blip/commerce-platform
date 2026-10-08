@@ -6,6 +6,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -62,6 +63,8 @@ import { WinbackResponseInterceptor } from './winback-response.interceptor';
 import { UploadMultipleFields } from './shared/ile-upload.interceptor';
 import { UploadService } from './shared/upload.service';
 import { AppRecordsService } from './app-records.service';
+import { OpportunityService } from './opportunity.service';
+import { normalizeActor, normalizeId } from './opportunity-meta.helpers';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
 
@@ -120,6 +123,7 @@ export class WinbackController {
     private readonly meetingPrep: MeetingPrepService,
     private readonly uploads: UploadService,
     private readonly appRecords: AppRecordsService,
+    private readonly opportunities: OpportunityService,
   ) {}
 
   private salesId(req: RequestWithUser): string {
@@ -317,8 +321,9 @@ export class WinbackController {
   }
 
   @Get('pool')
-  pool(@Query(pipe) q: PoolQueryDto) {
-    return this.winback.findPool(q);
+  pool(@Req() req: RequestWithUser, @Query(pipe) q: PoolQueryDto) {
+    const c = this.claims(req);
+    return this.winback.findPool(q, { id: c.sub, isManager: isWinbackManager(c.role) });
   }
 
   /** ดึงจำนวน lead แยกตามสถานะใน pool (+ `mine` = ที่ assign ให้ผู้เรียก) */
@@ -395,11 +400,20 @@ export class WinbackController {
 
   /** สร้าง TMP lead จาก Market Explorer restaurant_place (pre-fill ชื่อ/พิกัด/ประเภท) */
   @Post('leads/from-restaurant-place/:placeId')
-  createTmpFromRestaurantPlace(
+  async createTmpFromRestaurantPlace(
     @Req() req: RequestWithUser,
     @Param('placeId', new ParseUUIDPipe()) placeId: string,
   ) {
-    return this.leads.createTmpFromRestaurantPlace(this.salesId(req), placeId);
+    const c = this.claims(req);
+    const actor = normalizeActor({ id: c.sub, isManager: isWinbackManager(c.role) });
+    const id = normalizeId(placeId);
+    try {
+      await this.opportunities.assertCanTake(actor, id);
+    } catch (error) {
+      if (error instanceof NotFoundException) throw new NotFoundException('ไม่พบร้านใน Market Explorer');
+      throw error;
+    }
+    return this.leads.createTmpFromRestaurantPlace(actor.id, id);
   }
 
   /** บันทึก activity ใหม่ให้บัญชี lead ตาม id */

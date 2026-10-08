@@ -12,6 +12,8 @@ import { WinbackResponseInterceptor, wrapWinbackResponse } from './winback-respo
 import { AdminWriteGuard } from './shared/admin-write.guard';
 import { WinbackModule } from './winback.module';
 import { WinbackOwnershipGuard } from './winback-ownership.guard';
+import { WinbackAppRoleGuard } from './winback-app-role.guard';
+import { WinbackController } from './winback.controller';
 
 const sale = { user: { sub: 'sales-1', role: 'sale' } } as any;
 const manager = { user: { sub: 'mgr-1', role: 'manager' } } as any;
@@ -112,7 +114,7 @@ describe('WinbackAppController contract', () => {
       expect(collab.directory).toHaveBeenCalled();
     });
 
-    it('§4.11.8 visibility: detail / meta / thread / account opportunities get the caller (scoped in the service)', () => {
+    it('§4.11.8 visibility: detail / meta / thread / convert / account opportunities get the caller (scoped in the service)', () => {
       const { controller, opportunities, collab } = createController();
       controller.opportunity(sale, UUID);
       expect(collab.detail).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
@@ -120,6 +122,8 @@ describe('WinbackAppController contract', () => {
       expect(collab.meta).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
       controller.opportunityCollaboration(manager, UUID);
       expect(collab.collaboration).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true }, UUID);
+      controller.convertOpportunity(sale, UUID);
+      expect(opportunities.convert).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
       controller.accountOpportunities(sale, UUID);
       expect(opportunities.accountOpportunities).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
     });
@@ -167,7 +171,13 @@ describe('WinbackAppController contract', () => {
     it('convert stamps the caller as the lead creator', () => {
       const { controller, opportunities } = createController();
       controller.convertOpportunity(sale, UUID);
-      expect(opportunities.convert).toHaveBeenCalledWith('sales-1', UUID);
+      expect(opportunities.convert).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+    });
+
+    it('province counts receive the caller visibility scope', () => {
+      const { controller, opportunities } = createController();
+      controller.opportunityProvinces(sale, { search: 'Bangkok' });
+      expect(opportunities.provinces).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, { search: 'Bangkok' });
     });
 
     it('rejects a malformed draft key and report day (400)', () => {
@@ -189,7 +199,7 @@ describe('WinbackAppController contract', () => {
           winback_account_id: null, premium_signals: ['Google 4.6 (320 รีวิว)'], premium_fit_reasons: [], delivery_reasons: [],
           priority_reason: null,
         }],
-        pagination: { page: 1, limit: 20, total: 1 },
+        pagination: { page: 1, limit: 20, total: 1, capped: false, candidate_cap: 3000 },
         counts: { recommended: 1, near_warehouse: 0, needs_enrich: 3 },
       });
       expect(wrapWinbackResponse(await controller.listOpportunities(sale, { page: 1, limit: 20 } as any))).toMatchSnapshot();
@@ -209,7 +219,7 @@ describe('WinbackAppController contract', () => {
       opportunities.filterMeta.mockResolvedValue({
         stages: [{ value: 'prospect', count: 3 }], purposes: [{ value: 'new_product', count: 3 }],
         recommendation_reasons: [{ value: 'needs_research', count: 1 }], owners: [{ sales_user_id: 'sales-1', name: 'Rep One', count: 1 }],
-        unassigned_count: 2,
+        unassigned_count: 2, capped: false, candidate_cap: 3000,
       });
       collab.collaboration.mockResolvedValue({
         opportunity_id: UUID, owner_sales_user_id: 'sales-1', owner_name: 'Rep One', revision: 2,
@@ -318,7 +328,8 @@ describe('ownership write guard (commerce: WINBACK_OWNER, wired in winback.modul
 
   it('the module puts WinbackOwnershipGuard on the app routes', () => {
     expect(WinbackModule).toBeDefined();
-    expect(Reflect.getMetadata(GUARDS_METADATA, WinbackAppController)).toEqual(expect.arrayContaining([WinbackOwnershipGuard]));
+    expect(Reflect.getMetadata(GUARDS_METADATA, WinbackAppController)).toEqual([AdminWriteGuard, WinbackAppRoleGuard, WinbackOwnershipGuard]);
+    expect(Reflect.getMetadata(GUARDS_METADATA, WinbackController)).toEqual([AdminWriteGuard, WinbackOwnershipGuard]);
   });
 
   it('409 on a write while josh still runs winback; reads pass; writes pass once commerce owns it', () => {

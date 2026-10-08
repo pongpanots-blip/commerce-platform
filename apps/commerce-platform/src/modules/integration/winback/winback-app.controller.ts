@@ -22,6 +22,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { AdminWriteGuard } from './shared/admin-write.guard';
+import { WinbackAppRoleGuard } from './winback-app-role.guard';
 import { claimsFromBearer, RequestWithUser } from './winback.controller';
 import { isWinbackManager } from './winback-roles';
 import { WinbackResponseInterceptor } from './winback-response.interceptor';
@@ -86,7 +87,7 @@ function reportDay(raw: string): string {
   return raw;
 }
 
-@UseGuards(AdminWriteGuard)
+@UseGuards(AdminWriteGuard, WinbackAppRoleGuard)
 @UseInterceptors(WinbackResponseInterceptor)
 @Controller('winback')
 export class WinbackAppController {
@@ -122,8 +123,8 @@ export class WinbackAppController {
   }
 
   @Get('opportunities/provinces')
-  opportunityProvinces(@Query(pipe) q: OpportunityProvinceQueryDto) {
-    return this.opportunities.provinces(q);
+  opportunityProvinces(@Req() req: RequestWithUser, @Query(pipe) q: OpportunityProvinceQueryDto) {
+    return this.opportunities.provinces(this.actor(req), q);
   }
 
   /** นับตาม stage / purpose / recommendation / owner ร้านที่ยังไม่มี lead ที่ผู้เรียกมองเห็น (scope เดียวกับ list) — owners ของ sale = ตัวเองเท่านั้น */
@@ -138,10 +139,10 @@ export class WinbackAppController {
     return this.collab.detail(this.actor(req), id);
   }
 
-  /** สร้าง TMP lead จากโอกาส (idempotent — แปลงแล้วคืน lead เดิม) */
+  /** สร้าง TMP lead เฉพาะโอกาสที่เห็น thread ได้ (idempotent — แปลงแล้วคืน lead เดิม) */
   @Post('opportunities/:id/convert')
   convertOpportunity(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
-    return this.opportunities.convert(this.actor(req).id, id);
+    return this.opportunities.convert(this.actor(req), id);
   }
 
   // --- Opportunity filter metadata + collaboration (§4.11.8, record-only: nothing is sent or reassigned) ---

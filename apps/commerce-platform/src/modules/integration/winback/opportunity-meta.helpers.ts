@@ -223,10 +223,12 @@ export function opportunityVisibility(actor: Actor): OpportunityVisibility {
 /**
  * What a route needs beyond visibility:
  * - `owner` — PATCH meta, starting a request: visibility only.
- * - `thread` — read the opportunity / meta / thread, post a message: visibility, or the recipient of any
+ * - `thread` — read the opportunity / meta / thread, convert / create a lead, post or receive a message:
+ *   visibility, or the recipient of any
  *   request (pending or past) on it.
  * - `resolve` — approve / reject / cancel: visibility, or the recipient or requester of a request on it
- *   (collabResolveError then decides which of them may do what).
+ *   (collabResolveError then decides which of them may do what). The requester exception permits cancel,
+ *   not a full thread response: resolveRequest checks post-write thread access before returning it.
  */
 export type OpportunityAccess = 'owner' | 'thread' | 'resolve';
 

@@ -162,7 +162,7 @@ export class LeadService {
       .getMany();
     return rows.map((u) => ({
       id: u.id,
-      name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || u.email,
+      name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || `Staff ${u.id.slice(0, 8)}`,
       role: u.role,
     }));
   }
@@ -260,9 +260,8 @@ export class LeadService {
       where: { restaurant_place_id: placeId },
     });
     if (existing) {
-      throw new ConflictException(
-        `มี tmp lead จากร้านนี้แล้ว (${existing.customer_code})`,
-      );
+      // The conflict must not disclose another rep's account id or customer code.
+      throw new ConflictException('มี tmp lead จากร้านนี้แล้ว');
     }
 
     const name = place.name_th ?? place.name_en ?? 'ร้านอาหาร';

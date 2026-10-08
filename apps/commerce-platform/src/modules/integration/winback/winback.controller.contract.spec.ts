@@ -11,7 +11,8 @@ function createController() {
   };
   const sync = { syncFromJosh: jest.fn() };
   const imports = {};
-  const leads = {};
+  const leads = { createTmpFromRestaurantPlace: jest.fn() };
+  const opportunities = { assertCanTake: jest.fn() };
   const activityService = {};
   const diary = {
     getMyDay: jest.fn(),
@@ -46,12 +47,19 @@ function createController() {
     meetingPrep as any,
     uploads as any,
     appRecords as any,
+    opportunities as any,
   );
 
-  return { controller, winback, sync, diary, reports, analytics, meetingPrep, appRecords };
+  return { controller, winback, sync, diary, reports, analytics, meetingPrep, appRecords, leads, opportunities };
 }
 
 describe('WinbackController contract snapshots', () => {
+  it.each(['sale', 'manager', 'admin'])('passes %s claims to pool visibility without an app role gate', (role) => {
+    const { controller, winback } = createController();
+    controller.pool({ user: { sub: 'rep-1', role } }, { page: 1, limit: 20 } as any);
+    expect(winback.findPool).toHaveBeenCalledWith({ page: 1, limit: 20 }, { id: 'rep-1', isManager: role !== 'sale' });
+  });
+
   it('matches my-day contract shape', async () => {
     const { controller, diary } = createController();
     diary.getMyDay.mockResolvedValue({
@@ -141,7 +149,8 @@ describe('WinbackController contract snapshots', () => {
       meta: { total: 1, page: 1, limit: 20, totalPages: 1 },
     });
 
-    const result = await controller.pool({} as any);
+    const result = await controller.pool({ user: { sub: 'rep-1', role: 'sale' } }, {} as any);
+    expect(winback.findPool).toHaveBeenCalledWith({}, { id: 'rep-1', isManager: false });
 
     expect(result).toMatchSnapshot();
   });

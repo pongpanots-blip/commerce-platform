@@ -48,7 +48,8 @@ export class WinbackReports {
     return { counts, provinces, revenueRisk: revenueRisk(risk) };
   }
 
-  pool(q: PoolQueryDto) { return this.copies ? this.winback.findPool(q) : this.josh.pool(q); }
+  // This facade is used by the reports controller, whose scope is always the whole team.
+  pool(q: PoolQueryDto) { return this.copies ? this.winback.findPool(q, { id: '', isManager: true }) : this.josh.pool(q); }
   aging(days = 3) { return this.copies ? this.winback.getAging(days) : this.josh.aging(days); }
   scorecard(from?: string, to?: string) { return this.copies ? this.reports.getScorecard('team', '', from, to) : this.josh.scorecard(from, to); }
   dashboard(from?: string, to?: string) { return this.copies ? this.reports.getDashboard('team', '', from, to) : this.josh.dashboard(from, to); }

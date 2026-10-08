@@ -262,7 +262,11 @@ describe('WinbackService.getAccount', () => {
 });
 
 describe('WinbackService.findPool', () => {
-  function poolDeps(rows: WinbackAccount[], places: RestaurantPlace[] = []) {
+  function poolDeps(
+    rows: WinbackAccount[],
+    places: RestaurantPlace[] = [],
+    photos: { account_id: string; photo_url: string | null }[] = [],
+  ) {
     const qb = {
       andWhere: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
@@ -277,18 +281,36 @@ describe('WinbackService.findPool', () => {
     const restaurantPlaces = {
       find: jest.fn(async () => places),
     } as unknown as Repository<RestaurantPlace>;
+    const photoQb = {
+      select: jest.fn().mockReturnThis(),
+      addSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      addOrderBy: jest.fn().mockReturnThis(),
+      getRawMany: jest.fn(async () => photos),
+    };
+    const activities = { createQueryBuilder: jest.fn(() => photoQb) };
     const service = new WinbackService(
       accounts,
       {} as never,
-      {} as never,
+      activities as never,
       {} as never,
       {} as never,
       {} as never,
       restaurantPlaces,
       {} as MatchingService,
     );
-    return { service, restaurantPlaces };
+    return { service, restaurantPlaces, photoQb };
   }
+
+  it('adds photo_url from the latest activity photo (null when none)', async () => {
+    const rows = [account({ id: 'acc-1' }), account({ id: 'acc-2', customer_code: 'TMP-002' })];
+    const { service, photoQb } = poolDeps(rows, [place()], [{ account_id: 'acc-1', photo_url: 'https://cdn/x.jpg' }]);
+    const result = await service.findPool(POOL_QUERY);
+    expect(result.data.map((r) => (r as { photo_url: string | null }).photo_url)).toEqual(['https://cdn/x.jpg', null]);
+    expect(photoQb.where).toHaveBeenCalledWith('act.account_id IN (:...ids)', { ids: ['acc-1', 'acc-2'] });
+  });
 
   it('includes restaurant_place on each pool row when linked', async () => {
     const { service } = poolDeps([account()], [place()]);

@@ -9,6 +9,9 @@ export interface RestaurantPlaceListItemDto {
   nameTh: string | null;
   nameEn: string | null;
   district: string | null;
+  /** josh `thai_provinces.province_code`, from `district` (places carry no province); null when unknown/ambiguous. */
+  provinceCode: number | null;
+  provinceName: string | null;
   category: string | null;
   lat: number;
   lng: number;

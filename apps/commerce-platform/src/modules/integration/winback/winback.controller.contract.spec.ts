@@ -9,7 +9,7 @@ function createController() {
   const winback = {
     findPool: jest.fn(),
   };
-  const sync = {};
+  const sync = { syncFromJosh: jest.fn() };
   const imports = {};
   const leads = {};
   const activityService = {};
@@ -31,6 +31,7 @@ function createController() {
     acknowledge: jest.fn(),
   };
   const uploads = {};
+  const appRecords = { recordSyncRun: jest.fn() };
 
   const controller = new WinbackController(
     winback as any,
@@ -44,9 +45,10 @@ function createController() {
     contactsService as any,
     meetingPrep as any,
     uploads as any,
+    appRecords as any,
   );
 
-  return { controller, winback, diary, reports, analytics, meetingPrep };
+  return { controller, winback, sync, diary, reports, analytics, meetingPrep, appRecords };
 }
 
 describe('WinbackController contract snapshots', () => {
@@ -228,5 +230,24 @@ describe('WinbackController contract snapshots', () => {
     );
 
     expect(meetingPrep.acknowledge).toHaveBeenCalledWith(dto, 'mgr-1');
+  });
+});
+
+describe('WinbackController POST /sync', () => {
+  it('records the run (sync history) and returns its id next to the counts', async () => {
+    const { controller, sync, appRecords } = createController();
+    sync.syncFromJosh.mockResolvedValue({ scanned: 10, created: 2, updated: 3, reactivated: 1 });
+    appRecords.recordSyncRun.mockResolvedValue({ id: 'run-1' });
+
+    const result = await controller.runSync({ user: { sub: 'mgr-1', role: 'manager' } } as any, { days: 30 } as any);
+
+    expect(sync.syncFromJosh).toHaveBeenCalledWith(30);
+    expect(appRecords.recordSyncRun).toHaveBeenCalledWith(
+      { id: 'mgr-1', isManager: true },
+      30,
+      { scanned: 10, created: 2, updated: 3, reactivated: 1 },
+      expect.any(Date),
+    );
+    expect(result).toEqual({ scanned: 10, created: 2, updated: 3, reactivated: 1, run_id: 'run-1' });
   });
 });

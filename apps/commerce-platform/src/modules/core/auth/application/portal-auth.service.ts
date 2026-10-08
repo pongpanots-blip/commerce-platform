@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../user/infrastructure/user.entity';
-import { STAFF_ROLES } from '../../../../shared-kernel/presentation/auth.decorators';
+import { normalizeStaffRole, STAFF_ROLES } from '../../../../shared-kernel/presentation/auth.decorators';
 import { AuthSession, ClientMeta, RefreshAudience, RefreshTokenService } from './refresh-token.service';
 
 /**
@@ -80,7 +80,7 @@ export class PortalAuthService {
   async login(emailRaw: string, password: string, audience: RefreshAudience = 'portal', meta: ClientMeta = {}): Promise<AuthSession> {
     this.assertSecret();
     const user = await this.verifyCredentials(emailRaw, password);
-    if (audience === 'staff' && !STAFF_ROLES.includes(user.role as never)) {
+    if (audience === 'staff' && !STAFF_ROLES.includes(normalizeStaffRole(user.role) as never)) {
       throw new ForbiddenException('not a commerce-admin account');
     }
     return this.sessions.issueSession(user, audience, meta);

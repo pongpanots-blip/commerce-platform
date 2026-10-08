@@ -7,12 +7,12 @@ import { WinbackController } from './winback.controller';
 
 function createController() {
   const winback = {
-    findPool: jest.fn(),
+    findPool: jest.fn(), getCounts: jest.fn(),
   };
   const sync = { syncFromJosh: jest.fn() };
   const imports = {};
   const leads = { createTmpFromRestaurantPlace: jest.fn() };
-  const opportunities = { assertCanTake: jest.fn() };
+  const opportunities = { assertOpportunityVisible: jest.fn() };
   const activityService = {};
   const diary = {
     getMyDay: jest.fn(),
@@ -54,9 +54,24 @@ function createController() {
 }
 
 describe('WinbackController contract snapshots', () => {
+  it.each(['sale', 'manager', 'admin'])('passes %s claims to pool counts visibility', (role) => {
+    const { controller, winback } = createController();
+    controller.counts({ user: { sub: ' REP-1 ', role } });
+    expect(winback.getCounts).toHaveBeenCalledWith({ id: 'rep-1', isManager: role !== 'sale' });
+  });
+
+  it('requires owner access before creating a lead from a restaurant place', async () => {
+    const { controller, opportunities, leads } = createController();
+    const id = '00000000-0000-4000-8000-0000000000a1';
+    await controller.createTmpFromRestaurantPlace({ user: { sub: ' REP-1 ', role: 'sale' } }, id.toUpperCase());
+    expect(opportunities.assertOpportunityVisible).toHaveBeenCalledWith({ id: 'rep-1', isManager: false }, id, 'owner');
+    expect(leads.createTmpFromRestaurantPlace).toHaveBeenCalledWith('rep-1', id);
+    expect(opportunities.assertOpportunityVisible.mock.invocationCallOrder[0]).toBeLessThan(leads.createTmpFromRestaurantPlace.mock.invocationCallOrder[0]);
+  });
+
   it.each(['sale', 'manager', 'admin'])('passes %s claims to pool visibility without an app role gate', (role) => {
     const { controller, winback } = createController();
-    controller.pool({ user: { sub: 'rep-1', role } }, { page: 1, limit: 20 } as any);
+    controller.pool({ user: { sub: ' REP-1 ', role } }, { page: 1, limit: 20 } as any);
     expect(winback.findPool).toHaveBeenCalledWith({ page: 1, limit: 20 }, { id: 'rep-1', isManager: role !== 'sale' });
   });
 

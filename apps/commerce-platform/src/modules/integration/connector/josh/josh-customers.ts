@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { repScopeSql } from './sales-rep-scope';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone, maskRegisterNumber } from './winback/pii.helper';
 import { paidOrderSql } from './josh-insights';
@@ -27,7 +28,7 @@ export const COMPANY_ISSUES = {
   credit_application_pending: `EXISTS (SELECT 1 FROM credit_term_applications a WHERE a.company_id = c.id AND a.status::text IN ('PENDING','REVIEW','REQUEST_DOC'))`,
 } as const;
 
-export interface CompanyFilters { search?: string; issue?: string }
+export interface CompanyFilters { search?: string; issue?: string; repIds?: string[] }
 
 export function companyWhere(f: CompanyFilters): { where: string; params: unknown[] } {
   const params: unknown[] = [];
@@ -38,13 +39,14 @@ export function companyWhere(f: CompanyFilters): { where: string; params: unknow
     if (!(f.issue in COMPANY_ISSUES)) throw new BadRequestException(`issue must be one of: ${Object.keys(COMPANY_ISSUES).join(', ')}`);
     w.push(COMPANY_ISSUES[f.issue as keyof typeof COMPANY_ISSUES]);
   }
+  if (f.repIds !== undefined) { params.push(f.repIds); w.push(repScopeSql('c', `$${params.length}`)); }
   return { where: w.length ? `WHERE ${w.join(' AND ')}` : '', params };
 }
 
 /**
  * josh customers (companies, branches, people), READ-ONLY from josh's replica. Identity
  * numbers, phones, emails and family names are masked exactly like josh's winback screens;
- * full values only through josh's audited PII reveal, which stays in josh.
+ * assigned commerce sales reps may use the explicit unmask option; other readers use full values only through josh's audited PII reveal, which stays in josh.
  */
 @Injectable()
 export class JoshCustomers {
@@ -52,19 +54,20 @@ export class JoshCustomers {
 
   get available() { return this.replica.configured; }
 
-  async summary() {
+  async summary(f: CompanyFilters = {}) {
+    const { where, params } = companyWhere(f);
     const issues = Object.entries(COMPANY_ISSUES).map(([k, cond]) => `count(*) FILTER (WHERE ${cond})::int AS ${k}`).join(', ');
     const [row] = await this.replica.query(`SELECT count(*)::int AS total, ${issues},
         COALESCE(sum(c.credit_limit), 0)::float AS credit_limit_total, COALESCE(sum(c.credit_used), 0)::float AS credit_used_total
-      FROM company c ${KYC}`);
+      FROM company c ${KYC} ${where}`, params);
     return row;
   }
 
-  async list(f: CompanyFilters, page = 1, limit = 50) {
+  async list(f: CompanyFilters, page = 1, limit = 50, options: { unmask?: boolean } = {}) {
     const { where, params } = companyWhere(f);
     const n = params.length;
     const [rows, [{ total }]] = await Promise.all([
-      this.replica.query<Record<string, unknown>>(`SELECT c.id, c.name, c.erp_customer_code, c.register_number, c.business_type,
+      this.replica.query<Record<string, unknown>>(`SELECT c.id, c.name, c.assigned_sales_user_id, c.erp_customer_code, c.register_number, c.business_type,
           c.credit_limit::float AS credit_limit, c.credit_used::float AS credit_used, c.credit_term_days, c.created_at,
           (SELECT count(*)::int FROM branch b WHERE b.company_id = c.id) AS branch_count,
           (SELECT count(*)::int FROM users u WHERE u.company_id = c.id AND u.is_active) AS user_count,
@@ -73,14 +76,14 @@ export class JoshCustomers {
         FROM company c ${KYC} ${where} ORDER BY c.name LIMIT $${n + 1} OFFSET $${n + 2}`, [...params, limit, (page - 1) * limit]),
       this.replica.query(`SELECT count(*)::int AS total FROM company c ${KYC} ${where}`, params),
     ]);
-    return { items: rows.map((r) => ({ ...r, register_number: maskRegisterNumber(r.register_number as string) })), total, page, limit };
+    return { items: rows.map((r) => ({ ...r, register_number: options.unmask ? r.register_number : maskRegisterNumber(r.register_number as string) })), total, page, limit };
   }
 
-  async detail(id: string) {
+  async detail(id: string, repIds?: string[], options: { unmask?: boolean } = {}) {
     if (!UUID.test(id)) throw new BadRequestException('id must be a uuid');
-    const [company] = await this.replica.query<Record<string, unknown>>(`SELECT c.id, c.name, c.erp_customer_code, c.register_number, c.business_type, c.phone,
+    const [company] = await this.replica.query<Record<string, unknown>>(`SELECT c.id, c.name, c.assigned_sales_user_id, c.erp_customer_code, c.register_number, c.business_type, c.phone,
         c.credit_limit::float AS credit_limit, c.credit_used::float AS credit_used, c.credit_term_days, c.credit_term_renews_at, c.document_language, c.created_at,
-        ${KYC_STATUS} AS kyc_status FROM company c ${KYC} WHERE c.id = $1`, [id]);
+        ${KYC_STATUS} AS kyc_status FROM company c ${KYC} WHERE c.id = $1 ${repIds !== undefined ? `AND ${repScopeSql('c', '$2')}` : ''}`, repIds !== undefined ? [id, repIds] : [id]);
     if (!company) throw new NotFoundException(`company ${id} not found in josh`);
     const [branches, users, kycDocs, credit, orders] = await Promise.all([
       this.replica.query<Record<string, unknown>>(`SELECT id, name, type::text AS type, erp_branch_code, erp_sync_status, is_default_delivery, is_out_of_area,
@@ -98,10 +101,10 @@ export class JoshCustomers {
     ]);
     return {
       ...company,
-      register_number: maskRegisterNumber(company.register_number as string),
-      phone: maskPhone(company.phone as string),
-      branches: branches.map((b) => ({ ...b, phone: maskPhone(b.phone as string), tax_id: maskRegisterNumber(b.tax_id as string) })),
-      users: users.map(({ first_name, last_name, email, mobile_phone, ...u }) => ({
+      register_number: options.unmask ? company.register_number : maskRegisterNumber(company.register_number as string),
+      phone: options.unmask ? company.phone : maskPhone(company.phone as string),
+      branches: options.unmask ? branches : branches.map((b) => ({ ...b, phone: maskPhone(b.phone as string), tax_id: maskRegisterNumber(b.tax_id as string) })),
+      users: options.unmask ? users : users.map(({ first_name, last_name, email, mobile_phone, ...u }) => ({
         ...u, ...maskPersonName(first_name as string, last_name as string), email: maskEmail(email as string), mobile_phone: maskPhone(mobile_phone as string),
       })),
       kycDocuments: kycDocs, creditApplications: credit, orders: orders[0],

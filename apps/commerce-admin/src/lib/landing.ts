@@ -1,20 +1,10 @@
 // Where a staff member lands after sign-in, and which deep links they may be sent to. Pure (unit-tested).
-// The per-role list is navigation.ts ROLE_ACCESS — the same one the sidebar uses — so there is one source.
+// One source each: the per-role page list is navigation.ts ROLE_ACCESS (the sidebar uses it too), the role
+// homes are role-home.ts ROLE_HOME.
 import { navFor, ROLE_ACCESS } from '../app/navigation';
+import { normalizeRole, ROLE_HOME } from './role-home';
 
-/**
- * Each role's home: a page in its own sidebar whose first API calls the platform allows for that role
- * (@StaffRoles on the controller, or the josh relay's AREAS list for /j/*).
- */
-export const ROLE_LANDING: Readonly<Record<string, string>> = {
-  admin: '/', // Dashboard (admin-only)
-  merchandising: '/products', // platform catalog — GET /products: merchandising, graphic
-  sales_manager: '/reports/sales', // GET /reports/sales: sales_manager, business_analyst
-  business_analyst: '/reports/sales', // read-only role, GET only
-  cs: '/cs', // CS desk — no API call on load; its tabs use the josh relay /cs-admin/* (cs)
-  graphic: '/j/product/bulk-image-upload', // product images — relay /product/images*: marketing, merchandising, graphic
-  marketing: '/marketing/growth', // GET /growth/*: marketing, business_analyst
-};
+export { ROLE_HOME as ROLE_LANDING } from './role-home';
 
 /** Any role, including one the app does not know yet: GET /admin/auth/me + POST /admin/auth/password are @AnyStaff. */
 export const FALLBACK_LANDING = '/account/password';
@@ -33,7 +23,8 @@ export function isSafeInternalPath(path: unknown): path is string {
 const pathnameOf = (path: string) => path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
 
 /** Whether the role may open the page; the longest ROLE_ACCESS entry covering the path decides (detail pages included). */
-export function isRouteAllowed(role: string | null | undefined, path: string): boolean {
+export function isRouteAllowed(roleRaw: string | null | undefined, path: string): boolean {
+  const role = normalizeRole(roleRaw);
   if (!role || !isSafeInternalPath(path)) return false;
   const pathname = pathnameOf(path);
   if (pathname === '/login') return false;
@@ -46,8 +37,9 @@ export function isRouteAllowed(role: string | null | undefined, path: string): b
   return !!key && ROLE_ACCESS[key].includes(role);
 }
 
-export function landingFor(role: string | null | undefined): string {
-  const landing = role ? ROLE_LANDING[role] : undefined;
+export function landingFor(roleRaw: string | null | undefined): string {
+  const role = normalizeRole(roleRaw);
+  const landing = Object.prototype.hasOwnProperty.call(ROLE_HOME, role) ? ROLE_HOME[role] : undefined;
   return landing && isRouteAllowed(role, landing) ? landing : FALLBACK_LANDING;
 }
 

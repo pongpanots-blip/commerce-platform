@@ -17,7 +17,7 @@ function make(replicaConfigured: boolean) {
   const qb = { select: jest.fn().mockReturnThis(), getRawMany: jest.fn().mockResolvedValue([]) };
   const accounts = { createQueryBuilder: jest.fn(() => qb) };
   const reports = new WinbackReports(josh as never, winback as never, {} as never, {} as never, accounts as never);
-  return { c: new WinbackReportsController(reports), josh, winback };
+  return { c: new WinbackReportsController(reports, {} as never, {} as never, {} as never), josh, winback };
 }
 
 describe('/reports/winback wiring', () => {
@@ -37,7 +37,7 @@ describe('WinbackReportsController', () => {
     const { c, josh, winback } = make(false);
     const res = await c.overview() as { data: { counts: unknown } };
     expect(res.data.counts).toEqual({ total: 3 });
-    expect(winback.getCounts).toHaveBeenCalled();
+    expect(winback.getCounts).toHaveBeenCalledWith({ id: '', isManager: true });
     expect(josh.overview).not.toHaveBeenCalled();
   });
 

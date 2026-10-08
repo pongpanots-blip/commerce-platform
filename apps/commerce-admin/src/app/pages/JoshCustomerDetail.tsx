@@ -5,7 +5,7 @@ import {
   Page, PageHeader, Panel, SearchInput, Span, StatusChip,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { joshActionsApi, joshCustomerApi, JoshRow } from '../../lib/api';
+import { joshActionsApi, joshCustomerApi, JoshRow, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -26,6 +26,7 @@ function CustomerEdit({ kind, id, label, fields, onDone }: {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
 
+  if (session.claims()?.role !== 'admin') return null;
   if (!v) return <Button size="sm" variant="ghost" onClick={() => setV(start())}>{__uiText("แก้")}</Button>;
 
   const initial = start();

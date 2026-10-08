@@ -1,4 +1,4 @@
-import { Body, Controller, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Patch } from '@nestjs/common';
 import { IsOptional, IsUUID, ValidateIf } from 'class-validator';
 import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
 import { SalesRepsService } from './sales-reps.service';
@@ -13,6 +13,9 @@ class AssignSalesDto {
 @StaffRoles('sales_manager')
 export class SalesRepsController {
   constructor(private readonly reps: SalesRepsService) {}
+
+  @Get('sales-reps')
+  list() { return this.reps.list(); }
 
   @Patch('sales-assignment')
   assign(@Body() dto: AssignSalesDto) { return this.reps.assign(dto.company_id, dto.sales_user_id ?? null); }

@@ -15,6 +15,7 @@ export class InventoryController extends BaseCrudController<InventoryLevel>() {
   }
 
   @Get()
+  @StaffRoles('merchandising', 'sale')
   override list(@Query() query: InventoryListQueryDto) {
     return this.service.findMany({
       page: query.page,

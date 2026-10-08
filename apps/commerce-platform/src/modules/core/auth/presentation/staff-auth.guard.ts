@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ALLOW_PENDING_PASSWORD_KEY, ALLOW_READ_ONLY_WRITE_KEY, ANY_STAFF_KEY, IS_PUBLIC_KEY, READ_ONLY_STAFF_ROLES, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
+import { ALLOW_PENDING_PASSWORD_KEY, ALLOW_READ_ONLY_WRITE_KEY, ANY_STAFF_KEY, IS_PUBLIC_KEY, READ_ONLY_STAFF_ROLES, STAFF_ROLES, STAFF_ROLES_KEY, StaffRole, normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { User } from '../../user/infrastructure/user.entity';
 
 export interface StaffPrincipal {
@@ -53,11 +53,14 @@ export class StaffAuthGuard implements CanActivate {
       throw new UnauthorizedException('invalid or expired token');
     }
 
-    if (!payload.role || !STAFF_ROLES.includes(payload.role as StaffRole)) {
+    if (!payload.role || !STAFF_ROLES.includes(normalizeStaffRole(payload.role) as StaffRole)) {
       throw new ForbiddenException('this account cannot use this part of commerce-admin');
     }
     const account = payload.sub ? await this.users.findOne({ where: { id: payload.sub }, select: { id: true, email: true, role: true, status: true, mustChangePassword: true } }) : null;
     if (!account || account.status !== 'active') throw new UnauthorizedException('account disabled or removed');
+
+    const role = normalizeStaffRole(account.role) as StaffRole;
+    if (!STAFF_ROLES.includes(role)) throw new ForbiddenException('not a commerce-admin account');
 
     // a password someone else set (new account, reset): nothing but "who am I" and "change it" until changed
     if (account.mustChangePassword && !this.reflector.getAllAndOverride<boolean>(ALLOW_PENDING_PASSWORD_KEY, targets)) {
@@ -66,15 +69,15 @@ export class StaffAuthGuard implements CanActivate {
 
     const anyStaff = this.reflector.getAllAndOverride<boolean>(ANY_STAFF_KEY, targets);
     const allowed = new Set<string>(['admin', ...(this.reflector.getAllAndOverride<StaffRole[]>(STAFF_ROLES_KEY, targets) ?? [])]);
-    if (!anyStaff && !allowed.has(account.role)) {
+    if (!anyStaff && !allowed.has(role)) {
       throw new ForbiddenException('this account cannot use this part of commerce-admin');
     }
     const method = String(request.method ?? 'GET').toUpperCase();
-    if ((READ_ONLY_STAFF_ROLES as readonly string[]).includes(account.role) && method !== 'GET' && method !== 'HEAD'
+    if ((READ_ONLY_STAFF_ROLES as readonly string[]).includes(role) && method !== 'GET' && method !== 'HEAD'
       && !this.reflector.getAllAndOverride<boolean>(ALLOW_READ_ONLY_WRITE_KEY, targets)) {
       throw new ForbiddenException('this account is read-only');
     }
-    request.staff = { userId: account.id, email: account.email, role: account.role, mustChangePassword: account.mustChangePassword } as StaffPrincipal;
+    request.staff = { userId: account.id, email: account.email, role, mustChangePassword: account.mustChangePassword } as StaffPrincipal;
     return true;
   }
 }

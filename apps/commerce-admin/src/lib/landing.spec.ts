@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { FALLBACK_LANDING, isRouteAllowed, isSafeInternalPath, landingFor, loginPathFor, redirectParam, resolvePostLoginPath, ROLE_LANDING } from './landing';
 import { navFor } from '../app/navigation';
 
-const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic'];
+const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sale', 'sales_manager', 'business_analyst', 'graphic'];
 
 describe('role landing (commerce-admin)', () => {
   it.each([
@@ -13,6 +13,9 @@ describe('role landing (commerce-admin)', () => {
     ['cs', '/cs'],
     ['graphic', '/j/product/bulk-image-upload'],
     ['marketing', '/marketing/growth'],
+    ['sale', '/reports/sales'],
+    ['sale_manager', '/reports/sales'], // stored alias of sales_manager
+    [' SALE_MANAGER ', '/reports/sales'],
   ])('%s → %s', (role, path) => {
     expect(landingFor(role)).toBe(path);
   });
@@ -27,7 +30,6 @@ describe('role landing (commerce-admin)', () => {
   });
 
   it('unknown or missing role → the page every staff role can open', () => {
-    expect(landingFor('sale')).toBe(FALLBACK_LANDING);
     expect(landingFor('platform_admin')).toBe(FALLBACK_LANDING);
     expect(landingFor(undefined)).toBe('/account/password');
     expect(resolvePostLoginPath('developer', '/products')).toBe('/account/password');
@@ -51,6 +53,13 @@ describe('deep links', () => {
     ['cs', '/', '/cs'],
     ['admin', '/settings/staff', '/settings/staff'],
     ['admin', '/login?redirect=/x', '/'],
+    ['sale', '/reports/winback/my', '/reports/winback/my'],
+    ['sale', '/reports/winback', '/reports/sales'], // the team view is sales_manager / business_analyst
+    ['sale', '/reports/customers/c-1', '/reports/customers/c-1'],
+    ['sale', '/cs/sales-assignment', '/reports/sales'],
+    ['sale_manager', '/cs/sales-assignment', '/cs/sales-assignment'],
+    ['sales_manager', '/reports/winback/opportunities', '/reports/winback/opportunities'],
+    ['sales_manager', '/reports/winback/my', '/reports/sales'],
   ])('%s + redirect %s → %s', (role, redirect, expected) => {
     expect(resolvePostLoginPath(role, redirect)).toBe(expected);
   });

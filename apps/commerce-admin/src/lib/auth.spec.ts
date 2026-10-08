@@ -173,3 +173,10 @@ describe('logout', () => {
     expect(init.keepalive).toBe(true);
   });
 });
+
+describe('roles', () => {
+  it('claims() reports the canonical role (sale_manager → sales_manager)', () => {
+    session.set(jwt({ role: 'sale_manager' }), 'refresh-1');
+    expect(session.claims()?.role).toBe('sales_manager');
+  });
+});

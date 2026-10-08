@@ -20,3 +20,8 @@ describe('winback roles', () => {
     expect(isWinbackManager('sale')).toBe(false);
   });
 });
+
+it.each(['sales_manager', 'sale_manager', ' SALES_MANAGER '])('commerce manager %s sees team scope but is not an assignable rep', role => {
+  expect(isWinbackManager(role)).toBe(true);
+  expect(WINBACK_ASSIGNABLE_ROLES).not.toContain(role);
+});

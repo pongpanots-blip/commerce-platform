@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { createHash, randomBytes, randomUUID } from 'crypto';
 import { IsNull, Repository } from 'typeorm';
 import { User } from '../../user/infrastructure/user.entity';
-import { STAFF_ROLES } from '../../../../shared-kernel/presentation/auth.decorators';
+import { normalizeStaffRole, STAFF_ROLES } from '../../../../shared-kernel/presentation/auth.decorators';
 import { AuthRefreshToken, RefreshAudience } from '../infrastructure/auth-refresh-token.entity';
 
 export type { RefreshAudience } from '../infrastructure/auth-refresh-token.entity';
@@ -66,8 +66,10 @@ export class RefreshTokenService {
     if (row.expiresAt.getTime() <= Date.now()) throw invalid();
 
     const user = await this.users.findOne({ where: { id: row.userId } });
-    if (!user || user.status !== 'active' || user.role !== row.roleAtIssue
-      || (audience === 'staff' && !STAFF_ROLES.includes(user.role as never))) {
+    // canonical roles on both sides: a stored sale_manager is the same sign-in as sales_manager
+    const role = user ? normalizeStaffRole(user.role) : '';
+    if (!user || user.status !== 'active' || role !== normalizeStaffRole(row.roleAtIssue)
+      || (audience === 'staff' && !STAFF_ROLES.includes(role as never))) {
       await this.revokeFamily(row.familyId, 'account_changed');
       throw invalid();
     }
@@ -102,10 +104,11 @@ export class RefreshTokenService {
   }
 
   private async session(user: User, audience: RefreshAudience, familyId: string, meta: ClientMeta) {
+    const role = normalizeStaffRole(user.role);
     const refreshToken = randomBytes(32).toString('base64url');
     const refreshExpiresIn = refreshTokenTtlDays() * 24 * 60 * 60;
     const next = await this.tokens.save(this.tokens.create({
-      userId: user.id, familyId, tokenHash: tokenHash(refreshToken), audience, roleAtIssue: user.role,
+      userId: user.id, familyId, tokenHash: tokenHash(refreshToken), audience, roleAtIssue: role,
       expiresAt: new Date(Date.now() + refreshExpiresIn * 1000),
       usedAt: null, revokedAt: null, revokedReason: null, replacedById: null,
       userAgent: meta.userAgent ? meta.userAgent.slice(0, 255) : null,
@@ -113,8 +116,8 @@ export class RefreshTokenService {
     }));
     const expiresIn = accessTokenTtlSeconds();
     const session: AuthSession = {
-      accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }, { expiresIn }),
-      role: user.role,
+      accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role }, { expiresIn }),
+      role,
       mustChangePassword: !!user.mustChangePassword,
       refreshToken,
       expiresIn,

@@ -184,6 +184,27 @@ describe('RefreshTokenService', () => {
     expect((await jwt.verifyAsync(next.accessToken)).email).toBe('renamed@jagota.co.th');
   });
 
+  it('a stored sale_manager signs in and refreshes as sales_manager — the alias is not a role change', async () => {
+    const { service, jwt, rows, users, user } = setup([{ id: 'u-1', email: 'mgr@jagota.co.th', role: 'sale_manager', status: 'active' }]);
+    const s = await service.issueSession(user(), 'staff');
+    expect(s.role).toBe('sales_manager');
+    expect((await jwt.verifyAsync(s.accessToken)).role).toBe('sales_manager');
+    expect(rows()[0].roleAtIssue).toBe('sales_manager');
+    const next = await service.refresh(s.refreshToken, 'staff');
+    expect(next.role).toBe('sales_manager');
+    users()[0].role = 'sales_manager'; // the account row migrated to the canonical spelling
+    await expect(service.refresh(next.refreshToken, 'staff')).resolves.toMatchObject({ role: 'sales_manager' });
+  });
+
+  it('a sale account signs in and refreshes; sale → sales_manager is a real role change', async () => {
+    const { service, users, user } = setup([{ id: 'u-1', email: 'rep@jagota.co.th', role: 'sale', status: 'active' }]);
+    const s = await service.issueSession(user(), 'staff');
+    const next = await service.refresh(s.refreshToken, 'staff');
+    expect(next.role).toBe('sale');
+    users()[0].role = 'sale_manager';
+    await rejected401(service.refresh(next.refreshToken, 'staff'));
+  });
+
   it('revokeAllForUser ends every sign-in of that account only', async () => {
     const { service, user } = setup([
       { id: 'u-1', email: 'a@x', role: 'merchandising', status: 'active' },

@@ -1,5 +1,7 @@
 // Staff session for commerce-admin: the short access JWT plus the rotating refresh token, the single-flight
 // refresh behind every API call, and the silent sign-in on app start. No React in here (unit-tested).
+import { normalizeRole } from './role-home';
+
 const env = (import.meta as unknown as { env: Record<string, string | boolean> }).env;
 export const BASE = (env?.VITE_COMMERCE_API as string) || (env?.DEV ? 'http://localhost:3100/api' : '/api');
 
@@ -34,7 +36,9 @@ export const session = {
     const token = this.get();
     try {
       const part = token?.split('.')[1];
-      return part ? JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/'))) : null;
+      if (!part) return null;
+      const claims = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+      return { ...claims, role: normalizeRole(claims.role) };
     } catch {
       return null;
     }

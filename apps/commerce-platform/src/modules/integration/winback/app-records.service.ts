@@ -145,11 +145,17 @@ export class AppRecordsService {
 
   async listCoachingTasks(actor: WinbackActor, q: CoachingTaskQueryDto) {
     const salesUserId = actor.isManager ? q.sales_user_id : actor.id;
-    const where: Record<string, unknown> = { kind: Kind.COACHING_TASK };
-    if (salesUserId) where.sales_user_id = salesUserId;
-    if (q.account_id) where.account_id = q.account_id;
-    if (q.open_only) where.status = 'open';
-    const rows = await this.records.find({ where, take: 500 });
+    const qb = this.records.createQueryBuilder('r').where('r.kind = :kind', { kind: Kind.COACHING_TASK });
+    if (salesUserId) qb.andWhere('r.sales_user_id = :salesUserId', { salesUserId });
+    if (q.account_id) qb.andWhere('r.account_id = :accountId', { accountId: q.account_id });
+    if (q.open_only) qb.andWhere('r.status = :status', { status: 'open' });
+    // Ordered before the cap so more than 500 tasks keep the earliest due, not an arbitrary subset.
+    const rows = await qb
+      .orderBy("r.payload->>'due_at'", 'ASC', 'NULLS LAST')
+      .addOrderBy('r.create_date', 'DESC')
+      .addOrderBy('r.id', 'DESC')
+      .limit(500)
+      .getMany();
     return rows
       .map((r) => this.coachingView(r))
       .sort((a, b) => String(a.due_at).localeCompare(String(b.due_at)));

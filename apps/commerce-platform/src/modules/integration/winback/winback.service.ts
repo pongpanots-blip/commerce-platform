@@ -497,9 +497,16 @@ export class WinbackService {
       .orderBy('a.create_date', 'ASC');
   }
 
-  /** Leads with zero activity older than N days (manager aging view). */
-  async getAging(days = 3) {
-    const rows = await this.unworkedLeadsQuery(days).take(100).getMany();
+  /**
+   * Leads with zero activity older than N days (manager aging view). `scope` narrows a sales user to their
+   * own and unassigned leads in the query, before the 100 cap (not after it, which could leave a rep empty).
+   */
+  async getAging(days = 3, scope?: { salesUserId: string }) {
+    const qb = this.unworkedLeadsQuery(days);
+    if (scope) {
+      qb.andWhere('(a.assigned_sales_user_id = :agingRep OR a.assigned_sales_user_id IS NULL)', { agingRep: scope.salesUserId || null });
+    }
+    const rows = await qb.addOrderBy('a.id', 'ASC').take(100).getMany();
 
     const now = Date.now();
     const DAY = 1000 * 60 * 60 * 24;

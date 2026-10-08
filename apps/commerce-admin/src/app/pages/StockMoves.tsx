@@ -1,7 +1,8 @@
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useState } from 'react';
-import { Alert, Button, ErrorText, Field, Hint, Icon, Input, Loading, Page, PageHeader, Panel, PanelHead, Select } from '@cp/ui';
-import { stockApi, StockWarehouse } from '../../lib/api';
+import { Alert, Button, ErrorText, Field, Hint, Icon, Input, Loading, MasterDataSelect, Page, PageHeader, Panel, PanelHead, Select } from '@cp/ui';
+import { api, Paginated, Product, productsApi, stockApi, StockWarehouse } from '../../lib/api';
+import { roleCanWrite } from '../role-can';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -21,6 +22,7 @@ const TASKS = [
 export function StockMoves() {
   __useUiLocale();
   const warehouses = useAsync(() => stockApi.warehouses(), []);
+  const products = useAsync(() => api.get<Paginated<Product>>('/products?page=1&pageSize=100'), []);
   const own = (warehouses.data ?? []).filter((w: StockWarehouse) => w.stockSource === 'commerce');
   const [tab, setTab] = useState<Tab>('receive');
   const [form, setForm] = useState({ sku: '', warehouse: '', to: '', quantity: '', reason: 'DAMAGE', note: '' });
@@ -74,19 +76,34 @@ export function StockMoves() {
         <PanelHead title={__uiText("บันทึก{0}", {"0": task.title})} icon={task.icon} sub={task.hint} />
         <form onSubmit={submit}>
           <fieldset disabled={busy} className="grid min-w-0 gap-4 p-4 md:grid-cols-2 md:p-5">
-          <Field label={__uiText("SKU")} hint={__uiText("รหัสสินค้าที่ต้องการบันทึก")}><Input value={form.sku} onChange={set('sku')} required maxLength={64} /></Field>
+          <Field label={__uiText("สินค้า")} hint={__uiText("ค้นจากรหัสหรือชื่อ รายการที่โหลดมา 100 รายการแรก")}>
+            <MasterDataSelect
+              options={(products.data?.items ?? []).map((product) => ({ value: product.sku, label: `${product.sku} · ${product.name}` }))}
+              value={form.sku}
+              onChange={(next) => setForm((current) => ({ ...current, sku: String(next) }))}
+              canCreate={roleCanWrite(['merchandising'])}
+              createFields={[{ name: 'sku', label: 'รหัสสินค้า', required: true, placeholder: 'BREAD-001' }, { name: 'name', label: 'ชื่อสินค้า', required: true, placeholder: 'ขนมปังโฮลวีต' }]}
+              createFrom="sku"
+              onCreate={async (draft) => {
+                const made = await productsApi.create({ sku: draft.sku.trim(), name: draft.name.trim() });
+                return { value: made.sku, label: `${made.sku} · ${made.name}` };
+              }}
+            />
+          </Field>
           <Field label={tab === 'transfer' ? __uiText("จากคลัง") : __uiText("คลัง")}>
-            <Select value={form.warehouse} onChange={set('warehouse')} required>
-              <option value="">{__uiText("เลือกคลัง")}</option>
-              {own.map((w) => <option key={w.code} value={w.code}>{w.code} — {w.name}{w.sellable ? '' : __uiText(" (ไม่นับเป็นยอดขายได้)")}</option>)}
-            </Select>
+            <MasterDataSelect
+              options={own.map((w) => ({ value: w.code, label: `${w.code} — ${w.name}${w.sellable ? '' : __uiText(" (ไม่นับเป็นยอดขายได้)")}` }))}
+              value={form.warehouse}
+              onChange={(next) => set('warehouse')({ target: { value: String(next) } })}
+            />
           </Field>
           {tab === 'transfer' && (
             <Field label={__uiText("ไปคลัง")}>
-              <Select value={form.to} onChange={set('to')} required>
-                <option value="">{__uiText("เลือกคลัง")}</option>
-                {own.filter((w) => w.code !== form.warehouse).map((w) => <option key={w.code} value={w.code}>{w.code} — {w.name}</option>)}
-              </Select>
+              <MasterDataSelect
+                options={own.filter((w) => w.code !== form.warehouse).map((w) => ({ value: w.code, label: `${w.code} — ${w.name}` }))}
+                value={form.to}
+                onChange={(next) => set('to')({ target: { value: String(next) } })}
+              />
             </Field>
           )}
           {tab === 'adjust' && (

@@ -1430,6 +1430,6 @@ export const fmt = {
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
 export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
-export { FormSection, FormActions, DetailHeader, CopyableId, useUnsavedChanges, scrollToFirstInvalid, blankFieldMessage } from './forms';
+export { FormSection, FormActions, DetailHeader, CopyableId, MasterDataSelect, findMasterMatch, masterKey, useUnsavedChanges, scrollToFirstInvalid, blankFieldMessage } from './forms';
 export { pageGuide } from './page-guides';
 export type { PageGuide } from './page-guides';

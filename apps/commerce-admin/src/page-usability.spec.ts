@@ -1,4 +1,4 @@
-import { fmt, pageGuide, setUiLocale } from '@cp/ui';
+import { findMasterMatch, fmt, pageGuide, setUiLocale } from '@cp/ui';
 import { formatShipmentDuration } from './josh-admin/libs/shared-api/lib/orders/orders.api';
 
 describe('page usability', () => {
@@ -18,6 +18,13 @@ describe('page usability', () => {
   it('shows timestamps in Bangkok time', () => {
     setUiLocale('en');
     expect(fmt.when('2026-01-01T00:00:00Z')).toContain('07:00');
+  });
+
+  it('treats a different case or extra spaces as the same master record', () => {
+    const options = [{ value: 'b1', label: 'Acme Foods' }];
+    expect(findMasterMatch(options, '  acme   foods ')?.value).toBe('b1');
+    expect(findMasterMatch([{ value: 'c1', label: 'ร้านอาหารบ้านสวน · CUST-01' }], 'cust-01')?.value).toBe('c1');
+    expect(findMasterMatch(options, 'Other')).toBeUndefined();
   });
 
   it('gives a first-visit guide for known routes and a fallback for the rest', () => {

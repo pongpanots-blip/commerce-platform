@@ -2,7 +2,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import type { GrowthAiDraft, GrowthPlan, GrowthPlanInput, GrowthReadiness, GrowthTask, GrowthTemplate } from '@cp/growth';
-import { Alert, ArrowLink, Button, ButtonLink, Checkbox, Chip, DetailPanel, DetailSection, Field, FormPanel, Input, KeyValueGrid, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, fmt } from '@cp/ui';
+import { Alert, ArrowLink, Button, ButtonLink, Checkbox, Chip, DetailPanel, DetailSection, Field, FormPanel, Input, KeyValueGrid, MasterDataSelect, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, fmt } from '@cp/ui';
+import { createUserSegment, getUserSegments, type UserSegmentRuleType } from '@josh/shared-api';
+import { roleCanWrite } from '../../role-can';
 import { api, session } from '../../../lib/api';
 import { useAsync } from '../../hooks';
 import { Evidence, LoadState, PlanStatus, localDateTime, templateLabels } from './shared';
@@ -14,6 +16,25 @@ function inputOf(plan: GrowthPlan): GrowthPlanInput {
   return { title, goal, template, owner, segmentIds, excludeSegmentIds, productSkus, notifyTemplateKey, scheduleAt, budgetThb, minimumMarginPercent, holdoutPercent, cooldownDays, conversionWindowDays, variants, selectedVariant, researchTopicId, researchRunId, analysisId };
 }
 const commaList = (value: string) => [...new Set(value.split(',').map((item) => item.trim()).filter(Boolean))];
+const segmentCreateFields = [
+  { name: 'name', label: 'ชื่อกลุ่มลูกค้า', required: true, placeholder: 'ลูกค้าที่ไม่ได้สั่ง 30 วัน' },
+  { name: 'rule_type', label: 'ชนิดของกลุ่ม', options: [
+    { value: 'member', label: 'สมาชิก' },
+    { value: 'guest', label: 'ผู้มาเยือน' },
+    { value: 'staff', label: 'พนักงาน' },
+    { value: 'has_company', label: 'มีบริษัท' },
+  ] },
+];
+async function createSegmentOption(draft: Record<string, string>) {
+  const name = draft.name.trim();
+  const rule_type = (draft.rule_type || 'member') as UserSegmentRuleType;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'segment';
+  await createUserSegment({ slug, name, rule_type, rule_config: {}, is_active: true });
+  const rows = await getUserSegments();
+  const made = rows.find((row) => row.slug === slug) ?? rows.find((row) => row.name === name);
+  if (!made) throw new Error('บันทึกกลุ่มลูกค้าไม่สำเร็จ');
+  return { value: made.id, label: made.name };
+}
 function CommaInput({ value, onChange, placeholder, uuid = false }: { value: string[]; onChange: (value: string[]) => void; placeholder?: string; uuid?: boolean }) {
   __useUiLocale();
   const [text, setText] = useState(value.join(', '));
@@ -47,6 +68,7 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
   const navigate = useNavigate();
   const loaded = useAsync(() => id ? api.get<GrowthPlan>(`/growth/plans/${encodeURIComponent(id)}`) : Promise.resolve(null), [id]);
   const readiness = useAsync(() => api.get<GrowthReadiness>('/growth/readiness'));
+  const segments = useAsync(() => getUserSegments().catch(() => []), []);
   const [plan, setPlan] = useState<GrowthPlan | null>(null);
   const [form, setForm] = useState<GrowthPlanInput>(() => blank(params));
   const [tasks, setTasks] = useState<GrowthTask[]>([]);
@@ -128,8 +150,12 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
         <Field label={__uiText("งบสูงสุดของแผน (บาท)")}><Input required type="number" min={0} max={10000000} step="0.01" value={form.budgetThb} onChange={(event) => update('budgetThb', Number(event.target.value))} /></Field>
         <Field label={__uiText("อัตรา contribution ขั้นต่ำ (%)")} hint={__uiText("เกณฑ์ของแผน ยังไม่บังคับตรวจ ณ เวลาส่ง")}><Input required type="number" min={0} max={100} step="0.1" value={form.minimumMarginPercent} onChange={(event) => update('minimumMarginPercent', Number(event.target.value))} /></Field>
         <Span><details className="rounded-lg border border-secondary-container p-3"><summary className="text-xs font-semibold text-primary cursor-pointer">{__uiText("กลุ่มเป้าหมาย สินค้า และการทดลอง")}</summary><div className="grid gap-3 md:grid-cols-2 mt-3">
-          <Field label={__uiText("Segment IDs")} hint={__uiText("UUID เท่านั้น คั่นด้วย comma · ตรวจจากหน้า Segments")}><CommaInput uuid value={form.segmentIds} onChange={(value) => update('segmentIds', value)} placeholder={__uiText("ระบุกลุ่มที่ยืนยันแล้วก่อนส่งตรวจ")} /></Field>
-          <Field label={__uiText("Exclude segment IDs")} hint={__uiText("UUID เท่านั้น คั่นด้วย comma")}><CommaInput uuid value={form.excludeSegmentIds} onChange={(value) => update('excludeSegmentIds', value)} /></Field>
+          <Field label={__uiText("กลุ่มลูกค้า")} hint={__uiText("เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส")}>
+            <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.segmentIds} onChange={(value) => update('segmentIds', value as string[])} canCreate={roleCanWrite(['marketing'])} createFrom="name" createFields={segmentCreateFields} onCreate={createSegmentOption} />
+          </Field>
+          <Field label={__uiText("กลุ่มที่ไม่รวม")} hint={__uiText("เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส")}>
+            <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.excludeSegmentIds} onChange={(value) => update('excludeSegmentIds', value as string[])} canCreate={roleCanWrite(['marketing'])} createFrom="name" createFields={segmentCreateFields} onCreate={createSegmentOption} />
+          </Field>
           <Field label={__uiText("SKU ที่ใช้")} hint={__uiText("คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง")}><CommaInput value={form.productSkus} onChange={(value) => update('productSkus', value)} /></Field>
           <Field label={__uiText("ใช้ notification template เดิม (ไม่บังคับ)")} hint={__uiText("เว้นว่างเพื่อสร้าง template จากข้อความที่เลือก หากระบุ key เนื้อหาต้องตรงกับเวอร์ชันที่อนุมัติ")}><Input value={form.notifyTemplateKey ?? ''} onChange={(event) => update('notifyTemplateKey', event.target.value || null)} /></Field>
           <Field label={__uiText("กลุ่มควบคุม (%)")}><Input required type="number" min={1} max={50} value={form.holdoutPercent} onChange={(event) => update('holdoutPercent', Number(event.target.value))} /></Field>

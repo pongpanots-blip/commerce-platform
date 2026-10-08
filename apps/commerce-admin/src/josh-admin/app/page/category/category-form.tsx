@@ -1,5 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
-import { compareCategoryOrder, getProductCategories } from '@josh/shared-api';
+import { compareCategoryOrder, createProductCategory, getProductCategories } from '@josh/shared-api';
 import { Select } from '@josh/shared-ui-web';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
@@ -40,6 +40,21 @@ export function levelLabel(level: number): string {
  * หมวดปลายกิ่ง — หมวดที่ไม่มีลูก
  * สินค้าผูกกับหมวดแบบนี้เสมอ (ปัจจุบัน 5,889 SKU อยู่บน leaf 152 หมวด ไม่มีตัวไหนแขวนบนหมวดที่มีลูก)
  */
+export function categoryOption(row: CategoryRow) {
+  const name = row.category_name_th || row.category_name_en || row.category_path || row.category_id_uuid;
+  return { value: row.category_id_uuid, label: row.category_code ? `${name} (${row.category_code})` : String(name) };
+}
+
+export async function createCategoryOption(draft: Record<string, string>) {
+  const response: { data?: { data?: CategoryRow; category_id_uuid?: string } } = await createProductCategory({
+    category_name_en: draft.category_name_en.trim(),
+    parent_id: draft.parent_id || undefined,
+  });
+  const made = response.data?.data?.category_id_uuid ? response.data.data : response.data?.category_id_uuid ? response.data as CategoryRow : null;
+  if (!made?.category_id_uuid) throw new Error(__uiText('สร้างหมวดไม่สำเร็จ'));
+  return categoryOption(made);
+}
+
 export function leafCategories(rows: CategoryRow[]): CategoryRow[] {
   const hasChildren = new Set(
     rows.map((row) => row.parent_id_uuid).filter((id): id is string => Boolean(id)),

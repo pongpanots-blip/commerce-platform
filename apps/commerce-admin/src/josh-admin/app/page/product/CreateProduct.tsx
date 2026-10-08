@@ -21,12 +21,13 @@ import {
   validatePromotionMechanicForm,
   type PromotionMechanicForm,
 } from '../campain/promotion-mechanic.helpers';
-import { LeafCategorySelect, useCategoryRows } from '../category/category-form';
+import { categoryOption, createCategoryOption, leafCategories, useCategoryRows } from '../category/category-form';
+import { roleCanWrite } from '../../../../app/role-can';
 // 🌟 สมมติพิกัด Import ของ Components กลางในโปรเจกต์ของคุณ
 // import { Button, Input, DragDropUpload, DateRangeInput } from '@/components/common';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, Stepper, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { MasterDataSelect, PageHeader, Stepper, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function InsertProductForm() {
   __useUiLocale();
   const categoryRows = useCategoryRows();
@@ -45,7 +46,6 @@ export default function InsertProductForm() {
   });
 
   const [brandOptions, setBrandOptions] = useState<{ value: string; label: string }[]>([]);
-  const [newBrandCode, setNewBrandCode] = useState('');
 
   useEffect(() => {
     getBrands()
@@ -211,37 +211,28 @@ export default function InsertProductForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 <span className="mb-1 block">{__uiText("หมวดหมู่สินค้า")}</span>
-                <LeafCategorySelect
-                  rows={categoryRows}
+                <MasterDataSelect
+                  options={leafCategories(categoryRows).map(categoryOption)}
                   value={formData.category_id}
-                  onChange={(categoryId) => handleInputChange('category_id', categoryId)}
+                  onChange={(next) => handleInputChange('category_id', String(next))}
+                  canCreate={roleCanWrite(['merchandising'])}
+                  createFrom="category_name_en"
+                  createFields={[
+                    { name: 'category_name_en', label: 'ชื่อภาษาอังกฤษ', required: true, placeholder: 'Bakery' },
+                    { name: 'parent_id', label: 'หมวดที่อยู่เหนือกว่า', options: categoryRows.map(categoryOption) },
+                  ]}
+                  onCreate={(draft) => createCategoryOption(draft)}
                 />
               </label>
               <p className="mt-1 text-xs text-gray-500">
-                {__uiText("เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ (พิมพ์ชื่อขณะเปิดลิสต์เพื่อค้นหาได้)")}</p>
+                {__uiText("เห็นเฉพาะหมวดปลายกิ่ง — สินค้าผูกกับหมวดที่ไม่มีหมวดย่อยเสมอ")}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>
-              <select
-                className="w-full border rounded-lg px-3 py-2"
+              <MasterDataSelect
+                options={brandOptions}
                 value={formData.brand_code}
-                onChange={(e) => handleInputChange('brand_code', e.target.value)}
-              >
-                <option value="">{__uiText("-- เลือกแบรนด์ --")}</option>
-                {brandOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <Input
-                label={__uiText("หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)")}
-                value={newBrandCode}
-                onChange={(e: any) => {
-                  setNewBrandCode(e.target.value);
-                  handleInputChange('brand_code', e.target.value || formData.brand_code);
-                }}
-                placeholder={__uiText("เช่น ACME")}
+                onChange={(next) => handleInputChange('brand_code', String(next))}
               />
             </div>
           </div>

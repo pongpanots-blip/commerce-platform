@@ -56,7 +56,7 @@ import {
 } from '../campain/promotion-mechanic.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { MasterDataSelect, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const MAX_IMAGES = 3;
 const NUTRITION_FORM_KEYS = new Set(['nutrition_basis', 'nutrition_items']);
 
@@ -116,7 +116,6 @@ const EditProduct = () => {
   });
 
   const [brandOptions, setBrandOptions] = useState<{ value: string; label: string }[]>([]);
-  const [newBrandCode, setNewBrandCode] = useState('');
   // ERP PRICE (ราคากล่อง/หน่วยสั่ง) — read-only ที่นี่ เจ้าของค่าคือ ERP ไม่ใช่ admin
   const [orderingPrice, setOrderingPrice] = useState<string>('');
 
@@ -413,12 +412,14 @@ const EditProduct = () => {
           disabled
           readOnly
         />
-        <Input
-          label={__uiText("สถานะสินค้า")}
-          hint={__uiText("1 = ใช้งาน, 0 = ปิด")}
-          value={form.product_status}
-          onChange={(e) => handleInput('product_status', e.target.value)}
-        />
+        <label className="block text-sm font-medium text-gray-700">
+          <span className="mb-1 block">{__uiText("สถานะสินค้า")}</span>
+          <select className="w-full border rounded-lg px-3 py-2" value={form.product_status} onChange={(e) => handleInput('product_status', e.target.value)}>
+            {form.product_status && !['1', '0'].includes(String(form.product_status)) && <option value={form.product_status}>{form.product_status}</option>}
+            <option value="1">{__uiText("ใช้งาน")}</option>
+            <option value="0">{__uiText("ปิดการขาย")}</option>
+          </select>
+        </label>
         <Input
           label={__uiText("จำนวนสต็อก")}
           value={form.product_inventory_quantity}
@@ -431,26 +432,10 @@ const EditProduct = () => {
         />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>
-          <select
-            className="w-full border rounded-lg px-3 py-2"
+          <MasterDataSelect
+            options={brandOptions}
             value={form.brand_code}
-            onChange={(e) => handleInput('brand_code', e.target.value)}
-          >
-            <option value="">{__uiText("-- เลือกแบรนด์ --")}</option>
-            {brandOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <Input
-            label={__uiText("หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)")}
-            value={newBrandCode}
-            onChange={(e: any) => {
-              setNewBrandCode(e.target.value);
-              handleInput('brand_code', e.target.value || form.brand_code);
-            }}
-            placeholder={__uiText("เช่น ACME")}
+            onChange={(next) => handleInput('brand_code', String(next))}
           />
         </div>
         <Input
@@ -458,12 +443,15 @@ const EditProduct = () => {
           value={form.marketed_by}
           onChange={(e) => handleInput('marketed_by', e.target.value)}
         />
-        <Input
-          label={__uiText("ประเภทภาษีมูลค่าเพิ่ม (VAT Type)")}
-          hint={__uiText("0% หรือ 7%")}
-          value={form.vat_type}
-          onChange={(e) => handleInput('vat_type', e.target.value)}
-        />
+        <label className="block text-sm font-medium text-gray-700">
+          <span className="mb-1 block">{__uiText("ประเภทภาษีมูลค่าเพิ่ม (VAT Type)")}</span>
+          <select className="w-full border rounded-lg px-3 py-2" value={form.vat_type} onChange={(e) => handleInput('vat_type', e.target.value)}>
+            <option value="">{__uiText("ค้นหาแล้วเลือก")}</option>
+            {form.vat_type && !['0%', '7%'].includes(form.vat_type) && <option value={form.vat_type}>{form.vat_type}</option>}
+            <option value="0%">0%</option>
+            <option value="7%">7%</option>
+          </select>
+        </label>
         <Input
           label={__uiText("อุณหภูมิเก็บรักษา")}
           value={form.storage_temperature}

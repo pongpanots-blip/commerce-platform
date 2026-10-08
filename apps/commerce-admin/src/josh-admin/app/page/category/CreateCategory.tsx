@@ -8,13 +8,15 @@ import LogoUploadField from '../../components/LogoUploadField';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import {
   CATEGORY_ROWS_QUERY_KEY,
-  CategorySelect,
   Field,
+  categoryOption,
+  createCategoryOption,
   levelLabel,
   useCategoryRows,
 } from './category-form';
 
-import { toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { MasterDataSelect, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { roleCanWrite } from '../../../../app/role-can';
 
 /** Level 3 เป็นชั้นลึกสุดใน seed — หมวดที่ลึกกว่านั้นจะหลุดจากทุกคิวรีที่หน้าร้านใช้ */
 const DEEPEST_PARENT_LEVEL = 2;
@@ -97,12 +99,18 @@ const CreateCategory = () => {
         error={fieldErrors.parent}
         hint="เลือกกลุ่มที่หมวดใหม่อยู่ข้างใน ชั้นวางสินค้า (ชั้นลึกสุด) เลือกไม่ได้"
       >
-        <CategorySelect
-          rows={parents}
+        <MasterDataSelect
+          options={parents.map(categoryOption)}
           value={form.parent_id}
-          groupDepth={1}
           placeholder="เช่น เบเกอรี่"
-          onChange={(parent_id) => setForm({ ...form, parent_id })}
+          onChange={(parent_id) => setForm({ ...form, parent_id: String(parent_id) })}
+          canCreate={roleCanWrite(['merchandising'])}
+          createFrom="category_name_en"
+          createFields={[
+            { name: 'category_name_en', label: 'ชื่อภาษาอังกฤษ', required: true, placeholder: 'Bakery' },
+            { name: 'parent_id', label: 'หมวดที่อยู่เหนือกว่า', options: [{ value: '', label: 'ไม่มี (หมวดชั้นบนสุด)' }, ...parents.filter((row) => (row.category_level ?? 0) <= 1).map(categoryOption)] },
+          ]}
+          onCreate={createCategoryOption}
         />
       </Field>
 

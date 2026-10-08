@@ -24,7 +24,7 @@ describe('winback roles', () => {
   });
 
   it('names are resolved for the sales team plus the admins who act as managers', () => {
-    expect([...WINBACK_NAMED_ROLES]).toEqual(['sale', 'sales', 'manager', 'admin', 'platform_admin']);
+    expect([...WINBACK_NAMED_ROLES]).toEqual(['sale', 'sales', 'manager', 'admin', 'platform_admin', 'sales_manager']);
   });
 });
 
@@ -37,7 +37,7 @@ describe('WinbackAppRoleGuard', () => {
     expect(() => guard.canActivate(ctx(role))).toThrow('เฉพาะทีมขายที่ใช้งานส่วนนี้ได้');
   });
 
-  it.each(['sale', 'sales', 'manager', 'admin', 'platform_admin'])('allows %s', (role) => {
+  it.each(['sale', 'sales', 'manager', 'admin', 'platform_admin', 'sales_manager', 'sale_manager', ' SALES_MANAGER '])('allows %s', (role) => {
     expect(guard.canActivate(ctx(role))).toBe(true);
   });
 
@@ -46,4 +46,9 @@ describe('WinbackAppRoleGuard', () => {
     const context = { switchToHttp: () => ({ getRequest: () => ({ headers: { authorization: `Bearer e30.${payload}.fake` } }) }) } as never;
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
+});
+
+it.each(['sales_manager', 'sale_manager', ' SALES_MANAGER '])('commerce manager %s sees team scope but is not an assignable rep', role => {
+  expect(isWinbackManager(role)).toBe(true);
+  expect(WINBACK_ASSIGNABLE_ROLES).not.toContain(role);
 });

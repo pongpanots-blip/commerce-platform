@@ -1,3 +1,4 @@
+import { normalizeRole } from '../lib/role-home';
 import type { NavGroup, NavItem } from '@cp/ui';
 
 /**
@@ -23,7 +24,11 @@ export const SECTIONS: readonly Section[] = [
   { id: 'advanced', title: 'ตั้งค่าขั้นสูง', icon: 'tune', description: 'ระบบเชื่อมต่อ บันทึก เครื่องมือทดสอบ และข้อมูลสำรองจาก josh (ใช้ไม่บ่อย)' },
 ];
 
-type NavEntry = Omit<NavItem, 'icon' | 'badge'> & { description: string };
+type NavEntry = Omit<NavItem, 'icon' | 'badge'> & {
+  description: string;
+  /** A different label for some roles (e.g. a rep's own sales: "My sales"). */
+  roleLabels?: Readonly<Record<string, string>>;
+};
 
 const H_INTEGRATIONS = 'การเชื่อมต่อและ ERP';
 const H_LOGS = 'บันทึกและตรวจปัญหา';
@@ -72,9 +77,12 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/livechat', label: 'แชตกับลูกค้า', description: 'อ่านและตอบแชตของลูกค้า' },
     { to: '/j/cs/sample-requests', label: 'Sample requests', description: 'คำขอสินค้าตัวอย่างจากลูกค้า' },
     { to: '/j/price-requests', label: 'คำขอราคา', description: 'คำขอราคาพิเศษจากลูกค้า' },
-    { to: '/j/active-offers', label: 'ข้อเสนอราคาที่ใช้งาน', description: 'ราคาพิเศษเฉพาะลูกค้า (private price) ที่ยังใช้งานอยู่' },
+    { to: '/j/active-offers', label: 'ข้อเสนอราคาที่ใช้งาน', more: true, description: 'ราคาพิเศษเฉพาะลูกค้า (private price) ที่ยังใช้งานอยู่' },
     { to: '/j/kyc', label: 'ตรวจสอบตัวตนลูกค้า', description: 'ตรวจเอกสารยืนยันตัวตน (KYC) ที่รอพิจารณา' },
     { to: '/reports/winback', label: 'ติดตามลูกค้าเก่า', description: 'ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย' },
+    { to: '/reports/winback/opportunities', label: 'โอกาสของทีม', description: 'โอกาสขายและลีดของทั้งทีม แยกตามพนักงานขาย' },
+    { to: '/reports/winback/my', label: 'โอกาสและลีดของฉัน', more: true, description: 'ลูกค้าที่ควรติดต่อกลับและลีดที่ได้รับมอบหมาย' },
+    { to: '/cs/sales-assignment', label: 'มอบหมายพนักงานขาย', description: 'กำหนดพนักงานขายที่ดูแลแต่ละบริษัทลูกค้า' },
     { to: '/j/membership-tiers', label: 'ระดับสมาชิก', more: true, description: 'กำหนดระดับสมาชิกและเงื่อนไขของแต่ละระดับ' },
     { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', more: true, description: 'หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี' },
     { to: '/customers', label: 'ลูกค้าแพลตฟอร์ม', more: true, description: 'ข้อมูลติดต่อและรายละเอียดลูกค้าในแพลตฟอร์ม commerce' },
@@ -104,10 +112,10 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/bot/templates', label: 'Bot · templates', more: true, description: 'ข้อความสำเร็จรูปของแชตบอต' },
   ],
   reports: [
-    { to: '/reports/sales', label: 'รายงานยอดขาย', description: 'ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า' },
-    { to: '/reports/orders', label: 'รายงานออเดอร์', description: 'รายการและสรุปคำสั่งซื้อของร้าน' },
+    { to: '/reports/sales', label: 'รายงานยอดขาย', roleLabels: { sale: 'ยอดขายของฉัน', sales_manager: 'ยอดขายทีมและผลงานรายเซลส์' }, description: 'ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า' },
+    { to: '/reports/orders', label: 'รายงานออเดอร์', roleLabels: { sale: 'ออเดอร์ของฉัน' }, description: 'รายการและสรุปคำสั่งซื้อของร้าน' },
     { to: '/reports/products', label: 'รายงานสินค้า', description: 'สินค้าขายดี ยอดขาย และสถานะสินค้า' },
-    { to: '/reports/customers', label: 'รายงานลูกค้าและบริษัท', description: 'ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด' },
+    { to: '/reports/customers', label: 'รายงานลูกค้าและบริษัท', roleLabels: { sale: 'ลูกค้าของฉัน' }, description: 'ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด' },
     { to: '/reports/prices', label: 'รายงานราคาขาย', description: 'ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา' },
     { to: '/reports/order-targetgroup', label: 'กลุ่มลูกค้าเป้าหมาย', description: 'ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย' },
     { to: '/reports/traffic', label: 'การเข้าชม', description: 'การเข้าชมร้านค้าและพฤติกรรมการใช้งาน' },
@@ -179,7 +187,11 @@ export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatM
  * a page whose first API calls 403 for it. Also decides post-login landing pages and deep links.
  */
 export const ROLE_ACCESS: Record<string, readonly string[]> = {
+  "/reports/winback/opportunities": ["sales_manager", "business_analyst"],
+  "/reports/winback/my": ["sale"],
+  "/cs/sales-assignment": ["sales_manager"],
   "/reports/sales": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
@@ -188,14 +200,17 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
     "merchandising"
   ],
   "/reports/orders": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
   "/reports/customers": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
   "/reports/prices": [
+    "sale",
     "sales_manager",
     "business_analyst"
   ],
@@ -370,10 +385,12 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
     "marketing"
   ],
   "/erp/inventory-warehouse": [
+    "sale",
     "merchandising",
     "business_analyst"
   ],
   "/products": [
+    "sale",
     "merchandising",
     "graphic"
   ],
@@ -393,6 +410,7 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
     "business_analyst"
   ],
   "/account/password": [
+    "sale",
     "marketing",
     "merchandising",
     "cs",
@@ -402,12 +420,17 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
   ]
 };
 
-export const canSee = (role: string | null | undefined, to: string) => role === 'admin' || (!!role && !!ROLE_ACCESS[to]?.includes(role));
+export const canSee = (roleRaw: string | null | undefined, to: string) => {
+  const role = normalizeRole(roleRaw);
+  return role === 'admin' || (!!role && !!ROLE_ACCESS[to]?.includes(role));
+};
 
 /** The sidebar for a role: only items it may open, no empty sections; Dashboard for admin. */
-export function navFor(role?: string): NavGroup[] {
+export function navFor(roleRaw?: string): NavGroup[] {
+  const role = normalizeRole(roleRaw);
   const groups = SECTIONS.flatMap((section): NavGroup[] => {
-    const links = NAV[section.id].filter((item) => canSee(role, item.to));
+    const links = NAV[section.id].filter((item) => canSee(role, item.to))
+      .map(({ roleLabels, ...item }): NavItem => ({ ...item, label: roleLabels?.[role] ?? item.label }));
     if (!links.length) return [];
     // nothing but "more" items for this role: show them as the section's main items
     return [{ group: section.title, icon: section.icon, links: links.every((item) => item.more) ? links.map((item) => ({ ...item, more: false })) : links }];

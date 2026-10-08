@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { api, auth, getRefreshToken, getToken, keys, navigation, needsRestore, refreshSession, restoreSession } from './api';
+import { api, auth, getRefreshToken, getToken, keys, LOGOUT_TIMEOUT_MS, navigation, needsRestore, refreshSession, restoreSession } from './api';
 
 /** Unsigned look-alike JWTs (test fixtures only — the client never verifies). */
 const b64 = (o: object) => btoa(JSON.stringify(o)).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -125,11 +125,37 @@ describe('portal isAuthenticated', () => {
 });
 
 describe('portal logout', () => {
-  it('posts the refresh token best-effort and clears both tokens even if the call fails', async () => {
+  it('posts the refresh token BEFORE clearing, then clears both tokens', async () => {
+    set(NEW, 'refresh-1');
+    let storedDuringCall: (string | null)[] = [];
+    fetchMock.mockImplementationOnce(async () => { storedDuringCall = [getToken(), getRefreshToken()]; return json(200, { ok: true }); });
+    await auth.logout();
+    expect(storedDuringCall).toEqual([NEW, 'refresh-1']);
+    expect([getToken(), getRefreshToken()]).toEqual([null, null]);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ refreshToken: 'refresh-1' });
+  });
+
+  it('still clears both tokens when the call fails', async () => {
     set(NEW, 'refresh-1');
     fetchMock.mockImplementationOnce(async () => { throw new TypeError('network'); });
     await auth.logout();
     expect([getToken(), getRefreshToken()]).toEqual([null, null]);
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ refreshToken: 'refresh-1' });
+  });
+
+  it('gives up after LOGOUT_TIMEOUT_MS and clears anyway', async () => {
+    vi.useFakeTimers();
+    try {
+      set(NEW, 'refresh-1');
+      fetchMock.mockImplementationOnce((_url: string, init: RequestInit) => new Promise((_, reject) => {
+        init.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+      }));
+      const done = auth.logout();
+      expect(getRefreshToken()).toBe('refresh-1');
+      await vi.advanceTimersByTimeAsync(LOGOUT_TIMEOUT_MS);
+      await done;
+      expect([getToken(), getRefreshToken()]).toEqual([null, null]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -10,13 +10,19 @@ export const ALLOW_READ_ONLY_WRITE_KEY = 'auth:allowReadOnlyWrite';
  * list it with @StaffRoles (admin is always included).
  *
  * Josh staff (staff.access) is a different list — see JOSH_STAFF_ROLES. These commerce-only roles have no josh
- * account: `sales_manager` (the josh person is `manager`), `business_analyst`, `graphic`. `sale` stays a josh role.
+ * account: `sales_manager` (the josh person is `manager`), `business_analyst`, `graphic`. `sale` has both a commerce login and a separate josh account; their ids are different.
  */
-export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs' | 'sales_manager' | 'business_analyst' | 'graphic';
-export const STAFF_ROLES: readonly StaffRole[] = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic'];
+export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs' | 'sale' | 'sales_manager' | 'business_analyst' | 'graphic';
+export const STAFF_ROLES: readonly StaffRole[] = ['admin', 'marketing', 'merchandising', 'cs', 'sale', 'sales_manager', 'business_analyst', 'graphic'];
 
 /** GET/HEAD only, plus a route marked @AllowReadOnlyWrite (own password). Enforced in StaffAuthGuard. */
-export const READ_ONLY_STAFF_ROLES: readonly StaffRole[] = ['business_analyst'];
+export const READ_ONLY_STAFF_ROLES: readonly StaffRole[] = ['business_analyst', 'sale'];
+
+/** Canonical commerce role at every auth / account input boundary. Josh staff.access stays separate. */
+export function normalizeStaffRole(role: string | null | undefined): string {
+  const value = typeof role === 'string' ? role.trim().toLowerCase() : '';
+  return value === 'sale_manager' ? 'sales_manager' : value;
+}
 
 /**
  * Skip the global staff guard. Only for routes with their OWN auth (API key,

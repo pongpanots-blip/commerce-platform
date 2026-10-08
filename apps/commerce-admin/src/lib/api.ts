@@ -238,14 +238,15 @@ export const ordersApi = {
   releaseReservations: (orderId: string) => api.post(`/reservations/${orderId}/release`, {}),
 };
 
-// commerce-admin logins. sales_manager is not josh's `manager` (that stays on the josh account). sale has no commerce login.
-export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs' | 'sales_manager' | 'business_analyst' | 'graphic';
+// commerce-admin logins. sales_manager is not josh's `manager` (that stays on the josh account). sale has separate commerce and Josh logins.
+export type StaffRole = 'admin' | 'marketing' | 'merchandising' | 'cs' | 'sale' | 'sales_manager' | 'business_analyst' | 'graphic';
 export const STAFF_ROLE_LABEL: Record<StaffRole, string> = {
   admin: 'Admin — ทุกเมนู',
   marketing: 'Marketing — รายงานการตลาดและแคมเปญ',
   merchandising: 'Merchandise — สินค้า สต็อก ราคา โปรโมชัน รอบสั่ง',
   cs: 'CS — order, shipment, งาน CS',
-  sales_manager: 'Sales manager — รายงานร้าน, winback, มอบหมายพนักงานขาย',
+  sale: 'Sale',
+  sales_manager: 'Sale Manager',
   business_analyst: 'Business analyst — อ่านรายงาน สต็อก ออเดอร์ ราคาคู่แข่ง',
   graphic: 'Graphic — รูปและเนื้อหาสินค้า',
 };
@@ -526,7 +527,8 @@ export interface HealthReport {
 }
 const qs = (p: PeriodParams) => '?' + new URLSearchParams(Object.entries(p).filter(([, v]) => v) as [string, string][]).toString();
 export const reportsApi = {
-  sales: (p: PeriodParams) => api.get<SalesReport>(`/reports/sales${qs(p)}`),
+  salesByRep: (p: PeriodParams) => api.get<{ items: RepKpi[] }>(`/reports/sales/by-rep${qs(p)}`),
+  sales: (p: PeriodParams & { salesUserId?: string }) => api.get<SalesReport>(`/reports/sales${qs(p)}`),
   traffic: (p: PeriodParams) => api.get<TrafficReport>(`/reports/traffic${qs(p)}`),
   health: (p: PeriodParams) => api.get<HealthReport>(`/reports/health${qs(p)}`),
 };
@@ -627,7 +629,7 @@ export const joshOrderApi = {
   detail: (idOrNumber: string) => api.get<JoshRow>(`/reports/orders/${encodeURIComponent(idOrNumber)}`),
 };
 export const joshCustomerApi = {
-  summary: () => api.get<JoshRow>('/reports/customers/summary'),
+  summary: (salesUserId?: string) => api.get<JoshRow>(`/reports/customers/summary?${query({ salesUserId })}`),
   list: (f: Record<string, string | number | undefined>) => api.get<{ items: JoshRow[]; total: number }>(`/reports/customers?${query(f)}`),
   detail: (id: string) => api.get<JoshRow>(`/reports/customers/${id}`),
 };
@@ -792,4 +794,11 @@ export const staffPricesApi = {
   remove: (id: string) => api.del<unknown>(`/staff-prices/${id}`),
   retry: (id: string) => api.post<StaffPriceRow>(`/staff-prices/${id}/retry`, {}),
   importFromJosh: () => api.post<{ added: number; changedInJosh: number; removedInJosh: number }>('/staff-prices/import', {}),
+};
+
+export interface SalesRep { id: string; name: string }
+export interface RepKpi { sales_user_id: string | null; orders: number; revenue_inc_vat: number; customers: number; companies: number }
+export const salesAssignmentApi = {
+  reps: () => api.get<SalesRep[]>('/cs-admin/sales-reps'),
+  assign: (companyId: string, salesUserId: string | null) => api.patch<{ data: { assigned_sales_user_id: string | null } }>('/cs-admin/sales-assignment', { company_id: companyId, sales_user_id: salesUserId }),
 };

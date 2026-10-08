@@ -263,6 +263,9 @@ function authPost<T>(path: string, data: unknown): Promise<T> {
   );
 }
 
+/** How long sign-out waits for the server before dropping the tokens anyway. */
+export const LOGOUT_TIMEOUT_MS = 3000;
+
 export const auth = {
   async register(email: string, password: string): Promise<string | undefined> {
     await authPost<RegisterResponse>('/v1/portal/auth/register', { email, password });
@@ -274,14 +277,29 @@ export const auth = {
     setTokens(res.accessToken, res.refreshToken);
     return res.role ?? tokenClaims()?.role;
   },
-  /** Ends the sign-in on the server (best effort, survives the page change) and drops both tokens regardless. */
-  logout(): Promise<void> {
+  /**
+   * First ends the sign-in on the server (so the refresh token is revoked while we still hold it), waiting at
+   * most LOGOUT_TIMEOUT_MS, then drops both tokens — also when the call fails or times out.
+   */
+  async logout(): Promise<void> {
     const refreshToken = getRefreshToken();
-    clearToken();
-    if (!refreshToken) return Promise.resolve();
-    return fetch(`${BASE}/v1/portal/auth/logout`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refreshToken }), keepalive: true,
-    }).then(() => undefined, () => undefined);
+    try {
+      if (!refreshToken) return;
+      const abort = new AbortController();
+      const timer = setTimeout(() => abort.abort(), LOGOUT_TIMEOUT_MS);
+      try {
+        await fetch(`${BASE}/v1/portal/auth/logout`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refreshToken }),
+          keepalive: true, signal: abort.signal,
+        });
+      } catch {
+        // best effort: offline, timed out, server error — the tokens go regardless
+      } finally {
+        clearTimeout(timer);
+      }
+    } finally {
+      clearToken();
+    }
   },
   /** A token to go in with now, or a refresh token the next API call can trade for one. */
   isAuthenticated(): boolean {

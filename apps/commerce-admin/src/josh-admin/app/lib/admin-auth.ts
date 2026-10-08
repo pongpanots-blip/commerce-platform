@@ -17,5 +17,5 @@ export function isAdminTokenValid(): boolean { return session.usable(); }
 export function getAdminRole(): string | null { const r = payload()?.role; return typeof r === 'string' ? r : null; }
 export function getAdminUserId(): string | null { const s = payload()?.sub; return typeof s === 'string' ? s : null; }
 export function clearAdminAuth(): void { session.clear(); }
-export function forceAdminLogout(): void { void logout(); window.location.href = '/'; }
+export function forceAdminLogout(): void { void logout().finally(() => { window.location.href = '/'; }); }
 export function installAdminUnauthorizedHandler(): void { /* commerce's own client handles 401 */ }

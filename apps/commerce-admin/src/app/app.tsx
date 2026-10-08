@@ -1,3 +1,5 @@
+import { SalesAssignment } from './pages/SalesAssignment';
+import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
@@ -140,8 +142,8 @@ export function App() {
   const role = claims?.role;
   const nav = navFor(role);
 
-  function signOut() {
-    void logout();
+  async function signOut() {
+    await logout();
     window.history.replaceState(null, '', '/login');
     setAuth('out');
   }
@@ -183,6 +185,9 @@ export function App() {
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
             <Route path="/reports/products/:id" element={<JoshProductDetail />} />
+            <Route path="/cs/sales-assignment" element={<SalesAssignment />} />
+            <Route path="/reports/winback/opportunities" element={<MyWinback />} />
+            <Route path="/reports/winback/my" element={<MyWinback />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />

@@ -16,6 +16,8 @@ export class AuthRefreshToken {
   @Column({ name: 'user_id', type: 'uuid' }) userId: string;
   /** Every token rotated from one sign-in shares the family; revoking it ends that sign-in everywhere. */
   @Column({ name: 'family_id', type: 'uuid' }) familyId: string;
+  /** When the family's sign-in happened; no token of the family lives past it + AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS. */
+  @Column({ name: 'family_created_at', type: 'timestamptz' }) familyCreatedAt: Date;
   @Column({ name: 'token_hash', type: 'varchar', length: 64 }) tokenHash: string;
   @Column({ type: 'varchar', length: 12 }) audience: RefreshAudience;
   /** The account's role when the family was signed in; a different role at refresh ends the family. */
@@ -25,7 +27,7 @@ export class AuthRefreshToken {
   /** Set once, when the token is exchanged for the next one. */
   @Column({ name: 'used_at', type: 'timestamptz', nullable: true }) usedAt: Date | null;
   @Column({ name: 'revoked_at', type: 'timestamptz', nullable: true }) revokedAt: Date | null;
-  /** logout · reuse · disabled · role_changed · password_reset · password_changed · account_changed · cli */
+  /** logout · reuse · family_expired · disabled · role_changed · password_reset · password_changed · account_changed · cli */
   @Column({ name: 'revoked_reason', type: 'varchar', length: 32, nullable: true }) revokedReason: string | null;
   @Column({ name: 'replaced_by_id', type: 'uuid', nullable: true }) replacedById: string | null;
   @Column({ name: 'user_agent', type: 'varchar', length: 255, nullable: true }) userAgent: string | null;

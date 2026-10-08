@@ -1,3 +1,4 @@
+import { AuthModule } from '../../core/auth/auth.module';
 import { Module, UseGuards } from '@nestjs/common';
 import { JoshModule } from '../../integration/connector/josh/josh.module';
 import { Public } from '../../../shared-kernel/presentation/auth.decorators';
@@ -62,7 +63,7 @@ for (const c of [WinbackController, WinbackAppController, WinbackIntakeControlle
  * notifications and the welcome-lead email are delivered by josh through the outbox.
  */
 @Module({
-  imports: [
+  imports: [AuthModule,
     JoshModule,
     ApiKeyModule,
     TypeOrmModule.forFeature([WinbackAccount, WinbackActivity, WinbackContact, WinbackSalesTarget, WinbackStageHistory, WinbackMeetingAck, WinbackAppRecord, ...JOSH_COPY_TABLES]),

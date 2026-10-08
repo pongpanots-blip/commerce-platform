@@ -1,4 +1,4 @@
-// The sidebar as it was before the redesign (#80: 7 workspaces with overview pages), frozen so tests and
+// The sidebar as it was before the redesign (#80: 7 workspaces with overview pages, plus #83's sale pages), frozen so tests and
 // the PR's old → new mapping table can prove every old menu item still has a home. Not used by the app.
 import type { NavGroup, NavItem } from '@cp/ui';
 import { NAV_ENTRIES, ROLE_ACCESS, SECTIONS, type SectionId } from './navigation';
@@ -18,6 +18,9 @@ export const ORIGINAL_NAV: NavGroup[] = [
       { to: '/reports/traffic', label: 'Traffic', end: false },
       { to: '/reports/health', label: 'Error / สุขภาพระบบ', end: false },
       { to: '/reports/order-targetgroup', label: 'Order target group', end: false },
+      { to: '/reports/winback/opportunities', label: 'โอกาสของทีม', end: false },
+      { to: '/reports/winback/my', label: 'โอกาสและลีดของฉัน', end: false },
+      { to: '/cs/sales-assignment', label: 'มอบหมายพนักงานขาย', end: false },
       { to: '/reports/winback', label: 'Win-back (ฝ่ายขาย)', end: false },
     ],
   },

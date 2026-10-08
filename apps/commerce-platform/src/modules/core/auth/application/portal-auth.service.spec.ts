@@ -65,6 +65,13 @@ describe('PortalAuthService', () => {
     expect(sessions.logout).toHaveBeenCalledWith('rt', 'portal');
   });
 
+  it('staff login accepts a stored sale_manager alias (the session service issues the canonical role)', async () => {
+    const { service, sessions } = makeService();
+    jest.spyOn(service, 'verifyCredentials').mockResolvedValue({ id: 'u1', email: 'rep@example.test', role: ' SALE_MANAGER ' } as never);
+    await expect(service.login('rep@example.test', 'test-password', 'staff')).resolves.toBeDefined();
+    expect(sessions.issueSession).toHaveBeenCalledWith(expect.objectContaining({ id: 'u1' }), 'staff', {});
+  });
+
   it('login 401s on wrong password or unknown email', async () => {
     const bcrypt = await import('bcrypt');
     const passwordHash = await bcrypt.hash('secret123', 10);

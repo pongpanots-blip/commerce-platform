@@ -1,3 +1,4 @@
+import { companyRepSql, repScopeSql } from './sales-rep-scope';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -191,10 +192,28 @@ export class JoshInsights {
   /** Sales has its own switch (SALES_SOURCE); traffic / target group / failures still need the replica. */
   get salesAvailable() { return salesSource() === 'copies' || this.replica.configured; }
 
-  async sales(r: { current: Range; previous: Range }, top = 10, source: SalesSource = salesSource()) {
+  async sales(r: { current: Range; previous: Range }, top = 10, source: SalesSource = salesSource(), repIds?: string[]) {
     const copies = source === 'copies';
-    const q = (sql: string, range: Range, ...extra: unknown[]) =>
-      (copies ? this.db.query(sql, [range.from, range.to, ...extra]) : this.replica.query(sql, [range.from, range.to, ...extra]));
+    const q = (sql: string, range: Range, ...extra: unknown[]) => {
+      const params: unknown[] = [range.from, range.to, ...extra];
+      if (repIds !== undefined) {
+        params.push(repIds);
+        const table = copies ? 'josh_companies' : 'company';
+        const scope = (id: string) => `EXISTS (SELECT 1 FROM ${table} c WHERE c.id = ${id} AND ${repScopeSql('c', `$${params.length}`, copies)})`;
+        if (sql === NEW_CUSTOMERS_SQL) {
+          const users = copies ? 'josh_users' : 'users';
+          sql += ` AND EXISTS (SELECT 1 FROM ${users} u WHERE u.id = customer_metrics.user_id AND ${scope('u.company_id')})`;
+        } else if (sql === REFUNDS_SQL || sql === REFUNDS_COPIES_SQL) {
+          const refunds = copies ? 'josh_order_refunds' : 'order_refunds';
+          sql += ` AND EXISTS (SELECT 1 FROM ${copies ? 'josh_orders' : 'orders'} o WHERE o.orders_id = ${refunds}.${copies ? 'orders_id' : 'order_id'} AND ${scope('o.company_id')})`;
+        } else {
+          // Fail closed: an own-scope read must never run without its rep filter.
+          if (sql.split('o.create_date < $2').length !== 2) throw new Error('sales rep scope: query has no single order date bound to attach the rep filter to');
+          sql = sql.replace('o.create_date < $2', `o.create_date < $2 AND ${scope('o.company_id')}`);
+        }
+      }
+      return copies ? this.db.query(sql, params) : this.replica.query(sql, params);
+    };
     const days = (r.current.to.getTime() - r.current.from.getTime()) / DAY;
     const totals = copies ? SALES_TOTALS_COPIES_SQL : SALES_TOTALS_SQL;
     const [[now], [before], series, products, [newCustomers], [refunds]] = await Promise.all([
@@ -218,6 +237,20 @@ export class JoshInsights {
       topProducts: products,
       source,
     };
+  }
+
+  /** Current company assignment (including unassigned), paid orders only; no customer or staff contact fields. */
+  async salesByRep(range: Range, source: SalesSource = salesSource()) {
+    const copies = source === 'copies';
+    const owner = companyRepSql('c', copies);
+    const sql = `SELECT ${owner} AS sales_user_id, count(*)::int AS orders,
+        COALESCE(sum(o.total_price), 0)::float AS revenue_inc_vat,
+        count(DISTINCT o.user_id)::int AS customers, count(DISTINCT o.company_id)::int AS companies
+      FROM ${copies ? 'josh_orders' : 'orders'} o LEFT JOIN ${copies ? 'josh_companies' : 'company'} c ON c.id = o.company_id
+      WHERE o.create_date >= $1 AND o.create_date < $2 AND ${copies ? SOLD_COPIES : SOLD}
+      GROUP BY ${owner} ORDER BY revenue_inc_vat DESC`;
+    const params = [range.from, range.to, JOSH_SETTLED_STATUSES];
+    return { period: range.label, source, items: await (copies ? this.db.query(sql, params) : this.replica.query(sql, params)) };
   }
 
   /** Both answers for one period side by side, and where the totals differ — check before SALES_SOURCE=copies. Needs the replica. */

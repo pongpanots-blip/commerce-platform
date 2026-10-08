@@ -41,7 +41,8 @@ export class WinbackReports {
   async overview() {
     if (!this.copies) return this.josh.overview();
     const [counts, provinces, risk] = await Promise.all([
-      this.winback.getCounts(),
+      // The reports controller always covers the whole team.
+      this.winback.getCounts({ id: '', isManager: true }),
       this.winback.listProvinces(),
       this.accounts.createQueryBuilder('a').select(['a.health AS health', 'a.avg_monthly_revenue AS avg_monthly_revenue']).getRawMany(),
     ]);

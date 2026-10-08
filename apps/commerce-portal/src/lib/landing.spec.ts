@@ -24,6 +24,18 @@ describe('role landing (commerce-portal)', () => {
     expect(resolvePostLoginPath(role, redirect)).toBe(expected);
   });
 
+  it('resolves dot segments and refuses encoded ones before the allow-list check', () => {
+    expect(resolvePostLoginPath('developer', '/docs/../keys')).toBe('/keys');
+    expect(resolvePostLoginPath('someone', '/docs/../keys')).toBe('/docs');
+    expect(resolvePostLoginPath('developer', '/keys/./')).toBe('/keys/');
+    for (const bad of ['/docs/%2e%2e/keys', '/docs/%2E%2e/keys', '/docs%2f..%2fkeys', '/docs/%252e%252e/keys', '/docs/%5ckeys', '/%ZZ']) {
+      expect(isRouteAllowed('developer', bad)).toBe(false);
+      expect(resolvePostLoginPath('someone', bad)).toBe('/docs');
+    }
+    expect(resolvePostLoginPath('developer', '/webhooks?name=a%20b#x')).toBe('/webhooks?name=a%20b#x');
+    expect(landingFor('toString')).toBe('/docs');
+  });
+
   it('rejects open redirects', () => {
     for (const bad of ['https://evil.example/keys', '//evil.example/keys', '/\\evil.example', 'javascript:alert(1)', 'keys', '/\t/x', '', null, undefined]) {
       expect(resolvePostLoginPath('developer', bad as string)).toBe('/');

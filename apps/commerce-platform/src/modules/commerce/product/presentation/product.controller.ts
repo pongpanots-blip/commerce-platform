@@ -16,13 +16,13 @@ export class ProductController extends BaseCrudController<Product>() {
   }
 
   @Get()
-  @StaffRoles('merchandising', 'graphic')
+  @StaffRoles('merchandising', 'graphic', 'sale')
   override list(@Query() query: PaginationQueryDto) {
     return super.list(query);
   }
 
   @Get(':id')
-  @StaffRoles('merchandising', 'graphic')
+  @StaffRoles('merchandising', 'graphic', 'sale')
   override get(@Param('id', ParseUUIDPipe) id: string) {
     return super.get(id);
   }

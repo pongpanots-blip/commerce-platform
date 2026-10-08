@@ -27,7 +27,7 @@ export function Products() {
       columns={columns}
       fields={fields}
       createLabel={__uiText("เพิ่มสินค้า")}
-      readOnly={session.claims()?.role === 'graphic'}
+      readOnly={['sale', 'graphic'].includes(session.claims()?.role ?? '')}
       searchText={row => `${row.sku} ${row.name}`}
       searchPlaceholder="ค้นหา SKU หรือชื่อสินค้า…"
     />

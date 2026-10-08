@@ -4,6 +4,7 @@ import { AuthModule } from '../modules/core/auth/auth.module';
 import { ApiKeyModule } from '../modules/core/api-key/api-key.module';
 import { WebhookSubscription } from '../modules/integration/webhook-subscription/infrastructure/webhook-subscription.entity';
 import { WebhookDelivery } from '../modules/integration/webhook-subscription/infrastructure/webhook-delivery.entity';
+import { User } from '../modules/core/user/infrastructure/user.entity';
 import { PortalAuthController } from './auth/portal-auth.controller';
 import { PortalKeysController } from './keys/portal-keys.controller';
 import { PortalWebhooksController } from './webhooks/portal-webhooks.controller';
@@ -11,7 +12,7 @@ import { PortalWebhooksService } from './webhooks/portal-webhooks.service';
 import { PortalJwtGuard } from './portal-jwt.guard';
 
 @Module({
-  imports: [AuthModule, ApiKeyModule, TypeOrmModule.forFeature([WebhookSubscription, WebhookDelivery])],
+  imports: [AuthModule, ApiKeyModule, TypeOrmModule.forFeature([WebhookSubscription, WebhookDelivery, User])],
   controllers: [PortalAuthController, PortalKeysController, PortalWebhooksController],
   providers: [PortalJwtGuard, PortalWebhooksService],
 })

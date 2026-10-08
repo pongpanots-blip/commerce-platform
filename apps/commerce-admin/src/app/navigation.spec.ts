@@ -7,8 +7,9 @@ import messages from '../../../../libs/ui/src/locales/ui-messages.json';
 import { DASHBOARD, NAV_ENTRIES, ROLE_ACCESS, SECTIONS, WORKSPACE_SECTION, navFor, workspaceTarget } from './navigation';
 import { LEGACY_ITEMS, LEGACY_WORKSPACES, legacyMapping, legacyNavFor } from './navigation.legacy';
 import { isRouteAllowed, landingFor } from '../lib/landing';
+import { homeForRole, ROLE_HOME } from '../lib/role-home';
 
-const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic'];
+const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic', 'sale'];
 const NON_ADMIN = STAFF_ROLES.filter((r) => r !== 'admin');
 const linksOf = (role: string) => navFor(role).flatMap((g) => g.links.map((l) => l.to));
 const titleOf = (id: string) => SECTIONS.find((s) => s.id === id)!.title;
@@ -48,7 +49,7 @@ describe('sidebar per role', () => {
 
   it('per-role item counts (PR body table)', () => {
     const counts = Object.fromEntries(STAFF_ROLES.map((role) => [role, linksOf(role).length]));
-    expect(counts).toEqual({ admin: 115, marketing: 40, merchandising: 18, cs: 9, sales_manager: 8, business_analyst: 12, graphic: 5 });
+    expect(counts).toEqual({ admin: 118, marketing: 40, merchandising: 18, cs: 9, sales_manager: 10, business_analyst: 13, graphic: 5, sale: 8 });
   });
 
   it('journey funnel (josh /analytics/funnel is admin-only) is no longer offered to marketing', () => {
@@ -148,5 +149,31 @@ describe('copy (TH + EN)', () => {
 
   it('every menu item says what the page is for', () => {
     for (const e of NAV_ENTRIES) expect(e.description.length, e.to).toBeGreaterThan(5);
+  });
+});
+
+// #83: sale / sales manager menus
+const destinations = (role: string) => navFor(role).flatMap(group => group.links.map(link => link.to)).filter(path => !path.startsWith('/workspaces/'));
+
+describe('sale navigation', () => {
+  it('includes only own reports and read-only catalog / prices / stock / password', () => {
+    expect(destinations('sale').sort()).toEqual([
+      '/account/password', '/erp/inventory-warehouse', '/products', '/reports/customers',
+      '/reports/orders', '/reports/prices', '/reports/sales', '/reports/winback/my',
+    ].sort());
+  });
+  it('manager has team reports, rep KPIs and assignment without PII pages or write areas', () => {
+    expect(destinations('sales_manager').sort()).toEqual([
+      '/account/password', '/cs/sales-assignment', '/reports/customers', '/reports/health',
+      '/reports/orders', '/reports/order-targetgroup', '/reports/prices', '/reports/sales', '/reports/winback', '/reports/winback/opportunities',
+    ].sort());
+    expect(navFor('sale_manager')).toEqual(navFor('sales_manager'));
+    expect(navFor(' SALE_MANAGER ')).toEqual(navFor('sales_manager'));
+  });
+  it('every role home appears in its navigation and is permitted by ROLE_ACCESS', () => {
+    for (const role of Object.keys(ROLE_HOME)) {
+      expect(destinations(role)).toContain(homeForRole(role));
+      if (role !== 'admin') expect(ROLE_ACCESS[homeForRole(role)]).toContain(role);
+    }
   });
 });

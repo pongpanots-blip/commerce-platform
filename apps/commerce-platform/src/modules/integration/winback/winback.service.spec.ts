@@ -6,7 +6,7 @@ import { JoshRestaurantPlace as RestaurantPlace } from './josh-copies.entity';
 import { MatchingService } from './matching.service';
 import { PoolQueryDto } from './dto/pool-query.dto';
 import { WinbackAppRecord } from './entities/winback-app-record.entity';
-import { opportunityVisibility } from './opportunity-meta.helpers';
+import { OPPORTUNITY_OWNER_SQL, opportunityVisibility } from './opportunity-meta.helpers';
 
 const POOL_QUERY = { page: 1, limit: 20 } as PoolQueryDto;
 
@@ -386,8 +386,8 @@ describe('WinbackService.findPool', () => {
 
     const visibility = opportunityVisibility({ id: 'rep-1', isManager: false });
     if (isManager) {
-      // Managers see every place: the query stays join-free and unfiltered.
-      expect(qb.leftJoin).not.toHaveBeenCalled();
+      // Managers keep the same joins but have no visibility filter.
+      expect(qb.leftJoin).toHaveBeenCalledTimes(2);
       expect(qb.andWhere).not.toHaveBeenCalled();
     } else {
       expect(qb.leftJoin).toHaveBeenCalledWith(WinbackAccount, 'a', 'a.restaurant_place_id = p.id');
@@ -451,7 +451,7 @@ describe('WinbackService.getCounts', () => {
       ]),
     };
     const accounts = { createQueryBuilder: jest.fn(() => qb) } as unknown as Repository<WinbackAccount>;
-    const placesQb = { where: jest.fn().mockReturnThis(), getCount: jest.fn(async () => 7) };
+    const placesQb = { leftJoin: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), where: jest.fn().mockReturnThis(), getCount: jest.fn(async () => 7) };
     const restaurantPlaces = {
       createQueryBuilder: jest.fn(() => placesQb),
     } as unknown as Repository<RestaurantPlace>;
@@ -466,10 +466,11 @@ describe('WinbackService.getCounts', () => {
       {} as MatchingService,
     );
 
-    const counts = await service.getCounts('sale-1');
+    const counts = await service.getCounts({ id: 'sale-1', isManager: false });
 
     expect(qb.setParameter).toHaveBeenCalledWith('me', 'sale-1');
-    expect(placesQb.where.mock.calls[0][0]).toMatch(/NOT EXISTS[\s\S]*wa\.restaurant_place_id = p\.id/);
+    expect(placesQb.where).toHaveBeenCalledWith('a.id IS NULL');
+    expect(placesQb.andWhere).toHaveBeenCalledWith(opportunityVisibility({ id: 'sale-1', isManager: false }).sql, { visibleOwner: 'sale-1' });
     expect(counts).toMatchObject({
       total: 9,
       unassigned: 4,
@@ -478,5 +479,69 @@ describe('WinbackService.getCounts', () => {
       mine: 2,
     });
     expect(counts.byStage).toEqual({ prospect: 6, contacted: 3 });
+  });
+});
+
+describe('pool place candidate coordination owners', () => {
+  it.each([
+    ['sale excludes other coordination owners', { id: 'rep-1', isManager: false }, ['own', 'unowned']],
+    ['manager counts all coordination owners', { id: 'mgr-1', isManager: true }, ['own', 'unowned', 'other']],
+    ['default actor fails closed', undefined, ['unowned']],
+  ] as const)('%s with identical list and count visibility', async (_label, actor, expected) => {
+    const candidates = [
+      { row: place({ id: 'own' }), metaOwner: 'rep-1', accountId: null },
+      { row: place({ id: 'unowned' }), metaOwner: null, accountId: null },
+      { row: place({ id: 'other' }), metaOwner: 'rep-2', accountId: null },
+      { row: place({ id: 'converted' }), metaOwner: null, accountId: 'acc-1' },
+    ];
+    const builders: Array<{ leftJoin: jest.Mock; andWhere: jest.Mock; where: jest.Mock }> = [];
+    const places = {
+      createQueryBuilder: jest.fn(() => {
+        let openOnly = false;
+        let visibleOwner: string | null | undefined;
+        const rows = () => candidates.filter((c) =>
+          (!openOnly || c.accountId === null)
+          && (visibleOwner === undefined || c.metaOwner === null || c.metaOwner === visibleOwner),
+        ).map((c) => c.row);
+        const qb = {
+          leftJoin: jest.fn().mockReturnThis(),
+          where: jest.fn((sql) => { openOnly = sql === 'a.id IS NULL'; return qb; }),
+          andWhere: jest.fn((sql, params) => {
+            if (sql === `${OPPORTUNITY_OWNER_SQL} IS NULL`) visibleOwner = null;
+            else if (sql === `(${OPPORTUNITY_OWNER_SQL} IS NULL OR ${OPPORTUNITY_OWNER_SQL} = :visibleOwner)`) visibleOwner = params.visibleOwner;
+            else throw new Error(`Unexpected visibility SQL: ${sql}`);
+            return qb;
+          }),
+          orderBy: jest.fn().mockReturnThis(), addOrderBy: jest.fn().mockReturnThis(),
+          skip: jest.fn().mockReturnThis(), take: jest.fn().mockReturnThis(),
+          getMany: jest.fn(async () => rows()), getCount: jest.fn(async () => rows().length),
+        };
+        builders.push(qb);
+        return qb;
+      }),
+    };
+    const accountQb = {
+      select: jest.fn().mockReturnThis(), addSelect: jest.fn().mockReturnThis(),
+      setParameter: jest.fn().mockReturnThis(), groupBy: jest.fn().mockReturnThis(), addGroupBy: jest.fn().mockReturnThis(),
+      getRawMany: jest.fn(async () => [{ health: 'dormant', stage: 'prospect', source: 'manual', lifecycle: 'tmp', unassigned: true, mine: false, count: '4' }]),
+    };
+    const service = new WinbackService({ createQueryBuilder: () => accountQb } as never,
+      {} as never, {} as never, {} as never, {} as never, {} as never, places as never, {} as never);
+    const list = await service.findPool({ ...POOL_QUERY, assigned: 'unassigned', include_places: true }, actor);
+    const counts = await service.getCounts(actor);
+    expect(list.data.map((r) => r.restaurant_place_id)).toEqual(expected);
+    expect(list.meta.total).toBe(expected.length);
+    expect(counts).toMatchObject({ total: 4, unassigned: 4, placeCandidates: expected.length, unassignedIncludingPlaces: 4 + expected.length });
+    expect(accountQb.setParameter).toHaveBeenCalledWith('me', actor?.id || null);
+    expect(builders).toHaveLength(2);
+    expect(builders[0].andWhere.mock.calls).toEqual(builders[1].andWhere.mock.calls);
+    const visibility = opportunityVisibility(actor ?? { id: '', isManager: false });
+    for (const qb of builders) {
+      expect(qb.leftJoin).toHaveBeenCalledWith(WinbackAccount, 'a', 'a.restaurant_place_id = p.id');
+      expect(qb.leftJoin).toHaveBeenCalledWith(WinbackAppRecord, 'm', 'm.kind = :metaKind AND m.record_key = CAST(p.id AS text)', { metaKind: 'opportunity_meta' });
+      expect(qb.where).toHaveBeenCalledWith('a.id IS NULL');
+      if (actor?.isManager) expect(qb.andWhere).not.toHaveBeenCalled();
+      else expect(qb.andWhere).toHaveBeenCalledWith(visibility.sql, visibility.params);
+    }
   });
 });

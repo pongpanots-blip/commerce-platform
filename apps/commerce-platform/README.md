@@ -74,6 +74,8 @@ Core (see `.env.example`): `COMMERCE_DATABASE_URL` *or* `COMMERCE_DB_HOST` /
 | `AUTH_REFRESH_TOKEN_TTL_DAYS` | `30` | Lifetime of the opaque refresh token (sliding: every rotation issues a fresh one with the full TTL, up to the family cap below). Only its sha256 is stored (`auth_refresh_token`). |
 | `AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS` | `90` | Absolute cap on one sign-in (a refresh-token family) counted from the password login: successors never expire later than this, and a refresh past it is refused (`401`, family revoked as `family_expired`). |
 | `STOREFRONT_API_KEYS` | *(unset)* | Still supported as a bootstrap/e2e fallback for `StorefrontApiKeyGuard` — see "API keys" below for how it now interacts with DB-backed keys. |
+| `STOREFRONT_TRUSTED_KEY_IDS` | *(unset)* | Comma-separated `api_keys.id` values treated as **trusted** on josh-only storefront routes (`@TrustedStorefrontKey()`: everything except `catalog`). `STOREFRONT_API_KEYS` env keys are always trusted. Not a secret (ids, not keys). |
+| `STOREFRONT_TRUSTED_KEYS_MODE` | `warn` | `warn`: an untrusted key on a josh-only route is allowed and logged (key id only, once per key per hour). `enforce`: it gets `403`. Only the exact value `enforce` refuses. |
 
 ## Endpoints
 
@@ -129,6 +131,9 @@ DB-first as of Cycle 3b):
    exists (even a revoked one from a different account) the surface **fails
    closed** — a missing key is always `401` from then on. Always fails closed
    in production regardless.
+4. **Trusted keys (josh-only routes)** — customers, checkout, orders, `jagota/*`, `josh-orders/*`, `winback/*`,
+   `dbd/*` and `livechat/*` also need a trusted key: an env key from step 2, or a DB key whose id is in
+   `STOREFRONT_TRUSTED_KEY_IDS`. `catalog/*` stays open to any valid key. See `STOREFRONT_TRUSTED_KEYS_MODE`.
 
 **Revoke has a ≤30s window:** because of the guard's positive cache, a key
 revoked via `POST /v1/portal/keys/:id/revoke` can still authenticate for up to

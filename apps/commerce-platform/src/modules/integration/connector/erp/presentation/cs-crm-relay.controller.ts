@@ -5,6 +5,7 @@ import type { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../../../storefront/storefront-api-key.guard';
+import { TrustedStorefrontKey } from '../../../../../storefront/trusted-storefront-key';
 import { ERP_RELAY_EVENTS as E, ErpRelayService } from '../ingest/erp-relay.service';
 import { LivechatLog } from './livechat-log.entity';
 
@@ -66,6 +67,7 @@ export class CsCrmRelayController {
 
   @All('v1/storefront/livechat/*')
   @UseGuards(StorefrontApiKeyGuard)
+  @TrustedStorefrontKey()
   async toCsCrm(@Req() req: Request, @Res() res: Response) {
     const base = process.env.LIVECHAT_CS_CRM_BASE_URL?.trim().replace(/\/$/, '');
     const key = process.env.LIVECHAT_API_KEY?.trim();

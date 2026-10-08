@@ -1,6 +1,7 @@
 import { Body, Controller, Headers, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiHeader, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { StorefrontApiKeyGuard } from '../storefront-api-key.guard';
+import { TrustedStorefrontKey } from '../trusted-storefront-key';
 import { StorefrontCheckoutService } from './storefront-checkout.service';
 import { PaymentResultDto, StorefrontCheckoutDto } from './dto/storefront-checkout.dto';
 import { Public } from '../../shared-kernel/presentation/auth.decorators';
@@ -11,6 +12,7 @@ import { Public } from '../../shared-kernel/presentation/auth.decorators';
 @Public()
 @Controller('v1/storefront/checkout')
 @UseGuards(StorefrontApiKeyGuard)
+@TrustedStorefrontKey()
 export class StorefrontCheckoutController {
   constructor(private readonly service: StorefrontCheckoutService) {}
 

@@ -1,0 +1,112 @@
+name: Ops import-from-josh + parity
+
+# Stage 1 (competitor) cutover prep: runs `import-from-josh` (research, scraping, competitor) and
+# `competitor-parity` against PROD commerce DB, inside the running platform container on the commerce EC2
+# (same image / env as prod: COMMERCE_DB_*). josh is read with the read-only `commerce_ro` role
+# (password = secret JOSH_RO_PG_PASSWORD, created by jagota/Webjosh db-commerce-readonly-user.yml).
+# JOSH_DATABASE_URL is only given to these one-off processes (env file, deleted after) — never to the
+# platform's own env (runbook: don't keep it in commerce's env). Upserts on id → safe to re-run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'check = network + login only · import = import scopes then parity · parity = parity only'
+        type: choice
+        options: [check, import, parity]
+        default: check
+      scopes:
+        description: 'import scopes, in order'
+        type: string
+        default: 'research scraping competitor'
+      josh_host:
+        description: 'josh DB host as seen from commerce EC2 (josh-db-server-prod private IP)'
+        type: string
+        default: '172.31.32.200'
+      josh_db:
+        description: 'josh database name'
+        type: string
+        default: 'josh'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ops-import-from-josh
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: [self-hosted, linux, commerce-platform]
+    timeout-minutes: 60
+    env:
+      JOSH_HOST: ${{ inputs.josh_host }}
+      JOSH_DB: ${{ inputs.josh_db }}
+    steps:
+      - name: Network — commerce EC2 → josh DB 5432
+        run: |
+          set -u
+          if timeout 5 bash -c "</dev/tcp/$JOSH_HOST/5432" 2>/dev/null; then echo "tcp $JOSH_HOST:5432 OPEN from runner host"
+          else echo "::error::tcp $JOSH_HOST:5432 NOT reachable from commerce EC2 — josh DB SG needs inbound 5432 from 172.31.40.66 (commerce SG)"; exit 1; fi
+
+      - name: Find platform container + CLIs
+        id: c
+        run: |
+          set -euo pipefail
+          C=$(docker ps -q --filter label=com.docker.compose.service=platform | head -1)
+          [ -n "$C" ] || { echo "::error::platform container not running"; exit 1; }
+          echo "container: $(docker inspect -f '{{.Name}} {{.Config.Image}}' "$C")"
+          docker exec "$C" ls src/cli/import-from-josh.js src/cli/competitor-parity.js
+          echo "id=$C" >> "$GITHUB_OUTPUT"
+
+      - name: Write one-off env file (masked)
+        env:
+          RO_PW: ${{ secrets.JOSH_RO_PG_PASSWORD }}
+        run: |
+          set -euo pipefail
+          [ -n "$RO_PW" ] || { echo "::error::secret JOSH_RO_PG_PASSWORD missing"; exit 1; }
+          echo "::add-mask::$RO_PW"
+          URL="postgres://commerce_ro:${RO_PW}@${JOSH_HOST}:5432/${JOSH_DB}"
+          echo "::add-mask::$URL"
+          umask 077
+          F="$RUNNER_TEMP/josh-ro.env"
+          printf 'JOSH_DATABASE_URL=%s\n' "$URL" > "$F"
+          echo "env file ready"
+
+      - name: Login check (read-only, inside platform container)
+        run: |
+          set -euo pipefail
+          docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node -e '
+            const { Client } = require("pg");
+            (async () => {
+              const c = new Client({ connectionString: process.env.JOSH_DATABASE_URL, connectionTimeoutMillis: 5000 });
+              await c.connect();
+              const r = await c.query("SELECT current_user AS u, current_setting($$default_transaction_read_only$$) AS ro, (SELECT count(*) FROM competitor_prices)::int AS cp, (SELECT count(*) FROM scraping_sources)::int AS ss");
+              console.log("josh login ok:", JSON.stringify(r.rows[0]));
+              await c.end();
+            })().catch((e) => { console.error("josh login FAILED:", e.message); process.exit(1); });'
+
+      - name: import-from-josh
+        if: inputs.action == 'import'
+        env:
+          SCOPES: ${{ inputs.scopes }}
+        run: |
+          set -euo pipefail
+          for s in $SCOPES; do
+            case "$s" in research|scraping|competitor) ;; *) echo "::error::scope $s not allowed here"; exit 1;; esac
+            echo "::group::import-from-josh $s"
+            docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node src/cli/import-from-josh.js "$s"
+            echo "::endgroup::"
+          done
+
+      - name: competitor-parity
+        if: inputs.action != 'check'
+        run: |
+          set -euo pipefail
+          docker exec -i ${{ steps.c.outputs.id }} node src/cli/competitor-parity.js | tee "$RUNNER_TEMP/parity.json"
+          echo '### competitor-parity' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"; cut -c1-4000 "$RUNNER_TEMP/parity.json" >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove env file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/josh-ro.env" "$RUNNER_TEMP/parity.json"

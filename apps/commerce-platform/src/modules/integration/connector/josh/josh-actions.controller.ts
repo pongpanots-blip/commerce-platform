@@ -17,6 +17,15 @@ import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation
 import { JoshActions } from './josh-actions';
 import { JoshCatalogSyncService } from './josh-catalog-sync.service';
 
+/** In CONTENT_FIELDS, but a price / stock setting. Graphic must not write them. */
+const GRAPHIC_COMMERCIAL = ['buying_price', 'low_stock_threshold', 'reorder_quantity'] as const;
+/** Name, description and marketing copy. Not price, cost, stock, reorder or status. */
+const GRAPHIC_COPY = new Set([
+  'product_name_th', 'product_name_en', 'product_description_th', 'product_description_en',
+  'ingredients', 'allergens', 'expiration_info', 'usage_direction', 'best_paired_food',
+  'storage_temperature', 'maximum_shelf_life', 'is_organic', 'product_short_code',
+]);
+
 /**
  * commerce-admin buttons that ask josh to act (winback, push campaigns, credit applications, admin
  * access, coupon on/off). Bodies are passed through to josh, which validates them with its own DTOs
@@ -113,7 +122,7 @@ export class JoshActionsController {
    */
   @Post('products/:id/update') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising', 'graphic')
   async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
-    // ponytail: graphic writes content keys only (content-fields.ts). The merchandising path below is unchanged.
+    // ponytail: graphic writes copy fields only. The merchandising path below is unchanged.
     if (req.staff.role === 'graphic') return this.editContentOnly(id, b?.fields, req);
     const promotion = ownsPromotions() ? splitPromotionRules(plain(b?.fields)) : { rules: undefined, rest: plain(b?.fields) };
     const { selling_unit_price: price, ...others } = promotion.rest;
@@ -142,13 +151,15 @@ export class JoshActionsController {
     return result;
   }
 
-  /** Graphic: stage-4b content keys only. Price, master, logistics and promotion rules are refused. */
+  /** Graphic: names, descriptions and marketing copy. Cost, stock thresholds and reorder are content keys for merchandising, not here. */
   private async editContentOnly(id: string, fields: Record<string, unknown> | undefined, req: StaffRequest) {
-    const { content } = splitContent(plain(fields));
-    if (!Object.keys(content).length) throw new ForbiddenException('graphic edits product content only');
+    const raw = plain(fields);
+    for (const key of GRAPHIC_COMMERCIAL) delete raw[key];
+    const kept = Object.fromEntries(Object.entries(splitContent(raw).content).filter(([key]) => GRAPHIC_COPY.has(key)));
+    if (!Object.keys(kept).length) throw new ForbiddenException('graphic edits product content only');
     const sku = await this.skuOf(id);
-    if (ownsProductContent()) return { content: await this.modules.get(ProductContentsService, { strict: false }).edit(sku, content, req.staff.userId) };
-    return { product: await this.relayUpdate(id, content, req) };
+    if (ownsProductContent()) return { content: await this.modules.get(ProductContentsService, { strict: false }).edit(sku, kept, req.staff.userId) };
+    return { product: await this.relayUpdate(id, kept, req) };
   }
 
   private async relayUpdate(id: string, fields: Record<string, unknown>, req: StaffRequest) {

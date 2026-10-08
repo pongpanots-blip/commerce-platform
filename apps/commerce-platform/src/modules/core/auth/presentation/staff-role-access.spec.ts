@@ -78,6 +78,10 @@ describe('staff role access', () => {
     await allow(ba, CompetitorPricesController.prototype.list, CompetitorPricesController, 'GET');
     await allow(ba, GrowthController.prototype.timeline, GrowthController, 'GET');
     await allow(ba, GrowthController.prototype.workspace, GrowthController, 'GET');
+    await deny(ba, ShopReportsController.prototype.traffic, ShopReportsController, 'GET');
+    await deny(ba, ShopReportsController.prototype.restaurantList, ShopReportsController, 'GET');
+    await deny(ba, ShopReportsController.prototype.pushDelivery, ShopReportsController, 'GET');
+    await deny(ba, ShopReportsController.prototype.productList, ShopReportsController, 'GET');
     // listed on the class, still refused: read-only is the method, not the decorator
     await deny(ba, CompetitorPricesController.prototype.create, CompetitorPricesController, 'POST');
     await deny(ba, GrowthController.prototype.create, GrowthController, 'POST');
@@ -130,6 +134,10 @@ describe('staff role access', () => {
     await deny(mgr, ProductController.prototype.create, ProductController, 'POST');
     await deny(mgr, OrderController.prototype.create, OrderController, 'POST');
     await deny(mgr, ShopReportsController.prototype.erpLogList, ShopReportsController, 'GET');
+    await deny(mgr, ShopReportsController.prototype.traffic, ShopReportsController, 'GET');
+    await deny(mgr, ShopReportsController.prototype.restaurantList, ShopReportsController, 'GET');
+    await deny(mgr, ShopReportsController.prototype.pushDelivery, ShopReportsController, 'GET');
+    await deny(mgr, ShopReportsController.prototype.productList, ShopReportsController, 'GET');
   });
 
   it('cs and marketing stay off the routes this change did not give them', async () => {

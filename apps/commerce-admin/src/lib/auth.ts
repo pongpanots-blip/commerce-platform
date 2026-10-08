@@ -18,9 +18,11 @@ const EXPIRY_SKEW_MS = 30_000;
 export const session = {
   get(): string | null { return read(TOKEN_KEY); },
   getRefresh(): string | null { return read(REFRESH_KEY); },
+  /** A new pair; without a refresh token any older one is dropped (it belongs to another sign-in). */
   set(token: string, refreshToken?: string) {
     write(TOKEN_KEY, token);
     if (refreshToken) write(REFRESH_KEY, refreshToken);
+    else remove(REFRESH_KEY);
   },
   /** Both tokens, always together. */
   clear() {

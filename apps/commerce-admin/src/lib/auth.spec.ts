@@ -153,6 +153,14 @@ describe('auto sign-in on app start', () => {
   });
 });
 
+describe('session storage', () => {
+  it('a new access token without a refresh token drops the old refresh token', () => {
+    session.set(NEW, 'refresh-1');
+    session.set(NEW);
+    expect(session.getRefresh()).toBeNull();
+  });
+});
+
 describe('logout', () => {
   it('sends the refresh token best-effort and clears both tokens, even when the call fails', async () => {
     session.set(NEW, 'refresh-1');

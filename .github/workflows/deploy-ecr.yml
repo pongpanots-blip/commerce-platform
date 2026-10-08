@@ -194,4 +194,7 @@ jobs:
           # Cutover flags: repo variable PLATFORM_FLAGS (KEY=VALUE lines, non-secret) → platform-flags.env (compose env_file).
           printf '%s\n' "$PLATFORM_FLAGS" | grep -E '^[A-Z][A-Z0-9_]*=[^ ]*$' > platform-flags.env || true
           if grep -Eiq '(SECRET|PASSWORD|TOKEN|_KEY|DATABASE_URL)=' platform-flags.env; then echo "::error::PLATFORM_FLAGS must not carry secrets"; exit 1; fi
-          ./ec2-deploy.sh "$TAG" $SVC_LIST
+          # The media key pair (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY, josh bucket only) is for the container and is
+          # already in ./.env. Keep it out of this shell: the ECR credential helper would use it instead of the instance
+          # role and the pull fails ("no basic auth credentials"). Compose still reads the keys from ./.env.
+          env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY ./ec2-deploy.sh "$TAG" $SVC_LIST

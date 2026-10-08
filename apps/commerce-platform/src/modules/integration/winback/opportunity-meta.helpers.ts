@@ -26,6 +26,7 @@ export interface RuleError {
 
 /** Who is calling (same shape as AppRecordsService's WinbackActor). */
 interface Actor {
+  ids?: string[];
   id: string;
   isManager: boolean;
 }
@@ -52,7 +53,7 @@ export function sameId(a: string | null | undefined, b: string | null | undefine
 
 /** The caller with a normalised id (`''` when the token has no `sub`). */
 export function normalizeActor<T extends Actor>(actor: T): T {
-  return { ...actor, id: normalizeId(actor.id) ?? '' };
+  return { ...actor, id: normalizeId(actor.id) ?? '', ...(actor.ids ? { ids: [...new Set(actor.ids.map(id => normalizeId(id)).filter((id): id is string => !!id))] } : {}) };
 }
 
 // --- Opportunity meta ---
@@ -197,7 +198,7 @@ export const OPPORTUNITY_NOT_YOURS = 'โอกาสนี้มีผู้ด
 export interface OpportunityVisibility {
   /** AND clause over OPPORTUNITY_OWNER_SQL; null = no restriction (a manager). */
   sql: string | null;
-  params: Record<string, string>;
+  params: Record<string, string | string[]>;
   /** The same rule in memory, for one opportunity's owner id. */
   allows(ownerId: string | null | undefined): boolean;
 }
@@ -210,6 +211,12 @@ export interface OpportunityVisibility {
 export function opportunityVisibility(actor: Actor): OpportunityVisibility {
   if (actor.isManager) return { sql: null, params: {}, allows: () => true };
   const self = normalizeId(actor.id) || null;
+  const ids = actor.ids ? normalizeActor(actor).ids! : self ? [self] : [];
+  if (actor.ids) return {
+    sql: ids.length ? `(${OPPORTUNITY_OWNER_SQL} IS NULL OR ${OPPORTUNITY_OWNER_SQL} IN (:...visibleOwners))` : `${OPPORTUNITY_OWNER_SQL} IS NULL`,
+    params: ids.length ? { visibleOwners: ids } : {},
+    allows: ownerId => !normalizeId(ownerId) || ids.includes(normalizeId(ownerId)!),
+  };
   return {
     sql: self ? `(${OPPORTUNITY_OWNER_SQL} IS NULL OR ${OPPORTUNITY_OWNER_SQL} = :visibleOwner)` : `${OPPORTUNITY_OWNER_SQL} IS NULL`,
     params: self ? { visibleOwner: self } : {},
@@ -255,7 +262,7 @@ export function ownerFilterError(actor: Actor, q: { owner_sales_user_id?: string
   if (q.owner_sales_user_id && q.unassigned_only) {
     return { status: 400, message: 'ใช้ owner_sales_user_id กับ unassigned_only พร้อมกันไม่ได้' };
   }
-  if (q.owner_sales_user_id && !actor.isManager && !sameId(q.owner_sales_user_id, actor.id)) {
+  if (q.owner_sales_user_id && !actor.isManager && !(actor.ids ?? [actor.id]).some(id => sameId(q.owner_sales_user_id, id))) {
     return { status: 403, message: 'เซลล์กรองได้เฉพาะโอกาสของตัวเอง' };
   }
   return null;

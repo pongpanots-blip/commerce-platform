@@ -15,6 +15,7 @@ export class InventoryOverviewController {
   constructor(private readonly db: DataSource) {}
 
   @Get()
+  @StaffRoles('merchandising', 'business_analyst', 'sale')
   async overview(
     @Query('warehouse') warehouse = '',
     @Query('search') search = '',

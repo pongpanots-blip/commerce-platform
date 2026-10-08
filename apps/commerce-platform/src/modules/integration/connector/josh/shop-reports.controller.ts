@@ -1,5 +1,7 @@
-import { BadRequestException, Controller, Get, Header, NotFoundException, Param, ParseUUIDPipe, Query, ServiceUnavailableException } from '@nestjs/common';
-import { StaffRole, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
+import { isUUID } from 'class-validator';
+import { SalesRepIdentity } from '../../../core/auth/application/sales-rep-identity.service';
+import { BadRequestException, Controller, Get, Header, NotFoundException, Param, ParseUUIDPipe, Query, Req, ServiceUnavailableException } from '@nestjs/common';
+import { StaffRole, StaffRoles, StaffRequest } from '../../../../shared-kernel/presentation/auth.decorators';
 import { bangkokRange, JoshInsights, Period, PERIODS } from './josh-insights';
 import { JOSH_ONLY, joshOnly, NO_REPLICA, SystemHealthReport } from './system-health';
 import { parseRestaurantFilters, RestaurantPlaces } from './restaurant-places';
@@ -10,9 +12,9 @@ import { JoshOrders, OrderFilters } from './josh-orders';
 import { CompanyFilters, JoshCustomers } from './josh-customers';
 import { JoshPrices } from './josh-prices';
 
-interface PeriodQuery { period?: string; fromDate?: string; toDate?: string }
+interface PeriodQuery { period?: string; fromDate?: string; toDate?: string; salesUserId?: string }
 
-/** Shop-report readers besides admin. ERP log payloads stay admin (unredacted). Customer phones and emails on these routes are already masked. */
+/** Shop-report readers besides admin. ERP log payloads stay admin (unredacted). Team customer contacts stay masked; sale reads below explicitly unmask only assigned companies. */
 const SHOP: readonly StaffRole[] = ['sales_manager', 'business_analyst'];
 
 const int = (v: unknown, def: number, min: number, max: number) => {
@@ -38,7 +40,17 @@ function range(q: PeriodQuery) {
 @Controller('reports')
 export class ShopReportsController {
   constructor(private readonly insights: JoshInsights, private readonly health: SystemHealthReport, private readonly restaurants: RestaurantPlaces, private readonly erpLogs: JoshErpLogs, private readonly push: JoshPushCampaigns, private readonly products: JoshProducts,
-    private readonly orders: JoshOrders, private readonly customers: JoshCustomers, private readonly prices: JoshPrices) {}
+    private readonly orders: JoshOrders, private readonly customers: JoshCustomers, private readonly prices: JoshPrices, private readonly identity: SalesRepIdentity) {}
+
+  /** Query inputs cannot override own scope. Only admin / sales_manager may choose a team's rep. */
+  private async repIds(req: StaffRequest, salesUserId?: string): Promise<string[] | undefined> {
+    if (salesUserId !== undefined) {
+      if (!isUUID(salesUserId)) throw new BadRequestException('salesUserId must be a uuid');
+      if (!['admin', 'sales_manager'].includes(req.staff.role)) throw new BadRequestException('salesUserId is only available to sales managers');
+      return [salesUserId.toLowerCase()];
+    }
+    return req.staff.role === 'sale' ? this.identity.repIdsFor(req.staff) : undefined;
+  }
 
   /** The replica, for routes with no copy yet; `why` says which (josh-admin / not copied) instead of the bare 503. */
   private replica(why?: keyof typeof JOSH_ONLY) {
@@ -61,11 +73,17 @@ export class ShopReportsController {
     if (!this.restaurants.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set RESTAURANTS_SOURCE=copies to read commerce's copy.`);
   }
 
-  @Get('sales') @StaffRoles(...SHOP)
-  sales(@Query() q: PeriodQuery) {
+  @Get('sales') @StaffRoles(...SHOP, 'sale')
+  async sales(@Query() q: PeriodQuery, @Req() req: StaffRequest) {
     const r = range(q);
     if (!this.insights.salesAvailable) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set SALES_SOURCE=copies to read commerce's order copies.`);
-    return this.insights.sales(r, 20);
+    return this.insights.sales(r, 20, undefined, await this.repIds(req, q.salesUserId));
+  }
+
+  @Get('sales/by-rep') @StaffRoles('sales_manager')
+  salesByRep(@Query() q: PeriodQuery) {
+    if (!this.insights.salesAvailable) throw new ServiceUnavailableException(NO_REPLICA.reason);
+    return this.insights.salesByRep(range(q).current);
   }
 
   /** Replica and order copies for the same period side by side (totals that differ, top-products ranking) — check before SALES_SOURCE=copies. */
@@ -190,22 +208,37 @@ export class ShopReportsController {
   @StaffRoles('marketing', 'merchandising')
   productDetail(@Param('idOrSku') idOrSku: string) { this.productsReady(); return this.products.detail(idOrSku); }
 
-  // josh orders / customers / prices, read-only. Phones, emails and family names are masked in josh-orders / josh-customers.
-  @Get('orders/summary') @StaffRoles(...SHOP) orderSummary(@Query() q: OrderFilters) { this.ordersReady(); return this.orders.summary(q); }
-  @Get('orders') @StaffRoles(...SHOP) orderList(@Query() q: OrderFilters & { page?: string; limit?: string }) {
-    this.ordersReady(); return this.orders.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+  // Only the specific reads below include sale; operational reports retain SHOP's team roles.
+  @Get('orders/summary') @StaffRoles(...SHOP, 'sale')
+  async orderSummary(@Query() q: OrderFilters & { salesUserId?: string }, @Req() req: StaffRequest) {
+    this.ordersReady(); return this.orders.summary({ ...q, repIds: await this.repIds(req, q.salesUserId) });
   }
-  @Get('orders/:idOrNumber') @StaffRoles(...SHOP) orderDetail(@Param('idOrNumber') id: string) { this.ordersReady(); return this.orders.detail(id); }
-
-  @Get('customers/summary') @StaffRoles(...SHOP) customerSummary() { this.replica('customers'); return this.customers.summary(); }
-  @Get('customers') @StaffRoles(...SHOP) customerList(@Query() q: CompanyFilters & { page?: string; limit?: string }) {
-    this.replica('customers'); return this.customers.list(q, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
+  @Get('orders') @StaffRoles(...SHOP, 'sale')
+  async orderList(@Query() q: OrderFilters & { page?: string; limit?: string; salesUserId?: string }, @Req() req: StaffRequest) {
+    this.ordersReady(); return this.orders.list({ ...q, repIds: await this.repIds(req, q.salesUserId) }, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200));
   }
-  @Get('customers/:id') @StaffRoles(...SHOP) customerDetail(@Param('id', ParseUUIDPipe) id: string) { this.replica('customers'); return this.customers.detail(id); }
+  @Get('orders/:idOrNumber') @StaffRoles(...SHOP, 'sale')
+  async orderDetail(@Param('idOrNumber') id: string, @Req() req: StaffRequest) { this.ordersReady(); return this.orders.detail(id, await this.repIds(req)); }
 
-  @Get('prices/branches') @StaffRoles(...SHOP) priceBranches(@Query('search') search?: string) { this.replica('prices'); return this.prices.branches(search); }
-  @Get('prices/quotations') @StaffRoles(...SHOP) priceQuotations(@Query('customerCode') code = '') { this.replica('prices'); return this.prices.quotations(code); }
-  @Get('prices/branches/:branchId') @StaffRoles(...SHOP) branchPrices(@Param('branchId', ParseUUIDPipe) id: string, @Query('search') search?: string) {
-    this.replica('prices'); return this.prices.forBranch(id, search);
+  @Get('customers/summary') @StaffRoles(...SHOP, 'sale')
+  async customerSummary(@Query() q: { salesUserId?: string }, @Req() req: StaffRequest) {
+    this.replica('customers'); return this.customers.summary({ repIds: await this.repIds(req, q.salesUserId) });
+  }
+  @Get('customers') @StaffRoles(...SHOP, 'sale')
+  async customerList(@Query() q: CompanyFilters & { page?: string; limit?: string; salesUserId?: string }, @Req() req: StaffRequest) {
+    this.replica('customers'); return this.customers.list({ ...q, repIds: await this.repIds(req, q.salesUserId) }, int(q.page, 1, 1, 1e6), int(q.limit, 50, 1, 200), { unmask: req.staff.role === 'sale' });
+  }
+  @Get('customers/:id') @StaffRoles(...SHOP, 'sale')
+  async customerDetail(@Param('id', ParseUUIDPipe) id: string, @Req() req: StaffRequest) {
+    this.replica('customers'); return this.customers.detail(id, await this.repIds(req), { unmask: req.staff.role === 'sale' });
+  }
+
+  @Get('prices/branches') @StaffRoles(...SHOP, 'sale')
+  async priceBranches(@Req() req: StaffRequest, @Query('search') search?: string) { this.replica('prices'); return this.prices.branches(search, await this.repIds(req)); }
+  @Get('prices/quotations') @StaffRoles(...SHOP, 'sale')
+  async priceQuotations(@Req() req: StaffRequest, @Query('customerCode') code = '') { this.replica('prices'); return this.prices.quotations(code, await this.repIds(req)); }
+  @Get('prices/branches/:branchId') @StaffRoles(...SHOP, 'sale')
+  async branchPrices(@Param('branchId', ParseUUIDPipe) id: string, @Req() req: StaffRequest, @Query('search') search?: string) {
+    this.replica('prices'); return this.prices.forBranch(id, search, undefined, await this.repIds(req));
   }
 }

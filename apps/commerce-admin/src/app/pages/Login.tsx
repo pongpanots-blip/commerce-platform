@@ -1,3 +1,4 @@
+import { homeForRole } from '../../lib/role-home';
 import { useState } from 'react';
 import { Button, Field, FormPanel, Hint, Input, Icon, LanguageSelector } from '@cp/ui';
 import { login } from '../../lib/api';
@@ -15,7 +16,8 @@ export function Login({ onSignedIn }: { onSignedIn: () => void }) {
     setBusy(true);
     setError(null);
     try {
-      await login(email, password);
+      const result = await login(email, password);
+      window.history.replaceState(null, '', homeForRole(result.role));
       onSignedIn();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

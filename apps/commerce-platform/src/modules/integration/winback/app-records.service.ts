@@ -23,6 +23,8 @@ import { WINBACK_WORK_PLAN_STEPS, WinbackAppRecordKind as Kind, WinbackNextActio
 
 /** Who is calling: the JWT `sub` and whether their role sees the team. */
 export interface WinbackActor {
+  /** All linked ids for commerce report reads; app writes keep a single acting id. */
+  ids?: string[];
   id: string;
   isManager: boolean;
 }

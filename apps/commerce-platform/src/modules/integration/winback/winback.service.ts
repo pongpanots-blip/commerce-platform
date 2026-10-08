@@ -66,7 +66,7 @@ export class WinbackService {
     return rows.map((row) => ({ province: row.province, count: Number(row.count) }));
   }
 
-  async findPool(q: PoolQueryDto, actor: WinbackActor = { id: '', isManager: false }) {
+  async findPool(q: PoolQueryDto, actor: WinbackActor = { id: '', isManager: false }, ownScope = false) {
     const page = q.page ?? 1;
     const limit = q.limit ?? 20;
 
@@ -80,6 +80,13 @@ export class WinbackService {
     }
 
     const qb = this.accounts.createQueryBuilder('a');
+    if (ownScope && !actor.isManager) {
+      // Match opportunity visibility even when a place has already become a lead: coordination owner
+      // wins over the account assignment. A lead without a restaurant place falls back to its assigned rep.
+      qb.leftJoin(WinbackAppRecord, 'm', 'm.kind = :poolMetaKind AND m.record_key = CAST(a.restaurant_place_id AS text)', { poolMetaKind: WinbackAppRecordKind.OPPORTUNITY_META });
+      const visibility = opportunityVisibility(actor);
+      if (visibility.sql) qb.andWhere(visibility.sql, visibility.params);
+    }
     if (q.search) {
       qb.andWhere(
         '(UPPER(a.customer_code) LIKE :s OR UPPER(a.display_name) LIKE :s OR a.phone LIKE :sp)',

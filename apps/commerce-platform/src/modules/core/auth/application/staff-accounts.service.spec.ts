@@ -39,6 +39,15 @@ describe('StaffAccountsService', () => {
     await expect(svc.create({ email: 'dev@partner.test', role: 'admin' }, me)).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it.each(['sale', 'sale_manager', ' SALES_MANAGER '])('creates and updates canonical roles for %s', async role => {
+    const canonical = role === 'sale' ? 'sale' : 'sales_manager';
+    const { account } = await svc.create({ email: 'sale@example.test', role }, me);
+    expect(account.role).toBe(canonical);
+    expect(rows.find(row => row.id === account.id)?.role).toBe(canonical);
+    expect(await svc.update(account.id, { role: ' SALE_MANAGER ' }, me)).toMatchObject({ role: 'sales_manager' });
+    expect(rows.find(row => row.id === account.id)?.role).toBe('sales_manager');
+  });
+
   it('an admin cannot demote or disable themselves; the last active admin stays', async () => {
     await expect(svc.update('u-admin', { role: 'marketing' }, me)).rejects.toBeInstanceOf(BadRequestException);
     await expect(svc.update('u-admin', { status: 'disabled' }, { userId: 'u-other', email: 'x@y' })).rejects.toThrow('last active admin');

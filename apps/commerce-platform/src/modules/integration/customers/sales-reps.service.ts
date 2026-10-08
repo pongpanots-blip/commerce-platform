@@ -25,6 +25,12 @@ export class SalesRepsService {
     @Inject(EVENT_BUS) private readonly events: IEventBus,
   ) {}
 
+  /** Assignment picker: only active internal reps, with no email / phone. Managers of commerce are not reps. */
+  list(): Promise<{ id: string; name: string }[]> {
+    return this.db.query(`SELECT id, trim(concat_ws(' ', first_name, last_name)) AS name FROM josh_staff
+      WHERE is_active AND user_type = 'internal' AND role IN ('sale', 'sales', 'manager') ORDER BY name, id`);
+  }
+
   async assign(companyId: string, salesUserId: string | null) {
     if (!ownsSalesReps()) throw new ConflictException('sales reps are still assigned in josh (COMMERCE_OWNS_SALES_REPS is not true)');
     return this.db.transaction(async (m) => {

@@ -5,7 +5,7 @@ import {
   Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, Span, Stack2,
   StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, fmt,
 } from '@cp/ui';
-import { api, InventoryLevel, Paginated, Product, productsApi, stockApi } from '../../lib/api';
+import { api, InventoryLevel, Paginated, Product, productsApi, stockApi, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -16,10 +16,11 @@ const toForm = (p: Product): Form => ({ sku: p.sku, name: p.name, description: p
 /** One commerce product: facts, edit (PATCH /products/:id) and stock per warehouse. */
 export function ProductDetail() {
   __useUiLocale();
+  const canEdit = ['admin', 'merchandising'].includes(session.claims()?.role ?? '');
   const { id = '' } = useParams();
   const product = useAsync<Product>(() => productsApi.get(id), [id]);
   const inventory = useAsync(() => api.get<Paginated<InventoryLevel>>(`/inventory?productId=${encodeURIComponent(id)}&pageSize=100`), [id]);
-  const warehouses = useAsync(() => stockApi.warehouses(), []);
+  const warehouses = useAsync(() => canEdit ? stockApi.warehouses() : Promise.resolve([]), []);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Form>({ sku: '', name: '', description: '' });
   const [busy, setBusy] = useState(false);
@@ -63,7 +64,7 @@ export function ProductDetail() {
         actions={
           <>
             <Button icon="refresh" onClick={() => { product.reload(); inventory.reload(); warehouses.reload(); }}>{__uiText("รีเฟรช")}</Button>
-            {p && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขสินค้า")}</Button>}
+            {p && canEdit && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขสินค้า")}</Button>}
           </>
         }
       />

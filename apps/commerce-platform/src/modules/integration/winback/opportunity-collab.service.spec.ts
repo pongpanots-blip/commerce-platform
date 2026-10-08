@@ -399,7 +399,7 @@ describe('WinbackController — lead-from-place visibility', () => {
     const controller = new WinbackController(
       {} as never, {} as never, {} as never, s.leads as never, {} as never,
       {} as never, {} as never, {} as never, {} as never, {} as never,
-      {} as never, {} as never, s.opportunities,
+      {} as never, {} as never, s.opportunities, {} as never,
     );
     return { ...s, controller };
   }

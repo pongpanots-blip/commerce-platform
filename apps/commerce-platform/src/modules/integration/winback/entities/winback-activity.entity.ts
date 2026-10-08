@@ -57,6 +57,20 @@ export class WinbackActivity {
   @Column({ type: 'numeric', precision: 10, scale: 7, nullable: true })
   lng: number | null;
 
+  /** Reported accuracy (metres) of the check-in fix in `lat`/`lng`. */
+  @Column({ type: 'numeric', precision: 8, scale: 1, nullable: true })
+  checkin_accuracy_m: number | null;
+
+  /** Where the rep was when they checked out. */
+  @Column({ type: 'numeric', precision: 10, scale: 7, nullable: true })
+  checkout_lat: number | null;
+
+  @Column({ type: 'numeric', precision: 10, scale: 7, nullable: true })
+  checkout_lng: number | null;
+
+  @Column({ type: 'numeric', precision: 8, scale: 1, nullable: true })
+  checkout_accuracy_m: number | null;
+
   @Column({ type: 'uuid', nullable: true })
   contact_id: string | null;
 

@@ -48,6 +48,7 @@ function createController() {
     uploads as any,
     appRecords as any,
     opportunities as any,
+    {} as any,
   );
 
   return { controller, winback, sync, diary, reports, analytics, meetingPrep, appRecords, leads, opportunities };

@@ -54,7 +54,7 @@ it('my report routes pass linked ids and never delegate to team reports', async 
   const identity = { repIdsFor: jest.fn().mockResolvedValue(actor.ids) };
   const opportunities = { list: jest.fn().mockResolvedValue({ items: [], pagination: { total: 0 } }) };
   const pool = { findPool: jest.fn().mockResolvedValue({ data: [], meta: { total: 0 } }) };
-  const c = new WinbackReportsController({ available: false } as never, identity as never, opportunities as never, pool as never);
+  const c = new WinbackReportsController({ available: false } as never, identity as never, opportunities as never, pool as never, {} as never, {} as never);
   const req = { staff: { userId: actor.id, email: 'rep@example.test', role: 'sale' as const } };
   await c.myOpportunities(req, { page: 1, limit: 20 });
   expect(opportunities.list).toHaveBeenCalledWith(actor, { page: 1, limit: 20 });

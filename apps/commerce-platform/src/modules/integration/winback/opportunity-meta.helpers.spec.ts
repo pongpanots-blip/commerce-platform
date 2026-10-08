@@ -9,12 +9,18 @@ import {
   collabResolveError,
   deriveRecommendation,
   metaChanges,
-  metaEditError,
   NEEDS_RESEARCH_TEXT,
+  normalizeActor,
+  normalizeId,
+  OPPORTUNITY_NOT_YOURS,
+  OPPORTUNITY_OWNER_SQL,
+  opportunityAccessError,
+  opportunityVisibility,
   OpportunityMetaPlaceRow,
   ownerFilterError,
   recipientError,
   requestView,
+  sameId,
   staleHandoffError,
   storedMeta,
   summarizeOpportunityMeta,
@@ -82,14 +88,71 @@ describe('opportunity meta', () => {
   });
 });
 
-describe('opportunity meta rules', () => {
-  it('edit: manager, the owner, or anyone while unowned', () => {
-    expect(metaEditError(MGR, 'rep-2')).toBeNull();
-    expect(metaEditError(REP, 'rep-1')).toBeNull();
-    expect(metaEditError(REP, null)).toBeNull();
-    expect(metaEditError(REP, 'rep-2')).toEqual({ status: 403, message: 'เฉพาะผู้ดูแลโอกาสหรือ manager ที่แก้ได้' });
+describe('ids (§4.11.8 UUID normalisation)', () => {
+  const UP = 'ABCDEF00-0000-4000-8000-0000000000A1';
+  it('one normaliser: trimmed lowercase, null for missing', () => {
+    expect(normalizeId(` ${UP} `)).toBe(UP.toLowerCase());
+    expect(normalizeId(null)).toBeNull();
+    expect(normalizeId(undefined)).toBeNull();
+    expect(sameId(UP, UP.toLowerCase())).toBe(true);
+    expect(sameId(null, null)).toBe(false);
+    expect(sameId('', '')).toBe(false);
+    expect(normalizeActor({ id: UP, isManager: false })).toEqual({ id: UP.toLowerCase(), isManager: false });
+    expect(normalizeActor({ id: '', isManager: true })).toEqual({ id: '', isManager: true });
   });
 
+  it('meta ids are lowercase whatever the row carries; rule compares ignore case', () => {
+    expect(meta(place({ id: UP, account_owner_id: 'REP-2' }))).toMatchObject({ opportunity_id: UP.toLowerCase(), owner_sales_user_id: 'rep-2', owner_name: 'Rep Two' });
+    expect(ownerFilterError({ id: 'rep-1', isManager: false }, { owner_sales_user_id: 'REP-1' })).toBeNull();
+    expect(recipientError({ id: 'rep-1', isManager: false }, 'REP-1', ROSTER)?.message).toBe('ผู้รับต้องไม่ใช่ตัวเอง');
+    expect(recipientError(REP, 'REP-2', ROSTER)).toBeNull();
+  });
+});
+
+describe('opportunity visibility (§4.11.8)', () => {
+  it('manager: no clause, sees everything', () => {
+    const v = opportunityVisibility(MGR);
+    expect(v.sql).toBeNull();
+    expect([v.allows('rep-2'), v.allows(null)]).toEqual([true, true]);
+  });
+
+  it('a sale: own + unassigned — SQL and in-memory from the same definition', () => {
+    const v = opportunityVisibility({ id: 'REP-1', isManager: false });
+    expect(v.sql).toBe(`(${OPPORTUNITY_OWNER_SQL} IS NULL OR ${OPPORTUNITY_OWNER_SQL} = :visibleOwner)`);
+    expect(v.params).toEqual({ visibleOwner: 'rep-1' });
+    expect([v.allows('rep-1'), v.allows('REP-1'), v.allows(null), v.allows(undefined), v.allows('rep-2')]).toEqual([true, true, true, true, false]);
+    expect(OPPORTUNITY_OWNER_SQL).toBe('COALESCE(m.sales_user_id, a.assigned_sales_user_id)');
+  });
+
+  it('no caller id: unassigned only', () => {
+    const v = opportunityVisibility({ id: '', isManager: false });
+    expect(v.sql).toBe(`${OPPORTUNITY_OWNER_SQL} IS NULL`);
+    expect(v.params).toEqual({});
+    expect([v.allows(null), v.allows('rep-1')]).toEqual([true, false]);
+  });
+
+  it('access: owner-only routes ignore requests; the thread admits recipients; resolve admits recipients and requesters', () => {
+    const forbidden = { status: 403, message: OPPORTUNITY_NOT_YOURS };
+    const req = (requester: string, recipient: string, status = 'pending') => ({ id: 'r', requester_id: requester, recipient_id: recipient, status }) as unknown as CollabRequest;
+    const state = { requests: [req('rep-2', 'rep-1', 'rejected')], messages: [] };
+    expect(opportunityAccessError(MGR, 'rep-2', null, 'owner')).toBeNull();
+    expect(opportunityAccessError(REP, 'rep-1', null, 'owner')).toBeNull();
+    expect(opportunityAccessError(REP, null, null, 'owner')).toBeNull();
+    expect(opportunityAccessError(REP, 'rep-2', state, 'owner')).toEqual(forbidden);
+    // rep-1 was the recipient of a (past) request: may read / message / resolve, never edit
+    expect(opportunityAccessError(REP, 'rep-2', state, 'thread')).toBeNull();
+    expect(opportunityAccessError({ id: 'REP-1', isManager: false }, 'rep-2', state, 'resolve')).toBeNull();
+    // rep-3 only sent a request: may resolve (cancel — collabResolveError decides) but not read the thread
+    const sent = { requests: [req('rep-3', 'rep-2')], messages: [] };
+    expect(opportunityAccessError({ id: 'rep-3', isManager: false }, 'rep-2', sent, 'thread')).toEqual(forbidden);
+    expect(opportunityAccessError({ id: 'rep-3', isManager: false }, 'rep-2', sent, 'resolve')).toBeNull();
+    // a stranger, and a caller without an id
+    expect(opportunityAccessError({ id: 'rep-9', isManager: false }, 'rep-2', state, 'thread')).toEqual(forbidden);
+    expect(opportunityAccessError({ id: '', isManager: false }, 'rep-2', { requests: [req('', '')], messages: [] }, 'thread')).toEqual(forbidden);
+  });
+});
+
+describe('opportunity meta rules', () => {
   it('version: skipped when not sent, 409 with the current version when stale', () => {
     expect(versionError(2, undefined)).toBeNull();
     expect(versionError(2, 2)).toBeNull();

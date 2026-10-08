@@ -1,8 +1,9 @@
 import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { WinbackActor } from './app-records.service';
 import { OpportunityService } from './opportunity.service';
-import { OpportunityCollabService } from './opportunity-collab.service';
+import { NO_STAFF_ID, OpportunityCollabService } from './opportunity-collab.service';
 import { LeadService } from './lead.service';
+import { OPPORTUNITY_NOT_YOURS, OPPORTUNITY_OWNER_SQL } from './opportunity-meta.helpers';
 import { WINBACK_NAMED_ROLES } from './winback-roles';
 
 const P1 = '00000000-0000-4000-8000-0000000000a1';
@@ -117,8 +118,20 @@ const PLACES: Row[] = [
   { id: PC, name_th: 'ร้านที่แปลงแล้ว', name_en: null, district: 'วัฒนา', raw_category: 'Steak', rating: 4.2, review_count: 50, price_range: '฿900', enriched_at: '2026-09-01T00:00:00Z', created_at: '2026-08-01T00:00:00Z', updated_at: '2026-09-01T00:00:00Z' },
 ];
 
-/** Query builder over PLACES that joins the account + stored meta like OpportunityService's SQL, and records the clauses. */
-function placesRepo(accounts: FakeRepo, records: FakeRepo) {
+/** Open, enriched, with a spend range (tab `recommended`) — used by the visibility specs. */
+const P3 = '00000000-0000-4000-8000-0000000000d4';
+const PLACE_3: Row = { id: P3, name_th: 'ร้านสาม', name_en: null, district: 'วัฒนา', raw_category: 'Thai', rating: 4.4, review_count: 120, price_range: '฿300–600', enriched_at: '2026-09-01T00:00:00Z', created_at: '2026-08-01T00:00:00Z', updated_at: '2026-09-01T00:00:00Z' };
+
+const VISIBLE_SQL = `(${OPPORTUNITY_OWNER_SQL} IS NULL OR ${OPPORTUNITY_OWNER_SQL} = :visibleOwner)`;
+const UNASSIGNED_SQL = `${OPPORTUNITY_OWNER_SQL} IS NULL`;
+
+/**
+ * Query builder over the places that joins the account + stored meta like OpportunityService's SQL, records
+ * the clauses, and evaluates the ones that decide WHICH rows come back (open only, visibility, owner,
+ * unassigned, id) — stage / purpose / recommendation clauses are asserted on their SQL text instead.
+ * filter-meta (select(expr, alias)) groups the surviving rows like the GROUP BY, unless groups were preset.
+ */
+function placesRepo(accounts: FakeRepo, records: FakeRepo, placeRows: Row[] = PLACES) {
   const calls: Array<{ wheres: string[]; params: Row }> = [];
   let groups: Row[] = [];
   const join = (p: Row): Row => {
@@ -130,6 +143,31 @@ function placesRepo(accounts: FakeRepo, records: FakeRepo) {
       meta_owner_id: m?.sales_user_id ?? null, meta_version: m?.version ?? null, meta_updated_at: m?.update_date ?? null,
     };
   };
+  const ownerOf = (r: Row) => r.meta_owner_id ?? r.account_owner_id ?? null;
+  const keeps = (st: { wheres: string[]; params: Row }, owner: string | null, r?: Row) => st.wheres.every((w) => {
+    if (w === 'a.id IS NULL') return !r || !r.winback_account_id;
+    if (w === 'p.id = :id') return !r || r.id === st.params.id;
+    if (w === VISIBLE_SQL) return !owner || owner === st.params.visibleOwner;
+    if (w === UNASSIGNED_SQL) return !owner;
+    if (w === `${OPPORTUNITY_OWNER_SQL} = :metaOwner`) return owner === st.params.metaOwner;
+    return true;
+  });
+  const grouped = (rows: Row[]) => {
+    const out = new Map<string, Row>();
+    for (const r of rows) {
+      const g = {
+        stage: r.meta_payload?.stage ?? r.account_stage ?? 'prospect',
+        purpose: r.meta_payload?.purpose ?? 'new_product',
+        owner: ownerOf(r),
+        research: !r.enriched_at || !r.price_range || !/[1-9]/.test(r.price_range),
+      };
+      const key = JSON.stringify(g);
+      const hit = out.get(key) ?? { ...g, count: '0' };
+      hit.count = String(Number(hit.count) + 1);
+      out.set(key, hit);
+    }
+    return [...out.values()];
+  };
   const repo = {
     setGroups: (g: Row[]) => { groups = g; },
     calls,
@@ -140,9 +178,13 @@ function placesRepo(accounts: FakeRepo, records: FakeRepo) {
       for (const k of ['select', 'addSelect', 'orderBy', 'addOrderBy', 'limit', 'groupBy', 'addGroupBy']) qb[k] = jest.fn(() => qb);
       qb.leftJoin = jest.fn((_e: unknown, _a: string, _c: string, params?: Row) => { Object.assign(st.params, params); return qb; });
       qb.where = qb.andWhere = jest.fn((sql: string, params?: Row) => { st.wheres.push(sql); Object.assign(st.params, params); return qb; });
-      qb.getRawOne = jest.fn(async () => { const p = PLACES.find((x) => x.id === st.params.id); return p ? join(p) : undefined; });
+      qb.getRawOne = jest.fn(async () => { const p = placeRows.find((x) => x.id === st.params.id); return p ? join(p) : undefined; });
       // select(expr, alias) = the filter-meta GROUP BY; select([...]) = the list.
-      qb.getRawMany = jest.fn(async () => (qb.select.mock.calls[0]?.[1] ? groups : PLACES.map(join).filter((r) => !r.winback_account_id)));
+      qb.getRawMany = jest.fn(async () => {
+        const rows = placeRows.map(join).filter((r) => keeps(st, ownerOf(r), r));
+        if (!qb.select.mock.calls[0]?.[1]) return rows;
+        return groups.length ? groups.filter((g) => keeps(st, g.owner)) : grouped(rows);
+      });
       return qb;
     }),
   };
@@ -158,13 +200,13 @@ const STAFF = [
   { id: 'adm-1', name: 'Admin One', role: 'admin' },
 ];
 
-function setup(staff: Array<{ id: string; name: string; role: string }> = STAFF) {
+function setup(staff: Array<Row & { id: string; name: string; role: string }> = STAFF, placeRows: Row[] = PLACES) {
   const records = new FakeRepo();
   const accounts = new FakeRepo([
     { id: 'acc-c', customer_code: 'TMP-1', display_name: 'ร้านที่แปลงแล้ว (TMP)', stage: 'contacted', assigned_sales_user_id: 'rep-2', cuisine_id: 'cui-1', restaurant_place_id: PC },
     { id: 'acc-x', customer_code: 'GNA1', stage: 'inactive_pool', assigned_sales_user_id: 'rep-1', cuisine_id: null, restaurant_place_id: null },
   ]);
-  const places = placesRepo(accounts, records);
+  const places = placesRepo(accounts, records, placeRows);
   const leads = {
     // The 100-row `/sales-users` picker: §4.11.8 must not depend on it.
     listSalesUsers: jest.fn(async () => staff.filter((u) => u.role !== 'admin').slice(0, 100)),
@@ -219,7 +261,7 @@ describe('OpportunityService — §4.11.8 list filters + meta', () => {
     await expect(opportunities.meta('00000000-0000-4000-8000-000000000999')).rejects.toThrow('Opportunity not found');
   });
 
-  it('filter-meta counts the list\'s population for every caller; a sale\'s owner chips are only themself', async () => {
+  it('filter-meta counts what the caller may see (the list\'s visibility clause); a sale\'s owner chips are only themself', async () => {
     const { opportunities, places } = setup();
     places.setGroups([
       { stage: 'prospect', purpose: 'new_product', owner: null, research: true, count: '4' },
@@ -227,27 +269,38 @@ describe('OpportunityService — §4.11.8 list filters + meta', () => {
       { stage: 'negotiate', purpose: 'winback', owner: 'rep-2', research: false, count: '2' },
     ]);
     const sale = await opportunities.filterMeta(REP);
-    // same WHERE as the (unscoped) list: no owner clause for a sale
-    expect(places.calls.at(-1)!.wheres).toEqual(['a.id IS NULL']);
+    // the same WHERE as the list: open places, own + unassigned for a sale
+    expect(places.calls.at(-1)!.wheres).toEqual(['a.id IS NULL', VISIBLE_SQL]);
+    expect(places.calls.at(-1)!.params).toMatchObject({ visibleOwner: 'rep-1' });
     expect(sale).toMatchObject({ unassigned_count: 4, owners: [{ sales_user_id: 'rep-1', name: 'Rep One', count: 1 }] });
-    expect(sale.stages.find((x) => x.value === 'negotiate')).toEqual({ value: 'negotiate', count: 2 });
-    expect(sale.purposes.find((x) => x.value === 'winback')).toEqual({ value: 'winback', count: 3 });
+    // rep-2's opportunities are not counted for rep-1
+    expect(sale.stages.find((x) => x.value === 'negotiate')).toEqual({ value: 'negotiate', count: 0 });
+    expect(sale.purposes.find((x) => x.value === 'winback')).toEqual({ value: 'winback', count: 1 });
     expect(sale.recommendation_reasons.find((r) => r.value === 'needs_research')).toEqual({ value: 'needs_research', count: 4 });
-    // the manager sees the same counts, plus every owner
+    // the manager: no visibility clause, every owner
     const mgr = await opportunities.filterMeta(MGR);
     expect(places.calls.at(-1)!.wheres).toEqual(['a.id IS NULL']);
-    expect({ ...mgr, owners: [] }).toEqual({ ...sale, owners: [] });
+    expect(mgr.stages.find((x) => x.value === 'negotiate')).toEqual({ value: 'negotiate', count: 2 });
+    expect(mgr.unassigned_count).toBe(4);
     expect(mgr.owners).toEqual([{ sales_user_id: 'rep-2', name: 'Rep Two', count: 2 }, { sales_user_id: 'rep-1', name: 'Rep One', count: 1 }]);
     // a sale who owns nothing still gets their chip (0); no caller id → no chip
     expect((await opportunities.filterMeta(THIRD)).owners).toEqual([{ sales_user_id: 'rep-3', name: 'Rep Three', count: 0 }]);
-    expect((await opportunities.filterMeta({ id: '', isManager: false })).owners).toEqual([]);
+    const anonymous = await opportunities.filterMeta({ id: '', isManager: false });
+    expect(places.calls.at(-1)!.wheres).toEqual(['a.id IS NULL', UNASSIGNED_SQL]);
+    expect(anonymous).toMatchObject({ owners: [], unassigned_count: 4 });
   });
 
-  it('account → converted opportunity ids', async () => {
-    const { opportunities } = setup();
-    expect(await opportunities.accountOpportunities('acc-c')).toEqual([PC]);
-    expect(await opportunities.accountOpportunities('acc-x')).toEqual([]);
-    await expect(opportunities.accountOpportunities('acc-none')).rejects.toThrow('winback account not found');
+  it('account → converted opportunity ids the caller may see (filtered, never 403)', async () => {
+    const { opportunities, records } = setup();
+    expect(await opportunities.accountOpportunities(MGR, 'acc-c')).toEqual([PC]);
+    expect(await opportunities.accountOpportunities(OTHER, 'acc-c')).toEqual([PC]); // the account's rep
+    expect(await opportunities.accountOpportunities(REP, 'acc-c')).toEqual([]);
+    expect(await opportunities.accountOpportunities(MGR, 'acc-x')).toEqual([]);
+    await expect(opportunities.accountOpportunities(MGR, 'acc-none')).rejects.toThrow('winback account not found');
+    // a stored coordination owner beats the account's rep (same owner as everywhere)
+    records.rows.push({ id: 'm-pc', kind: 'opportunity_meta', record_key: PC, sales_user_id: 'rep-1', version: 1, payload: {} });
+    expect(await opportunities.accountOpportunities({ id: 'REP-1', isManager: false }, 'ACC-C'.toLowerCase())).toEqual([PC]);
+    expect(await opportunities.accountOpportunities(OTHER, 'acc-c')).toEqual([]);
   });
 });
 
@@ -266,7 +319,7 @@ describe('OpportunityCollabService — meta PATCH', () => {
 
   it('403 for a sale on someone else\'s opportunity, any sale while unowned, 409 on a stale version, 404 unknown', async () => {
     const { collab } = setup();
-    await expect(collab.updateMeta(REP, PC, { stage: 'won' })).rejects.toThrow('เฉพาะผู้ดูแลโอกาสหรือ manager ที่แก้ได้');
+    await expect(collab.updateMeta(REP, PC, { stage: 'won' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
     await expect(collab.updateMeta(REP, P1, { stage: 'contacted' })).resolves.toMatchObject({ stage: 'contacted', version: 1 });
     await expect(collab.updateMeta(OTHER, P1, { stage: 'negotiate', expected_version: 0 })).rejects.toThrow('ข้อมูลเปลี่ยนไปแล้ว (version 1)');
     await expect(collab.updateMeta(OTHER, P1, { stage: 'negotiate', expected_version: 0 })).rejects.toThrow(ConflictException);
@@ -277,12 +330,12 @@ describe('OpportunityCollabService — meta PATCH', () => {
 describe('OpportunityCollabService — collaboration', () => {
   it('empty state when nothing is stored; directory is names only', async () => {
     const { collab } = setup();
-    expect(await collab.collaboration(P1)).toEqual({ opportunity_id: P1, owner_sales_user_id: null, owner_name: null, requests: [], messages: [], revision: 0 });
+    expect(await collab.collaboration(REP, P1)).toEqual({ opportunity_id: P1, owner_sales_user_id: null, owner_name: null, requests: [], messages: [], revision: 0 });
     // recipients only (sale / sales / manager) — admins resolve names but are not recipients
     expect(await collab.directory()).toEqual([
       { id: 'mgr-1', name: 'Mgr One' }, { id: 'rep-1', name: 'Rep One' }, { id: 'rep-3', name: 'Rep Three' }, { id: 'rep-2', name: 'Rep Two' },
     ]);
-    await expect(collab.collaboration('00000000-0000-4000-8000-000000000999')).rejects.toThrow('Opportunity not found');
+    await expect(collab.collaboration(MGR, '00000000-0000-4000-8000-000000000999')).rejects.toThrow('Opportunity not found');
   });
 
   it('request: 400 self / not in roster / handoff to the owner, 409 duplicate pending, 403 without a caller id', async () => {
@@ -291,7 +344,7 @@ describe('OpportunityCollabService — collaboration', () => {
     await expect(collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: 'ghost', reason: 'x' })).rejects.toThrow('ผู้รับไม่ใช่เซลล์ในระบบ');
     await expect(collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: 'adm-1', reason: 'x' })).rejects.toThrow('ผู้รับไม่ใช่เซลล์ในระบบ');
     await expect(collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: 'rep-2', reason: '   ' })).rejects.toThrow(BadRequestException);
-    await expect(collab.createRequest(REP, PC, { kind: 'handoff', recipient_id: 'rep-2', reason: 'x' })).rejects.toThrow('อยู่กับผู้รับอยู่แล้ว');
+    await expect(collab.createRequest(MGR, PC, { kind: 'handoff', recipient_id: 'rep-2', reason: 'x' })).rejects.toThrow('อยู่กับผู้รับอยู่แล้ว');
     await expect(collab.createRequest({ id: '', isManager: false }, P1, { kind: 'handoff', recipient_id: 'rep-2', reason: 'x' })).rejects.toThrow(ForbiddenException);
     const state = await collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: 'rep-2', reason: ' ช่วยดูแลต่อ ' });
     expect(state).toMatchObject({ revision: 1, requests: [{
@@ -306,7 +359,8 @@ describe('OpportunityCollabService — collaboration', () => {
 
   it('approve a handoff (recipient): the recipient becomes the coordination owner, the account is untouched', async () => {
     const { collab, accounts, opportunities } = setup();
-    const { requests } = await collab.createRequest(REP, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'x' });
+    // rep-2 (the converted account's rep) hands PC to rep-3
+    const { requests } = await collab.createRequest(OTHER, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'x' });
     const id = requests[0].id;
     await expect(collab.resolveRequest(REP, PC, id, { status: 'approved', note: 'ok' })).rejects.toThrow(ForbiddenException);
     await expect(collab.resolveRequest(THIRD, PC, '00000000-0000-4000-8000-000000000999', { status: 'approved', note: 'ok' })).rejects.toThrow('request not found');
@@ -393,14 +447,14 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
 
   it('a coordinate request may go to the current owner (a handoff may not)', async () => {
     const { collab } = setup();
-    await expect(collab.createRequest(REP, PC, { kind: 'handoff', recipient_id: 'rep-2', reason: 'x' })).rejects.toThrow('อยู่กับผู้รับอยู่แล้ว');
-    const out = await collab.createRequest(REP, PC, { kind: 'coordinate', recipient_id: 'rep-2', reason: 'ช่วยกันดู' });
+    await expect(collab.createRequest(MGR, PC, { kind: 'handoff', recipient_id: 'rep-2', reason: 'x' })).rejects.toThrow('อยู่กับผู้รับอยู่แล้ว');
+    const out = await collab.createRequest(MGR, PC, { kind: 'coordinate', recipient_id: 'rep-2', reason: 'ช่วยกันดู' });
     expect(out.requests[0]).toMatchObject({ kind: 'coordinate', recipient_id: 'rep-2', status: 'pending', from_owner_id: null, from_owner_name: null });
   });
 
   it('a handoff stores who owned it; approving after the owner changed is 409 and writes nothing', async () => {
     const { collab, accounts, records, opportunities } = setup();
-    const { requests } = await collab.createRequest(REP, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'x' });
+    const { requests } = await collab.createRequest(OTHER, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'x' });
     expect(requests[0]).toMatchObject({ from_owner_id: 'rep-2', from_owner_name: 'Rep Two' });
     // the converted account moved to another rep after the request was made
     accounts.rows.find((a) => a.id === 'acc-c')!.assigned_sales_user_id = 'rep-1';
@@ -413,8 +467,10 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
     expect(JSON.stringify(records.rows)).toBe(rows);
     expect(await opportunities.meta(PC)).toMatchObject({ owner_sales_user_id: 'rep-1', source: 'derived' });
     // it stays pending: rejecting / cancelling still work
-    expect((await collab.collaboration(PC)).requests[0].status).toBe('pending');
-    await expect(collab.resolveRequest(REP, PC, requests[0].id, { status: 'cancelled', note: 'ล้าสมัย' })).resolves.toMatchObject({ requests: [{ status: 'cancelled' }] });
+    expect((await collab.collaboration(MGR, PC)).requests[0].status).toBe('pending');
+    // rep-2 no longer owns PC (and cannot read it) but still cancels the request they sent
+    await expect(collab.collaboration(OTHER, PC)).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    await expect(collab.resolveRequest(OTHER, PC, requests[0].id, { status: 'cancelled', note: 'ล้าสมัย' })).resolves.toMatchObject({ requests: [{ status: 'cancelled' }] });
   });
 
   it('a handoff stored before from_owner_id existed is never stale', async () => {
@@ -429,7 +485,7 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
         }],
       },
     });
-    const before = await collab.collaboration(PC);
+    const before = await collab.collaboration(MGR, PC);
     expect(before.requests[0]).toMatchObject({ from_owner_id: null, from_owner_name: null });
     await collab.resolveRequest(THIRD, PC, '00000000-0000-4000-8000-00000000aaaa', { status: 'approved', note: 'ok' });
     expect(await opportunities.meta(PC)).toMatchObject({ owner_sales_user_id: 'rep-3' });
@@ -470,8 +526,8 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
     // meta change on a converted place: account id + name on the row
     await collab.updateMeta(OTHER, PC, { stage: 'negotiate', purpose: 'winback' });
     await collab.updateMeta(OTHER, PC, { stage: 'negotiate' }); // nothing changed → no row
-    const created = await collab.createRequest(REP, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'ช่วยดูแลต่อ' });
-    await collab.postMessage(REP, PC, { recipient_id: 'rep-2', text: 'โทรหาร้านแล้ว', is_call_note: true });
+    const created = await collab.createRequest(OTHER, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'ช่วยดูแลต่อ' });
+    await collab.postMessage(OTHER, PC, { recipient_id: 'rep-1', text: 'โทรหาร้านแล้ว', is_call_note: true });
     await collab.resolveRequest(THIRD, PC, created.requests[0].id, { status: 'approved', note: 'รับเอง' });
     const logs = records.kind(LOG);
     expect(logs.map((r) => r.status)).toEqual(['meta_changed', 'request_created', 'message_posted', 'request_approved', 'owner_changed']);
@@ -483,10 +539,10 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
       actor_name: 'Rep Two', target_user_id: null, request_id: null, note: null,
       changes: { stage: { from: 'contacted', to: 'negotiate' }, purpose: { from: 'new_product', to: 'winback' } },
     } });
-    expect(logs[1]).toMatchObject({ sales_user_id: 'rep-1', payload: {
+    expect(logs[1]).toMatchObject({ sales_user_id: 'rep-2', payload: {
       target_user_id: 'rep-3', target_user_name: 'Rep Three', request_id: created.requests[0].id, request_kind: 'handoff', note: 'ช่วยดูแลต่อ', changes: null,
     } });
-    expect(logs[2]).toMatchObject({ sales_user_id: 'rep-1', payload: { target_user_id: 'rep-2', note: 'โทรหาร้านแล้ว', request_id: null } });
+    expect(logs[2]).toMatchObject({ sales_user_id: 'rep-2', payload: { target_user_id: 'rep-1', note: 'โทรหาร้านแล้ว', request_id: null } });
     expect(logs[3]).toMatchObject({ sales_user_id: 'rep-3', payload: { target_user_id: 'rep-3', note: 'รับเอง', seq: 0 } });
     expect(logs[4]).toMatchObject({ sales_user_id: 'rep-3', payload: {
       target_user_id: 'rep-3', request_id: created.requests[0].id, seq: 1,
@@ -606,5 +662,214 @@ describe('OpportunityCollabService — review follow-ups (§4.11.8)', () => {
     for (const cap of ['take', 'limit', 'skip', 'offset']) expect(names).not.toContain(cap);
     expect(calls.find(([k, a]) => (k === 'where' || k === 'andWhere') && String(a[0]).includes('u.role IN'))![1][1]).toEqual({ roles: [...WINBACK_NAMED_ROLES] });
     expect(await service.listStaffNames([])).toEqual([]);
+  });
+});
+
+describe('§4.11.8 review: UUID case', () => {
+  const UP1 = P1.toUpperCase();
+
+  it('an uppercase opportunity id hits the same meta row: no duplicate, version and owner consistent', async () => {
+    const { collab, opportunities, records } = setup();
+    await expect(collab.updateMeta(MGR, UP1, { stage: 'contacted', expected_version: 0 })).resolves.toMatchObject({ opportunity_id: P1, version: 1 });
+    await expect(collab.updateMeta(MGR, P1, { purpose: 'winback', expected_version: 1 })).resolves.toMatchObject({ stage: 'contacted', purpose: 'winback', version: 2 });
+    await expect(collab.updateMeta(MGR, UP1, { stage: 'won', expected_version: 1 })).rejects.toThrow('ข้อมูลเปลี่ยนไปแล้ว (version 2)');
+    expect(records.kind('opportunity_meta')).toHaveLength(1);
+    expect(records.kind('opportunity_meta')[0]).toMatchObject({ record_key: P1, version: 2 });
+    // the list joins on the lowercase key: the stored meta is found
+    const listed = await opportunities.list(MGR, { page: 1, limit: 20 } as never);
+    expect(listed.items.find((o) => o.id === P1)!.meta).toMatchObject({ stage: 'contacted', purpose: 'winback', version: 2, source: 'stored' });
+    expect(await collab.meta(MGR, UP1)).toMatchObject({ opportunity_id: P1, version: 2 });
+  });
+
+  it('requests / messages / resolve with uppercase ids: one thread, lowercase ids stored, owner set once', async () => {
+    const { collab, records } = setup();
+    const first = await collab.createRequest({ id: 'REP-1', isManager: false }, UP1, { kind: 'handoff', recipient_id: 'REP-2', reason: 'x' });
+    expect(first.requests[0]).toMatchObject({ requester_id: 'rep-1', recipient_id: 'rep-2', recipient_name: 'Rep Two' });
+    // the same pending request with other casing is a duplicate
+    await expect(collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: 'rep-2', reason: 'y' })).rejects.toThrow('มีคำขอแบบนี้รออยู่แล้ว');
+    await collab.postMessage(REP, P1, { recipient_id: 'REP-2', text: 'hi' });
+    // an uppercase actor id is the recipient; an uppercase request id finds the request
+    const out = await collab.resolveRequest({ id: 'REP-2', isManager: false }, UP1, first.requests[0].id.toUpperCase(), { status: 'approved', note: 'ok' });
+    expect(out).toMatchObject({ opportunity_id: P1, owner_sales_user_id: 'rep-2', owner_name: 'Rep Two', revision: 3, requests: [{ status: 'approved', resolved_by_id: 'rep-2' }] });
+    expect(records.kind('opportunity_collab')).toHaveLength(1);
+    expect(records.kind('opportunity_collab')[0].record_key).toBe(P1);
+    expect(records.kind('opportunity_meta')).toEqual([expect.objectContaining({ record_key: P1, sales_user_id: 'rep-2', version: 1 })]);
+    // the new owner with an uppercase id may edit; for anyone else it is still someone else's
+    await expect(collab.updateMeta({ id: 'REP-2', isManager: false }, UP1, { stage: 'negotiate', expected_version: 1 })).resolves.toMatchObject({ version: 2 });
+    await expect(collab.updateMeta(REP, UP1, { stage: 'won' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    for (const r of records.kind(LOG)) {
+      expect(r.payload.opportunity_id).toBe(P1);
+      expect(r.sales_user_id).toBe(r.sales_user_id.toLowerCase());
+    }
+  });
+
+  it('uppercase log filters (opportunity / actor / target / user, and the per-opportunity route) find the rows', async () => {
+    const { collab, records } = setup();
+    await collab.createRequest(REP, P1, { kind: 'handoff', recipient_id: 'rep-2', reason: 'r' });
+    await collab.postMessage(OTHER, P1, { recipient_id: 'rep-1', text: 'm' });
+    await collab.postMessage(REP, P2, { recipient_id: 'rep-3', text: 'other place' });
+    const notes = async (q: Row) => (await collab.logs({ page: 1, limit: 50, ...q } as never)).data.map((e) => e.note);
+    expect(await notes({ opportunity_id: UP1 })).toEqual(['m', 'r']);
+    expect(await notes({ actor_id: 'REP-1' })).toEqual(['other place', 'r']);
+    expect(await notes({ target_user_id: 'REP-2' })).toEqual(['r']);
+    expect(await notes({ user_id: 'REP-2' })).toEqual(['m', 'r']);
+    expect((await collab.opportunityLogs(UP1, { page: 1, limit: 50 })).meta.total).toBe(2);
+    expect(records.queries.at(-1)!.params).toMatchObject({ logOpportunity: P1 });
+  });
+
+  it('list owner filter and filter-meta with an uppercase caller id', async () => {
+    const { opportunities, collab } = setup();
+    await collab.createRequest(MGR, P1, { kind: 'handoff', recipient_id: 'rep-1', reason: 'x' }).then((s) => collab.resolveRequest(MGR, P1, s.requests[0].id, { status: 'approved', note: 'ok' }));
+    const upper = { id: 'REP-1', isManager: false };
+    await expect(opportunities.list(upper, { page: 1, limit: 20, owner_sales_user_id: 'REP-1' } as never)).resolves.toMatchObject({ counts: { recommended: 1 } });
+    expect((await opportunities.filterMeta(upper)).owners).toEqual([{ sales_user_id: 'rep-1', name: 'Rep One', count: 1 }]);
+  });
+});
+
+describe('§4.11.8 review: directory fields', () => {
+  it('each item is exactly { id, name } — no email / phone / role even when the roster row carries them', async () => {
+    const { collab } = setup([
+      { id: 'REP-1', name: 'rep1@example.com', role: 'sale', email: 'rep1@example.com', phone: '0812345678' },
+      { id: 'rep-2', name: 'Rep Two', role: 'sales', email: 'rep2@example.com', phone: '0899999999' },
+      { id: 'adm-1', name: 'Admin One', role: 'admin', email: 'a@example.com' },
+    ]);
+    const items = await collab.directory();
+    expect(items).toEqual([{ id: 'rep-1', name: 'rep1@example.com' }, { id: 'rep-2', name: 'Rep Two' }]);
+    for (const item of items) {
+      expect(Object.keys(item).sort()).toEqual(['id', 'name']);
+      for (const key of ['email', 'phone', 'role']) expect(item).not.toHaveProperty(key);
+    }
+  });
+});
+
+describe('§4.11.8 review: visibility (own + unassigned for sales, everything for managers)', () => {
+  /** P1 owned by rep-2 (stored owner), P3 owned by rep-1, P2 unassigned; PC converted (rep-2's account). */
+  function scoped() {
+    const ctx = setup(STAFF, [...PLACES, PLACE_3]);
+    ctx.records.rows.push(
+      { id: 'm-p1', kind: 'opportunity_meta', record_key: P1, sales_user_id: 'rep-2', version: 1, payload: {} },
+      { id: 'm-p3', kind: 'opportunity_meta', record_key: P3, sales_user_id: 'rep-1', version: 1, payload: { purpose: 'winback' } },
+    );
+    return ctx;
+  }
+  const ids = async (o: OpportunityService, actor: WinbackActor) => {
+    const tabs = await Promise.all(['recommended', 'needs_enrich'].map((tab) => o.list(actor, { page: 1, limit: 100, tab } as never)));
+    return tabs.flatMap((t) => t.items.map((i) => i.id)).sort();
+  };
+  const total = (counts: { recommended: number; needs_enrich: number }) => counts.recommended + counts.needs_enrich;
+
+  it('list: a sale sees own + unassigned, not another rep\'s; a manager sees all', async () => {
+    const { opportunities } = scoped();
+    expect(await ids(opportunities, REP)).toEqual([P2, P3].sort());
+    expect(await ids(opportunities, OTHER)).toEqual([P1, P2].sort());
+    expect(await ids(opportunities, THIRD)).toEqual([P2]);
+    expect(await ids(opportunities, MGR)).toEqual([P1, P2, P3].sort());
+  });
+
+  it('filter-meta counts == list totals for every caller (all, unassigned, own)', async () => {
+    const { opportunities } = scoped();
+    for (const actor of [REP, OTHER, THIRD, MGR]) {
+      const meta = await opportunities.filterMeta(actor);
+      const all = await opportunities.list(actor, { page: 1, limit: 100 } as never);
+      const sum = (xs: Array<{ count: number }>) => xs.reduce((n, x) => n + x.count, 0);
+      expect(sum(meta.stages)).toBe(total(all.counts));
+      expect(sum(meta.purposes)).toBe(total(all.counts));
+      expect(meta.recommendation_reasons.find((r) => r.value === 'needs_research')!.count).toBe(all.counts.needs_enrich);
+      expect(meta.unassigned_count).toBe(total((await opportunities.list(actor, { page: 1, limit: 100, unassigned_only: true } as never)).counts));
+      for (const chip of meta.owners) {
+        expect(chip.count).toBe(total((await opportunities.list(actor, { page: 1, limit: 100, owner_sales_user_id: chip.sales_user_id } as never)).counts));
+      }
+      expect(meta.unassigned_count + sum(meta.owners)).toBe(total(all.counts));
+    }
+    expect((await opportunities.filterMeta(REP)).owners).toEqual([{ sales_user_id: 'rep-1', name: 'Rep One', count: 1 }]);
+    expect((await opportunities.filterMeta(MGR)).owners.map((o) => o.sales_user_id).sort()).toEqual(['rep-1', 'rep-2']);
+  });
+
+  it('403 (never 404) on every guarded route for another rep\'s opportunity; the manager passes', async () => {
+    const { collab, records } = scoped();
+    const saves = records.saves;
+    const calls: Array<[string, () => Promise<unknown>]> = [
+      ['GET /opportunities/:id', () => collab.detail(REP, P1)],
+      ['GET meta', () => collab.meta(REP, P1)],
+      ['PATCH meta', () => collab.updateMeta(REP, P1, { stage: 'won' })],
+      ['GET collaboration', () => collab.collaboration(REP, P1)],
+      ['POST collaboration', () => collab.createRequest(REP, P1, { kind: 'coordinate', recipient_id: 'rep-3', reason: 'x' })],
+      ['POST message', () => collab.postMessage(REP, P1, { recipient_id: 'rep-2', text: 'x' })],
+      ['PATCH resolve (unknown request id)', () => collab.resolveRequest(REP, P1, '00000000-0000-4000-8000-000000000999', { status: 'cancelled', note: 'x' })],
+      // a converted opportunity: owner = the account's rep (rep-2)
+      ['GET meta (converted)', () => collab.meta(REP, PC)],
+      ['POST collaboration (converted)', () => collab.createRequest(REP, PC, { kind: 'handoff', recipient_id: 'rep-3', reason: 'x' })],
+    ];
+    for (const [, call] of calls) {
+      const error = await call().then(() => null, (e) => e);
+      expect(error).toBeInstanceOf(ForbiddenException);
+      expect((error as Error).message).toBe(OPPORTUNITY_NOT_YOURS);
+    }
+    expect(records.saves).toBe(saves);
+    // the manager anywhere; the owner on their own; any sale on an unassigned one
+    await expect(collab.detail(MGR, P1)).resolves.toMatchObject({ id: P1 });
+    await expect(collab.createRequest(MGR, P1, { kind: 'coordinate', recipient_id: 'rep-3', reason: 'x' })).resolves.toBeDefined();
+    await expect(collab.meta(OTHER, P1)).resolves.toMatchObject({ owner_sales_user_id: 'rep-2' });
+    await expect(collab.createRequest(REP, P3, { kind: 'coordinate', recipient_id: 'rep-2', reason: 'x' })).resolves.toBeDefined();
+    await expect(collab.createRequest(THIRD, P2, { kind: 'handoff', recipient_id: 'rep-2', reason: 'x' })).resolves.toBeDefined();
+    // unknown place is still 404
+    await expect(collab.meta(REP, '00000000-0000-4000-8000-000000000999')).rejects.toThrow(NotFoundException);
+  });
+
+  it('recipient exception: reads meta + thread, messages, resolves — but cannot PATCH meta or see it in the list', async () => {
+    const { collab, opportunities } = scoped();
+    // rep-2 owns P1 and asks rep-3 to coordinate; a handoff to rep-1 too (rep-1 = another recipient)
+    const state = await collab.createRequest(OTHER, P1, { kind: 'coordinate', recipient_id: 'rep-3', reason: 'ช่วยกัน' });
+    await expect(collab.detail(THIRD, P1)).resolves.toMatchObject({ id: P1 });
+    await expect(collab.meta(THIRD, P1)).resolves.toMatchObject({ owner_sales_user_id: 'rep-2' });
+    await expect(collab.collaboration(THIRD, P1)).resolves.toMatchObject({ requests: [{ recipient_id: 'rep-3' }] });
+    await expect(collab.postMessage(THIRD, P1, { recipient_id: 'rep-2', text: 'รับทราบ' })).resolves.toMatchObject({ messages: [{ author_id: 'rep-3' }] });
+    await expect(collab.updateMeta(THIRD, P1, { stage: 'won' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    await expect(collab.createRequest(THIRD, P1, { kind: 'coordinate', recipient_id: 'rep-1', reason: 'x' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    expect(await ids(opportunities, THIRD)).toEqual([P2]);
+    // a non-recipient third rep: 403 everywhere
+    await expect(collab.collaboration(REP, P1)).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    await expect(collab.postMessage(REP, P1, { recipient_id: 'rep-2', text: 'x' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    await expect(collab.resolveRequest(REP, P1, state.requests[0].id, { status: 'approved', note: 'x' })).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    // the recipient resolves it; a past request keeps the thread readable
+    await expect(collab.resolveRequest(THIRD, P1, state.requests[0].id, { status: 'approved', note: 'ไปด้วยกัน' })).resolves.toMatchObject({ owner_sales_user_id: 'rep-2' });
+    await expect(collab.collaboration(THIRD, P1)).resolves.toMatchObject({ requests: [{ status: 'approved' }] });
+    await expect(collab.postMessage(THIRD, P1, { recipient_id: 'rep-2', text: 'อีกเรื่อง' })).resolves.toBeDefined();
+  });
+
+  it('the recipient of a handoff approves it (then owns it); the requester who lost the opportunity still cancels', async () => {
+    const { collab, opportunities } = scoped();
+    const a = await collab.createRequest(OTHER, P1, { kind: 'handoff', recipient_id: 'rep-3', reason: 'ส่งต่อ' });
+    const b = await collab.createRequest(OTHER, P1, { kind: 'coordinate', recipient_id: 'rep-1', reason: 'ช่วยด้วย' });
+    // rep-1 is only the recipient of the coordinate request: may not approve the handoff addressed to rep-3
+    await expect(collab.resolveRequest(REP, P1, a.requests[0].id, { status: 'approved', note: 'x' })).rejects.toThrow('เฉพาะผู้รับคำขอหรือ manager ที่อนุมัติหรือปฏิเสธได้');
+    await expect(collab.resolveRequest(THIRD, P1, a.requests[0].id, { status: 'approved', note: 'รับ' })).resolves.toMatchObject({ owner_sales_user_id: 'rep-3' });
+    expect(await ids(opportunities, THIRD)).toEqual([P1, P2].sort());
+    // rep-2 no longer owns P1: no thread, but cancels the coordinate request they sent
+    await expect(collab.collaboration(OTHER, P1)).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
+    const out = await collab.resolveRequest(OTHER, P1, b.requests[1].id, { status: 'cancelled', note: 'ไม่ต้องแล้ว' });
+    expect(out.requests.map((r) => r.status)).toEqual(['approved', 'cancelled']);
+    // ... and only that: approving someone else's request is still 403 (the resolve rule's message)
+    const c = await collab.createRequest(THIRD, P1, { kind: 'coordinate', recipient_id: 'rep-1', reason: 'อีกที' });
+    await expect(collab.resolveRequest(OTHER, P1, c.requests[2].id, { status: 'approved', note: 'x' })).rejects.toThrow('เฉพาะผู้รับคำขอหรือ manager ที่อนุมัติหรือปฏิเสธได้');
+  });
+
+  it('every collaboration write needs a caller id: 403 before anything else, nothing written', async () => {
+    const { collab, records } = scoped();
+    const { requests } = await collab.createRequest(MGR, P2, { kind: 'coordinate', recipient_id: 'rep-1', reason: 'x' });
+    const saves = records.saves;
+    const anon: WinbackActor = { id: '', isManager: true };
+    for (const call of [
+      () => collab.updateMeta(anon, P2, { stage: 'won' }),
+      () => collab.createRequest(anon, P2, { kind: 'handoff', recipient_id: 'rep-1', reason: 'x' }),
+      () => collab.resolveRequest(anon, P2, requests[0].id, { status: 'cancelled', note: 'x' }),
+      () => collab.postMessage(anon, P2, { recipient_id: 'rep-1', text: 'x' }),
+    ]) {
+      await expect(call()).rejects.toThrow(NO_STAFF_ID);
+    }
+    expect(records.saves).toBe(saves);
+    // reads without an id: unassigned only
+    await expect(collab.meta({ id: '', isManager: false }, P2)).resolves.toBeDefined();
+    await expect(collab.meta({ id: '', isManager: false }, P1)).rejects.toThrow(OPPORTUNITY_NOT_YOURS);
   });
 });

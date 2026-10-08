@@ -19,8 +19,7 @@ const UUID = '00000000-0000-4000-8000-000000000001';
 
 function createController() {
   const opportunities = {
-    list: jest.fn(), provinces: jest.fn(), detail: jest.fn(), convert: jest.fn(),
-    meta: jest.fn(), filterMeta: jest.fn(), accountOpportunities: jest.fn(),
+    list: jest.fn(), provinces: jest.fn(), convert: jest.fn(), filterMeta: jest.fn(), accountOpportunities: jest.fn(),
   };
   const signals = { list: jest.fn(), complete: jest.fn(), snooze: jest.fn(), dismiss: jest.fn(), revenueContext: jest.fn() };
   const catalog = { listProducts: jest.fn() };
@@ -113,6 +112,25 @@ describe('WinbackAppController contract', () => {
       expect(collab.directory).toHaveBeenCalled();
     });
 
+    it('§4.11.8 visibility: detail / meta / thread / account opportunities get the caller (scoped in the service)', () => {
+      const { controller, opportunities, collab } = createController();
+      controller.opportunity(sale, UUID);
+      expect(collab.detail).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+      controller.opportunityMeta(sale, UUID);
+      expect(collab.meta).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+      controller.opportunityCollaboration(manager, UUID);
+      expect(collab.collaboration).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true }, UUID);
+      controller.accountOpportunities(sale, UUID);
+      expect(opportunities.accountOpportunities).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID);
+    });
+
+    it('a caller without a JWT sub reaches the service with an empty id (the service answers 403 on writes)', () => {
+      const { controller, collab } = createController();
+      const noSub = { user: { role: 'sale' } } as any;
+      controller.postCollabMessage(noSub, UUID, { recipient_id: UUID, text: 't' });
+      expect(collab.postMessage).toHaveBeenCalledWith({ id: '', isManager: false }, UUID, { recipient_id: UUID, text: 't' });
+    });
+
     it('collaboration logs: 403 message for a sale, the query goes through for a manager', () => {
       const { controller, collab } = createController();
       expect(() => controller.collaborationLogs(sale, { page: 1, limit: 50 } as any)).toThrow('เฉพาะ manager ที่ดูบันทึกการประสานงานได้');
@@ -179,7 +197,7 @@ describe('WinbackAppController contract', () => {
 
     it('opportunity meta + filter-meta + collaboration (§4.11.8)', async () => {
       const { controller, opportunities, collab } = createController();
-      opportunities.meta.mockResolvedValue({
+      collab.meta.mockResolvedValue({
         opportunity_id: UUID, stage: 'prospect', purpose: 'new_product', owner_sales_user_id: null, owner_name: null,
         cuisine_id: null, district_code: null, source: 'derived', version: 0, updated_at: null,
         recommendation: {
@@ -207,10 +225,10 @@ describe('WinbackAppController contract', () => {
       });
       opportunities.accountOpportunities.mockResolvedValue([UUID]);
       collab.directory.mockResolvedValue([{ id: 'sales-1', name: 'Rep One' }]);
-      expect(wrapWinbackResponse(await controller.opportunityMeta(UUID))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.opportunityMeta(sale, UUID))).toMatchSnapshot();
       expect(wrapWinbackResponse(await controller.opportunityFilterMeta(sale))).toMatchSnapshot();
-      expect(wrapWinbackResponse(await controller.opportunityCollaboration(UUID))).toMatchSnapshot();
-      expect(wrapWinbackResponse(await controller.accountOpportunities(UUID))).toEqual({ data: [UUID] });
+      expect(wrapWinbackResponse(await controller.opportunityCollaboration(sale, UUID))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.accountOpportunities(sale, UUID))).toEqual({ data: [UUID] });
       expect(wrapWinbackResponse(await controller.collaborationDirectory())).toEqual({ data: [{ id: 'sales-1', name: 'Rep One' }] });
     });
 

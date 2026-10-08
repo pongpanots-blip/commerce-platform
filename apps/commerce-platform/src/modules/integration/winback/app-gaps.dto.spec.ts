@@ -80,6 +80,17 @@ describe('app gap DTOs', () => {
     expect((await check(CollabMessageDto, { recipient_id: UUID, text: '', is_call_note: 'yes' })).fields).toEqual(['text', 'is_call_note']);
   });
 
+  it('uppercase UUIDs pass validation unchanged (the services normalise them — §4.11.8 UUID case)', async () => {
+    const UP = 'ABCDEF00-0000-4000-8000-0000000000A1';
+    const body = await check(CreateCollabRequestDto, { kind: 'handoff', recipient_id: UP, reason: 'r' });
+    expect(body.fields).toEqual([]);
+    expect(body.dto.recipient_id).toBe(UP);
+    const q = await check(CollabLogQueryDto, { opportunity_id: UP, actor_id: UP, target_user_id: UP, user_id: UP });
+    expect(q.fields).toEqual([]);
+    expect(q.dto.opportunity_id).toBe(UP);
+    expect((await check(OpportunityQueryDto, { owner_sales_user_id: UP })).fields).toEqual([]);
+  });
+
   it('collaboration log query: defaults, UUID filters, event list, Bangkok day or zoned ISO', async () => {
     expect((await check(CollabLogQueryDto, {})).dto).toMatchObject({ page: 1, limit: 50 });
     const ok = await check(CollabLogQueryDto, {

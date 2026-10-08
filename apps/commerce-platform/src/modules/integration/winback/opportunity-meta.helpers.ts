@@ -30,6 +30,31 @@ interface Actor {
   isManager: boolean;
 }
 
+// --- Ids ---
+
+/**
+ * THE one id normaliser for §4.11.8 (opportunity / account / user / request UUIDs): trimmed + lowercase.
+ * Postgres prints a uuid lowercase (`CAST(p.id AS text)`, uuid columns) but jsonb payload values,
+ * `record_key` (varchar, case-sensitive unique index) and in-memory compares are plain text — so every id
+ * is normalised before it is written, looked up or compared. `null` / non-strings → null.
+ */
+export function normalizeId(id: string): string;
+export function normalizeId(id: string | null | undefined): string | null;
+export function normalizeId(id: string | null | undefined): string | null {
+  return typeof id === 'string' ? id.trim().toLowerCase() : null;
+}
+
+/** Two ids are the same once normalised (null never equals anything). */
+export function sameId(a: string | null | undefined, b: string | null | undefined): boolean {
+  const x = normalizeId(a);
+  return !!x && x === normalizeId(b);
+}
+
+/** The caller with a normalised id (`''` when the token has no `sub`). */
+export function normalizeActor<T extends Actor>(actor: T): T {
+  return { ...actor, id: normalizeId(actor.id) ?? '' };
+}
+
 // --- Opportunity meta ---
 
 /** The place + converted-account columns the meta is derived from (OpportunityService selects them). */
@@ -145,9 +170,10 @@ export function buildOpportunityMeta(
   stored: StoredOpportunityMeta | null,
   names: ReadonlyMap<string, string>,
 ): OpportunityMeta {
-  const owner = stored?.owner_sales_user_id ?? row.account_owner_id ?? null;
+  // In-memory twin of OPPORTUNITY_OWNER_SQL: stored coordination owner, else the converted account's rep.
+  const owner = normalizeId(stored?.owner_sales_user_id ?? row.account_owner_id ?? null);
   return {
-    opportunity_id: row.id,
+    opportunity_id: normalizeId(row.id),
     stage: stored?.stage ?? row.account_stage ?? OPPORTUNITY_DEFAULT_STAGE,
     purpose: stored?.purpose ?? OPPORTUNITY_DEFAULT_PURPOSE,
     recommendation: deriveRecommendation(row, opportunity),
@@ -161,10 +187,60 @@ export function buildOpportunityMeta(
   };
 }
 
-/** Who may PATCH the meta: a manager, the owner, or anyone while the opportunity has no owner. */
-export function metaEditError(actor: Actor, ownerId: string | null): RuleError | null {
-  if (actor.isManager || !ownerId || ownerId === actor.id) return null;
-  return { status: 403, message: 'เฉพาะผู้ดูแลโอกาสหรือ manager ที่แก้ได้' };
+// --- Visibility (who may see / act on an opportunity) ---
+
+/** The coordination owner as SQL over `m` (stored opportunity_meta) and `a` (converted account). */
+export const OPPORTUNITY_OWNER_SQL = 'COALESCE(m.sales_user_id, a.assigned_sales_user_id)';
+
+export const OPPORTUNITY_NOT_YOURS = 'โอกาสนี้มีผู้ดูแลคนอื่น — เฉพาะผู้ดูแลหรือ manager';
+
+export interface OpportunityVisibility {
+  /** AND clause over OPPORTUNITY_OWNER_SQL; null = no restriction (a manager). */
+  sql: string | null;
+  params: Record<string, string>;
+  /** The same rule in memory, for one opportunity's owner id. */
+  allows(ownerId: string | null | undefined): boolean;
+}
+
+/**
+ * The one visibility rule: a manager sees every opportunity; anyone else only their own (coordination owner
+ * = self) or unassigned ones (no owner). A caller without an id sees only unassigned ones. The list,
+ * filter-meta, account opportunities and every per-opportunity route use this.
+ */
+export function opportunityVisibility(actor: Actor): OpportunityVisibility {
+  if (actor.isManager) return { sql: null, params: {}, allows: () => true };
+  const self = normalizeId(actor.id) || null;
+  return {
+    sql: self ? `(${OPPORTUNITY_OWNER_SQL} IS NULL OR ${OPPORTUNITY_OWNER_SQL} = :visibleOwner)` : `${OPPORTUNITY_OWNER_SQL} IS NULL`,
+    params: self ? { visibleOwner: self } : {},
+    allows: (ownerId) => {
+      const owner = normalizeId(ownerId ?? null);
+      return !owner || owner === self;
+    },
+  };
+}
+
+/**
+ * What a route needs beyond visibility:
+ * - `owner` — PATCH meta, starting a request: visibility only.
+ * - `thread` — read the opportunity / meta / thread, post a message: visibility, or the recipient of any
+ *   request (pending or past) on it.
+ * - `resolve` — approve / reject / cancel: visibility, or the recipient or requester of a request on it
+ *   (collabResolveError then decides which of them may do what).
+ */
+export type OpportunityAccess = 'owner' | 'thread' | 'resolve';
+
+export function opportunityAccessError(
+  actor: Actor,
+  ownerId: string | null | undefined,
+  state: CollabPayload | null,
+  access: OpportunityAccess,
+): RuleError | null {
+  if (opportunityVisibility(actor).allows(ownerId)) return null;
+  if (access !== 'owner' && state?.requests.some((r) => sameId(r.recipient_id, actor.id) || (access === 'resolve' && sameId(r.requester_id, actor.id)))) {
+    return null;
+  }
+  return { status: 403, message: OPPORTUNITY_NOT_YOURS };
 }
 
 export function versionError(current: number, expected: number | undefined): RuleError | null {
@@ -177,7 +253,7 @@ export function ownerFilterError(actor: Actor, q: { owner_sales_user_id?: string
   if (q.owner_sales_user_id && q.unassigned_only) {
     return { status: 400, message: 'ใช้ owner_sales_user_id กับ unassigned_only พร้อมกันไม่ได้' };
   }
-  if (q.owner_sales_user_id && !actor.isManager && q.owner_sales_user_id !== actor.id) {
+  if (q.owner_sales_user_id && !actor.isManager && !sameId(q.owner_sales_user_id, actor.id)) {
     return { status: 403, message: 'เซลล์กรองได้เฉพาะโอกาสของตัวเอง' };
   }
   return null;
@@ -291,8 +367,8 @@ export function collabPayload(raw: Record<string, unknown> | null | undefined): 
 
 /** Recipient checks shared by requests and messages. */
 export function recipientError(actor: Actor, recipientId: string, rosterIds: ReadonlySet<string>): RuleError | null {
-  if (recipientId === actor.id) return { status: 400, message: 'ผู้รับต้องไม่ใช่ตัวเอง' };
-  if (!rosterIds.has(recipientId)) return { status: 400, message: 'ผู้รับไม่ใช่เซลล์ในระบบ' };
+  if (sameId(recipientId, actor.id)) return { status: 400, message: 'ผู้รับต้องไม่ใช่ตัวเอง' };
+  if (!rosterIds.has(normalizeId(recipientId))) return { status: 400, message: 'ผู้รับไม่ใช่เซลล์ในระบบ' };
   return null;
 }
 
@@ -306,11 +382,11 @@ export function collabRequestError(
 ): RuleError | null {
   const recipient = recipientError(actor, recipientId, rosterIds);
   if (recipient) return recipient;
-  if (kind === WinbackCollabRequestKind.HANDOFF && ownerId === recipientId) {
+  if (kind === WinbackCollabRequestKind.HANDOFF && sameId(ownerId, recipientId)) {
     return { status: 400, message: 'โอกาสนี้อยู่กับผู้รับอยู่แล้ว — ส่งต่อให้เจ้าของเดิมไม่ได้' };
   }
   const duplicate = state.requests.some(
-    (r) => r.status === WinbackCollabRequestStatus.PENDING && r.kind === kind && r.requester_id === actor.id && r.recipient_id === recipientId,
+    (r) => r.status === WinbackCollabRequestStatus.PENDING && r.kind === kind && sameId(r.requester_id, actor.id) && sameId(r.recipient_id, recipientId),
   );
   if (duplicate) return { status: 409, message: 'มีคำขอแบบนี้รออยู่แล้ว' };
   return null;
@@ -319,10 +395,10 @@ export function collabRequestError(
 /** approve / reject: the recipient or a manager · cancel: the requester or a manager · only while pending. */
 export function collabResolveError(actor: Actor, request: CollabRequest, status: string): RuleError | null {
   if (status === WinbackCollabRequestStatus.CANCELLED) {
-    if (!actor.isManager && request.requester_id !== actor.id) {
+    if (!actor.isManager && !sameId(request.requester_id, actor.id)) {
       return { status: 403, message: 'เฉพาะผู้ส่งคำขอหรือ manager ที่ยกเลิกได้' };
     }
-  } else if (!actor.isManager && request.recipient_id !== actor.id) {
+  } else if (!actor.isManager && !sameId(request.recipient_id, actor.id)) {
     return { status: 403, message: 'เฉพาะผู้รับคำขอหรือ manager ที่อนุมัติหรือปฏิเสธได้' };
   }
   if (request.status !== WinbackCollabRequestStatus.PENDING) return { status: 409, message: 'คำขอนี้ไม่ได้รออยู่แล้ว' };
@@ -338,7 +414,7 @@ export const STALE_HANDOFF_MESSAGE = 'คำขอนี้ล้าสมัย
  */
 export function staleHandoffError(request: CollabRequest, currentOwnerId: string | null): RuleError | null {
   if (request.kind !== WinbackCollabRequestKind.HANDOFF || !('from_owner_id' in request)) return null;
-  if ((request.from_owner_id ?? null) === (currentOwnerId ?? null)) return null;
+  if (normalizeId(request.from_owner_id ?? null) === normalizeId(currentOwnerId ?? null)) return null;
   return { status: 409, message: STALE_HANDOFF_MESSAGE };
 }
 
@@ -410,13 +486,13 @@ export function collabLogEntry(r: CollabLogRecord): CollabLogEntry {
   return {
     id: r.id,
     event: r.status as WinbackCollabLogEvent,
-    opportunity_id: String(p.opportunity_id ?? ''),
+    opportunity_id: normalizeId(String(p.opportunity_id ?? '')),
     opportunity_name: p.opportunity_name ?? null,
-    account_id: r.account_id ?? null,
+    account_id: normalizeId(r.account_id ?? null),
     account_name: p.account_name ?? null,
-    actor_id: r.sales_user_id ?? r.created_by ?? null,
+    actor_id: normalizeId(r.sales_user_id ?? r.created_by ?? null),
     actor_name: p.actor_name ?? null,
-    target_user_id: p.target_user_id ?? null,
+    target_user_id: normalizeId(p.target_user_id ?? null),
     target_user_name: p.target_user_name ?? null,
     request_id: p.request_id ?? null,
     request_kind: p.request_kind ?? null,

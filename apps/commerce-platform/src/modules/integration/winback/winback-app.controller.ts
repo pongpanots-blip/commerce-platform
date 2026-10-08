@@ -126,15 +126,16 @@ export class WinbackAppController {
     return this.opportunities.provinces(q);
   }
 
-  /** นับตาม stage / purpose / recommendation / owner ทุกร้านที่ยังไม่มี lead (เท่ากับ list) — owners ของ sale = ตัวเองเท่านั้น */
+  /** นับตาม stage / purpose / recommendation / owner ร้านที่ยังไม่มี lead ที่ผู้เรียกมองเห็น (scope เดียวกับ list) — owners ของ sale = ตัวเองเท่านั้น */
   @Get('opportunities/filter-meta')
   opportunityFilterMeta(@Req() req: RequestWithUser) {
     return this.opportunities.filterMeta(this.actor(req));
   }
 
+  /** 403 on another rep's opportunity (same rule as its meta / thread — §4.11.8 visibility) */
   @Get('opportunities/:id')
-  opportunity(@Param('id', uuid()) id: string) {
-    return this.opportunities.detail(id);
+  opportunity(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.collab.detail(this.actor(req), id);
   }
 
   /** สร้าง TMP lead จากโอกาส (idempotent — แปลงแล้วคืน lead เดิม) */
@@ -144,10 +145,12 @@ export class WinbackAppController {
   }
 
   // --- Opportunity filter metadata + collaboration (§4.11.8, record-only: nothing is sent or reassigned) ---
+  // Visibility: manager = every opportunity; anyone else = own + unassigned (+ reading / messaging / resolving
+  // on a thread where a request is addressed to them) — 403 `โอกาสนี้มีผู้ดูแลคนอื่น …` otherwise.
 
   @Get('opportunities/:id/meta')
-  opportunityMeta(@Param('id', uuid()) id: string) {
-    return this.opportunities.meta(id);
+  opportunityMeta(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.collab.meta(this.actor(req), id);
   }
 
   @Patch('opportunities/:id/meta')
@@ -156,8 +159,8 @@ export class WinbackAppController {
   }
 
   @Get('opportunities/:id/collaboration')
-  opportunityCollaboration(@Param('id', uuid()) id: string) {
-    return this.collab.collaboration(id);
+  opportunityCollaboration(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.collab.collaboration(this.actor(req), id);
   }
 
   @Post('opportunities/:id/collaboration')
@@ -187,12 +190,13 @@ export class WinbackAppController {
     return this.collab.resolveRequest(this.actor(req), id, requestId, dto);
   }
 
+  /** place id ที่แปลงเป็น account นี้ — เฉพาะที่ผู้เรียกมองเห็น (ของตัวเอง / ยังไม่มีผู้ดูแล; manager ทั้งหมด) */
   @Get('account/:id/opportunities')
-  accountOpportunities(@Param('id', uuid()) id: string) {
-    return this.opportunities.accountOpportunities(id);
+  accountOpportunities(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
+    return this.opportunities.accountOpportunities(this.actor(req), id);
   }
 
-  /** รายชื่อเซลล์ (ชื่ออย่างเดียว) ให้เลือกผู้รับคำขอ/ข้อความ — sale ดู `/sales-users` ไม่ได้ */
+  /** รายชื่อเซลล์ให้เลือกผู้รับคำขอ/ข้อความ — `{ id, name }` เท่านั้น (ไม่มี email/phone/role) · sale ดู `/sales-users` ไม่ได้ */
   @Get('collaboration/directory')
   collaborationDirectory() {
     return this.collab.directory();

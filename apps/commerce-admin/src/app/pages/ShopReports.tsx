@@ -1,3 +1,4 @@
+import { SalesRepFilter } from '../components/SalesRepFilter';
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
@@ -6,7 +7,7 @@ import {
   Alert, BarList, Button, Chip, Empty, ErrorText, Field, Loading, Page, PageHeader, Panel, PanelHead, Select, StatGrid,
   StatTile, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { HealthReport, PeriodParams, REPORT_PERIODS, ReportPeriod, reportsApi } from '../../lib/api';
+import { HealthReport, PeriodParams, REPORT_PERIODS, ReportPeriod, reportsApi, session, salesAssignmentApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -17,10 +18,10 @@ const PERIOD_LABEL: Record<ReportPeriod, string> = {
 };
 
 /** Period picker + load; every report page is "pick a period, show what came back". */
-function useReport<T>(load: (p: PeriodParams) => Promise<T>) {
+function useReport<T>(load: (p: PeriodParams) => Promise<T>, deps: unknown[] = []) {
   const [p, setP] = useState<PeriodParams>({ period: 'this_month' });
   const ready = p.period !== 'custom' || (!!p.fromDate && !!p.toDate);
-  const state = useAsync<T | null>(() => (ready ? load(p) : Promise.resolve(null)), [p.period, p.fromDate, p.toDate]);
+  const state = useAsync<T | null>(() => (ready ? load(p) : Promise.resolve(null)), [p.period, p.fromDate, p.toDate, ...deps]);
   const picker = (
     <div className="flex items-center gap-3">
       <Select value={p.period} onChange={(e) => setP({ period: e.target.value as ReportPeriod })}>
@@ -46,20 +47,37 @@ function Change({ pct }: { pct: number | null }) {
 
 export function SalesReport() {
   __useUiLocale();
-  const { data, loading, error, picker } = useReport(reportsApi.sales);
+  const role = session.claims()?.role;
+  const manager = role === 'sales_manager' || role === 'admin';
+  const [salesUserId, setSalesUserId] = useState('');
+  const reps = useAsync(() => manager ? salesAssignmentApi.reps() : Promise.resolve([]), [manager]);
+  const { data, loading, error, picker } = useReport(async p => {
+    const [sales, byRep] = await Promise.all([
+      reportsApi.sales({ ...p, salesUserId: salesUserId || undefined }),
+      manager ? reportsApi.salesByRep(p) : Promise.resolve(null),
+    ]);
+    return { ...sales, byRep };
+  }, [salesUserId, manager]);
   const t = data?.totals;
   const series = data?.byDay ?? data?.byMonth ?? [];
 
   return (
     <Page>
       <PageHeader
-        title={__uiText("ยอดขาย")}
-        subtitle={__uiText("ออเดอร์ที่จ่ายแล้ว (paid/preparing/shipped/delivered) · บาทรวม VAT หลังส่วนลด · อ่านจาก replica ของ josh")}
-        actions={picker}
+        title={__uiText(role === 'sale' ? "ยอดขายของฉัน" : manager ? "ยอดขายทีมและผลงานรายเซลส์" : "ยอดขาย")}
+        subtitle={__uiText(role === 'sale' ? "ยอดขายจากบริษัทที่ฉันดูแล" : "ยอดขายจากบริษัทที่ทีมดูแล")}
+        actions={<>{picker}<SalesRepFilter value={salesUserId} onChange={setSalesUserId} /></>}
       />
       <div className="border-t border-secondary-container" />
 
       <ErrorText error={error} />
+      {data?.byRep && <Panel><PanelHead title={__uiText('ผลงานรายเซลส์')} />
+        <Table><THead><TH>{__uiText('พนักงานขาย')}</TH><TH>{__uiText('ออเดอร์')}</TH><TH>{__uiText('ยอดขาย')}</TH><TH>{__uiText('ลูกค้าที่ซื้อ')}</TH></THead>
+        <TBody>{data.byRep.items.map(row => <TR key={row.sales_user_id ?? 'unassigned'}>
+          <TD>{row.sales_user_id ? reps.data?.find(rep => rep.id === row.sales_user_id)?.name || row.sales_user_id : __uiText('ยังไม่มีผู้ดูแล')}</TD>
+          <TD>{fmt.num(row.orders)}</TD><TD>{fmt.baht(row.revenue_inc_vat)}</TD><TD>{fmt.num(row.customers)}</TD>
+        </TR>)}</TBody></Table>
+      </Panel>}
 
       {loading && !data ? (
         <Loading />

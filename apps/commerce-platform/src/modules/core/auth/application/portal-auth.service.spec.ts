@@ -38,6 +38,13 @@ describe('PortalAuthService', () => {
     expect(jwt.signAsync).toHaveBeenCalledWith({ sub: 'u1', email: 'dev@example.com', role: 'developer' });
   });
 
+  it('login canonicalizes a stored sale_manager alias in the token and response', async () => {
+    const { service, jwt } = makeService();
+    jest.spyOn(service, 'verifyCredentials').mockResolvedValue({ id: 'u1', email: 'rep@example.test', role: ' SALE_MANAGER ' } as never);
+    expect(await service.login('rep@example.test', 'test-password')).toMatchObject({ role: 'sales_manager' });
+    expect(jwt.signAsync).toHaveBeenCalledWith({ sub: 'u1', email: 'rep@example.test', role: 'sales_manager' });
+  });
+
   it('login 401s on wrong password or unknown email', async () => {
     const bcrypt = await import('bcrypt');
     const passwordHash = await bcrypt.hash('secret123', 10);

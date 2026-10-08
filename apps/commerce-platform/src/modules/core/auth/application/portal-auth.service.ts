@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { normalizeStaffRole } from '../../../../shared-kernel/presentation/auth.decorators';
 import { User } from '../../user/infrastructure/user.entity';
 
 /**
@@ -76,8 +77,8 @@ export class PortalAuthService {
     this.assertSecret();
     const user = await this.verifyCredentials(emailRaw, password);
     return {
-      accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: user.role }),
-      role: user.role,
+      accessToken: await this.jwt.signAsync({ sub: user.id, email: user.email, role: normalizeStaffRole(user.role) }),
+      role: normalizeStaffRole(user.role),
       mustChangePassword: !!user.mustChangePassword,
     };
   }

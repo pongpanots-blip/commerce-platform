@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { repScopeSql } from './sales-rep-scope';
 import { JoshReplica } from './josh-replica';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -69,21 +70,25 @@ export class JoshPrices {
   get available() { return this.replica.configured; }
 
   /** Branches to pick from (with their company), searchable by company / branch / ERP code. */
-  branches(search?: string) {
+  branches(search?: string, repIds?: string[]) {
     const s = search?.trim().slice(0, 100);
+    const params: unknown[] = [];
+    const w: string[] = [];
+    if (s) { params.push(`%${s}%`); w.push('(c.name ILIKE $1 OR b.name ILIKE $1 OR c.erp_customer_code ILIKE $1)'); }
+    if (repIds !== undefined) { params.push(repIds); w.push(repScopeSql('c', `$${params.length}`)); }
     return this.replica.query(`SELECT b.id AS branch_id, b.name AS branch_name, b.erp_branch_code, COALESCE(b.company_id, sh.company_id) AS company_id,
         c.name AS company_name, c.erp_customer_code
       FROM branch b LEFT JOIN shop sh ON sh.id = b.shop_id LEFT JOIN company c ON c.id = COALESCE(b.company_id, sh.company_id)
-      ${s ? 'WHERE c.name ILIKE $1 OR b.name ILIKE $1 OR c.erp_customer_code ILIKE $1' : ''}
-      ORDER BY c.name, b.name LIMIT 100`, s ? [`%${s}%`] : []);
+      ${w.length ? `WHERE ${w.join(' AND ')}` : ''}
+      ORDER BY c.name, b.name LIMIT 100`, params);
   }
 
   /** Products with a customer-specific price for this branch's company / branch (or matching `search`), each with all layers and today's winner. */
-  async forBranch(branchId: string, search?: string, at = new Date()) {
+  async forBranch(branchId: string, search?: string, at = new Date(), repIds?: string[]) {
     if (!UUID.test(branchId)) throw new BadRequestException('branchId must be a uuid');
     const [branch] = await this.replica.query<{ branch_id: string; branch_name: string; company_id: string | null; company_name: string | null; erp_customer_code: string | null }>(
       `SELECT b.id AS branch_id, b.name AS branch_name, COALESCE(b.company_id, sh.company_id) AS company_id, c.name AS company_name, c.erp_customer_code
-         FROM branch b LEFT JOIN shop sh ON sh.id = b.shop_id LEFT JOIN company c ON c.id = COALESCE(b.company_id, sh.company_id) WHERE b.id = $1`, [branchId]);
+         FROM branch b LEFT JOIN shop sh ON sh.id = b.shop_id LEFT JOIN company c ON c.id = COALESCE(b.company_id, sh.company_id) WHERE b.id = $1 ${repIds !== undefined ? `AND ${repScopeSql('c', '$2')}` : ''}`, repIds !== undefined ? [branchId, repIds] : [branchId]);
     if (!branch) throw new NotFoundException(`branch ${branchId} not found in josh`);
     const s = search?.trim().slice(0, 100);
     const params: unknown[] = [branch.company_id, branchId];
@@ -128,9 +133,13 @@ export class JoshPrices {
   }
 
   /** ERP quotations (special prices the ERP sent) for a customer code. */
-  quotations(customerCode: string) {
+  async quotations(customerCode: string, repIds?: string[]) {
     const code = customerCode.trim().slice(0, 50);
     if (!code) throw new BadRequestException('customerCode required');
+    if (repIds !== undefined) {
+      const [company] = await this.replica.query(`SELECT c.id FROM company c WHERE c.erp_customer_code = $1 AND ${repScopeSql('c', '$2')} LIMIT 1`, [code, repIds]);
+      if (!company) throw new NotFoundException('customer not found');
+    }
     return this.replica.query(`SELECT q.product_code, COALESCE(th.product_name, q.product_code) AS name, q.rate::float AS rate, q.ordering_rate::float AS ordering_rate,
         q.unit, q.quantity::float AS quantity, q.status, q.start_date::text AS start_date, q.expiry_date::text AS expiry_date, q.doc_book, q.doc_no, q.doc_date::text AS doc_date, q.updated_at
       FROM erp_quotations q LEFT JOIN product_inventory p ON p.product_inventory_sku = q.product_code

@@ -1,3 +1,6 @@
+import { homeForRole } from '../lib/role-home';
+import { SalesAssignment } from './pages/SalesAssignment';
+import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, useUiLocale } from '@cp/ui';
@@ -143,7 +146,7 @@ export function App() {
         topbar={<AdminTopBar role={role} />}
       >
           <Routes>
-            <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={nav[0]?.links[0]?.to ?? '/account/password'} replace />} />
+            <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={homeForRole(role)} replace />} />
             <Route path="/workspaces/:workspaceId" element={<Workspace />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />
@@ -159,6 +162,9 @@ export function App() {
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
             <Route path="/reports/products/:id" element={<JoshProductDetail />} />
+            <Route path="/cs/sales-assignment" element={<SalesAssignment />} />
+            <Route path="/reports/winback/opportunities" element={<MyWinback />} />
+            <Route path="/reports/winback/my" element={<MyWinback />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />

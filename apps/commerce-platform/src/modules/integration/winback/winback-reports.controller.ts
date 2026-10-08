@@ -1,5 +1,9 @@
-import { BadRequestException, Controller, Get, Query, ServiceUnavailableException, ValidationPipe } from '@nestjs/common';
-import { StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
+import { SalesRepIdentity } from '../../core/auth/application/sales-rep-identity.service';
+import { OpportunityService } from './opportunity.service';
+import { WinbackService } from './winback.service';
+import { OpportunityQueryDto } from './dto/app-gaps.dto';
+import { BadRequestException, Controller, Get, Query, Req, ServiceUnavailableException, ValidationPipe } from '@nestjs/common';
+import { StaffRoles, StaffRequest } from '../../../shared-kernel/presentation/auth.decorators';
 import { WinbackReports } from './winback-reports';
 import { wrapWinbackResponse } from './winback-response.interceptor';
 import { PoolQueryDto } from './dto/pool-query.dto';
@@ -11,16 +15,38 @@ const pipe = new ValidationPipe({ transform: true, whitelist: true });
 /**
  * winback manager reports for commerce-admin (admin, sales manager, business analyst — the sales app uses `/winback/*`
  * with josh's token). Paths and answers mirror josh `GET /api/winback/*` (same `{data, meta}` camelCase envelope).
- * `scope` is always team here. Source: WINBACK_REPORTS_SOURCE (winback-reports.ts).
+ * Existing reports use team scope and WINBACK_REPORTS_SOURCE. Opportunity / my reads use commerce tables;
+ * my routes override the class role list and enforce own + unassigned visibility.
  */
 @Controller('reports/winback')
 @StaffRoles('sales_manager', 'business_analyst')
 export class WinbackReportsController {
-  constructor(private readonly winback: WinbackReports) {}
+  constructor(private readonly winback: WinbackReports, private readonly identity: SalesRepIdentity, private readonly opportunities: OpportunityService, private readonly poolService: WinbackService) {}
 
   private async answer(fn: () => Promise<unknown>) {
     if (!this.winback.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL) — set WINBACK_REPORTS_SOURCE=copies to read commerce\'s winback tables.');
     return wrapWinbackResponse(await fn());
+  }
+
+  /** These reads use commerce's winback tables, independent of the team reports' source flag. */
+  private async saleActor(req: StaffRequest) {
+    const ids = await this.identity.repIdsFor(req.staff);
+    return { id: ids[0] ?? '', ids, isManager: req.staff.role === 'admin' };
+  }
+
+  @Get('opportunities')
+  async teamOpportunities(@Query(pipe) q: OpportunityQueryDto) {
+    return wrapWinbackResponse(await this.opportunities.list({ id: '', isManager: true }, q));
+  }
+
+  @Get('my/opportunities') @StaffRoles('sale')
+  async myOpportunities(@Req() req: StaffRequest, @Query(pipe) q: OpportunityQueryDto) {
+    return wrapWinbackResponse(await this.opportunities.list(await this.saleActor(req), q));
+  }
+
+  @Get('my/pool') @StaffRoles('sale')
+  async myPool(@Req() req: StaffRequest, @Query(pipe) q: PoolQueryDto) {
+    return wrapWinbackResponse(await this.poolService.findPool(q, await this.saleActor(req), true));
   }
 
   @Get('overview') overview() { return this.answer(() => this.winback.overview()); }

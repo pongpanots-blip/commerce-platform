@@ -2,7 +2,6 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { useEffect, useId, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   MARKETING_TEMPLATE_VARIABLES,
   createMarketingNotifyTemplate,
@@ -41,6 +40,7 @@ import {
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader } from '@cp/ui';
 type CouponOption = { id: string; coupon_code: string; title: string };
 
 const INPUT_CLASS =
@@ -804,13 +804,11 @@ export default function MarketingNotifyTemplates() {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <div>
-        <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-          {__uiText("&larr; Marketing Workflows")}</Link>
-        <h1 className="mt-1 text-xl font-bold text-gray-800">{__uiText("Notify · Email · Popup Templates")}</h1>
-        <p className="mt-1 text-xs text-gray-500">
-          {__uiText("สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ · popup ทำ variant ตาม segment ได้ — ใช้ใน step \"แจ้งเตือน\" / \"แสดง Offer\"")}</p>
-      </div>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.marketingWorkflows, label: 'เวิร์กโฟลว์การตลาด' }}
+        title={__uiText("Notify · Email · Popup Templates")}
+        subtitle={__uiText("สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ · popup ทำ variant ตาม segment ได้ — ใช้ใน step \"แจ้งเตือน\" / \"แสดง Offer\"")}
+      />
 
       {/* popup: 2 cols — PopupCreativeEditor มี panel ของตัวเองอยู่แล้ว ไม่จองคอลัมน์ขวา 300px ทิ้งไว้ */}
       <div

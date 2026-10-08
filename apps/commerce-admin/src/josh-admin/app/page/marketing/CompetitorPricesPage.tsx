@@ -16,6 +16,7 @@ import {
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader } from '@cp/ui';
 const money = (value: number | null) => value == null ? '—' : `฿${value.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const date = (value: string | null) => value ? new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : 'ยังไม่มีราคา';
 const blank: CompetitorPriceInput = { sku: '', ourWeightKg: 1, sourceUrl: '', competitorName: '', competitorSku: '', competitorWeightKg: 1,
@@ -197,10 +198,7 @@ export default function CompetitorPricesPage() {
 
   return <div className="mx-auto max-w-7xl space-y-5 p-4 text-gray-900 md:p-6">
     <ScrapingNavigation />
-    <header className="flex flex-wrap items-start justify-between gap-3">
-      <div><h1 className="text-2xl font-semibold">{__uiText("เทียบราคาคู่แข่ง")}</h1>
-        <p className="mt-1 text-sm text-gray-500">{__uiText("เก็บราคาจากเว็บคู่แข่ง → จับคู่กับ SKU ของเรา → ดูว่าเราแพงหรือถูกกว่าแต่ละเว็บ (ราคาต่อกิโล รวม VAT)")}</p></div>
-    </header>
+    <PageHeader title={__uiText("เทียบราคาคู่แข่ง")} subtitle={__uiText("เก็บราคาจากเว็บคู่แข่ง → จับคู่กับ SKU ของเรา → ดูว่าเราแพงหรือถูกกว่าแต่ละเว็บ (ราคาต่อกิโล รวม VAT)")} />
     <nav aria-label={__uiText("ขั้นตอน")} className="grid gap-2 sm:grid-cols-3">{([
       ['sources', '1', __uiText('เว็บคู่แข่ง'), __uiText('เก็บสินค้าและราคาจากเว็บ')],
       ['match', '2', __uiText('ตรวจคู่ที่ระบบจับให้'), __uiText('ติ๊กตัวที่ถูก บันทึกอัตโนมัติ')],

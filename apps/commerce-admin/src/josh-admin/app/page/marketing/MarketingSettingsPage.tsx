@@ -1,5 +1,4 @@
 import { useEffect, useId, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   MARKETING_TEMPLATE_VARIABLES,
   getGlobalFrequencyCap,
@@ -13,6 +12,7 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader } from '@cp/ui';
 const INPUT_CLASS =
   'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
 
@@ -93,13 +93,11 @@ export default function MarketingSettingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6">
-      <div>
-        <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-          {__uiText("&larr; Marketing Workflows")}</Link>
-        <h1 className="mt-1 text-2xl font-bold text-gray-900">{__uiText("Marketing Settings")}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {__uiText("ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ")}</p>
-      </div>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.marketingWorkflows, label: 'เวิร์กโฟลว์การตลาด' }}
+        title={__uiText("Marketing Settings")}
+        subtitle={__uiText("ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ")}
+      />
 
       <section className="space-y-4 rounded-2xl border bg-white p-6">
         <div>

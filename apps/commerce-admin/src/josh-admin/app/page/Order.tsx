@@ -2,14 +2,15 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { getOrderAnalytics, getOrders, type AdminOrderUiStatus, type OrderAnalytics } from '@josh/shared-api';
-import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn, Text } from '@josh/shared-ui-web';
+import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { ButtonLink, PageHeader, useNavAllows } from '@cp/ui';
 const PAGE_SIZE = 20;
 
 const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
@@ -33,6 +34,7 @@ interface OrderData {
 }
 
 const Order = () => {
+  const navAllows = useNavAllows();
   __useUiLocale();
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState<OrderAnalytics | null>(null);
@@ -249,28 +251,14 @@ const Order = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-4">
-        <div className="flex flex-col">
-          <Text bold={true} text={__uiText("All Orders")} size="2xl" />
-          <Text text={__uiText("Manage and monitor all customer orders")} size="sm" />
-          <Text
-            text={__uiText("Click the edit icon on an order to change its status")}
-            size="sm"
-          />
-        </div>
-        <div className="flex flex-wrap items-start gap-2">
-          <Link
-            to={ADMIN_ROUTES.orderImport}
-            className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            {__uiText("Order Import")}</Link>
-          <Link
-            to={ADMIN_ROUTES.paymentTransactions}
-            className="inline-flex h-fit items-center rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
-          >
-            {__uiText("Payment Transactions")}</Link>
-        </div>
-      </div>
+      <PageHeader
+        title={__uiText("All Orders")}
+        subtitle={__uiText("Click the edit icon on an order to change its status")}
+        actions={<>
+          {navAllows(ADMIN_ROUTES.paymentTransactions) && <ButtonLink to={ADMIN_ROUTES.paymentTransactions} icon="payments">{__uiText("Payment Transactions")}</ButtonLink>}
+          {navAllows(ADMIN_ROUTES.orderImport) && <ButtonLink to={ADMIN_ROUTES.orderImport} variant="primary" icon="cloud_upload">{__uiText("Order Import")}</ButtonLink>}
+        </>}
+      />
 
       <div className="grid grid-cols-4 gap-5">
         {cardData.map((card) => (

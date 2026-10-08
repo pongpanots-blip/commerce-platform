@@ -8,6 +8,7 @@ import { getScrapingSources, previewScrapingSource, saveScrapingSource, startScr
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader } from '@cp/ui';
 export const scrapingInput = 'mt-1 w-full rounded-lg border border-gray-300 bg-white p-2 text-sm focus:ring-2 focus:ring-primary';
 export const scrapingButton = 'rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium disabled:opacity-50';
 export const scrapingPrimary = 'rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50';
@@ -133,9 +134,8 @@ export default function ScrapingSourcesPage() {
 
   return <div className="mx-auto max-w-7xl space-y-5 p-4 md:p-6">
     <ScrapingNavigation />
-    <header className="flex flex-wrap justify-between gap-3"><div><h1 className="text-2xl font-semibold">{__uiText("ตั้งค่าเก็บข้อมูลจากเว็บ")}</h1>
-      <p className="mt-1 text-sm text-gray-500">{__uiText("กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น")}</p></div>
-      <button className={scrapingButton} disabled={busy} onClick={() => edit()}>{__uiText("+ ตั้งค่าเองแบบละเอียด")}</button></header>
+    <PageHeader title={__uiText("ตั้งค่าเก็บข้อมูลจากเว็บ")} subtitle={__uiText("กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น")}
+      actions={<button className={scrapingButton} disabled={busy} onClick={() => edit()}>{__uiText("+ ตั้งค่าเองแบบละเอียด")}</button>} />
     {automation && <section aria-label={__uiText("สวิตช์เก็บข้อมูลเบื้องหลัง")} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 ${automation.enabled ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}>
       <div><p className="font-medium">{__uiText("การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง): ")}{automation.enabled ? __uiText("เปิดอยู่") : __uiText("ปิดอยู่")}</p>
         <p className="text-xs text-gray-600">{automation.enabled ? __uiText("เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่") : __uiText("ไม่มีการเก็บเบื้องหลังเลย · “ลองดึงข้อมูล” ยังใช้ได้ · เปิดแล้วเก็บต่อจากที่ค้างไว้")}</p></div>

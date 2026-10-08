@@ -2,7 +2,7 @@ import React from 'react';
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, EmptyState } from "@cp/ui";
 export interface TableColumn<T> {
   key: string;
   label: string;
@@ -34,6 +34,9 @@ interface TableProps<T> {
   // เสมอ — ไม่ส่ง = พฤติกรรมเดิมทุกประการ (ไม่ scroll, ไม่ sticky header)
   // ตัวอย่าง: bodyMaxHeightClassName="max-h-[28rem]"
   bodyMaxHeightClassName?: string;
+
+  // ไม่มีแถว: ข้อความ/ปุ่มถัดไปของหน้านั้น (ไม่ส่ง = EmptyState กลาง)
+  empty?: React.ReactNode;
 }
 
 export function Table<T>({
@@ -52,6 +55,7 @@ export function Table<T>({
   onSelectAll,
   idKey = 'id' as keyof T,
   bodyMaxHeightClassName,
+  empty,
 }: TableProps<T>) {
   __useUiLocale();
   const pageSelectId = React.useId();
@@ -118,8 +122,8 @@ export function Table<T>({
           <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
             {safeData.length === 0 ? (
               <tr>
-                <td colSpan={totalColumnsCount} className="p-8 text-center text-gray-400">
-                  {__uiText("ไม่พบข้อมูลในระบบ")}</td>
+                <td colSpan={totalColumnsCount} className="p-0 text-center">
+                  {empty ?? <EmptyState icon="search_off" title="ไม่พบข้อมูลในระบบ" description="ลองเปลี่ยนคำค้นหรือตัวกรอง หรือเพิ่มรายการใหม่" />}</td>
               </tr>
             ) : (
               safeData.map((row, rowIndex) => {
